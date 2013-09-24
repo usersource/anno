@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="EditText">
+
+        <!-- top, right, bottom, left, none -->
+        <attr name="border_empty_direction" format="string" />
+        <attr name="border_empty_start" format="dimension" />
+        <attr name="border_empty_end" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="CommentArea">
+        <attr name="circle_radius" format="dimension" />
+        <attr name="circle_background_color" format="color" />
+        <attr name="circle_border_color" format="color" />
+        <attr name="arrow_border_color" format="color" />
+        <attr name="arrow_background_color" format="color" />
+        <attr name="circle_left" format="dimension" />
+        <attr name="arrow_left" format="dimension" />
+        <attr name="arrow_left_right_space" format="dimension" />
+        <attr name="arrow_on_top" format="boolean" />
+        <attr name="arrow_boundary" format="dimension" />
+    </declare-styleable>
+
+</resources>

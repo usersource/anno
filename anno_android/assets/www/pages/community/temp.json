@@ -1,0 +1,22 @@
+{
+    success: true|false,
+    message: "exception message, if success is false",
+    anno:
+        {
+            "screenshot":"demodata/screenshots/sc1.png", // screenshot image url or base64 dataUri format?
+            circleX: 256,
+            circleY:300,
+            deviceInfo:"Nexus 4, Android 4.0.2",
+            comments: [
+                {
+                    "author": "David Lee",
+                    "comment": "Hi, How are you."
+                },
+                {
+                    "author": "David Lee2",
+                    "comment": "Hi, How are you2."
+                },
+                ...
+            ]
+        }
+}
