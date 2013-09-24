@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="transparent_orange">#B0FF9900</color>
+    <color name="transparent_red">#B0FF0000</color>
+    <!-- <color name="transparent_white">#B0FFFFFF</color> -->
+    <color name="transparent_white">#FFFFFF</color>
+    <color name="orange">#FF9900</color>
+    <color name="red">#FF0000</color>
+    <!--  -->
+    <color name="circle_background">@color/transparent_orange</color>
+    <color name="circle_border">#FF9900</color>
+    <color name="commentbox_border">@android:color/black</color>
+    <color name="commentbox_background">@color/transparent_white</color>
+    <color name="send_comment_button_background">#FF9900</color>
+    <color name="text_hint_color">#808080</color>
+
+</resources>

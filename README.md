@@ -1,4 +1,4 @@
-anno
-====
+app-anno
+========
 
-annotate mobile apps to make them better
+Annotate mobile apps
