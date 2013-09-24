@@ -1,0 +1,7 @@
+indexes:
+
+- kind: FollowUp
+  properties:
+  - name: Feedback_key
+  - name: updateTimestamp
+    direction: desc

@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Community MVP</title>
+    <link type="text/css" href="./css/style.css" rel="stylesheet" />
+    <script type="text/javascript">
+        var dojoConfig = {
+            parseOnLoad:false,
+            mblHideAddressBar:false,
+            mblAndroidWorkaround:false,
+            mblAlwaysHideAddressBar:false,
+            async:1,
+            mblUserAgent: 'iPhone'
+        };
+    </script>
+    <script type="text/javascript" src="../../scripts/dojo/dojo.js"></script>
+    <script>
+        require([ "dojox/mobile/deviceTheme","dojox/mvc/at", "./main.js" ], function(deviceTheme, at) {
+
+        });
+    </script>
+    <script type="text/javascript" src="cordova-min.js"></script>
+    <script type="text/javascript" src="heartcode-canvasloader-min.js"></script>
+</head>
+<body id="container">
+<!--<div id="loadingMessageDiv" style="width:300px;margin-top: 20px;margin-left:20px;">Loading...</div>-->
+<div id="lightCover" class="lightCover" style="display: none;"></div>
+<div id="lightCoverScreenshot" class="lightCoverScreenshot" style="display: none;"></div>
+<input id="appNameTextBox" style="display: none;z-index: 4000;position: absolute;" type="text" data-dojo-type="dojox/mobile/TextBox" class="commentTextbox" placeholder="Type app name here">
+<button id="hiddenBtn" style="position: absolute;left:-2000px;top: -2000px;">a</button>
+<div id="toastMsgContainer" style="display: none;" class="toastMsgContainer"></div>
+</body>
+</html>

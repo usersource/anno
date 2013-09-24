@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:anno="http://schemas.android.com/apk/res-auto"
+    anno:arrow_boundary="20dp" >
+
+    <io.usersource.annoplugin.view.custom.CircleArrow
+        android:id="@+id/circleArrow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/comment_indicate_height"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        anno:arrow_background_color="@color/transparent_white"
+        anno:arrow_border_color="@color/commentbox_border"
+        anno:arrow_left="110dp"
+        anno:arrow_left_right_space="@dimen/comment_arrow_space"
+        anno:arrow_on_top="true"
+        anno:circle_background_color="@color/transparent_orange"
+        anno:circle_border_color="@color/orange"
+        anno:circle_left="110dp"
+        anno:circle_radius="20dp" />
+
+    <Button
+        android:id="@+id/btnGoHome"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/comment_button_height"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/send_comment_button"
+        android:layout_marginLeft="200dp"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:text="@string/go_home"
+        android:textColor="@android:color/black" />
+
+    <LinearLayout
+        android:id="@+id/commentActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/circleArrow"
+        android:layout_marginLeft="@dimen/comment_area_marginLeftRight"
+        android:layout_marginRight="@dimen/comment_area_marginLeftRight" >
+
+        <io.usersource.annoplugin.view.custom.EditTextLayout
+            android:id="@+id/inputArea"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            anno:arrow_background_color="@color/transparent_white"
+            anno:arrow_border_color="@color/commentbox_border"
+            anno:arrow_left="100dp"
+            anno:arrow_left_right_space="@dimen/comment_arrow_space"
+            anno:arrow_on_top="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true" >
+
+            <EditText
+                android:id="@+id/etComment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@null"
+                android:hint="@string/comment_hint"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxLines="4"
+                android:minHeight="@dimen/comment_button_height"
+                android:padding="8dp"
+                android:textColor="@android:color/black"
+                android:textColorHint="@color/text_hint_color" />
+        </io.usersource.annoplugin.view.custom.EditTextLayout>
+
+        <Button
+            android:id="@+id/btnComment"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/comment_button_height"
+            android:layout_marginLeft="@dimen/comment_button_margin"
+            android:background="@drawable/send_comment_button"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:text="@string/send_comment"
+            android:textColor="@android:color/black" />
+    </LinearLayout>
+
+</merge>

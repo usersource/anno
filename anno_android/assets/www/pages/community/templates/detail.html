@@ -1,0 +1,107 @@
+<div id="detailView" class="view mblView" style="overflow-x: hidden;">
+    <script type="dojo/require">at: "dojox/mvc/at"</script>
+    <div id="headingDetail" data-dojo-type="dojox/mobile/Heading">
+        <div id="navBtnBackDetail" class="navBtnBackDetail" data-dojo-type="dojox/mobile/ToolBarButton" back="true"></div>
+        <img src="css/images/anno.png" alt="" width="40" class="headingIcon">
+        <span class="headingTitle">Community</span>
+        <div id="navBtnNext" class="navBtnNext" data-dojo-type="dojox/mobile/ToolBarButton"></div>
+        <div id="navBtnPrevious" class="navBtnPrevious navBtnDisabled" data-dojo-type="dojox/mobile/ToolBarButton"></div>
+    </div>
+    <div class="fieldset" data-dojo-type="dojox/mvc/Group"
+         data-dojo-props="target: at(this.loadedModels.events, 'cursor')">
+        <div id="screenshotContainerDetail" class="screenshotContainerDetail">
+            <img id="imgDetailScreenshot" class="imgDetailScreenshot" data-dojo-type="dojox/mvc/Output" height="80%"
+                 data-dojo-props="src: at('rel:', 'screenshot')"/>
+            <!--<div id="discussDivDetail" class="discussDivDetail">Discuss</div>-->
+            <canvas id="screenshotAnchorDetail" width="40" height="40" class="screenshotAnchorDetail"></canvas>
+            <div id="screenshotAnchorInvisibleDetail" class="screenshotAnchorInvisibleDetail"></div>
+            <div id="screenshotDefaultAnchorDetail" class="screenshotDefaultAnchorDetail"></div>
+            <div id="textTooltip" data-dojo-type="dojox/mobile/Tooltip" class="mblTooltipBubble">
+                <div id="screenshotTooltipDetail" class="screenshotTooltipDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'annoText')"></div>
+            </div>
+        </div>
+        <div id="textDataAreaContainer" style="display: none" class="textDataAreaContainer">
+            <div id="appNameContainer" class="appNameDetail">
+                <table cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td valign="middle"><span class="appNameTitleDetail">App:</span></td>
+                        <td valign="middle">
+                            <span id="appNameSpanDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'app')"></span>
+                            <!--<input id="appNameTextBox" style="display: none;" type="text" data-dojo-type="dojox/mobile/TextBox" class="commentTextbox" placeholder="Type app name here">-->
+                        </td>
+                        <td valign="middle"><img id="editAppNameImg" src="css/images/content_edit.png" width="24"></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="annoCommentsContainer" data-dojo-type2="dojox/mobile/ScrollableView" data-dojo-props="weight:1" style="width: 100%;overflow-y: auto;overflow-x:hidden; ">
+                <div>
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td height="32" width="32">
+                                <span class="icon-user personImg"></span>
+                            </td>
+                            <td align="left"><span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'author')"></span><span class="authorDetail">'s anno</span></td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="annoTextDetail" class="annoTextDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'annoText')"></div>
+                <div>
+                    <table width="100%"  cellpadding="0" cellspacing="0" style="padding-top: 4px;">
+                        <tr>
+                            <td width="33%" align="right">
+                                <span id="imgThumbsUp" class="icon-thumbs-up icoImgDeactive"></span>
+                            </td>
+                            <td width="33%">&nbsp;</td>
+                            <td width="33%">
+                                <span id="imgFlag" class="icon-flag icoImgDeactive"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="annoCommentsSet" class="fieldset"
+                     data-dojo-type="dojox/mvc/Repeat"
+                     data-dojo-props="exprchar: '*', children: at('rel:', 'comments')">
+                    <div>
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td height="32" width="32">
+                                    <span class="icon-user personImg"></span>
+                                </td>
+                                <td align="left">
+                                    <span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:*{this.index}', 'author')"></span><span class="authorDetail">&nbsp;commented</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="commentDetail">
+                        <div data-dojo-type="dojox/mvc/Output" style="width: 96%" data-dojo-props="value: at('rel:*{this.index}', 'comment')"></div>
+                    </div>
+                </div>
+                <div id="deviceInfoContainer">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td width="32">
+                                <span class="icon-mobile personImg"></span>
+                            </td>
+                            <td valign="middle">
+                                <div class="deviceInfoDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'deviceInfo')"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div id="addCommentContainer" style="border-top: 2px solid #aeebfc;position2: absolute">
+                <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td height="32">
+                            <div class="noJump"></div>
+                                <input type="text" id="addCommentTextBox" data-dojo-type2="dojox/mobile/TextBox" class="commentTextbox" style="width: 100%" placeholder="Add a comment">
+                        </td>
+                        <td width="32"><img id="addCommentImg" src="css/images/addcomment.png"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--<div id="dummyDiv" style="width: 100%;height: 1000px;display: block">hh</div>-->
+</div>
