@@ -1,9 +1,7 @@
 package io.usersource.annoplugin.sync;
 
 import io.usersource.annoplugin.network.HttpConnector;
-import io.usersource.annoplugin.network.IHttpConnectorAuthHandler;
 import io.usersource.annoplugin.network.IHttpRequestHandler;
-import io.usersource.annoplugin.utils.AccountUtils;
 import io.usersource.annoplugin.utils.SystemUtils;
 
 import java.io.IOException;
@@ -18,11 +16,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.accounts.Account;
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Http implementation of anno services.
@@ -38,7 +34,6 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
 
   private HttpConnector httpConnector;
   private Context context;
-  private Account account;
   private UsersManager mUser;
 
   public AnnoHttpServiceImpl(Context context) {
@@ -115,8 +110,8 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
       public void execute(Map<String, Object> input) {
         try {
           String annoId = (String) input.get("anno_id");
-          String reqUrl = String.format("%s?anno_id=%s", BASE_URL_COMMUNITY,
-              annoId);
+          String reqUrl = String.format("%s?anno_id=%s&user_id=%s", BASE_URL_COMMUNITY,
+              annoId, mUser.getUserID());
           httpConnector.sendRequest(reqUrl, null, new ImageResponseHandler(
               respHandler));
         } catch (ParseException e) {
