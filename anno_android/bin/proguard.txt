@@ -1,0 +1,48 @@
+# view res/layout/anno_home.xml #generated:7
+# view res/layout/feedback_edit_activity.xml #generated:9
+# view res/layout/feedback_view_activity.xml #generated:8
+-keep class android.gesture.GestureOverlayView { <init>(...); }
+
+# view res/layout/comment_layout.xml #generated:10
+-keep class io.usersource.anno.view.custom.CircleArrow { <init>(...); }
+
+# view res/layout/comment_layout.xml #generated:14
+-keep class io.usersource.anno.view.custom.EditTextLayout { <init>(...); }
+
+# view AndroidManifest.xml #generated:95
+-keep class io.usersource.annoplugin.model.AnnoContentProvider { <init>(...); }
+
+# view AndroidManifest.xml #generated:113
+-keep class io.usersource.annoplugin.sync.AnnoAuthenticatorService { <init>(...); }
+
+# view AndroidManifest.xml #generated:102
+-keep class io.usersource.annoplugin.sync.AnnoSyncService { <init>(...); }
+
+# view AndroidManifest.xml #generated:47
+-keep class io.usersource.annoplugin.view.AnnoMainActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:93
+-keep class io.usersource.annoplugin.view.AnnoSettingActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:83
+-keep class io.usersource.annoplugin.view.CommunityActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:58
+-keep class io.usersource.annoplugin.view.FeedbackEditActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:78
+-keep class io.usersource.annoplugin.view.FeedbackViewActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:88
+-keep class io.usersource.annoplugin.view.IntroActivity { <init>(...); }
+
+# view res/layout/comment_area_layout.xml #generated:6
+-keep class io.usersource.annoplugin.view.custom.CircleArrow { <init>(...); }
+
+# view res/layout/feedback_edit_activity.xml #generated:28
+# view res/layout/feedback_view_activity.xml #generated:28
+-keep class io.usersource.annoplugin.view.custom.CommentAreaLayout { <init>(...); }
+
+# view res/layout/comment_area_layout.xml #generated:42
+-keep class io.usersource.annoplugin.view.custom.EditTextLayout { <init>(...); }
+
