@@ -193,6 +193,32 @@ define([
                     domStyle.set('editAppNameImg', 'display', 'none');
                 }
 
+                console.error("vote: "+ eventsModel.cursor.vote+", flat: "+eventsModel.cursor.flag);
+
+                if (eventsModel.cursor.vote == "true")
+                {
+                    if (!domClass.contains('imgThumbsUp','icoImgActive'))
+                    {
+                        domClass.add('imgThumbsUp', 'icoImgActive');
+                    }
+                }
+                else
+                {
+                    domClass.remove('imgThumbsUp', 'icoImgActive');
+                }
+
+                if (eventsModel.cursor.flag == "true")
+                {
+                    if (!domClass.contains('imgFlag','icoImgActive'))
+                    {
+                        domClass.add('imgFlag', 'icoImgActive');
+                    }
+                }
+                else
+                {
+                    domClass.remove('imgFlag', 'icoImgActive');
+                }
+
                 adjustAnnoCommentSize();
             }
         };
@@ -496,6 +522,9 @@ define([
 
                     deviceInfo = (returnAnno.deviceModel||'&nbsp;')+'&nbsp;'+(returnAnno.OSVersion||'&nbsp;');
                     currentAnno.set('deviceInfo', deviceInfo);
+
+                    currentAnno.set('vote', returnAnno.vote);
+                    currentAnno.set('flag', returnAnno.flag);
 
                     hideLoadingIndicator();
                     setDetailsContext(cursor);
