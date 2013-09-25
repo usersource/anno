@@ -27,6 +27,69 @@ define([
         var savingVote = false, savingFlag = false, screenshotMargin = 8;
         var currentAuthor = 'me';
         var annoTooltipY;
+        var goingNextRecord = null;
+
+        var wipeIn = function(args)
+        {
+            var node = args.node = dom.byId(args.node), s = node.style, o;
+            var currentHeight = domStyle.get(node, "height");
+            var anim = baseFX.animateProperty(lang.mixin({
+                properties: {
+                    height: {
+                        start: function(){
+                            o = s.overflow;
+                            s.overflow = "hidden";
+                            if(s.visibility == "hidden" || s.display == "none"){
+                                s.height = "1px";
+                                s.display = "";
+                                s.visibility = "";
+                                return 1;
+                            }else{
+                                var height = domStyle.get(node, "height");
+                                return Math.max(height, 1);
+                            }
+                        },
+                        end: function(){
+                            return currentHeight;
+                        }
+                    }
+                },
+                onEnd: function()
+                {
+                    s.height.display = "none";
+                    s.height = currentHeight+"px";
+                    s.overflow = o;
+                }
+            }, args));
+
+            return anim;
+        };
+
+        var wipeOut = function(args){
+            var node = args.node = dom.byId(args.node), s = node.style, o;
+            var currentHeight = domStyle.get(node, "height");
+            var anim = baseFX.animateProperty(lang.mixin({
+                properties: {
+                    height: {
+                        end: 1
+                    }
+                },
+                onEnd: function()
+                {
+                    s.overflow = o;
+                    s.display = "none";
+                    s.height = currentHeight+"px";
+                },
+                beforeBegin: function()
+                {
+                    o = s.overflow;
+                    s.overflow = "hidden";
+                    s.display = "";
+                }
+            }, args));
+
+            return anim;
+        };
 
         var adjustSize = function()
         {
@@ -34,63 +97,77 @@ define([
             var parentBox = domGeom.getMarginBox("headingDetail");
             domStyle.set("imgDetailScreenshot", "width", (viewPoint.w-screenshotMargin)+"px");
 
-            var h = (viewPoint.h-parentBox.h-6);
-            domStyle.set("textDataAreaContainer", "width", (viewPoint.w-30-6-10)+"px");
+            var h = (viewPoint.h-6);
+            domStyle.set("textDataAreaContainer", "width", (viewPoint.w-6-12)+"px");
             domStyle.set("annoTextDetail", "width", (viewPoint.w-30-6-10-8)+"px");
-            domStyle.set("textDataAreaContainer", "height", (h-11)+"px");
+            domStyle.set("textDataAreaContainer", "height", (h-30)+"px");
             domStyle.set("annoCommentsContainer", "height", (h-76)+"px");//104
 
             domStyle.set("appNameTextBox", "width", (viewPoint.w-30-6-10-40)+"px");
-
             domStyle.set("screenshotTooltipDetail", "width", (viewPoint.w-screenshotMargin-viewPoint.w*0.10)+"px");
-
-
-            //var tooltipWidget = registry.byId('textTooltip');
-            //domStyle.set(tooltipWidget.domNode, 'top', (parseInt(domStyle.get(tooltipWidget.domNode, 'top'))+14)+'px');
-            //domStyle.set("screenshotContainerDetail", "height", (viewPoint.h-parentBox.h)+"px");
         };
 
         var screenshotImageOnload = function()
         {
             annoTooltipY = null;
             window.setTimeout(function(){
-                //console.error(eventsModel.cursor.circleX+","+eventsModel.cursor.circleY);
                 var viewPoint = win.getBox();
-                //console.error(viewPoint.h);
                 var tooltipWidget = registry.byId('textTooltip');
                 var parentBox = domGeom.getMarginBox("headingDetail");
+                var deviceRatio = parseFloat((viewPoint.w/viewPoint.h).toFixed(2));
+                var orignialDeviceRatio = parseFloat((dom.byId('imgDetailScreenshot').naturalWidth/dom.byId('imgDetailScreenshot').naturalHeight).toFixed(2));
 
                 var orignialRatio = dom.byId('imgDetailScreenshot').naturalHeight/dom.byId('imgDetailScreenshot').naturalWidth;
-                dom.byId("imgDetailScreenshot").width = (viewPoint.w-screenshotMargin);
-                dom.byId("imgDetailScreenshot").height = (viewPoint.w-screenshotMargin)*orignialRatio;
-                //console.error("scna "+ dom.byId("imgDetailScreenshot").naturalWidth+","+dom.byId("imgDetailScreenshot").naturalHeight);
-                //console.error("sc "+ dom.byId("imgDetailScreenshot").width+","+dom.byId("imgDetailScreenshot").height);
+                var imageWidth, imageHeight;
+
+                if (orignialDeviceRatio == deviceRatio)
+                {
+                    imageWidth = (viewPoint.w-screenshotMargin);
+                    imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio;
+
+                    dom.byId("imgDetailScreenshot").width = imageWidth;
+                    dom.byId("imgDetailScreenshot").height = imageHeight;
+                }
+                else if (orignialDeviceRatio < deviceRatio) // taller than current device
+                {
+                    imageWidth = (viewPoint.h-8)/orignialRatio;
+                    imageHeight = (viewPoint.h-8);
+
+                    dom.byId("imgDetailScreenshot").height = imageHeight;
+                    dom.byId("imgDetailScreenshot").width = imageWidth;
+                }
+                else if (orignialDeviceRatio > deviceRatio) // wider than current device
+                {
+                    imageWidth = (viewPoint.w-screenshotMargin);
+                    imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio;
+
+                    dom.byId("imgDetailScreenshot").width = imageWidth;
+                    dom.byId("imgDetailScreenshot").height = imageHeight;
+                }
 
                 domStyle.set("lightCoverScreenshot", "width", (30)+"px");
 
-                if ((viewPoint.w-screenshotMargin)*orignialRatio< viewPoint.h)
+                if (imageHeight< viewPoint.h)
                 {
                     domStyle.set("lightCoverScreenshot", "height", (viewPoint.h+400)+"px");
                 }
                 else
                 {
-                    domStyle.set("lightCoverScreenshot", "height", ((viewPoint.w-screenshotMargin)*orignialRatio+400)+"px");
+                    domStyle.set("lightCoverScreenshot", "height", (imageHeight+400)+"px");
                 }
 
-                var toolTipDivWidth = (viewPoint.w-screenshotMargin-viewPoint.w*0.10);
+                var toolTipDivWidth = (imageWidth-viewPoint.w*0.05);
                 domStyle.set("screenshotTooltipDetail", "width", toolTipDivWidth+"px");
 
                 if (eventsModel.cursor.circleX != null)
                 {
-                    var imageRatio = (viewPoint.w-screenshotMargin)/dom.byId('imgDetailScreenshot').naturalWidth;
-                    var imageRatioV = ((viewPoint.w-screenshotMargin)*orignialRatio)/dom.byId('imgDetailScreenshot').naturalHeight;
+                    var imageRatio = imageWidth/dom.byId('imgDetailScreenshot').naturalWidth;
+                    var imageRatioV = imageHeight/dom.byId('imgDetailScreenshot').naturalHeight;
                     domStyle.set("screenshotAnchorDetail", {
                         top: eventsModel.cursor.circleY*imageRatioV+'px',
                         left: eventsModel.cursor.circleX*imageRatio+'px',
                         display: ''
                     });
-
-                    //console.error("sca "+ eventsModel.cursor.circleX*imageRatio+","+eventsModel.cursor.circleY*imageRatioV);
 
                     domStyle.set("screenshotAnchorInvisibleDetail", {
                         top: eventsModel.cursor.circleY*imageRatioV+'px'
@@ -134,6 +211,28 @@ define([
                 }
 
                 showToastMsg('tap for details');
+
+                if (goingNextRecord != null)
+                {
+                    if (goingNextRecord)
+                    {
+                        transit(null, dom.byId('screenshotContainerDetail'), {
+                            transition:"slide",
+                            duration:600
+                        });
+                    }
+                    else
+                    {
+                        transit(null, dom.byId('screenshotContainerDetail'), {
+                            transition:"slide",
+                            duration:600,
+                            reverse: true
+                        });
+                    }
+                }
+
+                adjustNavBarSize();
+
             }, 500);
         };
 
@@ -228,12 +327,12 @@ define([
             var annoContainer = dom.byId('annoCommentsContainer');
             var parentBox = domGeom.getMarginBox("headingDetail");
             var viewPoint = win.getBox();
-            var h = (viewPoint.h-parentBox.h-6);
+            var h = (viewPoint.h-6);
 
-            domStyle.set("annoCommentsContainer", "height", (h-76)+"px")
+            domStyle.set("annoCommentsContainer", "height", (h-76-20)+"px")
             if (annoContainer.scrollHeight > annoContainer.clientHeight)
             {
-                domStyle.set("annoCommentsContainer", "height", (h-76)+"px");
+                domStyle.set("annoCommentsContainer", "height", (h-76-20)+"px");
             }
             else
             {
@@ -247,12 +346,19 @@ define([
             }
         };
 
+        var adjustNavBarSize = function ()
+        {
+            var scSize = domGeom.getMarginBox('screenshotContainerDetail');
+            domStyle.set('headingDetail', 'width', (scSize.w-6)+'px');
+        };
+
         var goNextRecord = function()
         {
             if ( (currentIndex+1)< eventsModel.model.length)
             {
                 window.setTimeout(function(){
                     loadDetailData(currentIndex+1);
+                    goingNextRecord = true;
                 }, 50);
             }
         };
@@ -263,6 +369,7 @@ define([
             {
                 window.setTimeout(function(){
                     loadDetailData(currentIndex-1);
+                    goingNextRecord = false;
                 }, 50);
             }
         };
@@ -270,10 +377,10 @@ define([
         var showTextData = function()
         {
             domStyle.set("imgDetailScreenshot", "opacity", '0.4');
-            transit(null, dom.byId('textDataAreaContainer'), {
-                transition:"slide",
-                duration:600
-            });
+            wipeIn({
+                node:"textDataAreaContainer",
+                duration: 600
+            }).play();
             registry.byId('textTooltip').hide();
             window.setTimeout(function(){
                 domStyle.set("lightCoverScreenshot", "display", '');
@@ -281,21 +388,23 @@ define([
 
             textDataAreaShown = true;
             adjustAnnoCommentSize();
+            domStyle.set("headingDetail", "display", 'none');
         };
 
         var hideTextData = function()
         {
             domStyle.set("lightCoverScreenshot", "display", 'none');
             domStyle.set("imgDetailScreenshot", "opacity", '1');
-            transit(dom.byId('textDataAreaContainer'), null, {
-                transition:"slide",
-                duration:600,
-                reverse:true
-            });
+            wipeOut({
+                node:"textDataAreaContainer",
+                duration: 600
+            }).play();
 
             domClass.replace(registry.byId('textTooltip').domNode, "mblTooltipVisible" ,"mblTooltipHidden");
 
             textDataAreaShown = false;
+
+            domStyle.set("headingDetail", "display", '');
         };
 
         var drawOrangeCircle = function()
@@ -516,6 +625,8 @@ define([
 
                     currentAnno.set('circleX', parseInt(returnAnno.circleX, 10));
                     currentAnno.set('circleY', parseInt(returnAnno.circleY, 10));
+                    currentAnno.set('screenshot', "data:image/png;base64,");
+
                     currentAnno.set('screenshot', "data:image/png;base64,"+returnAnno.screenshot);
 
                     currentAnno.set('comments',new getStateful(returnAnno.comments));
@@ -725,6 +836,18 @@ define([
                     goNextRecord();
                 }));
 
+                _connectResults.push(connect.connect(dom.byId('navBtnTray'), "click", function ()
+                {
+                    if (textDataAreaShown)
+                    {
+                        hideTextData();
+                    }
+                    else
+                    {
+                        showTextData();
+                    }
+                }));
+
                 _connectResults.push(connect.connect(dom.byId('appNameTextBox'), "keydown", function (e)
                 {
                     if (e.keyCode == 13)
@@ -737,11 +860,6 @@ define([
                 {
                     goPreviousRecord();
                 }));
-
-                /*_connectResults.push(connect.connect(dom.byId('discussDivDetail'), "click", function ()
-                {
-                    showTextData();
-                }));*/
 
                 _connectResults.push(connect.connect(dom.byId('addCommentImg'), "click", function ()
                 {
@@ -830,7 +948,7 @@ define([
 
                 }));
 
-                /*_connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), "touchstart", function (e)
+                _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), "touchstart", function (e)
                 {
                     if( e.touches.length == 1 )
                     {
@@ -848,10 +966,15 @@ define([
                         if ((startX-endX) >=6 &&Math.abs(startY-endY)<10)
                         {
                             dojo.stopEvent(e);
-                            showTextData();
+                            goNextRecord();
+                        }
+                        else if ((startX-endX) <=-6 &&Math.abs(startY-endY)<10)
+                        {
+                            dojo.stopEvent(e);
+                            goPreviousRecord();
                         }
                     }
-                }));*/
+                }));
                 _connectResults.push(connect.connect(dom.byId('imgDetailScreenshot'), "click", function (e)
                 {
                     if (!textDataAreaShown)
@@ -898,6 +1021,7 @@ define([
                 drawOrangeCircle();
 
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;
+                domStyle.set('modelApp_detail','backgroundColor', '#333333');
 
                 cordova.exec(
                     function (data)
@@ -918,6 +1042,7 @@ define([
             },
             afterActivate: function()
             {
+                goingNextRecord = null;
                 var cursor = this.params["cursor"];
                 if (this.params["cursor"] != null)
                 {
@@ -929,6 +1054,7 @@ define([
 
                 domClass.replace(registry.byId('textTooltip').domNode, "mblTooltipVisible" ,"mblTooltipHidden");
                 textDataAreaShown = false;
+                domStyle.set("headingDetail", "display", '');
             },
             beforeDeactivate: function()
             {

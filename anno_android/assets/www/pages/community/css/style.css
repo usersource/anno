@@ -19,6 +19,7 @@
     text-transform: none;
     line-height: 1;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* Use the following CSS code if you want to have a class per icon */
@@ -27,8 +28,7 @@ Instead of a list of all class selectors,
 you can use the generic selector below, but it's slower:
 [class*="icon-"] {
 */
-
-.icon-thumbs-up, .icon-flag, .icon-user, .icon-mobile {
+.icon-thumbs-up, .icon-flag, .icon-user, .icon-mobile, .icon-arrow-right, .icon-arrow-right-2, .icon-arrow-left, .icon-comments {
     font-family: 'icomoon';
     speak: none;
     font-style: normal;
@@ -49,6 +49,18 @@ you can use the generic selector below, but it's slower:
 }
 .icon-mobile:before {
     content: "\e004";
+}
+.icon-arrow-right:before {
+    content: "\e003";
+}
+.icon-arrow-right-2:before {
+    content: "\e005";
+}
+.icon-arrow-left:before {
+    content: "\e006";
+}
+.icon-comments:before {
+    content: "\e007";
 }
 
 
@@ -83,7 +95,6 @@ you can use the generic selector below, but it's slower:
 
 #navBtnNext
 {
-    background-image: url(images/navigation_next.png);
     background-color: transparent;
     border-width: 0px;
     -webkit-box-shadow: none;
@@ -100,7 +111,6 @@ you can use the generic selector below, but it's slower:
 
 #navBtnPrevious
 {
-    background-image: url(images/navigation_previous.png);
     background-color: transparent;
     border-width: 0px;
     -webkit-box-shadow: none;
@@ -116,7 +126,6 @@ you can use the generic selector below, but it's slower:
 
 #navBtnBackDetail
 {
-    background-image: url(images/navigation_back.png);
     background-color: transparent;
     border-width: 0px;
     -webkit-box-shadow: none;
@@ -230,7 +239,7 @@ you can use the generic selector below, but it's slower:
     position: absolute;
     border: 2px solid #808080;
     background-color: white;
-    left: 30px;
+    left: 1px;
     margin-top: 2px;
     z-index: 2001;
     padding-top: 10px;
