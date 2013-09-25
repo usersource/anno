@@ -40,7 +40,7 @@ public class RequestCreater {
   public static final String JSON_OBJECT_KEY = "object_key";
   public static final String JSON_KEYS_COUNT = "keys_count";
   public static final String JSON_USER_ID = "user_id";
-  
+
   public static final String JSON_REQUEST_TYPE = "request_type";
   public static final String JSON_REQUEST_TYPE_KEYS = "generateKeys";
   public static final String JSON_REQUEST_TYPE_UPDATE = "updateData";
@@ -49,7 +49,6 @@ public class RequestCreater {
   public static final String JSON_IMAGE = "image";
 
   public static final String JSON_OBJECTS_KEYS = "objectsKeys";
-  
 
   int keysCount;
   int currentItem;
@@ -73,13 +72,18 @@ public class RequestCreater {
   }
 
   public void addObject(Cursor data) {
+    String comment = data.getString(data
+        .getColumnIndex(TableCommentFeedbackAdapter.COL_COMMENT));
+    if (comment.startsWith(Constants.PRACTICE_PREFIX)) {
+      Log.d(TAG, "Comment is " + comment + " - IGNORE.");
+      return;
+    }
     JSONObject object = new JSONObject();
 
     try {
       object.put(JSON_CLIENT_ID, data.getString(data
           .getColumnIndex(TableCommentFeedbackAdapter.COL_ID)));
-      object.put(JSON_COMMENT, data.getString(data
-          .getColumnIndex(TableCommentFeedbackAdapter.COL_COMMENT)));
+      object.put(JSON_COMMENT, comment);
       object.put(JSON_SCREEN_KEY, data.getString(data
           .getColumnIndex(TableCommentFeedbackAdapter.COL_SCREENSHOT_KEY)));
       object.put(JSON_X, data.getString(data
@@ -136,19 +140,17 @@ public class RequestCreater {
     }
     return result;
   }
-  
-  public void setUserID(String id)
-  {
-	  userID = id;
+
+  public void setUserID(String id) {
+    userID = id;
   }
 
   public JSONObject getRequest() {
     try {
       request.put(JSON_UPDATED_OBJECTS, objects);
       request.put(JSON_REQUEST_TYPE, JSON_REQUEST_TYPE_UPDATE);
-      if(!userID.isEmpty())
-      {
-    	  request.put(JSON_USER_ID, userID);
+      if (!userID.isEmpty()) {
+        request.put(JSON_USER_ID, userID);
       }
     } catch (JSONException e) {
       Log.e(TAG, e.getMessage(), e);
@@ -184,9 +186,8 @@ public class RequestCreater {
         // long imageSize = imageManager.imageSize(imageKey);
         item.put(JSON_IMAGE, imageManager.compressImage(imageKey));
 
-        if(!userID.isEmpty())
-        {
-        	item.put(JSON_USER_ID, userID);
+        if (!userID.isEmpty()) {
+          item.put(JSON_USER_ID, userID);
         }
         result.put(JSON_UPDATED_OBJECTS, item);
         result.put(JSON_REQUEST_TYPE, JSON_REQUEST_TYPE_UPDATE);

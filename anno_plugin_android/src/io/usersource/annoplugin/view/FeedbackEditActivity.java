@@ -1,6 +1,5 @@
 package io.usersource.annoplugin.view;
 
-import android.view.Gravity;
 import io.usersource.annoplugin.AnnoPlugin;
 import io.usersource.annoplugin.R;
 import io.usersource.annoplugin.datastore.FileImageManage;
@@ -33,6 +32,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
@@ -78,16 +78,16 @@ public class FeedbackEditActivity extends Activity {
 
   /**
    * the toast object shown the first launch message
-  */
-  private Toast initToast = null;
-  private Toast initToast2 = null;
-  private Toast initToast3 = null;
-  private Toast initToast4 = null;
-  private Toast initToast5 = null;
-  private Toast initToast6 = null;
-  private Toast initToast7 = null;
+   */
+  private static Toast initToast = null;
+  private static Toast initToast2 = null;
+  private static Toast initToast3 = null;
+  private static Toast initToast4 = null;
+  private static Toast initToast5 = null;
+  private static Toast initToast6 = null;
+  private static Toast initToast7 = null;
 
-    @Override
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.feedback_edit_activity);
@@ -102,34 +102,41 @@ public class FeedbackEditActivity extends Activity {
     AnnoPlugin.setEnableGesture(this, R.id.gestures, true);
 
     if (AnnoPlugin.FIRST_LAUNCH && !AnnoPlugin.FIRST_ANNO_SENT) {
-        // todo stupid way to show the toast message more than 3.5 seconds
-        initToast = Toast.makeText(FeedbackEditActivity.this, "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
-        initToast.setGravity(Gravity.CENTER|Gravity.CENTER, 0, 0);
-        initToast.show();
+      // todo stupid way to show the toast message more than 3.5 seconds
+      initToast = Toast.makeText(FeedbackEditActivity.this,
+          "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
+      initToast.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
+      initToast.show();
 
-        initToast2 = Toast.makeText(FeedbackEditActivity.this, "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
-        initToast2.setGravity(Gravity.CENTER|Gravity.CENTER, 0, 0);
-        initToast2.show();
+      initToast2 = Toast.makeText(FeedbackEditActivity.this,
+          "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
+      initToast2.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
+      initToast2.show();
 
-        initToast3 = Toast.makeText(FeedbackEditActivity.this, "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
-        initToast3.setGravity(Gravity.CENTER|Gravity.CENTER, 0, 0);
-        initToast3.show();
+      initToast3 = Toast.makeText(FeedbackEditActivity.this,
+          "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
+      initToast3.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
+      initToast3.show();
 
-        initToast4 = Toast.makeText(FeedbackEditActivity.this, "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
-        initToast4.setGravity(Gravity.CENTER|Gravity.CENTER, 0, 0);
-        initToast4.show();
+      initToast4 = Toast.makeText(FeedbackEditActivity.this,
+          "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
+      initToast4.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
+      initToast4.show();
 
-        initToast5 = Toast.makeText(FeedbackEditActivity.this, "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
-        initToast5.setGravity(Gravity.CENTER|Gravity.CENTER, 0, 0);
-        initToast5.show();
+      initToast5 = Toast.makeText(FeedbackEditActivity.this,
+          "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
+      initToast5.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
+      initToast5.show();
 
-        initToast6 = Toast.makeText(FeedbackEditActivity.this, "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
-        initToast6.setGravity(Gravity.CENTER|Gravity.CENTER, 0, 0);
-        initToast6.show();
+      initToast6 = Toast.makeText(FeedbackEditActivity.this,
+          "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
+      initToast6.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
+      initToast6.show();
 
-        initToast7 = Toast.makeText(FeedbackEditActivity.this, "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
-        initToast7.setGravity(Gravity.CENTER|Gravity.CENTER, 0, 0);
-        initToast7.show();
+      initToast7 = Toast.makeText(FeedbackEditActivity.this,
+          "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
+      initToast7.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
+      initToast7.show();
     }
   }
 
@@ -225,18 +232,6 @@ public class FeedbackEditActivity extends Activity {
         storeCommentInLocalDB(comment, imageKey, y, x, circleOnTop, isMoved,
             level);
 
-        if (AnnoPlugin.FIRST_LAUNCH && !AnnoPlugin.FIRST_ANNO_SENT)
-        {
-          initToast.cancel();
-          initToast2.cancel();
-          initToast3.cancel();
-          initToast4.cancel();
-          initToast5.cancel();
-          initToast6.cancel();
-          initToast7.cancel();
-          AnnoPlugin.FIRST_ANNO_SENT = true;
-        }
-
       } catch (IOException e) {
         Log.e(TAG, e.getMessage());
         ViewUtils.displayError(FeedbackEditActivity.this, e.getMessage());
@@ -251,13 +246,11 @@ public class FeedbackEditActivity extends Activity {
   };
 
   @Override
-  protected void onDestroy()
-  {
+  protected void onDestroy() {
     super.onDestroy();
 
     // hide these toast messages
-    if (initToast != null)
-    {
+    if (initToast != null) {
       initToast.cancel();
       initToast2.cancel();
       initToast3.cancel();
@@ -330,11 +323,28 @@ public class FeedbackEditActivity extends Activity {
       if (token == TOKEN_INSERT_COMMENT) {
         Log.d(TAG,
             "insert comment successfully. inserted uri:" + uri.toString());
+        boolean isPractice = (AnnoPlugin.FIRST_LAUNCH && !AnnoPlugin.FIRST_ANNO_SENT);
+        if (isPractice) {
+          initToast.cancel();
+          initToast2.cancel();
+          initToast3.cancel();
+          initToast4.cancel();
+          initToast5.cancel();
+          initToast6.cancel();
+          initToast7.cancel();
+          AnnoPlugin.FIRST_ANNO_SENT = true;
+        }
+
         ViewUtils.displayInfo(activityRef.get(), R.string.success_send_comment);
+
         activityRef.get().finish();
 
-        // if insert comment successfully, send it to GAE server asynchronizely.
-        AnnoSyncAdapter.requestSync(activityRef.get().getApplicationContext());
+        if (!isPractice) {
+          // if insert comment successfully, send it to GAE server
+          // asynchronizely.
+          AnnoSyncAdapter
+              .requestSync(activityRef.get().getApplicationContext());
+        }
       }
     }
 
@@ -347,8 +357,17 @@ public class FeedbackEditActivity extends Activity {
   private void storeCommentInLocalDB(String comment, String imageKey, float y,
       float x, boolean circleOnTop, boolean isMoved, int level)
       throws NameNotFoundException {
+    boolean isPractice = (AnnoPlugin.FIRST_LAUNCH && !AnnoPlugin.FIRST_ANNO_SENT);
+    // if it's practice, still save in local database, but not send to remote
+    // server.
+
     ContentValues values = new ContentValues();
-    values.put(TableCommentFeedbackAdapter.COL_COMMENT, comment);
+    if (isPractice) {
+      values.put(TableCommentFeedbackAdapter.COL_COMMENT,
+          Constants.PRACTICE_PREFIX + " " + comment);
+    } else {
+      values.put(TableCommentFeedbackAdapter.COL_COMMENT, comment);
+    }
     values.put(TableCommentFeedbackAdapter.COL_SCREENSHOT_KEY, imageKey);
     values.put(TableCommentFeedbackAdapter.COL_POSITION_X, x);
     values.put(TableCommentFeedbackAdapter.COL_POSITION_Y, y);
