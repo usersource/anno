@@ -24,6 +24,7 @@ import android.net.Uri;
 public class AnnoContentProvider extends ContentProvider {
 
   public static final String AUTHORITY = "io.usersource.anno.provider";
+  // public static final String AUTHORITY = "co.usersource.doui.provider";
   public static final String COMMENT_PATH = TableCommentFeedbackAdapter.TABLE_NAME;
   public static final String USERS_PATH = TableUsers.TABLE_NAME;
 
@@ -45,6 +46,8 @@ public class AnnoContentProvider extends ContentProvider {
   private static final String TABLE_MIME_SUBTYPE_FOR_ROW = "android.cursor.item/";
   private static final String TABLE_MIME_SUBTYPE_FOR_ROWS = "android.cursor.dir/";
   private static final String TABLE_NAME_PROVIDER_SPECIFIC = "io.usersource.anno.provider";
+  // private static final String TABLE_NAME_PROVIDER_SPECIFIC =
+  // "co.usersource.doui.provider";
 
   private AnnoSQLiteOpenHelper annoSQLiteOpenHelper;
   private static final UriMatcher URI_MATCHER = new UriMatcher(
