@@ -35,6 +35,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -162,6 +164,17 @@ public class FeedbackEditActivity extends Activity {
     outerBackground = (RelativeLayout) findViewById(R.id.outer_bg);
     circleArrow = (CircleArrow) findViewById(R.id.circleArrow);
     circleArrow.setActivity(this);
+
+    boolean isPractice = (AnnoPlugin.FIRST_LAUNCH && !AnnoPlugin.FIRST_ANNO_SENT);
+    if (isPractice) {
+      TranslateAnimation alphaAnimation2 = new TranslateAnimation(-20f, 20f, 0,
+          0);
+      alphaAnimation2.setDuration(1000);
+      alphaAnimation2.setRepeatCount(1);
+      alphaAnimation2.setRepeatMode(Animation.REVERSE);
+      circleArrow.setAnimation(alphaAnimation2);
+      alphaAnimation2.start();
+    }
 
     btnComment.setOnClickListener(sendCommentClickListener);
     btnGoHome.setOnClickListener(goHomeClickListener);

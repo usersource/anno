@@ -6,3 +6,5 @@
 bin
 .metadata
 gen
+anno_android/local.properties
+anno_android/version.properties
