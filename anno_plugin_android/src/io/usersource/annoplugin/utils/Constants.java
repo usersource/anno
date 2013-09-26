@@ -16,4 +16,10 @@ public class Constants {
 
   public static final String ANNO_SOURCE_PLUGIN = "plugin";
   public static final String ANNO_SOURCE_STANDALONE = "standalone";
+
+  /**
+   * Comment prefix. This string will prepend to comment if it's the first time
+   * anno launch.
+   */
+  public static final String PRACTICE_PREFIX = "[PRACTICE]";
 }
