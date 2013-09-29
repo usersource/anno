@@ -230,8 +230,6 @@ define([
                     }
                 }
 
-                showToastMsg('tap for details');
-
                 if (goingNextRecord != null)
                 {
                     if (goingNextRecord)
