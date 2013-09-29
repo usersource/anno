@@ -243,8 +243,8 @@ you can use the generic selector below, but it's slower:
     margin-top: 2px;
     z-index: 2001;
     padding-top: 10px;
-    padding-left: 6px;
-    padding-right: 6px;
+    /*padding-left: 6px;
+    padding-right: 6px;*/
 }
 
 .mblTooltipBelow .mblTooltipArrow {
