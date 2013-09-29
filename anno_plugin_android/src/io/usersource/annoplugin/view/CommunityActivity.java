@@ -1,5 +1,7 @@
 package io.usersource.annoplugin.view;
 
+import android.view.KeyEvent;
+import android.webkit.JavascriptInterface;
 import io.usersource.annoplugin.AnnoPlugin;
 
 import org.apache.cordova.DroidGap;
@@ -17,6 +19,8 @@ import android.widget.LinearLayout;
  * 
  */
 public class CommunityActivity extends DroidGap {
+
+  private boolean backButtonEnable = true;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -36,7 +40,49 @@ public class CommunityActivity extends DroidGap {
 
     setContentView(view);
     AnnoPlugin.setEnableGesture(this, view, true);
+
+
+    this.appView.setOnKeyListener(new View.OnKeyListener() {
+
+      public boolean onKey(View v, int keyCode, KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_UP) {
+          if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // Do Stuff Here
+            if (CommunityActivity.this.isBackButtonEnable())
+            {
+              return onKeyUp(keyCode, event);
+            }
+            else
+            {
+              CommunityActivity.this.sendJavascript("javascript:window.hideTrayScreen()");
+              return true;
+            }
+          }
+          return onKeyUp(keyCode, event);
+        }
+        return onKeyDown(keyCode, event);
+      }
+    });
+
+    appView.addJavascriptInterface(this, "CMActivity");
+
     super.loadUrl("file:///android_asset/www/pages/community/main.html");
   }
 
+  @JavascriptInterface
+  public void enableBackButton()
+  {
+    backButtonEnable = true;
+  }
+
+  @JavascriptInterface
+  public void disableBackButton()
+  {
+    backButtonEnable = false;
+  }
+
+  public boolean isBackButtonEnable()
+  {
+    return backButtonEnable;
+  }
 }
