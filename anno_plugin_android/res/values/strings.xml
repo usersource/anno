@@ -30,6 +30,8 @@
     <string name="prefSyncServerUrl_Title">Sync server URL</string>
     <string name="prefSyncServerUrl_Default">http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/annotest</string>
     <string name="main_menu_i_settings">Settings</string>
+    <string name="main_menu_i_intro">Quick Start</string>
+    <string name="main_menu_i_feedback">Feedback</string>
     <string name="share_preference_global">SharePrefGlobal</string>
     <string name="app_last_update_time">AppLastUpdateTime</string>
     <string name="title_activity_welcome">WelcomeActivity</string>

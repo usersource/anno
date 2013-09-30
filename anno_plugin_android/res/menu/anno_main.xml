@@ -4,5 +4,13 @@
         android:id="@+id/settings_menu"
         android:title="@string/main_menu_i_settings">
     </item>
+    <item
+        android:id="@+id/intro_menu"
+        android:title="@string/main_menu_i_intro">
+    </item>
+    <item
+        android:id="@+id/feedback_menu"
+        android:title="@string/main_menu_i_feedback">
+    </item>
 
 </menu>
