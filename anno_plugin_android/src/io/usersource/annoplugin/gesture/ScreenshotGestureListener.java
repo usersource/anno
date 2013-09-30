@@ -8,6 +8,7 @@ import io.usersource.annoplugin.utils.PluginUtils;
 import io.usersource.annoplugin.utils.ScreenshotUtils;
 import io.usersource.annoplugin.utils.ViewUtils;
 import io.usersource.annoplugin.view.AnnoMainActivity;
+import io.usersource.annoplugin.view.CommunityActivity;
 import io.usersource.annoplugin.view.FeedbackEditActivity;
 import io.usersource.annoplugin.view.FeedbackViewActivity;
 
@@ -69,6 +70,8 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
       level = ((FeedbackViewActivity) activity).getLevel();
     } else if (activity instanceof AnnoMainActivity) {
       level = ((AnnoMainActivity) activity).getLevel();
+    } else if (activity instanceof CommunityActivity) {
+      level = ((CommunityActivity) activity).getLevel();
     }
 
     if (level >= 2) {
@@ -110,7 +113,8 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
 
     if (activity instanceof FeedbackEditActivity
         || activity instanceof FeedbackViewActivity
-        || activity instanceof AnnoMainActivity) {
+        || activity instanceof AnnoMainActivity
+        || activity instanceof CommunityActivity) {
       // current app is standalone anno, or anno plugin activity.
       intent.putExtra(PluginUtils.LEVEL, 1);
     } else {

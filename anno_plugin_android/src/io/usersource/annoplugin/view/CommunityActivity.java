@@ -1,9 +1,11 @@
 package io.usersource.annoplugin.view;
 
 import io.usersource.annoplugin.AnnoPlugin;
+import io.usersource.annoplugin.utils.PluginUtils;
 
 import org.apache.cordova.DroidGap;
 
+import android.content.Intent;
 import android.gesture.GestureOverlayView;
 import android.os.Bundle;
 import android.view.View;
@@ -17,6 +19,8 @@ import android.widget.LinearLayout;
  * 
  */
 public class CommunityActivity extends DroidGap {
+
+  private int level;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,13 @@ public class CommunityActivity extends DroidGap {
     setContentView(view);
     AnnoPlugin.setEnableGesture(this, view, true);
     super.loadUrl("file:///android_asset/www/pages/community/main.html");
+
+    Intent intent = getIntent();
+    level = intent.getIntExtra(PluginUtils.LEVEL, 0);
+  }
+
+  public int getLevel() {
+    return level;
   }
 
 }
