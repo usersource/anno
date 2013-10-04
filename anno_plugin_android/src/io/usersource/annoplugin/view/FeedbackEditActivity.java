@@ -71,6 +71,10 @@ public class FeedbackEditActivity extends Activity {
    * 2-levels are allowed; For standalone alone, at most 1-level is allowed.
    */
   private int level = 0;
+  /*
+   * If this is a practice activity. This is extracted from intent.
+   */
+  private boolean isPractice;
 
   /**
    * token id represents inserting a comment in an async process.
@@ -96,7 +100,8 @@ public class FeedbackEditActivity extends Activity {
 
     AnnoPlugin.setEnableGesture(this, R.id.gestures, true);
 
-    if (AnnoPlugin.FIRST_LAUNCH && !AnnoPlugin.FIRST_ANNO_SENT) {
+    if (isPractice) {
+      // todo stupid way to show the toast message more than 3.5 seconds
       initToast = Toast.makeText(FeedbackEditActivity.this,
           "Position circle, type, send. Try it!", Toast.LENGTH_SHORT);
       initToast.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
@@ -143,7 +148,6 @@ public class FeedbackEditActivity extends Activity {
     circleArrow = (CircleArrow) findViewById(R.id.circleArrow);
     circleArrow.setActivity(this);
 
-    boolean isPractice = (AnnoPlugin.FIRST_LAUNCH && !AnnoPlugin.FIRST_ANNO_SENT);
     if (isPractice) {
       TranslateAnimation alphaAnimation2 = new TranslateAnimation(-20f, 20f, 0,
           0);
@@ -213,6 +217,11 @@ public class FeedbackEditActivity extends Activity {
         // coordinate
         float y = commentAreaLayout.getY();
         float x = commentAreaLayout.getCircleX();
+        int screenshotHeight = imvScreenshot.getHeight();
+        int screenshotWidth = imvScreenshot.getWidth();
+        int yRatio = (int) (y * 10000) / screenshotHeight;
+        int xRatio = (int) (x * 10000) / screenshotWidth;
+
         // direction
         boolean circleOnTop = commentAreaLayout.circleOnTop();
         // is moved
@@ -220,8 +229,8 @@ public class FeedbackEditActivity extends Activity {
         // level
         int level = getLevel();
 
-        storeCommentInLocalDB(comment, imageKey, y, x, circleOnTop, isMoved,
-            level);
+        storeCommentInLocalDB(comment, imageKey, yRatio, xRatio, circleOnTop,
+            isMoved, level);
 
       } catch (IOException e) {
         Log.e(TAG, e.getMessage());
@@ -258,6 +267,9 @@ public class FeedbackEditActivity extends Activity {
 
   private void handleFromShareImage(Intent intent) {
     this.level = intent.getIntExtra(PluginUtils.LEVEL, 0) + 1;
+    this.isPractice = intent.getBooleanExtra(
+        Constants.INTENT_EXTRA_IS_PRACTICE, false);
+
     Log.d(TAG, "current level:" + this.level);
     if (this.level == 2) {
       outerBackground.setBackgroundColor(getResources().getColor(R.color.red));
@@ -305,20 +317,25 @@ public class FeedbackEditActivity extends Activity {
     protected void onInsertComplete(int token, Object cookie, Uri uri) {
       super.onInsertComplete(token, cookie, uri);
 
+      Boolean paramIsPractice = (Boolean) cookie;
       if (token == TOKEN_INSERT_COMMENT) {
         Log.d(TAG,
             "insert comment successfully. inserted uri:" + uri.toString());
-        boolean isPractice = (AnnoPlugin.FIRST_LAUNCH && !AnnoPlugin.FIRST_ANNO_SENT);
-        if (isPractice) {
+        if (paramIsPractice) {
           initToast.cancel();
-          AnnoPlugin.FIRST_ANNO_SENT = true;
+          initToast2.cancel();
+          initToast3.cancel();
+          initToast4.cancel();
+          initToast5.cancel();
+          initToast6.cancel();
+          initToast7.cancel();
         }
 
         ViewUtils.displayInfo(activityRef.get(), R.string.success_send_comment);
 
         activityRef.get().finish();
 
-        if (!isPractice) {
+        if (!paramIsPractice) {
           // if insert comment successfully, send it to GAE server
           // asynchronizely.
           AnnoSyncAdapter
@@ -336,12 +353,10 @@ public class FeedbackEditActivity extends Activity {
   private void storeCommentInLocalDB(String comment, String imageKey, float y,
       float x, boolean circleOnTop, boolean isMoved, int level)
       throws NameNotFoundException {
-    boolean isPractice = (AnnoPlugin.FIRST_LAUNCH && !AnnoPlugin.FIRST_ANNO_SENT);
-    // if it's practice, still save in local database, but not send to remote
-    // server.
-
     ContentValues values = new ContentValues();
     if (isPractice) {
+      // if it's practice, still save in local database, but not send to remote
+      // server.
       values.put(TableCommentFeedbackAdapter.COL_COMMENT,
           Constants.PRACTICE_PREFIX + " " + comment);
     } else {
@@ -357,17 +372,29 @@ public class FeedbackEditActivity extends Activity {
         SystemUtils.getAppVersion(FeedbackEditActivity.this));
     values.put(TableCommentFeedbackAdapter.COL_OS_VERSION,
         SystemUtils.getOSVersion());
-    values.put(TableCommentFeedbackAdapter.COL_APP_NAME,
-        SystemUtils.getAppName(FeedbackEditActivity.this));
     values.put(TableCommentFeedbackAdapter.COL_MODEL, SystemUtils.getModel());
+
+    /*
+     * source - which the anno is from. 2 possible values are standlone and
+     * plugin. app name - which app the anno is about.
+     * 
+     * if source is standalone, app name is unknown; if source is plugin, app
+     * name is current app name.
+     */
     if (PluginUtils.isAnno(getPackageName()) && this.level != 2) {
       values.put(TableCommentFeedbackAdapter.COL_SOURCE,
           Constants.ANNO_SOURCE_STANDALONE);
+      values.put(TableCommentFeedbackAdapter.COL_APP_NAME,
+          Constants.UNKNOWN_APP_NAME);
     } else {
       values.put(TableCommentFeedbackAdapter.COL_SOURCE,
           Constants.ANNO_SOURCE_PLUGIN);
+      values.put(TableCommentFeedbackAdapter.COL_APP_NAME,
+          SystemUtils.getAppName(FeedbackEditActivity.this));
     }
-    handler.startInsert(TOKEN_INSERT_COMMENT, null,
+
+    Boolean paramIsPractice = Boolean.valueOf(isPractice);
+    handler.startInsert(TOKEN_INSERT_COMMENT, paramIsPractice,
         AnnoContentProvider.COMMENT_PATH_URI, values);
   }
 

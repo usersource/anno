@@ -29,7 +29,6 @@ public class CommentAreaLayout extends RelativeLayout {
   private float boundary;
   private static final float DEFAULT_BOUNDARY = 10;
   private boolean circleOnTop = true;
-  private Context context;
 
   /**
    * @param context
@@ -37,7 +36,6 @@ public class CommentAreaLayout extends RelativeLayout {
    */
   public CommentAreaLayout(Context context, AttributeSet attrs) {
     super(context, attrs);
-    this.context = context;
 
     LayoutInflater.from(context).inflate(R.layout.comment_area_layout, this,
         true);

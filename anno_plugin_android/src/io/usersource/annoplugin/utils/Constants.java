@@ -22,4 +22,14 @@ public class Constants {
    * anno launch.
    */
   public static final String PRACTICE_PREFIX = "[PRACTICE]";
+
+  /**
+   * Intent extra value: is_practice.
+   */
+  public static final String INTENT_EXTRA_IS_PRACTICE = "is_practice";
+
+  /**
+   * App name for anno sent from standalone.
+   */
+  public static final String UNKNOWN_APP_NAME = "Unknown";
 }
