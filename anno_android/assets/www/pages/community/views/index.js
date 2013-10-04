@@ -57,6 +57,8 @@ define([
                         return;
                     }
                     var annoList = data.annos;
+
+                    var spliceArgs = [0, 0];
                     for (var i = 0, l = annoList.length; i < l; i++)
                     {
                         var eventData = lang.clone(emptyAnno);
@@ -66,9 +68,10 @@ define([
                         eventData.author = annoList[i].author;
                         eventData.id = annoList[i].id;
 
-                        eventsModel.store.add(eventData);
-                        eventsModel.model.push(new getStateful(eventData));
+                        spliceArgs.push(new getStateful(eventData));
                     }
+
+                    eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
 
                     hideLoadingIndicator();
                     loadingMoreData = false;
