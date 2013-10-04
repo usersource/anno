@@ -58,7 +58,7 @@ define([
                     }
                     var annoList = data.annos;
 
-                    var spliceArgs = [0, 0];
+                    var spliceArgs = [eventsModel.model.length, 0];
                     for (var i = 0, l = annoList.length; i < l; i++)
                     {
                         var eventData = lang.clone(emptyAnno);
