@@ -37,7 +37,7 @@ import android.widget.RelativeLayout;
  */
 public class FeedbackViewActivity extends Activity {
 
-  private static final String TAG = "FeedbackViewActivity";
+  private static final String TAG = FeedbackViewActivity.class.getSimpleName();
 
   private ImageManage imageManage;
   private AsyncHandler handler;
@@ -165,7 +165,6 @@ public class FeedbackViewActivity extends Activity {
     }
 
     private void initPosition(Cursor cursor, FeedbackViewActivity activity) {
-      final int x, y, direction;
       int xIdx = cursor
           .getColumnIndex(TableCommentFeedbackAdapter.COL_POSITION_X);
       int yIdx = cursor
@@ -173,14 +172,21 @@ public class FeedbackViewActivity extends Activity {
       int directionIdx = cursor
           .getColumnIndex(TableCommentFeedbackAdapter.COL_DIRECTION);
       if (xIdx != -1 && yIdx != -1 && directionIdx != -1) {
-        x = cursor.getInt(xIdx);
-        y = cursor.getInt(yIdx);
-        direction = cursor.getInt(directionIdx);
+        final int xRatio = cursor.getInt(xIdx);
+        final int yRatio = cursor.getInt(yIdx);
+        final int direction = cursor.getInt(directionIdx);
         final FeedbackViewActivity finalActivity = activity;
         activity.viewCommentArea.post(new Runnable() {
 
           @Override
           public void run() {
+            /*
+             * x/y ratio is percentage / 100.
+             */
+            int screenshotWidth = finalActivity.viewImvScreenshot.getWidth();
+            int screenshotHeight = finalActivity.viewImvScreenshot.getHeight();
+            int x = screenshotWidth * xRatio / 10000;
+            int y = screenshotHeight * yRatio / 10000;
             finalActivity.viewCommentArea.locate(x, y, direction);
           }
 

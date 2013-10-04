@@ -14,9 +14,6 @@ import android.gesture.GestureOverlayView;
  */
 public class AnnoPlugin {
 
-  public static boolean FIRST_LAUNCH = false;
-  public static boolean FIRST_ANNO_SENT = false;
-
   /**
    * Enable taking screenshot by certain gesture.
    * 

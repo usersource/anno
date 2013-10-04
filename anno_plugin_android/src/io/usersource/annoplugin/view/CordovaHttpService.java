@@ -1,16 +1,18 @@
 package io.usersource.annoplugin.view;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Environment;
 import io.usersource.annoplugin.sync.AnnoHttpService;
 import io.usersource.annoplugin.sync.AnnoHttpServiceImpl;
 import io.usersource.annoplugin.sync.ResponseHandler;
 import io.usersource.annoplugin.utils.AccountUtils;
-
+import io.usersource.annoplugin.utils.Constants;
 import io.usersource.annoplugin.utils.PluginUtils;
 import io.usersource.annoplugin.utils.ScreenshotUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.cordova.api.CallbackContext;
 import org.apache.cordova.api.CordovaPlugin;
 import org.json.JSONArray;
@@ -18,11 +20,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.accounts.Account;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 
 /**
  * This is the interface to let html5 interact with. This is a cordova plugin,
@@ -52,7 +53,7 @@ public class CordovaHttpService extends CordovaPlugin {
   public static final String COUNT_FLAG = "count_flag";
   public static final String GET_ACCOUNT_NAME = "get_account_name";
   public static final String EXIT_COMMUNITY = "exit_community";
-    public static final String EXIT_INTRO = "exit_intro";
+  public static final String EXIT_INTRO = "exit_intro";
 
   private AnnoHttpService service;
 
@@ -104,10 +105,9 @@ public class CordovaHttpService extends CordovaPlugin {
     } else if (EXIT_COMMUNITY.equals(action)) {
       exitCommunity(args, callbackContext);
       return true;
-    }
-    else if (EXIT_INTRO.equals(action)) {
-        exitIntro(args, callbackContext);
-        return true;
+    } else if (EXIT_INTRO.equals(action)) {
+      exitIntro(args, callbackContext);
+      return true;
     }
     return false;
   }
@@ -122,87 +122,86 @@ public class CordovaHttpService extends CordovaPlugin {
     this.cordova.getActivity().finish();
   }
 
-    /**
-     * Exit intro and start feedbackedit with a screenshot.
-     *
-     * @param args
-     * @param callbackContext
-     */
-    private void exitIntro(JSONArray args, CallbackContext callbackContext)
-    {
-        Activity activity = this.cordova.getActivity();
-        activity.finish();
+  /**
+   * Exit intro and start feedbackedit with a screenshot.
+   * 
+   * @param args
+   * @param callbackContext
+   */
+  private void exitIntro(JSONArray args, CallbackContext callbackContext) {
+    Activity activity = this.cordova.getActivity();
+    activity.finish();
 
-        String packageName = activity.getPackageName();
+    String packageName = activity.getPackageName();
 
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setClassName(packageName, "io.usersource.annoplugin.view.FeedbackEditActivity");
-        intent.setType("image/*");
-        FileOutputStream fos = null;
-        InputStream is = null;
-        String filePath = "";
+    Intent intent = new Intent(Intent.ACTION_SEND);
+    intent.setClassName(packageName,
+        "io.usersource.annoplugin.view.FeedbackEditActivity");
+    intent.setType("image/*");
+    // set this flag for FeedbackEditActivity to know it's practice.
+    intent.putExtra(Constants.INTENT_EXTRA_IS_PRACTICE, true);
+    FileOutputStream fos = null;
+    InputStream is = null;
+    String filePath = "";
 
-        try
-        {
-            File screenshotDir = new File(
-                    Environment
-                            .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                    "Screenshots");
-            if (!screenshotDir.exists()) {
-                if (!screenshotDir.mkdirs()) {
-                    throw new IOException("Failed to create directory "
-                            + screenshotDir.getAbsolutePath());
-                }
-            }
-
-            File screenshotPath = new File(screenshotDir, ScreenshotUtils.generateScreenshotName());
-            fos = new FileOutputStream(screenshotPath);
-
-            is = activity.getAssets().open("www/pages/intro/css/images/defaultsht.jpg");
-            byte b[] = new byte[is.available()];
-            is.read(b);
-
-            fos.write(b);
-            filePath = screenshotPath.getAbsolutePath();
+    try {
+      File screenshotDir = new File(
+          Environment
+              .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+          "Screenshots");
+      if (!screenshotDir.exists()) {
+        if (!screenshotDir.mkdirs()) {
+          throw new IOException("Failed to create directory "
+              + screenshotDir.getAbsolutePath());
         }
-        catch (Exception e)
-        {
-            // dummy
+      }
+
+      File screenshotPath = new File(screenshotDir,
+          ScreenshotUtils.generateScreenshotName());
+      fos = new FileOutputStream(screenshotPath);
+
+      is = activity.getAssets().open(
+          "www/pages/intro/css/images/defaultsht.jpg");
+      byte b[] = new byte[is.available()];
+      is.read(b);
+
+      fos.write(b);
+      filePath = screenshotPath.getAbsolutePath();
+    } catch (Exception e) {
+      // dummy
+    } finally {
+      if (is != null) {
+        try {
+          is.close();
+        } catch (IOException e) {
         }
-        finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                }
-            }
+      }
 
-            if (fos != null) {
-                try {
-                    fos.flush();
-                    fos.close();
-                } catch (IOException e) {
-                }
-            }
+      if (fos != null) {
+        try {
+          fos.flush();
+          fos.close();
+        } catch (IOException e) {
         }
-
-
-        File imageFile = new File(filePath);
-        Uri imageUri = Uri.parse("file://" + imageFile.getPath());
-        intent.putExtra(Intent.EXTRA_STREAM, imageUri);
-
-        if (activity instanceof FeedbackEditActivity
-                || activity instanceof FeedbackViewActivity
-                || activity instanceof AnnoMainActivity) {
-            // current app is standalone anno, or anno plugin activity.
-            intent.putExtra(PluginUtils.LEVEL, 1);
-        } else {
-            // current app is 3rd.
-            intent.putExtra(PluginUtils.LEVEL, 0);
-        }
-
-        activity.startActivity(intent);
+      }
     }
+
+    File imageFile = new File(filePath);
+    Uri imageUri = Uri.parse("file://" + imageFile.getPath());
+    intent.putExtra(Intent.EXTRA_STREAM, imageUri);
+
+    if (activity instanceof FeedbackEditActivity
+        || activity instanceof FeedbackViewActivity
+        || activity instanceof AnnoMainActivity) {
+      // current app is standalone anno, or anno plugin activity.
+      intent.putExtra(PluginUtils.LEVEL, 1);
+    } else {
+      // current app is 3rd.
+      intent.putExtra(PluginUtils.LEVEL, 0);
+    }
+
+    activity.startActivity(intent);
+  }
 
   /**
    * Get google account that community will use to display current user.
