@@ -323,12 +323,6 @@ public class FeedbackEditActivity extends Activity {
             "insert comment successfully. inserted uri:" + uri.toString());
         if (paramIsPractice) {
           initToast.cancel();
-          initToast2.cancel();
-          initToast3.cancel();
-          initToast4.cancel();
-          initToast5.cancel();
-          initToast6.cancel();
-          initToast7.cancel();
         }
 
         ViewUtils.displayInfo(activityRef.get(), R.string.success_send_comment);
