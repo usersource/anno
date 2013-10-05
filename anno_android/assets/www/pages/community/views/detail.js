@@ -109,7 +109,6 @@ define([
         var adjustSize = function()
         {
             var viewPoint = win.getBox();
-            var parentBox = domGeom.getMarginBox("headingDetail");
             domStyle.set("imgDetailScreenshot", "width", (viewPoint.w-screenshotMargin)+"px");
 
             var h = (viewPoint.h-6);
@@ -131,7 +130,6 @@ define([
             window.setTimeout(function(){
                 var viewPoint = win.getBox();
                 var tooltipWidget = registry.byId('textTooltip');
-                var parentBox = domGeom.getMarginBox("headingDetail");
                 var deviceRatio = parseFloat((viewPoint.w/viewPoint.h).toFixed(2));
                 var orignialDeviceRatio = parseFloat((dom.byId('imgDetailScreenshot').naturalWidth/dom.byId('imgDetailScreenshot').naturalHeight).toFixed(2));
 
@@ -144,16 +142,20 @@ define([
                     imageWidth = (viewPoint.w-screenshotMargin);
                     imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio;
 
+                    console.error("image width: "+imageWidth+", image height: "+imageHeight);
+
                     dom.byId("imgDetailScreenshot").width = imageWidth;
                     dom.byId("imgDetailScreenshot").height = imageHeight;
                 }
                 else if (orignialDeviceRatio < deviceRatio) // taller than current device
-                {console.error('taller ratio');
-                    imageWidth = (viewPoint.h-8)/orignialRatio;
+                {console.error('taller ratio: o:'+orignialDeviceRatio+", d:"+ deviceRatio);
+                    imageWidth = Math.round((viewPoint.h-8)/orignialRatio);
                     imageHeight = (viewPoint.h-8);
 
-                    dom.byId("imgDetailScreenshot").height = imageHeight;
                     dom.byId("imgDetailScreenshot").width = imageWidth;
+                    dom.byId("imgDetailScreenshot").height = imageHeight;
+                    dom.byId("imgDetailScreenshot").style.width = imageWidth+'px';
+
                 }
                 else if (orignialDeviceRatio > deviceRatio) // wider than current device
                 {console.error('wider ratio');
@@ -176,24 +178,31 @@ define([
                 }
 
                 imageWidth = dom.byId("imgDetailScreenshot").width;
-                var toolTipDivWidth = imageWidth - 40;// was (imageWidth-viewPoint.w*0.05);
+                imageHeight = dom.byId("imgDetailScreenshot").height;
+
+                var toolTipDivWidth = imageWidth - 40;
                 domStyle.set("screenshotTooltipDetail", "width", toolTipDivWidth+"px");
 
                 if (eventsModel.cursor.circleX != null)
                 {
-                    var imageRatio = imageWidth/dom.byId('imgDetailScreenshot').naturalWidth;
-                    var imageRatioV = imageHeight/dom.byId('imgDetailScreenshot').naturalHeight;
+                    var tx = (imageWidth*eventsModel.cursor.circleX)/10000;
+                    var ty = (imageHeight*eventsModel.cursor.circleY)/10000;
+
+                    console.error("view w: "+viewPoint.w+", view h: "+viewPoint.h);
+                    console.error("image width2: "+imageWidth+", image height2: "+imageHeight);
+                    console.error("x: "+tx+", y: "+ty);
+
                     domStyle.set("screenshotAnchorDetail", {
-                        top: eventsModel.cursor.circleY*imageRatioV+'px',
-                        left: eventsModel.cursor.circleX*imageRatio+'px',
+                        top: ty+'px',
+                        left: tx+'px',
                         display: ''
                     });
 
                     domStyle.set("screenshotAnchorInvisibleDetail", {
-                        top: eventsModel.cursor.circleY*imageRatioV+'px'
+                        top: ty+'px'
                     });
 
-                    if (eventsModel.cursor.circleY > domStyle.get("screenshotTooltipDetail", "height"))
+                    if (ty > (domStyle.get("screenshotTooltipDetail", "height")+14))
                     {
                         tooltipWidget.show(dom.byId('screenshotAnchorInvisibleDetail'), ['above-centered','below-centered','before','after']);
                         annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))+14;
@@ -297,7 +306,7 @@ define([
                     dom.byId('screenshotTooltipDetail').innerHTML = shortText;
                 }
 
-                dom.byId("imgDetailScreenshot").width = (viewPoint.w-30);
+                //dom.byId("imgDetailScreenshot").width = (viewPoint.w-30);
                 domStyle.set("screenshotTooltipDetail", "width", toolTipDivWidth+"px");
 
 
@@ -310,8 +319,6 @@ define([
                 {
                     domStyle.set('editAppNameImg', 'display', 'none');
                 }
-
-                console.error("vote: "+ eventsModel.cursor.vote+", flat: "+eventsModel.cursor.flag);
 
                 if (eventsModel.cursor.vote == "true")
                 {
@@ -999,8 +1006,8 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "blur", function ()
                 {
-                    var viewPoint = win.getBox();
                     window.setTimeout(function(){
+                        var viewPoint = win.getBox();
                         adjustAnnoCommentSize();
                         domStyle.set('modelApp_detail', 'height', (viewPoint.h)+'px');
                         domStyle.set("lightCoverScreenshot", "display", 'none');
