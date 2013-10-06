@@ -122,6 +122,8 @@ define([
 
             domStyle.set("appNameTextBox", "width", (viewPoint.w-30-6-10-40)+"px");
             domStyle.set("screenshotTooltipDetail", "width", (viewPoint.w-screenshotMargin-viewPoint.w*0.10)+"px");
+
+            domStyle.set("lightCover", {"width": (viewPoint.w)+"px", "height":(viewPoint.h)+'px'});
         };
 
         var screenshotImageOnload = function()
@@ -310,10 +312,10 @@ define([
                 domStyle.set("screenshotTooltipDetail", "width", toolTipDivWidth+"px");
 
 
-                if (eventsModel.cursor.app == null||eventsModel.cursor.app == '')
+                if (eventsModel.cursor.app == null||eventsModel.cursor.app == ''||eventsModel.cursor.app.toLowerCase() == 'unknown')
                 {
                     domStyle.set('editAppNameImg', 'display', '');
-                    dom.byId('appNameSpanDetail').innerHTML = "unknown";
+                    dom.byId('appNameSpanDetail').innerHTML = "Unknown";
                 }
                 else
                 {
@@ -479,15 +481,16 @@ define([
 
             domStyle.set('appNameSpanDetail', 'display', 'none');
             domStyle.set('appNameTextBox', {display: '', top:pos.y+'px', left:pos.x+'px'});
-            domStyle.set('lightCover', 'display', '');
+            //domStyle.set('lightCover', 'display', '');
 
             window.setTimeout(function(){
                 dom.byId('appNameTextBox').click();
                 dom.byId('appNameTextBox').focus();
+                //domStyle.set('lightCover', {'display': '','backgroundColor':'#000000', 'opacity':'0.8'});
             },300);
             dom.byId('hiddenBtn').focus();
 
-            dom.byId('appNameTextBox').value = dom.byId('appNameSpanDetail').innerHTML == 'unknown'?'':dom.byId('appNameSpanDetail').innerHTML;
+            dom.byId('appNameTextBox').value = dom.byId('appNameSpanDetail').innerHTML == 'Unknown'?'':dom.byId('appNameSpanDetail').innerHTML;
         };
 
         var saveAppName = function()
@@ -497,6 +500,7 @@ define([
 
             if (newAppName.length <=0)
             {
+                newAppName = "Unknown";
                 dom.byId('hiddenBtn').focus();
 
                 domStyle.set('appNameSpanDetail', 'display', '');
@@ -939,6 +943,16 @@ define([
                     {
                         saveAppName();
                     }
+                }));
+
+                _connectResults.push(connect.connect(dom.byId('appNameTextBox'), "blur", function (e)
+                {
+                    dom.byId('hiddenBtn').focus();
+
+                    domStyle.set('appNameSpanDetail', 'display', '');
+                    domStyle.set('appNameTextBox', {display: 'none'});
+                    domStyle.set('lightCover', 'display', 'none');
+                    domStyle.set('editAppNameImg', 'display', '');
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('navBtnPrevious'), "click", function ()
