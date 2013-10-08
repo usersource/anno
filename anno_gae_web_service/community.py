@@ -3,21 +3,23 @@ Created on Aug 29, 2013
 
 @author: sergey
 '''
-import webapp2
 import json
-from google.appengine.ext import db
-from utils.AnnoJsonEncoder import AnnoJsonEncoder
-from model.FeedbackComment import FeedbackComment
-from model.FollowUp import FollowUp
-from model.Flags import Flags
-from model.Votes import Votes
-import sys
 import logging
+import sys
+
+from google.appengine.ext import db
+from model.FeedbackComment import FeedbackComment
+from model.Flags import Flags
+from model.FollowUp import FollowUp
+from model.Votes import Votes
+from utils.AnnoJsonEncoder import AnnoJsonEncoder
+import webapp2
 
 
 class Community(webapp2.RequestHandler):
     
     ANNO_ID = "anno_id"
+    USER_ID = "user_id"
     JSON_REQUEST = "jsonRequest"
     SET_APP_NAME = "setName"
     OFFSET = "offset"
@@ -58,7 +60,7 @@ class Community(webapp2.RequestHandler):
                 if name != None and name != '':
                     response = self.updateAppName(annoId, name)
                 else:
-                    response = self.getItemById(annoId)
+                    response = self.getItemById(annoId, self.request.get(Community.USER_ID))
             else:
                 offset = self.request.get(Community.OFFSET)
                 limit = self.request.get(Community.LIMIT) 
@@ -71,7 +73,7 @@ class Community(webapp2.RequestHandler):
         logging.info("Response = " + json.dumps(response, cls=AnnoJsonEncoder))
         return json.dumps(response, cls=AnnoJsonEncoder)
     
-    def getItemById(self, itemID):
+    def getItemById(self, itemID, userID):
         result = {}
         anno = {}
         comments = []
@@ -85,6 +87,18 @@ class Community(webapp2.RequestHandler):
                 anno["circleY"] = item.y
                 anno["deviceModel"] = item.model 
                 anno["OSVersion"] = item.os_version
+                
+                item.votes.filter("user = ", userID)
+                if item.votes.get() != None:
+                    anno["vote"] = "true"
+                else:
+                    anno["vote"] = "false"
+                    
+                item.flags.filter("user = ", userID)
+                if item.flags.get() != None:
+                    anno["flag"] = "true"
+                else:
+                    anno["flag"] = "false"
                                
                 for followup in item.followups.order('-updateTimestamp').run():
                     commentItem[Community.FOLLOWUP_KEY] = str(followup.key())
@@ -172,10 +186,10 @@ class Community(webapp2.RequestHandler):
             if parent != None:
                 delRec = None
                 if deleteType == Community.FLAG_TYPE:
-                    parent.votes.filter("user = ", data["user_id"])
+                    parent.flags.filter("user = ", data[Community.USER_ID])
                     delRec = parent.flags.get()
                 elif deleteType == Community.VOTE_TYPE:
-                    parent.votes.filter("user = ", data["user_id"])
+                    parent.votes.filter("user = ", data[Community.USER_ID])
                     delRec = parent.votes.get()
                 elif deleteType == Community.FOLLOWUP_TYPE:
                     delRec = parent

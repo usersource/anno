@@ -1,16 +1,15 @@
 <div id="detailView" class="view mblView" style="overflow-x: hidden;">
     <script type="dojo/require">at: "dojox/mvc/at"</script>
-    <div id="headingDetail" data-dojo-type="dojox/mobile/Heading">
-        <div id="navBtnBackDetail" class="navBtnBackDetail" data-dojo-type="dojox/mobile/ToolBarButton" back="true"></div>
-        <img src="css/images/anno.png" alt="" width="40" class="headingIcon">
-        <span class="headingTitle">Community</span>
-        <div id="navBtnNext" class="navBtnNext" data-dojo-type="dojox/mobile/ToolBarButton"></div>
-        <div id="navBtnPrevious" class="navBtnPrevious navBtnDisabled" data-dojo-type="dojox/mobile/ToolBarButton"></div>
+    <div id="headingDetail" style="position: absolute;background-color:#000000;left:4.5px;top:4.5px;opacity:0.5;z-index: 9000 " data-dojo-type="dojox/mobile/Heading">
+        <span id="navBtnPrevious" class="icon-arrow-left" style="width: 60px;height: 32px;color: #ff9900;float: left;padding-left: 20px;padding-top: 10px;font-size: 25px;"></span>
+        <span id="navBtnTray" class="icon-comments" style="width: 50px;height: 32px;color: #ff9900;padding-top: 10px;font-size: 25px;"></span>
+        <span id="navBtnNext" class="icon-arrow-right-2" style="width: 60px;height: 30px;color: #ff9900;float: right;padding-right: 20px;padding-top: 10px;font-size: 25px;"></span>
     </div>
+
     <div class="fieldset" data-dojo-type="dojox/mvc/Group"
          data-dojo-props="target: at(this.loadedModels.events, 'cursor')">
         <div id="screenshotContainerDetail" class="screenshotContainerDetail">
-            <img id="imgDetailScreenshot" class="imgDetailScreenshot" data-dojo-type="dojox/mvc/Output" height="80%"
+            <img id="imgDetailScreenshot" class="imgDetailScreenshot" style="background-color: #c5ccd3;" data-dojo-type="dojox/mvc/Output" height="80%"
                  data-dojo-props="src: at('rel:', 'screenshot')"/>
             <!--<div id="discussDivDetail" class="discussDivDetail">Discuss</div>-->
             <canvas id="screenshotAnchorDetail" width="40" height="40" class="screenshotAnchorDetail"></canvas>
@@ -21,7 +20,7 @@
             </div>
         </div>
         <div id="textDataAreaContainer" style="display: none" class="textDataAreaContainer">
-            <div id="appNameContainer" class="appNameDetail">
+            <div id="appNameContainer" class="appNameDetail" style="padding-left: 6px;">
                 <table cellpadding="0" cellspacing="0">
                     <tr>
                         <td valign="middle"><span class="appNameTitleDetail">App:</span></td>
@@ -33,7 +32,7 @@
                     </tr>
                 </table>
             </div>
-            <div id="annoCommentsContainer" data-dojo-type2="dojox/mobile/ScrollableView" data-dojo-props="weight:1" style="width: 100%;overflow-y: auto;overflow-x:hidden; ">
+            <div id="annoCommentsContainer" data-dojo-type2="dojox/mobile/ScrollableView" data-dojo-props="weight:1" style="padding-left: 6px;width: 100%;overflow-y: auto;overflow-x:hidden; ">
                 <div>
                     <table width="100%" cellpadding="0" cellspacing="0">
                         <tr>
@@ -90,7 +89,7 @@
                     </table>
                 </div>
             </div>
-            <div id="addCommentContainer" style="border-top: 2px solid #aeebfc;position2: absolute">
+            <div id="addCommentContainer" style="padding-left: 6px;border-top: 2px solid #aeebfc;position2: absolute">
                 <table width="100%" cellpadding="0" cellspacing="0">
                     <tr>
                         <td height="32">
@@ -98,6 +97,16 @@
                                 <input type="text" id="addCommentTextBox" data-dojo-type2="dojox/mobile/TextBox" class="commentTextbox" style="width: 100%" placeholder="Add a comment">
                         </td>
                         <td width="32"><img id="addCommentImg" src="css/images/addcomment.png"></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="trayPlaceHolder" style="width: 100%;height: 0px"></div>
+            <div id="trayBottomBar" style="height: 31px;background-color: #333333">
+                <table width="100%">
+                    <tr>
+                        <td align="center" valign="middle" height="30">
+                            <div id="trayBottomBarSpin" style="width: 98%;height: 3px;background-color: gray"></div>
+                        </td>
                     </tr>
                 </table>
             </div>

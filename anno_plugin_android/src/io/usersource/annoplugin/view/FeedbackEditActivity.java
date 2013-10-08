@@ -1,5 +1,8 @@
 package io.usersource.annoplugin.view;
 
+import android.graphics.Color;
+import android.util.DisplayMetrics;
+import android.widget.*;
 import io.usersource.annoplugin.AnnoPlugin;
 import io.usersource.annoplugin.R;
 import io.usersource.annoplugin.datastore.FileImageManage;
@@ -37,10 +40,6 @@ import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 /**
  * Edit feedback screen from share intent.
@@ -86,12 +85,6 @@ public class FeedbackEditActivity extends Activity {
    * the toast object shown the first launch message
    */
   private static Toast initToast = null;
-  private static Toast initToast2 = null;
-  private static Toast initToast3 = null;
-  private static Toast initToast4 = null;
-  private static Toast initToast5 = null;
-  private static Toast initToast6 = null;
-  private static Toast initToast7 = null;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -110,39 +103,25 @@ public class FeedbackEditActivity extends Activity {
     if (isPractice) {
       // todo stupid way to show the toast message more than 3.5 seconds
       initToast = Toast.makeText(FeedbackEditActivity.this,
-          "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
+          "Position circle, type, send. Try it!", Toast.LENGTH_SHORT);
       initToast.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
+      LinearLayout toastLayout = (LinearLayout) initToast.getView();
+      toastLayout.setBackgroundColor(Color.WHITE);
+
+      TextView toastTV = (TextView) toastLayout.getChildAt(0);
+      toastTV.setBackgroundColor(Color.WHITE);
+      toastTV.setTextColor(Color.BLACK);
+
+      DisplayMetrics dm = new DisplayMetrics();
+      getWindowManager().getDefaultDisplay().getMetrics(dm);
+
+      int toastWidth = (int)(dm.widthPixels*0.7);
+
+      toastLayout.setMinimumWidth(toastWidth);
+      toastTV.setWidth(toastWidth);
+      toastTV.setGravity(Gravity.CENTER);
+
       initToast.show();
-
-      initToast2 = Toast.makeText(FeedbackEditActivity.this,
-          "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
-      initToast2.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
-      initToast2.show();
-
-      initToast3 = Toast.makeText(FeedbackEditActivity.this,
-          "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
-      initToast3.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
-      initToast3.show();
-
-      initToast4 = Toast.makeText(FeedbackEditActivity.this,
-          "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
-      initToast4.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
-      initToast4.show();
-
-      initToast5 = Toast.makeText(FeedbackEditActivity.this,
-          "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
-      initToast5.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
-      initToast5.show();
-
-      initToast6 = Toast.makeText(FeedbackEditActivity.this,
-          "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
-      initToast6.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
-      initToast6.show();
-
-      initToast7 = Toast.makeText(FeedbackEditActivity.this,
-          "Position circle, type, send. Try it!", Toast.LENGTH_LONG);
-      initToast7.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
-      initToast7.show();
     }
   }
 
@@ -273,12 +252,6 @@ public class FeedbackEditActivity extends Activity {
     // hide these toast messages
     if (initToast != null) {
       initToast.cancel();
-      initToast2.cancel();
-      initToast3.cancel();
-      initToast4.cancel();
-      initToast5.cancel();
-      initToast6.cancel();
-      initToast7.cancel();
     }
   }
 
@@ -350,12 +323,6 @@ public class FeedbackEditActivity extends Activity {
             "insert comment successfully. inserted uri:" + uri.toString());
         if (paramIsPractice) {
           initToast.cancel();
-          initToast2.cancel();
-          initToast3.cancel();
-          initToast4.cancel();
-          initToast5.cancel();
-          initToast6.cancel();
-          initToast7.cancel();
         }
 
         ViewUtils.displayInfo(activityRef.get(), R.string.success_send_comment);
