@@ -148,15 +148,15 @@ public class FeedbackEditActivity extends Activity {
     circleArrow = (CircleArrow) findViewById(R.id.circleArrow);
     circleArrow.setActivity(this);
 
-    if (isPractice) {
-      TranslateAnimation alphaAnimation2 = new TranslateAnimation(-20f, 20f, 0,
-          0);
-      alphaAnimation2.setDuration(1000);
-      alphaAnimation2.setRepeatCount(1);
-      alphaAnimation2.setRepeatMode(Animation.REVERSE);
-      circleArrow.setAnimation(alphaAnimation2);
-      alphaAnimation2.start();
-    }
+//    if (isPractice) {
+//      TranslateAnimation alphaAnimation2 = new TranslateAnimation(-20f, 20f, 0,
+//          0);
+//      alphaAnimation2.setDuration(1000);
+//      alphaAnimation2.setRepeatCount(1);
+//      alphaAnimation2.setRepeatMode(Animation.REVERSE);
+//      circleArrow.setAnimation(alphaAnimation2);
+//      alphaAnimation2.start();
+//    }
 
     btnComment.setOnClickListener(sendCommentClickListener);
     btnGoHome.setOnClickListener(goHomeClickListener);

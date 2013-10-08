@@ -3,9 +3,11 @@ package io.usersource.annoplugin.view;
 import android.view.KeyEvent;
 import android.webkit.JavascriptInterface;
 import io.usersource.annoplugin.AnnoPlugin;
+import io.usersource.annoplugin.utils.PluginUtils;
 
 import org.apache.cordova.DroidGap;
 
+import android.content.Intent;
 import android.gesture.GestureOverlayView;
 import android.os.Bundle;
 import android.view.View;
@@ -20,6 +22,7 @@ import android.widget.LinearLayout;
  */
 public class CommunityActivity extends DroidGap {
 
+  private int level;
   private boolean backButtonEnable = true;
 
   @Override
@@ -67,6 +70,13 @@ public class CommunityActivity extends DroidGap {
     appView.addJavascriptInterface(this, "CMActivity");
 
     super.loadUrl("file:///android_asset/www/pages/community/main.html");
+
+    Intent intent = getIntent();
+    level = intent.getIntExtra(PluginUtils.LEVEL, 0);
+  }
+
+  public int getLevel() {
+    return level;
   }
 
   @JavascriptInterface

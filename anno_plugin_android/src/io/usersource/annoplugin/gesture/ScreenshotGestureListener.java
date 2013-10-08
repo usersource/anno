@@ -8,6 +8,7 @@ import io.usersource.annoplugin.utils.PluginUtils;
 import io.usersource.annoplugin.utils.ScreenshotUtils;
 import io.usersource.annoplugin.utils.ViewUtils;
 import io.usersource.annoplugin.view.AnnoMainActivity;
+import io.usersource.annoplugin.view.CommunityActivity;
 import io.usersource.annoplugin.view.FeedbackEditActivity;
 import io.usersource.annoplugin.view.FeedbackViewActivity;
 
@@ -41,7 +42,7 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
   private static final String TAG = "ScreenshotGestureListener";
 
   private static final String FEEDBACK_ACTIVITY = "io.usersource.annoplugin.view.FeedbackEditActivity";
-  private static final String GESTURE_NAME = "UserSource spiral";
+  private static final String GESTURE_NAME_PATTERN = "UserSource spiral[0-9]";
   private static final String SCREENSHOTS_DIR_NAME = "Screenshots";
 
   private Activity activity;
@@ -69,6 +70,8 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
       level = ((FeedbackViewActivity) activity).getLevel();
     } else if (activity instanceof AnnoMainActivity) {
       level = ((AnnoMainActivity) activity).getLevel();
+    } else if (activity instanceof CommunityActivity) {
+      level = ((CommunityActivity) activity).getLevel();
     }
 
     if (level >= 2) {
@@ -77,22 +80,23 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
     }
 
     ArrayList<Prediction> predictions = gestureLibrary.recognize(gesture);
-    ArrayList<String> predictionNames = new ArrayList<String>();
     if (predictions != null) {
       for (Prediction prediction : predictions) {
-        predictionNames.add(prediction.name);
-      }
-      if (predictionNames.contains(GESTURE_NAME)) {
-        String screenshotPath;
-        try {
-          screenshotPath = takeScreenshot();
-          launchAnnoPlugin(screenshotPath);
-        } catch (FileNotFoundException e) {
-          Log.e(TAG, e.getMessage(), e);
-          ViewUtils.displayError(activity, R.string.fail_take_screenshot);
-        } catch (IOException e) {
-          Log.e(TAG, e.getMessage());
-          ViewUtils.displayError(activity, R.string.fail_take_screenshot);
+        if (prediction.name.matches(GESTURE_NAME_PATTERN)) {
+          if (prediction.score > 1) {
+            String screenshotPath;
+            try {
+              screenshotPath = takeScreenshot();
+              launchAnnoPlugin(screenshotPath);
+            } catch (FileNotFoundException e) {
+              Log.e(TAG, e.getMessage(), e);
+              ViewUtils.displayError(activity, R.string.fail_take_screenshot);
+            } catch (IOException e) {
+              Log.e(TAG, e.getMessage());
+              ViewUtils.displayError(activity, R.string.fail_take_screenshot);
+            }
+            break;
+          }
         }
       }
     }
@@ -110,7 +114,8 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
 
     if (activity instanceof FeedbackEditActivity
         || activity instanceof FeedbackViewActivity
-        || activity instanceof AnnoMainActivity) {
+        || activity instanceof AnnoMainActivity
+        || activity instanceof CommunityActivity) {
       // current app is standalone anno, or anno plugin activity.
       intent.putExtra(PluginUtils.LEVEL, 1);
     } else {
