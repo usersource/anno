@@ -42,7 +42,7 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
   private static final String TAG = "ScreenshotGestureListener";
 
   private static final String FEEDBACK_ACTIVITY = "io.usersource.annoplugin.view.FeedbackEditActivity";
-  private static final String GESTURE_NAME = "UserSource spiral";
+  private static final String GESTURE_NAME_PATTERN = "UserSource spiral[0-9]";
   private static final String SCREENSHOTS_DIR_NAME = "Screenshots";
 
   private Activity activity;
@@ -80,22 +80,23 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
     }
 
     ArrayList<Prediction> predictions = gestureLibrary.recognize(gesture);
-    ArrayList<String> predictionNames = new ArrayList<String>();
     if (predictions != null) {
       for (Prediction prediction : predictions) {
-        predictionNames.add(prediction.name);
-      }
-      if (predictionNames.contains(GESTURE_NAME)) {
-        String screenshotPath;
-        try {
-          screenshotPath = takeScreenshot();
-          launchAnnoPlugin(screenshotPath);
-        } catch (FileNotFoundException e) {
-          Log.e(TAG, e.getMessage(), e);
-          ViewUtils.displayError(activity, R.string.fail_take_screenshot);
-        } catch (IOException e) {
-          Log.e(TAG, e.getMessage());
-          ViewUtils.displayError(activity, R.string.fail_take_screenshot);
+        if (prediction.name.matches(GESTURE_NAME_PATTERN)) {
+          if (prediction.score > 1) {
+            String screenshotPath;
+            try {
+              screenshotPath = takeScreenshot();
+              launchAnnoPlugin(screenshotPath);
+            } catch (FileNotFoundException e) {
+              Log.e(TAG, e.getMessage(), e);
+              ViewUtils.displayError(activity, R.string.fail_take_screenshot);
+            } catch (IOException e) {
+              Log.e(TAG, e.getMessage());
+              ViewUtils.displayError(activity, R.string.fail_take_screenshot);
+            }
+            break;
+          }
         }
       }
     }
