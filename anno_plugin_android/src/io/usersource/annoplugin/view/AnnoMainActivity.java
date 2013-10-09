@@ -188,6 +188,8 @@ public class AnnoMainActivity extends FragmentActivity implements
       startActivity(intent);
       return true;
     } else if (itemId == R.id.feedback_menu) {
+      Intent intent = new Intent(this, OptionFeedbackActivity.class);
+      startActivity(intent);
       return true;
     } else {
       return super.onOptionsItemSelected(item);
