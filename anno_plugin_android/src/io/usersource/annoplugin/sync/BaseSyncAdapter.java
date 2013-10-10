@@ -68,7 +68,9 @@ public class BaseSyncAdapter extends AbstractThreadedSyncAdapter {
 	          new IHttpRequestHandler() {
 
 	            public void onRequest(JSONObject response) {
-	              updateLocalKeys(response);
+	              if (response != null) {
+	                updateLocalKeys(response);
+	              }
 	            }
 	          });
 

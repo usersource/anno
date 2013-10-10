@@ -5,6 +5,7 @@ package io.usersource.annoplugin.model;
 
 import io.usersource.annoplugin.datastore.AnnoSQLiteOpenHelper;
 import io.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
+import io.usersource.annoplugin.datastore.TableLastSyncAdapter;
 import io.usersource.annoplugin.datastore.TableUsers;
 import io.usersource.annoplugin.datastore.UnknownUriException;
 import android.content.ContentProvider;
@@ -165,6 +166,15 @@ public class AnnoContentProvider extends ContentProvider {
       throws UnknownUriException {
     throw new UnknownUriException(uri, matchCode, String.format(
         "Unknown uri(%s) code(%s).", uri.toString(), matchCode));
+  }
+
+  public void resetDatabase() {
+    annoSQLiteOpenHelper.getWritableDatabase().execSQL(
+        "drop table " + TableCommentFeedbackAdapter.TABLE_NAME);
+    annoSQLiteOpenHelper.getWritableDatabase().execSQL(
+        "drop table " + TableLastSyncAdapter.TABLE_NAME);
+    annoSQLiteOpenHelper.close();
+    annoSQLiteOpenHelper.onCreate(annoSQLiteOpenHelper.getWritableDatabase());
   }
 
 }

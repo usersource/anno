@@ -50,7 +50,7 @@ public class TableCommentFeedbackAdapter extends AbstractTableAdapter {
 
   @Override
   public List<String> getInitSqls() {
-    String createTableSql = String.format("create table %s "
+    String createTableSql = String.format("create table if not exists %s "
         + "(%s integer primary key autoincrement, " + "%s text not null, "
         + "%s text not null, " + "%s integer not null, "
         + "%s integer not null, " + "%s integer not null, " + "%s text, "
