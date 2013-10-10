@@ -1,10 +1,12 @@
 package io.usersource.annoplugin.view;
 
 import io.usersource.annoplugin.R;
+import io.usersource.annoplugin.model.AnnoContentProvider;
+import android.content.ContentProviderClient;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import android.view.MenuItem;
 
@@ -19,15 +21,16 @@ import android.view.MenuItem;
 public class AnnoSettingActivity extends PreferenceActivity implements
     OnSharedPreferenceChangeListener {
 
-  private EditTextPreference mSyncServerUrlPref;
+  private ListPreference mSyncServerUrlPref;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     getActionBar().setDisplayHomeAsUpEnabled(true);
     this.addPreferencesFromResource(R.xml.anno_preferences);
-    mSyncServerUrlPref = (EditTextPreference) getPreferenceScreen()
-        .findPreference(getString(R.string.prefSyncServerUrl_Key));
+    mSyncServerUrlPref = (ListPreference) getPreferenceScreen().findPreference(
+        getString(R.string.prefSyncServerUrl_Key));
+    loadServerURLs();
   }
 
   @Override
@@ -44,8 +47,8 @@ public class AnnoSettingActivity extends PreferenceActivity implements
   @Override
   protected void onResume() {
     super.onResume();
-    mSyncServerUrlPref.setSummary(getPreferenceScreen().getSharedPreferences()
-        .getString(getString(R.string.prefSyncServerUrl_Key), ""));
+    this.loadServerURLs();
+    mSyncServerUrlPref.setSummary(mSyncServerUrlPref.getEntry());
     // Set up a listener whenever a key changes
     getPreferenceScreen().getSharedPreferences()
         .registerOnSharedPreferenceChangeListener(this);
@@ -63,9 +66,28 @@ public class AnnoSettingActivity extends PreferenceActivity implements
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
       String key) {
     if (key.equals(getString(R.string.prefSyncServerUrl_Key))) {
-      mSyncServerUrlPref.setSummary(sharedPreferences.getString(
-          getString(R.string.prefSyncServerUrl_Key), ""));
+      mSyncServerUrlPref.setSummary(mSyncServerUrlPref.getEntry());
+
+      ContentProviderClient client = getContentResolver()
+          .acquireContentProviderClient(AnnoContentProvider.AUTHORITY);
+      if (client != null) {
+        ((AnnoContentProvider) client.getLocalContentProvider())
+            .resetDatabase();
+        client.release();
+      }
     }
   }
 
+  private void loadServerURLs() {
+    String[] names = { "Production", "Test", "Production via EC2 proxy",
+        "Test via EC2 proxy" };
+    String[] urls = { "http://annoserver.appspot.com",
+        "http://annoserver-test.appspot.com",
+        "http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com",
+        "http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/annotest" };
+    mSyncServerUrlPref.setEntries(names);
+    mSyncServerUrlPref.setEntryValues(urls);
+    mSyncServerUrlPref
+        .setDefaultValue("http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/annotest");
+  }
 }
