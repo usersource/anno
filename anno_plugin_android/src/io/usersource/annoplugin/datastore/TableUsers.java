@@ -40,7 +40,7 @@ public class TableUsers extends AbstractTableAdapter {
 	@Override
 	public List<String> getInitSqls() {
 		String createTableSql = String
-		        .format( "create table %s " +
+		        .format( "create table if not exists %s " +
 		        		 "(%s integer primary key autoincrement, " +
 		        		 "%s text not null," +
 		        		 "%s text not null);",
