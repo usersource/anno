@@ -32,6 +32,7 @@ define([
             "screenshot":"0",
             circleX: 0,
             circleY:0,
+            level:1,
             deviceInfo:" ",
             comments:[{
                 author:'',
