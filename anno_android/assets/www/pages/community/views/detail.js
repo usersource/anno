@@ -34,6 +34,8 @@ define([
             trayBarHeight = 30,
             trayScreenHeight = 0;
 
+        var circleRadius = 17;
+
         var wipeIn = function(args)
         {
             var node = args.node = dom.byId(args.node), s = node.style, o;
@@ -187,8 +189,8 @@ define([
 
                 if (eventsModel.cursor.circleX != null)
                 {
-                    var tx = (imageWidth*eventsModel.cursor.circleX)/10000;
-                    var ty = (imageHeight*eventsModel.cursor.circleY)/10000;
+                    var tx = (imageWidth*eventsModel.cursor.circleX)/10000 -circleRadius;
+                    var ty = (imageHeight*eventsModel.cursor.circleY)/10000 -circleRadius;
 
                     console.error("view w: "+viewPoint.w+", view h: "+viewPoint.h);
                     console.error("image width2: "+imageWidth+", image height2: "+imageHeight);
@@ -240,6 +242,8 @@ define([
                         tooltipWidget.hide();
                     }
                 }
+
+                adjustNavBarZIndex();
 
                 if (goingNextRecord != null)
                 {
@@ -383,6 +387,11 @@ define([
         {
             var scSize = domGeom.getMarginBox('screenshotContainerDetail');
             domStyle.set('headingDetail', 'width', (scSize.w-6)+'px');
+        };
+
+        var adjustNavBarZIndex = function()
+        {
+
         };
 
         var goNextRecord = function()
@@ -921,7 +930,7 @@ define([
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('navBtnNext'), "click", function ()
-                {
+                {console.error('nextbtn');
                     goNextRecord();
                 }));
 
