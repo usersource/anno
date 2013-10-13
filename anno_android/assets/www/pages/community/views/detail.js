@@ -34,6 +34,10 @@ define([
             trayBarHeight = 30,
             trayScreenHeight = 0;
 
+        var circleRadius = 17,
+            level1Color = "#ff9900",
+            level2Color = "#ff0000";
+
         var wipeIn = function(args)
         {
             var node = args.node = dom.byId(args.node), s = node.style, o;
@@ -130,12 +134,14 @@ define([
         {
             annoTooltipY = null;
             window.setTimeout(function(){
+
+                var imgScreenshot = dom.byId('imgDetailScreenshot');
                 var viewPoint = win.getBox();
                 var tooltipWidget = registry.byId('textTooltip');
                 var deviceRatio = parseFloat((viewPoint.w/viewPoint.h).toFixed(2));
-                var orignialDeviceRatio = parseFloat((dom.byId('imgDetailScreenshot').naturalWidth/dom.byId('imgDetailScreenshot').naturalHeight).toFixed(2));
+                var orignialDeviceRatio = parseFloat((imgScreenshot.naturalWidth/imgScreenshot.naturalHeight).toFixed(2));
 
-                var orignialRatio = dom.byId('imgDetailScreenshot').naturalHeight/dom.byId('imgDetailScreenshot').naturalWidth;
+                var orignialRatio = imgScreenshot.naturalHeight/imgScreenshot.naturalWidth;
                 var imageWidth, imageHeight;
 
                 if (orignialDeviceRatio == deviceRatio)
@@ -146,17 +152,17 @@ define([
 
                     console.error("image width: "+imageWidth+", image height: "+imageHeight);
 
-                    dom.byId("imgDetailScreenshot").width = imageWidth;
-                    dom.byId("imgDetailScreenshot").height = imageHeight;
+                    imgScreenshot.width = imageWidth;
+                    imgScreenshot.height = imageHeight;
                 }
                 else if (orignialDeviceRatio < deviceRatio) // taller than current device
                 {console.error('taller ratio: o:'+orignialDeviceRatio+", d:"+ deviceRatio);
                     imageWidth = Math.round((viewPoint.h-8)/orignialRatio);
                     imageHeight = (viewPoint.h-8);
 
-                    dom.byId("imgDetailScreenshot").width = imageWidth;
-                    dom.byId("imgDetailScreenshot").height = imageHeight;
-                    dom.byId("imgDetailScreenshot").style.width = imageWidth+'px';
+                    imgScreenshot.width = imageWidth;
+                    imgScreenshot.height = imageHeight;
+                    imgScreenshot.style.width = imageWidth+'px';
 
                 }
                 else if (orignialDeviceRatio > deviceRatio) // wider than current device
@@ -164,8 +170,9 @@ define([
                     imageWidth = (viewPoint.w-screenshotMargin);
                     imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio;
 
-                    dom.byId("imgDetailScreenshot").width = imageWidth;
-                    dom.byId("imgDetailScreenshot").height = imageHeight;
+                    imgScreenshot.width = imageWidth;
+                    imgScreenshot.height = imageHeight;
+                    imgScreenshot.style.width = imageWidth+'px';
                 }
 
                 domStyle.set("lightCoverScreenshot", "width", (30)+"px");
@@ -179,16 +186,16 @@ define([
                     domStyle.set("lightCoverScreenshot", "height", (imageHeight+400)+"px");
                 }
 
-                imageWidth = dom.byId("imgDetailScreenshot").width;
-                imageHeight = dom.byId("imgDetailScreenshot").height;
+                imageWidth = imgScreenshot.width;
+                imageHeight = imgScreenshot.height;
 
                 var toolTipDivWidth = imageWidth - 40;
                 domStyle.set("screenshotTooltipDetail", "width", toolTipDivWidth+"px");
 
                 if (eventsModel.cursor.circleX != null)
                 {
-                    var tx = (imageWidth*eventsModel.cursor.circleX)/10000;
-                    var ty = (imageHeight*eventsModel.cursor.circleY)/10000;
+                    var tx = (imageWidth*eventsModel.cursor.circleX)/10000 -circleRadius;
+                    var ty = (imageHeight*eventsModel.cursor.circleY)/10000 -circleRadius;
 
                     console.error("view w: "+viewPoint.w+", view h: "+viewPoint.h);
                     console.error("image width2: "+imageWidth+", image height2: "+imageHeight);
@@ -241,6 +248,8 @@ define([
                     }
                 }
 
+                adjustNavBarZIndex();
+
                 if (goingNextRecord != null)
                 {
                     if (goingNextRecord)
@@ -271,6 +280,9 @@ define([
             var idx = parseInt(index);
             if (idx < eventsModel.model.length)
             {
+                console.error("level:"+eventsModel.cursor.level);
+                applyAnnoLevelColor(eventsModel.cursor.level);
+
                 eventsModel.set("cursorIndex", idx);
                 currentIndex = idx;
 
@@ -350,6 +362,22 @@ define([
             }
         };
 
+        var applyAnnoLevelColor = function(level)
+        {
+            level = level||1;
+            if (level == 1)
+            {
+                domStyle.set('imgDetailScreenshot', 'borderColor', level1Color);
+                drawOrangeCircle(1);
+            }
+            else if (level == 2)
+            {
+                domStyle.set('imgDetailScreenshot', 'borderColor', level2Color);
+                console.error(domStyle.get('imgDetailScreenshot', 'border'));
+                drawOrangeCircle(2);
+            }
+        };
+
         var adjustAnnoCommentSize = function()
         {
             var annoContainer = dom.byId('annoCommentsContainer');
@@ -383,6 +411,11 @@ define([
         {
             var scSize = domGeom.getMarginBox('screenshotContainerDetail');
             domStyle.set('headingDetail', 'width', (scSize.w-6)+'px');
+        };
+
+        var adjustNavBarZIndex = function()
+        {
+
         };
 
         var goNextRecord = function()
@@ -458,17 +491,32 @@ define([
             domStyle.set("headingDetail", "display", '');
         };
 
-        var drawOrangeCircle = function()
+        var drawOrangeCircle = function(level)
         {
+            level = level||1;
+            var lineColor, fillColor;
+
+            if (level == 1)
+            {
+                lineColor = "#FFA500";
+                fillColor = "rgba(255,165,0, 0.4)";
+            }
+            else
+            {
+                lineColor = "#FF0000";
+                fillColor = "rgba(255,12,9, 0.4)";
+            }
+
             var ctx = dom.byId('screenshotAnchorDetail').getContext('2d');
             var canvasWidth = 32;
 
+            ctx.clearRect(0, 0, 40, 40);
             ctx.beginPath();
-            ctx.strokeStyle = "#FFA500";
+            ctx.strokeStyle = lineColor;
             ctx.lineWidth = 3;
             ctx.arc(20, 20, canvasWidth/2, 0, 2 * Math.PI, true);
             ctx.stroke();
-            ctx.fillStyle = "rgba(255,165,0, 0.4)";
+            ctx.fillStyle = fillColor;
             ctx.arc(20, 20, canvasWidth/2-3, 0, 2 * Math.PI, true);
             ctx.fill();
         };
@@ -700,6 +748,7 @@ define([
 
                     currentAnno.set('vote', returnAnno.vote);
                     currentAnno.set('flag', returnAnno.flag);
+                    currentAnno.set('level', returnAnno.level);
 
                     loadingDetailData = false;
                     hideLoadingIndicator();
@@ -921,7 +970,7 @@ define([
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('navBtnNext'), "click", function ()
-                {
+                {console.error('nextbtn');
                     goNextRecord();
                 }));
 
