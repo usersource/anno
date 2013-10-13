@@ -28,7 +28,7 @@
     <!-- settings -->
     <string name="prefSyncServerUrl_Key">prefSyncServerUrl_Key</string>
     <string name="prefSyncServerUrl_Title">Server URL</string>
-    <string name="prefSyncServerUrl_Default">http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/annotest</string>
+    <string name="prefSyncServerUrl_Default">http://annoserver.appspot.com</string>
     <string name="main_menu_i_settings">Settings</string>
     <string name="main_menu_i_intro">Intro</string>
     <string name="main_menu_i_feedback">Feedback</string>
