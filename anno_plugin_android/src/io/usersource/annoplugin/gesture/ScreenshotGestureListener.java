@@ -7,10 +7,7 @@ import io.usersource.annoplugin.R;
 import io.usersource.annoplugin.utils.PluginUtils;
 import io.usersource.annoplugin.utils.ScreenshotUtils;
 import io.usersource.annoplugin.utils.ViewUtils;
-import io.usersource.annoplugin.view.AnnoMainActivity;
-import io.usersource.annoplugin.view.CommunityActivity;
-import io.usersource.annoplugin.view.FeedbackEditActivity;
-import io.usersource.annoplugin.view.FeedbackViewActivity;
+import io.usersource.annoplugin.view.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -72,7 +69,12 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
       level = ((AnnoMainActivity) activity).getLevel();
     } else if (activity instanceof CommunityActivity) {
       level = ((CommunityActivity) activity).getLevel();
+    } else if (activity instanceof OptionFeedbackActivity) {
+      level = ((OptionFeedbackActivity) activity).getLevel();
+    } else if (activity instanceof IntroActivity) {
+      level = ((IntroActivity) activity).getLevel();
     }
+
 
     if (level >= 2) {
       Log.d(TAG, "Already 2 levels, no recursive any more.");
