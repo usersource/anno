@@ -88,6 +88,6 @@ public class AnnoSettingActivity extends PreferenceActivity implements
     mSyncServerUrlPref.setEntries(names);
     mSyncServerUrlPref.setEntryValues(urls);
     mSyncServerUrlPref
-        .setDefaultValue("http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/annotest");
+        .setDefaultValue("http://annoserver.appspot.com");
   }
 }

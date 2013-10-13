@@ -3,9 +3,11 @@ Created on Jun 13, 2013
 
 @author: sergey
 '''
+import logging
 from AnnoSyncEntity import AnnoSyncEntity
 from google.appengine.ext import db
 from datetime import datetime
+from model.Users import Users
 
 
 class FeedbackComment(AnnoSyncEntity):
@@ -54,7 +56,12 @@ class FeedbackComment(AnnoSyncEntity):
             if name == self.JSON_IMAGE:
                 setattr(self, name, str(value))
             elif name == "user_id":
-                setattr(self, name, db.Key.from_path('Users', int(value)))
+                userKey = db.Key.from_path('Users', int(value))
+                if None == db.get(userKey):
+                    logging.info('%s key user doesn\'t exist, will create a user automatically.' % value)
+                    user = Users(key = userKey)
+                    user.createNewUser(data[self.JSON_MODEL])
+                setattr(self, name, userKey)
             else:    
                 setattr(self, name, value)
         self.put()
