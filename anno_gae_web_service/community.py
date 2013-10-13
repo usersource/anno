@@ -87,6 +87,7 @@ class Community(webapp2.RequestHandler):
                 anno["circleY"] = item.y
                 anno["deviceModel"] = item.model 
                 anno["OSVersion"] = item.os_version
+                anno["level"] = item.level
                 
                 item.votes.filter("user = ", userID)
                 if item.votes.get() != None:
