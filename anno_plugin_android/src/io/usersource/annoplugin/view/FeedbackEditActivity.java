@@ -1,8 +1,5 @@
 package io.usersource.annoplugin.view;
 
-import android.graphics.Color;
-import android.util.DisplayMetrics;
-import android.widget.*;
 import io.usersource.annoplugin.AnnoPlugin;
 import io.usersource.annoplugin.R;
 import io.usersource.annoplugin.datastore.FileImageManage;
@@ -31,15 +28,21 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Edit feedback screen from share intent.
@@ -115,7 +118,7 @@ public class FeedbackEditActivity extends Activity {
       DisplayMetrics dm = new DisplayMetrics();
       getWindowManager().getDefaultDisplay().getMetrics(dm);
 
-      int toastWidth = (int)(dm.widthPixels*0.7);
+      int toastWidth = (int) (dm.widthPixels * 0.7);
 
       toastLayout.setMinimumWidth(toastWidth);
       toastTV.setWidth(toastWidth);
@@ -148,15 +151,15 @@ public class FeedbackEditActivity extends Activity {
     circleArrow = (CircleArrow) findViewById(R.id.circleArrow);
     circleArrow.setActivity(this);
 
-//    if (isPractice) {
-//      TranslateAnimation alphaAnimation2 = new TranslateAnimation(-20f, 20f, 0,
-//          0);
-//      alphaAnimation2.setDuration(1000);
-//      alphaAnimation2.setRepeatCount(1);
-//      alphaAnimation2.setRepeatMode(Animation.REVERSE);
-//      circleArrow.setAnimation(alphaAnimation2);
-//      alphaAnimation2.start();
-//    }
+    // if (isPractice) {
+    // TranslateAnimation alphaAnimation2 = new TranslateAnimation(-20f, 20f, 0,
+    // 0);
+    // alphaAnimation2.setDuration(1000);
+    // alphaAnimation2.setRepeatCount(1);
+    // alphaAnimation2.setRepeatMode(Animation.REVERSE);
+    // circleArrow.setAnimation(alphaAnimation2);
+    // alphaAnimation2.start();
+    // }
 
     btnComment.setOnClickListener(sendCommentClickListener);
     btnGoHome.setOnClickListener(goHomeClickListener);
@@ -215,12 +218,12 @@ public class FeedbackEditActivity extends Activity {
         String imageKey;
         imageKey = imageManage.saveImage(bitmap);
         // coordinate
-        float y = commentAreaLayout.getY();
+        float y = commentAreaLayout.getCircleY();
         float x = commentAreaLayout.getCircleX();
         int screenshotHeight = imvScreenshot.getHeight();
         int screenshotWidth = imvScreenshot.getWidth();
-        int yRatio = (int) (y * 10000) / screenshotHeight;
-        int xRatio = (int) (x * 10000) / screenshotWidth;
+        int yRatio = (int) ((y * 10000) / screenshotHeight);
+        int xRatio = (int) ((x * 10000) / screenshotWidth);
 
         // direction
         boolean circleOnTop = commentAreaLayout.circleOnTop();
