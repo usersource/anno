@@ -7,6 +7,7 @@ import io.usersource.annoplugin.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -20,6 +21,8 @@ import android.widget.RelativeLayout;
  * 
  */
 public class CommentAreaLayout extends RelativeLayout {
+
+  private static final String TAG = CommentAreaLayout.class.getSimpleName();
 
   private CircleArrow circle;
   private EditTextLayout commentLayout;
@@ -48,20 +51,26 @@ public class CommentAreaLayout extends RelativeLayout {
     a.recycle();
   }
 
-  public void locate(int x, int y, int direction) {
+  public void locate(float x, float y, int direction) {
     circle = getCircleArrow();
     commentLayout = getCommentLayout();
     commentInput = getCommentInput();
     commentActionBar = getCommentActionBar();
 
     flip(direction == 1 ? true : false);
-
+    float commentAreaY = y;
+    if (direction == 1) { // bottom
+      commentAreaY -= (this.getHeight() - circle.getCircleRadius());
+    } else {
+      commentAreaY -= circle.getCircleRadius();
+    }
+    Log.d(TAG, "locate-comment area y=" + commentAreaY);
     RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
         this.getWidth(), this.getHeight());
-    lp.setMargins(0, y, 0, 0);
+    lp.setMargins(0, (int) commentAreaY, 0, 0);
     this.setLayoutParams(lp);
 
-    setHorizontalPosition(x);
+    setHorizontalPosition(x - circle.getCircleRadius());
 
     circle.invalidate();
     commentLayout.invalidate();
@@ -118,7 +127,7 @@ public class CommentAreaLayout extends RelativeLayout {
     }
   }
 
-  private void setHorizontalPosition(int x) {
+  private void setHorizontalPosition(float x) {
     if (x + circle.getCircleRadius() * 2 < getWidth()) {
       float margin = this.getContext().getResources()
           .getDimension(R.dimen.comment_area_marginLeftRight);
@@ -166,11 +175,15 @@ public class CommentAreaLayout extends RelativeLayout {
   }
 
   public float getCircleX() {
-    return getCircleArrow().getCircleLeft();
+    Log.d(TAG, "getCircleX - comment area x is " + getX());
+    return getX() + getCircleArrow().getCircleCenterX();
   }
 
   public float getCircleY() {
-    return getCircleArrow().getY() + getY();
+    float circleY = getCircleArrow().getCircleCenterY();
+    float commentAreaY = getY();
+    Log.d(TAG, "getCircleY-" + commentAreaY);
+    return circleY + commentAreaY;
   }
 
   private CircleArrow getCircleArrow() {

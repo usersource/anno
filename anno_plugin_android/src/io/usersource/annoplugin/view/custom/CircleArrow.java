@@ -14,6 +14,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -409,10 +410,23 @@ public class CircleArrow extends View implements View.OnTouchListener {
   }
 
   /**
-   * @return the circleLeft
+   * @return the circle center's x.
    */
-  public float getCircleLeft() {
-    return circleLeft;
+  public float getCircleCenterX() {
+    Log.d(TAG, "getCircleCenterX-circle left is " + circleLeft);
+    return circleLeft + circleRadius;
+  }
+
+  /**
+   * @return the circle center's y.
+   */
+  public float getCircleCenterY() {
+    if (this.arrowOnTop) {
+      Log.d(TAG, "getCircleCenterY-circle top:" + getY());
+      return getY() + circleRadius;
+    } else {
+      return getY() + (this.getHeight() - circleRadius);
+    }
   }
 
   private float verticalLine(float x, float y) {
