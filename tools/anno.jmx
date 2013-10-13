@@ -30,8 +30,8 @@
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
-          <stringProp name="HTTPSampler.domain">localhost</stringProp>
-          <stringProp name="HTTPSampler.port">8080</stringProp>
+          <stringProp name="HTTPSampler.domain">ec2-54-213-161-127.us-west-2.compute.amazonaws.com/annotest</stringProp>
+          <stringProp name="HTTPSampler.port">80</stringProp>
           <stringProp name="HTTPSampler.connect_timeout"></stringProp>
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
@@ -40,7 +40,7 @@
           <stringProp name="HTTPSampler.concurrentPool">4</stringProp>
         </ConfigTestElement>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="create_user" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="create_user" enabled="false">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
             <collectionProp name="Arguments.arguments">
               <elementProp name="jsonData" elementType="HTTPArgument">
@@ -68,7 +68,7 @@
           <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="generate keys" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="generate keys" enabled="false">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
             <collectionProp name="Arguments.arguments">
               <elementProp name="jsonData" elementType="HTTPArgument">
@@ -101,15 +101,15 @@
             <collectionProp name="Arguments.arguments">
               <elementProp name="jsonData" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">{   &quot;request_type&quot;:&quot;updateData&quot;,   &quot;updatedObjects&quot;:   {     &quot;user_id&quot;:&quot;5629499534213120&quot;,     &quot;object_key&quot;:&quot;ahNkZXZ-YW5ub3NlcnZlci10ZXN0chULEg9GZWVkYmFja0NvbW1lbnQYAQw&quot;,     &quot;model&quot;:&quot;Nexus 7&quot;,     &quot;app_name&quot;:&quot;Anno&quot;,     &quot;anno_type&quot;:&quot;simple comment&quot;,     &quot;level&quot;:1,     &quot;isMoved&quot;:1,     &quot;os_version&quot;:&quot;4.2.2&quot;,     &quot;app_version&quot;:&quot;1.0.7&quot;,     &quot;direction&quot;:&quot;0&quot;,     &quot;x&quot;:&quot;100&quot;,     &quot;y&quot;:&quot;100&quot;,     &quot;comment&quot;:&quot;anno comment is here.&quot;,     &quot;client_id&quot;:1   } }</stringProp>
+                <stringProp name="Argument.value">{   &quot;request_type&quot;:&quot;updateData&quot;,   &quot;updatedObjects&quot;:   {     &quot;user_id&quot;:&quot;23001&quot;,     &quot;object_key&quot;:&quot;ahNkZXZ-YW5ub3NlcnZlci10ZXN0chYLEg9GZWVkYmFja0NvbW1lbnQY6QcM&quot;,     &quot;model&quot;:&quot;Nexus 7&quot;,     &quot;app_name&quot;:&quot;Anno&quot;,     &quot;anno_type&quot;:&quot;simple comment&quot;,     &quot;level&quot;:1,     &quot;isMoved&quot;:1,     &quot;os_version&quot;:&quot;4.2.2&quot;,     &quot;app_version&quot;:&quot;1.0.7&quot;,     &quot;direction&quot;:&quot;0&quot;,     &quot;x&quot;:&quot;100&quot;,     &quot;y&quot;:&quot;100&quot;,     &quot;comment&quot;:&quot;nonexist user on test server.&quot;,     &quot;client_id&quot;:1   } }</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
                 <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 <stringProp name="Argument.name">jsonData</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
-          <stringProp name="HTTPSampler.domain">localhost</stringProp>
-          <stringProp name="HTTPSampler.port">8080</stringProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
           <stringProp name="HTTPSampler.connect_timeout"></stringProp>
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
@@ -157,7 +157,7 @@
         </ResultCollector>
         <hashTree/>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Community Thread Group" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Community Thread Group" enabled="false">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
