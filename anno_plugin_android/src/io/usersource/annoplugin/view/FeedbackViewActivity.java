@@ -22,6 +22,7 @@ import android.database.Cursor;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -122,7 +123,6 @@ public class FeedbackViewActivity extends Activity {
       FeedbackViewActivity activity = activityRef.get();
       if (token == TOKEN_GET_COMMENT) {
         if (cursor != null && cursor.moveToFirst()) {
-
           initComment(cursor, activity);
           initImage(cursor, activity);
           initPosition(cursor, activity);
@@ -185,8 +185,10 @@ public class FeedbackViewActivity extends Activity {
              */
             int screenshotWidth = finalActivity.viewImvScreenshot.getWidth();
             int screenshotHeight = finalActivity.viewImvScreenshot.getHeight();
-            int x = screenshotWidth * xRatio / 10000;
-            int y = screenshotHeight * yRatio / 10000;
+            float x = (float) screenshotWidth * xRatio / 10000;
+            float y = (float) screenshotHeight * yRatio / 10000;
+            Log.d(TAG, "circle center x = " + x);
+            Log.d(TAG, "circle center y  " + y);
             finalActivity.viewCommentArea.locate(x, y, direction);
           }
 
