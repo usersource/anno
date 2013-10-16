@@ -34,20 +34,6 @@ public class IntroActivity extends DroidGap {
     setContentView(view);
     AnnoPlugin.setEnableGesture(this, view, true);
 
-    this.appView.setOnKeyListener(new View.OnKeyListener() {
-
-      public boolean onKey(View v, int keyCode, KeyEvent event) {
-        if (event.getAction() == KeyEvent.ACTION_UP) {
-          if (keyCode == KeyEvent.KEYCODE_BACK) {
-            // Do Stuff Here
-            return true;
-          }
-          return onKeyUp(keyCode, event);
-        }
-        return onKeyDown(keyCode, event);
-      }
-    });
-
     super.loadUrl("file:///android_asset/www/pages/intro/main.html");
 
     Intent intent = getIntent();
