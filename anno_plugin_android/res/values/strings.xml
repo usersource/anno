@@ -7,23 +7,23 @@
     <string name="feedback_comment">Comment</string>
     <string name="feedback_draw">Draw</string>
     <string name="feedback_audio">Audio</string>
-    <string name="send_comment">Send</string>
+    <string name="send_comment">Share</string>
     <string name="go_home">Home</string>
 
     <!-- error message -->
     <string name="erorr_title">Error</string>
-    <string name="fail_take_screenshot">Take Screenshot Failed.</string>
-    <string name="fail_create_directory">Create directory %s failed.</string>
-    <string name="fail_enough_sdcard_space">No enough space on SD card.</string>
-    <string name="fail_send_comment">Send comment failed.</string>
-    <string name="invalid_comment_empty">You should enter some comments.</string>
+    <string name="fail_take_screenshot">Screenshot failed.</string>
+    <string name="fail_create_directory">Failed to create directory %s </string>
+    <string name="fail_enough_sdcard_space">Not enough space on SD card</string>
+    <string name="fail_send_comment">Your anno has not been shared</string>
+    <string name="invalid_comment_empty">Empty anno</string>
 
     <!-- success message -->
-    <string name="success_send_comment">Send comment successfully.</string>
+    <string name="success_send_comment">Your anno has been shared</string>
     <string name="title_activity_feedback_view">FeedbackViewActivity</string>
 
     <!-- text hint -->
-    <string name="comment_hint">Enter comment here.</string>
+    <string name="comment_hint">Propose a change and explain why</string>
 
     <!-- settings -->
     <string name="prefSyncServerUrl_Key">prefSyncServerUrl_Key</string>
