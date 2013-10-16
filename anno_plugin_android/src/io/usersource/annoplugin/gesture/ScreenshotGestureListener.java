@@ -117,7 +117,9 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
     if (activity instanceof FeedbackEditActivity
         || activity instanceof FeedbackViewActivity
         || activity instanceof AnnoMainActivity
-        || activity instanceof CommunityActivity) {
+        || activity instanceof CommunityActivity
+        || activity instanceof OptionFeedbackActivity
+        || activity instanceof IntroActivity) {
       // current app is standalone anno, or anno plugin activity.
       intent.putExtra(PluginUtils.LEVEL, 1);
     } else {
