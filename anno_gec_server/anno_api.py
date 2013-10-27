@@ -28,7 +28,7 @@ class AnnoApi(remote.Service):
 
     anno_get_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
-        id=messages.IntegerField(2, variant=messages.Variant.INT32, required=True)
+        id=messages.IntegerField(2, required=True)
     )
     @endpoints.method(anno_get_resource_container, AnnoMessage, path='anno/{id}', http_method='GET', name='anno.get')
     def anno_get(self, request):
@@ -39,7 +39,7 @@ class AnnoApi(remote.Service):
         if anno is None:
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
         else:
-            return anno
+            return anno.to_message()
 
 
     anno_list_resource_container = endpoints.ResourceContainer(
@@ -81,7 +81,7 @@ class AnnoApi(remote.Service):
 
     anno_update_resource_container = endpoints.ResourceContainer(
         AnnoMergeRequestMessage,
-        id=messages.IntegerField(2, variant=messages.Variant.INT32, required=True)
+        id=messages.IntegerField(2, required=True)
     )
     @endpoints.method(anno_update_resource_container, AnnoMessage, path='anno/{id}',
                       http_method='POST', name="anno.merge")
