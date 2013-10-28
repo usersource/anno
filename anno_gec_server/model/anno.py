@@ -1,15 +1,17 @@
 __author__ = 'topcircler'
 
 """
-Anno model definition.
+Anno data store model definition.
 """
 
 import endpoints
 from google.appengine.ext import ndb
 
 from anno_api_messages import AnnoMessage
+from anno_api_messages import AnnoResponseMessage
 
 package = 'core'
+
 
 def get_endpoints_current_user(raise_unauthorized=True):
     """Returns a current user and (optionally) causes an HTTP 401 if no user.
@@ -31,15 +33,15 @@ def get_endpoints_current_user(raise_unauthorized=True):
 
 class Anno(ndb.Model):
     """
-    This class representds Annotation Model(in datastore).
+    This class represents Annotation Model(in datastore).
     """
-    comment = ndb.StringProperty(required=True)
+    anno_text = ndb.StringProperty(required=True)
     x = ndb.FloatProperty(required=True)
     y = ndb.FloatProperty(required=True)
     image = ndb.BlobProperty()
-    type = ndb.StringProperty(required=True, default='simple comment')
+    anno_type = ndb.StringProperty(required=True, default='simple comment')
     is_circle_on_top = ndb.BooleanProperty(required=True)
-    moved = ndb.BooleanProperty(required=True)
+    is_moved = ndb.BooleanProperty(required=True)
     level = ndb.IntegerProperty(required=True)
     model = ndb.StringProperty(required=True)
     app_name = ndb.StringProperty()
@@ -49,37 +51,47 @@ class Anno(ndb.Model):
     create_time = ndb.DateTimeProperty(auto_now=True)
     creator = ndb.UserProperty()
 
-    def to_message(self):
+    def to_response_message(self):
         """
-        convert model to AnnoMessage.
+        Convert anno model to AnnoResponseMessage.
         """
-        return AnnoMessage(id=self.key.id(),
-                           comment=self.comment,
-                           x=self.x,
-                           y=self.y,
-                           anno_type=self.type,
-                           is_circle_on_top=self.is_circle_on_top,
-                           is_moved=self.moved,
-                           level=self.level,
-                           model=self.model,
-                           app_name=self.app_name,
-                           app_version=self.app_version,
-                           os_name=self.os_name,
-                           os_version=self.os_version,
-                           create_time=self.create_time)
-                           # user
+        # todo: add user.
+        return AnnoResponseMessage(id=self.key.id(),
+                                   anno_text=self.anno_text,
+                                   x=self.x,
+                                   y=self.y,
+                                   anno_type=self.anno_type,
+                                   is_circle_on_top=self.is_circle_on_top,
+                                   is_moved=self.is_moved,
+                                   level=self.level,
+                                   model=self.model,
+                                   app_name=self.app_name,
+                                   app_version=self.app_version,
+                                   os_name=self.os_name,
+                                   os_version=self.os_version,
+                                   create_time=self.create_time)
+
+    def to_response_message_by_projection(self, projection):
+        """
+        convert anno model to AnnoResponseMessage by projection.
+        """
+        anno_resp_message = AnnoResponseMessage(id=self.key.id())
+        for prop_name in projection:
+            anno_resp_message.__setattr__(prop_name, getattr(self, prop_name))
+        return anno_resp_message
 
     @classmethod
     def put_from_message(cls, message):
         """
         create a new anno model from request message.
         """
-        current_user = get_endpoints_current_user()
+        # todo: user
+        #current_user = get_endpoints_current_user()
         # TODO: image.
-        entity = cls(comment=message.comment, x=message.x, y=message.y, type=message.anno_type,
-                     is_circle_on_top=message.is_circle_on_top, moved=message.is_moved, level=message.level,
+        entity = cls(anno_text=message.anno_text, x=message.x, y=message.y, anno_type=message.anno_type,
+                     is_circle_on_top=message.is_circle_on_top, is_moved=message.is_moved, level=message.level,
                      model=message.model, app_name=message.app_name, app_version=message.app_version,
-                     os_name=message.os_name, os_version=message.os_version, creator=current_user)
+                     os_name=message.os_name, os_version=message.os_version)
         entity.put()
         return entity
 
@@ -87,8 +99,8 @@ class Anno(ndb.Model):
         """
         populate current anno with non-null fields in request message.(used in merge)
         """
-        if message.comment is not None:
-            self.comment = message.comment
+        if message.anno_text is not None:
+            self.anno_text = message.anno_text
         if message.x is not None:
             self.x = message.x
         if message.y is not None:
@@ -96,11 +108,11 @@ class Anno(ndb.Model):
         if message.image is not None:
             self.image = message.image
         if message.anno_type is not None:
-            self.type = message.anno_type
+            self.anno_type = message.anno_type
         if message.is_circle_on_top is not None:
             self.is_circle_on_top = message.is_circle_on_top
         if message.is_moved is not None:
-            self.moved = message.is_moved
+            self.is_moved = message.is_moved
         if message.level is not None:
             self.level = message.level
         if message.model is not None:
@@ -113,21 +125,3 @@ class Anno(ndb.Model):
             self.os_name = message.os_name
         if message.os_version is not None:
             self.os_version = message.os_version
-
-    def populate_from_message(self, message):
-        """
-        populate current anno with all fields in request message.(will use in update)
-        """
-        self.comment = message.comment
-        self.x = message.x
-        self.y = message.y
-        self.image = message.image
-        self.type = message.anno_type
-        self.is_circle_on_top = message.is_circle_on_top
-        self.moved = message.is_moved
-        self.level = message.level
-        self.model = message.model
-        self.app_name = message.app_name
-        self.app_version = message.app_version
-        self.os_name = message.os_name
-        self.os_version = message.os_version
