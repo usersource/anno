@@ -7,6 +7,8 @@ ProtoRPC message class definitions for Anno API.
 from protorpc import messages
 from protorpc import message_types
 
+from message.user_message import UserMessage
+
 
 class AnnoMessage(messages.Message):
     """
@@ -68,7 +70,7 @@ class AnnoResponseMessage(messages.Message):
     os_name = messages.StringField(13)
     os_version = messages.StringField(14)
     create_time = message_types.DateTimeField(15)
-    creator_key = messages.IntegerField(16)
+    creator = messages.MessageField(UserMessage, 16)
 
 
 class AnnoListMessage(messages.Message):
