@@ -1,3 +1,3 @@
 #!/bin/bash
 
-dev_appserver.py ../anno_gae_web_service --port 8080 --host 0.0.0.0
+$GAE/dev_appserver.py ../anno_gec_server --port 8080 --host 0.0.0.0
