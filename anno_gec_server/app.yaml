@@ -6,7 +6,7 @@ threadsafe: yes
 
 handlers:
 - url: /_ah/spi/.*
-  script: anno_api.APPLICATION
+  script: services.APPLICATION
 
 libraries:
 - name: endpoints

@@ -4,34 +4,14 @@ __author__ = 'topcircler'
 Anno data store model definition.
 """
 
-import endpoints
 from google.appengine.ext import ndb
 
-from anno_api_messages import AnnoMessage
-from anno_api_messages import AnnoResponseMessage
-
-package = 'core'
-
-
-def get_endpoints_current_user(raise_unauthorized=True):
-    """Returns a current user and (optionally) causes an HTTP 401 if no user.
-
-    Args:
-        raise_unauthorized: Boolean; defaults to True. If True, this method
-            raises an exception which causes an HTTP 401 Unauthorized to be
-            returned with the request.
-
-    Returns:
-        The signed in user if there is one, else None if there is no signed in
-        user and raise_unauthorized is False.
-    """
-    current_user = endpoints.get_current_user()
-    if raise_unauthorized and current_user is None:
-        raise endpoints.UnauthorizedException('Invalid token.')
-    return current_user
+from message.anno_api_messages import AnnoResponseMessage
+from message.user_message import UserMessage
+from model.base_model import BaseModel
 
 
-class Anno(ndb.Model):
+class Anno(BaseModel):
     """
     This class represents Annotation Model(in datastore).
     """
@@ -49,13 +29,18 @@ class Anno(ndb.Model):
     os_name = ndb.StringProperty()
     os_version = ndb.StringProperty()
     create_time = ndb.DateTimeProperty(auto_now=True)
-    creator = ndb.UserProperty()
 
     def to_response_message(self):
         """
         Convert anno model to AnnoResponseMessage.
         """
-        # todo: add user.
+        user_message = None
+        if self.creator is not None:
+            user_message = UserMessage()
+            user_message.id = self.creator.id()
+            user_message.user_id = self.creator.get().user_id
+            user_message.user_email = self.creator.get().user_email
+        # todo: set image.
         return AnnoResponseMessage(id=self.key.id(),
                                    anno_text=self.anno_text,
                                    x=self.x,
@@ -69,35 +54,44 @@ class Anno(ndb.Model):
                                    app_version=self.app_version,
                                    os_name=self.os_name,
                                    os_version=self.os_version,
-                                   create_time=self.create_time)
+                                   create_time=self.create_time,
+                                   creator=user_message)
 
     def to_response_message_by_projection(self, projection):
         """
         convert anno model to AnnoResponseMessage by projection.
         """
         anno_resp_message = AnnoResponseMessage(id=self.key.id())
+        # todo: set image
         for prop_name in projection:
-            anno_resp_message.__setattr__(prop_name, getattr(self, prop_name))
+            if prop_name == 'creator':
+                user_message = UserMessage()
+                user_message.id = self.creator.id()
+                user_message.user_id = self.creator.get().user_id
+                user_message.user_email = self.creator.get().user_email
+                anno_resp_message.creator = user_message
+            else:
+                anno_resp_message.__setattr__(prop_name, getattr(self, prop_name))
         return anno_resp_message
 
     @classmethod
-    def put_from_message(cls, message):
+    def insert_anno(cls, message, user):
         """
         create a new anno model from request message.
         """
-        # todo: user
-        #current_user = get_endpoints_current_user()
         # TODO: image.
         entity = cls(anno_text=message.anno_text, x=message.x, y=message.y, anno_type=message.anno_type,
                      is_circle_on_top=message.is_circle_on_top, is_moved=message.is_moved, level=message.level,
                      model=message.model, app_name=message.app_name, app_version=message.app_version,
-                     os_name=message.os_name, os_version=message.os_version)
+                     os_name=message.os_name, os_version=message.os_version, creator=user.key)
         entity.put()
         return entity
 
     def merge_from_message(self, message):
         """
         populate current anno with non-null fields in request message.(used in merge)
+
+        creator isn't update-able.
         """
         if message.anno_text is not None:
             self.anno_text = message.anno_text
