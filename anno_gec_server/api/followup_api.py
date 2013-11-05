@@ -28,7 +28,7 @@ class FollowupApi(remote.Service):
         Exposes and API endpoint to insert a follow up for the current user.
         """
         current_user = get_endpoints_current_user()
-        user = User.find_user_by_email(current_user.email()).get()
+        user = User.find_user_by_email(current_user.email())
         if user is None:
             user = User.insert_user(current_user.email())
 

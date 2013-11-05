@@ -17,6 +17,9 @@ from message.anno_api_messages import AnnoListMessage
 from message.anno_api_messages import AnnoResponseMessage
 from model.anno import Anno
 from model.user import User
+from model.vote import Vote
+from model.flag import Flag
+from model.follow_up import FollowUp
 from api.utils import get_endpoints_current_user
 
 
@@ -43,7 +46,20 @@ class AnnoApi(remote.Service):
         anno = Anno.get_by_id(request.id)
         if anno is None:
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
-        return anno.to_response_message()
+        # set anno basic properties
+        anno_resp_message = anno.to_response_message()
+        # set anno association with followups
+        followups = FollowUp.find_by_anno(anno)
+        followup_messages = [entity.to_message() for entity in followups]
+        anno_resp_message.followup_list = followup_messages
+        # set anno association with votes/flags
+        # if current user exists, then fetch vote/flag.
+        current_user = endpoints.get_current_user()
+        if current_user is not None:
+            user = User.find_user_by_email(current_user.email())
+            anno_resp_message.is_my_vote = Vote.is_belongs_user(anno, user)
+            anno_resp_message.is_my_flag = Flag.is_belongs_user(anno, user)
+        return anno_resp_message
 
 
     anno_list_resource_container = endpoints.ResourceContainer(
@@ -102,7 +118,7 @@ class AnnoApi(remote.Service):
         if current user doesn't exist, the user will be created first.
         """
         current_user = get_endpoints_current_user()
-        user = User.find_user_by_email(current_user.email()).get()
+        user = User.find_user_by_email(current_user.email())
         if user is None:
             user = User.insert_user(current_user.email())
 
