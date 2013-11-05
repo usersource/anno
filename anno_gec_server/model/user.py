@@ -12,7 +12,7 @@ class User(ndb.Model):
 
     @classmethod
     def find_user_by_email(cls, email):
-        return cls.query(User.user_email == email)
+        return cls.query(User.user_email == email).get()
 
     @classmethod
     def insert_user(cls, email):

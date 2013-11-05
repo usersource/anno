@@ -29,7 +29,7 @@ class FlagApi(remote.Service):
         Exposes an API endpoint to insert a flag for the current user.
         """
         current_user = get_endpoints_current_user()
-        user = User.find_user_by_email(current_user.email()).get()
+        user = User.find_user_by_email(current_user.email())
         if user is None:
             user = User.insert_user(current_user.email())
 
