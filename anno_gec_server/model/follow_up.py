@@ -25,3 +25,10 @@ class FollowUp(BaseModel):
         message.user_id = self.creator.id()
         message.comment = self.comment
         return message
+
+    @classmethod
+    def find_by_anno(cls, anno):
+        followups = []
+        for followup in FollowUp.query(FollowUp.anno_key == anno.key):
+            followups.append(followup)
+        return followups

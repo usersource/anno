@@ -8,6 +8,7 @@ from protorpc import messages
 from protorpc import message_types
 
 from message.user_message import UserMessage
+from message.followup_message import FollowupMessage
 
 
 class AnnoMessage(messages.Message):
@@ -71,6 +72,9 @@ class AnnoResponseMessage(messages.Message):
     os_version = messages.StringField(14)
     create_time = message_types.DateTimeField(15)
     creator = messages.MessageField(UserMessage, 16)
+    is_my_vote = messages.BooleanField(17)  # add this properties special for get anno api.
+    is_my_flag = messages.BooleanField(18)  # add this properties special for get anno api.
+    followup_list = messages.MessageField(FollowupMessage, 19, repeated=True)
 
 
 class AnnoListMessage(messages.Message):
