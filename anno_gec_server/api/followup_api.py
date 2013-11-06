@@ -8,6 +8,7 @@ from google.appengine.datastore.datastore_query import Cursor
 from google.appengine.ext.db import BadValueError
 
 from api.utils import get_endpoints_current_user
+from api.utils import anno_js_client_id
 from model.user import User
 from model.anno import Anno
 from model.follow_up import FollowUp
@@ -16,7 +17,7 @@ from message.followup_message import FollowupListMessage
 
 
 @endpoints.api(name='followup', version='1.0', description='Followup API',
-               allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID])
+               allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
 class FollowupApi(remote.Service):
     """
     Class which defines Follow up API v1.

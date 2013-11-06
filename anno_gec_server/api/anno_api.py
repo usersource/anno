@@ -21,10 +21,11 @@ from model.vote import Vote
 from model.flag import Flag
 from model.follow_up import FollowUp
 from api.utils import get_endpoints_current_user
+from api.utils import anno_js_client_id
 
 
 @endpoints.api(name='anno', version='1.0', description='Anno API',
-               allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID])
+               allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
 class AnnoApi(remote.Service):
     """
     Class which defines Anno API v1.

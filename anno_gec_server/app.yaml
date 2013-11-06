@@ -7,7 +7,13 @@ threadsafe: yes
 handlers:
 - url: /_ah/spi/.*
   script: services.APPLICATION
+- url: /.*
+  script: main.application
 
 libraries:
+- name: webapp2
+  version: latest
 - name: endpoints
   version: 1.0
+- name: jinja2
+  version: latest
