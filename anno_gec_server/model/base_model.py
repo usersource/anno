@@ -9,5 +9,5 @@ class BaseModel(ndb.Model):
     """
     Base model for all anno models.
     """
-    create_time = ndb.DateTimeProperty(auto_now=True)
+    created = ndb.DateTimeProperty(auto_now=True)
     creator = ndb.KeyProperty(kind=User)

@@ -12,12 +12,12 @@ from message.flag_message import FlagListMessage
 from model.flag import Flag
 from model.user import User
 from model.anno import Anno
-
+from api.utils import anno_js_client_id
 from api.utils import get_endpoints_current_user
 
 
 @endpoints.api(name='flag', version='1.0', description='Flag API',
-               allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID])
+               allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
 class FlagApi(remote.Service):
     """
     Class which defines Flag API v1.
