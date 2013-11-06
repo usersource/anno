@@ -11,7 +11,7 @@ class FlagMessage(messages.Message):
     id = messages.IntegerField(1)
     anno_id = messages.IntegerField(2)
     user_id = messages.IntegerField(3)
-    create_time = message_types.DateTimeField(4)
+    created = message_types.DateTimeField(4)
 
 
 class FlagListMessage(messages.Message):

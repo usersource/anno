@@ -10,13 +10,14 @@ from google.appengine.ext.db import BadValueError
 from message.vote_message import VoteMessage
 from message.vote_message import VoteListMessage
 from api.utils import get_endpoints_current_user
+from api.utils import anno_js_client_id
 from model.anno import Anno
 from model.user import User
 from model.vote import Vote
 
 
 @endpoints.api(name='vote', version='1.0', description='Vote API',
-               allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID])
+               allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
 class VoteApi(remote.Service):
     """
     Class which defines Vote API v1.
