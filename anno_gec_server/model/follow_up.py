@@ -24,6 +24,7 @@ class FollowUp(BaseModel):
         message.anno_id = self.anno_key.id()
         message.user_id = self.creator.id()
         message.comment = self.comment
+        message.created = self.created
         return message
 
     @classmethod

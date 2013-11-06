@@ -16,19 +16,18 @@ class Anno(BaseModel):
     This class represents Annotation Model(in datastore).
     """
     anno_text = ndb.StringProperty(required=True)
-    x = ndb.FloatProperty(required=True)
-    y = ndb.FloatProperty(required=True)
+    simple_x = ndb.FloatProperty(required=True)
+    simple_y = ndb.FloatProperty(required=True)
     image = ndb.BlobProperty()
-    anno_type = ndb.StringProperty(required=True, default='simple comment')
-    is_circle_on_top = ndb.BooleanProperty(required=True)
-    is_moved = ndb.BooleanProperty(required=True)
+    anno_type = ndb.StringProperty(required=True, default='simple_comment')
+    simple_circle_on_top = ndb.BooleanProperty(required=True)
+    simple_is_moved = ndb.BooleanProperty(required=True)
     level = ndb.IntegerProperty(required=True)
-    model = ndb.StringProperty(required=True)
+    device_model = ndb.StringProperty(required=True)
     app_name = ndb.StringProperty()
     app_version = ndb.StringProperty()
     os_name = ndb.StringProperty()
     os_version = ndb.StringProperty()
-    create_time = ndb.DateTimeProperty(auto_now=True)
 
     def to_response_message(self):
         """
@@ -43,18 +42,18 @@ class Anno(BaseModel):
         # todo: set image.
         return AnnoResponseMessage(id=self.key.id(),
                                    anno_text=self.anno_text,
-                                   x=self.x,
-                                   y=self.y,
+                                   simple_x=self.simple_x,
+                                   simple_y=self.simple_y,
                                    anno_type=self.anno_type,
-                                   is_circle_on_top=self.is_circle_on_top,
-                                   is_moved=self.is_moved,
+                                   simple_circle_on_top=self.simple_circle_on_top,
+                                   simple_is_moved=self.simple_is_moved,
                                    level=self.level,
-                                   model=self.model,
+                                   device_model=self.device_model,
                                    app_name=self.app_name,
                                    app_version=self.app_version,
                                    os_name=self.os_name,
                                    os_version=self.os_version,
-                                   create_time=self.create_time,
+                                   created=self.created,
                                    creator=user_message)
 
     def to_response_message_by_projection(self, projection):
@@ -80,10 +79,11 @@ class Anno(BaseModel):
         create a new anno model from request message.
         """
         # TODO: image.
-        entity = cls(anno_text=message.anno_text, x=message.x, y=message.y, anno_type=message.anno_type,
-                     is_circle_on_top=message.is_circle_on_top, is_moved=message.is_moved, level=message.level,
-                     model=message.model, app_name=message.app_name, app_version=message.app_version,
+        entity = cls(anno_text=message.anno_text, simple_x=message.simple_x, simple_y=message.simple_y, anno_type=message.anno_type,
+                     simple_circle_on_top=message.simple_circle_on_top, simple_is_moved=message.simple_is_moved, level=message.level,
+                     device_model=message.device_model, app_name=message.app_name, app_version=message.app_version,
                      os_name=message.os_name, os_version=message.os_version, creator=user.key)
+        entity.image = message.image
         entity.put()
         return entity
 
@@ -95,22 +95,22 @@ class Anno(BaseModel):
         """
         if message.anno_text is not None:
             self.anno_text = message.anno_text
-        if message.x is not None:
-            self.x = message.x
-        if message.y is not None:
-            self.y = message.y
+        if message.simple_x is not None:
+            self.simple_x = message.simple_x
+        if message.simple_y is not None:
+            self.simple_y = message.simple_y
         if message.image is not None:
             self.image = message.image
         if message.anno_type is not None:
             self.anno_type = message.anno_type
-        if message.is_circle_on_top is not None:
-            self.is_circle_on_top = message.is_circle_on_top
-        if message.is_moved is not None:
-            self.is_moved = message.is_moved
+        if message.simple_circle_on_top is not None:
+            self.simple_circle_on_top = message.simple_circle_on_top
+        if message.simple_is_moved is not None:
+            self.simple_is_moved = message.simple_is_moved
         if message.level is not None:
             self.level = message.level
-        if message.model is not None:
-            self.model = message.model
+        if message.device_model is not None:
+            self.device_model = message.device_model
         if message.app_name is not None:
             self.app_name = message.app_name
         if message.app_version is not None:
