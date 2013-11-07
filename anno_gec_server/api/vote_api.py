@@ -45,21 +45,28 @@ class VoteApi(remote.Service):
 
     vote_with_id_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
-        id=messages.IntegerField(2, required=True)
+        anno_id=messages.IntegerField(2),
+        id=messages.IntegerField(3)
     )
 
-    @endpoints.method(vote_with_id_resource_container, message_types.VoidMessage, path='vote/{id}',
-                      http_method='DELETE', name="vote.delete")
+    @endpoints.method(vote_with_id_resource_container, message_types.VoidMessage, path='vote',
+                      http_method='DELETE', name="vote.delete", )
     def vote_delete(self, request):
         """
         Exposes an API endpoint to delete an existing vote.
         """
-        if request.id is None:
-            raise endpoints.BadRequestException('id field is required.')
-        vote = Vote.get_by_id(request.id)
-        if vote is None:
-            raise endpoints.NotFoundException('No vote entity with the id "%s" exists.' % request.id)
-        vote.key.delete()
+        if request.id is None and request.anno_id is None:
+            raise endpoints.BadRequestException('id or anno_id field is required.')
+        if request.id is not None:
+            vote = Vote.get_by_id(request.id)
+            if vote is None:
+                raise endpoints.NotFoundException('No vote entity with the id "%s" exists.' % request.id)
+            vote.key.delete()
+        elif request.anno_id is not None:
+            user = User.find_user_by_email(get_endpoints_current_user().email())
+            anno = Anno.get_by_id(request.anno_id)
+            for key in Vote.query(Vote.anno_key == anno.key, Vote.creator == user.key).iter(keys_only=True):
+                key.delete()
         return message_types.VoidMessage()
 
     @endpoints.method(vote_with_id_resource_container, VoteMessage, http_method='GET', path='vote/{id}',
