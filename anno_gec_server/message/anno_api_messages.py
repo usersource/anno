@@ -32,6 +32,8 @@ class AnnoMessage(messages.Message):
     os_name = messages.StringField(13)
     os_version = messages.StringField(14)
     created = message_types.DateTimeField(15)
+    # temporary for copy tool
+    creator_id = messages.StringField(16)
 
 
 class AnnoMergeMessage(messages.Message):

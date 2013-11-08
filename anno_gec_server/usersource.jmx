@@ -64,14 +64,14 @@
   &quot;app_name&quot;: &quot;Anno&quot;,&#xd;
   &quot;app_version&quot;: &quot;1.0&quot;,&#xd;
   &quot;anno_text&quot;: &quot;2-This is a bug.&quot;,&#xd;
-  &quot;is_circle_on_top&quot;: true,&#xd;
-  &quot;is_moved&quot;: true,&#xd;
+  &quot;simple_circle_on_top&quot;: true,&#xd;
+  &quot;simple_is_moved&quot;: true,&#xd;
   &quot;level&quot;: &quot;1&quot;,&#xd;
-  &quot;model&quot;: &quot;Nexus 7&quot;,&#xd;
+  &quot;device_model&quot;: &quot;Nexus 7&quot;,&#xd;
   &quot;os_name&quot;: &quot;Android&quot;,&#xd;
   &quot;os_version&quot;: &quot;4.3&quot;,&#xd;
-  &quot;x&quot;: 200,&#xd;
-  &quot;y&quot;: 200&#xd;
+  &quot;simple_x&quot;: 200,&#xd;
+  &quot;simple_y&quot;: 200&#xd;
 }</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
