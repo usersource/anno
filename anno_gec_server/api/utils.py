@@ -19,7 +19,6 @@ def get_endpoints_current_user(raise_unauthorized=True):
     current_user = endpoints.get_current_user()
     if raise_unauthorized and current_user is None:
         raise endpoints.UnauthorizedException('Invalid token.')
-    logging.info("current user(email=" + current_user.email() + ")")
     return current_user
 
 anno_js_client_id = "955803277195.apps.googleusercontent.com"
