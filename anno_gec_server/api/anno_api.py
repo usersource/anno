@@ -118,10 +118,21 @@ class AnnoApi(remote.Service):
 
         if current user doesn't exist, the user will be created first.
         """
-        current_user = get_endpoints_current_user()
-        user = User.find_user_by_email(current_user.email())
-        if user is None:
-            user = User.insert_user(current_user.email())
+        current_user = get_endpoints_current_user(raise_unauthorized=False)
+        if current_user is None:
+            if request.creator_id is not None:
+                user = User.find_user_by_email(request.creator_id + "@gmail.com")
+                if user is None:
+                    user = User.insert_user(request.creator_id + "@gmail.com")
+            else:
+                email = 'anonymous@usersource.com'
+                user = User.find_user_by_email(email)
+                if user is None:
+                    user = User.insert_user(email)
+        else:
+            user = User.find_user_by_email(current_user.email())
+            if user is None:
+                user = User.insert_user(current_user.email())
 
         entity = Anno.insert_anno(request, user)
         return entity.to_response_message()
