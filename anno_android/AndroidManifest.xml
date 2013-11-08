@@ -60,7 +60,7 @@
                 android:configChanges="orientation|keyboardHidden"
                 android:screenOrientation="portrait"
                 android:uiOptions="splitActionBarWhenNarrow" >
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.intent.action.SEND" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -72,6 +72,22 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
 
+                <data android:mimeType="image/*" />
+            </intent-filter>-->
+        </activity>
+        <activity
+                android:name="io.usersource.annoplugin.view.AnnoDrawActivity"
+                android:configChanges="orientation|keyboardHidden"
+                android:screenOrientation="portrait"
+                android:uiOptions="splitActionBarWhenNarrow" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
@@ -96,6 +112,12 @@
                 android:screenOrientation="portrait" >
         </activity>
         <activity android:name="io.usersource.annoplugin.view.AnnoSettingActivity" />
+
+        <activity android:name="com.phonegap.plugins.childBrowser.ChildBrowser"
+                  android:label="@string/app_name">
+            <intent-filter>
+            </intent-filter>
+        </activity>
 
         <provider
                 android:name="io.usersource.annoplugin.model.AnnoContentProvider"

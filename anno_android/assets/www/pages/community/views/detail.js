@@ -38,6 +38,8 @@ define([
             level1Color = "#ff9900",
             level2Color = "#ff0000";
 
+        var imageBaseUrl = "https://usersource-anno.appspot.com/screenshot";
+
         var wipeIn = function(args)
         {
             var node = args.node = dom.byId(args.node), s = node.style, o;
@@ -334,7 +336,7 @@ define([
                     domStyle.set('editAppNameImg', 'display', 'none');
                 }
 
-                if (eventsModel.cursor.vote == "true")
+                if (eventsModel.cursor.vote == true)
                 {
                     if (!domClass.contains('imgThumbsUp','icoImgActive'))
                     {
@@ -346,7 +348,7 @@ define([
                     domClass.remove('imgThumbsUp', 'icoImgActive');
                 }
 
-                if (eventsModel.cursor.flag == "true")
+                if (eventsModel.cursor.flag == true)
                 {
                     if (!domClass.contains('imgFlag','icoImgActive'))
                     {
@@ -558,53 +560,11 @@ define([
             }
 
             showLoadingIndicator();
-            cordova.exec(
-                function (data)
-                {
-                    if (!data)
-                    {
-                        hideLoadingIndicator();
 
-                        dom.byId('hiddenBtn').focus();
-
-                        domStyle.set('appNameSpanDetail', 'display', '');
-                        domStyle.set('appNameTextBox', {display: 'none'});
-                        domStyle.set('lightCover', 'display', 'none');
-                        domStyle.set('editAppNameImg', 'display', '');
-
-                        alert("Update app name returned from server is empty.");
-                        return;
-                    }
-
-                    if (data.success != "true")
-                    {
-                        hideLoadingIndicator();
-
-                        dom.byId('hiddenBtn').focus();
-
-                        domStyle.set('appNameSpanDetail', 'display', '');
-                        domStyle.set('appNameTextBox', {display: 'none'});
-                        domStyle.set('lightCover', 'display', 'none');
-                        domStyle.set('editAppNameImg', 'display', '');
-
-                        alert(data.message);
-                        return;
-                    }
-
-
-                    var currentAnno = eventsModel.cursor;
-                    currentAnno.set('app', newAppName);
-
-                    hideLoadingIndicator();
-                    dom.byId('hiddenBtn').focus();
-
-                    domStyle.set('appNameSpanDetail', 'display', '');
-                    domStyle.set('appNameTextBox', {display: 'none'});
-                    domStyle.set('lightCover', 'display', 'none');
-                    domStyle.set('editAppNameImg', 'display', '');
-
-                },
-                function (err)
+            var annoApi = gapi.client.anno.anno.merge({id:id, app_name:newAppName});
+            annoApi.execute(function (data)
+            {
+                if (!data)
                 {
                     hideLoadingIndicator();
 
@@ -615,13 +575,36 @@ define([
                     domStyle.set('lightCover', 'display', 'none');
                     domStyle.set('editAppNameImg', 'display', '');
 
-                    alert(err);
-                },
-                "CordovaHttpService",
-                "update_app_name",
-                [{anno_id: id, "app_name": newAppName}]
+                    alert("Update app name returned from server is empty.");
+                }
 
-            );
+                if (data.error)
+                {
+                    hideLoadingIndicator();
+
+                    dom.byId('hiddenBtn').focus();
+
+                    domStyle.set('appNameSpanDetail', 'display', '');
+                    domStyle.set('appNameTextBox', {display: 'none'});
+                    domStyle.set('lightCover', 'display', 'none');
+                    domStyle.set('editAppNameImg', 'display', '');
+
+                    alert(data.message);
+                    return;
+                }
+                console.error(JSON.stringify(data.result));
+
+                var currentAnno = eventsModel.cursor;
+                currentAnno.set('app', newAppName);
+
+                hideLoadingIndicator();
+                dom.byId('hiddenBtn').focus();
+
+                domStyle.set('appNameSpanDetail', 'display', '');
+                domStyle.set('appNameTextBox', {display: 'none'});
+                domStyle.set('lightCover', 'display', 'none');
+                domStyle.set('editAppNameImg', 'display', '');
+            });
         };
 
         var showToastMsg = function(msg)
@@ -714,62 +697,55 @@ define([
                 id = eventsModel.cursor.id;
             }
 
+            dom.byId('imgDetailScreenshot').src = imageBaseUrl+"?anno_id="+id;
+            console.error("image url: "+imageBaseUrl+"?anno_id="+id);
+
             showLoadingIndicator();
-            cordova.exec(
-                function (data)
+
+            var getAnnoList = gapi.client.anno.anno.get({id:id});
+            getAnnoList.execute(function (data)
+            {
+                if (!data)
                 {
-                    if (!data&&!data.anno)
-                    {
-                        loadingDetailData = false;
-                        hideLoadingIndicator();
-                        alert("Anno detail returned from server is empty.");
-                        return;
-                    }
-
-                    if (data.success != "true")
-                    {
-                        loadingDetailData = false;
-                        hideLoadingIndicator();
-                        alert(data.message);
-                        return;
-                    }
-
-                    var currentAnno = eventsModel.cursor||eventsModel.model[0], returnAnno = data.anno, deviceInfo = '';
-
-                    currentAnno.set('circleX', parseInt(returnAnno.circleX, 10));
-                    currentAnno.set('circleY', parseInt(returnAnno.circleY, 10));
-
-                    currentAnno.set('screenshot', "data:image/png;base64,"+returnAnno.screenshot);
-
-                    currentAnno.set('comments',new getStateful(returnAnno.comments));
-
-                    deviceInfo = (returnAnno.deviceModel||'&nbsp;')+'&nbsp;'+(returnAnno.OSVersion||'&nbsp;');
-                    currentAnno.set('deviceInfo', deviceInfo);
-
-                    currentAnno.set('vote', returnAnno.vote);
-                    currentAnno.set('flag', returnAnno.flag);
-                    currentAnno.set('level', returnAnno.level);
-
-                    loadingDetailData = false;
                     hideLoadingIndicator();
-                    setDetailsContext(cursor);
+                    loadingDetailData = false;
+                    alert("Annos returned from server are empty.");
+                    return;
+                }
 
-                },
-                function (err)
+                if (data.error)
                 {
-                    loadingDetailData = false;
                     hideLoadingIndicator();
-                    alert(err);
-                },
-                "CordovaHttpService",
-                "get_anno_detail",
-                [{anno_id: id}]
-            );
+                    loadingDetailData = false;
+
+                    alert("An error occurred when calling anno.get api: "+data.error.message);
+                    return;
+                }
+                console.error(JSON.stringify(data.result));
+                var currentAnno = eventsModel.cursor||eventsModel.model[0], returnAnno = data.result, deviceInfo = '';
+
+                currentAnno.set('circleX', parseInt(returnAnno.simple_x, 10));
+                currentAnno.set('circleY', parseInt(returnAnno.simple_y, 10));
+
+                currentAnno.set('comments',new getStateful(returnAnno.followup_list||[]));
+
+                deviceInfo = (returnAnno.device_model||'&nbsp;')+'&nbsp;'+(returnAnno.os_name||'&nbsp;')+(returnAnno.os_version||'&nbsp;');
+                currentAnno.set('deviceInfo', deviceInfo);
+
+                currentAnno.set('vote', returnAnno.is_my_vote);
+                currentAnno.set('flag', returnAnno.is_my_flag);
+                currentAnno.set('level', returnAnno.level);
+
+                loadingDetailData = false;
+                hideLoadingIndicator();
+                setDetailsContext(cursor);
+
+            });
         };
 
         var saveComment = function(comment)
         {
-            var author = currentAuthor;
+            var author = currentUserInfo.email;
             var id;
             if (!eventsModel.cursor)
             {
@@ -781,40 +757,31 @@ define([
             }
 
             showLoadingIndicator();
-            cordova.exec(
-                function (data)
-                {
-                    if (!data)
-                    {
-                        hideLoadingIndicator();
-                        alert("Add followup returned from server is empty.");
-                        return;
-                    }
 
-                    if (data.success != "true")
-                    {
-                        hideLoadingIndicator();
-                        alert(data.message);
-                        return;
-                    }
-
-                    console.error(window.JSON.stringify(data));
-                    var currentAnno = eventsModel.cursor||eventsModel.model[0];
-
-                    hideLoadingIndicator();
-                    currentAnno.comments.splice(0,0,new getStateful({author:author, comment:comment}));
-                    adjustAnnoCommentSize();
-                },
-                function (err)
+            var getAnnoList = gapi.client.followup.followup.insert({anno_id:id, comment:comment});
+            getAnnoList.execute(function (data)
+            {
+                if (!data)
                 {
                     hideLoadingIndicator();
-                    alert(err);
-                },
-                "CordovaHttpService",
-                "add_follow_up",
-                [{anno_id: id, comment:comment}]
+                    alert("Annos returned from server are empty.");
+                    return;
+                }
 
-            );
+                if (data.error)
+                {
+                    hideLoadingIndicator();
+                    alert("An error occurred when calling anno.get api: "+data.error.message);
+                    return;
+                }
+                console.error(JSON.stringify(data.result));
+
+                var currentAnno = eventsModel.cursor||eventsModel.model[0];
+
+                hideLoadingIndicator();
+                currentAnno.comments.splice(0,0,new getStateful({user_id:author, comment:comment}));
+                adjustAnnoCommentSize();
+            });
         };
 
         var saveVote = function(action)
@@ -832,47 +799,52 @@ define([
             }
 
             showLoadingIndicator();
-            cordova.exec(
-                function (data)
-                {
-                    if (!data)
-                    {
-                        hideLoadingIndicator();
-                        alert("Data returned from server is empty.");
-                        savingVote = false;
-                        return;
-                    }
 
-                    if (data.success != "true")
-                    {
-                        hideLoadingIndicator();
-                        alert(data.message);
-                        savingVote = false;
-                        return;
-                    }
+            var voteApi, apiName;
 
-                    if (action == "remove_vote")
-                    {
-                        domClass.remove('imgThumbsUp', 'icoImgActive');
-                    }
-                    else
-                    {
-                        domClass.add('imgThumbsUp', 'icoImgActive');
-                    }
-                    hideLoadingIndicator();
-                    savingVote = false;
-                },
-                function (err)
+            if (action == "add_vote")
+            {
+                voteApi = gapi.client.vote.vote.insert({anno_id:id});
+                apiName = "vote.insert";
+            }
+            else
+            {
+                voteApi = gapi.client.vote.vote.delete({anno_id:id});
+                apiName = "vote.delete";
+            }
+
+            voteApi.execute(function (data)
+            {
+                if (!data)
                 {
                     hideLoadingIndicator();
-                    alert(err);
+                    alert("vote api result returned from server are empty.");
                     savingVote = false;
-                },
-                "CordovaHttpService",
-                action,
-                [{anno_id: id}]
+                    return;
+                }
 
-            );
+                if (data.error)
+                {
+                    hideLoadingIndicator();
+
+                    alert("An error occurred when calling "+apiName+" api: "+data.error.message);
+                    savingVote = false;
+                    return;
+                }
+                console.error(JSON.stringify(data.result));
+
+                if (action == "remove_vote")
+                {
+                    domClass.remove('imgThumbsUp', 'icoImgActive');
+                }
+                else
+                {
+                    domClass.add('imgThumbsUp', 'icoImgActive');
+                }
+
+                savingVote = false;
+                hideLoadingIndicator();
+            });
         };
 
         var saveFlag = function(action)
@@ -890,47 +862,51 @@ define([
             }
 
             showLoadingIndicator();
-            cordova.exec(
-                function (data)
-                {
-                    if (!data)
-                    {
-                        hideLoadingIndicator();
-                        alert("Data returned from server is empty.");
-                        savingFlag = false;
-                        return;
-                    }
 
-                    if (data.success != "true")
-                    {
-                        hideLoadingIndicator();
-                        alert(data.message);
-                        savingFlag = false;
-                        return;
-                    }
+            var flatApi, apiName;
 
-                    if (action == "remove_flag")
-                    {
-                        domClass.remove('imgFlag', 'icoImgActive');
-                    }
-                    else
-                    {
-                        domClass.add('imgFlag', 'icoImgActive');
-                    }
-                    hideLoadingIndicator();
-                    savingFlag = false;
-                },
-                function (err)
+            if (action == "add_flag")
+            {
+                flatApi = gapi.client.flag.flag.insert({anno_id:id});
+                apiName = "flag.insert";
+            }
+            else
+            {
+                flatApi = gapi.client.flag.flag.delete({anno_id:id});
+                apiName = "flag.delete";
+            }
+
+            flatApi.execute(function (data)
+            {
+                if (!data)
                 {
                     hideLoadingIndicator();
-                    alert(err);
+                    alert("vote api result returned from server are empty.");
                     savingFlag = false;
-                },
-                "CordovaHttpService",
-                action,
-                [{anno_id: id}]
+                    return;
+                }
 
-            );
+                if (data.error)
+                {
+                    hideLoadingIndicator();
+
+                    alert("An error occurred when calling "+apiName+" api: "+data.error.message);
+                    savingFlag = false;
+                    return;
+                }
+                console.error(JSON.stringify(data.result));
+
+                if (action == "remove_flag")
+                {
+                    domClass.remove('imgFlag', 'icoImgActive');
+                }
+                else
+                {
+                    domClass.add('imgFlag', 'icoImgActive');
+                }
+                hideLoadingIndicator();
+                savingFlag = false;
+            });
         };
 
         var touchStartOnTrayScreen = function(e)
@@ -970,7 +946,7 @@ define([
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('navBtnNext'), "click", function ()
-                {console.error('nextbtn');
+                {
                     goNextRecord();
                 }));
 
@@ -1177,22 +1153,6 @@ define([
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;
                 domStyle.set('modelApp_detail','backgroundColor', '#333333');
 
-                cordova.exec(
-                    function (data)
-                    {
-                        if (data&&data.current_user)
-                        {
-                            currentAuthor = data.current_user;
-                        }
-                    },
-                    function (err)
-                    {
-                        alert(err);
-                    },
-                    "CordovaHttpService",
-                    'get_account_name',
-                    []
-                );
             },
             afterActivate: function()
             {

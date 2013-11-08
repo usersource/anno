@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Anno Draw</title>
+    <script type="text/javascript">
+        var dojoConfig = {
+            parseOnLoad: true,
+            mblHideAddressBar: false,
+            mblAndroidWorkaround: false,
+            mblAlwaysHideAddressBar: false,
+            async: 1,
+            mblUserAgent: 'iPhone',
+            forceGfxRenderer2:'canvas',
+            mblThemeFiles2: ['base','SimpleDialog', 'CheckBox'],
+            packages:[
+                {
+                    name:'anno',
+                    location:'../anno'
+                }
+            ]
+        };
+    </script>
+    <script type="text/javascript" src="../../scripts/dojo/dojo.js"></script>
+    <script type="text/javascript">
+        require(["dojo/parser","dojox/mobile/deviceTheme", "dojox/mobile/SimpleDialog", "dojox/mobile/CheckBox"]);
+    </script>
+    <script type="text/javascript" src="main.js"></script>
+    <link type="text/css" href="./css/style.css" rel="stylesheet" />
+</head>
+<body id="container">
+<div id="gfxCanvasContainer" style="width: 500px; height: 500px;"></div>
+<div id="bottomBarContainer" style="display: none">
+    <table width="100%">
+        <tr>
+            <td width="25%" align="center">
+                <span id="barArrow" class="barIcon icon-arrow-up-right"></span>
+            </td>
+            <td width="25%" align="center">
+                <span id="barRectangle" class="barIcon icon-landscape"></span>
+            </td>
+            <td width="25%" align="center">
+                <span id="barComment" class="barIcon icon-chat" style="font-size: 32px;"></span>
+            </td>
+            <td width="25%" align="center">
+                <span id="barShare" style="font-size: 26px;font-weight: bold;">Share</span>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="topBar">
+    <button class="btn" id="btnHome" type="button">Home</button>
+    <button class="btn" id="btnDraw" type="button">Draw</button>
+</div>
+<div id="bottomBarBlackContainer" style="display: none">
+    <table width="100%">
+        <tr>
+            <td width="25%" align="center">
+                <div id="barBlackRectangle" class="barBlackRectangle barBlackActive"></div>
+            </td>
+            <td width="25%" align="center">
+                <span id="barBlackRectangleDone" style="font-size: 26px;font-weight: bold;">Done</span>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="shareDialog" data-dojo-type="dojox/mobile/SimpleDialog" style="display: none">
+    <div id="sdTitle">
+        <div style="padding-left: 36px;padding-top: 16px;">Annotation of: </div>
+    </div>
+    <div id="sdAppList">
+        <div class="appNameItem firstAppNameItem">
+            <div class="appNameValue">Clock</div>
+        </div>
+        <div class="appNameItem">
+            <div class="appNameValue">Dogfood</div>
+        </div>
+        <div class="appNameItem">
+            <div class="appNameValue">Eggplant cookbook</div>
+        </div>
+        <div class="appNameItem">
+            <div class="appNameValue">Groupon</div>
+        </div>
+    </div>
+    <div id="sdBottom" style="padding-left: 20px">
+        <div>
+            <input id="chkHidePersonalData" type="checkbox" data-dojo-type="dojox/mobile/CheckBox" data-dojo-props="onChange:onChkHidePersonalDataChange">
+            <label for="chkHidePersonalData">Help hide personal data</label>
+        </div>
+        <div style="text-align: center">
+            <button class="btn" id="btnShare" type="button">Share</button>
+        </div>
+    </div>
+</div>
+<button id="hiddenBtn" style="position: absolute;left:-2000px;top: -2000px;">a</button>
+</body>
+</html>

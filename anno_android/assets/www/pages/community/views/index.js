@@ -24,6 +24,7 @@ define([
         var loadingIndicator = null;
         var loadingMoreData = false,
             offset = 0, limit=30;
+        var hasMoreData = false;
         var emptyAnno = {
             "id": 0,
             "annoText": "0",
@@ -40,60 +41,81 @@ define([
             }]
         };
 
-        var loadListData = function (poffset)
+        var gceRootUrl = "";
+
+        var gce_init2 = window.gce_init2 = function ()
+        {
+            console.error('gec here');
+            showLoadingIndicator();
+            var ROOT = gceRootUrl;
+            gapi.client.load('anno', '1.0', function() {
+                loadListData();
+            }, ROOT);
+        };
+
+        var loadListData = window.loadListData = function (poffset)
         {
             if (poffset)
             {
                 loadingMoreData = true;
             }
             showLoadingIndicator();
-            cordova.exec(
-                function (data)
-                {
-                    if (!data&&!data.annos)
-                    {
-                        hideLoadingIndicator();
-                        loadingMoreData = false;
-                        alert("Annos returned from server are empty.");
-                        return;
-                    }
-                    var annoList = data.annos;
 
-                    var spliceArgs = [eventsModel.model.length, 0];
-                    for (var i = 0, l = annoList.length; i < l; i++)
-                    {
-                        var eventData = lang.clone(emptyAnno);
+            var arg = {outcome: 'cursor,has_more,anno_list', limit: limit}
 
-                        eventData.annoText = annoList[i].annoText;
-                        eventData.app = annoList[i].app;
-                        eventData.author = annoList[i].author;
-                        eventData.id = annoList[i].id;
+            if (poffset)
+            {
+                arg.cursor = poffset;
+            }
 
-                        spliceArgs.push(new getStateful(eventData));
-                    }
-
-                    eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
-
-                    hideLoadingIndicator();
-                    loadingMoreData = false;
-
-                    if (poffset)
-                    {
-                        offset = poffset;
-                    }
-
-                },
-                function (err)
+            var getAnnoList = gapi.client.anno.anno.list(arg);
+            getAnnoList.execute(function (data)
+            {
+                if (!data)
                 {
                     hideLoadingIndicator();
                     loadingMoreData = false;
-                    alert(err);
-                },
-                "CordovaHttpService",
-                "get_anno_list",
-                [{offset: eventsModel.model.length||0, limit: limit}]
+                    alert("Annos returned from server are empty.");
+                    return;
+                }
 
-            );
+                if (data.error)
+                {
+                    hideLoadingIndicator();
+                    loadingMoreData = false;
+
+                    alert("An error occurred when calling anno.list api: "+data.error.message);
+                    return;
+                }
+
+                var annoList = data.result.anno_list;
+
+                var spliceArgs = [eventsModel.model.length, 0];
+                for (var i = 0, l = annoList.length; i < l; i++)
+                {
+                    var eventData = lang.clone(emptyAnno);
+
+                    eventData.annoText = annoList[i].anno_text;
+                    eventData.app = annoList[i].app_name;
+                    eventData.author = annoList[i].creator?annoList[i].creator.user_id:"";
+                    eventData.id = annoList[i].id;
+
+                    spliceArgs.push(new getStateful(eventData));
+                }
+
+                eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
+
+                hideLoadingIndicator();
+                loadingMoreData = false;
+
+                if (poffset)
+                {
+                    offset = poffset;
+                }
+
+                hasMoreData = data.result.has_more;
+                offset = data.result.cursor;
+            });
         };
 
         var loadMoreData = function()
@@ -196,9 +218,9 @@ define([
                     }
                 }));
 
-                window.setTimeout(function(){
+                /*window.setTimeout(function(){
                     loadListData();
-                }, 50);
+                }, 50);*/
             },
             afterActivate: function()
             {

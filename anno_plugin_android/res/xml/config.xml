@@ -23,10 +23,12 @@
     Domains are assumed blocked unless set otherwise
      -->
 
-    <access origin="http://127.0.0.1*"/> <!-- allow local pages -->
+    <!--<access origin="http://127.0.0.1*"/> --><!-- allow local pages -->
 
     <!-- <access origin="https://example.com" /> allow any secure requests to example.com -->
     <!-- <access origin="https://example.com" subdomains="true" /> such as above, but including subdomains, such as www -->
+    <!--<access origin=".*"/>-->
+    <access origin="http://127.0.0.1*"/>
     <access origin=".*"/>
 
     <log level="DEBUG"/>
@@ -51,6 +53,9 @@
     <plugin name="SplashScreen" value="org.apache.cordova.SplashScreen"/>
     <plugin name="Echo" value="org.apache.cordova.Echo" />
     <plugin name="Globalization" value="org.apache.cordova.Globalization"/>
+    <plugin name="InAppBrowser" value="org.apache.cordova.InAppBrowser" />
+    <plugin name="ChildBrowser"
+            value="com.phonegap.plugins.childBrowser.ChildBrowser"/>
     <!-- anno cordova plugin -->
     <plugin name="CordovaHttpService" value="io.usersource.annoplugin.view.CordovaHttpService" />
 </plugins>
