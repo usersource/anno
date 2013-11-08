@@ -25,6 +25,7 @@ class ItemMessage(messages.Message):
     app_version = messages.StringField(11)
     os_version = messages.StringField(12)
     create_time = message_types.DateTimeField(13)
+    user_id = messages.StringField(14)
 
 class GetItemsResponse(messages.Message):
     anno_list = messages.MessageField(ItemMessage, 1, repeated=True)
@@ -76,6 +77,7 @@ class CopyApi(remote.Service):
             anno_item.model = item.model
             anno_item.os_version = item.os_version
             anno_item.create_time = item.updateTimestamp 
+            anno_item.user_id = item.user_id.user_name
             result.append(anno_item)
             
         return GetItemsResponse(anno_list=result)
