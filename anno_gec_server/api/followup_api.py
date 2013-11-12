@@ -41,6 +41,8 @@ class FollowupApi(remote.Service):
         followup.anno_key = anno.key
         followup.creator = user.key
         followup.comment = request.comment
+        if request.created is not None:
+            followup.created = request.created
         followup.put()
         return followup.to_message()
 
