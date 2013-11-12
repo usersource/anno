@@ -84,6 +84,8 @@ class Anno(BaseModel):
                      device_model=message.device_model, app_name=message.app_name, app_version=message.app_version,
                      os_name=message.os_name, os_version=message.os_version, creator=user.key)
         entity.image = message.image
+        if message.created is not None:
+            entity.created = message.created
         entity.put()
         return entity
 

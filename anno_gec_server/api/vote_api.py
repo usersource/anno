@@ -40,6 +40,8 @@ class VoteApi(remote.Service):
         vote = Vote()
         vote.anno_key = anno.key
         vote.creator = user.key
+        if request.created is not None:
+            vote.created = request.created
         vote.put()
         return vote.to_message()
 
