@@ -31,10 +31,11 @@ define([
             annoTooltipY,
             goingNextRecord = null,
             loadingDetailData = false,
+            loadingImage = false;
             trayBarHeight = 30,
             trayScreenHeight = 0;
 
-        var circleRadius = 17,
+        var circleRadius = 16,
             level1Color = "#ff9900",
             level2Color = "#ff0000";
 
@@ -134,6 +135,12 @@ define([
 
         var screenshotImageOnload = function()
         {
+            if (!loadingDetailData)
+            {
+                hideLoadingIndicator();
+            }
+
+            loadingImage = false;
             annoTooltipY = null;
             window.setTimeout(function(){
 
@@ -196,8 +203,8 @@ define([
 
                 if (eventsModel.cursor.circleX != null)
                 {
-                    var tx = (imageWidth*eventsModel.cursor.circleX)/10000 -circleRadius;
-                    var ty = (imageHeight*eventsModel.cursor.circleY)/10000 -circleRadius;
+                    var tx = Math.round((imageWidth*eventsModel.cursor.circleX)/10000) -circleRadius;
+                    var ty = Math.round((imageHeight*eventsModel.cursor.circleY)/10000) -circleRadius;
 
                     console.error("view w: "+viewPoint.w+", view h: "+viewPoint.h);
                     console.error("image width2: "+imageWidth+", image height2: "+imageHeight);
@@ -274,6 +281,15 @@ define([
                 adjustNavBarSize();
 
             }, 10);
+        };
+
+        var screenshotImageOnerror = function()
+        {
+            loadingImage = false;
+            if (!loadingDetailData)
+            {
+                hideLoadingIndicator();
+            }
         };
 
         var setDetailsContext = function (index)
@@ -676,7 +692,7 @@ define([
 
         var loadDetailData = function(cursor)
         {
-            if (loadingDetailData) return;
+            if (loadingDetailData||loadingImage) return;
 
             loadingDetailData = true;
             var previousAnno = eventsModel.cursor||eventsModel.model[0];
@@ -697,6 +713,7 @@ define([
                 id = eventsModel.cursor.id;
             }
 
+            loadingImage = true;
             dom.byId('imgDetailScreenshot').src = imageBaseUrl+"?anno_id="+id;
             console.error("image url: "+imageBaseUrl+"?anno_id="+id);
 
@@ -737,7 +754,12 @@ define([
                 currentAnno.set('level', returnAnno.level);
 
                 loadingDetailData = false;
-                hideLoadingIndicator();
+
+                if (!loadingImage)
+                {
+                    hideLoadingIndicator();
+                }
+
                 setDetailsContext(cursor);
 
             });
@@ -1151,6 +1173,7 @@ define([
                 drawOrangeCircle();
 
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;
+                dom.byId("imgDetailScreenshot").onerror = screenshotImageOnerror;
                 domStyle.set('modelApp_detail','backgroundColor', '#333333');
 
             },

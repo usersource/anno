@@ -4,13 +4,16 @@ require([
     "dojo/dom",
     "dojo/dom-class",
     "dojo/dom-style",
+    "dojo/json",
     "dojo/query",
     "dojo/ready",
     "dojo/touch",
     "dojo/window",
     "dijit/registry",
+    "anno/common/Util",
+    "anno/anno/AnnoDataHandler",
     "dojo/domReady!"
-], function (Surface, connect, dom, domClass, domStyle, query, ready, touch, win, registry)
+], function (Surface, connect, dom, domClass, domStyle, dojoJson, query, ready, touch, win, registry, annoUtil, AnnoDataHandler)
 {
     var viewPoint,
         defaultShapeWidth = 160,
@@ -53,6 +56,11 @@ require([
     connect.connect(dom.byId("barShare"), touch.release, function()
     {
         registry.byId('shareDialog').show();
+
+        //var appList = window.ADActivity.getRecentTasks(10);
+
+        //console.error(appList);
+        //console.error(JSON.stringify(appList));
     });
 
     connect.connect(dom.byId("barBlackRectangle"), touch.release, function()
@@ -147,6 +155,8 @@ require([
         domStyle.set('bottomBarContainer', 'display', '');
         domStyle.set('bottomBarBlackContainer', 'display', 'none');
         registry.byId('shareDialog').hide();
+
+        saveDrawCommentAnno();
     });
 
     window.onChkHidePersonalDataChange = function(e)
@@ -164,13 +174,11 @@ require([
 
     var createBlackRectangle = function()
     {
-        var rectangle = surface.createRectangle({
+        var rectangle = surface.createAnonymizedRectangle({
             startX: lastBlackRectanglePos.x1,
             startY: lastBlackRectanglePos.y1 - defaultShapeHeight - 50,
             width: defaultShapeWidth,
-            height: defaultShapeHeight,
-            lineStrokeStyle: {color: '#000000', width: 3},
-            hiddenColor:"rgba(0, 0, 0, 1)"
+            height: defaultShapeHeight
         });
 
         updateLastBlackRectanglePos();
@@ -204,6 +212,76 @@ require([
         {
             window.setTimeout(initBackgroundImage, 50);
         }
+    };
+
+    var saveSimpleCommentAnno = function()
+    {
+        annoUtil.showLoadingIndicator();
+
+        var deviceInfo = annoUtil.getDeviceInfo();
+        console.error(JSON.stringify(deviceInfo));
+
+        var saveImageRet = window.ADActivity.saveImage().split(",");
+        var imageKey = saveImageRet[0];
+        var screenshotDirPath = saveImageRet[1];
+
+        var appInfo = dojoJson.parse(window.ADActivity.getAppNameAndSource());
+        console.error(JSON.stringify(appInfo));
+
+        var earPoint = defaultCommentBox.getRelativeEarPoint();
+
+        var annoItem = {
+            "anno_text":defaultCommentBox.inputElement.value,
+            "image":imageKey,
+            "simple_x":earPoint.x,
+            "simple_y":earPoint.y,
+            "simple_circle_on_top":!defaultCommentBox.earLow,
+            "app_version":appInfo[2],
+            "simple_is_moved":defaultCommentBox.isMoved,
+            "level":appInfo[3],
+            "app_name":appInfo[1],
+            "device_model":deviceInfo.model,
+            "os_name":deviceInfo.osName,
+            "os_version":deviceInfo.osVersion,
+            "anno_type":"Simple Comment"
+        };
+
+        AnnoDataHandler.saveAnno(annoItem, appInfo[0], screenshotDirPath);
+    };
+
+    var saveDrawCommentAnno = function()
+    {
+        annoUtil.showLoadingIndicator();
+
+        var deviceInfo = annoUtil.getDeviceInfo();
+        console.error(JSON.stringify(deviceInfo));
+
+        var saveImageRet = window.ADActivity.saveImage().split(",");
+        var imageKey = saveImageRet[0];
+        var screenshotDirPath = saveImageRet[1];
+
+        var appInfo = dojoJson.parse(window.ADActivity.getAppNameAndSource());
+        console.error(JSON.stringify(appInfo));
+
+        var annoItem = {
+            "anno_text":surface.getConcatenatedComment(),
+            "image":imageKey,
+            "simple_x":0,
+            "simple_y":0,
+            "simple_circle_on_top":false,
+            "app_version":appInfo[2],
+            "simple_is_moved":false,
+            "level":appInfo[3],
+            "app_name":appInfo[1],
+            "device_model":deviceInfo.model,
+            "os_name":deviceInfo.osName,
+            "os_version":deviceInfo.osVersion,
+            "draw_elements":dojoJson.stringify(surface.toJSON()),
+            "screenshot_is_anonymized":surface.isScreenshotAnonymized(),
+            "anno_type":"Draw Comment"
+        };
+
+        AnnoDataHandler.saveAnno(annoItem, appInfo[0], screenshotDirPath);
     };
 
     var init = function()
@@ -282,6 +360,11 @@ require([
             domStyle.set('sdBottom', 'height', sdBottom+'px');
 
             defaultCommentBox = surface.createSimpleCommentBox({deletable:false, startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight});
+
+            connect.connect(defaultCommentBox.shareBtnNode, "click", function()
+            {
+                saveSimpleCommentAnno();
+            });
         }, 500);
     };
 

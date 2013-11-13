@@ -70,7 +70,7 @@ public class AnnoMainActivity extends FragmentActivity implements
 
     AnnoSyncAdapter.createSyncAccount(this);
     Long newUpdateTime = checkIfNewOrUpdated();
-    if (newUpdateTime != null) {
+    /*if (newUpdateTime != null) {
       SharedPreferences pref = this.getSharedPreferences(
           getString(R.string.share_preference_global), 0);
       Editor editor = pref.edit();
@@ -78,7 +78,7 @@ public class AnnoMainActivity extends FragmentActivity implements
       editor.commit();
       Intent intent = new Intent(this, IntroActivity.class);
       startActivity(intent);
-    }
+    }*/
 
     super.onCreate(savedInstanceState);
     setContentView(R.layout.anno_home);

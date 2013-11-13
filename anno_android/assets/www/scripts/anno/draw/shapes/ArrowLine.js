@@ -20,10 +20,16 @@ define([
             arrowHeadFillStyle: "rgba(255, 153, 0, 1)",
             shapeType: "ArrowLine",
             minSize:100,
+            arrowPoints:null,
+            redrawn:false,
             createShape: function (args)
             {
                 this.createArrowLine(args);
-                this.surface.selectShape(this);
+
+                if (this.selectable)
+                {
+                    this.surface.selectShape(this);
+                }
             },
             createArrowLine: function (args)
             {
@@ -33,7 +39,24 @@ define([
 
                 var length = this.arrowLength;
                 var angle = this.arrowAngle;
-                var arrowLinePoints = this._getShapePoints(x1, y1, x2, y2, angle, length);
+                var arrowLinePoints;
+                var endPointFillStyle = this.endpointFillStyle,
+                    endPointStrokeStyle = this.endpointStrokeStyle,
+                    xColor = this.xColor;
+
+                if (args.shapeJson)
+                {
+                    x1 = args.shapeJson._o.x1, y1 = args.shapeJson._o.y1, x2 = args.shapeJson._o.x2, y2 = args.shapeJson._o.y2;
+                    arrowLinePoints = this.arrowPoints = args.shapeJson.points;
+
+                    endPointFillStyle = this.endpointHiddenStrokeStyle;
+                    endPointStrokeStyle = this.endpointHiddenFillStyle;
+                    xColor = this.xHiddenColor;
+                }
+                else
+                {
+                    arrowLinePoints = this.arrowPoints = this._getShapePoints(x1, y1, x2, y2, angle, length);
+                }
 
                 var linePoints = arrowLinePoints.line;
                 var arrowPoints = arrowLinePoints.arrow;
@@ -56,91 +79,99 @@ define([
                 this.hiddenArea.isSelectTarget = true;
                 this.hiddenArea.sid = this.id;
 
-                this.endpoint1 = surface.createCircle({cx: linePoints[0].x, cy: linePoints[0].y, r: circleR}).setStroke(this.endpointStrokeStyle).setFill(this.endpointFillStyle);
-                this.endpoint2 = surface.createCircle({cx: arrowPoints[1].x, cy: arrowPoints[1].y, r: circleR}).setStroke(this.endpointStrokeStyle).setFill(this.endpointFillStyle);
+                this.endpoint1 = surface.createCircle({cx: linePoints[0].x, cy: linePoints[0].y, r: circleR}).setStroke(endPointStrokeStyle).setFill(endPointFillStyle);
+                this.endpoint2 = surface.createCircle({cx: arrowPoints[1].x, cy: arrowPoints[1].y, r: circleR}).setStroke(endPointStrokeStyle).setFill(endPointFillStyle);
                 this.endpoint1.sid = this.id;
                 this.endpoint2.sid = this.id;
 
                 var xPoints = arrowLinePoints.x;
-                this.x = surface.createText({x: xPoints[0].x, y: xPoints[0].y, text: "x", align: "middle"}).setFont(this.xFont).setStroke(this.xColor).setFill(this.xColor);
+                this.x = surface.createText({x: xPoints[0].x, y: xPoints[0].y, text: "x", align: "middle"}).setFont(this.xFont).setStroke(xColor).setFill(xColor);
                 this.x.sid = this.id;
                 this.x.isX = true;
 
-                var hiddenAreaMover = new gfx.Moveable(this.hiddenArea);
-
-                var circle1Mover = new gfx.Moveable(this.endpoint1);
-                var circle2Mover = new gfx.Moveable(this.endpoint2);
-
-                this._connects.push(connect.connect(hiddenAreaMover, "onMoved", this, function (mover, shift)
+                if (this.selectable)
                 {
-                    if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy))
+                    var hiddenAreaMover = new gfx.Moveable(this.hiddenArea);
+
+                    var circle1Mover = new gfx.Moveable(this.endpoint1);
+                    var circle2Mover = new gfx.Moveable(this.endpoint2);
+
+                    this._connects.push(connect.connect(hiddenAreaMover, "onMoved", this, function (mover, shift)
                     {
-                        this.rollbackEndpoint(mover.shape, shift);
-                        return;
-                    }
+                        if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy))
+                        {
+                            this.rollbackEndpoint(mover.shape, shift);
+                            return;
+                        }
 
-                    this.line.applyTransform({dy: shift.dy, dx: shift.dx});
-                    this.arrowHead.applyTransform({dy: shift.dy, dx: shift.dx});
-                    this.endpoint1.applyTransform({dy: shift.dy, dx: shift.dx});
-                    this.endpoint2.applyTransform({dy: shift.dy, dx: shift.dx});
-                    this.x.applyTransform({dy: shift.dy, dx: shift.dx});
-                }));
+                        this.line.applyTransform({dy: shift.dy, dx: shift.dx});
+                        this.arrowHead.applyTransform({dy: shift.dy, dx: shift.dx});
+                        this.endpoint1.applyTransform({dy: shift.dy, dx: shift.dx});
+                        this.endpoint2.applyTransform({dy: shift.dy, dx: shift.dx});
+                        this.x.applyTransform({dy: shift.dy, dx: shift.dx});
 
-                this._connects.push(connect.connect(circle1Mover, "onMoved", this, function (mover, shift)
-                {
-                    if (!this.isMoveable())
+                        this.redrawn = false;
+                    }));
+
+                    this._connects.push(connect.connect(circle1Mover, "onMoved", this, function (mover, shift)
                     {
-                        this.rollbackEndpoint(mover.shape, shift);
-                        return;
-                    }
+                        if (!this.isMoveable())
+                        {
+                            this.rollbackEndpoint(mover.shape, shift);
+                            return;
+                        }
 
-                    if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy))
+                        if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy))
+                        {
+                            this.rollbackEndpoint(mover.shape, shift);
+                            return;
+                        }
+
+                        var o = this.line._o;
+                        var arrowLinePoints = this._getShapePoints(o.x1 + shift.dx, o.y1 + shift.dy, o.x2, o.y2, angle, length);
+
+                        if (arrowLinePoints.distance< this.minSize )
+                        {
+                            this.rollbackEndpoint(mover.shape, shift);
+                            return;
+                        }
+
+                        this.arrowPoints = arrowLinePoints;
+
+                        this._redrawShape(arrowLinePoints);
+                        this.line._o = {x1: o.x1 + shift.dx, y1: o.y1 + shift.dy, x2: o.x2, y2: o.y2};
+                    }));
+
+                    this._connects.push(connect.connect(circle2Mover, "onMoved", this, function (mover, shift)
                     {
-                        this.rollbackEndpoint(mover.shape, shift);
-                        return;
-                    }
+                        if (!this.isMoveable())
+                        {
+                            this.rollbackEndpoint(mover.shape, shift);
+                            return;
+                        }
 
-                    var o = this.line._o;
-                    var arrowLinePoints = this._getShapePoints(o.x1 + shift.dx, o.y1 + shift.dy, o.x2, o.y2, angle, length);
+                        if (this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy))
+                        {
+                            this.rollbackEndpoint(mover.shape, shift);
+                            return;
+                        }
 
-                    if (arrowLinePoints.distance< this.minSize )
-                    {
-                        this.rollbackEndpoint(mover.shape, shift);
-                        return;
-                    }
+                        var o = this.line._o;
+                        var arrowLinePoints = this._getShapePoints(o.x1, o.y1, o.x2 + shift.dx, o.y2 + shift.dy, angle, length);
 
-                    this._redrawShape(arrowLinePoints);
-                    this.line._o = {x1: o.x1 + shift.dx, y1: o.y1 + shift.dy, x2: o.x2, y2: o.y2};
-                }));
+                        if (arrowLinePoints.distance< this.minSize )
+                        {
+                            this.rollbackEndpoint(mover.shape, shift);
+                            return;
+                        }
 
-                this._connects.push(connect.connect(circle2Mover, "onMoved", this, function (mover, shift)
-                {
-                    if (!this.isMoveable())
-                    {
-                        this.rollbackEndpoint(mover.shape, shift);
-                        return;
-                    }
+                        this.arrowPoints = arrowLinePoints;
+                        this._redrawShape(arrowLinePoints);
+                        this.line._o = {x1: o.x1, y1: o.y1, x2: o.x2 + shift.dx, y2: o.y2 + shift.dy};
+                    }));
 
-                    if (this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy))
-                    {
-                        this.rollbackEndpoint(mover.shape, shift);
-                        return;
-                    }
-
-                    var o = this.line._o;
-                    var arrowLinePoints = this._getShapePoints(o.x1, o.y1, o.x2 + shift.dx, o.y2 + shift.dy, angle, length);
-
-                    if (arrowLinePoints.distance< this.minSize )
-                    {
-                        this.rollbackEndpoint(mover.shape, shift);
-                        return;
-                    }
-
-                    this._redrawShape(arrowLinePoints);
-                    this.line._o = {x1: o.x1, y1: o.y1, x2: o.x2 + shift.dx, y2: o.y2 + shift.dy};
-                }));
-
-                this._connects.push(this.x.on(touch.release, lang.hitch(this, this.onXTouched)));
+                    this._connects.push(this.x.on(touch.release, lang.hitch(this, this.onXTouched)));
+                }
             },
             _getShapePoints: function (x1, y1, x2, y2, angle, d)
             {
@@ -216,6 +247,8 @@ define([
                 this.arrowHead.setShape("M" + arrowHeadPoints[0].x + " " + arrowHeadPoints[0].y + " L" + arrowHeadPoints[1].x + " " + arrowHeadPoints[1].y + " L" + arrowHeadPoints[2].x + " " + arrowHeadPoints[2].y + " L" + arrowHeadPoints[0].x + " " + arrowHeadPoints[0].y + " Z");
                 this.hiddenArea.setShape({x1: hiddenAreaPoints[0].x, y1: hiddenAreaPoints[0].y, x2: hiddenAreaPoints[1].x, y2: hiddenAreaPoints[1].y});
                 this.x.setShape({x: xPoints[0].x, y: xPoints[0].y});
+
+                this.redrawn = true;
             },
             destroy: function ()
             {
@@ -233,6 +266,8 @@ define([
             {
                 this.inherited(arguments);
 
+                if (!this.selectable) return;
+
                 if (sel)
                 {
                     this.endpoint1.setStroke(this.endpointStrokeStyle).setFill(this.endpointFillStyle);
@@ -247,6 +282,53 @@ define([
             setId: function(id)
             {
                 this.inherited(arguments);
+            },
+            toJSON: function()
+            {
+                if (this.redrawn)
+                {
+                    return {type:this.shapeType, points:this.arrowPoints, "_o":this.line._o};
+                }
+                else
+                {
+                    // apply transform dx, dy.
+                    var dx = 0, dy = 0;
+
+                    if (this.line.matrix)
+                    {
+                        dx = this.line.matrix.dx;
+                        dy = this.line.matrix.dy;
+
+                        var ps = lang.clone(this.arrowPoints);
+
+                        ps.line[0].x += dx;
+                        ps.line[0].y += dy;
+                        ps.line[1].x += dx;
+                        ps.line[1].y += dy;
+
+                        ps.arrow[0].x += dx;
+                        ps.arrow[0].y += dy;
+                        ps.arrow[1].x += dx;
+                        ps.arrow[1].y += dy;
+                        ps.arrow[2].x += dx;
+                        ps.arrow[2].y += dy;
+
+                        ps.hiddenArea[0].x += dx;
+                        ps.hiddenArea[0].y += dy;
+                        ps.hiddenArea[1].x += dx;
+                        ps.hiddenArea[1].y += dy;
+
+                        ps.x[0].x += dx;
+                        ps.x[0].y += dy;
+
+                        return {type:this.shapeType, points:ps, "_o":this.line._o};;
+                    }
+                    else
+                    {
+                        return {type:this.shapeType, points:this.arrowPoints, "_o":this.line._o};
+                    }
+                }
+
             }
         });
     });

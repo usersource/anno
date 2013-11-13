@@ -13,9 +13,10 @@ define([
     "dijit/registry",
     "dojox/mvc/at",
     "dojo/store/Memory",
-    "dojox/mvc/getStateful"
+    "dojox/mvc/getStateful",
+    "anno/common/Util"
 ],
-    function (arrayUtil, dom, domClass, domGeom, domStyle, query, lang, connect, win, has, sniff, registry, at, Memory, getStateful)
+    function (arrayUtil, dom, domClass, domGeom, domStyle, query, lang, connect, win, has, sniff, registry, at, Memory, getStateful, annoUtil)
     {
         var _connectResults = []; // events connect results
         var eventsModel = null;
@@ -55,6 +56,7 @@ define([
 
         var loadListData = window.loadListData = function (poffset)
         {
+            annoUtil.hasConnection();
             if (poffset)
             {
                 loadingMoreData = true;
@@ -99,6 +101,8 @@ define([
                     eventData.app = annoList[i].app_name;
                     eventData.author = annoList[i].creator?annoList[i].creator.user_id:"";
                     eventData.id = annoList[i].id;
+                    eventData.circleX = parseInt(annoList[i].simple_x, 10);
+                    eventData.circleY = parseInt(annoList[i].simple_y, 10);
 
                     spliceArgs.push(new getStateful(eventData));
                 }

@@ -28,6 +28,24 @@
         require(["dojo/parser","dojox/mobile/deviceTheme", "dojox/mobile/SimpleDialog", "dojox/mobile/CheckBox"]);
     </script>
     <script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript">
+        var apiVersion = "1.0";
+        var currentUserInfo = {email:''};
+        function gce_init()
+        {
+            var ROOT = 'https://usersource-anno.appspot.com/_ah/api';
+            gapi.client.load('anno', apiVersion, function(yy) {
+                console.error("Anno API loaded.");
+            }, ROOT);
+        }
+    </script>
+    <script type="text/javascript" src="../../scripts/gce.js"></script>
+    <script type="text/javascript" src="../community/cordova-min.js"></script>
+    <script type="text/javascript" src="../../childbrowser.js"></script>
+    <script type="text/javascript" src="../../scripts/gceAuth.js"></script>
+    <script type="text/javascript" src="../community/heartcode-canvasloader-min.js"></script>
+    <script type="text/javascript" src="../../SQLitePlugin.js"></script>
+    <script type="text/javascript" src="../../scripts/dbHandler.js"></script>
     <link type="text/css" href="./css/style.css" rel="stylesheet" />
 </head>
 <body id="container">

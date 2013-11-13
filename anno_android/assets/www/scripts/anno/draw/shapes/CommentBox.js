@@ -32,27 +32,47 @@ define([
             createShape: function (args)
             {
                 this.createCommentBox(args);
-                this.surface.selectShape(this);
+                if (this.selectable)
+                {
+                    this.surface.selectShape(this);
+                }
             },
             createCommentBox: function (args)
             {
-                var startX = args.startX, startY = args.startY, width = args.width, height = args.height;
                 var circleR = this.circleR;
                 var surface = this.surface.surface;
+                var endPointFillStyle = this.endpointFillStyle,
+                    endPointStrokeStyle = this.endpointStrokeStyle,
+                    xColor = this.xColor;
+                var comment = "";
 
-                var pathPoints = this._getBoxPointsPath();
-                this.path = surface.createPath(pathPoints.path).setStroke(this.lineStrokeStyle).setFill("#ffffff"); //this.hiddenColor
+                var pathPoints;
+
+                if (args.shapeJson)
+                {
+                    pathPoints = this._getBoxPointsPathByShapeJson();
+                    endPointFillStyle = this.endpointHiddenStrokeStyle;
+                    endPointStrokeStyle = this.endpointHiddenFillStyle;
+                    xColor = this.xHiddenColor;
+                    comment = args.shapeJson.comment;
+                }
+                else
+                {
+                    pathPoints = this._getBoxPointsPath();
+                }
+
+                this.path = surface.createPath(pathPoints.path).setStroke(this.lineStrokeStyle).setFill("#ffffff");
                 this.path.isSelectTarget = true;
                 this.path.sid = this.id;
 
-                this.endpoint1 = surface.createCircle({cx: pathPoints.endpointsPos[0].x, cy: pathPoints.endpointsPos[0].y, r: circleR}).setStroke(this.endpointStrokeStyle).setFill(this.endpointFillStyle);
-                this.endpoint2 = surface.createCircle({cx: pathPoints.endpointsPos[1].x, cy: pathPoints.endpointsPos[1].y, r: circleR}).setStroke(this.endpointStrokeStyle).setFill(this.endpointFillStyle);
-                this.endpoint3 = surface.createCircle({cx: pathPoints.endpointsPos[2].x, cy: pathPoints.endpointsPos[2].y, r: circleR}).setStroke(this.endpointStrokeStyle).setFill(this.endpointFillStyle);
+                this.endpoint1 = surface.createCircle({cx: pathPoints.endpointsPos[0].x, cy: pathPoints.endpointsPos[0].y, r: circleR}).setStroke(endPointStrokeStyle).setFill(endPointFillStyle);
+                this.endpoint2 = surface.createCircle({cx: pathPoints.endpointsPos[1].x, cy: pathPoints.endpointsPos[1].y, r: circleR}).setStroke(endPointStrokeStyle).setFill(endPointFillStyle);
+                this.endpoint3 = surface.createCircle({cx: pathPoints.endpointsPos[2].x, cy: pathPoints.endpointsPos[2].y, r: circleR}).setStroke(endPointStrokeStyle).setFill(endPointFillStyle);
                 this.endpoint1.sid = this.id;
                 this.endpoint2.sid = this.id;
                 this.endpoint3.sid = this.id;
 
-                this.x = surface.createText({x: pathPoints.xPos.x, y: pathPoints.xPos.y, text: "x", align: "middle"}).setFont(this.xFont).setStroke(this.xColor).setFill(this.xColor);
+                this.x = surface.createText({x: pathPoints.xPos.x, y: pathPoints.xPos.y, text: "x", align: "middle"}).setFont(this.xFont).setStroke(xColor).setFill(xColor);
                 this.x.sid = this.id;
                 this.x.isX = true;
 
@@ -70,6 +90,16 @@ define([
                     innerHTML:"<textarea id='input_"+this.id+"' placeholder='Enter suggestion here' style='font-family: helvetica, arial;font-size: 16px;font-weight: bold;background-color:transparent;width:100%;height:100%;padding:0px;border:none;outline: none;'></textarea>"
                 }, document.body, 'last');
                 this.inputElement = dom.byId("input_"+this.id);
+
+                // set comment text
+                if (comment)
+                {
+                    var textDiv = dom.byId('textDiv_'+this.id);
+                    dom.byId('textDiv_'+this.id).innerHTML = comment.replace(/\n/g, "<br>");
+                    domStyle.set(textDiv, 'color', this.normalColor);
+
+                    this.inputElement.value = comment;
+                }
 
                 this._connects.push(connect.connect(this.inputElement, "blur", this, function (e)
                 {
@@ -92,143 +122,145 @@ define([
                     dom.byId("hiddenBtn").focus();
                 }));
 
-
                 var ts = dojox.gfx.shape.Shape();
                 ts.rawNode = this.txtNode;
 
-                var commentBoxMover = new gfx.Moveable(ts);
-                connect.connect(commentBoxMover, "onMoved", this, function (mover, shift)
+                if (this.selectable)
                 {
-                    if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint3, shift.dx, shift.dy))
+                    var commentBoxMover = new gfx.Moveable(ts);
+                    connect.connect(commentBoxMover, "onMoved", this, function (mover, shift)
                     {
-                        return;
-                    }
+                        if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint3, shift.dx, shift.dy))
+                        {
+                            return;
+                        }
 
-                    var top = parseInt(this.txtNode.style.top);
-                    this.txtNode.style.top = (top+shift.dy)+'px';
-                    this.inputNode.style.top = (top+shift.dy)+'px';
-                    var left = parseInt(this.txtNode.style.left);
-                    this.txtNode.style.left = (left+shift.dx)+'px';
-                    this.inputNode.style.left = (left+shift.dx)+'px';
+                        var top = parseInt(this.txtNode.style.top);
+                        this.txtNode.style.top = (top+shift.dy)+'px';
+                        this.inputNode.style.top = (top+shift.dy)+'px';
+                        var left = parseInt(this.txtNode.style.left);
+                        this.txtNode.style.left = (left+shift.dx)+'px';
+                        this.inputNode.style.left = (left+shift.dx)+'px';
 
-                    this.path.applyTransform({dy: shift.dy, dx: shift.dx});
-                    this.endpoint1.applyTransform({dy: shift.dy, dx: shift.dx});
-                    this.endpoint2.applyTransform({dy: shift.dy, dx: shift.dx});
-                    this.endpoint3.applyTransform({dy: shift.dy, dx: shift.dx});
+                        this.path.applyTransform({dy: shift.dy, dx: shift.dx});
+                        this.endpoint1.applyTransform({dy: shift.dy, dx: shift.dx});
+                        this.endpoint2.applyTransform({dy: shift.dy, dx: shift.dx});
+                        this.endpoint3.applyTransform({dy: shift.dy, dx: shift.dx});
 
-                    this.x.applyTransform({dy: shift.dy, dx: shift.dx});
-                });
+                        this.x.applyTransform({dy: shift.dy, dx: shift.dx});
+                    });
 
-                connect.connect(commentBoxMover, "onMoveStop", this, function (mover, shift)
-                {
-                    //console.error('move stop');
-                });
-
-                var pathMover = new gfx.Moveable(this.path);
-                var endpoint1Mover = new gfx.Moveable(this.endpoint1);
-                var endpoint2Mover = new gfx.Moveable(this.endpoint2);
-                var endpoint3Mover = new gfx.Moveable(this.endpoint3);
-
-                this._connects.push(connect.connect(pathMover, "onMoved", this, function (mover, shift)
-                {
-                    if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint3, shift.dx, shift.dy))
+                    connect.connect(commentBoxMover, "onMoveStop", this, function (mover, shift)
                     {
-                        this.rollbackEndpoint(mover.shape, shift);
-                        return;
-                    }
+                        //console.error('move stop');
+                    });
 
-                    this.endpoint1.applyTransform({dy: shift.dy, dx: shift.dx});
-                    this.endpoint2.applyTransform({dy: shift.dy, dx: shift.dx});
-                    this.endpoint3.applyTransform({dy: shift.dy, dx: shift.dx});
+                    var pathMover = new gfx.Moveable(this.path);
+                    var endpoint1Mover = new gfx.Moveable(this.endpoint1);
+                    var endpoint2Mover = new gfx.Moveable(this.endpoint2);
+                    var endpoint3Mover = new gfx.Moveable(this.endpoint3);
 
-                    this.x.applyTransform({dy: shift.dy, dx: shift.dx});
-
-                    var top = parseInt(this.txtNode.style.top);
-                    this.txtNode.style.top = (top+shift.dy)+'px';
-                    this.inputNode.style.top = (top+shift.dy)+'px';
-                    var left = parseInt(this.txtNode.style.left);
-                    this.txtNode.style.left = (left+shift.dx)+'px';
-                    this.inputNode.style.left = (left+shift.dx)+'px';
-                }));
-
-                this._connects.push(connect.connect(endpoint1Mover, "onMoved", this, function (mover, shift)
-                {
-                    if (!this.isMoveable())
+                    this._connects.push(connect.connect(pathMover, "onMoved", this, function (mover, shift)
                     {
-                        this.rollbackEndpoint(mover.shape, shift);
-                        return;
-                    }
+                        if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint3, shift.dx, shift.dy))
+                        {
+                            this.rollbackEndpoint(mover.shape, shift);
+                            return;
+                        }
 
-                    if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy)||!this._isEndpoint1Moveable(shift.dx, shift.dy))
+                        this.endpoint1.applyTransform({dy: shift.dy, dx: shift.dx});
+                        this.endpoint2.applyTransform({dy: shift.dy, dx: shift.dx});
+                        this.endpoint3.applyTransform({dy: shift.dy, dx: shift.dx});
+
+                        this.x.applyTransform({dy: shift.dy, dx: shift.dx});
+
+                        var top = parseInt(this.txtNode.style.top);
+                        this.txtNode.style.top = (top+shift.dy)+'px';
+                        this.inputNode.style.top = (top+shift.dy)+'px';
+                        var left = parseInt(this.txtNode.style.left);
+                        this.txtNode.style.left = (left+shift.dx)+'px';
+                        this.inputNode.style.left = (left+shift.dx)+'px';
+                    }));
+
+                    this._connects.push(connect.connect(endpoint1Mover, "onMoved", this, function (mover, shift)
                     {
-                        this.rollbackEndpoint(mover.shape, shift);
-                        return;
-                    }
+                        if (!this.isMoveable())
+                        {
+                            this.rollbackEndpoint(mover.shape, shift);
+                            return;
+                        }
 
-                    var pathPoints = this._getBoxPointsPathForBTEndpointChange(shift.dx, shift.dy);
+                        if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy)||!this._isEndpoint1Moveable(shift.dx, shift.dy))
+                        {
+                            this.rollbackEndpoint(mover.shape, shift);
+                            return;
+                        }
 
-                    this.path.setShape(pathPoints.path);
-                    var boundingBox = this.path.getTransformedBoundingBox();
+                        var pathPoints = this._getBoxPointsPathForBTEndpointChange(shift.dx, shift.dy);
 
-                    domStyle.set(this.txtNode, {left:(boundingBox[0].x+3)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
-                    domStyle.set(this.inputNode, {left:(boundingBox[0].x+3)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
-                }));
+                        this.path.setShape(pathPoints.path);
+                        var boundingBox = this.path.getTransformedBoundingBox();
 
-                this._connects.push(connect.connect(endpoint2Mover, "onMoved", this, function (mover, shift)
-                {
-                    if (!this.isMoveable())
+                        domStyle.set(this.txtNode, {left:(boundingBox[0].x+3)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
+                        domStyle.set(this.inputNode, {left:(boundingBox[0].x+3)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
+                    }));
+
+                    this._connects.push(connect.connect(endpoint2Mover, "onMoved", this, function (mover, shift)
                     {
-                        this.rollbackEndpoint(mover.shape, shift);
-                        return;
-                    }
+                        if (!this.isMoveable())
+                        {
+                            this.rollbackEndpoint(mover.shape, shift);
+                            return;
+                        }
 
-                    if (this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy)||!this._isEarMoveable(shift.dx, shift.dy))
+                        if (this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy)||!this._isEarMoveable(shift.dx, shift.dy))
+                        {
+                            this.rollbackEndpoint(mover.shape, shift);
+                            return;
+                        }
+
+                        var pathPoints = this._getBoxPointsPathForEarChange(this.endpoint2, shift.dx, shift.dy);
+
+                        this.path.setShape(pathPoints.path);
+                    }));
+
+                    this._connects.push(connect.connect(endpoint3Mover, "onMoved", this, function (mover, shift)
                     {
-                        this.rollbackEndpoint(mover.shape, shift);
-                        return;
-                    }
+                        if (!this.isMoveable())
+                        {
+                            this.rollbackEndpoint(mover.shape, shift);
+                            return;
+                        }
 
-                    var pathPoints = this._getBoxPointsPathForEarChange(this.endpoint2, shift.dx, shift.dy);
+                        if (this.isEndpointOutScreen(this.endpoint3, shift.dx, shift.dy)||!this._isEndpoint3Moveable(shift.dx, shift.dy))
+                        {
+                            this.rollbackEndpoint(mover.shape, shift);
+                            return;
+                        }
 
-                    this.path.setShape(pathPoints.path);
-                }));
+                        var pathPoints = this._getBoxPointsPathForUREndpointChange(shift.dx, shift.dy);
 
-                this._connects.push(connect.connect(endpoint3Mover, "onMoved", this, function (mover, shift)
-                {
-                    if (!this.isMoveable())
+                        this.path.setShape(pathPoints.path);
+                        this.x.applyTransform({dy: shift.dy, dx: shift.dx});
+
+                        domStyle.set(this.txtNode, {top:(this.pathPoints[0].y+3)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
+                        domStyle.set(this.inputNode, {top:(this.pathPoints[0].y+3)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
+                    }));
+
+                    this._connects.push(this.x.on(touch.release, lang.hitch(this, this.onXTouched)));
+
+                    this._connects.push(connect.connect(this.txtNode, touch.release, this, function (e)
                     {
-                        this.rollbackEndpoint(mover.shape, shift);
-                        return;
-                    }
-
-                    if (this.isEndpointOutScreen(this.endpoint3, shift.dx, shift.dy)||!this._isEndpoint3Moveable(shift.dx, shift.dy))
-                    {
-                        this.rollbackEndpoint(mover.shape, shift);
-                        return;
-                    }
-
-                    var pathPoints = this._getBoxPointsPathForUREndpointChange(shift.dx, shift.dy);
-
-                    this.path.setShape(pathPoints.path);
-                    this.x.applyTransform({dy: shift.dy, dx: shift.dx});
-
-                    domStyle.set(this.txtNode, {top:(this.pathPoints[0].y+3)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
-                    domStyle.set(this.inputNode, {top:(this.pathPoints[0].y+3)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
-                }));
-
-                this._connects.push(this.x.on(touch.release, lang.hitch(this, this.onXTouched)));
-
-                this._connects.push(connect.connect(this.txtNode, touch.release, this, function (e)
-                {
-                    if (this.selected)
-                    {
-                        this._openKeybord();
-                    }
-                    else
-                    {
-                        this.surface.selectShape(this);
-                    }
-                }));
+                        if (this.selected)
+                        {
+                            this._openKeybord();
+                        }
+                        else
+                        {
+                            this.surface.selectShape(this);
+                        }
+                    }));
+                }
             },
             _openKeybord: function(e)
             {
@@ -368,6 +400,30 @@ define([
                     xPos:{x: rightX-6, y:leftY1-40}
                 };
             },
+            _getBoxPointsPathByShapeJson: function(eX, eY)
+            {
+                var cp = this.pathPoints = this.shapeJson.points;
+
+                var leftX = cp[0].x, rightX = cp[4].x = cp[4].x;
+                var leftY1 = cp[0].y = cp[0].y, leftY2 = cp[5].y;
+
+                var x2 = cp[1].x;
+                var x3 = cp[2].x;
+                var y3 = cp[2].y;
+                var x4 = cp[3].x;
+
+                var path = "M"+leftX+" "+leftY1 + " L"+x2+" "+leftY1+" L"+x3+" "+y3+" L"+x4+" "+leftY1+" L"+rightX+" "+leftY1+
+                    " L"+rightX+" "+leftY2+" L"+leftX+" "+leftY2+ " L"+ leftX+" "+leftY1 + " Z";
+
+                return {
+                    path: path,
+                    endpointsPos:[
+                        {x: leftX, y: leftY2},
+                        {x: x3, y: y3},
+                        {x: rightX, y: leftY1}],
+                    xPos:{x: rightX-6, y:leftY1-40}
+                };
+            },
             _isEarMoveable: function(dx, dy)
             {
                 var cp = this.pathPoints;
@@ -435,6 +491,7 @@ define([
             setSelected: function (sel)
             {
                 this.inherited(arguments);
+                if (!this.selectable) return;
 
                 if (sel)
                 {
@@ -452,6 +509,28 @@ define([
             setId: function (id)
             {
                 this.inherited(arguments);
+            },
+            getComment:function()
+            {
+                return this.inputElement.value;
+            },
+            toJSON: function()
+            {
+                var ps = lang.clone(this.pathPoints);
+
+                if (this.path.matrix)
+                {
+                    var dx = this.path.matrix.dx;
+                    var dy = this.path.matrix.dy;
+
+                    for (var i= 0,c=ps.length;i<c;i++)
+                    {
+                        ps[i].x += dx;
+                        ps[i].y += dy;
+                    }
+                }
+
+                return {type:this.shapeType, points:ps, comment:this.inputElement.value};
             }
         });
     });

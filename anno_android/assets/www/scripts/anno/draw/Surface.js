@@ -12,7 +12,8 @@ define([
     "./shapes/ArrowLine",
     "./shapes/Rectangle",
     "./shapes/CommentBox",
-    "./shapes/SimpleCommentBox"
+    "./shapes/SimpleCommentBox",
+    "./shapes/AnonymizedRectangle"
 ],
     function (
         declare,
@@ -28,7 +29,8 @@ define([
         ArrowLine,
         Rectangle,
         CommentBox,
-        SimpleCommentBox
+        SimpleCommentBox,
+        AnonymizedRectangle
         )
     {
         /**
@@ -40,6 +42,13 @@ define([
             registry:{},
             _g_id: 0,
             drawMode:false,
+            shapeTypes: {
+                ArrowLine:"ArrowLine",
+                Rectangle:"Rectangle",
+                CommentBox:"CommentBox",
+                SimpleCommentBox:"SimpleCommentBox",
+                AnonymizedRectangle:"AnonymizedRectangle"
+            },
             constructor: function(args)
             {
                 lang.mixin(this, args);
@@ -73,7 +82,10 @@ define([
                         }
                         else
                         {
-                            self.removeSelection();
+                            if (e.target.tagName.toUpperCase() == "SVG")
+                            {
+                                self.removeSelection();
+                            }
                         }
                     }
                 });
@@ -109,6 +121,18 @@ define([
                 rectangle.createShape(args);
                 return rectangle;
             },
+            createAnonymizedRectangle: function(args)
+            {
+                this.beforeCreateShape(args);
+
+                var rectangle = new AnonymizedRectangle(args);
+                var id = this._generateShapeId(rectangle.shapeType);
+                rectangle.setId(id);
+                this.registry[id] = rectangle;
+
+                rectangle.createShape(args);
+                return rectangle;
+            },
             createCommentBox: function(args)
             {
                 this.beforeCreateShape(args);
@@ -132,6 +156,10 @@ define([
 
                 rectangle.createShape(args);
                 return rectangle;
+            },
+            createImage:function(args)
+            {
+                this.surface.createImage(args);
             },
             _generateShapeId: function(shapeType)
             {
@@ -224,6 +252,82 @@ define([
             switchMode: function(drawMode)
             {
                 this.drawMode = drawMode;
+            },
+            clear: function()
+            {
+                var shape;
+                for (var p in this.registry)
+                {
+                    shape = this.registry[p];
+                    this.removeShape(shape);
+                }
+            },
+            toJSON: function()
+            {
+                var shape, jsonObject = {};
+                for (var p in this.registry)
+                {
+                    shape = this.registry[p];
+                    jsonObject[p] = shape.toJSON();
+                }
+
+                return jsonObject;
+            },
+            getConcatenatedComment: function()
+            {
+                var shape, comments = [];
+                for (var p in this.registry)
+                {
+                    shape = this.registry[p];
+
+                    if (shape.shapeType == this.shapeTypes.CommentBox)
+                    {
+                        comments.push(shape.getComment());
+                    }
+                }
+
+                return comments.join("... ...");
+            },
+            isScreenshotAnonymized: function()
+            {
+                var anonymized = false;
+                for (var p in this.registry)
+                {
+                    if (this.registry[p].shapeType == this.shapeTypes.AnonymizedRectangle)
+                    {
+                        anonymized = true;
+                    }
+                }
+
+                return anonymized;
+            },
+            parse: function(shapesJson)
+            {
+                this.clear();
+
+                var item;
+                for (var p in shapesJson)
+                {
+                    item = shapesJson[p];
+
+                    if (item.type == this.shapeTypes.ArrowLine)
+                    {
+                        this.createArrowLine({shapeJson:item, selectable:false});
+                    }
+                    else if (item.type == this.shapeTypes.Rectangle)
+                    {
+                        this.createRectangle({shapeJson:item, selectable:false});
+                    }
+                    else if (item.type == this.shapeTypes.AnonymizedRectangle)
+                    {
+                        this.createAnonymizedRectangle({shapeJson:item, selectable:false});
+                    }
+                    else if (item.type == this.shapeTypes.CommentBox)
+                    {
+                        this.createCommentBox({shapeJson:item, selectable:false});
+                    }
+
+                }
             }
         });
     });

@@ -28,6 +28,7 @@ define([
             hiddenColor:"rgba(253, 155, 0, 0)",
             selected:false,
             deletable:true,
+            selectable:true,
             constructor: function(args)
             {
                 lang.mixin(this, args);
@@ -52,6 +53,8 @@ define([
             },
             setSelected: function(sel)
             {
+                if (!this.selectable) return;
+
                 this.selected = sel;
 
                 if (sel&&this.deletable)
@@ -65,7 +68,7 @@ define([
             },
             isMoveable: function()
             {
-                return this.selected;
+                return this.selectable&&this.selected;
             },
             rollbackEndpoint: function(endpoint, shift)
             {
@@ -114,6 +117,10 @@ define([
                 }
 
                 return false;
+            },
+            toJSON: function()
+            {
+                return this.id;
             }
         });
     });

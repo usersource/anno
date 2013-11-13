@@ -31,6 +31,7 @@ define([
             grayColor: "#A9A9A9",
             normalColor: "#000000",
             earLow:false,
+            isMoved:false,
             oneLineHeight:20,
             lastHeight:20,
             createShape: function (args)
@@ -132,6 +133,8 @@ define([
                         this.rollbackEndpoint(mover.shape, shift);
                         return;
                     }
+
+                    this.isMoved = true;
 
                     var pathPoints = this._getBoxPointsPathForEarChange(this.endpoint2, shift.dx, shift.dy);
                     this.path.setShape(pathPoints.path);
@@ -317,6 +320,13 @@ define([
                 return {
                     path: path
                 };
+            },
+            getRelativeEarPoint:function()
+            {
+                var earPoint = this.pathPoints[2];
+                var x = Math.round((earPoint.x*10000)/this.viewPoint.w);
+                var y = Math.round((earPoint.y*10000)/this.viewPoint.h);
+                return {x:x, y:y};
             },
             _isEarMoveable: function(dx, dy)
             {
