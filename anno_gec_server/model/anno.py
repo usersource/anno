@@ -28,6 +28,8 @@ class Anno(BaseModel):
     app_version = ndb.StringProperty()
     os_name = ndb.StringProperty()
     os_version = ndb.StringProperty()
+    draw_elements = ndb.StringProperty()
+    screenshot_is_anonymized = ndb.BooleanProperty()
 
     def to_response_message(self):
         """
@@ -39,7 +41,6 @@ class Anno(BaseModel):
             user_message.id = self.creator.id()
             user_message.user_id = self.creator.get().user_id
             user_message.user_email = self.creator.get().user_email
-        # todo: set image.
         return AnnoResponseMessage(id=self.key.id(),
                                    anno_text=self.anno_text,
                                    simple_x=self.simple_x,
@@ -54,14 +55,15 @@ class Anno(BaseModel):
                                    os_name=self.os_name,
                                    os_version=self.os_version,
                                    created=self.created,
-                                   creator=user_message)
+                                   creator=user_message,
+                                   draw_elements=self.draw_elements,
+                                   screenshot_is_anonymized=self.screenshot_is_anonymized)
 
     def to_response_message_by_projection(self, projection):
         """
         convert anno model to AnnoResponseMessage by projection.
         """
         anno_resp_message = AnnoResponseMessage(id=self.key.id())
-        # todo: set image
         for prop_name in projection:
             if prop_name == 'creator':
                 user_message = UserMessage()
@@ -78,11 +80,13 @@ class Anno(BaseModel):
         """
         create a new anno model from request message.
         """
-        # TODO: image.
-        entity = cls(anno_text=message.anno_text, simple_x=message.simple_x, simple_y=message.simple_y, anno_type=message.anno_type,
-                     simple_circle_on_top=message.simple_circle_on_top, simple_is_moved=message.simple_is_moved, level=message.level,
+        entity = cls(anno_text=message.anno_text, simple_x=message.simple_x, simple_y=message.simple_y,
+                     anno_type=message.anno_type,
+                     simple_circle_on_top=message.simple_circle_on_top, simple_is_moved=message.simple_is_moved,
+                     level=message.level,
                      device_model=message.device_model, app_name=message.app_name, app_version=message.app_version,
-                     os_name=message.os_name, os_version=message.os_version, creator=user.key)
+                     os_name=message.os_name, os_version=message.os_version, creator=user.key,
+                     draw_elements=message.draw_elements, screenshot_is_anonymized=message.screenshot_is_anonymized)
         entity.image = message.image
         if message.created is not None:
             entity.created = message.created
@@ -121,3 +125,7 @@ class Anno(BaseModel):
             self.os_name = message.os_name
         if message.os_version is not None:
             self.os_version = message.os_version
+        if message.draw_elements is not None:
+            self.draw_elements = message.draw_elements
+        if message.screenshot_is_anonymized is not None:
+            self.screenshot_is_anonymized = message.screenshot_is_anonymized
