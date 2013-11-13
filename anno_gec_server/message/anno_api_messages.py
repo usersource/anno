@@ -32,6 +32,10 @@ class AnnoMessage(messages.Message):
     os_name = messages.StringField(13)
     os_version = messages.StringField(14)
     created = message_types.DateTimeField(15)
+    # temporary for copy tool
+    creator_id = messages.StringField(16)
+    draw_elements = messages.StringField(17)
+    screenshot_is_anonymized = messages.BooleanField(18)
 
 
 class AnnoMergeMessage(messages.Message):
@@ -53,6 +57,8 @@ class AnnoMergeMessage(messages.Message):
     os_name = messages.StringField(13)
     os_version = messages.StringField(14)
     created = message_types.DateTimeField(15)
+    draw_elements = messages.StringField(16)
+    screenshot_is_anonymized = messages.BooleanField(17)
 
 
 class AnnoResponseMessage(messages.Message):
@@ -75,6 +81,8 @@ class AnnoResponseMessage(messages.Message):
     is_my_vote = messages.BooleanField(17)  # add this properties special for get anno api.
     is_my_flag = messages.BooleanField(18)  # add this properties special for get anno api.
     followup_list = messages.MessageField(FollowupMessage, 19, repeated=True)
+    draw_elements = messages.StringField(20)
+    screenshot_is_anonymized = messages.BooleanField(21)
 
 
 class AnnoListMessage(messages.Message):

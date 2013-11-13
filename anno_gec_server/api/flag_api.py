@@ -40,6 +40,8 @@ class FlagApi(remote.Service):
         flag = Flag()
         flag.anno_key = anno.key
         flag.creator = user.key
+        if request.created is not None:
+            flag.created = request.created
         flag.put()
         return flag.to_message()
 
