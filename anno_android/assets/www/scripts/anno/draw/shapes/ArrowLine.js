@@ -46,6 +46,8 @@ define([
 
                 if (args.shapeJson)
                 {
+                    this.translateValues();
+
                     x1 = args.shapeJson._o.x1, y1 = args.shapeJson._o.y1, x2 = args.shapeJson._o.x2, y2 = args.shapeJson._o.y2;
                     arrowLinePoints = this.arrowPoints = args.shapeJson.points;
 
@@ -285,50 +287,93 @@ define([
             },
             toJSON: function()
             {
-                if (this.redrawn)
-                {
-                    return {type:this.shapeType, points:this.arrowPoints, "_o":this.line._o};
-                }
-                else
+                var ps = lang.clone(this.arrowPoints), _o = lang.clone(this.line._o);
+                var jsonObject = {type:this.shapeType, points:ps, "_o":_o};
+
+                if (this.line.matrix)
                 {
                     // apply transform dx, dy.
-                    var dx = 0, dy = 0;
+                    var dx = this.line.matrix.dx || 0;
+                    var dy = this.line.matrix.dy || 0;
 
-                    if (this.line.matrix)
-                    {
-                        dx = this.line.matrix.dx;
-                        dy = this.line.matrix.dy;
+                    ps.line[0].x += dx;
+                    ps.line[0].y += dy;
+                    ps.line[1].x += dx;
+                    ps.line[1].y += dy;
 
-                        var ps = lang.clone(this.arrowPoints);
+                    ps.arrow[0].x += dx;
+                    ps.arrow[0].y += dy;
+                    ps.arrow[1].x += dx;
+                    ps.arrow[1].y += dy;
+                    ps.arrow[2].x += dx;
+                    ps.arrow[2].y += dy;
 
-                        ps.line[0].x += dx;
-                        ps.line[0].y += dy;
-                        ps.line[1].x += dx;
-                        ps.line[1].y += dy;
+                    ps.hiddenArea[0].x += dx;
+                    ps.hiddenArea[0].y += dy;
+                    ps.hiddenArea[1].x += dx;
+                    ps.hiddenArea[1].y += dy;
 
-                        ps.arrow[0].x += dx;
-                        ps.arrow[0].y += dy;
-                        ps.arrow[1].x += dx;
-                        ps.arrow[1].y += dy;
-                        ps.arrow[2].x += dx;
-                        ps.arrow[2].y += dy;
-
-                        ps.hiddenArea[0].x += dx;
-                        ps.hiddenArea[0].y += dy;
-                        ps.hiddenArea[1].x += dx;
-                        ps.hiddenArea[1].y += dy;
-
-                        ps.x[0].x += dx;
-                        ps.x[0].y += dy;
-
-                        return {type:this.shapeType, points:ps, "_o":this.line._o};;
-                    }
-                    else
-                    {
-                        return {type:this.shapeType, points:this.arrowPoints, "_o":this.line._o};
-                    }
+                    ps.x[0].x += dx;
+                    ps.x[0].y += dy;
                 }
 
+                // convert all values into relative values
+                ps.line[0].x = this.toRelativeValue(ps.line[0].x, true);
+                ps.line[0].y = this.toRelativeValue(ps.line[0].y, false);
+                ps.line[1].x = this.toRelativeValue(ps.line[1].x, true);
+                ps.line[1].y = this.toRelativeValue(ps.line[1].y, false);
+
+                ps.arrow[0].x = this.toRelativeValue(ps.arrow[0].x, true);
+                ps.arrow[0].y = this.toRelativeValue(ps.arrow[0].y, false);
+                ps.arrow[1].x = this.toRelativeValue(ps.arrow[1].x, true);
+                ps.arrow[1].y = this.toRelativeValue(ps.arrow[1].y, false);
+                ps.arrow[2].x = this.toRelativeValue(ps.arrow[2].x, true);
+                ps.arrow[2].y = this.toRelativeValue(ps.arrow[2].y, false);
+
+                ps.hiddenArea[0].x = this.toRelativeValue(ps.hiddenArea[0].x, true);
+                ps.hiddenArea[0].y = this.toRelativeValue(ps.hiddenArea[0].y, false);
+                ps.hiddenArea[1].x = this.toRelativeValue(ps.hiddenArea[1].x, true);
+                ps.hiddenArea[1].y = this.toRelativeValue(ps.hiddenArea[1].y, false);
+
+                ps.x[0].x = this.toRelativeValue(ps.x[0].x, true);
+                ps.x[0].y = this.toRelativeValue(ps.x[0].y, false);
+
+                _o.x1 = this.toRelativeValue(_o.x1, true);
+                _o.y1 = this.toRelativeValue(_o.y1, false);
+                _o.x2 = this.toRelativeValue(_o.x2, true);
+                _o.y2 = this.toRelativeValue(_o.y2, false);
+
+                return jsonObject;
+            },
+            translateValues:function()
+            {
+                var ps = this.shapeJson.points, _o = this.shapeJson._o;
+
+                // convert all relative values into real values
+                ps.line[0].x = this.translateValue(ps.line[0].x, true);
+                ps.line[0].y = this.translateValue(ps.line[0].y, false);
+                ps.line[1].x = this.translateValue(ps.line[1].x, true);
+                ps.line[1].y = this.translateValue(ps.line[1].y, false);
+
+                ps.arrow[0].x = this.translateValue(ps.arrow[0].x, true);
+                ps.arrow[0].y = this.translateValue(ps.arrow[0].y, false);
+                ps.arrow[1].x = this.translateValue(ps.arrow[1].x, true);
+                ps.arrow[1].y = this.translateValue(ps.arrow[1].y, false);
+                ps.arrow[2].x = this.translateValue(ps.arrow[2].x, true);
+                ps.arrow[2].y = this.translateValue(ps.arrow[2].y, false);
+
+                ps.hiddenArea[0].x = this.translateValue(ps.hiddenArea[0].x, true);
+                ps.hiddenArea[0].y = this.translateValue(ps.hiddenArea[0].y, false);
+                ps.hiddenArea[1].x = this.translateValue(ps.hiddenArea[1].x, true);
+                ps.hiddenArea[1].y = this.translateValue(ps.hiddenArea[1].y, false);
+
+                ps.x[0].x = this.translateValue(ps.x[0].x, true);
+                ps.x[0].y = this.translateValue(ps.x[0].y, false);
+
+                _o.x1 = this.translateValue(_o.x1, true);
+                _o.y1 = this.translateValue(_o.y1, false);
+                _o.x2 = this.translateValue(_o.x2, true);
+                _o.y2 = this.translateValue(_o.y2, false);
             }
         });
     });

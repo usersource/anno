@@ -88,20 +88,7 @@
     <div id="sdTitle">
         <div style="padding-left: 36px;padding-top: 16px;">Annotation of: </div>
     </div>
-    <div id="sdAppList">
-        <div class="appNameItem firstAppNameItem">
-            <div class="appNameValue">Clock</div>
-        </div>
-        <div class="appNameItem">
-            <div class="appNameValue">Dogfood</div>
-        </div>
-        <div class="appNameItem">
-            <div class="appNameValue">Eggplant cookbook</div>
-        </div>
-        <div class="appNameItem">
-            <div class="appNameValue">Groupon</div>
-        </div>
-    </div>
+    <div id="sdAppList" style="overflow-y:auto"></div>
     <div id="sdBottom" style="padding-left: 20px">
         <div>
             <input id="chkHidePersonalData" type="checkbox" data-dojo-type="dojox/mobile/CheckBox" data-dojo-props="onChange:onChkHidePersonalDataChange">
@@ -113,5 +100,6 @@
     </div>
 </div>
 <button id="hiddenBtn" style="position: absolute;left:-2000px;top: -2000px;">a</button>
+<canvas id="hiddenCanvas" style="position: absolute;display: none"></canvas>
 </body>
 </html>

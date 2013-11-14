@@ -57,7 +57,7 @@ define([
             },
             _createSurface: function()
             {
-                domStyle.set(this.container, {width:this.width, height: this.height});
+                domStyle.set(this.container, {width:this.width+'px', height: this.height+'px'});
                 this.surface = gfx.createSurface(this.container, this.width, this.height);
 
                 var self = this;
@@ -318,10 +318,10 @@ define([
                     {
                         this.createRectangle({shapeJson:item, selectable:false});
                     }
-                    else if (item.type == this.shapeTypes.AnonymizedRectangle)
+                    /*else if (item.type == this.shapeTypes.AnonymizedRectangle)
                     {
                         this.createAnonymizedRectangle({shapeJson:item, selectable:false});
-                    }
+                    }*/
                     else if (item.type == this.shapeTypes.CommentBox)
                     {
                         this.createCommentBox({shapeJson:item, selectable:false});

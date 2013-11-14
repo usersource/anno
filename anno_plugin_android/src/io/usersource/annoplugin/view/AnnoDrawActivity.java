@@ -1,10 +1,8 @@
 package io.usersource.annoplugin.view;
 
-import android.app.ActivityManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.gesture.GestureOverlayView;
 import android.graphics.Bitmap;
@@ -13,27 +11,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
 import android.webkit.JavascriptInterface;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import io.usersource.annoplugin.AnnoPlugin;
-import io.usersource.annoplugin.R;
-import io.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
 import io.usersource.annoplugin.utils.*;
 import org.apache.cordova.DroidGap;
-import org.json.JSONArray;
 
 import java.io.*;
-import java.util.List;
-import java.util.UUID;
 
 public class AnnoDrawActivity extends DroidGap
 {
   private boolean isPractice;
   private int level;
   private String screenshotPath;
-  private static final int COMPRESS_QUALITY = 40;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -130,73 +118,5 @@ public class AnnoDrawActivity extends DroidGap
   public String getScreenshotPath()
   {
     return screenshotPath;
-  }
-
-  @JavascriptInterface
-  public String saveImage() throws IOException
-  {
-    AppConfig config = AppConfig.getInstance(this);
-
-    String appLocation = config.getDataLocation();
-    String screenshotDirName = config.getScreenshotDirName();
-    String screenshotDirPath = new File(appLocation, screenshotDirName)
-            .getAbsolutePath();
-    SystemUtils.mkdirs(this, screenshotDirPath);
-    //checkEnoughSpace(bitmap.getByteCount());
-
-    String imageKey = generateUniqueImageKey();
-    FileOutputStream out = new FileOutputStream(new File(screenshotDirPath,
-            imageKey));
-
-    ContentResolver rc = this.getContentResolver();
-    BitmapDrawable drawable;
-    drawable = new BitmapDrawable(new FileInputStream(screenshotPath));
-
-    Bitmap bmp = drawable.getBitmap();
-    bmp.compress(Bitmap.CompressFormat.PNG, COMPRESS_QUALITY, out);
-
-    return imageKey+","+screenshotDirPath;
-  }
-
-  private String generateUniqueImageKey() {
-    return UUID.randomUUID().toString();
-  }
-
-  @JavascriptInterface
-  public String getAppNameAndSource() throws Exception
-  {
-    String source, appName, appVersion, retValue;
-    if (PluginUtils.isAnno(getPackageName()) && this.level != 2) {
-      source = Constants.ANNO_SOURCE_STANDALONE;
-      appName = Constants.UNKNOWN_APP_NAME;
-    } else {
-      source = Constants.ANNO_SOURCE_PLUGIN;
-      appName = SystemUtils.getAppName(AnnoDrawActivity.this);
-    }
-
-    appVersion = SystemUtils.getAppVersion(AnnoDrawActivity.this);
-
-    retValue = "[\""+source+"\",\""+appName+"\",\""+appVersion+"\",\""+getLevel()+"\"]";
-
-    return retValue;
-  }
-
-  @JavascriptInterface
-  public String getRecentTasks(int taskNum)
-  {
-    ActivityManager mActivityManager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
-    // Print Recent Running Tasks
-    JSONArray jsonArray = new JSONArray();
-    List<ActivityManager.RecentTaskInfo> recentTasks = mActivityManager.getRecentTasks(
-            taskNum, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
-    for (ActivityManager.RecentTaskInfo rti : recentTasks) {
-      Intent intent = rti.baseIntent;
-      ResolveInfo resolveInfo = this.getPackageManager().resolveActivity(
-              intent, 0);
-
-      jsonArray.put(resolveInfo.loadLabel(this.getPackageManager()).toString());
-    }
-
-    return jsonArray.toString();
   }
 }

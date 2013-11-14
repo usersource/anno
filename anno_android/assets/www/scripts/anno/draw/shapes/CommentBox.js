@@ -50,6 +50,8 @@ define([
 
                 if (args.shapeJson)
                 {
+                    this.translateValues();
+
                     pathPoints = this._getBoxPointsPathByShapeJson();
                     endPointFillStyle = this.endpointHiddenStrokeStyle;
                     endPointStrokeStyle = this.endpointHiddenFillStyle;
@@ -400,7 +402,7 @@ define([
                     xPos:{x: rightX-6, y:leftY1-40}
                 };
             },
-            _getBoxPointsPathByShapeJson: function(eX, eY)
+            _getBoxPointsPathByShapeJson: function()
             {
                 var cp = this.pathPoints = this.shapeJson.points;
 
@@ -520,8 +522,8 @@ define([
 
                 if (this.path.matrix)
                 {
-                    var dx = this.path.matrix.dx;
-                    var dy = this.path.matrix.dy;
+                    var dx = this.path.matrix.dx||0;
+                    var dy = this.path.matrix.dy||0;
 
                     for (var i= 0,c=ps.length;i<c;i++)
                     {
@@ -530,7 +532,25 @@ define([
                     }
                 }
 
+                // convert all values into relative values
+                for (var i= 0,c=ps.length;i<c;i++)
+                {
+                    ps[i].x = this.toRelativeValue(ps[i].x, true);
+                    ps[i].y = this.toRelativeValue(ps[i].y, false);
+                }
+
                 return {type:this.shapeType, points:ps, comment:this.inputElement.value};
+            },
+            translateValues:function()
+            {
+                var ps = this.shapeJson.points;
+
+                // convert all relative values into real values
+                for (var i= 0,c=ps.length;i<c;i++)
+                {
+                    ps[i].x = this.translateValue(ps[i].x, true);
+                    ps[i].y = this.translateValue(ps[i].y, false);
+                }
             }
         });
     });

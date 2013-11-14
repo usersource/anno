@@ -57,7 +57,10 @@
     <plugin name="ChildBrowser"
             value="com.phonegap.plugins.childBrowser.ChildBrowser"/>
     <!-- anno cordova plugin -->
-    <plugin name="CordovaHttpService" value="io.usersource.annoplugin.view.CordovaHttpService" />
+    <plugin name="AnnoCordovaPlugin" value="io.usersource.annoplugin.view.AnnoCordovaPlugin" />
+
+    <plugin name="SQLitePlugin" value="org.pgsqlite.SQLitePlugin"/>
+    <plugin name="NetworkStatus" value="org.apache.cordova.NetworkManager" />
 </plugins>
 </cordova>
 

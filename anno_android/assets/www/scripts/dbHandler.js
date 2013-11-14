@@ -61,25 +61,40 @@ function doUpgrade()
             annoDB.executeSql("alter table feedback_comment add column os_name text default 'Android'", [], function(res){
                 console.error("os_name column added.");
             });
+        }
 
+        if (!tempObj["anno_type"])
+        {
             annoDB.executeSql("alter table feedback_comment add column anno_type text default 'Simple Comment'", [], function(res){
                 console.error("anno_type column added.");
             });
+        }
 
+        if (!tempObj["synched"])
+        {
             annoDB.executeSql("alter table feedback_comment add column synched integer default 0", [], function(res){
                 console.error("synched column added.");
             });
+        }
 
+        if (!tempObj["created"])
+        {
             annoDB.executeSql("alter table feedback_comment add column created integer default 0", [], function(res){
                 console.error("created column added.");
             });
 
             annoDB.executeSql('CREATE INDEX feedback_comment_created ON feedback_comment(created)');
+        }
 
+        if (!tempObj["draw_elements"])
+        {
             annoDB.executeSql("alter table feedback_comment add column draw_elements text", [], function(res){
                 console.error("draw_elements column added.");
             });
+        }
 
+        if (!tempObj["draw_is_anonymized"])
+        {
             annoDB.executeSql("alter table feedback_comment add column draw_is_anonymized integer default 0", [], function(res){
                 console.error("draw_is_anonymized column added.");
             });

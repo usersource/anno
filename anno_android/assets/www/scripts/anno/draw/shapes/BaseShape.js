@@ -121,6 +121,20 @@ define([
             toJSON: function()
             {
                 return this.id;
+            },
+            toRelativeValue: function(v, xory)
+            {
+                if (xory)
+                    return Math.round((v*10000)/this.viewPoint.w);
+                else
+                    return Math.round((v*10000)/this.viewPoint.h);
+            },
+            translateValue: function(v, xory)
+            {
+                if (xory)
+                    return Math.round((this.surface.width*v)/10000);
+                else
+                    return Math.round((this.surface.height*v)/10000);
             }
         });
     });

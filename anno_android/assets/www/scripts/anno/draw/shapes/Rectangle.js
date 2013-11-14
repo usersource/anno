@@ -38,6 +38,8 @@ define([
 
                 if (args.shapeJson)
                 {
+                    this.translateValues();
+
                     startX = args.shapeJson.points.x;
                     startY = args.shapeJson.points.y;
                     width = args.shapeJson.points.width;
@@ -148,8 +150,6 @@ define([
 
                     this._connects.push(this.x.on(touch.release, lang.hitch(this, this.onXTouched)));
                 }
-
-
             },
             destroy: function ()
             {
@@ -189,11 +189,27 @@ define([
 
                 if (this.rectangle.matrix)
                 {
-                    shapeObject.points.x += this.rectangle.matrix.dx;
-                    shapeObject.points.y += this.rectangle.matrix.dy;
+                    shapeObject.points.x += this.rectangle.matrix.dx||0;
+                    shapeObject.points.y += this.rectangle.matrix.dy||0;
                 }
 
+                // convert all values into relative values
+                shapeObject.points.x = this.toRelativeValue(shapeObject.points.x, true);
+                shapeObject.points.y = this.toRelativeValue(shapeObject.points.y, false);
+                shapeObject.points.width = this.toRelativeValue(shapeObject.points.width, true);
+                shapeObject.points.height = this.toRelativeValue(shapeObject.points.height, false);
+
                 return shapeObject;
+            },
+            translateValues:function()
+            {
+                var ps = this.shapeJson.points;
+
+                // convert all relative values into real values
+                ps.x = this.translateValue(ps.x, true);
+                ps.y = this.translateValue(ps.y, false);
+                ps.width = this.translateValue(ps.width, true);
+                ps.height = this.translateValue(ps.height, false);
             }
         });
     });

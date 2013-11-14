@@ -29,6 +29,8 @@ require([
     var surface;
     var defaultCommentBox;
 
+    var selectedAppName, screenShotPath;
+
     connect.connect(dom.byId("barArrow"), touch.release, function()
     {
         if (domClass.contains(dom.byId("barArrow"), 'barIconDisabled')) return;
@@ -57,10 +59,22 @@ require([
     {
         registry.byId('shareDialog').show();
 
-        //var appList = window.ADActivity.getRecentTasks(10);
-
-        //console.error(appList);
-        //console.error(JSON.stringify(appList));
+        cordova.exec(
+            function (result)
+            {
+                if (result&&result.length>0)
+                {
+                    fillAppNameList(result);
+                }
+            },
+            function (err)
+            {
+                alert(err.message);
+            },
+            "AnnoCordovaPlugin",
+            'get_recent_applist',
+            [10]
+        );
     });
 
     connect.connect(dom.byId("barBlackRectangle"), touch.release, function()
@@ -83,6 +97,24 @@ require([
     {
         switchMode(true);
     });
+
+    var fillAppNameList = function(appList)
+    {
+        var content = "";
+        for (var i= 0,c=appList.length;i<c;i++)
+        {
+            if (i == 0)
+            {
+                content = content + '<div class="appNameItem firstAppNameItem"><div class="appNameValue">'+appList[i]+'</div></div>'
+            }
+            else
+            {
+                content = content + '<div class="appNameItem"><div class="appNameValue">'+appList[i]+'</div></div>'
+            }
+        }
+
+        dom.byId('sdAppList').innerHTML = content;
+    };
 
     var updateLastShapePos = function(shapeType)
     {
@@ -147,6 +179,8 @@ require([
         }
 
         domClass.remove(itemNode, 'appNameItem-gray');
+
+        selectedAppName = itemNode.children[0].innerHTML;
     });
 
     // share button
@@ -197,6 +231,17 @@ require([
         updateLastShapePos('Rectangle');
 
         surface.switchMode(true);
+
+        var hiddenCanvas = dom.byId('hiddenCanvas');
+        hiddenCanvas.width = viewPoint.w;
+        hiddenCanvas.height = viewPoint.h;
+        var ctx = hiddenCanvas.getContext('2d');
+        var hiddenImage = new Image();
+        hiddenImage.onload = function()
+        {
+            ctx.drawImage(hiddenImage, 0, 0, viewPoint.w, viewPoint.h);
+        };
+        hiddenImage.src = screenShotPath;
     };
 
     var initBackgroundImage = function()
@@ -206,6 +251,7 @@ require([
         if (scPath)
         {
             console.error(scPath);
+            screenShotPath = scPath;
             document.body.style.backgroundImage = "url("+scPath+")";
         }
         else
@@ -221,32 +267,44 @@ require([
         var deviceInfo = annoUtil.getDeviceInfo();
         console.error(JSON.stringify(deviceInfo));
 
-        var saveImageRet = window.ADActivity.saveImage().split(",");
-        var imageKey = saveImageRet[0];
-        var screenshotDirPath = saveImageRet[1];
+        var pluginParam = [];
 
-        var appInfo = dojoJson.parse(window.ADActivity.getAppNameAndSource());
-        console.error(JSON.stringify(appInfo));
+        cordova.exec(
+            function (result)
+            {
+                var imageKey = result.imageAttrs.imageKey;
+                var screenshotDirPath = result.imageAttrs.screenshotPath;
+                var appInfo = result.appInfo;
 
-        var earPoint = defaultCommentBox.getRelativeEarPoint();
+                var earPoint = defaultCommentBox.getRelativeEarPoint();
 
-        var annoItem = {
-            "anno_text":defaultCommentBox.inputElement.value,
-            "image":imageKey,
-            "simple_x":earPoint.x,
-            "simple_y":earPoint.y,
-            "simple_circle_on_top":!defaultCommentBox.earLow,
-            "app_version":appInfo[2],
-            "simple_is_moved":defaultCommentBox.isMoved,
-            "level":appInfo[3],
-            "app_name":appInfo[1],
-            "device_model":deviceInfo.model,
-            "os_name":deviceInfo.osName,
-            "os_version":deviceInfo.osVersion,
-            "anno_type":"Simple Comment"
-        };
+                var annoItem = {
+                    "anno_text":defaultCommentBox.inputElement.value,
+                    "image":imageKey,
+                    "simple_x":earPoint.x,
+                    "simple_y":earPoint.y,
+                    "simple_circle_on_top":!defaultCommentBox.earLow,
+                    "app_version":appInfo.appVersion,
+                    "simple_is_moved":defaultCommentBox.isMoved,
+                    "level":appInfo.level,
+                    "app_name":appInfo.appName,
+                    "device_model":deviceInfo.model,
+                    "os_name":deviceInfo.osName,
+                    "os_version":deviceInfo.osVersion,
+                    "anno_type":"Simple Comment",
+                    "screenshot_is_anonymized":false
+                };
 
-        AnnoDataHandler.saveAnno(annoItem, appInfo[0], screenshotDirPath);
+                AnnoDataHandler.saveAnno(annoItem, appInfo.source, screenshotDirPath);
+            },
+            function (err)
+            {
+                alert(err.message);
+            },
+            "AnnoCordovaPlugin",
+            'process_image_and_appinfo',
+            pluginParam
+        );
     };
 
     var saveDrawCommentAnno = function()
@@ -256,32 +314,73 @@ require([
         var deviceInfo = annoUtil.getDeviceInfo();
         console.error(JSON.stringify(deviceInfo));
 
-        var saveImageRet = window.ADActivity.saveImage().split(",");
-        var imageKey = saveImageRet[0];
-        var screenshotDirPath = saveImageRet[1];
+        var pluginParam = [], isScreenshotAnonymized = surface.isScreenshotAnonymized();
 
-        var appInfo = dojoJson.parse(window.ADActivity.getAppNameAndSource());
-        console.error(JSON.stringify(appInfo));
+        if (isScreenshotAnonymized)
+        {
+            pluginParam[0] = outputImage();
+        }
 
-        var annoItem = {
-            "anno_text":surface.getConcatenatedComment(),
-            "image":imageKey,
-            "simple_x":0,
-            "simple_y":0,
-            "simple_circle_on_top":false,
-            "app_version":appInfo[2],
-            "simple_is_moved":false,
-            "level":appInfo[3],
-            "app_name":appInfo[1],
-            "device_model":deviceInfo.model,
-            "os_name":deviceInfo.osName,
-            "os_version":deviceInfo.osVersion,
-            "draw_elements":dojoJson.stringify(surface.toJSON()),
-            "screenshot_is_anonymized":surface.isScreenshotAnonymized(),
-            "anno_type":"Draw Comment"
-        };
+        cordova.exec(
+            function (result)
+            {
+                var imageKey = result.imageAttrs.imageKey;
+                var screenshotDirPath = result.imageAttrs.screenshotPath;
+                var appInfo = result.appInfo;
 
-        AnnoDataHandler.saveAnno(annoItem, appInfo[0], screenshotDirPath);
+                var annoItem = {
+                    "anno_text":surface.getConcatenatedComment(),
+                    "image":imageKey,
+                    "simple_x":0,
+                    "simple_y":0,
+                    "simple_circle_on_top":false,
+                    "app_version":appInfo.appVersion,
+                    "simple_is_moved":false,
+                    "level":appInfo.level,
+                    "app_name":selectedAppName||appInfo.appName,
+                    "device_model":deviceInfo.model,
+                    "os_name":deviceInfo.osName,
+                    "os_version":deviceInfo.osVersion,
+                    "draw_elements":dojoJson.stringify(surface.toJSON()),
+                    "screenshot_is_anonymized":isScreenshotAnonymized,
+                    "anno_type":"Draw Comment"
+                };
+
+                AnnoDataHandler.saveAnno(annoItem, appInfo.source, screenshotDirPath);
+            },
+            function (err)
+            {
+                alert(err.message);
+            },
+            "AnnoCordovaPlugin",
+            'process_image_and_appinfo',
+            pluginParam
+        );
+    };
+
+    var outputImage = function()
+    {
+        var hiddenCanvas = dom.byId('hiddenCanvas');
+        var ctx = hiddenCanvas.getContext('2d');
+        ctx.fillStyle = "black";
+
+        var shapes = surface.registry;
+
+        for (var p in shapes)
+        {
+            if (shapes[p].shapeType == "AnonymizedRectangle")
+            {
+                var shape = shapes[p].getShape();
+
+                ctx.fillRect(shape.x, shape.y, shape.width, shape.height);
+            }
+        }
+
+        var dataUrl = hiddenCanvas.toDataURL("image/png");
+        var pos = dataUrl.lastIndexOf(",");
+        dataUrl = dataUrl.substr(pos+1);
+
+        return dataUrl;
     };
 
     var init = function()

@@ -1181,6 +1181,7 @@ define([
             {
                 goingNextRecord = null;
                 loadingDetailData = false;
+                loadingImage = false;
 
                 var cursor = this.params["cursor"];
                 if (this.params["cursor"] != null)
