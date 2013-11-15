@@ -49,6 +49,9 @@
     <link type="text/css" href="./css/style.css" rel="stylesheet" />
 </head>
 <body id="container">
+<div id="screenshotContainer" class="screenshotContainer">
+    <img id="imageScreenshot" src="" width="100%" height="100%">
+</div>
 <div id="gfxCanvasContainer" style="width: 500px; height: 500px;"></div>
 <div id="bottomBarContainer" style="display: none">
     <table width="100%">
@@ -69,8 +72,16 @@
     </table>
 </div>
 <div id="topBar">
-    <button class="btn" id="btnHome" type="button">Home</button>
-    <button class="btn" id="btnDraw" type="button">Draw</button>
+    <table width="100%" height="100%">
+        <tr>
+            <td width="50%" align="center">
+                <span id="btnDraw" style="font-size: 26px;font-weight: bold;">Draw</span>
+            </td>
+            <td width="50%" align="center">
+                <span id="btnHome" style="font-size: 26px;font-weight: bold;">Feed</span>
+            </td>
+        </tr>
+    </table>
 </div>
 <div id="bottomBarBlackContainer" style="display: none">
     <table width="100%">

@@ -10,6 +10,8 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Base64;
+import android.view.Gravity;
+import android.widget.Toast;
 import io.usersource.annoplugin.utils.*;
 import org.apache.cordova.api.CallbackContext;
 import org.apache.cordova.api.CordovaPlugin;
@@ -25,7 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Anno Cordova Plugin, provide series functions that can't be done in JavaScript
+ * Anno Cordova Plugin, provide series functions that can't be done in JavaScript, or done better in native code than Javascript
  *
  * @author David Lee
  */
@@ -36,6 +38,8 @@ public class AnnoCordovaPlugin extends CordovaPlugin
   public static final String EXIT_INTRO = "exit_intro";
   public static final String PROCESS_IMAGE_AND_APPINFO = "process_image_and_appinfo";
   public static final String GET_RECENT_APPLIST = "get_recent_applist";
+  public static final String GET_SCREENSHOT_PATH = "get_screenshot_path";
+  public static final String SHOW_TOAST = "show_toast";
 
   private static final int COMPRESS_QUALITY = 40;
 
@@ -57,6 +61,16 @@ public class AnnoCordovaPlugin extends CordovaPlugin
     }
     else if (GET_RECENT_APPLIST.equals(action)) {
       getRecentTasks(args, callbackContext);
+      return true;
+    }
+    else if (GET_SCREENSHOT_PATH.equals(action)) {
+      AnnoDrawActivity annoDrawActivity = (AnnoDrawActivity)this.cordova.getActivity();
+      callbackContext.success(annoDrawActivity.getScreenshotPath());
+      return true;
+    }
+    else if (SHOW_TOAST.equals(action)) {
+      showToastMessage(args);
+      callbackContext.success();
       return true;
     }
 
@@ -301,5 +315,14 @@ public class AnnoCordovaPlugin extends CordovaPlugin
     }
 
     callbackContext.success(jsonArray);
+  }
+
+  private void showToastMessage(JSONArray args) throws JSONException
+  {
+    String message = args.getString(0);
+    Activity activity = this.cordova.getActivity();
+    Toast toast = Toast.makeText(activity,
+            message, Toast.LENGTH_SHORT);
+    toast.show();
   }
 }

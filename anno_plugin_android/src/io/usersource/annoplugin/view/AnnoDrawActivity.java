@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.webkit.JavascriptInterface;
 import io.usersource.annoplugin.utils.*;
 import org.apache.cordova.DroidGap;
 
@@ -27,7 +26,6 @@ public class AnnoDrawActivity extends DroidGap
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     super.init();
-    appView.addJavascriptInterface(this, "ADActivity");
 
     super.loadUrl("file:///android_asset/www/pages/annodraw/main.html");
 
@@ -62,7 +60,7 @@ public class AnnoDrawActivity extends DroidGap
 
     Log.d(TAG, "current level:" + this.level);
     if (this.level == 2) {
-      //red color
+      // todo red color
     }
 
     Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
@@ -114,7 +112,6 @@ public class AnnoDrawActivity extends DroidGap
     }
   }
 
-  @JavascriptInterface
   public String getScreenshotPath()
   {
     return screenshotPath;

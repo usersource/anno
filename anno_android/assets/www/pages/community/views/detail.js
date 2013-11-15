@@ -5,6 +5,7 @@ define([
     "dojo/dom-class",
     "dojo/dom-geometry",
     "dojo/dom-style",
+    "dojo/json",
     "dojo/query",
     "dojo/_base/lang",
     "dojo/_base/connect",
@@ -14,9 +15,10 @@ define([
     "dijit/registry",
     "dojox/css3/transit",
     "dojo/store/Memory",
-    "dojox/mvc/getStateful"
+    "dojox/mvc/getStateful",
+    "anno/draw/Surface"
 ],
-    function (arrayUtil, baseFX, dom, domClass, domGeom, domStyle, query, lang, connect, win, has, sniff, registry, transit, Memory, getStateful)
+    function (arrayUtil, baseFX, dom, domClass, domGeom, domStyle, dojoJson, query, lang, connect, win, has, sniff, registry, transit, Memory, getStateful, Surface)
     {
         var _connectResults = [],
             eventsModel = null,
@@ -40,6 +42,11 @@ define([
             level2Color = "#ff0000";
 
         var imageBaseUrl = "https://usersource-anno.appspot.com/screenshot";
+        var surface;
+        var annoType = {
+            SimpleComment:"simple comment",
+            DrawComment:"draw comment"
+        };
 
         var wipeIn = function(args)
         {
@@ -135,6 +142,7 @@ define([
 
         var screenshotImageOnload = function()
         {
+            console.error("screenshot loaded.");
             if (!loadingDetailData)
             {
                 hideLoadingIndicator();
@@ -201,60 +209,68 @@ define([
                 var toolTipDivWidth = imageWidth - 40;
                 domStyle.set("screenshotTooltipDetail", "width", toolTipDivWidth+"px");
 
-                if (eventsModel.cursor.circleX != null)
+                if (eventsModel.cursor.annoType == annoType.SimpleComment)
                 {
-                    var tx = Math.round((imageWidth*eventsModel.cursor.circleX)/10000) -circleRadius;
-                    var ty = Math.round((imageHeight*eventsModel.cursor.circleY)/10000) -circleRadius;
-
-                    console.error("view w: "+viewPoint.w+", view h: "+viewPoint.h);
-                    console.error("image width2: "+imageWidth+", image height2: "+imageHeight);
-                    console.error("x: "+tx+", y: "+ty);
-
-                    domStyle.set("screenshotAnchorDetail", {
-                        top: ty+'px',
-                        left: tx+'px',
-                        display: ''
-                    });
-
-                    domStyle.set("screenshotAnchorInvisibleDetail", {
-                        top: ty+'px'
-                    });
-
-                    if (ty > (domStyle.get("screenshotTooltipDetail", "height")+14))
+                    if (eventsModel.cursor.circleX != null)
                     {
-                        tooltipWidget.show(dom.byId('screenshotAnchorInvisibleDetail'), ['above-centered','below-centered','before','after']);
-                        annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))+14;
-                        domStyle.set(tooltipWidget.domNode, 'top', annoTooltipY+'px');
+                        var tx = Math.round((imageWidth*eventsModel.cursor.circleX)/10000) -circleRadius;
+                        var ty = Math.round((imageHeight*eventsModel.cursor.circleY)/10000) -circleRadius;
+
+                        console.error("view w: "+viewPoint.w+", view h: "+viewPoint.h);
+                        console.error("image width2: "+imageWidth+", image height2: "+imageHeight);
+                        console.error("x: "+tx+", y: "+ty);
+
+                        domStyle.set("screenshotAnchorDetail", {
+                            top: ty+'px',
+                            left: tx+'px',
+                            display: ''
+                        });
+
+                        domStyle.set("screenshotAnchorInvisibleDetail", {
+                            top: ty+'px'
+                        });
+
+                        if (ty > (domStyle.get("screenshotTooltipDetail", "height")+14))
+                        {
+                            tooltipWidget.show(dom.byId('screenshotAnchorInvisibleDetail'), ['above-centered','below-centered','before','after']);
+                            annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))+14;
+                            domStyle.set(tooltipWidget.domNode, 'top', annoTooltipY+'px');
+                        }
+                        else
+                        {
+                            tooltipWidget.show(dom.byId('screenshotAnchorInvisibleDetail'), ['below-centered','below-centered','after','before']);
+                            annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))-14;
+                            domStyle.set(tooltipWidget.domNode, 'top', annoTooltipY+'px');
+                        }
+
+                        var pos = domGeom.position("screenshotAnchorDetail", true);
+                        var tpLeft = domStyle.get(tooltipWidget.domNode, 'left');
+                        domStyle.set(tooltipWidget.anchor, {
+                            left: (pos.x-tpLeft+2)+'px'
+                        });
+
+                        if (textDataAreaShown)
+                        {
+                            tooltipWidget.hide();
+                        }
                     }
                     else
                     {
-                        tooltipWidget.show(dom.byId('screenshotAnchorInvisibleDetail'), ['below-centered','below-centered','after','before']);
+                        domStyle.set("screenshotAnchorDetail", "display", "none");
+                        tooltipWidget.show(dom.byId('screenshotDefaultAnchorDetail'), ['below-centered','below-centered','after','before']);
                         annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))-14;
                         domStyle.set(tooltipWidget.domNode, 'top', annoTooltipY+'px');
-                    }
 
-                    var pos = domGeom.position("screenshotAnchorDetail", true);
-                    var tpLeft = domStyle.get(tooltipWidget.domNode, 'left');
-                    domStyle.set(tooltipWidget.anchor, {
-                        left: (pos.x-tpLeft+2)+'px'
-                    });
-
-                    if (textDataAreaShown)
-                    {
-                        tooltipWidget.hide();
+                        if (textDataAreaShown)
+                        {
+                            tooltipWidget.hide();
+                        }
                     }
                 }
                 else
                 {
+                    tooltipWidget.hide();
                     domStyle.set("screenshotAnchorDetail", "display", "none");
-                    tooltipWidget.show(dom.byId('screenshotDefaultAnchorDetail'), ['below-centered','below-centered','after','before']);
-                    annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))-14;
-                    domStyle.set(tooltipWidget.domNode, 'top', annoTooltipY+'px');
-
-                    if (textDataAreaShown)
-                    {
-                        tooltipWidget.hide();
-                    }
                 }
 
                 adjustNavBarZIndex();
@@ -280,15 +296,44 @@ define([
 
                 adjustNavBarSize();
 
+                redrawShapes();
             }, 10);
         };
 
         var screenshotImageOnerror = function()
         {
+            console.error("screenshot loaded error.");
             loadingImage = false;
             if (!loadingDetailData)
             {
                 hideLoadingIndicator();
+            }
+
+            surface.clear();
+            surface.hide();
+        };
+
+        var redrawShapes = function()
+        {
+            var drawElements = eventsModel.cursor.draw_elements;
+            if (drawElements)
+            {
+                console.error('redrawShapes:'+drawElements);
+                var elementsObject = dojoJson.parse(drawElements);
+                var imgScreenshot = dom.byId('imgDetailScreenshot'),
+                    imageWidth = imgScreenshot.width,
+                    imageHeight = imgScreenshot.height;
+
+                surface.show();
+                surface.setDimensions(imageWidth, imageHeight);
+                surface.parse(elementsObject);
+
+                console.error('redrawShapes end');
+            }
+            else
+            {
+                surface.clear();
+                surface.hide();
             }
         };
 
@@ -752,12 +797,14 @@ define([
                 currentAnno.set('vote', returnAnno.is_my_vote);
                 currentAnno.set('flag', returnAnno.is_my_flag);
                 currentAnno.set('level', returnAnno.level);
+                currentAnno.set('draw_elements', returnAnno.draw_elements||"");
 
                 loadingDetailData = false;
 
                 if (!loadingImage)
                 {
                     hideLoadingIndicator();
+                    redrawShapes();
                 }
 
                 setDetailsContext(cursor);
@@ -1130,6 +1177,11 @@ define([
                     if (!textDataAreaShown)
                         showTextData();
                 }));
+                _connectResults.push(connect.connect(dom.byId("gfxCanvasContainer"), "click", function (e)
+                {
+                    if (!textDataAreaShown)
+                        showTextData();
+                }));
 
                 _connectResults.push(connect.connect(dom.byId('bottomPlaceholder'), "touchstart", touchStartOnTrayScreen));
 
@@ -1176,6 +1228,14 @@ define([
                 dom.byId("imgDetailScreenshot").onerror = screenshotImageOnerror;
                 domStyle.set('modelApp_detail','backgroundColor', '#333333');
 
+                // create surface
+                surface = new Surface({
+                    container: dom.byId("gfxCanvasContainer"),
+                    width:500,
+                    height:500,
+                    editable:false
+                });
+
             },
             afterActivate: function()
             {
@@ -1205,6 +1265,9 @@ define([
                 domStyle.set("imgDetailScreenshot", "opacity", '1');
 
                 hideLoadingIndicator();
+
+                surface.clear();
+                surface.hide();
 
                 if (window.CMActivity)
                 {

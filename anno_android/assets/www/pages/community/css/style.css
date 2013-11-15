@@ -181,6 +181,13 @@ you can use the generic selector below, but it's slower:
     border: 2px solid #ff9900;
 }
 
+.gfxCanvasContainer
+{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
 .screenshotContainerDetail{
     padding-left: 2px;
     padding-top: 2px;

@@ -91,6 +91,11 @@ define([
                     }
 
                     dom.byId("hiddenBtn").focus();
+
+                    if (this.onCommentBoxBlur)
+                    {
+                        this.onCommentBoxBlur(this);
+                    }
                 }));
 
                 this._connects.push(connect.connect(this.inputElement, "input", this, function (e)
@@ -100,6 +105,7 @@ define([
                         domStyle.set(this.shareBtnNode, 'display', '');
                         domStyle.set(dom.byId('btnHome'), 'display', 'none');
                         domStyle.set(dom.byId('btnDraw'), 'display', 'none');
+                        domStyle.set(dom.byId('topBar'), 'display', 'none');
 
                         // handle simple-comment box grows in height up to 4 visible lines
                         this.handleBoxHeight();
@@ -109,6 +115,14 @@ define([
                         domStyle.set(this.shareBtnNode, 'display', 'none');
                     }
 
+                }));
+
+                this._connects.push(connect.connect(this.inputElement, "focus", this, function (e)
+                {
+                    if (this.onCommentBoxFocus)
+                    {
+                        this.onCommentBoxFocus(this);
+                    }
                 }));
 
                 this.shareBtnNode = domConstruct.create('button', {
@@ -154,6 +168,9 @@ define([
                         this.shareBtnNode.style.top = (this.pathPoints[0].y-3)+'px';
                     }
 
+                    domStyle.set(dom.byId('btnHome'), 'display', 'none');
+                    domStyle.set(dom.byId('btnDraw'), 'display', 'none');
+                    domStyle.set(dom.byId('topBar'), 'display', 'none');
                 }));
 
                 this._connects.push(connect.connect(this.txtNode, touch.release, this, function (e)

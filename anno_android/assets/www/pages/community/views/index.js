@@ -98,6 +98,7 @@ define([
                     var eventData = lang.clone(emptyAnno);
 
                     eventData.annoText = annoList[i].anno_text;
+                    eventData.annoType = annoList[i].anno_type;
                     eventData.app = annoList[i].app_name;
                     eventData.author = annoList[i].creator?annoList[i].creator.user_id:"";
                     eventData.id = annoList[i].id;
@@ -182,8 +183,8 @@ define([
                 {
                     alert(err);
                 },
-                "CordovaHttpService",
-                'exit_community',
+                "AnnoCordovaPlugin",
+                'exit_current_activity',
                 []
             );
         };

@@ -79,7 +79,7 @@ body{
     position: absolute;
     bottom: 0px;
     left: 0px;
-    height: 50px;
+    height: 46px;
     width: 100%;
     /*background-color: black;*/
     /*opacity: 0.5;*/
@@ -91,8 +91,28 @@ body{
 #topBar
 {
     position: absolute;
-    left: 50%;
-    top: 18px;
+    bottom: 0px;
+    left: 0px;
+    height: 46px;
+    width: 100%;
+    background-color: rgba(0,0,0, 1);
+    padding-top: 4px;
+    color: white;
+}
+
+.screenshotContainer
+{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+}
+
+#gfxCanvasContainer
+{
+    position: absolute;
+    top: 0px;
+    left: 0px;
 }
 
 .barIcon

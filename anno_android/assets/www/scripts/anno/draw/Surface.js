@@ -42,6 +42,7 @@ define([
             registry:{},
             _g_id: 0,
             drawMode:false,
+            editable:true,
             shapeTypes: {
                 ArrowLine:"ArrowLine",
                 Rectangle:"Rectangle",
@@ -60,38 +61,41 @@ define([
                 domStyle.set(this.container, {width:this.width+'px', height: this.height+'px'});
                 this.surface = gfx.createSurface(this.container, this.width, this.height);
 
-                var self = this;
-                on(document.body, touch.release,function(e)
+                if (this.editable)
                 {
-                    if (!self.drawMode) return;
-                    self.fixEventTarget(e);
-                    if (e.gfxTarget&&e.gfxTarget.isSelectTarget)
+                    var self = this;
+                    on(document.body, touch.release,function(e)
                     {
-                        var shape = self.getShapeById(e.gfxTarget.sid);
+                        if (!self.drawMode) return;
+                        self.fixEventTarget(e);
+                        if (e.gfxTarget&&e.gfxTarget.isSelectTarget)
+                        {
+                            var shape = self.getShapeById(e.gfxTarget.sid);
 
-                        if (shape)
-                        {
-                            self.selectShape(shape);
-                        }
-                    }
-                    else
-                    {
-                        if (e.gfxTarget&&e.gfxTarget.sid)
-                        {
-                            self.removeSelection(e.gfxTarget.sid);
+                            if (shape)
+                            {
+                                self.selectShape(shape);
+                            }
                         }
                         else
                         {
-                            if (e.target.tagName.toUpperCase() == "SVG")
+                            if (e.gfxTarget&&e.gfxTarget.sid)
                             {
-                                self.removeSelection();
+                                self.removeSelection(e.gfxTarget.sid);
+                            }
+                            else
+                            {
+                                if (e.target.tagName.toUpperCase() == "SVG")
+                                {
+                                    self.removeSelection();
+                                }
                             }
                         }
-                    }
-                });
+                    });
 
-                connect.connect(this.container, "ondragstart",   dojo, "stopEvent");
-                connect.connect(this.container, "onselectstart", dojo, "stopEvent");
+                    connect.connect(this.container, "ondragstart",   dojo, "stopEvent");
+                    connect.connect(this.container, "onselectstart", dojo, "stopEvent");
+                }
             },
             beforeCreateShape: function(args)
             {
@@ -328,6 +332,22 @@ define([
                     }
 
                 }
+            },
+            setDimensions: function(width, height)
+            {
+                this.width = width;
+                this.height = height;
+
+                domStyle.set(this.container, {width:this.width+'px', height: this.height+'px'});
+                this.surface.setDimensions(this.width+'px', this.height+'px');
+            },
+            hide: function()
+            {
+                domStyle.set(this.container, 'display', 'none');
+            },
+            show: function()
+            {
+                domStyle.set(this.container, 'display', '');
             }
         });
     });

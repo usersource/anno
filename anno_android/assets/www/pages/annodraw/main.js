@@ -225,6 +225,7 @@ require([
         domStyle.set('bottomBarContainer', 'display', '');
         domStyle.set(dom.byId('btnHome'), 'display', 'none');
         domStyle.set(dom.byId('btnDraw'), 'display', 'none');
+        domStyle.set(dom.byId('topBar'), 'display', 'none');
 
         // create default comment box
         var commentBox = surface.createCommentBox({deletable:false, startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight});
@@ -246,18 +247,37 @@ require([
 
     var initBackgroundImage = function()
     {
-        var scPath = window.ADActivity.getScreenshotPath();
-
-        if (scPath)
+        if (cordova.exec)
         {
-            console.error(scPath);
-            screenShotPath = scPath;
-            document.body.style.backgroundImage = "url("+scPath+")";
+            cordova.exec(
+                function (result)
+                {
+                    if (result)
+                    {
+                        console.error("sc Path: "+result);
+                        screenShotPath = result;
+                        //document.body.style.backgroundImage = "url("+result+")";
+                        dom.byId('imageScreenshot').src = result;
+                    }
+                    else
+                    {
+                        window.setTimeout(initBackgroundImage, 50);
+                    }
+                },
+                function (err)
+                {
+                    alert(err.message);
+                },
+                "AnnoCordovaPlugin",
+                'get_screenshot_path',
+                []
+            );
         }
         else
         {
             window.setTimeout(initBackgroundImage, 50);
         }
+
     };
 
     var saveSimpleCommentAnno = function()
@@ -291,7 +311,7 @@ require([
                     "device_model":deviceInfo.model,
                     "os_name":deviceInfo.osName,
                     "os_version":deviceInfo.osVersion,
-                    "anno_type":"Simple Comment",
+                    "anno_type":"simple comment",
                     "screenshot_is_anonymized":false
                 };
 
@@ -343,7 +363,7 @@ require([
                     "os_version":deviceInfo.osVersion,
                     "draw_elements":dojoJson.stringify(surface.toJSON()),
                     "screenshot_is_anonymized":isScreenshotAnonymized,
-                    "anno_type":"Draw Comment"
+                    "anno_type":"draw comment"
                 };
 
                 AnnoDataHandler.saveAnno(annoItem, appInfo.source, screenshotDirPath);
@@ -454,6 +474,12 @@ require([
                 height: (viewPoint.h-shareDialogGap)+'px'
             });
 
+            // set screenshot container size
+            domStyle.set('screenshotContainer', {
+                width: (viewPoint.w)+'px',
+                height: (viewPoint.h)+'px'
+            });
+
             domStyle.set('sdTitle', 'height', sdTitleHeight+'px');
             domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-sdBottom-shareDialogGap)+'px');
             domStyle.set('sdBottom', 'height', sdBottom+'px');
@@ -464,6 +490,36 @@ require([
             {
                 saveSimpleCommentAnno();
             });
+
+            defaultCommentBox.onCommentBoxFocus = function(commentBox)
+            {
+                if (commentBox.earLow)
+                {
+                    if ((commentBox.pathPoints[2].y+20+400) >= viewPoint.h)
+                    {
+                        domStyle.set(surface.container, 'top', '-350px');
+                        domStyle.set('screenshotContainer', 'top', '-350px');
+
+                        var top = parseInt(commentBox.txtNode.style.top);
+                        domStyle.set(commentBox.txtNode, 'top', (top-350)+'px');
+                        domStyle.set(commentBox.inputNode, 'top', (top-350)+'px');
+                    }
+                }
+            };
+
+            defaultCommentBox.onCommentBoxBlur = function (commentBox)
+            {
+                console.error(surface.container.style.top);
+                if (surface.container.style.top == '-350px')
+                {
+                    domStyle.set(surface.container, 'top', '0px');
+                    domStyle.set('screenshotContainer', 'top', '0px');
+
+                    var top = parseInt(commentBox.txtNode.style.top);
+                    domStyle.set(commentBox.txtNode, 'top', (top+350)+'px');
+                    domStyle.set(commentBox.inputNode, 'top', (top+350)+'px');
+                }
+            };
         }, 500);
     };
 

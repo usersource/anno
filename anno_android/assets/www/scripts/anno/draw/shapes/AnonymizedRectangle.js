@@ -17,6 +17,7 @@ define([
             lineStrokeStyle: {color: '#000000', width: 0},
             hiddenColor: "rgba(0, 0, 0, 1)",
             shapeType: "AnonymizedRectangle",
+            minSize:32,
             getShape: function()
             {
                 var shape = this.rectangle.getShape();
@@ -24,6 +25,24 @@ define([
                 var dy = this.rectangle.matrix?this.rectangle.matrix.dy:0;
 
                 return {x:shape.x+dx, y:shape.y+dy, width:shape.width, height:shape.height}
+            },
+            isEndpointOutScreen: function(endpoint, dx, dy)
+            {
+                // check if shape's endpoint was dragged out of screen.
+                var boundingBox = endpoint.getTransformedBoundingBox();
+                var es = endpoint.getShape(), exl = boundingBox[0].x+dx, exr = boundingBox[1].x+dx, eyt = boundingBox[0].y+dy, eyb = boundingBox[2].y+dy;
+                var vp = this.viewPoint;
+                if (exl <= -16 || exr>= (vp.w+16))
+                {
+                    return true;
+                }
+
+                if (eyt <= -16 || eyb>= (vp.h+16))
+                {
+                    return true;
+                }
+
+                return false;
             }
         });
     });

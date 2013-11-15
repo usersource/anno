@@ -79,6 +79,29 @@ define(["../common/Util"], function(annoUtil){
 
                     self.updateAnnoSynchedStateByCreated(data.result.id, createdTime);
                     annoUtil.hideLoadingIndicator();
+
+                    cordova.exec(
+                        function (result)
+                        {
+                            cordova.exec(
+                                function (result)
+                                {
+                                },
+                                function (err)
+                                {
+                                },
+                                "AnnoCordovaPlugin",
+                                'exit_current_activity',
+                                []
+                            );
+                        },
+                        function (err)
+                        {
+                        },
+                        "AnnoCordovaPlugin",
+                        'show_toast',
+                        ["Your comment has been shared."]
+                    );
                 });
             });
         },
