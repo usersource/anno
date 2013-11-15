@@ -36,6 +36,7 @@ class AnnoMessage(messages.Message):
     creator_id = messages.StringField(16)
     draw_elements = messages.StringField(17)
     screenshot_is_anonymized = messages.BooleanField(18)
+    geo_position = messages.StringField(19)
 
 
 class AnnoMergeMessage(messages.Message):
@@ -59,6 +60,7 @@ class AnnoMergeMessage(messages.Message):
     created = message_types.DateTimeField(15)
     draw_elements = messages.StringField(16)
     screenshot_is_anonymized = messages.BooleanField(17)
+    geo_position = messages.StringField(18)
 
 
 class AnnoResponseMessage(messages.Message):
@@ -83,6 +85,7 @@ class AnnoResponseMessage(messages.Message):
     followup_list = messages.MessageField(FollowupMessage, 19, repeated=True)
     draw_elements = messages.StringField(20)
     screenshot_is_anonymized = messages.BooleanField(21)
+    geo_position = messages.StringField(22)
 
 
 class AnnoListMessage(messages.Message):
