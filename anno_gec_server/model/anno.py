@@ -28,8 +28,13 @@ class Anno(BaseModel):
     app_version = ndb.StringProperty()
     os_name = ndb.StringProperty()
     os_version = ndb.StringProperty()
-    draw_elements = ndb.StringProperty()
+    # use TextProperty instead of StringProperty.
+    # StringProperty if indexed, up to 500 characters.
+    # TextProperty not indexed, no limitation.
+    draw_elements = ndb.TextProperty()
     screenshot_is_anonymized = ndb.BooleanProperty()
+    geo_position = ndb.StringProperty()
+
 
     def to_response_message(self):
         """
@@ -57,7 +62,8 @@ class Anno(BaseModel):
                                    created=self.created,
                                    creator=user_message,
                                    draw_elements=self.draw_elements,
-                                   screenshot_is_anonymized=self.screenshot_is_anonymized)
+                                   screenshot_is_anonymized=self.screenshot_is_anonymized,
+                                   geo_position=self.geo_position)
 
     def to_response_message_by_projection(self, projection):
         """
@@ -86,7 +92,8 @@ class Anno(BaseModel):
                      level=message.level,
                      device_model=message.device_model, app_name=message.app_name, app_version=message.app_version,
                      os_name=message.os_name, os_version=message.os_version, creator=user.key,
-                     draw_elements=message.draw_elements, screenshot_is_anonymized=message.screenshot_is_anonymized)
+                     draw_elements=message.draw_elements, screenshot_is_anonymized=message.screenshot_is_anonymized,
+                     geo_position=message.geo_position)
         entity.image = message.image
         if message.created is not None:
             entity.created = message.created
@@ -129,3 +136,5 @@ class Anno(BaseModel):
             self.draw_elements = message.draw_elements
         if message.screenshot_is_anonymized is not None:
             self.screenshot_is_anonymized = message.screenshot_is_anonymized
+        if message.geo_position is not None:
+            self.geo_position = message.geo_position
