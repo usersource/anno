@@ -34,7 +34,7 @@ define([
                 lang.mixin(this, args);
                 this._connects = [];
 
-                this.viewPoint = win.getBox();
+                this.viewPoint = {w:this.surface.width, h:this.surface.height};
             },
             createShape: function(args)
             {

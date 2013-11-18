@@ -178,7 +178,7 @@ you can use the generic selector below, but it's slower:
 }
 
 .imgDetailScreenshot{
-    border: 2px solid #ff9900;
+    /*border: 2px solid #ff9900;*/
 }
 
 .gfxCanvasContainer
@@ -189,8 +189,8 @@ you can use the generic selector below, but it's slower:
 }
 
 .screenshotContainerDetail{
-    padding-left: 2px;
-    padding-top: 2px;
+    /*padding-left: 2px;
+    padding-top: 2px;*/
     position: absolute;
 }
 

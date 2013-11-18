@@ -33,9 +33,10 @@ define([
             annoTooltipY,
             goingNextRecord = null,
             loadingDetailData = false,
-            loadingImage = false;
+            loadingImage = false,
             trayBarHeight = 30,
-            trayScreenHeight = 0;
+            trayScreenHeight = 0,
+            borderWidth;
 
         var circleRadius = 16,
             level1Color = "#ff9900",
@@ -47,6 +48,8 @@ define([
             SimpleComment:"simple comment",
             DrawComment:"draw comment"
         };
+
+        var imageWidth, imageHeight;
 
         var wipeIn = function(args)
         {
@@ -159,7 +162,7 @@ define([
                 var orignialDeviceRatio = parseFloat((imgScreenshot.naturalWidth/imgScreenshot.naturalHeight).toFixed(2));
 
                 var orignialRatio = imgScreenshot.naturalHeight/imgScreenshot.naturalWidth;
-                var imageWidth, imageHeight;
+                //var imageWidth, imageHeight;
 
                 if (orignialDeviceRatio == deviceRatio)
                 {
@@ -169,17 +172,17 @@ define([
 
                     console.error("image width: "+imageWidth+", image height: "+imageHeight);
 
-                    imgScreenshot.width = imageWidth;
-                    imgScreenshot.height = imageHeight;
+                    //imgScreenshot.width = imageWidth;
+                    //imgScreenshot.height = imageHeight;
                 }
                 else if (orignialDeviceRatio < deviceRatio) // taller than current device
                 {console.error('taller ratio: o:'+orignialDeviceRatio+", d:"+ deviceRatio);
-                    imageWidth = Math.round((viewPoint.h-8)/orignialRatio);
-                    imageHeight = (viewPoint.h-8);
+                    imageWidth = Math.round((viewPoint.h-0)/orignialRatio);
+                    imageHeight = (viewPoint.h-0);
 
-                    imgScreenshot.width = imageWidth;
-                    imgScreenshot.height = imageHeight;
-                    imgScreenshot.style.width = imageWidth+'px';
+                    //imgScreenshot.width = imageWidth;
+                    //imgScreenshot.height = imageHeight;
+                    //imgScreenshot.style.width = imageWidth+'px';
 
                 }
                 else if (orignialDeviceRatio > deviceRatio) // wider than current device
@@ -187,9 +190,9 @@ define([
                     imageWidth = (viewPoint.w-screenshotMargin);
                     imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio;
 
-                    imgScreenshot.width = imageWidth;
-                    imgScreenshot.height = imageHeight;
-                    imgScreenshot.style.width = imageWidth+'px';
+                    //imgScreenshot.width = imageWidth;
+                    //imgScreenshot.height = imageHeight;
+                    //imgScreenshot.style.width = imageWidth+'px';
                 }
 
                 domStyle.set("lightCoverScreenshot", "width", (30)+"px");
@@ -203,8 +206,12 @@ define([
                     domStyle.set("lightCoverScreenshot", "height", (imageHeight+400)+"px");
                 }
 
-                imageWidth = imgScreenshot.width;
-                imageHeight = imgScreenshot.height;
+                var oldImageWidth = imgScreenshot.width;
+                borderWidth = Math.floor(imageWidth*0.02);
+                applyAnnoLevelColor(eventsModel.cursor.level);
+
+                //imageWidth = imgScreenshot.width;
+                //imageHeight = imgScreenshot.height;
 
                 var toolTipDivWidth = imageWidth - 40;
                 domStyle.set("screenshotTooltipDetail", "width", toolTipDivWidth+"px");
@@ -213,8 +220,8 @@ define([
                 {
                     if (eventsModel.cursor.circleX != null)
                     {
-                        var tx = Math.round((imageWidth*eventsModel.cursor.circleX)/10000) -circleRadius;
-                        var ty = Math.round((imageHeight*eventsModel.cursor.circleY)/10000) -circleRadius;
+                        var tx = Math.round(((imageWidth-borderWidth*2)*eventsModel.cursor.circleX)/10000) -circleRadius;
+                        var ty = Math.round(((imageHeight-borderWidth*2)*eventsModel.cursor.circleY)/10000) -circleRadius;
 
                         console.error("view w: "+viewPoint.w+", view h: "+viewPoint.h);
                         console.error("image width2: "+imageWidth+", image height2: "+imageHeight);
@@ -320,12 +327,14 @@ define([
             {
                 console.error('redrawShapes:'+drawElements);
                 var elementsObject = dojoJson.parse(drawElements);
-                var imgScreenshot = dom.byId('imgDetailScreenshot'),
-                    imageWidth = imgScreenshot.width,
-                    imageHeight = imgScreenshot.height;
 
                 surface.show();
-                surface.setDimensions(imageWidth, imageHeight);
+                domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', left:(-borderWidth)+'px',top:(-borderWidth)+'px'});
+
+                console.error('redrawShapes:'+domStyle.get(surface.container, 'border'));
+                surface.borderWidth = borderWidth;
+                surface.setDimensions(imageWidth-borderWidth*2, imageHeight-borderWidth*2);
+
                 surface.parse(elementsObject);
 
                 console.error('redrawShapes end');
@@ -344,7 +353,7 @@ define([
             if (idx < eventsModel.model.length)
             {
                 console.error("level:"+eventsModel.cursor.level);
-                applyAnnoLevelColor(eventsModel.cursor.level);
+                //applyAnnoLevelColor(eventsModel.cursor.level);
 
                 eventsModel.set("cursorIndex", idx);
                 currentIndex = idx;
@@ -427,16 +436,21 @@ define([
 
         var applyAnnoLevelColor = function(level)
         {
+            borderWidth = Math.floor(imageWidth*0.02);
             level = level||1;
             if (level == 1)
             {
-                domStyle.set('imgDetailScreenshot', 'borderColor', level1Color);
+                console.error("img width:"+(imageWidth-borderWidth*2));
+
+                domStyle.set('screenshotContainerDetail', {width:(imageWidth-borderWidth*2)+'px',height:(imageHeight-borderWidth*2)+'px', 'borderColor': level1Color,'borderStyle':'solid', 'borderWidth':borderWidth+'px'});
+                domStyle.set('imgDetailScreenshot', {width:'100%',height:'100%'});
+
                 drawOrangeCircle(1);
             }
             else if (level == 2)
             {
-                domStyle.set('imgDetailScreenshot', 'borderColor', level2Color);
-                console.error(domStyle.get('imgDetailScreenshot', 'border'));
+                domStyle.set('screenshotContainerDetail', {width:(imageWidth-borderWidth*2)+'px',height:(imageHeight-borderWidth*2)+'px', 'borderColor': level2Color,'borderStyle':'solid', 'borderWidth':borderWidth+'px'});
+                domStyle.set('imgDetailScreenshot', {width:'100%',height:'100%'});
                 drawOrangeCircle(2);
             }
         };
@@ -1233,7 +1247,8 @@ define([
                     container: dom.byId("gfxCanvasContainer"),
                     width:500,
                     height:500,
-                    editable:false
+                    editable:false,
+                    borderWidth:0
                 });
 
             },

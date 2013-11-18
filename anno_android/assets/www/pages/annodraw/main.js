@@ -18,7 +18,8 @@ require([
     var viewPoint,
         defaultShapeWidth = 160,
         defaultShapeHeight = 80,
-        shareDialogGap = 80;
+        shareDialogGap = 80,
+        borderWidth;
 
     var sdTitleHeight = 60,
         sdBottom = 80;
@@ -30,6 +31,8 @@ require([
     var defaultCommentBox;
 
     var selectedAppName, screenShotPath;
+    var level1Color = "#ff9900",
+        level2Color = "#ff0000";
 
     connect.connect(dom.byId("barArrow"), touch.release, function()
     {
@@ -234,13 +237,13 @@ require([
         surface.switchMode(true);
 
         var hiddenCanvas = dom.byId('hiddenCanvas');
-        hiddenCanvas.width = viewPoint.w;
-        hiddenCanvas.height = viewPoint.h;
+        hiddenCanvas.width = viewPoint.w-borderWidth*2;;
+        hiddenCanvas.height = viewPoint.h-borderWidth*2;;
         var ctx = hiddenCanvas.getContext('2d');
         var hiddenImage = new Image();
         hiddenImage.onload = function()
         {
-            ctx.drawImage(hiddenImage, 0, 0, viewPoint.w, viewPoint.h);
+            ctx.drawImage(hiddenImage, 0, 0, viewPoint.w-borderWidth*2, viewPoint.h-borderWidth*2);
         };
         hiddenImage.src = screenShotPath;
     };
@@ -254,10 +257,20 @@ require([
                 {
                     if (result)
                     {
+                        var datas = result.split("|");
                         console.error("sc Path: "+result);
-                        screenShotPath = result;
+                        screenShotPath = datas[0];
                         //document.body.style.backgroundImage = "url("+result+")";
-                        dom.byId('imageScreenshot').src = result;
+                        dom.byId('imageScreenshot').src = screenShotPath;
+
+                        if (datas[1] == 1)
+                        {
+                            domStyle.set('screenshotContainer', 'borderColor', level1Color);
+                        }
+                        else
+                        {
+                            domStyle.set('screenshotContainer', 'borderColor', level2Color);
+                        }
                     }
                     else
                     {
@@ -410,6 +423,7 @@ require([
         window.setTimeout(function(){
 
             viewPoint = win.getBox();
+            borderWidth = Math.floor(viewPoint.w*0.02);
 
             lastShapePos = {
                 x1:Math.round((viewPoint.w-defaultShapeWidth)/2),
@@ -427,9 +441,12 @@ require([
 
             surface = window.surface = new Surface({
                 container: dom.byId("gfxCanvasContainer"),
-                width:viewPoint.w,
-                height:viewPoint.h
+                width:viewPoint.w-borderWidth*2,
+                height:viewPoint.h-borderWidth*2,
+                borderWidth:borderWidth
             });
+
+            domStyle.set(surface.container, 'borderWidth', borderWidth+'px');
 
             connect.connect(surface, "onShapeRemoved", function()
             {
@@ -476,8 +493,9 @@ require([
 
             // set screenshot container size
             domStyle.set('screenshotContainer', {
-                width: (viewPoint.w)+'px',
-                height: (viewPoint.h)+'px'
+                width: (viewPoint.w-borderWidth*2)+'px',
+                height: (viewPoint.h-borderWidth*2)+'px',
+                borderWidth:borderWidth+"px"
             });
 
             domStyle.set('sdTitle', 'height', sdTitleHeight+'px');

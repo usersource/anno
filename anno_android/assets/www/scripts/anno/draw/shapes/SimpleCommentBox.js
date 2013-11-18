@@ -59,7 +59,7 @@ define([
 
                 // create text node
                 this.txtNode = domConstruct.create('div', {
-                    style: "background-color:transparent;display2:none;padding2:4px;padding-left2:6px;position:absolute;top:"+(this.pathPoints[0].y+3)+"px;left:"+(this.pathPoints[0].x+3)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
+                    style: "background-color:transparent;display2:none;padding2:4px;padding-left2:6px;position:absolute;top:"+(this.pathPoints[0].y+3+this.surface.borderWidth)+"px;left:"+(this.pathPoints[0].x+3+this.surface.borderWidth)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
                     innerHTML:"<div id='textDiv_"+this.id+"' style='padding:3px;overflow:hidden;width:100%;height:100%;font-size: 16px;font-weight: bold;color: "+this.grayColor+";'>"+this.placeholder+"</div>"
                 }, document.body, 'last');
 
@@ -67,7 +67,7 @@ define([
                 this.txtNode.children[0].gfxTarget = {isSelectTarget:true, sid:this.id};
 
                 this.inputNode = domConstruct.create('div', {
-                    style: "background-color:transparent;display:none;position:absolute;top:"+(this.pathPoints[0].y+3)+"px;left:"+(this.pathPoints[0].x+3)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
+                    style: "background-color:transparent;display:none;position:absolute;top:"+(this.pathPoints[0].y+3+this.surface.borderWidth)+"px;left:"+(this.pathPoints[0].x+3+this.surface.borderWidth)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
                     innerHTML:"<textarea id='input_"+this.id+"' placeholder='Enter suggestion here' style='font-family: helvetica, arial;font-size: 16px;font-weight: bold;background-color:transparent;width:100%;overflow-y2: hidden; border-color:transparent;outline: none;overflow-x: auto; box-sizing2: border-box; height: 24px;'></textarea>"
                 }, document.body, 'last');
                 this.inputElement = dom.byId("input_"+this.id);
@@ -126,7 +126,7 @@ define([
                 }));
 
                 this.shareBtnNode = domConstruct.create('button', {
-                    style: "display:none;position:absolute;top:"+(this.pathPoints[0].y-3)+"px;left:"+(this.pathPoints[5].x+3)+"px;",
+                    style: "display:none;position:absolute;top:"+(this.pathPoints[0].y-3+this.surface.borderWidth)+"px;left:"+(this.pathPoints[5].x+3+this.surface.borderWidth)+"px;",
                     "class": "btn",
                     innerHTML:"Share"
                 }, document.body, 'last');
@@ -155,17 +155,17 @@ define([
 
                     if (pathPoints.earLow)
                     {
-                        this.txtNode.style.top = (this.pathPoints[5].y+3)+'px';
-                        this.inputNode.style.top = (this.pathPoints[5].y+3)+'px';
+                        this.txtNode.style.top = (this.pathPoints[5].y+3+this.surface.borderWidth)+'px';
+                        this.inputNode.style.top = (this.pathPoints[5].y+3+this.surface.borderWidth)+'px';
 
-                        this.shareBtnNode.style.top = (this.pathPoints[5].y-3)+'px';
+                        this.shareBtnNode.style.top = (this.pathPoints[5].y-3+this.surface.borderWidth)+'px';
                     }
                     else
                     {
-                        this.txtNode.style.top = (this.pathPoints[0].y+3)+'px';
-                        this.inputNode.style.top = (this.pathPoints[0].y+3)+'px';
+                        this.txtNode.style.top = (this.pathPoints[0].y+3+this.surface.borderWidth)+'px';
+                        this.inputNode.style.top = (this.pathPoints[0].y+3+this.surface.borderWidth)+'px';
 
-                        this.shareBtnNode.style.top = (this.pathPoints[0].y-3)+'px';
+                        this.shareBtnNode.style.top = (this.pathPoints[0].y-3+this.surface.borderWidth)+'px';
                     }
 
                     domStyle.set(dom.byId('btnHome'), 'display', 'none');
