@@ -86,6 +86,12 @@ class AnnoResponseMessage(messages.Message):
     draw_elements = messages.StringField(20)
     screenshot_is_anonymized = messages.BooleanField(21)
     geo_position = messages.StringField(22)
+    vote_count = messages.IntegerField(23)
+    flag_count = messages.IntegerField(24)
+    followup_count = messages.IntegerField(25)
+    activity_count = messages.IntegerField(26)
+    last_update_time = message_types.DateTimeField(27)
+    last_activity = messages.StringField(28)
 
 
 class AnnoListMessage(messages.Message):
