@@ -40,6 +40,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
   public static final String GET_RECENT_APPLIST = "get_recent_applist";
   public static final String GET_SCREENSHOT_PATH = "get_screenshot_path";
   public static final String SHOW_TOAST = "show_toast";
+  public static final String GOTO_ANNO_HOME = "goto_anno_home";
 
   private static final int COMPRESS_QUALITY = 40;
 
@@ -70,6 +71,15 @@ public class AnnoCordovaPlugin extends CordovaPlugin
     }
     else if (SHOW_TOAST.equals(action)) {
       showToastMessage(args);
+      callbackContext.success();
+      return true;
+    }
+    else if (GOTO_ANNO_HOME.equals(action)) {
+      Activity activity = this.cordova.getActivity();
+      activity.finish();
+
+      Intent intent = new Intent(activity, AnnoMainActivity.class);
+      activity.startActivity(intent);
       callbackContext.success();
       return true;
     }

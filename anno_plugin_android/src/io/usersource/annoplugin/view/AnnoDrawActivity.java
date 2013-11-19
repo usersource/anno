@@ -11,6 +11,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import io.usersource.annoplugin.AnnoPlugin;
 import io.usersource.annoplugin.utils.*;
 import org.apache.cordova.DroidGap;
 
@@ -26,6 +30,20 @@ public class AnnoDrawActivity extends DroidGap
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     super.init();
+
+    GestureOverlayView view = new GestureOverlayView(this);
+    view.setLayoutParams(new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.MATCH_PARENT, 1));
+
+    setContentView(view);
+    view.addView((View) appView.getParent());
+    view.getChildAt(0).setLayoutParams(
+            new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT, 1));
+
+    setContentView(view);
+    AnnoPlugin.setEnableGesture(this, view, true);
 
     super.loadUrl("file:///android_asset/www/pages/annodraw/main.html");
 
@@ -98,6 +116,12 @@ public class AnnoDrawActivity extends DroidGap
   }
 
   public String getRealPathFromURI(Context context, Uri contentUri) {
+
+    if (contentUri.toString().startsWith("file://"))
+    {
+      return contentUri.getPath();
+    }
+
     Cursor cursor = null;
     try {
       String[] proj = { MediaStore.Images.Media.DATA };

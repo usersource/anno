@@ -33,6 +33,7 @@ require([
     var selectedAppName, screenShotPath;
     var level1Color = "#ff9900",
         level2Color = "#ff0000";
+    var level = 1;
 
     connect.connect(dom.byId("barArrow"), touch.release, function()
     {
@@ -196,6 +197,34 @@ require([
         saveDrawCommentAnno();
     });
 
+    // home/feeds/cancel button
+    connect.connect(dom.byId("btnHome"), 'click', function(e)
+    {
+        var action;
+        if (level == 1)
+        {
+            action = "goto_anno_home";
+        }
+        else
+        {
+            action = "exit_current_activity";
+        }
+
+        cordova.exec(
+            function (result)
+            {
+
+            },
+            function (err)
+            {
+                alert(err.message);
+            },
+            "AnnoCordovaPlugin",
+            action,
+            []
+        );
+    });
+
     window.onChkHidePersonalDataChange = function(e)
     {
         var checked = registry.byId('chkHidePersonalData').checked;
@@ -260,17 +289,20 @@ require([
                         var datas = result.split("|");
                         console.error("sc Path: "+result);
                         screenShotPath = datas[0];
-                        //document.body.style.backgroundImage = "url("+result+")";
+                        level = datas[1];
                         dom.byId('imageScreenshot').src = screenShotPath;
 
-                        if (datas[1] == 1)
+                        if (level == 1)
                         {
                             domStyle.set('screenshotContainer', 'borderColor', level1Color);
                         }
                         else
                         {
                             domStyle.set('screenshotContainer', 'borderColor', level2Color);
+                            dom.byId('btnHome').innerHTML = "Cancel";
                         }
+
+                        window.setTimeout(adjustShareDialogSize, 500);
                     }
                     else
                     {
@@ -291,6 +323,36 @@ require([
             window.setTimeout(initBackgroundImage, 50);
         }
 
+    };
+
+    var adjustShareDialogSize = function()
+    {
+        viewPoint = win.getBox();
+
+        if (level == 1)
+        {
+            // set share dialog size
+            domStyle.set('shareDialog', {
+                width: (viewPoint.w-shareDialogGap)+'px',
+                height: (viewPoint.h-shareDialogGap)+'px'
+            });
+        }
+        else
+        {
+            domStyle.set('sdAppList','display','none');
+            domStyle.set('sdTitle','display','none');
+            domStyle.set('sdShareBtn','paddingTop','18px');
+            domStyle.set('sdBottom',{
+                'paddingTop':'45px'
+            });
+
+
+            // set share dialog size
+            domStyle.set('shareDialog', {
+                width: '300px',
+                height: '150px'
+            });
+        }
     };
 
     var saveSimpleCommentAnno = function()
@@ -483,12 +545,6 @@ require([
                      domClass.add(dom.byId("barBlackRectangle"), 'barBlackActive');*/
                     domClass.remove(dom.byId("barBlackRectangleDone"), 'barIconDisabled');
                 }
-            });
-
-            // set share dialog size
-            domStyle.set('shareDialog', {
-                width: (viewPoint.w-shareDialogGap)+'px',
-                height: (viewPoint.h-shareDialogGap)+'px'
             });
 
             // set screenshot container size

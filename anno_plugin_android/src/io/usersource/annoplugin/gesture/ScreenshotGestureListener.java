@@ -3,7 +3,6 @@
  */
 package io.usersource.annoplugin.gesture;
 
-import io.usersource.annoplugin.R;
 import io.usersource.annoplugin.utils.PluginUtils;
 import io.usersource.annoplugin.utils.ScreenshotUtils;
 import io.usersource.annoplugin.utils.ViewUtils;
@@ -38,9 +37,10 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
 
   private static final String TAG = "ScreenshotGestureListener";
 
-  private static final String FEEDBACK_ACTIVITY = "io.usersource.annoplugin.view.FeedbackEditActivity";
+  private static final String FEEDBACK_ACTIVITY = "io.usersource.annoplugin.view.AnnoDrawActivity";
   private static final String GESTURE_NAME_PATTERN = "UserSource spiral[0-9]";
   private static final String SCREENSHOTS_DIR_NAME = "Screenshots";
+  private static final String TAKE_SCREENSHOT_FAIL_MESSAGE = "Take Screenshot Failed.";
 
   private Activity activity;
   private GestureLibrary gestureLibrary = null;
@@ -61,9 +61,7 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
   @Override
   public void onGesturePerformed(GestureOverlayView arg0, Gesture gesture) {
     int level = 0;
-    if (activity instanceof FeedbackEditActivity) {
-      level = ((FeedbackEditActivity) activity).getLevel();
-    } else if (activity instanceof FeedbackViewActivity) {
+    if (activity instanceof FeedbackViewActivity) {
       level = ((FeedbackViewActivity) activity).getLevel();
     } else if (activity instanceof AnnoMainActivity) {
       level = ((AnnoMainActivity) activity).getLevel();
@@ -73,6 +71,8 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
       level = ((OptionFeedbackActivity) activity).getLevel();
     } else if (activity instanceof IntroActivity) {
       level = ((IntroActivity) activity).getLevel();
+    } else if (activity instanceof AnnoDrawActivity) {
+      level = ((AnnoDrawActivity) activity).getLevel();
     }
 
 
@@ -92,10 +92,10 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
               launchAnnoPlugin(screenshotPath);
             } catch (FileNotFoundException e) {
               Log.e(TAG, e.getMessage(), e);
-              ViewUtils.displayError(activity, R.string.fail_take_screenshot);
+              ViewUtils.displayError(activity, TAKE_SCREENSHOT_FAIL_MESSAGE);
             } catch (IOException e) {
               Log.e(TAG, e.getMessage());
-              ViewUtils.displayError(activity, R.string.fail_take_screenshot);
+              ViewUtils.displayError(activity, TAKE_SCREENSHOT_FAIL_MESSAGE);
             }
             break;
           }
@@ -114,7 +114,7 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
     Uri imageUri = Uri.parse("file://" + imageFile.getPath());
     intent.putExtra(Intent.EXTRA_STREAM, imageUri);
 
-    if (activity instanceof FeedbackEditActivity
+    if (activity instanceof AnnoDrawActivity
         || activity instanceof FeedbackViewActivity
         || activity instanceof AnnoMainActivity
         || activity instanceof CommunityActivity

@@ -17,6 +17,7 @@ import android.widget.Toast;
  */
 public final class ViewUtils {
 
+  private static final String ERROR_TITILE = "Error";
   /**
    * Display information.
    * 
@@ -44,7 +45,7 @@ public final class ViewUtils {
       }
     };
 
-    new AlertDialog.Builder(context).setTitle(R.string.erorr_title)
+    new AlertDialog.Builder(context).setTitle(ERROR_TITILE)
         .setMessage(message).setNeutralButton(android.R.string.ok, listener)
         .show();
   }
@@ -66,7 +67,7 @@ public final class ViewUtils {
       }
     };
 
-    new AlertDialog.Builder(context).setTitle(R.string.erorr_title)
+    new AlertDialog.Builder(context).setTitle(ERROR_TITILE)
         .setMessage(resId).setNeutralButton(android.R.string.ok, listener)
         .show();
   }

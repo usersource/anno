@@ -171,28 +171,16 @@ define([
                     imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio;
 
                     console.error("image width: "+imageWidth+", image height: "+imageHeight);
-
-                    //imgScreenshot.width = imageWidth;
-                    //imgScreenshot.height = imageHeight;
                 }
                 else if (orignialDeviceRatio < deviceRatio) // taller than current device
                 {console.error('taller ratio: o:'+orignialDeviceRatio+", d:"+ deviceRatio);
                     imageWidth = Math.round((viewPoint.h-0)/orignialRatio);
                     imageHeight = (viewPoint.h-0);
-
-                    //imgScreenshot.width = imageWidth;
-                    //imgScreenshot.height = imageHeight;
-                    //imgScreenshot.style.width = imageWidth+'px';
-
                 }
                 else if (orignialDeviceRatio > deviceRatio) // wider than current device
                 {console.error('wider ratio');
                     imageWidth = (viewPoint.w-screenshotMargin);
                     imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio;
-
-                    //imgScreenshot.width = imageWidth;
-                    //imgScreenshot.height = imageHeight;
-                    //imgScreenshot.style.width = imageWidth+'px';
                 }
 
                 domStyle.set("lightCoverScreenshot", "width", (30)+"px");
@@ -209,9 +197,6 @@ define([
                 var oldImageWidth = imgScreenshot.width;
                 borderWidth = Math.floor(imageWidth*0.02);
                 applyAnnoLevelColor(eventsModel.cursor.level);
-
-                //imageWidth = imgScreenshot.width;
-                //imageHeight = imgScreenshot.height;
 
                 var toolTipDivWidth = imageWidth - 40;
                 domStyle.set("screenshotTooltipDetail", "width", toolTipDivWidth+"px");
