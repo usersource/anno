@@ -10,6 +10,8 @@ from google.appengine.ext.db import BadValueError
 from protorpc import message_types
 from protorpc import messages
 from protorpc import remote
+from google.appengine.ext import ndb
+import datetime
 
 from message.anno_api_messages import AnnoMessage
 from message.anno_api_messages import AnnoMergeMessage
@@ -67,7 +69,9 @@ class AnnoApi(remote.Service):
         message_types.VoidMessage,
         cursor=messages.StringField(2),
         limit=messages.IntegerField(3),
-        select=messages.StringField(4)
+        select=messages.StringField(4),
+        app=messages.StringField(5),
+        query_type=messages.StringField(6)
     )
 
     @endpoints.method(anno_list_resource_container, AnnoListMessage, path='anno', http_method='GET', name='anno.list')
@@ -75,7 +79,7 @@ class AnnoApi(remote.Service):
         """
         Exposes an API endpoint to retrieve a list of anno.
         """
-        limit = 10 # default limit is 10.
+        limit = 10
         if request.limit is not None:
             limit = request.limit
 
@@ -87,28 +91,21 @@ class AnnoApi(remote.Service):
                 raise endpoints.BadRequestException('Invalid cursor %s.' % request.cursor)
 
         select_projection = None
-        # todo: add projection validation, may need metadata.
         if request.select is not None:
             select_projection = request.select.split(',')
 
-        if (curs is not None) and (select_projection is not None):
-            annos, next_curs, more = Anno.query().fetch_page(limit, start_cursor=curs, projection=select_projection)
-        elif (curs is not None) and (select_projection is None):
-            annos, next_curs, more = Anno.query().fetch_page(limit, start_cursor=curs)
-        elif (curs is None) and (select_projection is not None):
-            annos, next_curs, more = Anno.query().fetch_page(limit, projection=select_projection)
+        if request.query_type == 'by_created':
+            return Anno.query_by_app_by_created(request.app, limit, select_projection, curs)
+        elif request.query_type == 'by_vote_count':
+            return Anno.query_by_vote_count(request.app)
+        elif request.query_type == 'by_flag_count':
+            return Anno.query_by_flag_count(request.app)
+        elif request.query_type == 'by_activity_count':
+            return Anno.query_by_activity_count(request.app)
+        elif request.query_type == 'by_last_activity':
+            return Anno.query_by_last_activity(request.app)
         else:
-            annos, next_curs, more = Anno.query().fetch_page(limit)
-
-        if select_projection is not None:
-            items = [entity.to_response_message_by_projection(select_projection) for entity in annos]
-        else:
-            items = [entity.to_response_message() for entity in annos]
-
-        if more:
-            return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
-        else:
-            return AnnoListMessage(anno_list=items, has_more=more)
+            return Anno.query_by_page(limit, select_projection, curs)
 
 
     @endpoints.method(AnnoMessage, AnnoResponseMessage, path='anno', http_method='POST', name="anno.insert")

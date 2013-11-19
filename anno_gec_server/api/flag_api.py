@@ -6,6 +6,7 @@ from protorpc import message_types
 from protorpc import messages
 from google.appengine.datastore.datastore_query import Cursor
 from google.appengine.ext.db import BadValueError
+import datetime
 
 from message.flag_message import FlagMessage
 from message.flag_message import FlagListMessage
@@ -28,10 +29,16 @@ class FlagApi(remote.Service):
         """
         Exposes an API endpoint to insert a flag for the current user.
         """
-        current_user = get_endpoints_current_user()
-        user = User.find_user_by_email(current_user.email())
-        if user is None:
-            user = User.insert_user(current_user.email())
+        current_user = get_endpoints_current_user(raise_unauthorized=False)
+        if current_user is None:
+            email = 'anonymous@usersource.com'
+            user = User.find_user_by_email(email)
+            if user is None:
+                user = User.insert_user(email)
+        else:
+            user = User.find_user_by_email(current_user.email())
+            if user is None:
+                user = User.insert_user(current_user.email())
 
         anno = Anno.get_by_id(request.anno_id)
         if anno is None:
@@ -43,6 +50,11 @@ class FlagApi(remote.Service):
         if request.created is not None:
             flag.created = request.created
         flag.put()
+
+        anno.flag_count += 1
+        anno.last_update_time = datetime.datetime.now()
+        anno.last_activity = 'flag'
+        anno.put()
         return flag.to_message()
 
     flag_with_id_resource_container = endpoints.ResourceContainer(
@@ -63,12 +75,18 @@ class FlagApi(remote.Service):
             flag = Flag.get_by_id(request.id)
             if flag is None:
                 raise endpoints.NotFoundException('No flag entity with the id "%s" exists.' % request.id)
+
+            anno = flag.anno_key.get()
             flag.key.delete()
+            anno.flag_count -= 1
+            anno.put()
         elif request.anno_id is not None:
             user = User.find_user_by_email(get_endpoints_current_user().email())
             anno = Anno.get_by_id(request.anno_id)
             for key in Flag.query(Flag.anno_key == anno.key, Flag.creator == user.key).iter(keys_only=True):
                 key.delete()
+                anno.flag_count -= 1
+                anno.put()
         return message_types.VoidMessage()
 
     @endpoints.method(flag_with_id_resource_container, FlagMessage, http_method='GET', path='flag/{id}',
