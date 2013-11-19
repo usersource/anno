@@ -7,8 +7,10 @@ Anno data store model definition.
 from google.appengine.ext import ndb
 
 from message.anno_api_messages import AnnoResponseMessage
+from message.anno_api_messages import AnnoListMessage
 from message.user_message import UserMessage
 from model.base_model import BaseModel
+import datetime
 
 
 class Anno(BaseModel):
@@ -34,7 +36,11 @@ class Anno(BaseModel):
     draw_elements = ndb.TextProperty()
     screenshot_is_anonymized = ndb.BooleanProperty()
     geo_position = ndb.StringProperty()
-
+    flag_count = ndb.IntegerProperty(default=0)  # how many flags are there for this anno
+    vote_count = ndb.IntegerProperty(default=0)  # how many votes are there for this anno
+    followup_count = ndb.IntegerProperty(default=0)  # how many follow ups are there for this anno
+    last_update_time = ndb.DateTimeProperty(auto_now_add=True)  # last time that vote/flag/followup creation.
+    last_activity = ndb.StringProperty('anno')  # last activity, vote/flag/followup creation
 
     def to_response_message(self):
         """
@@ -93,10 +99,13 @@ class Anno(BaseModel):
                      device_model=message.device_model, app_name=message.app_name, app_version=message.app_version,
                      os_name=message.os_name, os_version=message.os_version, creator=user.key,
                      draw_elements=message.draw_elements, screenshot_is_anonymized=message.screenshot_is_anonymized,
-                     geo_position=message.geo_position)
+                     geo_position=message.geo_position, flag_count=0, vote_count=0, followup_count=0,
+                     last_activity='anno')
         entity.image = message.image
         if message.created is not None:
             entity.created = message.created
+        entity.last_update_time = datetime.datetime.now()
+        entity.last_activity = 'anno'
         entity.put()
         return entity
 
@@ -138,3 +147,91 @@ class Anno(BaseModel):
             self.screenshot_is_anonymized = message.screenshot_is_anonymized
         if message.geo_position is not None:
             self.geo_position = message.geo_position
+
+    @classmethod
+    def query_by_app_by_created(cls, app_name, limit, projection, curs):
+        query = cls.query()
+        query = query.filter(cls.app_name == app_name)
+        query = query.order(-cls.created)
+        if (curs is not None) and (projection is not None):
+            annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)
+        elif (curs is not None) and (projection is None):
+            annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
+        elif (curs is None) and (projection is not None):
+            annos, next_curs, more = query.fetch_page(limit, projection=projection)
+        else:
+            annos, next_curs, more = query.fetch_page(limit)
+        if projection is not None:
+            items = [entity.to_response_message_by_projection(projection) for entity in annos]
+        else:
+            items = [entity.to_response_message() for entity in annos]
+
+        if more:
+            return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
+        else:
+            return AnnoListMessage(anno_list=items, has_more=more)
+
+    @classmethod
+    def query_by_vote_count(cls, app_name):
+        query = cls.query().filter(cls.app_name == app_name).order(-cls.vote_count)
+        anno_list = []
+        for anno in query:
+            anno_message = anno.to_response_message()
+            anno_message.vote_count = anno.vote_count
+            anno_list.append(anno_message)
+        return AnnoListMessage(anno_list=anno_list)
+
+    @classmethod
+    def query_by_flag_count(cls, app_name):
+        query = cls.query().filter(cls.app_name == app_name).filter(cls.flag_count > 0).order(-cls.flag_count)
+        anno_list = []
+        for anno in query:
+            anno_message = anno.to_response_message()
+            anno_message.flag_count = anno.flag_count
+            anno_list.append(anno_message)
+        return AnnoListMessage(anno_list=anno_list)
+
+    @classmethod
+    def query_by_activity_count(cls, app_name):
+        anno_list = []
+        for anno in cls.query().filter(cls.app_name == app_name):
+            anno_list.append(anno)
+        anno_list = sorted(anno_list, key=lambda x: (x.vote_count + x.flag_count + x.followup_count), reverse=True)
+        anno_resp_list = []
+        for anno in anno_list:
+            anno_message = anno.to_response_message()
+            anno_message.activity_count = anno.vote_count + anno.flag_count + anno.followup_count
+            anno_resp_list.append(anno_message)
+        return AnnoListMessage(anno_list=anno_resp_list)
+
+    @classmethod
+    def query_by_last_activity(cls, app_name):
+        query = cls.query().filter(cls.app_name == app_name).order(-cls.last_update_time)
+        anno_list = []
+        for anno in query:
+            anno_message = anno.to_response_message()
+            anno_message.last_update_time = anno.last_update_time
+            anno_message.last_activity = anno.last_activity
+            anno_list.append(anno_message)
+        return AnnoListMessage(anno_list=anno_list)
+
+    @classmethod
+    def query_by_page(cls, limit, projection, curs):
+        query = cls.query()
+        if (curs is not None) and (projection is not None):
+            annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)
+        elif (curs is not None) and (projection is None):
+            annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
+        elif (curs is None) and (projection is not None):
+            annos, next_curs, more = query.fetch_page(limit, projection=projection)
+        else:
+            annos, next_curs, more = query.fetch_page(limit)
+        if projection is not None:
+            items = [entity.to_response_message_by_projection(projection) for entity in annos]
+        else:
+            items = [entity.to_response_message() for entity in annos]
+
+        if more:
+            return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
+        else:
+            return AnnoListMessage(anno_list=items, has_more=more)

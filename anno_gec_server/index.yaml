@@ -62,3 +62,32 @@ indexes:
   - name: anno_type
   - name: is_circle_on_top
   - name: is_moved
+
+- kind: Anno
+  properties:
+  - name: app_name
+  - name: created
+
+- kind: Anno
+  properties:
+  - name: app_name
+  - name: created
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: app_name
+  - name: flag_count
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: app_name
+  - name: last_update_time
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: app_name
+  - name: vote_count
+    direction: desc
