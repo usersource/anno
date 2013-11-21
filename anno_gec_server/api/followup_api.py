@@ -29,7 +29,7 @@ class FollowupApi(remote.Service):
         """
         Exposes and API endpoint to insert a follow up for the current user.
         """
-        current_user = get_endpoints_current_user()
+        current_user = get_endpoints_current_user(raise_unauthorized=False)
         if current_user is None:
             email = 'anonymous@usersource.com'
             user = User.find_user_by_email(email)
@@ -117,10 +117,11 @@ class FollowupApi(remote.Service):
             except BadValueError:
                 raise endpoints.BadRequestException('Invalid cursor %s.' % request.cursor)
 
+        query = FollowUp.query().order(-FollowUp.created)
         if curs is not None:
-            followups, next_curs, more = FollowUp.query().fetch_page(limit, start_cursor=curs)
+            followups, next_curs, more = query.fetch_page(limit, start_cursor=curs)
         else:
-            followups, next_curs, more = FollowUp.query().fetch_page(limit)
+            followups, next_curs, more = query.fetch_page(limit)
 
         items = [entity.to_message() for entity in followups]
         if more:
