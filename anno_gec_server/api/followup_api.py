@@ -6,6 +6,7 @@ from protorpc import messages
 from protorpc import message_types
 from google.appengine.datastore.datastore_query import Cursor
 from google.appengine.ext.db import BadValueError
+import datetime
 
 from api.utils import get_endpoints_current_user
 from api.utils import anno_js_client_id
@@ -29,9 +30,15 @@ class FollowupApi(remote.Service):
         Exposes and API endpoint to insert a follow up for the current user.
         """
         current_user = get_endpoints_current_user()
-        user = User.find_user_by_email(current_user.email())
-        if user is None:
-            user = User.insert_user(current_user.email())
+        if current_user is None:
+            email = 'anonymous@usersource.com'
+            user = User.find_user_by_email(email)
+            if user is None:
+                user = User.insert_user(email)
+        else:
+            user = User.find_user_by_email(current_user.email())
+            if user is None:
+                user = User.insert_user(current_user.email())
 
         anno = Anno.get_by_id(request.anno_id)
         if anno is None:
@@ -44,6 +51,11 @@ class FollowupApi(remote.Service):
         if request.created is not None:
             followup.created = request.created
         followup.put()
+
+        anno.followup_count += 1
+        anno.last_update_time = datetime.datetime.now()
+        anno.last_activity = 'follwup'
+        anno.put()
         return followup.to_message()
 
     followup_with_id_resource_container = endpoints.ResourceContainer(
@@ -62,7 +74,10 @@ class FollowupApi(remote.Service):
         followup = FollowUp.get_by_id(request.id)
         if followup is None:
             raise endpoints.NotFoundException('No follow up entity with the id "%s" exists.' % request.id)
+        anno = followup.anno_key.get()
         followup.key.delete()
+        anno.followup_count -= 1
+        anno.put()
         return message_types.VoidMessage()
 
 
