@@ -243,7 +243,7 @@ class Anno(BaseModel):
 
     @classmethod
     def query_by_page(cls, limit, projection, curs):
-        query = cls.query()
+        query = cls.query().order(-cls.created)
         if (curs is not None) and (projection is not None):
             annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)
         elif (curs is not None) and (projection is None):
