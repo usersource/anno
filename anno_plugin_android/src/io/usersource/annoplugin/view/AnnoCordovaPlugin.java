@@ -39,8 +39,13 @@ public class AnnoCordovaPlugin extends CordovaPlugin
   public static final String PROCESS_IMAGE_AND_APPINFO = "process_image_and_appinfo";
   public static final String GET_RECENT_APPLIST = "get_recent_applist";
   public static final String GET_SCREENSHOT_PATH = "get_screenshot_path";
+  public static final String GET_ANNO_SCREENSHOT_PATH = "get_anno_screenshot_path";
   public static final String SHOW_TOAST = "show_toast";
   public static final String GOTO_ANNO_HOME = "goto_anno_home";
+  public static final String START_ACTIVITY = "start_activity";
+
+  // activity names
+  public static final String ACTIVITY_INTRO = "Intro";
 
   private static final int COMPRESS_QUALITY = 40;
 
@@ -69,6 +74,18 @@ public class AnnoCordovaPlugin extends CordovaPlugin
       callbackContext.success(annoDrawActivity.getScreenshotPath()+"|"+annoDrawActivity.getLevel());
       return true;
     }
+    else if (GET_ANNO_SCREENSHOT_PATH.equals(action)) {
+      Activity activity = this.cordova.getActivity();
+      AppConfig config = AppConfig.getInstance(activity);
+
+      String appLocation = config.getDataLocation();
+      String screenshotDirName = config.getScreenshotDirName();
+      String screenshotDirPath = new File(appLocation, screenshotDirName)
+              .getAbsolutePath();
+
+      callbackContext.success(screenshotDirPath);
+      return true;
+    }
     else if (SHOW_TOAST.equals(action)) {
       showToastMessage(args);
       callbackContext.success();
@@ -81,6 +98,28 @@ public class AnnoCordovaPlugin extends CordovaPlugin
       Intent intent = new Intent(activity, AnnoMainActivity.class);
       activity.startActivity(intent);
       callbackContext.success();
+      return true;
+    }
+    else if (START_ACTIVITY.equals(action)) {
+      String activityName = args.getString(0);
+      boolean closeCurrentActivity = args.getBoolean(1);
+
+      Activity activity = this.cordova.getActivity();
+
+      if (closeCurrentActivity)
+      {
+        activity.finish();
+      }
+
+      Intent intent = null;
+      if (activityName.equalsIgnoreCase(ACTIVITY_INTRO))
+      {
+        intent = new Intent(activity, IntroActivity.class);
+      }
+
+      activity.startActivity(intent);
+      callbackContext.success();
+
       return true;
     }
 
@@ -110,7 +149,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
 
     Intent intent = new Intent(Intent.ACTION_SEND);
     intent.setClassName(packageName,
-            "io.usersource.annoplugin.view.FeedbackEditActivity");
+            "io.usersource.annoplugin.view.AnnoDrawActivity");
     intent.setType("image/*");
     // set this flag for FeedbackEditActivity to know it's practice.
     intent.putExtra(Constants.INTENT_EXTRA_IS_PRACTICE, true);
@@ -164,9 +203,9 @@ public class AnnoCordovaPlugin extends CordovaPlugin
     Uri imageUri = Uri.parse("file://" + imageFile.getPath());
     intent.putExtra(Intent.EXTRA_STREAM, imageUri);
 
-    if (activity instanceof FeedbackEditActivity
-            || activity instanceof FeedbackViewActivity
-            || activity instanceof AnnoMainActivity) {
+    if (activity instanceof AnnoDrawActivity
+            || activity instanceof IntroActivity
+            || activity instanceof CommunityActivity) {
       // current app is standalone anno, or anno plugin activity.
       intent.putExtra(PluginUtils.LEVEL, 1);
     } else {

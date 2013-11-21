@@ -357,11 +357,17 @@ require([
 
     var saveSimpleCommentAnno = function()
     {
+        var commentText = defaultCommentBox.inputElement.value;
+
+        if (commentText.length <=0)
+        {
+            alert("Please enter suggestion.");
+            return;
+        }
+
         annoUtil.showLoadingIndicator();
 
         var deviceInfo = annoUtil.getDeviceInfo();
-        console.error(JSON.stringify(deviceInfo));
-
         var pluginParam = [];
 
         cordova.exec(
@@ -404,6 +410,12 @@ require([
 
     var saveDrawCommentAnno = function()
     {
+        if (!surface.allCommentFilled())
+        {
+            alert("Please enter suggestion.");
+            return;
+        }
+
         annoUtil.showLoadingIndicator();
 
         var deviceInfo = annoUtil.getDeviceInfo();

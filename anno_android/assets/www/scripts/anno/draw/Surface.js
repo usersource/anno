@@ -292,6 +292,26 @@ define([
 
                 return comments.join("... ...");
             },
+            allCommentFilled: function()
+            {
+                var shape, ret=true, commentText;
+                for (var p in this.registry)
+                {
+                    shape = this.registry[p];
+
+                    if (shape.shapeType == this.shapeTypes.CommentBox)
+                    {
+                        commentText = shape.getComment();
+                        if (commentText.length <=0)
+                        {
+                            ret = false;
+                            break;
+                        }
+                    }
+                }
+
+                return ret;
+            },
             isScreenshotAnonymized: function()
             {
                 var anonymized = false;

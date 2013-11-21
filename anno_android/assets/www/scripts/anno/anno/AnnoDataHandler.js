@@ -1,10 +1,9 @@
 define(["../common/Util"], function(annoUtil){
 
-    var insert_anno_sql = "insert into feedback_comment(created,last_update,comment,screenshot_key,x,y,direction,app_version,os_version,is_moved,level,app_name,model,source,os_name,anno_type,synched)"+
-        " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     var insert_anno_draw_sql = "insert into feedback_comment(draw_elements,draw_is_anonymized,created,last_update,comment,screenshot_key,x,y,direction,app_version,os_version,is_moved,level,app_name,model,source,os_name,anno_type,synched)"+
         " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     var update_anno_synched_by_created_sql = "update feedback_comment set synched=1,object_key=? where created=?";
+    var select_anno_sql = "select * from feedback_comment";
 
     var onSQLError = function(err)
     {
@@ -109,6 +108,20 @@ define(["../common/Util"], function(annoUtil){
         {
             executeUpdateSql(update_anno_synched_by_created_sql,[cloudKey, ct], function(res){
 
+            }, onSQLError);
+        },
+        loadLocalAnnos: function(callback)
+        {
+            executeUpdateSql(select_anno_sql,[], function(res){
+                var annos = [];
+                var cnt = res.rows.length;
+
+                for (var i=0;i<cnt;i++)
+                {
+                    annos.push(res.rows.item(i));
+                }
+
+                callback(annos);
             }, onSQLError);
         }
     };

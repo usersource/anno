@@ -28,7 +28,7 @@ define([
         var app = null,
             savingVote = false,
             savingFlag = false,
-            screenshotMargin = 8;
+            screenshotMargin = 0;
         var currentAuthor = 'me',
             annoTooltipY,
             goingNextRecord = null,

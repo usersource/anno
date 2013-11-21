@@ -5,6 +5,7 @@ define([
     "dojo/dom-geometry",
     "dojo/dom-style",
     "dojo/query",
+    "dojo/touch",
     "dojo/_base/lang",
     "dojo/_base/connect",
     "dojo/window",
@@ -16,7 +17,7 @@ define([
     "dojox/mvc/getStateful",
     "anno/common/Util"
 ],
-    function (arrayUtil, dom, domClass, domGeom, domStyle, query, lang, connect, win, has, sniff, registry, at, Memory, getStateful, annoUtil)
+    function (arrayUtil, dom, domClass, domGeom, domStyle, query, touch, lang, connect, win, has, sniff, registry, at, Memory, getStateful, annoUtil)
     {
         var _connectResults = []; // events connect results
         var eventsModel = null;
@@ -26,6 +27,7 @@ define([
         var loadingMoreData = false,
             offset = 0, limit=30;
         var hasMoreData = false;
+        var bottomBarHeight = 50;
         var emptyAnno = {
             "id": 0,
             "annoText": "0",
@@ -99,6 +101,7 @@ define([
 
                     eventData.annoText = annoList[i].anno_text;
                     eventData.annoType = annoList[i].anno_type;
+                    eventData.annoIcon = annoList[i].anno_type == annoUtil.annoType.SimpleComment?"icon-simplecomment":"icon-shapes";
                     eventData.app = annoList[i].app_name;
                     eventData.author = annoList[i].creator?annoList[i].creator.user_id:"";
                     eventData.id = annoList[i].id;
@@ -125,7 +128,7 @@ define([
 
         var loadMoreData = function()
         {
-            if (loadingMoreData) return;
+            if (loadingMoreData||!hasMoreData) return;
 
             loadListData(offset+limit);
 
@@ -137,7 +140,7 @@ define([
             var viewPoint = win.getBox();
             var parentBox = domGeom.getMarginBox("headingStart");
 
-            domStyle.set("listContainerStart", "height", (viewPoint.h-parentBox.h)+"px");
+            domStyle.set("listContainerStart", "height", (viewPoint.h-parentBox.h-bottomBarHeight)+"px");
         };
 
         var showLoadingIndicator = function()
@@ -196,6 +199,12 @@ define([
                 console.log("console from view", this);
                 eventsModel = this.loadedModels.events;
                 app = this.app;
+
+                _connectResults.push(connect.connect(dom.byId("barMyStuff"), 'click', function(e)
+                {
+                    dojo.stopEvent(e);
+                    app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
+                }));
 
                 _connectResults.push(connect.connect(dom.byId('btnLoadListData'), "click", function ()
                 {

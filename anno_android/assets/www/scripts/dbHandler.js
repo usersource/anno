@@ -2,6 +2,34 @@ var annoDB = null;
 var dbIsReady = false;
 document.addEventListener("deviceready", initDB, false);
 
+var createCommentTableScript = '\
+    create table if not exists feedback_comment\
+(\
+    _id integer primary key autoincrement,\
+    comment text not null,\
+    screenshot_key text not null,\
+    x integer not null,\
+    y integer not null,\
+    direction integer not null,\
+    app_version text,\
+    os_version text,\
+    last_update integer not null,\
+    object_key text,\
+    is_moved integer not null,\
+    level integer not null,\
+    app_name text,\
+    model text,\
+    source text,\
+    os_name text default \'Android\',\
+    anno_type text default \'simple comment\',\
+    synched integer default 0,\
+    created integer default 0,\
+    draw_elements text,\
+    draw_is_anonymized integer default 0\
+)';
+
+var createCommentTableIndexScript = "CREATE INDEX feedback_comment_created ON feedback_comment(created)";
+
 function initDB()
 {
     window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs){
@@ -19,15 +47,11 @@ function checkTables()
         if (res.rows.item(0).cnt == 1)
         {
             doUpgrade();
-            annoDB.executeSql("select * from feedback_comment", [], function(resf) {
-                console.error("feedback_comment data: "+JSON.stringify(resf.rows.item(0)));
-            });
-
             dbIsReady = true;
         }
         else
         {
-            //initTables();
+            initTables();
         }
     });
 
@@ -36,8 +60,8 @@ function checkTables()
 function initTables()
 {
     annoDB.transaction(function(tx) {
-        tx.executeSql('CREATE TABLE IF NOT EXISTS app_settings (id integer primary key, userpin text, settingsjson text)');
-
+        tx.executeSql(createCommentTableScript);
+        tx.executeSql(createCommentTableIndexScript);
         dbIsReady = true;
     });
 }

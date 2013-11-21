@@ -1,11 +1,8 @@
 <div class="view mblView">
     <script type="dojo/require">at: "dojox/mvc/at"</script>
     <div id="headingStart" data-dojo-type="dojox/mobile/Heading">
-        <div id="navBtnBackStart" class="navBtnBackStart" data-dojo-type="dojox/mobile/ToolBarButton"></div>
         <img src="css/images/anno.png" alt="" width="40" class="headingIcon">
-        <span class="headingTitle">Community</span>
-
-        <div id="btnLoadListData" style="display: none" data-dojo-type="dojox/mobile/ToolBarButton" label="Load Data"></div>
+        <span class="headingTitle">Anno</span>
     </div>
     <div id="listContainerStart" style="width: 100%;overflow: auto">
         <ul data-dojo-type="dojox/mobile/EdgeToEdgeList">
@@ -14,26 +11,61 @@
                  data-dojo-props="exprchar: '#', children: this.loadedModels.events.model">
                 <li id="event#{this.index}" class="row"
                     data-dojo-type="dojox/mobile/ListItem"
-                    data-dojo-props="transition:'slide',variableHeight:true,clickable:true,transitionOptions:{target:'detail',url:'#detail',params:{cursor:'#{this.index}'}}">
+                    data-dojo-props="transition:'slide',variableHeight:true,clickable:true,noArrow:true,transitionOptions:{target:'detail',url:'#detail',params:{cursor:'#{this.index}'}}">
                     <div class="infoContainer">
-                        <div class="listTitle" data-dojo-type="dojox/mvc/Output"
-                             data-dojo-props="value: at('rel:#{this.index}', 'annoText')"></div>
-                        <table style="width: 100%">
+                        <table style="width: 100%;table-layout: fixed;">
                             <tr>
-                                <td style="width: 60%;text-align: left">
-                                    <div class="listAppName" data-dojo-type="dojox/mvc/Output"
-                                         data-dojo-props="value: at('rel:#{this.index}', 'app')"></div>
+                                <td width="36">
+                                    <span data-dojo-props="class: at('rel:#{this.index}', 'annoIcon')" data-dojo-type="dojox/mvc/Output" class="annoListItemIcon"></span>
                                 </td>
-                                <td style="width: 40%;text-align: right">
-                                    <div class="listAuthor" data-dojo-type="dojox/mvc/Output"
-                                         data-dojo-props="value: at('rel:#{this.index}', 'author')"></div>
+                                <td width="95%">
+                                    <div class="listTitle" data-dojo-type="dojox/mvc/Output"
+                                         data-dojo-props="value: at('rel:#{this.index}', 'annoText')"></div>
+                                    <table style="width: 100%">
+                                        <tr>
+                                            <td style="width: 60%;text-align: left">
+                                                <div class="listAppName" data-dojo-type="dojox/mvc/Output"
+                                                     data-dojo-props="value: at('rel:#{this.index}', 'app')"></div>
+                                            </td>
+                                            <td style="width: 40%;text-align: right">
+                                                <div class="listAuthor" data-dojo-type="dojox/mvc/Output"
+                                                     data-dojo-props="value: at('rel:#{this.index}', 'author')"></div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td width="25" valign="top">
+                                    <div class="mblListItemRightIcon">
+                                        <div class="mblDomButtonArrow mblDomButton">
+                                            <div></div>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         </table>
+
                     </div>
                 </li>
             </div>
 
         </ul>
+    </div>
+    <div class="homeBottomBar" style="position: absolute;left: 0px;bottom: 0px">
+        <table width="100%">
+            <tr>
+                <td width="25%" align="center">
+                    <span id="barArrow" style="font-size: 24px;font-weight: bold;" class="barIconHighlight">New</span>
+                </td>
+                <td width="25%" align="center">
+                    <span id="barMyStuff" class="barIcon icon-comment"></span>
+                </td>
+                <td width="25%" align="center">
+                    <span id="barComment" class="barIcon icon-search" style="font-size: 36px;"></span>
+                </td>
+                <td width="25%" align="center">
+                    <span id="barShare" class="barIcon icon-cog"></span>
+                </td>
+            </tr>
+        </table>
     </div>
 </div>

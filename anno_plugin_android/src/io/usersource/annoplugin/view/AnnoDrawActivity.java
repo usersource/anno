@@ -31,7 +31,7 @@ public class AnnoDrawActivity extends DroidGap
     super.onCreate(savedInstanceState);
     super.init();
 
-    GestureOverlayView view = new GestureOverlayView(this);
+    /*GestureOverlayView view = new GestureOverlayView(this);
     view.setLayoutParams(new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.MATCH_PARENT, 1));
@@ -43,7 +43,7 @@ public class AnnoDrawActivity extends DroidGap
                     FrameLayout.LayoutParams.MATCH_PARENT, 1));
 
     setContentView(view);
-    AnnoPlugin.setEnableGesture(this, view, true);
+    AnnoPlugin.setEnableGesture(this, view, true);*/
 
     super.loadUrl("file:///android_asset/www/pages/annodraw/main.html");
 

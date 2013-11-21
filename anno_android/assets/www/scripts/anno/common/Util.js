@@ -2,6 +2,13 @@ define(["dojo/dom-style","dojo/window"], function(domStyle, win){
 
     var util = {
         loadingIndicator:null,
+        _parser:null,
+        annoType: {
+            SimpleComment:"simple comment",
+            DrawComment:"draw comment"
+        },
+        level1Color:"#ff9900",
+        level2Color:"#ff0000",
         hasConnection: function()
         {
             var networkState = navigator.connection.type;
@@ -78,6 +85,67 @@ define(["dojo/dom-style","dojo/window"], function(domStyle, win){
             {
                 this.loadingIndicator.hide();
             }
+        },
+        getParser: function ()
+        {
+            if (!this._parser)
+            {
+                try
+                {
+                    // returns dojo/parser if loaded, otherwise throws
+                    this._parser = require("dojo/parser");
+                }
+                catch (e)
+                {
+                    // if here, dojo/parser not loaded
+                    try
+                    {
+                        // returns dojox/mobile/parser if loaded, otherwise throws
+                        this._parser = require("dojox/mobile/parser");
+                    }
+                    catch (e)
+                    {
+                        // if here, both dojox/mobile/parser and dojo/parser are not loaded
+                        console.error("Add explicit require(['dojo/parser']) or explicit require(['dojox/mobile/parser']), one of the parsers is required!");
+                    }
+                }
+            }
+
+            return this._parser;
+        },
+        startActivity: function(activityName, closeCurrentActivity)
+        {
+            cordova.exec(
+                function (result)
+                {
+                },
+                function (err)
+                {
+                    alert(err);
+                },
+                "AnnoCordovaPlugin",
+                'start_activity',
+                [activityName, closeCurrentActivity]
+            );
+        },
+        getAnnoScreenshotPath: function()
+        {
+            var screenShotPath = "";
+            cordova.exec(
+                function (result)
+                {
+                    screenShotPath = result;
+                },
+                function (err)
+                {
+                    alert(err);
+                },
+                "AnnoCordovaPlugin",
+                'get_anno_screenshot_path',
+                []
+            );
+
+            return screenShotPath;
         }
     };
 
