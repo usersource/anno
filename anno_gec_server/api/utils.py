@@ -1,6 +1,8 @@
 __author__ = 'topcircler'
 
 import endpoints
+import httplib
+import json
 import logging
 
 
@@ -20,5 +22,35 @@ def get_endpoints_current_user(raise_unauthorized=True):
     if raise_unauthorized and current_user is None:
         raise endpoints.UnauthorizedException('Invalid token.')
     return current_user
+
+
+def get_country_by_coordinate(latitude, longitude):
+    """
+    This function returns country information by the specified coordinate.
+    It sends request to google map by providing latitude&longitude and parse out country information from
+    the response.
+
+    The country part of google map response is like:
+    {
+        "long_name" : "United States",
+        "short_name" : "US",
+        "types" : [ "country", "political" ]
+    }
+    TODO: now we only return long_name, maybe in the future we will return both long_name and short_name if necessary.
+    """
+    map_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + str(latitude) + "," + str(
+        longitude) + "&sensor=false"
+    conn = httplib.HTTPConnection("maps.googleapis.com")
+    conn.request('GET', map_url)
+    result = conn.getresponse()
+    content = result.read()
+    location_json = json.loads(content)
+    for address_component in location_json['results'][0]['address_components']:
+        logging.info("long_name:" + address_component['long_name'])
+        logging.info("short name:" + address_component['short_name'])
+        logging.info("types[0]:" + address_component['types'][0])
+        if address_component['types'][0] == 'country':
+            return address_component['long_name']
+
 
 anno_js_client_id = "955803277195.apps.googleusercontent.com"

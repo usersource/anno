@@ -66,6 +66,11 @@ indexes:
 - kind: Anno
   properties:
   - name: app_name
+  - name: country
+
+- kind: Anno
+  properties:
+  - name: app_name
   - name: created
 
 - kind: Anno

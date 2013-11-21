@@ -5,12 +5,13 @@ Anno data store model definition.
 """
 
 from google.appengine.ext import ndb
+import datetime
 
 from message.anno_api_messages import AnnoResponseMessage
 from message.anno_api_messages import AnnoListMessage
 from message.user_message import UserMessage
 from model.base_model import BaseModel
-import datetime
+from api.utils import get_country_by_coordinate
 
 
 class Anno(BaseModel):
@@ -41,6 +42,9 @@ class Anno(BaseModel):
     followup_count = ndb.IntegerProperty(default=0)  # how many follow ups are there for this anno
     last_update_time = ndb.DateTimeProperty(auto_now_add=True)  # last time that vote/flag/followup creation.
     last_activity = ndb.StringProperty('anno')  # last activity, vote/flag/followup creation
+    latitude = ndb.FloatProperty()
+    longitude = ndb.FloatProperty()
+    country = ndb.StringProperty()
 
     def to_response_message(self):
         """
@@ -69,7 +73,10 @@ class Anno(BaseModel):
                                    creator=user_message,
                                    draw_elements=self.draw_elements,
                                    screenshot_is_anonymized=self.screenshot_is_anonymized,
-                                   geo_position=self.geo_position)
+                                   latitude=self.latitude,
+                                   longitude=self.longitude,
+                                   country=self.country
+                                   )
 
     def to_response_message_by_projection(self, projection):
         """
@@ -100,10 +107,15 @@ class Anno(BaseModel):
                      os_name=message.os_name, os_version=message.os_version, creator=user.key,
                      draw_elements=message.draw_elements, screenshot_is_anonymized=message.screenshot_is_anonymized,
                      geo_position=message.geo_position, flag_count=0, vote_count=0, followup_count=0,
-                     last_activity='anno')
+                     last_activity='anno', latitude=message.latitude, longitude=message.longitude)
+        # set image.
         entity.image = message.image
+        # set created time if provided in the message.
         if message.created is not None:
             entity.created = message.created
+            # use google map api to retrieve country information and save into datastore.
+        entity.country = get_country_by_coordinate(message.latitude, message.longitude)
+        # set last update time & activity
         entity.last_update_time = datetime.datetime.now()
         entity.last_activity = 'anno'
         entity.put()
@@ -147,6 +159,7 @@ class Anno(BaseModel):
             self.screenshot_is_anonymized = message.screenshot_is_anonymized
         if message.geo_position is not None:
             self.geo_position = message.geo_position
+        # TODO: can't merge latitude & longitude now, if to enable it, also needs to look up country again.
 
     @classmethod
     def query_by_app_by_created(cls, app_name, limit, projection, curs):
@@ -212,6 +225,19 @@ class Anno(BaseModel):
             anno_message = anno.to_response_message()
             anno_message.last_update_time = anno.last_update_time
             anno_message.last_activity = anno.last_activity
+            anno_list.append(anno_message)
+        return AnnoListMessage(anno_list=anno_list)
+
+    @classmethod
+    def query_by_country(cls, app_name):
+        """
+        Query annos for a given app by country alphabetical order.
+        No pagination is supported here.
+        """
+        query = cls.query().filter(cls.app_name == app_name).order(cls.country)
+        anno_list = []
+        for anno in query:
+            anno_message = anno.to_response_message()
             anno_list.append(anno_message)
         return AnnoListMessage(anno_list=anno_list)
 
