@@ -46,6 +46,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
 
   // activity names
   public static final String ACTIVITY_INTRO = "Intro";
+  public static final String ACTIVITY_FEEDBACK = "Feedback";
 
   private static final int COMPRESS_QUALITY = 40;
 
@@ -115,6 +116,10 @@ public class AnnoCordovaPlugin extends CordovaPlugin
       if (activityName.equalsIgnoreCase(ACTIVITY_INTRO))
       {
         intent = new Intent(activity, IntroActivity.class);
+      }
+      else if (activityName.equalsIgnoreCase(ACTIVITY_FEEDBACK))
+      {
+        intent = new Intent(activity, OptionFeedbackActivity.class);
       }
 
       activity.startActivity(intent);
