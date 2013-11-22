@@ -117,6 +117,15 @@ define([
 
                 }));
 
+                this._connects.push(connect.connect(this.inputElement, "keydown", this, function (e)
+                {
+                    if (e.keyCode == 13)
+                    {
+                        dojo.stopEvent(e);
+                        this._closeKeybord();
+                    }
+                }));
+
                 this._connects.push(connect.connect(this.inputElement, "focus", this, function (e)
                 {
                     if (this.onCommentBoxFocus)
@@ -195,6 +204,17 @@ define([
                     self.inputElement.focus();
                 }, 300);
                 dom.byId("hiddenBtn").focus();
+            },
+            _closeKeybord: function(e)
+            {
+                domStyle.set(this.txtNode, 'display', '');
+                domStyle.set(this.inputNode, 'display', 'none');
+
+                this.inputElement.blur();
+                dom.byId("hiddenBtn").focus();
+                dom.byId("hiddenBtn").click();
+
+                console.error("9999");
             },
             _getBoxPointsPath: function()
             {

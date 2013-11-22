@@ -30,6 +30,14 @@ var createCommentTableScript = '\
 
 var createCommentTableIndexScript = "CREATE INDEX feedback_comment_created ON feedback_comment(created)";
 
+var createSettingsTableScript = '\
+    create table if not exists app_settings\
+(\
+    _id integer primary key autoincrement,\
+    item text not null,\
+    value text\
+)';
+
 function initDB()
 {
     window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs){
@@ -43,7 +51,6 @@ function initDB()
 function checkTables()
 {
     annoDB.executeSql("SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name='feedback_comment'", [], function(res) {
-        console.error("feedback_comment table found? "+ res.rows.item(0).cnt);
         if (res.rows.item(0).cnt == 1)
         {
             doUpgrade();
@@ -54,7 +61,6 @@ function checkTables()
             initTables();
         }
     });
-
 }
 
 function initTables()
@@ -62,6 +68,8 @@ function initTables()
     annoDB.transaction(function(tx) {
         tx.executeSql(createCommentTableScript);
         tx.executeSql(createCommentTableIndexScript);
+        tx.executeSql(createSettingsTableScript);
+        tx.executeSql("insert into app_settings(item, value) values('ServerURL','1')");
         dbIsReady = true;
     });
 }
@@ -124,6 +132,15 @@ function doUpgrade()
             });
         }
     });
+
+    annoDB.executeSql("SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name='app_settings'", [], function(res) {
+        console.error("app_settings "+res.rows.item(0).cnt);
+        if (res.rows.item(0).cnt == 0)
+        {
+            annoDB.executeSql(createSettingsTableScript);
+            annoDB.executeSql("insert into app_settings(item, value) values('ServerURL','1')");
+        }
+    });
 }
 
 function executeSelectSql(sql, params, onSuccess, onFail)
@@ -134,4 +151,10 @@ function executeSelectSql(sql, params, onSuccess, onFail)
 function executeUpdateSql(sql, params, onSuccess, onFail)
 {
     annoDB.executeSql(sql, params, onSuccess, onFail);
+}
+
+function onSQLError(err)
+{
+    console.error(JSON.stringify(err));
+    alert(JSON.stringify(err));
 }

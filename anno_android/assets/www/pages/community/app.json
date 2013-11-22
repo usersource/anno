@@ -22,6 +22,7 @@
         "dojox/mobile/EdgeToEdgeList",
         "dojox/mvc/Repeat",
         "dojox/mobile/ListItem",
+        "dojox/mobile/RadioButton",
         "dojox/mvc/Output",
         "dojox/mvc/at",
         "dojox/mobile/ToolBarButton",
@@ -110,6 +111,11 @@
             "controller" : "./views/localAnnoViewer",
             "dependencies":[],
             "template": "./templates/localAnnoViewer.html"
+        },
+        "settings": {
+            "controller" : "./views/settings",
+            "dependencies":[],
+            "template": "./templates/settings.html"
         }
     }
 }

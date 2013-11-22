@@ -27,7 +27,7 @@ define([
         var loadingMoreData = false,
             offset = 0, limit=30;
         var hasMoreData = false;
-        var bottomBarHeight = 50;
+        var topBarHeight=48, bottomBarHeight = 50;
         var emptyAnno = {
             "id": 0,
             "annoText": "0",
@@ -138,9 +138,13 @@ define([
         var adjustSize = function()
         {
             var viewPoint = win.getBox();
-            var parentBox = domGeom.getMarginBox("headingStart");
 
-            domStyle.set("listContainerStart", "height", (viewPoint.h-parentBox.h-bottomBarHeight)+"px");
+            domStyle.set("listContainerStart", "height", (viewPoint.h-topBarHeight-bottomBarHeight)+"px");
+
+            // reposition the menus dialog
+            var menusDialog = registry.byId('menusDialog');
+            menusDialog.top = (viewPoint.h-bottomBarHeight-120)+'px';
+            menusDialog.left = (viewPoint.w-304)+'px';
         };
 
         var showLoadingIndicator = function()
@@ -206,6 +210,42 @@ define([
                     app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
                 }));
 
+                _connectResults.push(connect.connect(dom.byId("menuItemSettings"), 'click', function(e)
+                {
+                    {
+                        domClass.remove("barMenus", 'barIconHighlight');
+                        registry.byId('menusDialog').hide();
+                        app.transitionToView(document.getElementById('modelApp_home'), {target:'settings',url:'#settings'});
+                    }
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("menuItemIntro"), 'click', function(e)
+                {
+                    annoUtil.startActivity("Intro", false);
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("menuItemFeedback"), 'click', function(e)
+                {
+                    annoUtil.startActivity("Feedback", false);
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("barMenus"), 'click', function(e)
+                {
+                    var menusDialog = registry.byId('menusDialog');
+                    if (menusDialog.domNode.style.display === "")
+                    {
+                        registry.byId('menusDialog').hide();
+                        domClass.remove("barMenus", 'barIconHighlight');
+                    }
+                    else
+                    {
+                        var viewPoint = win.getBox();
+                        registry.byId('menusDialog').show();
+                        domStyle.set(menusDialog._cover[0], {"height": (viewPoint.h-topBarHeight-bottomBarHeight)+"px", top:(topBarHeight)+"px"});
+                        domClass.add("barMenus", 'barIconHighlight');
+                    }
+                }));
+
                 _connectResults.push(connect.connect(dom.byId('btnLoadListData'), "click", function ()
                 {
                     loadListData();
@@ -246,6 +286,9 @@ define([
             {
                 var listContainer = dom.byId('listContainerStart');
                 listScrollTop = listContainer.scrollTop;
+
+                registry.byId('menusDialog').hide();
+                domClass.remove("barMenus", 'barIconHighlight');
             },
             destroy:function ()
             {

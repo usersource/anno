@@ -606,6 +606,7 @@ require([
                     domStyle.set(commentBox.inputNode, 'top', (top+350)+'px');
                 }
             };
+
         }, 500);
     };
 

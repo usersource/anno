@@ -146,6 +146,49 @@ define(["dojo/dom-style","dojo/window"], function(domStyle, win){
             );
 
             return screenShotPath;
+        },
+        readSettings: function(callback)
+        {
+            if (this.settings)
+            {
+                callback(this.settings);
+                return;
+            }
+            var settingsSQl = "select * from app_settings";
+            var self = this;
+            executeSelectSql(settingsSQl, [], function(res){
+                var rows = res.rows;
+
+                console.error("app_settings rows: "+rows.length);
+
+                var settings = {}, item;
+                for (var i= 0,c=rows.length;i<c;i++)
+                {
+                    item = rows.item(i);
+                    settings[item.item] = item.value;
+                }
+
+                self.settings = settings;
+                callback(settings);
+            }, onSQLError);
+        },
+        saveSettings: function(settingItem, callback)
+        {
+            var settingsSQl = "update app_settings set value=? where item=?";
+            var self = this;
+            executeUpdateSql(settingsSQl, [settingItem.value, settingItem.item], function(res){
+                self.settings[settingItem.item] = settingItem.value;
+
+                callback(true);
+            }, callback(false));
+        },
+        getSettings: function()
+        {
+            return this.settings;
+        },
+        noop: function()
+        {
+
         }
     };
 
