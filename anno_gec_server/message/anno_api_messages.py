@@ -37,6 +37,8 @@ class AnnoMessage(messages.Message):
     draw_elements = messages.StringField(17)
     screenshot_is_anonymized = messages.BooleanField(18)
     geo_position = messages.StringField(19)
+    latitude = messages.FloatField(20)
+    longitude = messages.FloatField(21)
 
 
 class AnnoMergeMessage(messages.Message):
@@ -92,6 +94,9 @@ class AnnoResponseMessage(messages.Message):
     activity_count = messages.IntegerField(26)
     last_update_time = message_types.DateTimeField(27)
     last_activity = messages.StringField(28)
+    latitude = messages.FloatField(29)
+    longitude = messages.FloatField(30)
+    country = messages.StringField(31)
 
 
 class AnnoListMessage(messages.Message):

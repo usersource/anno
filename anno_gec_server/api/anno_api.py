@@ -104,6 +104,8 @@ class AnnoApi(remote.Service):
             return Anno.query_by_activity_count(request.app)
         elif request.query_type == 'by_last_activity':
             return Anno.query_by_last_activity(request.app)
+        elif request.query_type == 'by_country':
+            return Anno.query_by_country(request.app)
         else:
             return Anno.query_by_page(limit, select_projection, curs)
 
