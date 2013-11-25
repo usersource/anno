@@ -111,10 +111,11 @@ define(["../common/Util"], function(annoUtil){
             }, onSQLError);
         },
         loadLocalAnnos: function(callback)
-        {
+        {console.error("loadLocalAnnos: start");
             executeUpdateSql(select_anno_sql,[], function(res){
                 var annos = [];
                 var cnt = res.rows.length;
+                console.error('local annos: '+cnt);
 
                 for (var i=0;i<cnt;i++)
                 {
@@ -122,7 +123,9 @@ define(["../common/Util"], function(annoUtil){
                 }
 
                 callback(annos);
-            }, onSQLError);
+            }, function(err){
+                console.error("loadLocalAnnos: "+err);
+            });//onSQLError
         }
     };
 

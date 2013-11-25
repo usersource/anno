@@ -124,6 +124,15 @@ define([
                     dom.byId("hiddenBtn").focus();
                 }));
 
+                this._connects.push(connect.connect(this.inputElement, "keydown", this, function (e)
+                {
+                    if (e.keyCode == 13)
+                    {
+                        dojo.stopEvent(e);
+                        this._closeKeybord();
+                    }
+                }));
+
                 var ts = dojox.gfx.shape.Shape();
                 ts.rawNode = this.txtNode;
 
@@ -274,6 +283,31 @@ define([
                     self.inputElement.focus();
                 }, 300);
                 dom.byId("hiddenBtn").focus();
+            },
+            _closeKeybord: function(e)
+            {
+                domStyle.set(this.txtNode, 'display', '');
+                domStyle.set(this.inputNode, 'display', 'none');
+
+                this.inputElement.blur();
+                dom.byId("hiddenBtn").focus();
+                dom.byId("hiddenBtn").click();
+
+                if (cordova&&cordova.exec)
+                {
+                    cordova.exec(
+                        function (result)
+                        {
+                        },
+                        function (err)
+                        {
+                            alert(err);
+                        },
+                        "AnnoCordovaPlugin",
+                        'close_softkeyboard',
+                        []
+                    );
+                }
             },
             _getBoxPointsPath: function()
             {

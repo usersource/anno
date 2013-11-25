@@ -27,7 +27,7 @@ require([
     var lastShapePos;
     var lastBlackRectanglePos;
 
-    var surface;
+    var surface, drawMode = false;
     var defaultCommentBox;
 
     var selectedAppName, screenShotPath;
@@ -55,11 +55,17 @@ require([
     {
         if (domClass.contains(dom.byId("barComment"), 'barIconDisabled')) return;
 
-        var commentBox = surface.createCommentBox({startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight});
+        var lineStrokeStyle = {color: level==1?level1Color:level2Color, width: 3};
+        var commentBox = surface.createCommentBox({startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight,lineStrokeStyle:lineStrokeStyle});
         updateLastShapePos('Rectangle');
     });
 
     connect.connect(dom.byId("barShare"), touch.release, function()
+    {
+        openShareDialog();
+    });
+
+    var openShareDialog = function()
     {
         registry.byId('shareDialog').show();
 
@@ -79,7 +85,7 @@ require([
             'get_recent_applist',
             [10]
         );
-    });
+    };
 
     connect.connect(dom.byId("barBlackRectangle"), touch.release, function()
     {
@@ -92,8 +98,12 @@ require([
     {
         if (domClass.contains(dom.byId("barBlackRectangle"), 'barIconDisabled')) return;
 
-        domStyle.set('bottomBarContainer', 'display', '');
-        domStyle.set('bottomBarBlackContainer', 'display', 'none');
+        if (drawMode)
+        {
+            domStyle.set('bottomBarContainer', 'display', '');
+            domStyle.set('bottomBarBlackContainer', 'display', 'none');
+        }
+
         registry.byId('shareDialog').show();
     });
 
@@ -190,11 +200,22 @@ require([
     // share button
     connect.connect(dom.byId("btnShare"), 'click', function(e)
     {
-        domStyle.set('bottomBarContainer', 'display', '');
-        domStyle.set('bottomBarBlackContainer', 'display', 'none');
+        if (drawMode)
+        {
+            domStyle.set('bottomBarContainer', 'display', '');
+            domStyle.set('bottomBarBlackContainer', 'display', 'none');
+        }
+
         registry.byId('shareDialog').hide();
 
-        saveDrawCommentAnno();
+        if (drawMode)
+        {
+            saveDrawCommentAnno();
+        }
+        else
+        {
+            saveSimpleCommentAnno();
+        }
     });
 
     // home/feeds/cancel button
@@ -250,8 +271,9 @@ require([
         updateLastBlackRectanglePos();
     };
 
-    var switchMode = function(drawMode)
+    var switchMode = function(mode)
     {
+        drawMode = true;
         // remove default comment box
         surface.removeShape(defaultCommentBox);
         domStyle.set('bottomBarContainer', 'display', '');
@@ -260,11 +282,15 @@ require([
         domStyle.set(dom.byId('topBar'), 'display', 'none');
 
         // create default comment box
-        var commentBox = surface.createCommentBox({deletable:false, startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight});
+        var lineStrokeStyle = {color: level==1?level1Color:level2Color, width: 3};
+        var commentBox = surface.createCommentBox({deletable:false, startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight,lineStrokeStyle:lineStrokeStyle});
         updateLastShapePos('Rectangle');
 
         surface.switchMode(true);
+    };
 
+    var drawImageHiddenCanvas = function()
+    {
         var hiddenCanvas = dom.byId('hiddenCanvas');
         hiddenCanvas.width = viewPoint.w-borderWidth*2;;
         hiddenCanvas.height = viewPoint.h-borderWidth*2;;
@@ -302,7 +328,11 @@ require([
                             dom.byId('btnHome').innerHTML = "Cancel";
                         }
 
-                        window.setTimeout(adjustShareDialogSize, 500);
+
+                        window.setTimeout(function(){
+                            adjustShareDialogSize();
+                            drawImageHiddenCanvas();
+                        }, 1000);
                     }
                     else
                     {
@@ -368,7 +398,12 @@ require([
         annoUtil.showLoadingIndicator();
 
         var deviceInfo = annoUtil.getDeviceInfo();
-        var pluginParam = [];
+        var pluginParam = [], isScreenshotAnonymized = surface.isScreenshotAnonymized();
+
+        if (isScreenshotAnonymized)
+        {
+            pluginParam[0] = outputImage();
+        }
 
         cordova.exec(
             function (result)
@@ -388,12 +423,12 @@ require([
                     "app_version":appInfo.appVersion,
                     "simple_is_moved":defaultCommentBox.isMoved,
                     "level":appInfo.level,
-                    "app_name":appInfo.appName,
+                    "app_name":selectedAppName||appInfo.appName,
                     "device_model":deviceInfo.model,
                     "os_name":deviceInfo.osName,
                     "os_version":deviceInfo.osVersion,
                     "anno_type":"simple comment",
-                    "screenshot_is_anonymized":false
+                    "screenshot_is_anonymized":isScreenshotAnonymized
                 };
 
                 AnnoDataHandler.saveAnno(annoItem, appInfo.source, screenshotDirPath);
@@ -570,11 +605,13 @@ require([
             domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-sdBottom-shareDialogGap)+'px');
             domStyle.set('sdBottom', 'height', sdBottom+'px');
 
-            defaultCommentBox = surface.createSimpleCommentBox({deletable:false, startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight});
+            var lineStrokeStyle = {color: level==1?level1Color:level2Color, width: 3};
+            defaultCommentBox = surface.createSimpleCommentBox({deletable:false, startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight,lineStrokeStyle:lineStrokeStyle});
 
             connect.connect(defaultCommentBox.shareBtnNode, "click", function()
             {
-                saveSimpleCommentAnno();
+                defaultCommentBox._closeKeybord();
+                openShareDialog();
             });
 
             defaultCommentBox.onCommentBoxFocus = function(commentBox)
@@ -583,12 +620,15 @@ require([
                 {
                     if ((commentBox.pathPoints[2].y+20+400) >= viewPoint.h)
                     {
-                        domStyle.set(surface.container, 'top', '-350px');
-                        domStyle.set('screenshotContainer', 'top', '-350px');
+                        var shift = viewPoint.h-(commentBox.pathPoints[2].y+20+400);
+                        domStyle.set(surface.container, 'top', shift+'px');
+                        domStyle.set('screenshotContainer', 'top', shift+'px');
 
                         var top = parseInt(commentBox.txtNode.style.top);
-                        domStyle.set(commentBox.txtNode, 'top', (top-350)+'px');
-                        domStyle.set(commentBox.inputNode, 'top', (top-350)+'px');
+                        domStyle.set(commentBox.txtNode, 'top', (top+shift)+'px');
+                        domStyle.set(commentBox.inputNode, 'top', (top+shift)+'px');
+
+                        commentBox._shift = shift;
                     }
                 }
             };
@@ -596,15 +636,22 @@ require([
             defaultCommentBox.onCommentBoxBlur = function (commentBox)
             {
                 console.error(surface.container.style.top);
-                if (surface.container.style.top == '-350px')
+                if (commentBox._shift != null)
                 {
                     domStyle.set(surface.container, 'top', '0px');
                     domStyle.set('screenshotContainer', 'top', '0px');
 
                     var top = parseInt(commentBox.txtNode.style.top);
-                    domStyle.set(commentBox.txtNode, 'top', (top+350)+'px');
-                    domStyle.set(commentBox.inputNode, 'top', (top+350)+'px');
+                    domStyle.set(commentBox.txtNode, 'top', (top-commentBox._shift)+'px');
+                    domStyle.set(commentBox.inputNode, 'top', (top-commentBox._shift)+'px');
+
+                    commentBox._shift = null;
                 }
+
+                window.setTimeout(function(){
+                    openShareDialog();
+                }, 500);
+
             };
 
         }, 500);

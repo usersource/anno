@@ -57,6 +57,11 @@ public class AnnoDrawActivity extends DroidGap
     return level;
   }
 
+  public View getAppView()
+  {
+    return this.appView;
+  }
+
   private void handleIntent() {
     Intent intent = getIntent();
     String action = intent.getAction();

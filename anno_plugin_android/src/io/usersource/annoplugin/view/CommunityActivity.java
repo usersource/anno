@@ -1,5 +1,6 @@
 package io.usersource.annoplugin.view;
 
+import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.JavascriptInterface;
 import io.usersource.annoplugin.AnnoPlugin;
@@ -13,6 +14,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+
+import java.io.File;
 
 /**
  * Community html5 entry activity. This activity launch html5 pages on create.
@@ -29,6 +32,14 @@ public class CommunityActivity extends DroidGap {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     super.init();
+
+    File database=getApplicationContext().getDatabasePath("anno.db");
+
+    if (!database.exists())
+    {
+      Intent intent = new Intent(this, IntroActivity.class);
+      startActivity(intent);
+    }
 
     GestureOverlayView view = new GestureOverlayView(this);
     view.setLayoutParams(new LinearLayout.LayoutParams(
@@ -73,6 +84,7 @@ public class CommunityActivity extends DroidGap {
 
     Intent intent = getIntent();
     level = intent.getIntExtra(PluginUtils.LEVEL, 0);
+
   }
 
   public int getLevel() {

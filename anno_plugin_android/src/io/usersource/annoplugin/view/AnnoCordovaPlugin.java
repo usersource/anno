@@ -11,8 +11,10 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Base64;
 import android.view.Gravity;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 import io.usersource.annoplugin.utils.*;
+import org.apache.cordova.DroidGap;
 import org.apache.cordova.api.CallbackContext;
 import org.apache.cordova.api.CordovaPlugin;
 import org.json.JSONArray;
@@ -43,6 +45,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
   public static final String SHOW_TOAST = "show_toast";
   public static final String GOTO_ANNO_HOME = "goto_anno_home";
   public static final String START_ACTIVITY = "start_activity";
+  public static final String CLOSE_SOFTKEYBOARD = "close_softkeyboard";
 
   // activity names
   public static final String ACTIVITY_INTRO = "Intro";
@@ -96,7 +99,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
       Activity activity = this.cordova.getActivity();
       activity.finish();
 
-      Intent intent = new Intent(activity, AnnoMainActivity.class);
+      Intent intent = new Intent(activity, CommunityActivity.class);
       activity.startActivity(intent);
       callbackContext.success();
       return true;
@@ -127,6 +130,17 @@ public class AnnoCordovaPlugin extends CordovaPlugin
 
       return true;
     }
+    else if (CLOSE_SOFTKEYBOARD.equals(action)) {
+
+      AnnoDrawActivity activity = (AnnoDrawActivity)this.cordova.getActivity();
+      InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+      imm.hideSoftInputFromWindow(activity.getAppView().getWindowToken(), 0);
+
+      callbackContext.success();
+
+      return true;
+    }
+
 
     return false;
   }

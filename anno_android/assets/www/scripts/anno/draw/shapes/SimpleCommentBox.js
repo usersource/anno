@@ -214,7 +214,21 @@ define([
                 dom.byId("hiddenBtn").focus();
                 dom.byId("hiddenBtn").click();
 
-                console.error("9999");
+                if (cordova&&cordova.exec)
+                {
+                    cordova.exec(
+                        function (result)
+                        {
+                        },
+                        function (err)
+                        {
+                            alert(err);
+                        },
+                        "AnnoCordovaPlugin",
+                        'close_softkeyboard',
+                        []
+                    );
+                }
             },
             _getBoxPointsPath: function()
             {

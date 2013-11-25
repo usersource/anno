@@ -44,7 +44,7 @@ function initDB()
         localFileSystem = fs;
     });
 
-    annoDB = window.sqlitePlugin.openDatabase({name: "anno", bgType: 1});
+    annoDB = window.sqlitePlugin.openDatabase({name: "anno", bgType2: 1});
     checkTables();
 }
 
@@ -150,6 +150,7 @@ function executeSelectSql(sql, params, onSuccess, onFail)
 
 function executeUpdateSql(sql, params, onSuccess, onFail)
 {
+    console.error(JSON.stringify(annoDB));
     annoDB.executeSql(sql, params, onSuccess, onFail);
 }
 
