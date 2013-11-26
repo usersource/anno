@@ -37,7 +37,10 @@ define([
             createShape: function (args)
             {
                 this.createCommentBox(args);
-                this.surface.selectShape(this);
+                if (this.selectable)
+                {
+                    this.surface.selectShape(this);
+                }
             },
             createCommentBox: function (args)
             {
@@ -53,146 +56,166 @@ define([
                 this.endpoint2 = surface.createCircle({cx: pathPoints.endpointsPos[1].x, cy: pathPoints.endpointsPos[1].y, r: circleR}).setStroke(this.endpointStrokeStyle).setFill(this.endpointFillStyle);
                 this.endpoint2.sid = this.id;
 
-                this.x = surface.createText({x: pathPoints.xPos.x, y: pathPoints.xPos.y, text: "x", align: "middle"}).setFont(this.xFont).setStroke(this.xColor).setFill(this.xColor);
+                this.x = surface.createText({x: pathPoints.xPos.x, y: pathPoints.xPos.y, text: "x", align: "middle"}).setFont(this.xFont).setStroke(this.xHiddenColor).setFill(this.xHiddenColor);
                 this.x.sid = this.id;
                 this.x.isX = true;
 
+                var textNodeTop;
+
+                if (this.earLow)
+                {
+                    textNodeTop = (this.pathPoints[5].y+3+this.surface.borderWidth);
+                }
+                else
+                {
+                    textNodeTop = (this.pathPoints[0].y+3+this.surface.borderWidth);
+                }
+
                 // create text node
+                var textColor = this.grayColor;
+
+                if (this.commentText&&this.commentText.length)
+                {
+                    textColor = this.normalColor;
+                }
+
                 this.txtNode = domConstruct.create('div', {
-                    style: "background-color:transparent;display2:none;padding2:4px;padding-left2:6px;position:absolute;top:"+(this.pathPoints[0].y+3+this.surface.borderWidth)+"px;left:"+(this.pathPoints[0].x+3+this.surface.borderWidth)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
-                    innerHTML:"<div id='textDiv_"+this.id+"' style='padding:3px;overflow:hidden;width:100%;height:100%;font-size: 16px;font-weight: bold;color: "+this.grayColor+";'>"+this.placeholder+"</div>"
+                    style: "background-color:transparent;display2:none;padding2:4px;padding-left2:6px;position:absolute;top:"+(textNodeTop)+"px;left:"+(this.pathPoints[0].x+3+this.surface.borderWidth)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
+                    innerHTML:"<div id='textDiv_"+this.id+"' style='padding:3px;overflow:hidden;width:100%;height:100%;font-size: 16px;font-weight: bold;color: "+textColor+";'>"+this.placeholder+"</div>"
                 }, document.body, 'last');
 
                 this.txtNode.gfxTarget = {isSelectTarget:true, sid:this.id};
                 this.txtNode.children[0].gfxTarget = {isSelectTarget:true, sid:this.id};
 
                 this.inputNode = domConstruct.create('div', {
-                    style: "background-color:transparent;display:none;position:absolute;top:"+(this.pathPoints[0].y+3+this.surface.borderWidth)+"px;left:"+(this.pathPoints[0].x+3+this.surface.borderWidth)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
+                    style: "background-color:transparent;display:none;position:absolute;top:"+(textNodeTop)+"px;left:"+(this.pathPoints[0].x+3+this.surface.borderWidth)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
                     innerHTML:"<textarea id='input_"+this.id+"' placeholder='Enter suggestion here' style='font-family: helvetica, arial;font-size: 16px;font-weight: bold;background-color:transparent;width:100%;overflow-y2: hidden; border-color:transparent;outline: none;overflow-x: auto; box-sizing2: border-box; height: 24px;'></textarea>"
                 }, document.body, 'last');
                 this.inputElement = dom.byId("input_"+this.id);
 
-                this._connects.push(connect.connect(this.inputElement, "blur", this, function (e)
+                if (this.selectable)
                 {
-                    domStyle.set(this.txtNode, 'display', '');
-                    domStyle.set(this.inputNode, 'display', 'none');
-
-                    var textDiv = dom.byId('textDiv_'+this.id);
-                    textDiv.innerHTML = this.inputElement.value.replace(/\n/g, "<br>");
-
-                    if (this.inputElement.value.length <=0)
+                    this._connects.push(connect.connect(this.inputElement, "blur", this, function (e)
                     {
-                        textDiv.innerHTML = this.placeholder;
-                        domStyle.set(textDiv, 'color', this.grayColor);
-                    }
-                    else
-                    {
-                        domStyle.set(textDiv, 'color', this.normalColor);
-                    }
+                        domStyle.set(this.txtNode, 'display', '');
+                        domStyle.set(this.inputNode, 'display', 'none');
 
-                    dom.byId("hiddenBtn").focus();
+                        var textDiv = dom.byId('textDiv_'+this.id);
+                        textDiv.innerHTML = this.inputElement.value.replace(/\n/g, "<br>");
 
-                    if (this.onCommentBoxBlur)
-                    {
-                        this.onCommentBoxBlur(this);
-                    }
-                }));
+                        if (this.inputElement.value.length <=0)
+                        {
+                            textDiv.innerHTML = this.placeholder;
+                            domStyle.set(textDiv, 'color', this.grayColor);
+                        }
+                        else
+                        {
+                            domStyle.set(textDiv, 'color', this.normalColor);
+                        }
 
-                this._connects.push(connect.connect(this.inputElement, "input", this, function (e)
-                {
-                    if (this.inputElement.value)
+                        dom.byId("hiddenBtn").focus();
+
+                        if (this.onCommentBoxBlur)
+                        {
+                            this.onCommentBoxBlur(this);
+                        }
+                    }));
+
+                    this._connects.push(connect.connect(this.inputElement, "input", this, function (e)
                     {
-                        domStyle.set(this.shareBtnNode, 'display', '');
+                        if (this.inputElement.value)
+                        {
+                            domStyle.set(this.shareBtnNode, 'display', '');
+                            domStyle.set(dom.byId('btnHome'), 'display', 'none');
+                            domStyle.set(dom.byId('btnDraw'), 'display', 'none');
+                            domStyle.set(dom.byId('topBar'), 'display', 'none');
+
+                            // handle simple-comment box grows in height up to 4 visible lines
+                            this.handleBoxHeight();
+                        }
+                        else
+                        {
+                            domStyle.set(this.shareBtnNode, 'display', 'none');
+                        }
+
+                    }));
+
+                    this._connects.push(connect.connect(this.inputElement, "keydown", this, function (e)
+                    {
+                        if (e.keyCode == 13)
+                        {
+                            dojo.stopEvent(e);
+                            this._closeKeybord();
+                        }
+                    }));
+
+                    this._connects.push(connect.connect(this.inputElement, "focus", this, function (e)
+                    {
+                        if (this.onCommentBoxFocus)
+                        {
+                            this.onCommentBoxFocus(this);
+                        }
+                    }));
+
+                    this.shareBtnNode = domConstruct.create('button', {
+                        style: "display:none;position:absolute;top:"+(this.pathPoints[0].y-3+this.surface.borderWidth)+"px;left:"+(this.pathPoints[5].x+3+this.surface.borderWidth)+"px;",
+                        "class": "btn",
+                        innerHTML:"Share"
+                    }, document.body, 'last');
+
+                    var endpoint2Mover = new gfx.Moveable(this.endpoint2);
+
+                    this._connects.push(connect.connect(endpoint2Mover, "onMoved", this, function (mover, shift)
+                    {
+                        if (!this.isMoveable())
+                        {
+                            this.rollbackEndpoint(mover.shape, shift);
+                            return;
+                        }
+
+                        if (this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy)||!this._isEarMoveable(shift.dx, shift.dy))
+                        {
+                            this.rollbackEndpoint(mover.shape, shift);
+                            return;
+                        }
+
+                        this.isMoved = true;
+
+                        var pathPoints = this._getBoxPointsPathForEarChange(this.endpoint2, shift.dx, shift.dy);
+                        this.path.setShape(pathPoints.path);
+
+                        if (pathPoints.earLow)
+                        {
+                            this.txtNode.style.top = (this.pathPoints[5].y+3+this.surface.borderWidth)+'px';
+                            this.inputNode.style.top = (this.pathPoints[5].y+3+this.surface.borderWidth)+'px';
+
+                            this.shareBtnNode.style.top = (this.pathPoints[5].y-3+this.surface.borderWidth)+'px';
+                        }
+                        else
+                        {
+                            this.txtNode.style.top = (this.pathPoints[0].y+3+this.surface.borderWidth)+'px';
+                            this.inputNode.style.top = (this.pathPoints[0].y+3+this.surface.borderWidth)+'px';
+
+                            this.shareBtnNode.style.top = (this.pathPoints[0].y-3+this.surface.borderWidth)+'px';
+                        }
+
                         domStyle.set(dom.byId('btnHome'), 'display', 'none');
                         domStyle.set(dom.byId('btnDraw'), 'display', 'none');
                         domStyle.set(dom.byId('topBar'), 'display', 'none');
+                    }));
 
-                        // handle simple-comment box grows in height up to 4 visible lines
-                        this.handleBoxHeight();
-                    }
-                    else
+                    this._connects.push(connect.connect(this.txtNode, touch.release, this, function (e)
                     {
-                        domStyle.set(this.shareBtnNode, 'display', 'none');
-                    }
-
-                }));
-
-                this._connects.push(connect.connect(this.inputElement, "keydown", this, function (e)
-                {
-                    if (e.keyCode == 13)
-                    {
-                        dojo.stopEvent(e);
-                        this._closeKeybord();
-                    }
-                }));
-
-                this._connects.push(connect.connect(this.inputElement, "focus", this, function (e)
-                {
-                    if (this.onCommentBoxFocus)
-                    {
-                        this.onCommentBoxFocus(this);
-                    }
-                }));
-
-                this.shareBtnNode = domConstruct.create('button', {
-                    style: "display:none;position:absolute;top:"+(this.pathPoints[0].y-3+this.surface.borderWidth)+"px;left:"+(this.pathPoints[5].x+3+this.surface.borderWidth)+"px;",
-                    "class": "btn",
-                    innerHTML:"Share"
-                }, document.body, 'last');
-
-
-                var endpoint2Mover = new gfx.Moveable(this.endpoint2);
-
-                this._connects.push(connect.connect(endpoint2Mover, "onMoved", this, function (mover, shift)
-                {
-                    if (!this.isMoveable())
-                    {
-                        this.rollbackEndpoint(mover.shape, shift);
-                        return;
-                    }
-
-                    if (this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy)||!this._isEarMoveable(shift.dx, shift.dy))
-                    {
-                        this.rollbackEndpoint(mover.shape, shift);
-                        return;
-                    }
-
-                    this.isMoved = true;
-
-                    var pathPoints = this._getBoxPointsPathForEarChange(this.endpoint2, shift.dx, shift.dy);
-                    this.path.setShape(pathPoints.path);
-
-                    if (pathPoints.earLow)
-                    {
-                        this.txtNode.style.top = (this.pathPoints[5].y+3+this.surface.borderWidth)+'px';
-                        this.inputNode.style.top = (this.pathPoints[5].y+3+this.surface.borderWidth)+'px';
-
-                        this.shareBtnNode.style.top = (this.pathPoints[5].y-3+this.surface.borderWidth)+'px';
-                    }
-                    else
-                    {
-                        this.txtNode.style.top = (this.pathPoints[0].y+3+this.surface.borderWidth)+'px';
-                        this.inputNode.style.top = (this.pathPoints[0].y+3+this.surface.borderWidth)+'px';
-
-                        this.shareBtnNode.style.top = (this.pathPoints[0].y-3+this.surface.borderWidth)+'px';
-                    }
-
-                    domStyle.set(dom.byId('btnHome'), 'display', 'none');
-                    domStyle.set(dom.byId('btnDraw'), 'display', 'none');
-                    domStyle.set(dom.byId('topBar'), 'display', 'none');
-                }));
-
-                this._connects.push(connect.connect(this.txtNode, touch.release, this, function (e)
-                {
-                    if (this.selected)
-                    {
-                        this._openKeybord();
-                    }
-                    else
-                    {
-                        this.surface.selectShape(this);
-                    }
-                }));
+                        if (this.selected)
+                        {
+                            this._openKeybord();
+                        }
+                        else
+                        {
+                            this.surface.selectShape(this);
+                        }
+                    }));
+                }
             },
             _openKeybord: function(e)
             {
@@ -242,6 +265,19 @@ define([
                 var x3 = x2 + this.earDistance/2;
                 var y3 = this.startY;
                 var x4 = x2 + this.earDistance;
+
+                if (this.startX)
+                {
+                    x3 = this.startX;
+                    x2 = x3 - this.earDistance/2;
+                    x4 = x3 + this.earDistance/2;
+                }
+
+                if (this.earLow)
+                {
+                    leftY1 = y3-(this.earHeight);
+                    leftY2 = y3-(this.earHeight+this.boxHeight);
+                }
 
                 var path = "M"+leftX+" "+leftY1 + " L"+x2+" "+leftY1+" L"+x3+" "+y3+" L"+x4+" "+leftY1+" L"+rightX+" "+leftY1+
                     " L"+rightX+" "+leftY2+" L"+leftX+" "+leftY2+ " L"+ leftX+" "+leftY1 + " Z";
@@ -399,15 +435,16 @@ define([
             setSelected: function (sel)
             {
                 this.inherited(arguments);
+                if (!this.selectable) return;
 
-                if (sel)
-                {
-                    this.endpoint2.setStroke(this.endpointStrokeStyle).setFill(this.endpointFillStyle);
-                }
-                else
-                {
-                    this.endpoint2.setStroke(this.endpointHiddenStrokeStyle).setFill(this.endpointHiddenFillStyle);
-                }
+                /*if (sel)
+                 {
+                 this.endpoint2.setStroke(this.endpointStrokeStyle).setFill(this.endpointFillStyle);
+                 }
+                 else
+                 {
+                 this.endpoint2.setStroke(this.endpointHiddenStrokeStyle).setFill(this.endpointHiddenFillStyle);
+                 }*/
             },
             setId: function (id)
             {

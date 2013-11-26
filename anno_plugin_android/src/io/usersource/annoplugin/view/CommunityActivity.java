@@ -1,10 +1,8 @@
 package io.usersource.annoplugin.view;
 
-import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.JavascriptInterface;
-import io.usersource.annoplugin.AnnoPlugin;
-import io.usersource.annoplugin.utils.PluginUtils;
+import io.usersource.annoplugin.utils.AnnoUtils;
 
 import org.apache.cordova.DroidGap;
 
@@ -53,7 +51,7 @@ public class CommunityActivity extends DroidGap {
             FrameLayout.LayoutParams.MATCH_PARENT, 1));
 
     setContentView(view);
-    AnnoPlugin.setEnableGesture(this, view, true);
+    AnnoUtils.setEnableGesture(this, view, true);
 
 
     this.appView.setOnKeyListener(new View.OnKeyListener() {
@@ -83,7 +81,7 @@ public class CommunityActivity extends DroidGap {
     super.loadUrl("file:///android_asset/www/pages/community/main.html");
 
     Intent intent = getIntent();
-    level = intent.getIntExtra(PluginUtils.LEVEL, 0);
+    level = intent.getIntExtra(AnnoUtils.LEVEL, 0);
 
   }
 

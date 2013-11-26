@@ -19,7 +19,6 @@ define([
         var index = 0;
         var annoItemList;
         var surface;
-        var circleRadius = 16;
 
         var showAnno = function()
         {
@@ -28,110 +27,102 @@ define([
             if (!listItem) return;
 
             var annoItem = listItem.annoItem;
-            var viewPoint = win.getBox(), annoTooltipY;
-            var tooltipWidget = registry.byId('textTooltipLocal');
+            var viewPoint = win.getBox();
 
             if (annoItem.level == 1)
             {
                 domStyle.set('screenshotContainer','borderColor', Util.level1Color);
-                drawOrangeCircle(1);
             }
             else
             {
                 domStyle.set('screenshotContainer','borderColor', Util.level2Color);
-                drawOrangeCircle(2);
             }
 
             dom.byId('imageScreenshot').src = screenshotPath+"/"+annoItem.screenshot_key;
-            dom.byId('screenshotTooltipLocal').innerHTML = annoItem.comment;
 
             var imageWidth = viewPoint.w, imageHeight = viewPoint.h,borderWidth = Math.floor(imageWidth*0.02);
 
             if (annoItem.anno_type == Util.annoType.DrawComment)
             {
-                tooltipWidget.hide();
-                domStyle.set("screenshotAnchorLocal", "display", "none");
                 redrawShapes(annoItem);
             }
             else
             {
-                surface.clear();
-                surface.hide();
-
-                var toolTipDivWidth = (viewPoint.w-viewPoint.w*0.10),
-                    pxPerChar = 8,
-                    charsPerLine = toolTipDivWidth/pxPerChar;
-
-                if (annoItem.comment.length >= charsPerLine*3)
-                {
-                    var shortText = annoItem.comment.substr(0, charsPerLine*3-3)+"...";
-
-                    dom.byId('screenshotTooltipLocal').innerHTML = shortText;
-                }
-
-                if (annoItem.x != null)
-                {
-                    var tx = Math.round(((imageWidth-borderWidth*2)*annoItem.x)/10000) -circleRadius+8;
-                    var ty = Math.round(((imageHeight-borderWidth*2)*annoItem.y)/10000) -circleRadius+8;
-
-                    domStyle.set("screenshotAnchorLocal", {
-                        top: ty+'px',
-                        left: tx+'px',
-                        display: ''
-                    });
-
-                    domStyle.set("screenshotAnchorInvisibleLocal", {
-                        top: ty+'px'
-                    });
-
-                    if (ty > (domStyle.get("screenshotTooltipLocal", "height")+14))
-                    {
-                        tooltipWidget.show(dom.byId('screenshotAnchorInvisibleLocal'), ['above-centered','below-centered','before','after']);
-                        annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))+14;
-                        domStyle.set(tooltipWidget.domNode, 'top', annoTooltipY+'px');
-                    }
-                    else
-                    {
-                        tooltipWidget.show(dom.byId('screenshotAnchorInvisibleLocal'), ['below-centered','below-centered','after','before']);
-                        annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))-14;
-                        domStyle.set(tooltipWidget.domNode, 'top', annoTooltipY+'px');
-                    }
-
-                    var pos = domGeom.position("screenshotAnchorLocal", true);
-                    var tpLeft = domStyle.get(tooltipWidget.domNode, 'left');
-                    domStyle.set(tooltipWidget.anchor, {
-                        left: (pos.x-tpLeft+2)+'px'
-                    });
-                }
-                else
-                {
-                    domStyle.set("screenshotAnchorLocal", "display", "none");
-                    tooltipWidget.show(dom.byId('screenshotDefaultAnchorLocal'), ['below-centered','below-centered','after','before']);
-                    annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))-14;
-                    domStyle.set(tooltipWidget.domNode, 'top', annoTooltipY+'px');
-                }
+                redrawShapes(annoItem);
             }
         };
 
         var redrawShapes = function(annoItem)
         {
             var viewPoint = win.getBox();
-            var imageWidth = viewPoint.w, borderWidth = Math.floor(imageWidth*0.02);
+            var imageWidth = viewPoint.w,imageHeight = viewPoint.h, borderWidth = Math.floor(imageWidth*0.02);
             var drawElements = annoItem.draw_elements;
+            var lineStrokeStyle = {color: annoItem.level==1?Util.level1Color:Util.level2Color, width: 3};
+
             if (drawElements)
             {
-                console.error('redrawShapes:'+drawElements);
                 var elementsObject = dojoJson.parse(drawElements);
 
                 surface.show();
                 domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', left:'0px',top:'0px'});
 
-                //surface.borderWidth = borderWidth;
-                //surface.setDimensions(imageWidth-borderWidth*2, imageHeight-borderWidth*2);
-
-                surface.parse(elementsObject);
+                surface.parse(elementsObject, lineStrokeStyle);
 
                 console.error('redrawShapes end');
+            }
+            else
+            {
+                surface.clear();
+                surface.show();
+
+                var earLow = annoItem.direction==0||annoItem.direction=='false';
+                domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', left:'0px',top:'0px'});
+
+                var toolTipDivWidth = (viewPoint.w-borderWidth*2-60),
+                    pxPerChar = 8,
+                    charsPerLine = toolTipDivWidth/pxPerChar;
+
+                var commentText = annoItem.comment;
+                var lines = Math.max(Math.round(commentText.length/charsPerLine),1);
+
+                if (lines > 3 )
+                {
+                    lines = 3;
+                    var shortText = commentText.substr(0, charsPerLine*3-3)+"...";
+                    commentText = shortText;
+                }
+
+                var boxHeight = 34 + (lines-1)*20;
+                var epLineStyle, epFillStyle;
+
+                if (annoItem.level==1)
+                {
+                    epLineStyle = {color:'#FFA500', width:1};
+                    epFillStyle = "rgba(255,165,0, 0.4)";
+                }
+                else
+                {
+                    epLineStyle = {color:'#FF0000',width:1};
+                    epFillStyle = "rgba(255,12,9, 0.4)";
+                }
+
+                var tx = Math.round(((imageWidth-borderWidth*2)*annoItem.x)/10000);
+                var ty = Math.round(((imageHeight-borderWidth*2)*annoItem.y)/10000);
+
+                var commentBox = surface.createSimpleCommentBox({
+                    deletable:false,
+                    startX:tx,
+                    startY: ty,
+                    selectable:false,
+                    shareBtnWidth:0,
+                    boxHeight:boxHeight,
+                    earLow:earLow,
+                    placeholder:commentText,
+                    commentText:annoItem.comment,
+                    lineStrokeStyle:lineStrokeStyle,
+                    endpointStrokeStyle:epLineStyle,
+                    endpointFillStyle:epFillStyle
+                });
             }
 
         };
@@ -146,38 +137,6 @@ define([
                 height: (viewPoint.h-borderWidth*2)+'px',
                 borderWidth:borderWidth+"px"
             });
-
-            domStyle.set("screenshotTooltipLocal", "width", (viewPoint.w-viewPoint.w*0.10)+"px");
-        };
-
-        var drawOrangeCircle = function(level)
-        {
-            level = level||1;
-            var lineColor, fillColor;
-
-            if (level == 1)
-            {
-                lineColor = "#FFA500";
-                fillColor = "rgba(255,165,0, 0.4)";
-            }
-            else
-            {
-                lineColor = "#FF0000";
-                fillColor = "rgba(255,12,9, 0.4)";
-            }
-
-            var ctx = dom.byId('screenshotAnchorLocal').getContext('2d');
-            var canvasWidth = 32;
-
-            ctx.clearRect(0, 0, 40, 40);
-            ctx.beginPath();
-            ctx.strokeStyle = lineColor;
-            ctx.lineWidth = 3;
-            ctx.arc(20, 20, canvasWidth/2, 0, 2 * Math.PI, true);
-            ctx.stroke();
-            ctx.fillStyle = fillColor;
-            ctx.arc(20, 20, canvasWidth/2-3, 0, 2 * Math.PI, true);
-            ctx.fill();
         };
 
         var goNextRecord = function()
@@ -263,7 +222,6 @@ define([
             },
             beforeDeactivate: function()
             {
-                registry.byId('textTooltipLocal').hide();
                 surface.clear();
                 surface.hide();
             },

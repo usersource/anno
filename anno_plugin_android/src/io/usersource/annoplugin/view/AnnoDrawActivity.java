@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.gesture.GestureOverlayView;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -12,9 +11,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import io.usersource.annoplugin.AnnoPlugin;
 import io.usersource.annoplugin.utils.*;
 import org.apache.cordova.DroidGap;
 
@@ -48,7 +44,7 @@ public class AnnoDrawActivity extends DroidGap
     super.loadUrl("file:///android_asset/www/pages/annodraw/main.html");
 
     Intent intent = getIntent();
-    level = intent.getIntExtra(PluginUtils.LEVEL, 0);
+    level = intent.getIntExtra(AnnoUtils.LEVEL, 0);
 
     handleIntent();
   }
@@ -77,9 +73,9 @@ public class AnnoDrawActivity extends DroidGap
   private void handleFromShareImage(Intent intent)
   {
     this.screenshotPath = "";
-    this.level = intent.getIntExtra(PluginUtils.LEVEL, 0) + 1;
+    this.level = intent.getIntExtra(AnnoUtils.LEVEL, 0) + 1;
     this.isPractice = intent.getBooleanExtra(
-            Constants.INTENT_EXTRA_IS_PRACTICE, false);
+            AnnoUtils.INTENT_EXTRA_IS_PRACTICE, false);
 
     Log.d(TAG, "current level:" + this.level);
     if (this.level == 2) {
@@ -97,9 +93,9 @@ public class AnnoDrawActivity extends DroidGap
       try {
         drawable = new BitmapDrawable(getResources(),
                 rc.openInputStream(imageUri));
-        if (ImageUtils.IMAGE_ORIENTATION_LANDSCAPE.equals(ImageUtils
+        if (AnnoUtils.IMAGE_ORIENTATION_LANDSCAPE.equals(AnnoUtils
                 .isLandscapeOrPortrait(drawable))) {
-          drawable = ImageUtils.rotateImage(drawable, 90);
+          drawable = AnnoUtils.rotateImage(drawable, 90);
 
           Bitmap bmp = drawable.getBitmap();
           FileOutputStream fos = new FileOutputStream(realUrl);

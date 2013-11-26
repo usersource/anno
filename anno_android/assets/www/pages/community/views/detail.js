@@ -44,11 +44,6 @@ define([
 
         var imageBaseUrl = "https://usersource-anno.appspot.com/screenshot";
         var surface;
-        var annoType = {
-            SimpleComment:"simple comment",
-            DrawComment:"draw comment"
-        };
-
         var imageWidth, imageHeight;
 
         var wipeIn = function(args)
@@ -138,8 +133,6 @@ define([
             domStyle.set("annoCommentsContainer", "height", (h-76-30-trayBarHeight)+"px");//104
 
             domStyle.set("appNameTextBox", "width", (viewPoint.w-30-6-10-40)+"px");
-            domStyle.set("screenshotTooltipDetail", "width", (viewPoint.w-screenshotMargin-viewPoint.w*0.10)+"px");
-
             domStyle.set("lightCover", {"width": (viewPoint.w)+"px", "height":(viewPoint.h)+'px'});
         };
 
@@ -157,7 +150,6 @@ define([
 
                 var imgScreenshot = dom.byId('imgDetailScreenshot');
                 var viewPoint = win.getBox();
-                var tooltipWidget = registry.byId('textTooltip');
                 var deviceRatio = parseFloat((viewPoint.w/viewPoint.h).toFixed(2));
                 var orignialDeviceRatio = parseFloat((imgScreenshot.naturalWidth/imgScreenshot.naturalHeight).toFixed(2));
 
@@ -194,76 +186,8 @@ define([
                     domStyle.set("lightCoverScreenshot", "height", (imageHeight+400)+"px");
                 }
 
-                var oldImageWidth = imgScreenshot.width;
                 borderWidth = Math.floor(imageWidth*0.02);
                 applyAnnoLevelColor(eventsModel.cursor.level);
-
-                var toolTipDivWidth = imageWidth - 40;
-                domStyle.set("screenshotTooltipDetail", "width", toolTipDivWidth+"px");
-
-                if (eventsModel.cursor.annoType == annoType.SimpleComment)
-                {
-                    if (eventsModel.cursor.circleX != null)
-                    {
-                        var tx = Math.round(((imageWidth-borderWidth*2)*eventsModel.cursor.circleX)/10000) -circleRadius;
-                        var ty = Math.round(((imageHeight-borderWidth*2)*eventsModel.cursor.circleY)/10000) -circleRadius;
-
-                        console.error("view w: "+viewPoint.w+", view h: "+viewPoint.h);
-                        console.error("image width2: "+imageWidth+", image height2: "+imageHeight);
-                        console.error("x: "+tx+", y: "+ty);
-
-                        domStyle.set("screenshotAnchorDetail", {
-                            top: ty+'px',
-                            left: tx+'px',
-                            display: ''
-                        });
-
-                        domStyle.set("screenshotAnchorInvisibleDetail", {
-                            top: ty+'px'
-                        });
-
-                        if (ty > (domStyle.get("screenshotTooltipDetail", "height")+14))
-                        {
-                            tooltipWidget.show(dom.byId('screenshotAnchorInvisibleDetail'), ['above-centered','below-centered','before','after']);
-                            annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))+14;
-                            domStyle.set(tooltipWidget.domNode, 'top', annoTooltipY+'px');
-                        }
-                        else
-                        {
-                            tooltipWidget.show(dom.byId('screenshotAnchorInvisibleDetail'), ['below-centered','below-centered','after','before']);
-                            annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))-14;
-                            domStyle.set(tooltipWidget.domNode, 'top', annoTooltipY+'px');
-                        }
-
-                        var pos = domGeom.position("screenshotAnchorDetail", true);
-                        var tpLeft = domStyle.get(tooltipWidget.domNode, 'left');
-                        domStyle.set(tooltipWidget.anchor, {
-                            left: (pos.x-tpLeft+2)+'px'
-                        });
-
-                        if (textDataAreaShown)
-                        {
-                            tooltipWidget.hide();
-                        }
-                    }
-                    else
-                    {
-                        domStyle.set("screenshotAnchorDetail", "display", "none");
-                        tooltipWidget.show(dom.byId('screenshotDefaultAnchorDetail'), ['below-centered','below-centered','after','before']);
-                        annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))-14;
-                        domStyle.set(tooltipWidget.domNode, 'top', annoTooltipY+'px');
-
-                        if (textDataAreaShown)
-                        {
-                            tooltipWidget.hide();
-                        }
-                    }
-                }
-                else
-                {
-                    tooltipWidget.hide();
-                    domStyle.set("screenshotAnchorDetail", "display", "none");
-                }
 
                 adjustNavBarZIndex();
 
@@ -308,26 +232,79 @@ define([
         var redrawShapes = function()
         {
             var drawElements = eventsModel.cursor.draw_elements;
+            var lineStrokeStyle = {color: eventsModel.cursor.level==1?level1Color:level2Color, width: 3};
             if (drawElements)
             {
-                console.error('redrawShapes:'+drawElements);
                 var elementsObject = dojoJson.parse(drawElements);
 
                 surface.show();
                 domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', left:(-borderWidth)+'px',top:(-borderWidth)+'px'});
 
-                console.error('redrawShapes:'+domStyle.get(surface.container, 'border'));
                 surface.borderWidth = borderWidth;
                 surface.setDimensions(imageWidth-borderWidth*2, imageHeight-borderWidth*2);
 
-                surface.parse(elementsObject);
+                surface.parse(elementsObject, lineStrokeStyle);
 
                 console.error('redrawShapes end');
             }
             else
             {
+
+                domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', left:(-borderWidth)+'px',top:(-borderWidth)+'px'});
+
+                surface.borderWidth = borderWidth;
+                surface.setDimensions(imageWidth-borderWidth*2, imageHeight-borderWidth*2);
+
                 surface.clear();
-                surface.hide();
+                surface.show();
+
+                var earLow = !eventsModel.cursor.simple_circle_on_top;
+
+                var toolTipDivWidth = (imageWidth-borderWidth*2-60),
+                    pxPerChar = 8,
+                    charsPerLine = toolTipDivWidth/pxPerChar;
+
+                var commentText = eventsModel.cursor.annoText;
+                var lines = Math.max(Math.round(commentText.length/charsPerLine),1);
+
+                if (lines > 3 )
+                {
+                    lines = 3;
+                    var shortText = commentText.substr(0, charsPerLine*3-3)+"...";
+                    commentText = shortText;
+                }
+
+                var boxHeight = 34 + (lines-1)*20;
+                var epLineStyle, epFillStyle;
+
+                if (eventsModel.cursor.level==1)
+                {
+                    epLineStyle = {color:'#FFA500', width:1};
+                    epFillStyle = "rgba(255,165,0, 0.4)";
+                }
+                else
+                {
+                    epLineStyle = {color:'#FF0000',width:1};
+                    epFillStyle = "rgba(255,12,9, 0.4)";
+                }
+
+                var tx = Math.round(((imageWidth-borderWidth*2)*eventsModel.cursor.circleX)/10000);
+                var ty = Math.round(((imageHeight-borderWidth*2)*eventsModel.cursor.circleY)/10000);
+
+                var commentBox = surface.createSimpleCommentBox({
+                    deletable:false,
+                    startX:tx,
+                    startY: ty,
+                    selectable:false,
+                    shareBtnWidth:0,
+                    boxHeight:boxHeight,
+                    earLow:earLow,
+                    placeholder:commentText,
+                    commentText:eventsModel.cursor.annoText,
+                    lineStrokeStyle:lineStrokeStyle,
+                    endpointStrokeStyle:epLineStyle,
+                    endpointFillStyle:epFillStyle
+                });
             }
         };
 
@@ -361,25 +338,6 @@ define([
                     domClass.remove("navBtnNext", "navBtnDisabled");
                     domClass.remove("navBtnPrevious", "navBtnDisabled");
                 }
-
-                var tooltipWidget = registry.byId('textTooltip');
-                var viewPoint = win.getBox();
-
-                // was (viewPoint.w-30-viewPoint.w*0.10)
-                var toolTipDivWidth = (viewPoint.w-30-viewPoint.w*0.10),
-                    pxPerChar = 8,
-                    charsPerLine = toolTipDivWidth/pxPerChar;
-
-                if (eventsModel.cursor.annoText.length >= charsPerLine*3)
-                {
-                    var shortText = eventsModel.cursor.annoText.substr(0, charsPerLine*3-3)+"...";
-
-                    dom.byId('screenshotTooltipDetail').innerHTML = shortText;
-                }
-
-                //dom.byId("imgDetailScreenshot").width = (viewPoint.w-30);
-                domStyle.set("screenshotTooltipDetail", "width", toolTipDivWidth+"px");
-
 
                 if (eventsModel.cursor.app == null||eventsModel.cursor.app == ''||eventsModel.cursor.app.toLowerCase() == 'unknown')
                 {
@@ -429,14 +387,11 @@ define([
 
                 domStyle.set('screenshotContainerDetail', {width:(imageWidth-borderWidth*2)+'px',height:(imageHeight-borderWidth*2)+'px', 'borderColor': level1Color,'borderStyle':'solid', 'borderWidth':borderWidth+'px'});
                 domStyle.set('imgDetailScreenshot', {width:'100%',height:'100%'});
-
-                drawOrangeCircle(1);
             }
             else if (level == 2)
             {
                 domStyle.set('screenshotContainerDetail', {width:(imageWidth-borderWidth*2)+'px',height:(imageHeight-borderWidth*2)+'px', 'borderColor': level2Color,'borderStyle':'solid', 'borderWidth':borderWidth+'px'});
                 domStyle.set('imgDetailScreenshot', {width:'100%',height:'100%'});
-                drawOrangeCircle(2);
             }
         };
 
@@ -521,7 +476,6 @@ define([
                     adjustAnnoCommentSize();
                 }
             }).play();
-            registry.byId('textTooltip').hide();
 
             textDataAreaShown = true;
             domStyle.set("headingDetail", "display", 'none');
@@ -546,41 +500,9 @@ define([
                 }
             }).play();
 
-            domClass.replace(registry.byId('textTooltip').domNode, "mblTooltipVisible" ,"mblTooltipHidden");
-
             textDataAreaShown = false;
 
             domStyle.set("headingDetail", "display", '');
-        };
-
-        var drawOrangeCircle = function(level)
-        {
-            level = level||1;
-            var lineColor, fillColor;
-
-            if (level == 1)
-            {
-                lineColor = "#FFA500";
-                fillColor = "rgba(255,165,0, 0.4)";
-            }
-            else
-            {
-                lineColor = "#FF0000";
-                fillColor = "rgba(255,12,9, 0.4)";
-            }
-
-            var ctx = dom.byId('screenshotAnchorDetail').getContext('2d');
-            var canvasWidth = 32;
-
-            ctx.clearRect(0, 0, 40, 40);
-            ctx.beginPath();
-            ctx.strokeStyle = lineColor;
-            ctx.lineWidth = 3;
-            ctx.arc(20, 20, canvasWidth/2, 0, 2 * Math.PI, true);
-            ctx.stroke();
-            ctx.fillStyle = fillColor;
-            ctx.arc(20, 20, canvasWidth/2-3, 0, 2 * Math.PI, true);
-            ctx.fill();
         };
 
         var showAppNameTextBox = function()
@@ -1221,8 +1143,6 @@ define([
                     domStyle.set(registry.byId('textTooltip').domNode, 'top', (annoTooltipY-parentScrollTop)+'px');
                 }));
 
-                drawOrangeCircle();
-
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;
                 dom.byId("imgDetailScreenshot").onerror = screenshotImageOnerror;
                 domStyle.set('modelApp_detail','backgroundColor', '#333333');
@@ -1252,13 +1172,11 @@ define([
                 }
                 adjustSize();
 
-                domClass.replace(registry.byId('textTooltip').domNode, "mblTooltipVisible" ,"mblTooltipHidden");
                 textDataAreaShown = false;
                 domStyle.set("headingDetail", "display", '');
             },
             beforeDeactivate: function()
             {
-                registry.byId('textTooltip').hide();
                 domStyle.set('textDataAreaContainer', 'display', 'none');
                 domStyle.set("lightCoverScreenshot", "display", 'none');
 

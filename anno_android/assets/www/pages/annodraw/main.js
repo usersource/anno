@@ -606,7 +606,28 @@ require([
             domStyle.set('sdBottom', 'height', sdBottom+'px');
 
             var lineStrokeStyle = {color: level==1?level1Color:level2Color, width: 3};
-            defaultCommentBox = surface.createSimpleCommentBox({deletable:false, startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight,lineStrokeStyle:lineStrokeStyle});
+            var epLineStyle, epFillStyle;
+
+            if (level==1)
+            {
+                epLineStyle = {color:'#FFA500', width:1};
+                epFillStyle = "rgba(255,165,0, 0.4)";
+            }
+            else
+            {
+                epLineStyle = {color:'#FF0000',width:1};
+                epFillStyle = "rgba(255,12,9, 0.4)";
+            }
+            defaultCommentBox = surface.createSimpleCommentBox({
+                deletable:false,
+                startX2:lastShapePos.x1,
+                startY: lastShapePos.y1-defaultShapeHeight-50,
+                width: defaultShapeWidth,
+                height: defaultShapeHeight,
+                lineStrokeStyle:lineStrokeStyle,
+                endpointStrokeStyle:epLineStyle,
+                endpointFillStyle:epFillStyle
+            });
 
             connect.connect(defaultCommentBox.shareBtnNode, "click", function()
             {

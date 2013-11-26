@@ -107,6 +107,7 @@ define([
                     eventData.id = annoList[i].id;
                     eventData.circleX = parseInt(annoList[i].simple_x, 10);
                     eventData.circleY = parseInt(annoList[i].simple_y, 10);
+                    eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
 
                     spliceArgs.push(new getStateful(eventData));
                 }

@@ -10,11 +10,9 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Base64;
-import android.view.Gravity;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 import io.usersource.annoplugin.utils.*;
-import org.apache.cordova.DroidGap;
 import org.apache.cordova.api.CallbackContext;
 import org.apache.cordova.api.CordovaPlugin;
 import org.json.JSONArray;
@@ -80,10 +78,9 @@ public class AnnoCordovaPlugin extends CordovaPlugin
     }
     else if (GET_ANNO_SCREENSHOT_PATH.equals(action)) {
       Activity activity = this.cordova.getActivity();
-      AppConfig config = AppConfig.getInstance(activity);
 
-      String appLocation = config.getDataLocation();
-      String screenshotDirName = config.getScreenshotDirName();
+      String appLocation = AnnoUtils.getDataLocation();
+      String screenshotDirName = AnnoUtils.getScreenshotDirName();
       String screenshotDirPath = new File(appLocation, screenshotDirName)
               .getAbsolutePath();
 
@@ -171,7 +168,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
             "io.usersource.annoplugin.view.AnnoDrawActivity");
     intent.setType("image/*");
     // set this flag for FeedbackEditActivity to know it's practice.
-    intent.putExtra(Constants.INTENT_EXTRA_IS_PRACTICE, true);
+    intent.putExtra(AnnoUtils.INTENT_EXTRA_IS_PRACTICE, true);
     FileOutputStream fos = null;
     InputStream is = null;
     String filePath = "";
@@ -189,7 +186,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
       }
 
       File screenshotPath = new File(screenshotDir,
-              ScreenshotUtils.generateScreenshotName());
+              AnnoUtils.generateScreenshotName());
       fos = new FileOutputStream(screenshotPath);
 
       is = activity.getAssets().open(
@@ -226,10 +223,10 @@ public class AnnoCordovaPlugin extends CordovaPlugin
             || activity instanceof IntroActivity
             || activity instanceof CommunityActivity) {
       // current app is standalone anno, or anno plugin activity.
-      intent.putExtra(PluginUtils.LEVEL, 1);
+      intent.putExtra(AnnoUtils.LEVEL, 1);
     } else {
       // current app is 3rd.
-      intent.putExtra(PluginUtils.LEVEL, 0);
+      intent.putExtra(AnnoUtils.LEVEL, 0);
     }
 
     activity.startActivity(intent);
@@ -287,13 +284,12 @@ public class AnnoCordovaPlugin extends CordovaPlugin
     }
 
     AnnoDrawActivity annoDrawActivity = (AnnoDrawActivity)this.cordova.getActivity();
-    AppConfig config = AppConfig.getInstance(annoDrawActivity);
 
-    String appLocation = config.getDataLocation();
-    String screenshotDirName = config.getScreenshotDirName();
+    String appLocation = AnnoUtils.getDataLocation();
+    String screenshotDirName = AnnoUtils.getScreenshotDirName();
     String screenshotDirPath = new File(appLocation, screenshotDirName)
             .getAbsolutePath();
-    SystemUtils.mkdirs(annoDrawActivity, screenshotDirPath);
+    AnnoUtils.mkdirs(annoDrawActivity, screenshotDirPath);
     //checkEnoughSpace(bitmap.getByteCount());
 
     String imageKey = generateUniqueImageKey();
@@ -336,18 +332,18 @@ public class AnnoCordovaPlugin extends CordovaPlugin
     AnnoDrawActivity annoDrawActivity = (AnnoDrawActivity)this.cordova.getActivity();
 
     String source, appName, appVersion;
-    if (PluginUtils.isAnno(annoDrawActivity.getPackageName()) && annoDrawActivity.getLevel() != 2)
+    if (AnnoUtils.isAnno(annoDrawActivity.getPackageName()) && annoDrawActivity.getLevel() != 2)
     {
-      source = Constants.ANNO_SOURCE_STANDALONE;
-      appName = Constants.UNKNOWN_APP_NAME;
+      source = AnnoUtils.ANNO_SOURCE_STANDALONE;
+      appName = AnnoUtils.UNKNOWN_APP_NAME;
     }
     else
     {
-      source = Constants.ANNO_SOURCE_PLUGIN;
-      appName = SystemUtils.getAppName(annoDrawActivity);
+      source = AnnoUtils.ANNO_SOURCE_PLUGIN;
+      appName = AnnoUtils.getAppName(annoDrawActivity);
     }
 
-    appVersion = SystemUtils.getAppVersion(annoDrawActivity);
+    appVersion = AnnoUtils.getAppVersion(annoDrawActivity);
 
     result.put("source", source);
     result.put("appName", appName);

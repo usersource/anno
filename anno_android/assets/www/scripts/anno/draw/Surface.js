@@ -325,7 +325,7 @@ define([
 
                 return anonymized;
             },
-            parse: function(shapesJson)
+            parse: function(shapesJson, cbxStrokeStyle)
             {
                 this.clear();
 
@@ -348,7 +348,7 @@ define([
                     }*/
                     else if (item.type == this.shapeTypes.CommentBox)
                     {
-                        this.createCommentBox({shapeJson:item, selectable:false});
+                        this.createCommentBox({shapeJson:item, selectable:false, lineStrokeStyle:cbxStrokeStyle});
                     }
 
                 }

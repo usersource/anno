@@ -26,8 +26,7 @@
         "dojox/mvc/Output",
         "dojox/mvc/at",
         "dojox/mobile/ToolBarButton",
-        "dojox/mvc/Group",
-        "dojox/mobile/Tooltip"
+        "dojox/mvc/Group"
     ],
     // Modules for the application.  The are basically used as the second
     // array of mixins in a dojo.declare().  Modify the top level behavior
