@@ -114,7 +114,8 @@ class Anno(BaseModel):
         if message.created is not None:
             entity.created = message.created
             # use google map api to retrieve country information and save into datastore.
-        entity.country = get_country_by_coordinate(message.latitude, message.longitude)
+        if message.latitude is not None and message.longitude is not None:
+            entity.country = get_country_by_coordinate(message.latitude, message.longitude)
         # set last update time & activity
         entity.last_update_time = datetime.datetime.now()
         entity.last_activity = 'anno'
