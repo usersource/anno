@@ -9,6 +9,7 @@ define(["dojo/dom-style","dojo/window"], function(domStyle, win){
         },
         level1Color:"#ff9900",
         level2Color:"#ff0000",
+        annoScreenshotPath:null,
         hasConnection: function()
         {
             var networkState = navigator.connection.type;
@@ -128,13 +129,27 @@ define(["dojo/dom-style","dojo/window"], function(domStyle, win){
                 [activityName, closeCurrentActivity]
             );
         },
-        getAnnoScreenshotPath: function()
+        getAnnoScreenshotPath: function(callback)
         {
+            if (this.annoScreenshotPath)
+            {
+                if (callback)
+                {
+                    callback(this.annoScreenshotPath);
+                }
+                return this.annoScreenshotPath;
+            }
             var screenShotPath = "";
             cordova.exec(
                 function (result)
                 {
                     screenShotPath = result;
+                    this.annoScreenshotPath = screenShotPath;
+
+                    if (callback)
+                    {
+                        callback(screenShotPath);
+                    }
                 },
                 function (err)
                 {

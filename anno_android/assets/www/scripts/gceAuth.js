@@ -4,7 +4,7 @@ var oauthOptions = {
     redirect_uri: 'http://localhost', //postmessage
     scope: 'https://www.googleapis.com/auth/userinfo.email'
 };
-require(["dojo/ready", "dojo/request/xhr"], function(ready, xhr){
+require(["dojo/ready", "dojo/request/xhr", "anno/anno/AnnoDataHandler"], function(ready, xhr, AnnoDataHandler){
     var checkAuth = function()
     {
         var authUrl = 'https://accounts.google.com/o/oauth2/auth?' +
@@ -70,6 +70,7 @@ require(["dojo/ready", "dojo/request/xhr"], function(ready, xhr){
                 }
 
                 currentUserInfo = userinfo;
+                AnnoDataHandler.startBackgroundSync();
             });
         });
     };

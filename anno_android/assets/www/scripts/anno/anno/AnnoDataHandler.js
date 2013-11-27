@@ -3,7 +3,9 @@ define(["../common/Util"], function(annoUtil){
     var insert_anno_draw_sql = "insert into feedback_comment(draw_elements,draw_is_anonymized,created,last_update,comment,screenshot_key,x,y,direction,app_version,os_version,is_moved,level,app_name,model,source,os_name,anno_type,synched)"+
         " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     var update_anno_synched_by_created_sql = "update feedback_comment set synched=1,object_key=? where created=?";
+    var update_anno_synched_by_id_sql = "update feedback_comment set synched=1,object_key=? where _id=?";
     var select_anno_sql = "select * from feedback_comment";
+    var select_anno_sync_sql = "select * from feedback_comment where synched=0 LIMIT 1";
 
     var onSQLError = function(err)
     {
@@ -13,6 +15,7 @@ define(["../common/Util"], function(annoUtil){
 
     var annoDataHandler = {
 
+        syncInterval: 5000,
         //created, last_update,comment,screenshot_key,x,y,direction,app_version,os_version,is_moved,level,app_name,model,source,os_name,anno_type,synched
         saveAnno: function(anno, source, screenshotDirPath)
         {
@@ -44,13 +47,26 @@ define(["../common/Util"], function(annoUtil){
 
             this.saveAnnoToCloud(anno, screenshotDirPath, createdTime);
         },
-        saveAnnoToCloud: function(anno, screenshotDirPath, createdTime)
+        saveAnnoToCloud: function(anno, screenshotDirPath, createdTime, background, callback)
         {
-            if (!annoUtil.hasConnection()) return;
+            if (!annoUtil.hasConnection())
+            {
+                annoUtil.hideLoadingIndicator();
+
+                if (callback)
+                {
+                    callback();
+                }
+                return;
+            }
 
             var self = this;
 
-            annoUtil.showLoadingIndicator();
+            if (!background)
+            {
+                annoUtil.showLoadingIndicator();
+            }
+
             anno.simple_circle_on_top = anno.simple_circle_on_top==1;
             anno.simple_is_moved = anno.simple_is_moved==1;
 
@@ -63,50 +79,100 @@ define(["../common/Util"], function(annoUtil){
                     if (!data)
                     {
                         annoUtil.hideLoadingIndicator();
-                        alert("Anno returned from server are empty.");
+
+                        if (background)
+                        {
+                            console.error("Anno returned from server are empty.");
+                        }
+                        else
+                        {
+                            alert("Anno returned from server are empty.");
+                        }
+
+                        if (callback)
+                        {
+                            callback();
+                        }
+
                         return;
                     }
 
                     if (data.error)
                     {
                         annoUtil.hideLoadingIndicator();
-                        alert("An error occurred when calling anno.insert api: "+data.error.message);
+
+                        if (background)
+                        {
+                            console.error("An error occurred when calling anno.insert api: "+data.error.message);
+                        }
+                        else
+                        {
+                            alert("An error occurred when calling anno.insert api: "+data.error.message);
+                        }
+
+                        if (callback)
+                        {
+                            callback();
+                        }
+
                         return;
                     }
 
                     console.error(JSON.stringify(data.result));
 
-                    self.updateAnnoSynchedStateByCreated(data.result.id, createdTime);
+                    if (background)
+                    {
+                        self.updateAnnoSynchedStateById(data.result.id, createdTime);
+                    }
+                    else
+                    {
+                        self.updateAnnoSynchedStateByCreated(data.result.id, createdTime);
+                    }
+
                     annoUtil.hideLoadingIndicator();
 
-                    cordova.exec(
-                        function (result)
-                        {
-                            cordova.exec(
-                                function (result)
-                                {
-                                },
-                                function (err)
-                                {
-                                },
-                                "AnnoCordovaPlugin",
-                                'exit_current_activity',
-                                []
-                            );
-                        },
-                        function (err)
-                        {
-                        },
-                        "AnnoCordovaPlugin",
-                        'show_toast',
-                        ["Your comment has been shared."]
-                    );
+                    if (!background)
+                    {
+                        cordova.exec(
+                            function (result)
+                            {
+                                cordova.exec(
+                                    function (result)
+                                    {
+                                    },
+                                    function (err)
+                                    {
+                                    },
+                                    "AnnoCordovaPlugin",
+                                    'exit_current_activity',
+                                    []
+                                );
+                            },
+                            function (err)
+                            {
+                            },
+                            "AnnoCordovaPlugin",
+                            'show_toast',
+                            ["Your comment has been shared."]
+                        );
+                    }
+
+                    if (callback)
+                    {
+                        callback();
+                    }
                 });
             });
         },
         updateAnnoSynchedStateByCreated: function(cloudKey, ct)
         {
             executeUpdateSql(update_anno_synched_by_created_sql,[cloudKey, ct], function(res){
+
+            }, onSQLError);
+        },
+        updateAnnoSynchedStateById: function(cloudKey, ct)
+        {
+            executeUpdateSql(update_anno_synched_by_id_sql,[cloudKey, ct], function(res){
 
             }, onSQLError);
         },
@@ -126,6 +192,63 @@ define(["../common/Util"], function(annoUtil){
             }, function(err){
                 console.error("loadLocalAnnos: "+err);
             });//onSQLError
+        },
+        startBackgroundSync: function()
+        {
+            var inAnnoApp = document.getElementById('modelApp_home')!= null;
+
+            if (!inAnnoApp) return;
+
+            var self = this;
+            executeUpdateSql(select_anno_sync_sql,[], function(res){
+                var cnt = res.rows.length;
+
+                if (cnt)
+                {
+                    console.error('startBackgroundSync annos: '+cnt);
+
+                    var item = res.rows.item(0);
+                    var createdTime = new Date(parseInt(item.created));
+                    var formattedCreatedTime = createdTime.getFullYear()+'-'+(createdTime.getMonth()+1)+'-'+createdTime.getDate()+"T"+createdTime.getHours()+":"+createdTime.getMinutes()+":"+createdTime.getSeconds();
+
+                    console.error('startBackgroundSync annos: '+JSON.stringify(item));
+                    var annoItem = {
+                        "anno_text":item.comment,
+                        "image":item.screenshot_key,
+                        "simple_x":item.x,
+                        "simple_y":item.y,
+                        "simple_circle_on_top":item.direction,
+                        "app_version":item.app_version,
+                        "simple_is_moved":item.is_moved,
+                        "level":item.level,
+                        "app_name":item.app_name,
+                        "device_model":item.model,
+                        "os_name":item.os_name,
+                        "os_version":item.os_version,
+                        "anno_type":item.anno_type,
+                        "screenshot_is_anonymized":item.draw_is_anonymized==1,
+                        "draw_elements":item.draw_elements,
+                        "created":formattedCreatedTime
+                    };
+
+                    annoUtil.getAnnoScreenshotPath(function(scPath){
+                        self.saveAnnoToCloud(annoItem, scPath, item._id, true, function(){
+                            window.setTimeout(function(){
+                                annoDataHandler.startBackgroundSync();
+                            }, annoDataHandler.syncInterval);
+                        });
+                    });
+                }
+                else
+                {
+                    window.setTimeout(function(){
+                        annoDataHandler.startBackgroundSync();
+                    }, annoDataHandler.syncInterval);
+                }
+
+            }, function(err){
+                console.error("startBackgroundSync: "+err);
+            });
         }
     };
 

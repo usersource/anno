@@ -23,7 +23,7 @@ var createCommentTableScript = '\
     os_name text default \'Android\',\
     anno_type text default \'simple comment\',\
     synched integer default 0,\
-    created integer default 0,\
+    created VARCHAR(30) default \'0\',\
     draw_elements text,\
     draw_is_anonymized integer default 0\
 )';
@@ -111,7 +111,7 @@ function doUpgrade()
 
         if (!tempObj["created"])
         {
-            annoDB.executeSql("alter table feedback_comment add column created integer default 0", [], function(res){
+            annoDB.executeSql("alter table feedback_comment add column created VARCHAR(30) default '0'", [], function(res){
                 console.error("created column added.");
             });
 
@@ -150,8 +150,16 @@ function executeSelectSql(sql, params, onSuccess, onFail)
 
 function executeUpdateSql(sql, params, onSuccess, onFail)
 {
-    console.error(JSON.stringify(annoDB));
-    annoDB.executeSql(sql, params, onSuccess, onFail);
+    //console.error(JSON.stringify(annoDB));
+    try
+    {
+        annoDB.executeSql(sql, params, onSuccess, onFail);
+    }
+    catch(err)
+    {
+        console.error(err);
+    }
+    //annoDB.executeSql(sql, params, onSuccess, onFail);
 }
 
 function onSQLError(err)

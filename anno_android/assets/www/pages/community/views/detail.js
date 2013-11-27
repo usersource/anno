@@ -461,11 +461,6 @@ define([
         {
             if (textDataAreaShown) return;
 
-            if (window.CMActivity)
-            {
-                window.CMActivity.disableBackButton();
-            }
-
             domStyle.set("imgDetailScreenshot", "opacity", '0.4');
             wipeIn({
                 node:"textDataAreaContainer",
@@ -479,15 +474,18 @@ define([
 
             textDataAreaShown = true;
             domStyle.set("headingDetail", "display", 'none');
+
+            document.addEventListener("backbutton", handleBackButton, false);
+        };
+
+        var handleBackButton = function()
+        {
+            hideTextData();
         };
 
         var hideTextData = window.hideTrayScreen = function()
         {
             if (!textDataAreaShown) return;
-            if (window.CMActivity)
-            {
-                window.CMActivity.enableBackButton();
-            }
 
             domStyle.set("lightCoverScreenshot", "display", 'none');
             domStyle.set("imgDetailScreenshot", "opacity", '1');
@@ -503,6 +501,7 @@ define([
             textDataAreaShown = false;
 
             domStyle.set("headingDetail", "display", '');
+            document.removeEventListener("backbutton", handleBackButton, false);
         };
 
         var showAppNameTextBox = function()
@@ -1155,7 +1154,6 @@ define([
                     editable:false,
                     borderWidth:0
                 });
-
             },
             afterActivate: function()
             {
@@ -1186,11 +1184,6 @@ define([
 
                 surface.clear();
                 surface.hide();
-
-                if (window.CMActivity)
-                {
-                    window.CMActivity.enableBackButton();
-                }
             },
             destroy:function ()
             {
