@@ -1,4 +1,12 @@
-define(["dojo/dom-style","dojo/window"], function(domStyle, win){
+define([
+    "dojo/_base/declare",
+    "dojo/_base/connect",
+    "dojo/dom-style",
+    "dojo/window",
+    "dojox/mobile/SimpleDialog",
+    "dojox/mobile/_ContentPaneMixin",
+    "dijit/registry"
+], function(declare, connect, domStyle, win, SimpleDialog, _ContentPaneMixin, registry){
 
     var util = {
         loadingIndicator:null,
@@ -204,6 +212,50 @@ define(["dojo/dom-style","dojo/window"], function(domStyle, win){
         noop: function()
         {
 
+        },
+        showMessageDialog: function (message, title)
+        {
+            var dlg = registry.byId('dlg_common_message');
+
+            if (!dlg)
+            {
+                dlg = new (declare([SimpleDialog, _ContentPaneMixin]))({
+                    id: "dlg_common_message",
+                    content: '' +
+                        '<div id="div_cancel_common_message_message" class="mblSimpleDialogText">' + message + '</div>' +
+                        '<div style="text-align: center"><button id="btn_cancel_common_message" class="btn">OK</button></div>'
+                });
+                dlg.startup();
+
+                connect.connect(document.getElementById('btn_cancel_common_message'), 'click', function ()
+                {
+                    registry.byId('dlg_common_message').hide();
+                });
+            }
+            else
+            {
+                document.getElementById("div_cancel_common_message_message").innerHTML = message;
+            }
+
+            dlg.show();
+        },
+        showSoftKeyboard: function()
+        {
+            if (window.cordova&&cordova.exec)
+            {
+                cordova.exec(
+                    function (result)
+                    {
+                    },
+                    function (err)
+                    {
+                        alert(err);
+                    },
+                    "AnnoCordovaPlugin",
+                    'show_softkeyboard',
+                    []
+                );
+            }
         }
     };
 

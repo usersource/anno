@@ -86,7 +86,7 @@
     },
 
     //the name of the scene to load when the app is initialized.
-    "defaultView": "home",
+    "defaultView": "signin",
 
     "defaultTransition": "slide",
     //scenes are groups of views and models loaded at once
@@ -115,6 +115,21 @@
             "controller" : "./views/settings",
             "dependencies":[],
             "template": "./templates/settings.html"
+        },
+        "signin": {
+            "controller" : "./views/signin",
+            "dependencies":[],
+            "template": "./templates/signin.html"
+        },
+        "signup": {
+            "controller" : "./views/signup",
+            "dependencies":[],
+            "template": "./templates/signup.html"
+        },
+        "forgotMyDetails": {
+            "controller" : "./views/forgotMyDetails",
+            "dependencies":[],
+            "template": "./templates/forgotMyDetails.html"
         }
     }
 }

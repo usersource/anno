@@ -1,0 +1,30 @@
+<div class="view mblView" style="background-color: #DDDDDD">
+    <div id="signinContainer">
+        <div data-dojo-type="dojox/mobile/Heading" class="signinHeading">
+            <img src="css/images/anno.png" alt="" width="40" class="headingIcon">
+            <span class="headingTitle" style="color: #274e13;">Anno</span>
+        </div>
+        <div style="text-align: center">
+            <div style="font-size: 20px;font-weight: bold">Sign in with</div>
+            <img src="css/images/google-icon.png" alt="">
+        </div>
+        <div style="text-align: center">
+            <div id="signinFormContainer" style="font-weight: bold;border-top:2px solid #CCCCCC;padding-top: 16px;width:80%;margin-top: 20px;margin-left: auto;margin-right: auto">
+                <form action="signin.html" method="post">
+                    <div><input type="email" id="signinEmail" placeholder="Email" required="true" class="signin-input" style="font-weight: bold;"></div>
+                    <div style="padding-top: 2px;"><input type="password" id="signPwd" placeholder="Password" class="signin-input" style="font-weight: bold;"></div>
+                </form>
+                <div style="color: #999999;padding-top: 26px;">
+                    <div id="btnSignUp" style="float: left">Sign-up</div>
+                    <div id="btnFmd" style="float: right">Forgot your details?</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="pickNickNameContainer" style="margin-top: 30px;display:none;clear: both;width: 80%;margin-left: auto;margin-right: auto">
+        <div id="btnBackToSignin" style="color: #999999;font-weight: bold">&lt;&lt; Back to sign-in</div>
+        <div style="height: 150px;"></div>
+        <div style="color: #000000;font-weight: bold;font-size: 20px;padding-bottom: 20px;padding-left: 10px">Almost there!</div>
+        <div><input id="nickNameSignin" type="text" placeholder="Name to display in our community" class="signin-input" style="font-weight: bold;"></div>
+    </div>
+</div>

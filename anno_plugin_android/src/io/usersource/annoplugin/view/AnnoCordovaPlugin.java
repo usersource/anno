@@ -44,6 +44,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
   public static final String GOTO_ANNO_HOME = "goto_anno_home";
   public static final String START_ACTIVITY = "start_activity";
   public static final String CLOSE_SOFTKEYBOARD = "close_softkeyboard";
+  public static final String SHOW_SOFTKEYBOARD = "show_softkeyboard";
 
   // activity names
   public static final String ACTIVITY_INTRO = "Intro";
@@ -132,6 +133,16 @@ public class AnnoCordovaPlugin extends CordovaPlugin
       AnnoDrawActivity activity = (AnnoDrawActivity)this.cordova.getActivity();
       InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
       imm.hideSoftInputFromWindow(activity.getAppView().getWindowToken(), 0);
+
+      callbackContext.success();
+
+      return true;
+    }
+    else if (SHOW_SOFTKEYBOARD.equals(action)) {
+
+      CommunityActivity activity = (CommunityActivity)this.cordova.getActivity();
+      InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+      imm.showSoftInput(activity.getAppView(), InputMethodManager.SHOW_FORCED);
 
       callbackContext.success();
 

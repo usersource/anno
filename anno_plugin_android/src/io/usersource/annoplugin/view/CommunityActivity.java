@@ -61,4 +61,8 @@ public class CommunityActivity extends DroidGap {
     return level;
   }
 
+  public View getAppView()
+  {
+    return this.appView;
+  }
 }

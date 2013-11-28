@@ -526,3 +526,28 @@
     padding-top: 8px;
     padding-left: 12px;
 }
+
+/* sign in*/
+.signinHeading
+{
+    background-image: none;
+    background-color: transparent;
+    text-shadow:none;
+    color: #333333;
+    height: 44px;
+    padding-top: 4px;
+    border: none;
+}
+
+.signin-input
+{
+    border: none;
+    height: 34px;
+    line-height: 20px;
+    margin: 0px;
+    font-size: 14px;
+    vertical-align: middle;
+    padding: 6px 12px;
+    width: 100%;
+    box-sizing: border-box;
+}
