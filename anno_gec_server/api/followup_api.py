@@ -10,6 +10,7 @@ import datetime
 
 from api.utils import get_endpoints_current_user
 from api.utils import anno_js_client_id
+from api.utils import handle_user
 from model.user import User
 from model.anno import Anno
 from model.follow_up import FollowUp
@@ -29,16 +30,7 @@ class FollowupApi(remote.Service):
         """
         Exposes and API endpoint to insert a follow up for the current user.
         """
-        current_user = get_endpoints_current_user(raise_unauthorized=False)
-        if current_user is None:
-            email = 'anonymous@usersource.com'
-            user = User.find_user_by_email(email)
-            if user is None:
-                user = User.insert_user(email)
-        else:
-            user = User.find_user_by_email(current_user.email())
-            if user is None:
-                user = User.insert_user(current_user.email())
+        user = handle_user(request.user_email)
 
         anno = Anno.get_by_id(request.anno_id)
         if anno is None:
