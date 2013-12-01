@@ -12,6 +12,7 @@ from message.vote_message import VoteMessage
 from message.vote_message import VoteListMessage
 from api.utils import get_endpoints_current_user
 from api.utils import anno_js_client_id
+from api.utils import handle_user
 from model.anno import Anno
 from model.user import User
 from model.vote import Vote
@@ -29,16 +30,7 @@ class VoteApi(remote.Service):
         """
         Exposes an API endpoint to insert a vote for the current user.
         """
-        current_user = get_endpoints_current_user(raise_unauthorized=False)
-        if current_user is None:
-            email = 'anonymous@usersource.com'
-            user = User.find_user_by_email(email)
-            if user is None:
-                user = User.insert_user(email)
-        else:
-            user = User.find_user_by_email(current_user.email())
-            if user is None:
-                user = User.insert_user(current_user.email())
+        user = handle_user(request.user_email)
 
         anno = Anno.get_by_id(request.anno_id)
         if anno is None:
