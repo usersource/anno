@@ -12,6 +12,7 @@ class VoteMessage(messages.Message):
     anno_id = messages.IntegerField(2)
     user_id = messages.IntegerField(3)
     created = message_types.DateTimeField(4)
+    user_email = messages.StringField(5)
 
 
 class VoteListMessage(messages.Message):

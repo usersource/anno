@@ -4,6 +4,7 @@ import endpoints
 import httplib
 import json
 import logging
+from model.user import User
 
 
 def get_endpoints_current_user(raise_unauthorized=True):
@@ -23,6 +24,24 @@ def get_endpoints_current_user(raise_unauthorized=True):
         raise endpoints.UnauthorizedException('Invalid token.')
     return current_user
 
+
+def handle_user(creator_id):
+    current_user = get_endpoints_current_user(raise_unauthorized=False)
+    if current_user is None:
+        if creator_id is not None:
+            user = User.find_user_by_email(creator_id + "@gmail.com")
+            if user is None:
+                user = User.insert_user(creator_id + "@gmail.com")
+        else:
+            email = 'anonymous@usersource.com'
+            user = User.find_user_by_email(email)
+            if user is None:
+                user = User.insert_user(email)
+    else:
+        user = User.find_user_by_email(current_user.email())
+        if user is None:
+            user = User.insert_user(current_user.email())
+    return user
 
 def get_country_by_coordinate(latitude, longitude):
     """
