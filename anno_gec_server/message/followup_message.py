@@ -13,6 +13,7 @@ class FollowupMessage(messages.Message):
     user_id = messages.IntegerField(3)
     created = message_types.DateTimeField(4)
     comment = messages.StringField(5)
+    user_email = messages.StringField(6)
 
 
 class FollowupListMessage(messages.Message):

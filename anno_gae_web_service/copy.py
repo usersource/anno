@@ -4,6 +4,9 @@ import endpoints
 from protorpc import remote
 from protorpc import messages
 from protorpc import message_types
+from model.Votes import Votes
+from model.Flags import Flags
+from model.FollowUp import FollowUp
 
 from model.FeedbackComment import FeedbackComment
 
@@ -35,15 +38,76 @@ class GetImageRequest(messages.Message):
     
 class GetImageResponse(messages.Message):
     image = messages.BytesField(1)
-    
+
+
+class AnnoIdRequest(messages.Message):
+    anno_id = messages.IntegerField(1, required=True)
+class VoteFlagResponse(messages.Message):
+    created = message_types.DateTimeField(1)
+    creator = messages.StringField(2)
+class FollowupResponse(messages.Message):
+    comment = messages.StringField(1)
+    created = message_types.DateTimeField(2)
+    creator = messages.StringField(3)
+class ListResponse(messages.Message):
+    vote_list = messages.MessageField(VoteFlagResponse, 1, repeated=True)
+    flag_list = messages.MessageField(VoteFlagResponse, 2, repeated=True)
+    followup_list = messages.MessageField(FollowupResponse, 3, repeated=True)
 
 @endpoints.api(name="copy_api", 
                version="v1", 
                description="Copy data api", 
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID])
 class CopyApi(remote.Service):
-    
-    @endpoints.method(GetItemsRequest, 
+    @endpoints.method(AnnoIdRequest, ListResponse, path="copyvote", http_method="GET", name="copy.vote_list")
+    def getVotes(self, request):
+        fc = FeedbackComment.get_by_id(request.anno_id)
+        if fc is None:
+            print "No followups for anno - " + str(request.anno_id)
+            return ListResponse(vote_list=[])
+        votes = Votes.all().filter("feedback_key = ", fc.key())
+        results = []
+        for vote in votes:
+            result = VoteFlagResponse()
+            result.created = vote.updateTimestamp
+            result.creator = vote.user_id.user_name
+            results.append(result)
+        return ListResponse(vote_list=results)
+
+    @endpoints.method(AnnoIdRequest, ListResponse, path="copyflag", http_method="GET", name="copy.flag_list")
+    def getFlags(self, request):
+        fc = FeedbackComment.get_by_id(request.anno_id)
+        if fc is None:
+            print "No followups for anno - " + str(request.anno_id)
+            return ListResponse(flag_list=[])
+        flags = Flags.all().filter("feedback_key = ", fc.key())
+        results = []
+        for flag in flags:
+            result = VoteFlagResponse()
+            result.created = flag.updateTimestamp
+            result.creator = flag.user_id.user_name
+            results.append(result)
+        return ListResponse(flag_list=results)
+
+
+    @endpoints.method(AnnoIdRequest, ListResponse, path="copyfollowup", http_method="GET", name="copy.followup_list")
+    def getFollowups(self, request):
+        fc = FeedbackComment.get_by_id(request.anno_id)
+        if fc is None:
+            print "No followups for anno - " + str(request.anno_id)
+            return ListResponse(followup_list=[])
+        followups = FollowUp.all().filter("Feedback_key = ", fc.key())
+        results = []
+        for followup in followups:
+            result = FollowupResponse()
+            result.created = followup.updateTimestamp
+            result.creator = followup.user_id.user_name
+            result.comment = followup.comment
+            results.append(result)
+        return ListResponse(followup_list=results)
+
+
+    @endpoints.method(GetItemsRequest,
                       GetItemsResponse, 
                       path="copy", 
                       http_method='GET', 
