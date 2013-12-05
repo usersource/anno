@@ -3,6 +3,8 @@ __author__ = 'topcircler'
 from protorpc import messages
 from protorpc import message_types
 
+from message.user_message import UserMessage
+
 
 class FlagMessage(messages.Message):
     """
@@ -10,9 +12,8 @@ class FlagMessage(messages.Message):
     """
     id = messages.IntegerField(1)
     anno_id = messages.IntegerField(2)
-    user_id = messages.IntegerField(3)
+    creator = messages.MessageField(UserMessage, 3)
     created = message_types.DateTimeField(4)
-    user_email = messages.StringField(5)
 
 
 class FlagListMessage(messages.Message):
