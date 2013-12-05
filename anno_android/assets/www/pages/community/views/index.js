@@ -15,9 +15,10 @@ define([
     "dojox/mvc/at",
     "dojo/store/Memory",
     "dojox/mvc/getStateful",
-    "anno/common/Util"
+    "anno/common/Util",
+    "anno/anno/AnnoDataHandler"
 ],
-    function (arrayUtil, dom, domClass, domGeom, domStyle, query, touch, lang, connect, win, has, sniff, registry, at, Memory, getStateful, annoUtil)
+    function (arrayUtil, dom, domClass, domGeom, domStyle, query, touch, lang, connect, win, has, sniff, registry, at, Memory, getStateful, annoUtil, AnnoDataHandler)
     {
         var _connectResults = []; // events connect results
         var eventsModel = null;
@@ -103,7 +104,7 @@ define([
                     eventData.annoType = annoList[i].anno_type;
                     eventData.annoIcon = annoList[i].anno_type == annoUtil.annoType.SimpleComment?"icon-simplecomment":"icon-shapes";
                     eventData.app = annoList[i].app_name;
-                    eventData.author = annoList[i].creator?annoList[i].creator.user_id:"";
+                    eventData.author = annoList[i].creator?annoList[i].creator.display_name||annoList[i].creator.user_email||annoList[i].creator.user_id:"";
                     eventData.id = annoList[i].id;
                     eventData.circleX = parseInt(annoList[i].simple_x, 10);
                     eventData.circleY = parseInt(annoList[i].simple_y, 10);
@@ -131,7 +132,7 @@ define([
         {
             if (loadingMoreData||!hasMoreData) return;
 
-            loadListData(offset+limit);
+            loadListData(offset);
 
             adjustSize();
         };
@@ -197,91 +198,156 @@ define([
             );
         };
 
+        var exitApp = function()
+        {
+            navigator.app.exitApp();
+        };
+
+        var _init = function()
+        {
+            if (_userChecked)
+            {
+                //var token = annoUtil.getTokenFromURL();
+                var params = annoUtil.parseUrlParams(document.location.search);
+                var token = params['token'];
+                var newUser = params['newuser'];
+                var signinMethod = params['signinmethod'];
+
+                console.error("index view got params: "+ JSON.stringify(params));
+
+                if (annoUtil.needAuth(token))
+                {
+                    annoUtil.openAuthPage();
+                    return;
+                }
+                else
+                {
+                    console.error("index view got token: "+ JSON.stringify(token));
+
+                    if (signinMethod == 'anno')
+                    {
+                        if (newUser == "1")
+                        {
+                            annoUtil.startActivity("Intro", false);
+                        }
+
+                        AnnoDataHandler.getCurrentUserInfo(function(userInfo){
+                            var basicToken = annoUtil.getBasicAuthToken(userInfo);
+                            annoUtil.setAuthToken(basicToken);
+                        });
+                    }
+                    else
+                    {
+                        if (token)
+                        {
+                            annoUtil.setAuthToken(JSON.parse(token));
+                            AnnoDataHandler.getCurrentUserInfo();
+                        }
+                        else
+                        {
+                            AnnoDataHandler.getCurrentUserInfo(function(userInfo){
+                                var basicToken = annoUtil.getBasicAuthToken(userInfo);
+                                annoUtil.setAuthToken(basicToken);
+                            });
+                        }
+                    }
+
+
+                    AnnoDataHandler.startBackgroundSync();
+
+                    _connectResults.push(connect.connect(dom.byId("barMyStuff"), 'click', function(e)
+                    {
+                        dojo.stopEvent(e);
+                        app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
+                    }));
+
+                    _connectResults.push(connect.connect(dom.byId("menuItemSettings"), 'click', function(e)
+                    {
+                        {
+                            domClass.remove("barMenus", 'barIconHighlight');
+                            registry.byId('menusDialog').hide();
+                            app.transitionToView(document.getElementById('modelApp_home'), {target:'settings',url:'#settings'});
+                        }
+                    }));
+
+                    _connectResults.push(connect.connect(dom.byId("menuItemIntro"), 'click', function(e)
+                    {
+                        annoUtil.startActivity("Intro", false);
+                    }));
+
+                    _connectResults.push(connect.connect(dom.byId("menuItemFeedback"), 'click', function(e)
+                    {
+                        annoUtil.startActivity("Feedback", false);
+                    }));
+
+                    _connectResults.push(connect.connect(dom.byId("barMenus"), 'click', function(e)
+                    {
+                        var menusDialog = registry.byId('menusDialog');
+                        if (menusDialog.domNode.style.display === "")
+                        {
+                            registry.byId('menusDialog').hide();
+                            domClass.remove("barMenus", 'barIconHighlight');
+                        }
+                        else
+                        {
+                            var viewPoint = win.getBox();
+                            registry.byId('menusDialog').show();
+                            domStyle.set(menusDialog._cover[0], {"height": (viewPoint.h-topBarHeight-bottomBarHeight)+"px", top:(topBarHeight)+"px"});
+                            domClass.add("barMenus", 'barIconHighlight');
+                        }
+                    }));
+
+                    _connectResults.push(connect.connect(dom.byId('btnLoadListData'), "click", function ()
+                    {
+                        loadListData();
+                    }));
+
+                    _connectResults.push(connect.connect(dom.byId('navBtnBackStart'), "click", function ()
+                    {
+                        goBackActivity();
+                    }));
+
+                    _connectResults.push(connect.connect(window, has("ios") ? "orientationchange" : "resize", this, function (e)
+                    {
+                        adjustSize();
+                    }));
+
+                    _connectResults.push(connect.connect(dom.byId('listContainerStart'), "scroll", this, function(){
+                        var toEnd = false;
+                        var listContainer = dom.byId('listContainerStart');
+                        if ((listContainer.clientHeight + listContainer.scrollTop) >= listContainer.scrollHeight) toEnd = true;
+
+                        if (toEnd)
+                        {
+                            loadMoreData();
+                        }
+                    }));
+
+                    adjustSize();
+                }
+            }
+            else
+            {
+                window.setTimeout(_init, 20);
+            }
+        };
+
         return {
             // simple view init
             init:function ()
             {
-                console.log("console from view", this);
                 eventsModel = this.loadedModels.events;
                 app = this.app;
 
-                _connectResults.push(connect.connect(dom.byId("barMyStuff"), 'click', function(e)
-                {
-                    dojo.stopEvent(e);
-                    app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
-                }));
-
-                _connectResults.push(connect.connect(dom.byId("menuItemSettings"), 'click', function(e)
-                {
-                    {
-                        domClass.remove("barMenus", 'barIconHighlight');
-                        registry.byId('menusDialog').hide();
-                        app.transitionToView(document.getElementById('modelApp_home'), {target:'settings',url:'#settings'});
-                    }
-                }));
-
-                _connectResults.push(connect.connect(dom.byId("menuItemIntro"), 'click', function(e)
-                {
-                    annoUtil.startActivity("Intro", false);
-                }));
-
-                _connectResults.push(connect.connect(dom.byId("menuItemFeedback"), 'click', function(e)
-                {
-                    annoUtil.startActivity("Feedback", false);
-                }));
-
-                _connectResults.push(connect.connect(dom.byId("barMenus"), 'click', function(e)
-                {
-                    var menusDialog = registry.byId('menusDialog');
-                    if (menusDialog.domNode.style.display === "")
-                    {
-                        registry.byId('menusDialog').hide();
-                        domClass.remove("barMenus", 'barIconHighlight');
-                    }
-                    else
-                    {
-                        var viewPoint = win.getBox();
-                        registry.byId('menusDialog').show();
-                        domStyle.set(menusDialog._cover[0], {"height": (viewPoint.h-topBarHeight-bottomBarHeight)+"px", top:(topBarHeight)+"px"});
-                        domClass.add("barMenus", 'barIconHighlight');
-                    }
-                }));
-
-                _connectResults.push(connect.connect(dom.byId('btnLoadListData'), "click", function ()
-                {
-                    loadListData();
-                }));
-
-                _connectResults.push(connect.connect(dom.byId('navBtnBackStart'), "click", function ()
-                {
-                    goBackActivity();
-                }));
-
-                _connectResults.push(connect.connect(window, has("ios") ? "orientationchange" : "resize", this, function (e)
-                {
-                    adjustSize();
-                }));
-
-                _connectResults.push(connect.connect(dom.byId('listContainerStart'), "scroll", this, function(){
-                    var toEnd = false;
-                    var listContainer = dom.byId('listContainerStart');
-                    if ((listContainer.clientHeight + listContainer.scrollTop) >= listContainer.scrollHeight) toEnd = true;
-
-                    if (toEnd)
-                    {
-                        loadMoreData();
-                    }
-                }));
-
-                /*window.setTimeout(function(){
-                    loadListData();
-                }, 50);*/
+                _init();
             },
             afterActivate: function()
             {
                 adjustSize();
                 var listContainer = dom.byId('listContainerStart');
                 listContainer.scrollTop = listScrollTop;
+
+                document.addEventListener("backbutton", exitApp, false);
             },
             beforeDeactivate: function()
             {
@@ -290,6 +356,8 @@ define([
 
                 registry.byId('menusDialog').hide();
                 domClass.remove("barMenus", 'barIconHighlight');
+
+                document.removeEventListener("backbutton", exitApp, false);
             },
             destroy:function ()
             {
@@ -299,6 +367,8 @@ define([
                     connect.disconnect(connectResult);
                     connectResult = _connectResults.pop();
                 }
+
+                document.removeEventListener("backbutton", exitApp, false);
             }
         }
     });

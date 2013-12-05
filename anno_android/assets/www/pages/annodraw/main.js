@@ -527,157 +527,216 @@ require([
 
     var init = function()
     {
-        initBackgroundImage();
+        if (_userChecked)
+        {
+            var params = annoUtil.parseUrlParams(document.location.search);
+            var token = params['token'];
+            var newUser = params['newuser'];
+            var signinMethod = params['signinmethod'];
 
-        window.setTimeout(function(){
-
-            viewPoint = win.getBox();
-            borderWidth = Math.floor(viewPoint.w*0.02);
-
-            lastShapePos = {
-                x1:Math.round((viewPoint.w-defaultShapeWidth)/2),
-                y1:100+defaultShapeHeight,
-                x2:Math.round((viewPoint.w-defaultShapeWidth)/2)+defaultShapeWidth,
-                y2:100
-            };
-
-            lastBlackRectanglePos = {
-                x1:Math.round((viewPoint.w-defaultShapeWidth)/2),
-                y1:100+defaultShapeHeight,
-                x2:Math.round((viewPoint.w-defaultShapeWidth)/2)+defaultShapeWidth,
-                y2:100
-            };
-
-            surface = window.surface = new Surface({
-                container: dom.byId("gfxCanvasContainer"),
-                width:viewPoint.w-borderWidth*2,
-                height:viewPoint.h-borderWidth*2,
-                borderWidth:borderWidth
-            });
-
-            domStyle.set(surface.container, 'borderWidth', borderWidth+'px');
-
-            connect.connect(surface, "onShapeRemoved", function()
+            if (annoUtil.hasConnection()&&annoUtil.needAuth(token))
             {
-                if (!surface.hasShapes())
+                annoUtil.openAuthPage();
+                return;
+            }
+            else
+            {
+                console.error("anno draw got token: "+ JSON.stringify(token));
+
+                if (signinMethod == 'anno')
                 {
+                    if (newUser == "1")
+                    {
+                        annoUtil.startActivity("Intro", false);
+                    }
+
+                    AnnoDataHandler.getCurrentUserInfo(function(userInfo){
+                        var basicToken = annoUtil.getBasicAuthToken(userInfo);
+                        annoUtil.setAuthToken(basicToken);
+                    });
+                }
+                else
+                {
+                    if (token&&annoUtil.hasConnection())
+                    {
+                        annoUtil.setAuthToken(JSON.parse(token));
+                    }
+                    else
+                    {
+                        AnnoDataHandler.getCurrentUserInfo(function(userInfo){
+                            var basicToken = annoUtil.getBasicAuthToken(userInfo);
+                            annoUtil.setAuthToken(basicToken);
+                        });
+                    }
+                }
+
+                initBackgroundImage();
+
+                window.setTimeout(function(){
+
+                    viewPoint = win.getBox();
+                    borderWidth = Math.floor(viewPoint.w*0.02);
+
                     lastShapePos = {
                         x1:Math.round((viewPoint.w-defaultShapeWidth)/2),
                         y1:100+defaultShapeHeight,
                         x2:Math.round((viewPoint.w-defaultShapeWidth)/2)+defaultShapeWidth,
                         y2:100
                     };
-                }
-            });
 
-            connect.connect(surface, "onShapeSelected", function(selected)
-            {
-                if (selected)
-                {
-                    domClass.add(dom.byId("barArrow"), 'barIconDisabled');
-                    domClass.add(dom.byId("barRectangle"), 'barIconDisabled');
-                    domClass.add(dom.byId("barComment"), 'barIconDisabled');
-                    domClass.add(dom.byId("barShare"), 'barIconDisabled');
-                    /*domClass.remove(dom.byId("barBlackRectangle"), 'barBlackActive');
-                     domClass.add(dom.byId("barBlackRectangle"), 'barIconDisabled2');*/
-                    domClass.add(dom.byId("barBlackRectangleDone"), 'barIconDisabled');
-                }
-                else
-                {
-                    domClass.remove(dom.byId("barArrow"), 'barIconDisabled');
-                    domClass.remove(dom.byId("barRectangle"), 'barIconDisabled');
-                    domClass.remove(dom.byId("barComment"), 'barIconDisabled');
-                    domClass.remove(dom.byId("barShare"), 'barIconDisabled');
-                    /*domClass.remove(dom.byId("barBlackRectangle"), 'barIconDisabled2');
-                     domClass.add(dom.byId("barBlackRectangle"), 'barBlackActive');*/
-                    domClass.remove(dom.byId("barBlackRectangleDone"), 'barIconDisabled');
-                }
-            });
+                    lastBlackRectanglePos = {
+                        x1:Math.round((viewPoint.w-defaultShapeWidth)/2),
+                        y1:100+defaultShapeHeight,
+                        x2:Math.round((viewPoint.w-defaultShapeWidth)/2)+defaultShapeWidth,
+                        y2:100
+                    };
 
-            // set screenshot container size
-            domStyle.set('screenshotContainer', {
-                width: (viewPoint.w-borderWidth*2)+'px',
-                height: (viewPoint.h-borderWidth*2)+'px',
-                borderWidth:borderWidth+"px"
-            });
+                    surface = window.surface = new Surface({
+                        container: dom.byId("gfxCanvasContainer"),
+                        width:viewPoint.w-borderWidth*2,
+                        height:viewPoint.h-borderWidth*2,
+                        borderWidth:borderWidth
+                    });
 
-            domStyle.set('sdTitle', 'height', sdTitleHeight+'px');
-            domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-sdBottom-shareDialogGap)+'px');
-            domStyle.set('sdBottom', 'height', sdBottom+'px');
+                    domStyle.set(surface.container, 'borderWidth', borderWidth+'px');
 
-            var lineStrokeStyle = {color: level==1?level1Color:level2Color, width: 3};
-            var epLineStyle, epFillStyle;
-
-            if (level==1)
-            {
-                epLineStyle = {color:'#FFA500', width:1};
-                epFillStyle = "rgba(255,165,0, 0.4)";
-            }
-            else
-            {
-                epLineStyle = {color:'#FF0000',width:1};
-                epFillStyle = "rgba(255,12,9, 0.4)";
-            }
-            defaultCommentBox = surface.createSimpleCommentBox({
-                deletable:false,
-                startX2:lastShapePos.x1,
-                startY: lastShapePos.y1-defaultShapeHeight-50,
-                width: defaultShapeWidth,
-                height: defaultShapeHeight,
-                lineStrokeStyle:lineStrokeStyle,
-                endpointStrokeStyle:epLineStyle,
-                endpointFillStyle:epFillStyle
-            });
-
-            connect.connect(defaultCommentBox.shareBtnNode, "click", function()
-            {
-                defaultCommentBox._closeKeybord();
-                openShareDialog();
-            });
-
-            defaultCommentBox.onCommentBoxFocus = function(commentBox)
-            {
-                if (commentBox.earLow)
-                {
-                    if ((commentBox.pathPoints[2].y+20+400) >= viewPoint.h)
+                    connect.connect(surface, "onShapeRemoved", function()
                     {
-                        var shift = viewPoint.h-(commentBox.pathPoints[2].y+20+400);
-                        domStyle.set(surface.container, 'top', shift+'px');
-                        domStyle.set('screenshotContainer', 'top', shift+'px');
+                        if (!surface.hasShapes())
+                        {
+                            lastShapePos = {
+                                x1:Math.round((viewPoint.w-defaultShapeWidth)/2),
+                                y1:100+defaultShapeHeight,
+                                x2:Math.round((viewPoint.w-defaultShapeWidth)/2)+defaultShapeWidth,
+                                y2:100
+                            };
+                        }
+                    });
 
-                        var top = parseInt(commentBox.txtNode.style.top);
-                        domStyle.set(commentBox.txtNode, 'top', (top+shift)+'px');
-                        domStyle.set(commentBox.inputNode, 'top', (top+shift)+'px');
+                    connect.connect(surface, "onShapeSelected", function(selected)
+                    {
+                        if (selected)
+                        {
+                            domClass.add(dom.byId("barArrow"), 'barIconDisabled');
+                            domClass.add(dom.byId("barRectangle"), 'barIconDisabled');
+                            domClass.add(dom.byId("barComment"), 'barIconDisabled');
+                            domClass.add(dom.byId("barShare"), 'barIconDisabled');
+                            /*domClass.remove(dom.byId("barBlackRectangle"), 'barBlackActive');
+                             domClass.add(dom.byId("barBlackRectangle"), 'barIconDisabled2');*/
+                            domClass.add(dom.byId("barBlackRectangleDone"), 'barIconDisabled');
+                        }
+                        else
+                        {
+                            domClass.remove(dom.byId("barArrow"), 'barIconDisabled');
+                            domClass.remove(dom.byId("barRectangle"), 'barIconDisabled');
+                            domClass.remove(dom.byId("barComment"), 'barIconDisabled');
+                            domClass.remove(dom.byId("barShare"), 'barIconDisabled');
+                            /*domClass.remove(dom.byId("barBlackRectangle"), 'barIconDisabled2');
+                             domClass.add(dom.byId("barBlackRectangle"), 'barBlackActive');*/
+                            domClass.remove(dom.byId("barBlackRectangleDone"), 'barIconDisabled');
+                        }
+                    });
 
-                        commentBox._shift = shift;
+                    // set screenshot container size
+                    domStyle.set('screenshotContainer', {
+                        width: (viewPoint.w-borderWidth*2)+'px',
+                        height: (viewPoint.h-borderWidth*2)+'px',
+                        borderWidth:borderWidth+"px"
+                    });
+
+                    domStyle.set('sdTitle', 'height', sdTitleHeight+'px');
+                    domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-sdBottom-shareDialogGap)+'px');
+                    domStyle.set('sdBottom', 'height', sdBottom+'px');
+
+                    var lineStrokeStyle = {color: level==1?level1Color:level2Color, width: 3};
+                    var epLineStyle, epFillStyle;
+
+                    if (level==1)
+                    {
+                        epLineStyle = {color:'#FFA500', width:1};
+                        epFillStyle = "rgba(255,165,0, 0.4)";
                     }
-                }
-            };
+                    else
+                    {
+                        epLineStyle = {color:'#FF0000',width:1};
+                        epFillStyle = "rgba(255,12,9, 0.4)";
+                    }
+                    defaultCommentBox = surface.createSimpleCommentBox({
+                        deletable:false,
+                        startX2:lastShapePos.x1,
+                        startY: lastShapePos.y1-defaultShapeHeight-50,
+                        width: defaultShapeWidth,
+                        height: defaultShapeHeight,
+                        lineStrokeStyle:lineStrokeStyle,
+                        endpointStrokeStyle:epLineStyle,
+                        endpointFillStyle:epFillStyle
+                    });
 
-            defaultCommentBox.onCommentBoxBlur = function (commentBox)
-            {
-                console.error(surface.container.style.top);
-                if (commentBox._shift != null)
-                {
-                    domStyle.set(surface.container, 'top', '0px');
-                    domStyle.set('screenshotContainer', 'top', '0px');
+                    connect.connect(defaultCommentBox.shareBtnNode, "click", function()
+                    {
+                        defaultCommentBox._closeKeybord();
+                        openShareDialog();
+                    });
 
-                    var top = parseInt(commentBox.txtNode.style.top);
-                    domStyle.set(commentBox.txtNode, 'top', (top-commentBox._shift)+'px');
-                    domStyle.set(commentBox.inputNode, 'top', (top-commentBox._shift)+'px');
+                    defaultCommentBox.onCommentBoxFocus = function(commentBox)
+                    {
+                        if (commentBox.earLow)
+                        {
+                            if ((commentBox.pathPoints[2].y+20+400) >= viewPoint.h)
+                            {
+                                var shift = viewPoint.h-(commentBox.pathPoints[2].y+20+400);
+                                domStyle.set(surface.container, 'top', shift+'px');
+                                domStyle.set('screenshotContainer', 'top', shift+'px');
 
-                    commentBox._shift = null;
-                }
+                                var top = parseInt(commentBox.txtNode.style.top);
+                                domStyle.set(commentBox.txtNode, 'top', (top+shift)+'px');
+                                domStyle.set(commentBox.inputNode, 'top', (top+shift)+'px');
 
-                window.setTimeout(function(){
-                    openShareDialog();
+                                commentBox._shift = shift;
+                            }
+                        }
+                    };
+
+                    defaultCommentBox.onCommentBoxBlur = function (commentBox)
+                    {
+                        console.error(surface.container.style.top);
+                        if (commentBox._shift != null)
+                        {
+                            domStyle.set(surface.container, 'top', '0px');
+                            domStyle.set('screenshotContainer', 'top', '0px');
+
+                            var top = parseInt(commentBox.txtNode.style.top);
+                            domStyle.set(commentBox.txtNode, 'top', (top-commentBox._shift)+'px');
+                            domStyle.set(commentBox.inputNode, 'top', (top-commentBox._shift)+'px');
+
+                            commentBox._shift = null;
+                        }
+
+                        window.setTimeout(function(){
+                            openShareDialog();
+                        }, 500);
+
+                    };
+
                 }, 500);
-
-            };
-
-        }, 500);
+            }
+        }
+        else
+        {
+            window.setTimeout(init, 20);
+        }
     };
 
     ready(init);
 
+    var dddd = function()
+    {
+        console.error("dddd");
+    };
+
+    document.addEventListener('deviceready', dddd, false);
+
+    document.addEventListener("backbutton", function(){
+        navigator.app.exitApp();
+    }, false);
 });

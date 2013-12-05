@@ -709,6 +709,14 @@ define([
                 currentAnno.set('circleX', parseInt(returnAnno.simple_x, 10));
                 currentAnno.set('circleY', parseInt(returnAnno.simple_y, 10));
 
+                if (returnAnno.followup_list)
+                {
+                    for (var j=0;j<returnAnno.followup_list.length;j++)
+                    {
+                        returnAnno.followup_list[j].user_id = returnAnno.followup_list[j].creator.display_name||returnAnno.followup_list[j].creator.user_email||returnAnno.followup_list[j].creator.id;
+                    }
+                }
+
                 currentAnno.set('comments',new getStateful(returnAnno.followup_list||[]));
 
                 deviceInfo = (returnAnno.device_model||'&nbsp;')+'&nbsp;'+(returnAnno.os_name||'&nbsp;')+(returnAnno.os_version||'&nbsp;');
@@ -734,7 +742,7 @@ define([
 
         var saveComment = function(comment)
         {
-            var author = currentUserInfo.email;
+            var author = currentUserInfo.nickname;
             var id;
             if (!eventsModel.cursor)
             {

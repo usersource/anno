@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Community MVP</title>
+    <link type="text/css" href="../community/css/style.css" rel="stylesheet" />
+    <script type="text/javascript">
+        var dojoConfig = {
+            parseOnLoad:false,
+            mblHideAddressBar:false,
+            mblAndroidWorkaround:false,
+            mblAlwaysHideAddressBar:false,
+            async:1,
+            mblUserAgent: 'iPhone',
+            packages:[
+                {
+                    name:'anno',
+                    location:'../anno'
+                }
+            ]
+        };
+    </script>
+    <script type="text/javascript" src="../../scripts/dojo/dojo.js"></script>
+    <script>
+        require([ "dojox/mobile/deviceTheme","dojox/mvc/at", "./main.js" ], function(deviceTheme, at) {
+
+        });
+    </script>
+    <script type="text/javascript">
+        var apiVersion = "1.0";
+        var currentUserInfo = {email:''};
+        function gce_init()
+        {
+            var ROOT = 'https://usersource-anno.appspot.com/_ah/api';
+            gapi.client.load('account', apiVersion, function() {
+
+            }, ROOT);
+        }
+    </script>
+    <script type="text/javascript" src="../../scripts/gce.js"></script>
+    <script type="text/javascript" src="../../cordova.js"></script>
+    <script type="text/javascript" src="../../scripts/gceAuth.js"></script>
+    <script type="text/javascript" src="../community/heartcode-canvasloader-min.js"></script>
+    <script type="text/javascript" src="../../scripts/dbHandler.js"></script>
+</head>
+<body id="container">
+<button id="hiddenBtn" style="position: absolute;left:-2000px;top: -2000px;">a</button>
+</body>
+</html>

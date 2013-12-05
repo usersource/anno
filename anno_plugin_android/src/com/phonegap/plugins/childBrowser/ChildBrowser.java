@@ -35,15 +35,16 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import org.apache.cordova.api.*;
+import org.apache.cordova.*;
 
-public class ChildBrowser extends Plugin {
+public class ChildBrowser extends CordovaPlugin {
 
   protected static final String LOG_TAG = "ChildBrowser";
   private static int CLOSE_EVENT = 0;
   private static int LOCATION_CHANGED_EVENT = 1;
 
   private String browserCallbackId = null;
+  private CallbackContext browserCallbackContext = null;
 
   private Dialog dialog;
   private WebView webview;
@@ -57,33 +58,40 @@ public class ChildBrowser extends Plugin {
    *
    * @param action        The action to execute.
    * @param args          JSONArry of arguments for the plugin.
-   * @param callbackId    The callback id used when calling back into JavaScript.
+   * @param callbackContext    The callback id used when calling back into JavaScript.
    * @return              A PluginResult object with a status and message.
    */
-  public PluginResult execute(String action, JSONArray args, String callbackId) {
+  @Override
+  public boolean execute(String action, JSONArray args,
+                         CallbackContext callbackContext) throws JSONException
+  {
     PluginResult.Status status = PluginResult.Status.OK;
     String result = "";
 
     try {
       if (action.equals("showWebPage")) {
-        this.browserCallbackId = callbackId;
+        this.browserCallbackContext = callbackContext;
 
         // If the ChildBrowser is already open then throw an error
         if (dialog != null && dialog.isShowing()) {
-          return new PluginResult(PluginResult.Status.ERROR, "ChildBrowser is already open");
+          //return new PluginResult(PluginResult.Status.ERROR, "ChildBrowser is already open");
+          callbackContext.error("ChildBrowser is already open");
+          return false;
         }
 
         result = this.showWebPage(args.getString(0), args.optJSONObject(1));
 
         if (result.length() > 0) {
           status = PluginResult.Status.ERROR;
-          return new PluginResult(status, result);
+          callbackContext.error(result);
+          return false;
         } else {
           PluginResult pluginResult = new PluginResult(status, result);
           pluginResult.setKeepCallback(true);
-          return pluginResult;
+          callbackContext.sendPluginResult(pluginResult);
         }
-      } else if (action.equals("close")) {
+      }
+      else if (action.equals("close")) {
         closeDialog();
 
         JSONObject obj = new JSONObject();
@@ -91,8 +99,12 @@ public class ChildBrowser extends Plugin {
 
         PluginResult pluginResult = new PluginResult(status, obj);
         pluginResult.setKeepCallback(false);
-        return pluginResult;
-      } else if (action.equals("openExternal")) {
+
+        callbackContext.sendPluginResult(pluginResult);
+        return true;
+        //return pluginResult;
+      }
+      else if (action.equals("openExternal")) {
         result = this.openExternal(args.getString(0), args.optBoolean(1));
         if (result.length() > 0) {
           status = PluginResult.Status.ERROR;
@@ -100,9 +112,12 @@ public class ChildBrowser extends Plugin {
       } else {
         status = PluginResult.Status.INVALID_ACTION;
       }
-      return new PluginResult(status, result);
+
+      return true;
     } catch (JSONException e) {
-      return new PluginResult(PluginResult.Status.JSON_EXCEPTION);
+      //return new PluginResult(PluginResult.Status.JSON_EXCEPTION);
+      callbackContext.error(e.getMessage());
+      return false;
     }
   }
 
@@ -196,7 +211,7 @@ public class ChildBrowser extends Plugin {
    * Display a new browser with the specified URL.
    *
    * @param url           The url to load.
-   * @param jsonObject
+   * @param options
    */
   public String showWebPage(final String url, JSONObject options) {
     // Determine if we should hide the location bar.
@@ -305,7 +320,8 @@ public class ChildBrowser extends Plugin {
         webview = new WebView((Context) cordova.getActivity());
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setBuiltInZoomControls(true);
-        WebViewClient client = new ChildBrowserClient(ctx, edittext);
+        //WebViewClient client = new ChildBrowserClient(ctx, edittext);
+        WebViewClient client = new ChildBrowserClient(cordova,edittext);
         webview.setWebViewClient(client);
         webview.loadUrl(url);
         webview.setId(5);
@@ -359,10 +375,11 @@ public class ChildBrowser extends Plugin {
    * @param obj a JSONObject contain event payload information
    */
   private void sendUpdate(JSONObject obj, boolean keepCallback) {
-    if (this.browserCallbackId != null) {
+    if (this.browserCallbackContext != null) {
       PluginResult result = new PluginResult(PluginResult.Status.OK, obj);
       result.setKeepCallback(keepCallback);
-      this.success(result, this.browserCallbackId);
+      //this.success(result, this.browserCallbackId);
+      browserCallbackContext.sendPluginResult(result);
     }
   }
 
@@ -377,7 +394,7 @@ public class ChildBrowser extends Plugin {
      * Constructor.
      *
      * @param mContext
-     * @param edittext
+     * @param mEditText
      */
     public ChildBrowserClient(CordovaInterface mContext, EditText mEditText) {
       this.ctx = mContext;

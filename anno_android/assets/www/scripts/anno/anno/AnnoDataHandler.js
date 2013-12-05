@@ -6,6 +6,9 @@ define(["../common/Util"], function(annoUtil){
     var update_anno_synched_by_id_sql = "update feedback_comment set synched=1,object_key=? where _id=?";
     var select_anno_sql = "select * from feedback_comment";
     var select_anno_sync_sql = "select * from feedback_comment where synched=0 LIMIT 1";
+    var save_userInfo_sql = "insert into app_users(userid,email,signinmethod,nickname,password) values (?,?,?,?,?)";
+    var select_userInfo_sql = "select * from app_users";
+    var delete_userInfo_sql = "delete from app_users";
 
     var onSQLError = function(err)
     {
@@ -45,7 +48,7 @@ define(["../common/Util"], function(annoUtil){
                 console.error(res);
             }, onSQLError);
 
-            this.saveAnnoToCloud(anno, screenshotDirPath, createdTime);
+            this.saveAnnoToCloud(anno, screenshotDirPath, createdTime, false);
         },
         saveAnnoToCloud: function(anno, screenshotDirPath, createdTime, background, callback)
         {
@@ -74,6 +77,7 @@ define(["../common/Util"], function(annoUtil){
                 anno.image = base64Str;
 
                 var insertAnno = gapi.client.anno.anno.insert(anno);
+                console.error("start insert anno."+insertAnno);
                 insertAnno.execute(function (data)
                 {
                     if (!data)
@@ -249,6 +253,40 @@ define(["../common/Util"], function(annoUtil){
             }, function(err){
                 console.error("startBackgroundSync: "+err);
             });
+        },
+        saveUserInfo: function(userInfo, callback)
+        {
+            executeUpdateSql(delete_userInfo_sql,[], function(res){
+                console.error("current userInfo deleted:"+ JSON.stringify(res));
+                executeUpdateSql(save_userInfo_sql,[userInfo.userId, userInfo.email, userInfo.signinMethod, userInfo.nickname, userInfo.password||''], function(res){
+                    console.error("save userInfo end:"+ JSON.stringify(res));
+                    if (callback)
+                    {
+                        callback();
+                    }
+                }, onSQLError);
+            }, onSQLError);
+        },
+        getCurrentUserInfo: function(callback)
+        {
+            executeUpdateSql(select_userInfo_sql,[], function(res){
+                var cnt = res.rows.length;
+                console.error('local annos: '+cnt);
+                var userInfo = {};
+
+                if (cnt >0)
+                {
+                    var data = res.rows.item(0);
+                    userInfo.userId = data.userid;
+                    userInfo.email = data.email;
+                    userInfo.password = data.password;
+                    userInfo.signinMethod = data.signinmethod;
+                    userInfo.nickname = data.nickname;
+                }
+
+                window.currentUserInfo = userInfo;
+                if (callback) callback(userInfo);
+            }, onSQLError);
         }
     };
 

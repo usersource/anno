@@ -6,6 +6,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>Community MVP</title>
     <link type="text/css" href="./css/style.css" rel="stylesheet" />
+    <style>
+        html, body{
+            height: 100%;
+        }
+    </style>
     <script type="text/javascript">
         var dojoConfig = {
             parseOnLoad:false,
@@ -50,6 +55,10 @@
             gapi.client.load('flag', apiVersion, function() {
 
             }, ROOT);
+
+            gapi.client.load('user', apiVersion, function() {
+
+            }, ROOT);
         }
 
         function checkLoadReady()
@@ -65,11 +74,11 @@
         }
     </script>
     <script type="text/javascript" src="../../scripts/gce.js"></script>
-    <script type="text/javascript" src="cordova-min.js"></script>
-    <script type="text/javascript" src="../../childbrowser.js"></script>
+    <script type="text/javascript" src="../../cordova.js"></script>
+    <!--<script type="text/javascript" src="../../childbrowser.js"></script>-->
     <script type="text/javascript" src="../../scripts/gceAuth.js"></script>
     <script type="text/javascript" src="heartcode-canvasloader-min.js"></script>
-    <script type="text/javascript" src="../../SQLitePlugin.js"></script>
+    <!--<script type="text/javascript" src="../../SQLitePlugin.js"></script>-->
     <script type="text/javascript" src="../../scripts/dbHandler.js"></script>
 </head>
 <body id="container">

@@ -2,11 +2,12 @@ define([
     "dojo/_base/declare",
     "dojo/_base/connect",
     "dojo/dom-style",
+    "dojo/json",
     "dojo/window",
     "dojox/mobile/SimpleDialog",
     "dojox/mobile/_ContentPaneMixin",
     "dijit/registry"
-], function(declare, connect, domStyle, win, SimpleDialog, _ContentPaneMixin, registry){
+], function(declare, connect, domStyle, dojoJson, win, SimpleDialog, _ContentPaneMixin, registry){
 
     var util = {
         loadingIndicator:null,
@@ -51,7 +52,7 @@ define([
                     var reader = new FileReader();
                     reader.onloadend = function (evt)
                     {
-                        console.error("file read end");
+                        console.error("file read end:");
                         var pos = evt.target.result.lastIndexOf(",");
                         callback(evt.target.result.substr(pos+1));
                     };
@@ -181,7 +182,6 @@ define([
             var self = this;
             executeSelectSql(settingsSQl, [], function(res){
                 var rows = res.rows;
-
                 console.error("app_settings rows: "+rows.length);
 
                 var settings = {}, item;
@@ -190,6 +190,8 @@ define([
                     item = rows.item(i);
                     settings[item.item] = item.value;
                 }
+
+                console.error("app_settings : "+JSON.stringify(settings));
 
                 self.settings = settings;
                 callback(settings);
@@ -213,7 +215,7 @@ define([
         {
 
         },
-        showMessageDialog: function (message, title)
+        showMessageDialog: function (message, callback)
         {
             var dlg = registry.byId('dlg_common_message');
 
@@ -230,6 +232,11 @@ define([
                 connect.connect(document.getElementById('btn_cancel_common_message'), 'click', function ()
                 {
                     registry.byId('dlg_common_message').hide();
+
+                    if (dlg._callback)
+                    {
+                        dlg._callback();
+                    }
                 });
             }
             else
@@ -237,7 +244,9 @@ define([
                 document.getElementById("div_cancel_common_message_message").innerHTML = message;
             }
 
+            dlg._callback = callback;
             dlg.show();
+            domStyle.set(dlg._cover[0], {"height": "100%", top:"0px"});
         },
         showSoftKeyboard: function()
         {
@@ -256,8 +265,97 @@ define([
                     []
                 );
             }
+        },
+        getTokenFromURL: function()
+        {
+            var token = /\?token=(.+)$/.exec(document.location.href);
+
+            if (token)
+            {
+                var tokenObject = dojoJson.parse(decodeURIComponent(token[1]));
+                console.error("got token object:" + JSON.stringify(tokenObject));
+
+                return tokenObject;
+            }
+
+            return null;
+        },
+        openAuthPage: function()
+        {
+            var url = "file:///android_asset/www/pages/auth/main.html?callback="+document.location.href+"&hasUserInLocalDB="+_hasUserInLocalDB;
+            var ref2 = window.open(url, '_self', 'location=no');
+        },
+        setAuthToken:function(token)
+        {
+            if (gapi&&gapi.auth)
+            {
+                gapi.auth.setToken(token);
+            }
+            else
+            {
+                var self = this;
+                window.setTimeout(function(){
+                    self.setAuthToken(token);
+                }, 50)
+            }
+        },
+        needAuth:function(token)
+        {
+            var ret = false;
+            console.error("_localUserInfo:"+JSON.stringify(_localUserInfo));
+            if ((!token&&!_hasUserInLocalDB)||(!token&&_hasUserInLocalDB&&_localUserInfo.signinmethod=='google'))
+            {
+                ret = true;
+            }
+
+            return ret;
+        },
+        parseUrlParams: function (surl)
+        {
+            if (surl.indexOf("?") < 0) return {};
+            surl = surl.substr(1);
+            var segments = surl.split("&"), params = {};
+
+            for (var i = 0; i < segments.length; i++)
+            {
+                params[segments[i].split("=")[0]] = decodeURIComponent(segments[i].split("=")[1]);
+            }
+
+            return params;
+        },
+        encodeBase64:function(str)
+        {
+            return btoa(str);
+        },
+        getBasicAuthToken: function(userInfo)
+        {
+            var token = {'token_type':'Basic'};
+
+            token.expires_in = 3600*24;
+            token.access_token = this.encodeBase64(userInfo.email+":"+userInfo.password);
+
+            console.error("basic token:"+ JSON.stringify(token));
+
+            return token;
+        },
+        showToastMessage: function(message)
+        {
+            cordova.exec(
+                function (result)
+                {
+                },
+                function (err)
+                {
+                },
+                "AnnoCordovaPlugin",
+                'show_toast',
+                [message]
+            );
         }
     };
+
+
+    //document.addEventListener("deviceready", initDB, false);
 
     return util;
 });

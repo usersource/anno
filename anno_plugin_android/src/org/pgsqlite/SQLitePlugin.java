@@ -16,8 +16,8 @@ import java.lang.Number;
 
 import java.util.HashMap;
 
-import org.apache.cordova.api.CordovaPlugin;
-import org.apache.cordova.api.CallbackContext;
+import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CallbackContext;
 
 import android.database.Cursor;
 
@@ -197,6 +197,10 @@ public class SQLitePlugin extends CordovaPlugin
     if (this.getDatabase(dbname) != null) this.closeDatabase(dbname);
 
     File dbfile = this.cordova.getActivity().getDatabasePath(dbname + ".db");
+
+    if (!dbfile.exists()) {
+      dbfile.getParentFile().mkdirs();
+    }
 
     Log.v("info", "Open sqlite db: " + dbfile.getAbsolutePath());
 

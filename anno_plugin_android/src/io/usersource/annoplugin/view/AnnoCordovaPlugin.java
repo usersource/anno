@@ -13,8 +13,8 @@ import android.util.Base64;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 import io.usersource.annoplugin.utils.*;
-import org.apache.cordova.api.CallbackContext;
-import org.apache.cordova.api.CordovaPlugin;
+import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaPlugin;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -383,10 +383,18 @@ public class AnnoCordovaPlugin extends CordovaPlugin
             taskNum, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
     for (ActivityManager.RecentTaskInfo rti : recentTasks) {
       Intent intent = rti.baseIntent;
-      ResolveInfo resolveInfo = annoDrawActivity.getPackageManager().resolveActivity(
-              intent, 0);
 
-      jsonArray.put(resolveInfo.loadLabel(annoDrawActivity.getPackageManager()).toString());
+      try
+      {
+        ResolveInfo resolveInfo = annoDrawActivity.getPackageManager().resolveActivity(
+                intent, 0);
+        jsonArray.put(resolveInfo.loadLabel(annoDrawActivity.getPackageManager()).toString());
+      }
+      catch (Exception dummy)
+      {
+
+      }
+
     }
 
     callbackContext.success(jsonArray);

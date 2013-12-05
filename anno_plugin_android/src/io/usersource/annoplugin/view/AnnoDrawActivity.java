@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.webkit.ConsoleMessage;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
 import io.usersource.annoplugin.utils.*;
 import org.apache.cordova.DroidGap;
 
@@ -47,6 +50,24 @@ public class AnnoDrawActivity extends DroidGap
     level = intent.getIntExtra(AnnoUtils.LEVEL, 0);
 
     handleIntent();
+
+    WebView myWebView = this.appView;
+    myWebView.setWebChromeClient(new WebChromeClient() {
+      public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+        onConsoleMessage(consoleMessage.message(), consoleMessage.lineNumber(),
+                consoleMessage.sourceId());
+
+        if (consoleMessage.messageLevel() == ConsoleMessage.MessageLevel.ERROR)
+        {
+          Log.e("Anno", consoleMessage.message() + " -- line "
+                  + consoleMessage.lineNumber() + " of "
+                  + consoleMessage.sourceId());
+        }
+
+        return false;
+      }
+
+    });
   }
 
   public int getLevel() {

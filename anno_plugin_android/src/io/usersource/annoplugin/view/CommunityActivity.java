@@ -1,5 +1,10 @@
 package io.usersource.annoplugin.view;
 
+import android.content.res.AssetFileDescriptor;
+import android.util.Log;
+import android.webkit.ConsoleMessage;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
 import io.usersource.annoplugin.utils.AnnoUtils;
 
 import org.apache.cordova.DroidGap;
@@ -28,13 +33,13 @@ public class CommunityActivity extends DroidGap {
     super.onCreate(savedInstanceState);
     super.init();
 
-    File database=getApplicationContext().getDatabasePath("anno.db");
+    /*File database=getApplicationContext().getDatabasePath("anno.db");
 
     if (!database.exists())
     {
       Intent intent = new Intent(this, IntroActivity.class);
-      startActivity(intent);
-    }
+      //startActivity(intent);
+    }*/
 
     GestureOverlayView view = new GestureOverlayView(this);
     view.setLayoutParams(new LinearLayout.LayoutParams(
@@ -54,6 +59,35 @@ public class CommunityActivity extends DroidGap {
 
     Intent intent = getIntent();
     level = intent.getIntExtra(AnnoUtils.LEVEL, 0);
+
+    WebView myWebView = this.appView;
+    myWebView.setWebChromeClient(new WebChromeClient() {
+      public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+        onConsoleMessage(consoleMessage.message(), consoleMessage.lineNumber(),
+                consoleMessage.sourceId());
+
+        if (consoleMessage.messageLevel() == ConsoleMessage.MessageLevel.ERROR)
+        {
+          Log.e("Anno", consoleMessage.message() + " -- line "
+                  + consoleMessage.lineNumber() + " of "
+                  + consoleMessage.sourceId());
+        }
+
+        return false;
+      }
+
+    });
+
+    /*//this.getAssets().open("www/pages/community/main.html");
+
+    try
+    {
+      AssetFileDescriptor fd = this.getAssets().openFd("www/pages/community/main.html");
+    }
+    catch (Exception e)
+    {
+
+    }*/
 
   }
 

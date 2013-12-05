@@ -1,5 +1,9 @@
 var annoDB = null;
 var dbIsReady = false;
+var firstInstall = false;
+var _hasUserInLocalDB = false;
+var _userChecked = false;
+var _localUserInfo = null;
 document.addEventListener("deviceready", initDB, false);
 
 var createCommentTableScript = '\
@@ -38,14 +42,25 @@ var createSettingsTableScript = '\
     value text\
 )';
 
+var createUsersTableScript = '\
+    create table if not exists app_users\
+(\
+    _id integer primary key autoincrement,\
+    userid text not null,\
+    email text not null,\
+    password text,\
+    signinmethod VARCHAR not null default \'google\',\
+    nickname text\
+)';
+
 function initDB()
 {
+    annoDB = window.sqlitePlugin.openDatabase({name: "anno", bgType2: 1});
+    checkTables();
+
     window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs){
         localFileSystem = fs;
     });
-
-    annoDB = window.sqlitePlugin.openDatabase({name: "anno", bgType2: 1});
-    checkTables();
 }
 
 function checkTables()
@@ -58,6 +73,7 @@ function checkTables()
         }
         else
         {
+            firstInstall = true;
             initTables();
         }
     });
@@ -69,13 +85,40 @@ function initTables()
         tx.executeSql(createCommentTableScript);
         tx.executeSql(createCommentTableIndexScript);
         tx.executeSql(createSettingsTableScript);
+        tx.executeSql(createUsersTableScript);
         tx.executeSql("insert into app_settings(item, value) values('ServerURL','1')");
         dbIsReady = true;
+        _userChecked = true;
     });
 }
 
 function doUpgrade()
 {
+    annoDB.executeSql("SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name='app_users'", [], function(res) {
+        console.error("app_users "+res.rows.item(0).cnt);
+
+        if (res.rows.item(0).cnt == 0)
+        {
+            annoDB.executeSql(createUsersTableScript);
+            _userChecked = true;
+        }
+        else
+        {
+            annoDB.executeSql("select * from app_users", [], function(ures){
+                if (ures)
+                {
+                    console.error("app_users2: "+ures.rows.length);
+                    _hasUserInLocalDB = ures.rows.length>0;
+                    if (ures.rows.length>0)
+                        _localUserInfo = ures.rows.item(0);
+                    _userChecked = true;
+                    console.error("app_users: "+JSON.stringify(_localUserInfo));
+                }
+
+            })
+        }
+    });
+
     // check if the db schema need be upgraded.
     annoDB.executeSql("pragma table_info (feedback_comment);", [], function(res) {
         var rows = res.rows;

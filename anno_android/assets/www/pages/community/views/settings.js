@@ -5,9 +5,10 @@ define([
     "dojo/_base/connect",
     "dojo/window",
     "dijit/registry",
-    "anno/common/Util"
+    "anno/common/Util",
+    "anno/anno/AnnoDataHandler"
 ],
-    function (dom, domClass, domStyle, connect, win, registry, annoUtil)
+    function (dom, domClass, domStyle, connect, win, registry, annoUtil, AnnoDataHandler)
     {
         var _connectResults = []; // events connect results
         var app = null;
@@ -35,6 +36,46 @@ define([
                     registry.byId('serverURLDialog').hide();
                     dom.byId('settingValueServerURL').innerHTML = self.labelText;
                 }
+            });
+        };
+
+        var submitChangePwd = function()
+        {
+            var changePasswordAPI = gapi.client.user.user.password.update({
+                'password':dom.byId('txt_changePwd').value
+            });
+
+            annoUtil.showLoadingIndicator();
+            changePasswordAPI.execute(function(resp){
+                if (!resp)
+                {
+                    annoUtil.hideLoadingIndicator();
+                    annoUtil.showMessageDialog("Response from server are empty when calling user.password.update api.");
+                    return;
+                }
+
+                if (resp.error)
+                {
+                    annoUtil.hideLoadingIndicator();
+
+                    annoUtil.showMessageDialog("An error occurred when calling user.password.update api: "+resp.error.message);
+                    return;
+                }
+
+                // save user info into local db
+                var userInfo = currentUserInfo;
+                userInfo.password = dom.byId('txt_changePwd').value;
+
+                AnnoDataHandler.saveUserInfo(userInfo, function(){
+                    var token = annoUtil.getBasicAuthToken(currentUserInfo);
+                    annoUtil.setAuthToken(token);
+
+                    var changePwdDialog = registry.byId('changePwdDialog');
+                    changePwdDialog.hide();
+
+                    annoUtil.showToastMessage("Password has been changed.");
+                });
+                annoUtil.hideLoadingIndicator();
             });
         };
 
@@ -76,6 +117,13 @@ define([
                     domStyle.set(serverURLDialog._cover[0], {"height": "100%", top:"0px"});
                 }));
 
+                _connectResults.push(connect.connect(registry.byId("settingItemChangePassword"), 'onClick', function(e)
+                {
+                    var changePwdDialog = registry.byId('changePwdDialog');
+                    changePwdDialog.show();
+                    domStyle.set(changePwdDialog._cover[0], {"height": "100%", top:"0px"});
+                }));
+
                 var radioButtons = registry.byId('serverURLDialog').getChildren();
 
                 for (var i= 0,c=radioButtons.length;i<c;i++)
@@ -88,6 +136,32 @@ define([
                     var serverURLDialog = registry.byId('serverURLDialog');
                     serverURLDialog.hide();
                 }));
+
+                _connectResults.push(connect.connect(dom.byId("btnCancelChangePwd"), 'click', function(e)
+                {
+                    var changePwdDialog = registry.byId('changePwdDialog');
+                    changePwdDialog.hide();
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("btnDoneChangePwd"), 'click', function(e)
+                {
+                    var newPwd = dom.byId('txt_changePwd').value;
+
+                    if (newPwd.length <6)
+                    {
+                        annoUtil.showMessageDialog("Password must be at least 6 characters long.");
+                    }
+                    else
+                    {
+                        submitChangePwd();
+                    }
+                }));
+
+                if (currentUserInfo.signinMethod == "google")
+                {
+                    domStyle.set('settingItemChangePassword', 'display', 'none');
+                }
+
             },
             afterActivate: function()
             {

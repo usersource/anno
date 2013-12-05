@@ -5,7 +5,8 @@ var oauthOptions = {
     scope: 'https://www.googleapis.com/auth/userinfo.email'
 };
 require(["dojo/ready", "dojo/request/xhr", "anno/anno/AnnoDataHandler"], function(ready, xhr, AnnoDataHandler){
-    var checkAuth = function()
+
+    var checkAuth = window.checkAuth = function()
     {
         var authUrl = 'https://accounts.google.com/o/oauth2/auth?' +
             "client_id="+oauthOptions.client_id+
@@ -14,20 +15,24 @@ require(["dojo/ready", "dojo/request/xhr", "anno/anno/AnnoDataHandler"], functio
             "&origin=http://localhost:8080"+
             "&scope="+oauthOptions.scope;
 
-        window.plugins.childBrowser.onLocationChange = checkCode;
-        window.plugins.childBrowser.showWebPage(authUrl, { showLocationBar: false,showAddress:false,showNavigationBar:false });
+        ref = window.open(authUrl, '_blank', 'location=no');
+        ref.addEventListener('loadstart', checkCode);
+        //window.plugins.childBrowser.onLocationChange = checkCode;
+        //window.plugins.childBrowser.showWebPage(authUrl, { showLocationBar: false,showAddress:false,showNavigationBar:false });
     };
 
     var checkCoding = false;
     var checkCode = function(url)
     {
+        url = url.url;
         var code = /\?code=(.+)$/.exec(url);
         var error = /\?error=(.+)$/.exec(url);
 
         if (code || error) {
             //Always close the browser when match is found
             console.error(code[1]);
-            window.plugins.childBrowser.close();
+            //window.plugins.childBrowser.close();
+            ref.close();
         }
 
         if (code) {
@@ -45,18 +50,40 @@ require(["dojo/ready", "dojo/request/xhr", "anno/anno/AnnoDataHandler"], functio
                 handleAs:"json"
             }).then(function(data) {
                     console.error("post res: "+JSON.stringify(data));
-                    gapi.auth.setToken(data);
-                    getUserInfo();
+
+
+                    if (_hasUserInLocalDB)
+                    {
+                        if (window.authCallback)
+                        {
+                            window.authCallback({success:true, token:data});
+                        }
+                    }
+                    else
+                    {
+                        gapi.auth.setToken(data);
+                        getUserInfo(data);
+                    }
+
                 }, function(err){
                     console.error("post res error: "+err);
                     alert("Get access token error: "+err);
+                    if (window.authCallback)
+                    {
+                        window.authCallback({success:false})
+                    }
                 });
         } else if (error) {
             console.error("error: "+error[1]);
+            alert("Auth error: "+error[1]);
+            if (window.authCallback)
+            {
+                window.authCallback({success:false})
+            }
         }
     };
 
-    var getUserInfo = function()
+    var getUserInfo = function(token)
     {
         gapi.client.load('oauth2', 'v2', function() {
             console.error("oauth loaded");
@@ -70,10 +97,16 @@ require(["dojo/ready", "dojo/request/xhr", "anno/anno/AnnoDataHandler"], functio
                 }
 
                 currentUserInfo = userinfo;
-                AnnoDataHandler.startBackgroundSync();
+
+                if (window.authCallback)
+                {
+                    window.authCallback({success:true, userInfo:userinfo, token:token});
+                }
+
+                //AnnoDataHandler.startBackgroundSync();
             });
         });
     };
 
-    document.addEventListener('deviceready', checkAuth, false);
+    //document.addEventListener('deviceready', checkAuth, false);
 });
