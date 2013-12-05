@@ -10,7 +10,7 @@ import datetime
 
 from api.utils import get_endpoints_current_user
 from api.utils import anno_js_client_id
-from api.utils import handle_user
+from api.utils import auth_user
 from model.user import User
 from model.anno import Anno
 from model.follow_up import FollowUp
@@ -30,7 +30,7 @@ class FollowupApi(remote.Service):
         """
         Exposes and API endpoint to insert a follow up for the current user.
         """
-        user = handle_user(request.user_email)
+        user = auth_user(self.request_state.headers)
 
         anno = Anno.get_by_id(request.anno_id)
         if anno is None:
@@ -61,6 +61,7 @@ class FollowupApi(remote.Service):
         """
         Exposes an API endpoint to delete an existing follow up.
         """
+        user = auth_user(self.request_state.headers)
         if request.id is None:
             raise endpoints.BadRequestException('id field is required.')
         followup = FollowUp.get_by_id(request.id)
@@ -79,6 +80,7 @@ class FollowupApi(remote.Service):
         """
         Exposes an API endpoint to get a followup.
         """
+        user = auth_user(self.request_state.headers)
         if request.id is None:
             raise endpoints.BadRequestException('id field is required.')
         followup = FollowUp.get_by_id(request.id)
@@ -98,6 +100,7 @@ class FollowupApi(remote.Service):
         """
         Exposes an API endpoint to retrieve a list of follow up.
         """
+        user = auth_user(self.request_state.headers)
         limit = 10
         if request.limit is not None:
             limit = request.limit

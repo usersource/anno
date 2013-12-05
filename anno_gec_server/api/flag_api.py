@@ -15,7 +15,7 @@ from model.user import User
 from model.anno import Anno
 from api.utils import anno_js_client_id
 from api.utils import get_endpoints_current_user
-from api.utils import handle_user
+from api.utils import auth_user
 
 
 @endpoints.api(name='flag', version='1.0', description='Flag API',
@@ -30,7 +30,7 @@ class FlagApi(remote.Service):
         """
         Exposes an API endpoint to insert a flag for the current user.
         """
-        user = handle_user(request.user_email)
+        user = auth_user(self.request_state.headers)
 
         anno = Anno.get_by_id(request.anno_id)
         if anno is None:
@@ -61,6 +61,7 @@ class FlagApi(remote.Service):
         """
         Exposes an API endpoint to delete an existing flag.
         """
+        user = auth_user(self.request_state.headers)
         if request.id is None and request.anno_id is None:
             raise endpoints.BadRequestException('id or anno_id field is required.')
         if request.id is not None:
@@ -73,7 +74,6 @@ class FlagApi(remote.Service):
             anno.flag_count -= 1
             anno.put()
         elif request.anno_id is not None:
-            user = User.find_user_by_email(get_endpoints_current_user().email())
             anno = Anno.get_by_id(request.anno_id)
             for key in Flag.query(Flag.anno_key == anno.key, Flag.creator == user.key).iter(keys_only=True):
                 key.delete()
@@ -87,6 +87,7 @@ class FlagApi(remote.Service):
         """
         Exposes an API endpoint to get a flag.
         """
+        user = auth_user(self.request_state.headers)
         if request.id is None:
             raise endpoints.BadRequestException('id field is required.')
         flag = Flag.get_by_id(request.id)
@@ -105,6 +106,7 @@ class FlagApi(remote.Service):
         """
         Exposes an API endpoint to retrieve a list of flag.
         """
+        user = auth_user(self.request_state.headers)
         limit = 10
         if request.limit is not None:
             limit = request.limit
