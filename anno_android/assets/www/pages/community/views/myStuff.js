@@ -88,10 +88,8 @@ define([
             },
             afterActivate: function()
             {
-                console.error("afterActivate mystuff.");
                 adjustSize();
                 loadLocalAnnos();
-                console.error("afterActivate2 mystuff.");
             },
             beforeDeactivate: function()
             {

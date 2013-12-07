@@ -16,15 +16,15 @@ define([
     "dojo/store/Memory",
     "dojox/mvc/getStateful",
     "anno/common/Util",
+    "anno/common/OAuthUtil",
     "anno/anno/AnnoDataHandler"
 ],
-    function (arrayUtil, dom, domClass, domGeom, domStyle, query, touch, lang, connect, win, has, sniff, registry, at, Memory, getStateful, annoUtil, AnnoDataHandler)
+    function (arrayUtil, dom, domClass, domGeom, domStyle, query, touch, lang, connect, win, has, sniff, registry, at, Memory, getStateful, annoUtil, OAuthUtil, AnnoDataHandler)
     {
         var _connectResults = []; // events connect results
         var eventsModel = null;
         var app = null;
         var listScrollTop = 0;
-        var loadingIndicator = null;
         var loadingMoreData = false,
             offset = 0, limit=30;
         var hasMoreData = false;
@@ -45,26 +45,14 @@ define([
             }]
         };
 
-        var gceRootUrl = "";
-
-        var gce_init2 = window.gce_init2 = function ()
-        {
-            console.error('gec here');
-            showLoadingIndicator();
-            var ROOT = gceRootUrl;
-            gapi.client.load('anno', '1.0', function() {
-                loadListData();
-            }, ROOT);
-        };
-
-        var loadListData = window.loadListData = function (poffset)
+        var loadListData = function (poffset)
         {
             annoUtil.hasConnection();
             if (poffset)
             {
                 loadingMoreData = true;
             }
-            showLoadingIndicator();
+            annoUtil.showLoadingIndicator();
 
             var arg = {outcome: 'cursor,has_more,anno_list', limit: limit}
 
@@ -78,7 +66,7 @@ define([
             {
                 if (!data)
                 {
-                    hideLoadingIndicator();
+                    annoUtil.hideLoadingIndicator();
                     loadingMoreData = false;
                     alert("Annos returned from server are empty.");
                     return;
@@ -86,14 +74,14 @@ define([
 
                 if (data.error)
                 {
-                    hideLoadingIndicator();
+                    annoUtil.hideLoadingIndicator();
                     loadingMoreData = false;
 
                     alert("An error occurred when calling anno.list api: "+data.error.message);
                     return;
                 }
 
-                var annoList = data.result.anno_list;
+                var annoList = data.result.anno_list||[];
 
                 var spliceArgs = [eventsModel.model.length, 0];
                 for (var i = 0, l = annoList.length; i < l; i++)
@@ -115,7 +103,7 @@ define([
 
                 eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
 
-                hideLoadingIndicator();
+                annoUtil.hideLoadingIndicator();
                 loadingMoreData = false;
 
                 if (poffset)
@@ -149,38 +137,6 @@ define([
             menusDialog.left = (viewPoint.w-304)+'px';
         };
 
-        var showLoadingIndicator = function()
-        {
-            var cl = loadingIndicator;
-
-            if (!cl)
-            {
-                cl = loadingIndicator = new CanvasLoader('', {
-                    id: "index_loading"
-                });
-                cl.setColor('#302730');
-                cl.setDiameter(50);
-                cl.setRange(0.9);
-            }
-
-            var viewPoint = win.getBox();
-            domStyle.set("index_loading", {
-                position: 'absolute',
-                left: ((viewPoint.w-50)/2) + 'px',
-                top: ((viewPoint.h-50)/2) + 'px',
-                zIndex:4000
-            });
-
-            cl.show();
-        };
-        var hideLoadingIndicator = function()
-        {
-            if (loadingIndicator)
-            {
-                loadingIndicator.hide();
-            }
-        };
-
         var goBackActivity = function()
         {
             cordova.exec(
@@ -207,53 +163,32 @@ define([
         {
             if (_userChecked)
             {
-                //var token = annoUtil.getTokenFromURL();
-                var params = annoUtil.parseUrlParams(document.location.search);
-                var token = params['token'];
-                var newUser = params['newuser'];
-                var signinMethod = params['signinmethod'];
-
-                console.error("index view got params: "+ JSON.stringify(params));
-
-                if (annoUtil.needAuth(token))
+                var authResult = OAuthUtil.isAuthorized();
+                if (!authResult.authorized)
                 {
-                    annoUtil.openAuthPage();
+                    OAuthUtil.openAuthPage();
                     return;
                 }
                 else
                 {
-                    console.error("index view got token: "+ JSON.stringify(token));
+                    AnnoDataHandler.getCurrentUserInfo(function(userInfo){
 
-                    if (signinMethod == 'anno')
-                    {
-                        if (newUser == "1")
+                        if (userInfo.signinMethod == OAuthUtil.signinMethod.anno)
                         {
-                            annoUtil.startActivity("Intro", false);
+                            if (authResult.newUser)
+                            {
+                                annoUtil.startActivity("Intro", false);
+                            }
+
+                            OAuthUtil.processBasicAuthToken(userInfo);
                         }
 
-                        AnnoDataHandler.getCurrentUserInfo(function(userInfo){
-                            var basicToken = annoUtil.getBasicAuthToken(userInfo);
-                            annoUtil.setAuthToken(basicToken);
+                        annoUtil.showLoadingIndicator();
+                        OAuthUtil.getAccessToken(function(){
+                            annoUtil.loadAPI(annoUtil.API.anno, loadListData);
+                            AnnoDataHandler.startBackgroundSync();
                         });
-                    }
-                    else
-                    {
-                        if (token)
-                        {
-                            annoUtil.setAuthToken(JSON.parse(token));
-                            AnnoDataHandler.getCurrentUserInfo();
-                        }
-                        else
-                        {
-                            AnnoDataHandler.getCurrentUserInfo(function(userInfo){
-                                var basicToken = annoUtil.getBasicAuthToken(userInfo);
-                                annoUtil.setAuthToken(basicToken);
-                            });
-                        }
-                    }
-
-
-                    AnnoDataHandler.startBackgroundSync();
+                    });
 
                     _connectResults.push(connect.connect(dom.byId("barMyStuff"), 'click', function(e)
                     {
@@ -356,7 +291,6 @@ define([
 
                 registry.byId('menusDialog').hide();
                 domClass.remove("barMenus", 'barIconHighlight');
-
                 document.removeEventListener("backbutton", exitApp, false);
             },
             destroy:function ()

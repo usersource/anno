@@ -1,4 +1,4 @@
-define(["../common/Util"], function(annoUtil){
+define(["../common/Util","../common/OAuthUtil"], function(annoUtil, OAuthUtil){
 
     var insert_anno_draw_sql = "insert into feedback_comment(draw_elements,draw_is_anonymized,created,last_update,comment,screenshot_key,x,y,direction,app_version,os_version,is_moved,level,app_name,model,source,os_name,anno_type,synched)"+
         " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -76,95 +76,99 @@ define(["../common/Util"], function(annoUtil){
             annoUtil.getBase64FileContent(screenshotDirPath+"/"+anno.image, function(base64Str){
                 anno.image = base64Str;
 
-                var insertAnno = gapi.client.anno.anno.insert(anno);
-                console.error("start insert anno."+insertAnno);
-                insertAnno.execute(function (data)
-                {
-                    if (!data)
-                    {
-                        annoUtil.hideLoadingIndicator();
-
-                        if (background)
+                OAuthUtil.getAccessToken(function(){
+                    annoUtil.loadAPI(annoUtil.API.anno, function(){
+                        var insertAnno = gapi.client.anno.anno.insert(anno);
+                        console.error("start insert anno."+insertAnno);
+                        insertAnno.execute(function (data)
                         {
-                            console.error("Anno returned from server are empty.");
-                        }
-                        else
-                        {
-                            alert("Anno returned from server are empty.");
-                        }
+                            if (!data)
+                            {
+                                annoUtil.hideLoadingIndicator();
 
-                        if (callback)
-                        {
-                            callback();
-                        }
+                                if (background)
+                                {
+                                    console.error("Anno returned from server are empty.");
+                                }
+                                else
+                                {
+                                    alert("Anno returned from server are empty.");
+                                }
 
-                        return;
-                    }
+                                if (callback)
+                                {
+                                    callback();
+                                }
 
-                    if (data.error)
-                    {
-                        annoUtil.hideLoadingIndicator();
+                                return;
+                            }
 
-                        if (background)
-                        {
-                            console.error("An error occurred when calling anno.insert api: "+data.error.message);
-                        }
-                        else
-                        {
-                            alert("An error occurred when calling anno.insert api: "+data.error.message);
-                        }
+                            if (data.error)
+                            {
+                                annoUtil.hideLoadingIndicator();
 
-                        if (callback)
-                        {
-                            callback();
-                        }
+                                if (background)
+                                {
+                                    console.error("An error occurred when calling anno.insert api: "+data.error.message);
+                                }
+                                else
+                                {
+                                    alert("An error occurred when calling anno.insert api: "+data.error.message);
+                                }
 
-                        return;
-                    }
+                                if (callback)
+                                {
+                                    callback();
+                                }
 
-                    console.error(JSON.stringify(data.result));
+                                return;
+                            }
 
-                    if (background)
-                    {
-                        self.updateAnnoSynchedStateById(data.result.id, createdTime);
-                    }
-                    else
-                    {
-                        self.updateAnnoSynchedStateByCreated(data.result.id, createdTime);
-                    }
+                            console.error(JSON.stringify(data.result));
 
-                    annoUtil.hideLoadingIndicator();
+                            if (background)
+                            {
+                                self.updateAnnoSynchedStateById(data.result.id, createdTime);
+                            }
+                            else
+                            {
+                                self.updateAnnoSynchedStateByCreated(data.result.id, createdTime);
+                            }
 
-                    if (!background)
-                    {
-                        cordova.exec(
-                            function (result)
+                            annoUtil.hideLoadingIndicator();
+
+                            if (!background)
                             {
                                 cordova.exec(
                                     function (result)
                                     {
+                                        cordova.exec(
+                                            function (result)
+                                            {
+                                            },
+                                            function (err)
+                                            {
+                                            },
+                                            "AnnoCordovaPlugin",
+                                            'exit_current_activity',
+                                            []
+                                        );
                                     },
                                     function (err)
                                     {
                                     },
                                     "AnnoCordovaPlugin",
-                                    'exit_current_activity',
-                                    []
+                                    'show_toast',
+                                    ["Your comment has been shared."]
                                 );
-                            },
-                            function (err)
-                            {
-                            },
-                            "AnnoCordovaPlugin",
-                            'show_toast',
-                            ["Your comment has been shared."]
-                        );
-                    }
+                            }
 
-                    if (callback)
-                    {
-                        callback();
-                    }
+                            if (callback)
+                            {
+                                callback();
+                            }
+                        });
+                    });
                 });
             });
         },

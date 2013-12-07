@@ -6,17 +6,13 @@ define([
     "dojo/window",
     "dijit/registry",
     "anno/common/Util",
+    "anno/common/OAuthUtil",
     "anno/anno/AnnoDataHandler"
 ],
-    function (dom, domClass, domStyle, connect, win, registry, annoUtil, AnnoDataHandler)
+    function (dom, domClass, domStyle, connect, win, registry, annoUtil, OAuthUtil, AnnoDataHandler)
     {
         var _connectResults = []; // events connect results
         var app = null;
-
-        var loadLocalAnnos = function()
-        {
-
-        };
 
         var adjustSize = function()
         {
@@ -41,41 +37,45 @@ define([
 
         var submitChangePwd = function()
         {
-            var changePasswordAPI = gapi.client.user.user.password.update({
-                'password':dom.byId('txt_changePwd').value
-            });
-
             annoUtil.showLoadingIndicator();
-            changePasswordAPI.execute(function(resp){
-                if (!resp)
-                {
-                    annoUtil.hideLoadingIndicator();
-                    annoUtil.showMessageDialog("Response from server are empty when calling user.password.update api.");
-                    return;
-                }
+            OAuthUtil.getAccessToken(function(){
+                annoUtil.loadAPI(annoUtil.API.user, function(){
+                    var changePasswordAPI = gapi.client.user.user.password.update({
+                        'password':dom.byId('txt_changePwd').value
+                    });
 
-                if (resp.error)
-                {
-                    annoUtil.hideLoadingIndicator();
+                    changePasswordAPI.execute(function(resp){
+                        if (!resp)
+                        {
+                            annoUtil.hideLoadingIndicator();
+                            annoUtil.showMessageDialog("Response from server are empty when calling user.password.update api.");
+                            return;
+                        }
 
-                    annoUtil.showMessageDialog("An error occurred when calling user.password.update api: "+resp.error.message);
-                    return;
-                }
+                        if (resp.error)
+                        {
+                            annoUtil.hideLoadingIndicator();
 
-                // save user info into local db
-                var userInfo = currentUserInfo;
-                userInfo.password = dom.byId('txt_changePwd').value;
+                            annoUtil.showMessageDialog("An error occurred when calling user.password.update api: "+resp.error.message);
+                            return;
+                        }
 
-                AnnoDataHandler.saveUserInfo(userInfo, function(){
-                    var token = annoUtil.getBasicAuthToken(currentUserInfo);
-                    annoUtil.setAuthToken(token);
+                        // save user info into local db
+                        var userInfo = currentUserInfo;
+                        userInfo.password = dom.byId('txt_changePwd').value;
 
-                    var changePwdDialog = registry.byId('changePwdDialog');
-                    changePwdDialog.hide();
+                        AnnoDataHandler.saveUserInfo(userInfo, function(){
+                            var token = annoUtil.getBasicAuthToken(currentUserInfo);
+                            annoUtil.setAuthToken(token);
 
-                    annoUtil.showToastMessage("Password has been changed.");
+                            var changePwdDialog = registry.byId('changePwdDialog');
+                            changePwdDialog.hide();
+
+                            annoUtil.showToastMessage("Password has been changed.");
+                        });
+                        annoUtil.hideLoadingIndicator();
+                    });
                 });
-                annoUtil.hideLoadingIndicator();
             });
         };
 
@@ -165,7 +165,6 @@ define([
             },
             afterActivate: function()
             {
-                loadLocalAnnos();
             },
             beforeDeactivate: function()
             {

@@ -7,9 +7,10 @@ define([
     "dijit/registry",
     "dojox/css3/transit",
     "anno/common/Util",
+    "anno/common/OAuthUtil",
     "anno/anno/AnnoDataHandler"
 ],
-    function (dom, domClass, domStyle, connect, win, registry, transit, annoUtil, AnnoDataHandler)
+    function (dom, domClass, domStyle, connect, win, registry, transit, annoUtil, OAuthUtil, AnnoDataHandler)
     {
         var _connectResults = []; // events connect results
         var app = null,
@@ -58,40 +59,42 @@ define([
             var email = dom.byId('signinEmail').value,
                 pwd = dom.byId('signPwd').value;
 
-            var signinAPI = gapi.client.account.account.authenticate({
-                'password':pwd,
-                'user_email':email
-            });
-
             annoUtil.showLoadingIndicator();
-            signinAPI.execute(function(resp){
-                if (!resp)
-                {
-                    annoUtil.hideLoadingIndicator();
-                    annoUtil.showMessageDialog("Response from server are empty when calling account.authenticate api.");
-                    return;
-                }
-
-                if (resp.error)
-                {
-                    annoUtil.hideLoadingIndicator();
-
-                    annoUtil.showMessageDialog("An error occurred when calling account.authenticate api: "+resp.error.message);
-                    return;
-                }
-
-                // save user info into local db
-                var userInfo = {};
-                userInfo.userId = resp.result.id;
-                userInfo.email = email;
-                userInfo.password = pwd;
-                userInfo.signinMethod = "anno";
-                userInfo.nickname = resp.result.display_name;
-
-                AnnoDataHandler.saveUserInfo(userInfo, function(){
-                    doCallback();
+            annoUtil.loadAPI(annoUtil.API.account, function(){
+                var signinAPI = gapi.client.account.account.authenticate({
+                    'password':pwd,
+                    'user_email':email
                 });
-                annoUtil.hideLoadingIndicator();
+
+                signinAPI.execute(function(resp){
+                    if (!resp)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        annoUtil.showMessageDialog("Response from server are empty when calling account.authenticate api.");
+                        return;
+                    }
+
+                    if (resp.error)
+                    {
+                        annoUtil.hideLoadingIndicator();
+
+                        annoUtil.showMessageDialog("An error occurred when calling account.authenticate api: "+resp.error.message);
+                        return;
+                    }
+
+                    // save user info into local db
+                    var userInfo = {};
+                    userInfo.userId = resp.result.id;
+                    userInfo.email = email;
+                    userInfo.password = pwd;
+                    userInfo.signinMethod = "anno";
+                    userInfo.nickname = resp.result.display_name;
+
+                    AnnoDataHandler.saveUserInfo(userInfo, function(){
+                        doCallback();
+                    });
+                    annoUtil.hideLoadingIndicator();
+                });
             });
         };
 
@@ -104,39 +107,108 @@ define([
             userInfo.signinMethod = "google";
             userInfo.nickname = dom.byId("nickNameSignin").value;
 
-            AnnoDataHandler.saveUserInfo(userInfo, function(){
-                doCallback(_currentAuthResult);
+            annoUtil.showLoadingIndicator();
+            annoUtil.loadAPI(annoUtil.API.account, function(){
+                var bindAccountAPI = gapi.client.account.account.bind_account({
+                    'display_name':dom.byId("nickNameSignin").value,
+                    'auth_source':'Google'
+                });
+
+                bindAccountAPI.execute(function(resp){
+                    if (!resp)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        annoUtil.showMessageDialog("Response from server are empty when calling account.bind_account api.");
+                        return;
+                    }
+
+                    console.error("bind_account:"+JSON.stringify(resp));
+                    if (resp.error)
+                    {
+                        annoUtil.hideLoadingIndicator();
+
+                        annoUtil.showMessageDialog("An error occurred when calling account.bind_account api: "+resp.error.message);
+                        return;
+                    }
+
+                    AnnoDataHandler.saveUserInfo(userInfo, function(){
+                        doCallback(_currentAuthResult);
+                    });
+
+                    annoUtil.hideLoadingIndicator();
+                });
             });
         };
 
         var doGoogleAuth = function()
         {
-            window.authCallback = authCallback;
-            checkAuth();
+            OAuthUtil.openAuthWindow(authCallback);
+            annoUtil.showLoadingIndicator();
         };
 
         var authCallback = function(result)
         {
+            annoUtil.hideLoadingIndicator();
             if (result.success)
             {
                 if (!_hasUserInLocalDB)
                 {
-                    currentSignInUserInfo = result.userInfo;
-                    // goes to pick nick name screen
-                    domStyle.set('pickNickNameContainer', 'display', '');
-                    domStyle.set('signinContainer', 'display', 'none');
+                    annoUtil.showLoadingIndicator();
+                    annoUtil.loadAPI(annoUtil.API.user, function(){
+                        var getDisplayNameAPI = gapi.client.user.user.displayname.get({});
 
-                    transit(null, dom.byId('pickNickNameContainer'), {
-                        transition:"slide",
-                        duration:300
+                        getDisplayNameAPI.execute(function(resp){
+                            if (!resp)
+                            {
+                                annoUtil.hideLoadingIndicator();
+                                annoUtil.showMessageDialog("Response from server are empty when calling user.displayname.get api.");
+                                return;
+                            }
+
+                            if (resp.error)
+                            {
+                                annoUtil.hideLoadingIndicator();
+
+                                annoUtil.showMessageDialog("An error occurred when calling user.displayname.get api: "+resp.error.message);
+                                return;
+                            }
+
+                            console.error("user.displayname.get: "+ JSON.stringify(resp));
+
+                            currentSignInUserInfo = result.userInfo;
+                            _currentAuthResult = result;
+                            if (!resp.display_name)
+                            {
+                                // goes to pick nick name screen
+                                domStyle.set('pickNickNameContainer', 'display', '');
+                                domStyle.set('signinContainer', 'display', 'none');
+
+                                transit(null, dom.byId('pickNickNameContainer'), {
+                                    transition:"slide",
+                                    duration:300
+                                });
+                            }
+                            else
+                            {
+
+                                var userInfo = {};
+                                userInfo.userId = currentSignInUserInfo.id;
+                                userInfo.email = currentSignInUserInfo.email;
+                                userInfo.signinMethod = "google";
+                                userInfo.nickname = resp.result.display_name;
+
+                                AnnoDataHandler.saveUserInfo(userInfo, function(){
+                                    doCallback(_currentAuthResult);
+                                });
+                            }
+
+                            annoUtil.hideLoadingIndicator();
+                        });
                     });
 
-                    _currentAuthResult = result;
                 }
                 else
                 {
-                    //app.transitionToView(document.getElementById('modelApp_signin'), {target:'home',url:'#home'});
-
                     doCallback(result);
                 }
             }
@@ -184,21 +256,7 @@ define([
 
                 var params = annoUtil.parseUrlParams(document.location.search);
                 _callbackURL = params['callback'];
-                var hasUserInDb = params['hasUserInLocalDB'] == "true";
-
-                console.error("_callbackURL:"+_callbackURL+",hasUserInDb:"+hasUserInDb);
-
-                if (!hasUserInDb)
-                {
-                    domStyle.set('modelApp_signin', {'display':''});
-                }
-                else
-                {
-                    domStyle.set('modelApp_signin', 'display', 'none');
-                    domStyle.set(document.body, 'backgroundColor', 'white');
-
-                    doGoogleAuth();
-                }
+                console.error("_callbackURL:"+_callbackURL);
 
                 app = this.app;
 

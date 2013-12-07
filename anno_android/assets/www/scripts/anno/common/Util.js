@@ -19,6 +19,16 @@ define([
         level1Color:"#ff9900",
         level2Color:"#ff0000",
         annoScreenshotPath:null,
+        API:{
+            apiRoot:"https://usersource-anno.appspot.com/_ah/api",
+            apiVersion:"1.0",
+            anno:"anno",
+            user:"user",
+            account:"account",
+            followUp:"followup",
+            vote:"vote",
+            flag:"flag"
+        },
         hasConnection: function()
         {
             var networkState = navigator.connection.type;
@@ -351,6 +361,35 @@ define([
                 'show_toast',
                 [message]
             );
+        },
+        loadAPI: function(apiId, callback, errorCallback)
+        {
+            gapi.client.load(apiId, this.API.apiVersion, function(res) {
+
+                if (res&&res.error)
+                {
+                    console.error(apiId+" API load failed.");
+
+                    if (errorCallback)
+                    {
+                        errorCallback();
+                    }
+                    else
+                    {
+                        alert('Load '+apiId+" failed, "+res.error.message);
+                        this.hideLoadingIndicator();
+                    }
+                }
+                else
+                {
+                    console.error(apiId+" API loaded.");
+                    callback();
+                }
+            }, this.API.apiRoot);
+        },
+        getCurrentUserInfo:function()
+        {
+            return _localUserInfo;
         }
     };
 

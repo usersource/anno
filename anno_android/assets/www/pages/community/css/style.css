@@ -551,3 +551,7 @@
     width: 100%;
     box-sizing: border-box;
 }
+.mblBackground
+{
+    background-color: #ffffff;
+}

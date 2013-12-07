@@ -13,6 +13,7 @@ require(["dojo/ready", "dojo/request/xhr", "anno/anno/AnnoDataHandler"], functio
             "&redirect_uri="+oauthOptions.redirect_uri+
             "&response_type=code"+
             "&origin=http://localhost:8080"+
+            "&access_type=offline"+
             "&scope="+oauthOptions.scope;
 
         ref = window.open(authUrl, '_blank', 'location=no');
@@ -51,7 +52,6 @@ require(["dojo/ready", "dojo/request/xhr", "anno/anno/AnnoDataHandler"], functio
             }).then(function(data) {
                     console.error("post res: "+JSON.stringify(data));
 
-
                     if (_hasUserInLocalDB)
                     {
                         if (window.authCallback)
@@ -70,7 +70,7 @@ require(["dojo/ready", "dojo/request/xhr", "anno/anno/AnnoDataHandler"], functio
                     alert("Get access token error: "+err);
                     if (window.authCallback)
                     {
-                        window.authCallback({success:false})
+                        window.authCallback({success:false});
                     }
                 });
         } else if (error) {
@@ -78,7 +78,7 @@ require(["dojo/ready", "dojo/request/xhr", "anno/anno/AnnoDataHandler"], functio
             alert("Auth error: "+error[1]);
             if (window.authCallback)
             {
-                window.authCallback({success:false})
+                window.authCallback({success:false});
             }
         }
     };

@@ -34,55 +34,17 @@
         });
     </script>
     <script type="text/javascript">
-        var apiVersion = "1.0";
         var currentUserInfo = {email:''};
         function gce_init()
         {
-            var ROOT = 'https://usersource-anno.appspot.com/_ah/api';
-            gapi.client.load('anno', apiVersion, function(yy) {
-                console.error("Anno API loaded.");
-                checkLoadReady();
-            }, ROOT);
-
-            gapi.client.load('followup', apiVersion, function() {
-
-            }, ROOT);
-
-            gapi.client.load('vote', apiVersion, function() {
-
-            }, ROOT);
-
-            gapi.client.load('flag', apiVersion, function() {
-
-            }, ROOT);
-
-            gapi.client.load('user', apiVersion, function() {
-
-            }, ROOT);
-        }
-
-        function checkLoadReady()
-        {
-            if (window.loadListData)
-            {
-                window.loadListData();
-            }
-            else
-            {
-                window.setTimeout(checkLoadReady, 50);
-            }
         }
     </script>
     <script type="text/javascript" src="../../scripts/gce.js"></script>
     <script type="text/javascript" src="../../cordova.js"></script>
-    <!--<script type="text/javascript" src="../../childbrowser.js"></script>-->
-    <script type="text/javascript" src="../../scripts/gceAuth.js"></script>
     <script type="text/javascript" src="heartcode-canvasloader-min.js"></script>
-    <!--<script type="text/javascript" src="../../SQLitePlugin.js"></script>-->
     <script type="text/javascript" src="../../scripts/dbHandler.js"></script>
 </head>
 <body id="container">
-<!--<div id="loadingMessageDiv" style="width:300px;margin-top: 20px;margin-left:20px;">Loading...</div>-->
 <div id="lightCover" class="lightCover" style="display: none;"></div>
 <div id="lightCoverScreenshot" class="lightCoverScreenshot" style="display: none;"></div>
 <input id="appNameTextBox" style="display: none;z-index: 4000;position: absolute;" type="text" data-dojo-type="dojox/mobile/TextBox" class="commentTextbox" placeholder="Type app name here">

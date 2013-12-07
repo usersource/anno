@@ -28,24 +28,19 @@
 
         });
     </script>
-    <script type="text/javascript">
-        var apiVersion = "1.0";
-        var currentUserInfo = {email:''};
-        function gce_init()
+    <style>
+        .mblBackground
         {
-            var ROOT = 'https://usersource-anno.appspot.com/_ah/api';
-            gapi.client.load('account', apiVersion, function() {
-
-            }, ROOT);
+            background-color: #ffffff;
         }
-    </script>
+    </style>
     <script type="text/javascript" src="../../scripts/gce.js"></script>
     <script type="text/javascript" src="../../cordova.js"></script>
-    <script type="text/javascript" src="../../scripts/gceAuth.js"></script>
     <script type="text/javascript" src="../community/heartcode-canvasloader-min.js"></script>
     <script type="text/javascript" src="../../scripts/dbHandler.js"></script>
 </head>
 <body id="container">
+<!--<div id="loadingContainer" style="display:none;position: absolute;top: 0px;left: 0px">Signing in...</div>-->
 <button id="hiddenBtn" style="position: absolute;left:-2000px;top: -2000px;">a</button>
 </body>
 </html>

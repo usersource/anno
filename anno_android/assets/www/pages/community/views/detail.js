@@ -16,9 +16,11 @@ define([
     "dojox/css3/transit",
     "dojo/store/Memory",
     "dojox/mvc/getStateful",
-    "anno/draw/Surface"
+    "anno/draw/Surface",
+    "anno/common/Util",
+    "anno/common/OAuthUtil"
 ],
-    function (arrayUtil, baseFX, dom, domClass, domGeom, domStyle, dojoJson, query, lang, connect, win, has, sniff, registry, transit, Memory, getStateful, Surface)
+    function (arrayUtil, baseFX, dom, domClass, domGeom, domStyle, dojoJson, query, lang, connect, win, has, sniff, registry, transit, Memory, getStateful, Surface, annoUtil, OAuthUtil)
     {
         var _connectResults = [],
             eventsModel = null,
@@ -29,18 +31,13 @@ define([
             savingVote = false,
             savingFlag = false,
             screenshotMargin = 0;
-        var currentAuthor = 'me',
-            annoTooltipY,
+        var annoTooltipY,
             goingNextRecord = null,
             loadingDetailData = false,
             loadingImage = false,
             trayBarHeight = 30,
             trayScreenHeight = 0,
             borderWidth;
-
-        var circleRadius = 16,
-            level1Color = "#ff9900",
-            level2Color = "#ff0000";
 
         var imageBaseUrl = "https://usersource-anno.appspot.com/screenshot";
         var surface;
@@ -141,7 +138,7 @@ define([
             console.error("screenshot loaded.");
             if (!loadingDetailData)
             {
-                hideLoadingIndicator();
+                annoUtil.hideLoadingIndicator();
             }
 
             loadingImage = false;
@@ -222,7 +219,7 @@ define([
             loadingImage = false;
             if (!loadingDetailData)
             {
-                hideLoadingIndicator();
+                annoUtil.hideLoadingIndicator();
             }
 
             surface.clear();
@@ -232,7 +229,7 @@ define([
         var redrawShapes = function()
         {
             var drawElements = eventsModel.cursor.draw_elements;
-            var lineStrokeStyle = {color: eventsModel.cursor.level==1?level1Color:level2Color, width: 3};
+            var lineStrokeStyle = {color: eventsModel.cursor.level==1?annoUtil.level1Color:annoUtil.level2Color, width: 3};
             if (drawElements)
             {
                 var elementsObject = dojoJson.parse(drawElements);
@@ -385,12 +382,12 @@ define([
             {
                 console.error("img width:"+(imageWidth-borderWidth*2));
 
-                domStyle.set('screenshotContainerDetail', {width:(imageWidth-borderWidth*2)+'px',height:(imageHeight-borderWidth*2)+'px', 'borderColor': level1Color,'borderStyle':'solid', 'borderWidth':borderWidth+'px'});
+                domStyle.set('screenshotContainerDetail', {width:(imageWidth-borderWidth*2)+'px',height:(imageHeight-borderWidth*2)+'px', 'borderColor': annoUtil.level1Color,'borderStyle':'solid', 'borderWidth':borderWidth+'px'});
                 domStyle.set('imgDetailScreenshot', {width:'100%',height:'100%'});
             }
             else if (level == 2)
             {
-                domStyle.set('screenshotContainerDetail', {width:(imageWidth-borderWidth*2)+'px',height:(imageHeight-borderWidth*2)+'px', 'borderColor': level2Color,'borderStyle':'solid', 'borderWidth':borderWidth+'px'});
+                domStyle.set('screenshotContainerDetail', {width:(imageWidth-borderWidth*2)+'px',height:(imageHeight-borderWidth*2)+'px', 'borderColor': annoUtil.level2Color,'borderStyle':'solid', 'borderWidth':borderWidth+'px'});
                 domStyle.set('imgDetailScreenshot', {width:'100%',height:'100%'});
             }
         };
@@ -483,7 +480,7 @@ define([
             hideTextData();
         };
 
-        var hideTextData = window.hideTrayScreen = function()
+        var hideTextData = function()
         {
             if (!textDataAreaShown) return;
 
@@ -512,12 +509,10 @@ define([
 
             domStyle.set('appNameSpanDetail', 'display', 'none');
             domStyle.set('appNameTextBox', {display: '', top:pos.y+'px', left:pos.x+'px'});
-            //domStyle.set('lightCover', 'display', '');
 
             window.setTimeout(function(){
                 dom.byId('appNameTextBox').click();
                 dom.byId('appNameTextBox').focus();
-                //domStyle.set('lightCover', {'display': '','backgroundColor':'#000000', 'opacity':'0.8'});
             },300);
             dom.byId('hiddenBtn').focus();
 
@@ -540,119 +535,55 @@ define([
                 domStyle.set('editAppNameImg', 'display', '');
             }
 
-            showLoadingIndicator();
+            annoUtil.showLoadingIndicator();
+            OAuthUtil.getAccessToken(function(){
+                annoUtil.loadAPI(annoUtil.API.anno, function(){
+                    var annoApi = gapi.client.anno.anno.merge({id:id, app_name:newAppName});
+                    annoApi.execute(function (data)
+                    {
+                        if (!data)
+                        {
+                            annoUtil.hideLoadingIndicator();
 
-            var annoApi = gapi.client.anno.anno.merge({id:id, app_name:newAppName});
-            annoApi.execute(function (data)
-            {
-                if (!data)
-                {
-                    hideLoadingIndicator();
+                            dom.byId('hiddenBtn').focus();
 
-                    dom.byId('hiddenBtn').focus();
+                            domStyle.set('appNameSpanDetail', 'display', '');
+                            domStyle.set('appNameTextBox', {display: 'none'});
+                            domStyle.set('lightCover', 'display', 'none');
+                            domStyle.set('editAppNameImg', 'display', '');
 
-                    domStyle.set('appNameSpanDetail', 'display', '');
-                    domStyle.set('appNameTextBox', {display: 'none'});
-                    domStyle.set('lightCover', 'display', 'none');
-                    domStyle.set('editAppNameImg', 'display', '');
+                            alert("Update app name returned from server is empty.");
+                        }
 
-                    alert("Update app name returned from server is empty.");
-                }
+                        if (data.error)
+                        {
+                            annoUtil.hideLoadingIndicator();
 
-                if (data.error)
-                {
-                    hideLoadingIndicator();
+                            dom.byId('hiddenBtn').focus();
 
-                    dom.byId('hiddenBtn').focus();
+                            domStyle.set('appNameSpanDetail', 'display', '');
+                            domStyle.set('appNameTextBox', {display: 'none'});
+                            domStyle.set('lightCover', 'display', 'none');
+                            domStyle.set('editAppNameImg', 'display', '');
 
-                    domStyle.set('appNameSpanDetail', 'display', '');
-                    domStyle.set('appNameTextBox', {display: 'none'});
-                    domStyle.set('lightCover', 'display', 'none');
-                    domStyle.set('editAppNameImg', 'display', '');
+                            alert(data.message);
+                            return;
+                        }
+                        console.error(JSON.stringify(data.result));
 
-                    alert(data.message);
-                    return;
-                }
-                console.error(JSON.stringify(data.result));
+                        var currentAnno = eventsModel.cursor;
+                        currentAnno.set('app', newAppName);
 
-                var currentAnno = eventsModel.cursor;
-                currentAnno.set('app', newAppName);
+                        annoUtil.hideLoadingIndicator();
+                        dom.byId('hiddenBtn').focus();
 
-                hideLoadingIndicator();
-                dom.byId('hiddenBtn').focus();
-
-                domStyle.set('appNameSpanDetail', 'display', '');
-                domStyle.set('appNameTextBox', {display: 'none'});
-                domStyle.set('lightCover', 'display', 'none');
-                domStyle.set('editAppNameImg', 'display', '');
-            });
-        };
-
-        var showToastMsg = function(msg)
-        {
-            var vp = win.getBox(), msgContainer = dom.byId('toastMsgContainer');
-
-            msgContainer.innerHTML = msg;
-            domStyle.set(msgContainer, {
-                top: (vp.h-20)/2+'px',
-                left: (vp.w-230)/2+'px',
-                display:''
-            });
-
-            window.setTimeout(function(){
-                domStyle.set(msgContainer, {
-                    display:'none'
+                        domStyle.set('appNameSpanDetail', 'display', '');
+                        domStyle.set('appNameTextBox', {display: 'none'});
+                        domStyle.set('lightCover', 'display', 'none');
+                        domStyle.set('editAppNameImg', 'display', '');
+                    });
                 });
-            }, 3000);
-
-            /*baseFX.fadeIn({
-                node: msgContainer,
-                start:0,
-                duration:750,
-                onEnd:function()
-                {
-                    window.setTimeout(function(){
-                        alert(baseFX+"3");
-                        baseFX.fadeOut({
-                            node: dom.byId('toastMsgContainer'),
-                            start:1,
-                            duration:750
-                        }).play();
-                    }, 3000);
-                }
-            }).play();*/
-        };
-
-        var showLoadingIndicator = function()
-        {
-            var cl = loadingIndicator;
-
-            if (!cl)
-            {
-                cl = loadingIndicator = new CanvasLoader('', {
-                    id: "detail_loading"
-                });
-                cl.setColor('#302730');
-                cl.setDiameter(50);
-                cl.setRange(0.9);
-            }
-
-            var viewPoint = win.getBox();
-            domStyle.set("detail_loading", {
-                position: 'absolute',
-                left: ((viewPoint.w-50)/2) + 'px',
-                top: ((viewPoint.h-50)/2) + 'px',
-                zIndex:4000
             });
-
-            cl.show();
-        };
-        var hideLoadingIndicator = function()
-        {
-            if (loadingIndicator)
-            {
-                loadingIndicator.hide();
-            }
         };
 
         var loadDetailData = function(cursor)
@@ -682,61 +613,65 @@ define([
             dom.byId('imgDetailScreenshot').src = imageBaseUrl+"?anno_id="+id;
             console.error("image url: "+imageBaseUrl+"?anno_id="+id);
 
-            showLoadingIndicator();
+            annoUtil.showLoadingIndicator();
 
-            var getAnnoList = gapi.client.anno.anno.get({id:id});
-            getAnnoList.execute(function (data)
-            {
-                if (!data)
-                {
-                    hideLoadingIndicator();
-                    loadingDetailData = false;
-                    alert("Annos returned from server are empty.");
-                    return;
-                }
-
-                if (data.error)
-                {
-                    hideLoadingIndicator();
-                    loadingDetailData = false;
-
-                    alert("An error occurred when calling anno.get api: "+data.error.message);
-                    return;
-                }
-                console.error(JSON.stringify(data.result));
-                var currentAnno = eventsModel.cursor||eventsModel.model[0], returnAnno = data.result, deviceInfo = '';
-
-                currentAnno.set('circleX', parseInt(returnAnno.simple_x, 10));
-                currentAnno.set('circleY', parseInt(returnAnno.simple_y, 10));
-
-                if (returnAnno.followup_list)
-                {
-                    for (var j=0;j<returnAnno.followup_list.length;j++)
+            OAuthUtil.getAccessToken(function(){
+                annoUtil.loadAPI(annoUtil.API.anno, function(){
+                    var getAnnoList = gapi.client.anno.anno.get({id:id});
+                    getAnnoList.execute(function (data)
                     {
-                        returnAnno.followup_list[j].user_id = returnAnno.followup_list[j].creator.display_name||returnAnno.followup_list[j].creator.user_email||returnAnno.followup_list[j].creator.id;
-                    }
-                }
+                        if (!data)
+                        {
+                            annoUtil.hideLoadingIndicator();
+                            loadingDetailData = false;
+                            alert("Annos returned from server are empty.");
+                            return;
+                        }
 
-                currentAnno.set('comments',new getStateful(returnAnno.followup_list||[]));
+                        if (data.error)
+                        {
+                            annoUtil.hideLoadingIndicator();
+                            loadingDetailData = false;
 
-                deviceInfo = (returnAnno.device_model||'&nbsp;')+'&nbsp;'+(returnAnno.os_name||'&nbsp;')+(returnAnno.os_version||'&nbsp;');
-                currentAnno.set('deviceInfo', deviceInfo);
+                            alert("An error occurred when calling anno.get api: "+data.error.message);
+                            return;
+                        }
+                        console.error(JSON.stringify(data.result));
+                        var currentAnno = eventsModel.cursor||eventsModel.model[0], returnAnno = data.result, deviceInfo = '';
 
-                currentAnno.set('vote', returnAnno.is_my_vote);
-                currentAnno.set('flag', returnAnno.is_my_flag);
-                currentAnno.set('level', returnAnno.level);
-                currentAnno.set('draw_elements', returnAnno.draw_elements||"");
+                        currentAnno.set('circleX', parseInt(returnAnno.simple_x, 10));
+                        currentAnno.set('circleY', parseInt(returnAnno.simple_y, 10));
 
-                loadingDetailData = false;
+                        if (returnAnno.followup_list)
+                        {
+                            for (var j=0;j<returnAnno.followup_list.length;j++)
+                            {
+                                returnAnno.followup_list[j].user_id = returnAnno.followup_list[j].creator.display_name||returnAnno.followup_list[j].creator.user_email||returnAnno.followup_list[j].creator.id;
+                            }
+                        }
 
-                if (!loadingImage)
-                {
-                    hideLoadingIndicator();
-                    redrawShapes();
-                }
+                        currentAnno.set('comments',new getStateful(returnAnno.followup_list||[]));
 
-                setDetailsContext(cursor);
+                        deviceInfo = (returnAnno.device_model||'&nbsp;')+'&nbsp;'+(returnAnno.os_name||'&nbsp;')+(returnAnno.os_version||'&nbsp;');
+                        currentAnno.set('deviceInfo', deviceInfo);
 
+                        currentAnno.set('vote', returnAnno.is_my_vote);
+                        currentAnno.set('flag', returnAnno.is_my_flag);
+                        currentAnno.set('level', returnAnno.level);
+                        currentAnno.set('draw_elements', returnAnno.draw_elements||"");
+
+                        loadingDetailData = false;
+
+                        if (!loadingImage)
+                        {
+                            annoUtil.hideLoadingIndicator();
+                            redrawShapes();
+                        }
+
+                        setDetailsContext(cursor);
+
+                    });
+                });
             });
         };
 
@@ -753,31 +688,35 @@ define([
                 id = eventsModel.cursor.id;
             }
 
-            showLoadingIndicator();
+            annoUtil.showLoadingIndicator();
 
-            var getAnnoList = gapi.client.followup.followup.insert({anno_id:id, comment:comment});
-            getAnnoList.execute(function (data)
-            {
-                if (!data)
-                {
-                    hideLoadingIndicator();
-                    alert("Annos returned from server are empty.");
-                    return;
-                }
+            OAuthUtil.getAccessToken(function(){
+                annoUtil.loadAPI(annoUtil.API.followUp, function(){
+                    var getAnnoList = gapi.client.followup.followup.insert({anno_id:id, comment:comment});
+                    getAnnoList.execute(function (data)
+                    {
+                        if (!data)
+                        {
+                            annoUtil.hideLoadingIndicator();
+                            alert("Annos returned from server are empty.");
+                            return;
+                        }
 
-                if (data.error)
-                {
-                    hideLoadingIndicator();
-                    alert("An error occurred when calling anno.get api: "+data.error.message);
-                    return;
-                }
-                console.error(JSON.stringify(data.result));
+                        if (data.error)
+                        {
+                            annoUtil.hideLoadingIndicator();
+                            alert("An error occurred when calling anno.get api: "+data.error.message);
+                            return;
+                        }
+                        console.error(JSON.stringify(data.result));
 
-                var currentAnno = eventsModel.cursor||eventsModel.model[0];
+                        var currentAnno = eventsModel.cursor||eventsModel.model[0];
 
-                hideLoadingIndicator();
-                currentAnno.comments.splice(0,0,new getStateful({user_id:author, comment:comment}));
-                adjustAnnoCommentSize();
+                        annoUtil.hideLoadingIndicator();
+                        currentAnno.comments.splice(0,0,new getStateful({user_id:author, comment:comment}));
+                        adjustAnnoCommentSize();
+                    });
+                });
             });
         };
 
@@ -795,52 +734,56 @@ define([
                 id = eventsModel.cursor.id;
             }
 
-            showLoadingIndicator();
+            annoUtil.showLoadingIndicator();
 
-            var voteApi, apiName;
+            OAuthUtil.getAccessToken(function(){
+                annoUtil.loadAPI(annoUtil.API.vote, function(){
+                    var voteApi, apiName;
 
-            if (action == "add_vote")
-            {
-                voteApi = gapi.client.vote.vote.insert({anno_id:id});
-                apiName = "vote.insert";
-            }
-            else
-            {
-                voteApi = gapi.client.vote.vote.delete({anno_id:id});
-                apiName = "vote.delete";
-            }
+                    if (action == "add_vote")
+                    {
+                        voteApi = gapi.client.vote.vote.insert({anno_id:id});
+                        apiName = "vote.insert";
+                    }
+                    else
+                    {
+                        voteApi = gapi.client.vote.vote.delete({anno_id:id});
+                        apiName = "vote.delete";
+                    }
 
-            voteApi.execute(function (data)
-            {
-                if (!data)
-                {
-                    hideLoadingIndicator();
-                    alert("vote api result returned from server are empty.");
-                    savingVote = false;
-                    return;
-                }
+                    voteApi.execute(function (data)
+                    {
+                        if (!data)
+                        {
+                            annoUtil.hideLoadingIndicator();
+                            alert("vote api result returned from server are empty.");
+                            savingVote = false;
+                            return;
+                        }
 
-                if (data.error)
-                {
-                    hideLoadingIndicator();
+                        if (data.error)
+                        {
+                            annoUtil.hideLoadingIndicator();
 
-                    alert("An error occurred when calling "+apiName+" api: "+data.error.message);
-                    savingVote = false;
-                    return;
-                }
-                console.error(JSON.stringify(data.result));
+                            alert("An error occurred when calling "+apiName+" api: "+data.error.message);
+                            savingVote = false;
+                            return;
+                        }
+                        console.error(JSON.stringify(data.result));
 
-                if (action == "remove_vote")
-                {
-                    domClass.remove('imgThumbsUp', 'icoImgActive');
-                }
-                else
-                {
-                    domClass.add('imgThumbsUp', 'icoImgActive');
-                }
+                        if (action == "remove_vote")
+                        {
+                            domClass.remove('imgThumbsUp', 'icoImgActive');
+                        }
+                        else
+                        {
+                            domClass.add('imgThumbsUp', 'icoImgActive');
+                        }
 
-                savingVote = false;
-                hideLoadingIndicator();
+                        savingVote = false;
+                        annoUtil.hideLoadingIndicator();
+                    });
+                });
             });
         };
 
@@ -858,51 +801,55 @@ define([
                 id = eventsModel.cursor.id;
             }
 
-            showLoadingIndicator();
+            annoUtil.showLoadingIndicator();
 
-            var flatApi, apiName;
+            OAuthUtil.getAccessToken(function(){
+                annoUtil.loadAPI(annoUtil.API.flag, function(){
+                    var flatApi, apiName;
 
-            if (action == "add_flag")
-            {
-                flatApi = gapi.client.flag.flag.insert({anno_id:id});
-                apiName = "flag.insert";
-            }
-            else
-            {
-                flatApi = gapi.client.flag.flag.delete({anno_id:id});
-                apiName = "flag.delete";
-            }
+                    if (action == "add_flag")
+                    {
+                        flatApi = gapi.client.flag.flag.insert({anno_id:id});
+                        apiName = "flag.insert";
+                    }
+                    else
+                    {
+                        flatApi = gapi.client.flag.flag.delete({anno_id:id});
+                        apiName = "flag.delete";
+                    }
 
-            flatApi.execute(function (data)
-            {
-                if (!data)
-                {
-                    hideLoadingIndicator();
-                    alert("vote api result returned from server are empty.");
-                    savingFlag = false;
-                    return;
-                }
+                    flatApi.execute(function (data)
+                    {
+                        if (!data)
+                        {
+                            annoUtil.hideLoadingIndicator();
+                            alert("vote api result returned from server are empty.");
+                            savingFlag = false;
+                            return;
+                        }
 
-                if (data.error)
-                {
-                    hideLoadingIndicator();
+                        if (data.error)
+                        {
+                            annoUtil.hideLoadingIndicator();
 
-                    alert("An error occurred when calling "+apiName+" api: "+data.error.message);
-                    savingFlag = false;
-                    return;
-                }
-                console.error(JSON.stringify(data.result));
+                            alert("An error occurred when calling "+apiName+" api: "+data.error.message);
+                            savingFlag = false;
+                            return;
+                        }
+                        console.error(JSON.stringify(data.result));
 
-                if (action == "remove_flag")
-                {
-                    domClass.remove('imgFlag', 'icoImgActive');
-                }
-                else
-                {
-                    domClass.add('imgFlag', 'icoImgActive');
-                }
-                hideLoadingIndicator();
-                savingFlag = false;
+                        if (action == "remove_flag")
+                        {
+                            domClass.remove('imgFlag', 'icoImgActive');
+                        }
+                        else
+                        {
+                            domClass.add('imgFlag', 'icoImgActive');
+                        }
+                        annoUtil.hideLoadingIndicator();
+                        savingFlag = false;
+                    });
+                });
             });
         };
 
@@ -1011,7 +958,7 @@ define([
                     {
                         if (domClass.contains('imgFlag','icoImgActive'))
                         {
-                            showToastMsg("You must unflag the annotation up.");
+                            annoUtil.showToastMessage("You must unflag the annotation up.");
                             return;
                         }
 
@@ -1188,7 +1135,7 @@ define([
 
                 domStyle.set("imgDetailScreenshot", "opacity", '1');
 
-                hideLoadingIndicator();
+                annoUtil.hideLoadingIndicator();
 
                 surface.clear();
                 surface.hide();

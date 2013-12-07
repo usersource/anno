@@ -43,33 +43,34 @@ define([
         {
             var email = dom.byId('fmtEmail').value;
 
-            var registerAPI = gapi.client.account.account.forgot_detail({
-                'user_email':email
-            });
-
             annoUtil.showLoadingIndicator();
-            registerAPI.execute(function(resp){
-                if (!resp)
-                {
-                    annoUtil.hideLoadingIndicator();
-                    annoUtil.showMessageDialog("Response from server are empty when calling account.forgot_detail api.");
-                    return;
-                }
-
-                if (resp.error)
-                {
-                    annoUtil.hideLoadingIndicator();
-
-                    annoUtil.showMessageDialog("An error occurred when calling account.forgot_detail api: "+resp.error.message);
-                    return;
-                }
-
-                annoUtil.showMessageDialog("A temporary password has been sent to the email address you provided. Please follow the instructions in your email.", function(){
-                    history.back();
+            annoUtil.loadAPI(annoUtil.API.account, function(){
+                var registerAPI = gapi.client.account.account.forgot_detail({
+                    'user_email':email
                 });
-                annoUtil.hideLoadingIndicator();
-            });
 
+                registerAPI.execute(function(resp){
+                    if (!resp)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        annoUtil.showMessageDialog("Response from server are empty when calling account.forgot_detail api.");
+                        return;
+                    }
+
+                    if (resp.error)
+                    {
+                        annoUtil.hideLoadingIndicator();
+
+                        annoUtil.showMessageDialog("An error occurred when calling account.forgot_detail api: "+resp.error.message);
+                        return;
+                    }
+
+                    annoUtil.showMessageDialog("A temporary password has been sent to the email address you provided. Please follow the instructions in your email.", function(){
+                        history.back();
+                    });
+                    annoUtil.hideLoadingIndicator();
+                });
+            });
         };
 
         return {

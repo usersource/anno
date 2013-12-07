@@ -11,9 +11,10 @@ require([
     "dojo/window",
     "dijit/registry",
     "anno/common/Util",
+    "anno/common/OAuthUtil",
     "anno/anno/AnnoDataHandler",
     "dojo/domReady!"
-], function (Surface, connect, dom, domClass, domStyle, dojoJson, query, ready, touch, win, registry, annoUtil, AnnoDataHandler)
+], function (Surface, connect, dom, domClass, domStyle, dojoJson, query, ready, touch, win, registry, annoUtil, OAuthUtil, AnnoDataHandler)
 {
     var viewPoint,
         defaultShapeWidth = 160,
@@ -529,46 +530,25 @@ require([
     {
         if (_userChecked)
         {
-            var params = annoUtil.parseUrlParams(document.location.search);
-            var token = params['token'];
-            var newUser = params['newuser'];
-            var signinMethod = params['signinmethod'];
-
-            if (annoUtil.hasConnection()&&annoUtil.needAuth(token))
+            var authResult = OAuthUtil.isAuthorized();
+            if (annoUtil.hasConnection()&&!authResult.authorized)
             {
-                annoUtil.openAuthPage();
+                OAuthUtil.openAuthPage();
                 return;
             }
             else
             {
-                console.error("anno draw got token: "+ JSON.stringify(token));
+                AnnoDataHandler.getCurrentUserInfo(function(userInfo){
+                    if (userInfo.signinMethod == OAuthUtil.signinMethod.anno)
+                    {
+                        if (authResult.newUser)
+                        {
+                            annoUtil.startActivity("Intro", false);
+                        }
 
-                if (signinMethod == 'anno')
-                {
-                    if (newUser == "1")
-                    {
-                        annoUtil.startActivity("Intro", false);
+                        OAuthUtil.processBasicAuthToken(userInfo);
                     }
-
-                    AnnoDataHandler.getCurrentUserInfo(function(userInfo){
-                        var basicToken = annoUtil.getBasicAuthToken(userInfo);
-                        annoUtil.setAuthToken(basicToken);
-                    });
-                }
-                else
-                {
-                    if (token&&annoUtil.hasConnection())
-                    {
-                        annoUtil.setAuthToken(JSON.parse(token));
-                    }
-                    else
-                    {
-                        AnnoDataHandler.getCurrentUserInfo(function(userInfo){
-                            var basicToken = annoUtil.getBasicAuthToken(userInfo);
-                            annoUtil.setAuthToken(basicToken);
-                        });
-                    }
-                }
+                });
 
                 initBackgroundImage();
 
@@ -728,13 +708,6 @@ require([
     };
 
     ready(init);
-
-    var dddd = function()
-    {
-        console.error("dddd");
-    };
-
-    document.addEventListener('deviceready', dddd, false);
 
     document.addEventListener("backbutton", function(){
         navigator.app.exitApp();

@@ -47,7 +47,7 @@ define([
                 return false;
             }
 
-            if (nickname.length < 0)
+            if (nickname.length <= 0)
             {
                 annoUtil.showMessageDialog("Please enter nickname.");
                 return false;
@@ -62,41 +62,43 @@ define([
                 pwd = dom.byId('signupPwd').value,
                 nickname = dom.byId('nickNameSignup').value;
 
-            var registerAPI = gapi.client.account.account.register({
-                'display_name':nickname,
-                'password':pwd,
-                'user_email':email
-            });
-
             annoUtil.showLoadingIndicator();
-            registerAPI.execute(function(resp){
-                if (!resp)
-                {
-                    annoUtil.hideLoadingIndicator();
-                    annoUtil.showMessageDialog("Response from server are empty when calling account.register api.");
-                    return;
-                }
-
-                if (resp.error)
-                {
-                    annoUtil.hideLoadingIndicator();
-
-                    annoUtil.showMessageDialog("An error occurred when calling account.register api: "+resp.error.message);
-                    return;
-                }
-
-                // save user info into local db
-                var userInfo = {};
-                userInfo.userId = resp.result.id;
-                userInfo.email = email;
-                userInfo.password = pwd;
-                userInfo.signinMethod = "anno";
-                userInfo.nickname = nickname;
-
-                AnnoDataHandler.saveUserInfo(userInfo, function(){
-                    doCallback();
+            annoUtil.loadAPI(annoUtil.API.account, function(){
+                var registerAPI = gapi.client.account.account.register({
+                    'display_name':nickname,
+                    'password':pwd,
+                    'user_email':email
                 });
-                annoUtil.hideLoadingIndicator();
+
+                registerAPI.execute(function(resp){
+                    if (!resp)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        annoUtil.showMessageDialog("Response from server are empty when calling account.register api.");
+                        return;
+                    }
+
+                    if (resp.error)
+                    {
+                        annoUtil.hideLoadingIndicator();
+
+                        annoUtil.showMessageDialog("An error occurred when calling account.register api: "+resp.error.message);
+                        return;
+                    }
+
+                    // save user info into local db
+                    var userInfo = {};
+                    userInfo.userId = resp.result.id;
+                    userInfo.email = email;
+                    userInfo.password = pwd;
+                    userInfo.signinMethod = "anno";
+                    userInfo.nickname = nickname;
+
+                    AnnoDataHandler.saveUserInfo(userInfo, function(){
+                        doCallback();
+                    });
+                    annoUtil.hideLoadingIndicator();
+                });
             });
         };
 
