@@ -275,7 +275,7 @@ define(["../common/Util","../common/OAuthUtil"], function(annoUtil, OAuthUtil){
         {
             executeUpdateSql(select_userInfo_sql,[], function(res){
                 var cnt = res.rows.length;
-                console.error('local annos: '+cnt);
+                console.error('user cnt: '+cnt);
                 var userInfo = {};
 
                 if (cnt >0)

@@ -505,7 +505,7 @@ require([
     {
         var hiddenCanvas = dom.byId('hiddenCanvas');
         var ctx = hiddenCanvas.getContext('2d');
-        ctx.fillStyle = "black";
+        ctx.fillStyle = "gray";
 
         var shapes = surface.registry;
 
@@ -575,7 +575,8 @@ require([
                         container: dom.byId("gfxCanvasContainer"),
                         width:viewPoint.w-borderWidth*2,
                         height:viewPoint.h-borderWidth*2,
-                        borderWidth:borderWidth
+                        borderWidth:borderWidth,
+                        drawMode:true
                     });
 
                     domStyle.set(surface.container, 'borderWidth', borderWidth+'px');

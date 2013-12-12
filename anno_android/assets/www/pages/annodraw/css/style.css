@@ -94,11 +94,10 @@ html,body{
 }
 
 body{
-    /*background-image: url(file:///storage/emulated/0/Pictures/Screenshots/Screenshot_2013-11-01-12-58-14.png);*/
     background-repeat: no-repeat;
     background-size: 100% 100%;
     font-family: helvetica, arial;
-    /*background-color: transparent;*/
+    font-size: 13pt;
 }
 
 #gfxCanvasContainer

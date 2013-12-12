@@ -14,8 +14,8 @@ define([
          * AnonymizedRectangle class
          */
         return declare("anno.draw.shapes.AnonymizedRectangle", [Rectangle], {
-            lineStrokeStyle: {color: '#000000', width: 0},
-            hiddenColor: "rgba(0, 0, 0, 1)",
+            lineStrokeStyle: {color: 'gray', width: 0},
+            hiddenColor: "gray",
             shapeType: "AnonymizedRectangle",
             minSize:32,
             getShape: function()
@@ -24,7 +24,7 @@ define([
                 var dx = this.rectangle.matrix?this.rectangle.matrix.dx:0;
                 var dy = this.rectangle.matrix?this.rectangle.matrix.dy:0;
 
-                return {x:shape.x+dx, y:shape.y+dy, width:shape.width, height:shape.height}
+                return {x:shape.x+dx, y:shape.y+dy, width:shape.width, height:shape.height};
             },
             isEndpointOutScreen: function(endpoint, dx, dy)
             {
