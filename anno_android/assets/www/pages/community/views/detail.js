@@ -267,8 +267,8 @@ define([
                 if (lines > 4 )
                 {
                     lines = 4;
-                    var shortText = commentText.substr(0, charsPerLine*4-10)+"...";
-                    commentText = shortText;
+                    //var shortText = commentText.substr(0, charsPerLine*4-10)+"...";
+                    //commentText = shortText;
                 }
 
                 var boxHeight = 34 + (lines-1)*22;

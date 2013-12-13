@@ -21,11 +21,11 @@ define([
         return declare("anno.draw.shapes.CommentBox", [BaseShape], {
             lineStrokeStyle: {color: '#000000', width: 3},
             shapeType: "CommentBox",
-            minSize:50,
+            minSize:44,
             shapePadding: 30,
-            earHeight:40,
-            earDistance: 50,
-            boxHeight:38,
+            earHeight:34,
+            earDistance: 44,
+            boxHeight:34,
             placeholder:"Enter suggestion here",
             grayColor: "#A9A9A9",
             normalColor: "#000000",
@@ -80,8 +80,8 @@ define([
 
                 // create text node
                 this.txtNode = domConstruct.create('div', {
-                    style: "background-color:transparent;display2:none;padding2:4px;padding-left2:6px;position:absolute;top:"+(this.pathPoints[0].y+3+this.surface.borderWidth)+"px;left:"+(this.pathPoints[0].x+3+this.surface.borderWidth)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
-                    innerHTML:"<div id='textDiv_"+this.id+"' style='overflow:hidden;width:100%;height:100%;font-weight: bold;color: "+this.grayColor+";'>"+this.placeholder+"</div>"
+                    style: "background-color:transparent;position:absolute;top:"+(this.pathPoints[0].y+3+this.surface.borderWidth)+"px;left:"+(this.pathPoints[0].x+3+this.surface.borderWidth)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
+                    innerHTML:"<div id='textDiv_"+this.id+"' style='padding:3px;overflow:hidden;width:100%;height:100%;box-sizing: border-box;font-weight: normal;color: "+this.grayColor+";'>"+this.placeholder+"</div>"
                 }, document.body, 'last');
 
                 this.txtNode.gfxTarget = {isSelectTarget:true, sid:this.id};
@@ -89,13 +89,14 @@ define([
 
                 this.inputNode = domConstruct.create('div', {
                     style: "background-color:transparent;display:none;position:absolute;top:"+(this.pathPoints[0].y+3+this.surface.borderWidth)+"px;left:"+(this.pathPoints[0].x+3+this.surface.borderWidth)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
-                    innerHTML:"<textarea id='input_"+this.id+"' placeholder='Enter suggestion here' style='font-family: helvetica, arial;font-size: 13pt;font-weight: bold;background-color:transparent;width:100%;height:100%;padding:0px;border:none;outline: none;'></textarea>"
+                    innerHTML:"<textarea id='input_"+this.id+"' placeholder='Enter suggestion here' style='font-family: helvetica, arial;font-size: 13pt;font-weight: normal;background-color:transparent;width:100%;height:100%;border-color:transparent;outline: none;'></textarea>"
                 }, document.body, 'last');
                 this.inputElement = dom.byId("input_"+this.id);
 
                 // set comment text
                 if (comment)
                 {
+                    if (this.shortText) comment = this.shortText;
                     var textDiv = dom.byId('textDiv_'+this.id);
                     dom.byId('textDiv_'+this.id).innerHTML = comment.replace(/\n/g, "<br>");
                     domStyle.set(textDiv, 'color', this.normalColor);
@@ -440,8 +441,8 @@ define([
             {
                 var cp = this.pathPoints = this.shapeJson.points;
 
-                var leftX = cp[0].x, rightX = cp[4].x = cp[4].x;
-                var leftY1 = cp[0].y = cp[0].y, leftY2 = cp[5].y;
+                var leftX = cp[0].x, rightX = cp[4].x;
+                var leftY1 = cp[0].y, leftY2 = cp[5].y;
 
                 var x2 = cp[1].x;
                 var x3 = cp[2].x;
@@ -481,7 +482,7 @@ define([
                     return false;
                 }
 
-                if ((leftY2 - leftY1 + dy) >= this.boxHeight*3 || (leftY2 - leftY1 + dy) < this.boxHeight)
+                if ((leftY2 - leftY1 + dy) >= (this.boxHeight*3) || (leftY2 - leftY1 + dy) < this.boxHeight)
                 {
                     return false;
                 }
@@ -498,7 +499,7 @@ define([
                     return false;
                 }
 
-                if ((leftY2 - leftY1 - dy) >= this.boxHeight*3 || (leftY2 - leftY1 - dy) < this.boxHeight)
+                if ((leftY2 - leftY1 - dy) >= (this.boxHeight*3) || (leftY2 - leftY1 - dy) < this.boxHeight)
                 {
                     return false;
                 }
@@ -585,6 +586,64 @@ define([
                     ps[i].x = this.translateValue(ps[i].x, true);
                     ps[i].y = this.translateValue(ps[i].y, false);
                 }
+
+                // check the ear height and distance
+                var x2 = ps[1].x, x3 = ps[2].x, y1 = ps[0].y, y3 = ps[2].y, x4 = ps[3].x;
+
+                if ((x4 - x2) < this.earDistance)
+                {
+                    var dx = Math.round((this.earDistance-(x4 - x2))/2);
+                    ps[1].x = ps[1].x - dx;
+                    ps[3].x = ps[3].x + dx;
+                }
+                else if ((x4 - x2) > this.earDistance)
+                {
+                    var dx = Math.round(((x4 - x2)-this.earDistance)/2);
+                    ps[1].x = ps[1].x + dx;
+                    ps[3].x = ps[3].x - dx;
+                }
+
+                if ((y1-y3) <this.earHeight)
+                {
+                    var dy = this.earHeight - (y1-y3);
+
+                    ps[0].y += dy;
+                    ps[1].y += dy;
+                    ps[3].y += dy;
+                    ps[4].y += dy;
+                    ps[5].y += dy;
+                    ps[6].y += dy;
+                }
+                else if ((y1-y3) >this.earHeight)
+                {
+                    var dy = (y1-y3)-this.earHeight;
+
+                    ps[0].y -= dy;
+                    ps[1].y -= dy;
+                    ps[3].y -= dy;
+                    ps[4].y -= dy;
+                    ps[5].y -= dy;
+                    ps[6].y -= dy;
+                }
+                // check the box height and make sure it's should be up to 4 lines height
+                var leftY1 = ps[0].y, leftY2 = ps[5].y;
+
+                var boxWidth = ps[4].x-ps[0].x,
+                    pxPerChar = 8,
+                    charsPerLine = boxWidth/pxPerChar;
+
+                var commentText = this.shapeJson.comment;
+                var lines = Math.max(Math.round(commentText.length/charsPerLine),1);
+
+                if (lines > 4 )
+                {
+                    lines = 4;
+                    var shortText = commentText.substr(0, charsPerLine*4-Math.round(charsPerLine/2))+"...";
+                    //this.shortText = shortText;
+                }
+
+                var boxHeight = this.boxHeight + (lines-1)*20;
+                ps[5].y = ps[6].y = leftY1+boxHeight;
             }
         });
     });

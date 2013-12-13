@@ -80,8 +80,8 @@ define([
                 }
 
                 this.txtNode = domConstruct.create('div', {
-                    style: "background-color:transparent;display2:none;padding2:4px;padding-left2:6px;position:absolute;top:"+(textNodeTop)+"px;left:"+(this.pathPoints[0].x+3+this.surface.borderWidth)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
-                    innerHTML:"<div id='textDiv_"+this.id+"' style='padding:3px;overflow:hidden;width:100%;height:100%;font-weight: bold;color: "+textColor+";'>"+this.placeholder+"</div>"
+                    style: "background-color:transparent;position:absolute;top:"+(textNodeTop)+"px;left:"+(this.pathPoints[0].x+3+this.surface.borderWidth)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
+                    innerHTML:"<div id='textDiv_"+this.id+"' style='padding:3px;overflow:hidden;width:100%;height:100%;box-sizing: border-box;font-weight: normal;color: "+textColor+";'>"+this.placeholder+"</div>"
                 }, document.body, 'last');
 
                 this.txtNode.gfxTarget = {isSelectTarget:true, sid:this.id};
@@ -89,7 +89,7 @@ define([
 
                 this.inputNode = domConstruct.create('div', {
                     style: "background-color:transparent;display:none;position:absolute;top:"+(textNodeTop)+"px;left:"+(this.pathPoints[0].x+3+this.surface.borderWidth)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
-                    innerHTML:"<textarea id='input_"+this.id+"' placeholder='Enter suggestion here' style='font-family: helvetica, arial;font-size: 13pt;font-weight: bold;background-color:transparent;width:100%;overflow-y2: hidden; border-color:transparent;outline: none;overflow-x: auto; box-sizing2: border-box; height: 24px;'></textarea>"
+                    innerHTML:"<textarea id='input_"+this.id+"' placeholder='Enter suggestion here' style='font-family: helvetica, arial;font-size: 13pt;font-weight: normal;background-color:transparent;width:100%;border-color:transparent;outline: none;overflow-x: auto; box-sizing2: border-box; height: 24px;'></textarea>"
                 }, document.body, 'last');
                 this.inputElement = dom.byId("input_"+this.id);
 
@@ -436,15 +436,6 @@ define([
             {
                 this.inherited(arguments);
                 if (!this.selectable) return;
-
-                /*if (sel)
-                 {
-                 this.endpoint2.setStroke(this.endpointStrokeStyle).setFill(this.endpointFillStyle);
-                 }
-                 else
-                 {
-                 this.endpoint2.setStroke(this.endpointHiddenStrokeStyle).setFill(this.endpointHiddenFillStyle);
-                 }*/
             },
             isMoveable: function()
             {

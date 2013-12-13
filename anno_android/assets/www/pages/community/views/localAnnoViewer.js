@@ -81,16 +81,15 @@ define([
                 var toolTipDivWidth = (viewPoint.w-borderWidth*2-60),
                     pxPerChar = 8,
                     charsPerLine = toolTipDivWidth/pxPerChar;
-console.error(toolTipDivWidth);
-                console.error(charsPerLine);
+
                 var commentText = annoItem.comment;
                 var lines = Math.max(Math.round(commentText.length/charsPerLine),1);
-                console.error(lines);
+
                 if (lines > 4 )
                 {
                     lines = 4;
-                    var shortText = commentText.substr(0, charsPerLine*4-10)+"...";
-                    commentText = shortText;
+                    //var shortText = commentText.substr(0, charsPerLine*4-10)+"...";
+                    //commentText = shortText;
                 }
 
                 var boxHeight = 34 + (lines-1)*22;
