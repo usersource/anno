@@ -1,4 +1,4 @@
-package io.usersource.annoplugin.view;
+package io.usersource.annoplugin;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -12,6 +12,10 @@ import android.os.Environment;
 import android.util.Base64;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
+import io.usersource.anno.AnnoDrawActivity;
+import io.usersource.anno.CommunityActivity;
+import io.usersource.anno.IntroActivity;
+import io.usersource.anno.OptionFeedbackActivity;
 import io.usersource.annoplugin.utils.*;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -176,7 +180,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
 
     Intent intent = new Intent(Intent.ACTION_SEND);
     intent.setClassName(packageName,
-            "io.usersource.annoplugin.view.AnnoDrawActivity");
+            "io.usersource.anno.AnnoDrawActivity");
     intent.setType("image/*");
     // set this flag for FeedbackEditActivity to know it's practice.
     intent.putExtra(AnnoUtils.INTENT_EXTRA_IS_PRACTICE, true);

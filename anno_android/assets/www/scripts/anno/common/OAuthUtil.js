@@ -177,6 +177,10 @@ define([
                     {
                         errorCallback();
                     }
+                    else
+                    {
+                        annoUtil.hideLoadingIndicator();
+                    }
                 });
         },
         isAuthorized:function()

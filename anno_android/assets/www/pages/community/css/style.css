@@ -388,6 +388,7 @@
     padding-bottom: 2px;
     padding-left: 46px;
     padding-right: 20px;
+    box-sizing: border-box;
 /*    overflow-x: hidden;*/
 }
 

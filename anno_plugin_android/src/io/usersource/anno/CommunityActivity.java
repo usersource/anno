@@ -1,4 +1,4 @@
-package io.usersource.annoplugin.view;
+package io.usersource.anno;
 
 import android.content.res.AssetFileDescriptor;
 import android.util.Log;

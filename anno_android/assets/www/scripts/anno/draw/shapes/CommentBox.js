@@ -162,11 +162,6 @@ define([
                         this.x.applyTransform({dy: shift.dy, dx: shift.dx});
                     });
 
-                    connect.connect(commentBoxMover, "onMoveStop", this, function (mover, shift)
-                    {
-                        //console.error('move stop');
-                    });
-
                     var pathMover = new gfx.Moveable(this.path);
                     var endpoint1Mover = new gfx.Moveable(this.endpoint1);
                     var endpoint2Mover = new gfx.Moveable(this.endpoint2);
@@ -211,10 +206,10 @@ define([
                         var pathPoints = this._getBoxPointsPathForBTEndpointChange(shift.dx, shift.dy);
 
                         this.path.setShape(pathPoints.path);
-                        var boundingBox = this.path.getTransformedBoundingBox();
 
-                        domStyle.set(this.txtNode, {left:(boundingBox[0].x+3+this.surface.borderWidth)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
-                        domStyle.set(this.inputNode, {left:(boundingBox[0].x+3+this.surface.borderWidth)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
+                        var mdx = this.path.matrix?this.path.matrix.dx:0;
+                        domStyle.set(this.txtNode, {left:(this.pathPoints[0].x+3+mdx+this.surface.borderWidth)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
+                        domStyle.set(this.inputNode, {left:(this.pathPoints[0].x+3+mdx+this.surface.borderWidth)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
                     }));
 
                     this._connects.push(connect.connect(endpoint2Mover, "onMoved", this, function (mover, shift)
@@ -255,8 +250,9 @@ define([
                         this.path.setShape(pathPoints.path);
                         this.x.applyTransform({dy: shift.dy, dx: shift.dx});
 
-                        domStyle.set(this.txtNode, {top:(this.pathPoints[0].y+3+this.surface.borderWidth)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
-                        domStyle.set(this.inputNode, {top:(this.pathPoints[0].y+3+this.surface.borderWidth)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
+                        var mdy = this.path.matrix?this.path.matrix.dy: 0;
+                        domStyle.set(this.txtNode, {top:(this.pathPoints[0].y+3+mdy+this.surface.borderWidth)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
+                        domStyle.set(this.inputNode, {top:(this.pathPoints[0].y+3+mdy+this.surface.borderWidth)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
                     }));
 
                     this._connects.push(this.x.on(touch.release, lang.hitch(this, this.onXTouched)));
