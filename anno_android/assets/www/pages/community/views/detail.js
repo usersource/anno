@@ -411,7 +411,7 @@ define([
                 var th = domStyle.get("textDataAreaContainer", "height");
                 var h = domStyle.get("annoCommentsContainer", "height");
 
-                domStyle.set("trayPlaceHolder", "height", (th-h-95)+"px");
+                domStyle.set("trayPlaceHolder", "height", (th-h-100)+"px");
             }
 
             var ach = domGeom.getMarginBox("annoCommentsSet");

@@ -80,17 +80,17 @@ define([
 
                 // create text node
                 this.txtNode = domConstruct.create('div', {
-                    style: "background-color:transparent;position:absolute;top:"+(this.pathPoints[0].y+3+this.surface.borderWidth)+"px;left:"+(this.pathPoints[0].x+3+this.surface.borderWidth)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
+                    style: "background-color:transparent;position:absolute;top:"+(this.pathPoints[0].y+3)+"px;left:"+(this.pathPoints[0].x+3)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
                     innerHTML:"<div id='textDiv_"+this.id+"' style='padding:3px;overflow:hidden;width:100%;height:100%;box-sizing: border-box;font-weight: normal;color: "+this.grayColor+";'>"+this.placeholder+"</div>"
-                }, document.body, 'last');
+                }, this.surface.container, 'last');
 
                 this.txtNode.gfxTarget = {isSelectTarget:true, sid:this.id};
-                this.txtNode.children[0].gfxTarget = {isSelectTarget:true, sid:this.id};
+                this.txtNode.children[0].gfxTarget = {isSelectTarget:true, sid:this.id}; //+this.surface.borderWidth
 
                 this.inputNode = domConstruct.create('div', {
-                    style: "background-color:transparent;display:none;position:absolute;top:"+(this.pathPoints[0].y+3+this.surface.borderWidth)+"px;left:"+(this.pathPoints[0].x+3+this.surface.borderWidth)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
+                    style: "background-color:transparent;display:none;position:absolute;top:"+(this.pathPoints[0].y+3)+"px;left:"+(this.pathPoints[0].x+3)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
                     innerHTML:"<textarea id='input_"+this.id+"' placeholder='Enter suggestion here' style='font-family: helvetica, arial;font-size: 13pt;font-weight: normal;background-color:transparent;width:100%;height:100%;border-color:transparent;outline: none;'></textarea>"
-                }, document.body, 'last');
+                }, this.surface.container, 'last');
                 this.inputElement = dom.byId("input_"+this.id);
 
                 // set comment text
@@ -208,8 +208,8 @@ define([
                         this.path.setShape(pathPoints.path);
 
                         var mdx = this.path.matrix?this.path.matrix.dx:0;
-                        domStyle.set(this.txtNode, {left:(this.pathPoints[0].x+3+mdx+this.surface.borderWidth)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
-                        domStyle.set(this.inputNode, {left:(this.pathPoints[0].x+3+mdx+this.surface.borderWidth)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
+                        domStyle.set(this.txtNode, {left:(this.pathPoints[0].x+3+mdx)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
+                        domStyle.set(this.inputNode, {left:(this.pathPoints[0].x+3+mdx)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
                     }));
 
                     this._connects.push(connect.connect(endpoint2Mover, "onMoved", this, function (mover, shift)
@@ -251,8 +251,8 @@ define([
                         this.x.applyTransform({dy: shift.dy, dx: shift.dx});
 
                         var mdy = this.path.matrix?this.path.matrix.dy: 0;
-                        domStyle.set(this.txtNode, {top:(this.pathPoints[0].y+3+mdy+this.surface.borderWidth)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
-                        domStyle.set(this.inputNode, {top:(this.pathPoints[0].y+3+mdy+this.surface.borderWidth)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
+                        domStyle.set(this.txtNode, {top:(this.pathPoints[0].y+3+mdy)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
+                        domStyle.set(this.inputNode, {top:(this.pathPoints[0].y+3+mdy)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
                     }));
 
                     this._connects.push(this.x.on(touch.release, lang.hitch(this, this.onXTouched)));

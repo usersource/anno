@@ -64,11 +64,11 @@ define([
 
                 if (this.earLow)
                 {
-                    textNodeTop = (this.pathPoints[5].y+3+this.surface.borderWidth);
+                    textNodeTop = (this.pathPoints[5].y+3);
                 }
                 else
                 {
-                    textNodeTop = (this.pathPoints[0].y+3+this.surface.borderWidth);
+                    textNodeTop = (this.pathPoints[0].y+3);
                 }
 
                 // create text node
@@ -80,17 +80,17 @@ define([
                 }
 
                 this.txtNode = domConstruct.create('div', {
-                    style: "background-color:transparent;position:absolute;top:"+(textNodeTop)+"px;left:"+(this.pathPoints[0].x+3+this.surface.borderWidth)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
+                    style: "background-color:transparent;position:absolute;top:"+(textNodeTop)+"px;left:"+(this.pathPoints[0].x+3)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
                     innerHTML:"<div id='textDiv_"+this.id+"' style='padding:3px;overflow:hidden;width:100%;height:100%;box-sizing: border-box;font-weight: normal;color: "+textColor+";'>"+this.placeholder+"</div>"
-                }, document.body, 'last');
+                }, this.surface.container, 'last');
 
                 this.txtNode.gfxTarget = {isSelectTarget:true, sid:this.id};
                 this.txtNode.children[0].gfxTarget = {isSelectTarget:true, sid:this.id};
 
                 this.inputNode = domConstruct.create('div', {
-                    style: "background-color:transparent;display:none;position:absolute;top:"+(textNodeTop)+"px;left:"+(this.pathPoints[0].x+3+this.surface.borderWidth)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
+                    style: "background-color:transparent;display:none;position:absolute;top:"+(textNodeTop)+"px;left:"+(this.pathPoints[0].x+3)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
                     innerHTML:"<textarea id='input_"+this.id+"' placeholder='Enter suggestion here' style='font-family: helvetica, arial;font-size: 13pt;font-weight: normal;background-color:transparent;width:100%;border-color:transparent;outline: none;overflow-x: auto; box-sizing2: border-box; height: 24px;'></textarea>"
-                }, document.body, 'last');
+                }, this.surface.container, 'last');
                 this.inputElement = dom.byId("input_"+this.id);
 
                 if (this.selectable)
@@ -186,15 +186,15 @@ define([
 
                         if (pathPoints.earLow)
                         {
-                            this.txtNode.style.top = (this.pathPoints[5].y+3+this.surface.borderWidth)+'px';
-                            this.inputNode.style.top = (this.pathPoints[5].y+3+this.surface.borderWidth)+'px';
+                            this.txtNode.style.top = (this.pathPoints[5].y+3)+'px';
+                            this.inputNode.style.top = (this.pathPoints[5].y+3)+'px';
 
                             this.shareBtnNode.style.top = (this.pathPoints[5].y-3+this.surface.borderWidth)+'px';
                         }
                         else
                         {
-                            this.txtNode.style.top = (this.pathPoints[0].y+3+this.surface.borderWidth)+'px';
-                            this.inputNode.style.top = (this.pathPoints[0].y+3+this.surface.borderWidth)+'px';
+                            this.txtNode.style.top = (this.pathPoints[0].y+3)+'px';
+                            this.inputNode.style.top = (this.pathPoints[0].y+3)+'px';
 
                             this.shareBtnNode.style.top = (this.pathPoints[0].y-3+this.surface.borderWidth)+'px';
                         }

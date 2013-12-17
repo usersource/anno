@@ -212,6 +212,10 @@ define([
                     doCallback(result);
                 }
             }
+            else
+            {
+                annoUtil.hideLoadingIndicator();
+            }
         };
 
         var doCallback = function(result)

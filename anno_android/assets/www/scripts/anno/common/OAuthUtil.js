@@ -37,6 +37,7 @@ define([
                 "&response_type=code" +
                 "&origin=http://localhost:8080" +
                 "&access_type=offline" +
+                "&approval_prompt=force" +
                 "&scope=" + this.oauthOptions.scope;
 
             this.checkingAuthCode = false;
@@ -74,22 +75,32 @@ define([
                     handleAs: "json"
                 }).then(function (data)
                     {
-                        self._saveRefreshToken(data);
                         console.error("post res: " + JSON.stringify(data));
 
-                        if (_hasUserInLocalDB)
+                        if (data&&data.refresh_token)
                         {
-                            if (self.authCallback)
+                            self._saveRefreshToken(data);
+                            if (_hasUserInLocalDB)
                             {
-                                self.authCallback({success: true, token: data});
+                                if (self.authCallback)
+                                {
+                                    self.authCallback({success: true, token: data});
+                                }
+                            }
+                            else
+                            {
+                                gapi.auth.setToken(data);
+                                self.getUserInfo(data);
                             }
                         }
                         else
                         {
-                            gapi.auth.setToken(data);
-                            self.getUserInfo(data);
+                            alert("Get access token error, please login again.");
+                            if (self.authCallback)
+                            {
+                                self.authCallback({success: false});
+                            }
                         }
-
                     }, function (err)
                     {
                         console.error("post res error: " + err);
@@ -194,12 +205,29 @@ define([
 
             if (_hasUserInLocalDB)
             {
-                ret = {
-                    authorized:true,
-                    newUser:newUser=='1',
-                    signinMethod:signinMethod,
-                    token:token
-                };
+                if (_localUserInfo.signinmethod == this.signinMethod.google)
+                {
+                    var refreshToken = this.getRefreshToken();
+                    if (refreshToken&&refreshToken!= 'undefined')
+                    {
+                        console.error(typeof refreshToken);
+                        ret = {
+                            authorized:true,
+                            newUser:newUser=='1',
+                            signinMethod:signinMethod,
+                            token:token
+                        };
+                    }
+                }
+                else
+                {
+                    ret = {
+                        authorized:true,
+                        newUser:newUser=='1',
+                        signinMethod:signinMethod,
+                        token:token
+                    };
+                }
             }
 
             if (token)
@@ -211,7 +239,9 @@ define([
         },
         getRefreshToken: function()
         {
-            return window.localStorage.getItem(this.refreshTokenKey);
+            var rt = window.localStorage.getItem(this.refreshTokenKey);
+            console.error("refresh token:" + rt);
+            return rt;
         },
         _isTokenExpired: function()
         {
