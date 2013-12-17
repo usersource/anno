@@ -20,7 +20,7 @@
     <script type="text/javascript" src="../../scripts/dojo/dojo.js"></script>
     <script>
         var frame = 0;
-        var intervalHandle = null;
+        var intervalHandle = null, timeoutHandle = null;
         var frameInterval = 240;
         var frameInterval2 = 340;
         var wentToMainActivity = false;
@@ -40,7 +40,7 @@
                     {
                         alert(err);
                     },
-                    "CordovaHttpService",
+                    "AnnoCordovaPlugin",
                     'exit_intro',
                     []
             );
@@ -164,6 +164,9 @@
 
             var gotoMainView = function(cview, reverse)
             {
+                window.clearInterval(intervalHandle);
+                window.clearTimeout(timeoutHandle);
+
                 if (cview == 1)
                 {
                     if (!reverse)
@@ -210,7 +213,7 @@
 
             var onSecondMainViewShown = function()
             {
-                window.setTimeout(function(){
+                timeoutHandle = window.setTimeout(function(){
                     if (registry.byId('mainView2').domNode.style.display != 'none')
                     {
                         registry.byId('mainView2').performTransition("view2", 1, "slide", null, onSecondMainViewTransEnd);
@@ -231,7 +234,7 @@
 
             var onThirdMainViewShown = function()
             {
-                window.setTimeout(function(){
+                timeoutHandle = window.setTimeout(function(){
                     if (registry.byId('mainView3').domNode.style.display != 'none')
                     {
                         gotoMainActivity();
@@ -265,6 +268,8 @@
                 document.getElementById('sc_caImage').src = "css/images/sc_ca1.png";
             };
 
+            var startX, startY, swipeEnd = true;
+
             ready(function ()
             {
                 var spacerDiv = document.getElementById('spacerDiv'), viewpoint = win.getBox();
@@ -278,26 +283,42 @@
                 registry.byId('mainView3').domNode.style.height = (viewpoint.h-20)+'px';
                 domStyle.set('titleMainView3', 'top', ((viewpoint.h-65)/2)+'px');
 
-                connect.connect(document.body, dojox.gesture.swipe.end, this, function (e)
+                connect.connect(document.body, "touchstart", function (e)
                 {
-                    var currentMainView = getCurrentMainView();
-
-                    if (currentMainView&&Math.abs(e.dx) > 20 && e.time > 100)
+                    if( e.touches.length == 1 )
                     {
-                        var direction = e.dx > 0 ? "right" : "left";
-                        this._doingTransition = true;
-                        if (direction == "left")
-                        {
-                            gotoMainView(currentMainView);
-                        }
-                        else
-                        {
-                            gotoMainView(currentMainView, true);
-                        }
+                        swipeEnd = false;
+                        startX = e.touches[0].pageX;
+                        startY = e.touches[0].pageY;
                     }
                 });
 
-                connect.connect(document.body, dojox.gesture.tap, this, function (e)
+                connect.connect(document.body, "touchmove", this, function (e)
+                {
+                    var currentMainView = getCurrentMainView();
+                    if (!currentMainView) return;
+                    if (swipeEnd) return;
+
+                    if( e.touches.length == 1 )
+                    {
+                        var endX = e.touches[0].pageX;
+                        var endY = e.touches[0].pageY;
+                        if ((startX-endX) >=6 &&Math.abs(startY-endY)<10)
+                        {
+                            dojo.stopEvent(e);
+                            gotoMainView(currentMainView);
+                        }
+                        else if ((startX-endX) <=-6 &&Math.abs(startY-endY)<10)
+                        {
+                            dojo.stopEvent(e);
+                            gotoMainView(currentMainView, true);
+                        }
+
+                        swipeEnd = true;
+                    }
+                });
+
+                connect.connect(document.body, "click", this, function (e)
                 {
                     var currentMainView = getCurrentMainView();
 
@@ -478,7 +499,7 @@
             return (node && node.nodeType === 1) &&node.getAttribute("ismainview")=="1";
         }
     </script>
-    <script type="text/javascript" src="../community/cordova-min.js"></script>
+    <script type="text/javascript" src="../../cordova.js"></script>
     <style>
         .mblPageIndicatorDot
         {
@@ -488,6 +509,12 @@
         .mblPageIndicatorDotSelected
         {
             background-color: #333333;
+        }
+
+        html, body{
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
         }
     </style>
 </head>

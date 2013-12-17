@@ -22,11 +22,11 @@
         "dojox/mobile/EdgeToEdgeList",
         "dojox/mvc/Repeat",
         "dojox/mobile/ListItem",
+        "dojox/mobile/RadioButton",
         "dojox/mvc/Output",
         "dojox/mvc/at",
         "dojox/mobile/ToolBarButton",
-        "dojox/mvc/Group",
-        "dojox/mobile/Tooltip"
+        "dojox/mvc/Group"
     ],
     // Modules for the application.  The are basically used as the second
     // array of mixins in a dojo.declare().  Modify the top level behavior
@@ -45,17 +45,10 @@
 
     //stores we are using
     "stores": {
-        "listStore":{
-            "type": "dojo/store/Memory",
-            "observable": true,
-            "params": {
-                "data": "modelApp.listData"
-            }
-        },
         "eventsStore":{
             "type": "dojo/store/Memory",
             "params":	{
-                "data": "modelApp.events"
+                "data": ""
             }
         }
     },
@@ -100,6 +93,21 @@
             "controller" : "./views/detail",
             "dependencies":[],
             "template": "./templates/detail.html"
+        },
+        "myStuff": {
+            "controller" : "./views/myStuff",
+            "dependencies":[],
+            "template": "./templates/myStuff.html"
+        },
+        "localAnnoViewer": {
+            "controller" : "./views/localAnnoViewer",
+            "dependencies":[],
+            "template": "./templates/localAnnoViewer.html"
+        },
+        "settings": {
+            "controller" : "./views/settings",
+            "dependencies":[],
+            "template": "./templates/settings.html"
         }
     }
 }

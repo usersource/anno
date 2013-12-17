@@ -5,6 +5,7 @@ define([
     "dojo/dom-class",
     "dojo/dom-geometry",
     "dojo/dom-style",
+    "dojo/json",
     "dojo/query",
     "dojo/_base/lang",
     "dojo/_base/connect",
@@ -14,9 +15,12 @@ define([
     "dijit/registry",
     "dojox/css3/transit",
     "dojo/store/Memory",
-    "dojox/mvc/getStateful"
+    "dojox/mvc/getStateful",
+    "anno/draw/Surface",
+    "anno/common/Util",
+    "anno/common/OAuthUtil"
 ],
-    function (arrayUtil, baseFX, dom, domClass, domGeom, domStyle, query, lang, connect, win, has, sniff, registry, transit, Memory, getStateful)
+    function (arrayUtil, baseFX, dom, domClass, domGeom, domStyle, dojoJson, query, lang, connect, win, has, sniff, registry, transit, Memory, getStateful, Surface, annoUtil, OAuthUtil)
     {
         var _connectResults = [],
             eventsModel = null,
@@ -26,17 +30,18 @@ define([
         var app = null,
             savingVote = false,
             savingFlag = false,
-            screenshotMargin = 8;
-        var currentAuthor = 'me',
-            annoTooltipY,
+            screenshotMargin = 0;
+        var annoTooltipY,
             goingNextRecord = null,
             loadingDetailData = false,
+            loadingImage = false,
             trayBarHeight = 30,
-            trayScreenHeight = 0;
+            trayScreenHeight = 0,
+            borderWidth;
 
-        var circleRadius = 17,
-            level1Color = "#ff9900",
-            level2Color = "#ff0000";
+        var imageBaseUrl = "https://usersource-anno.appspot.com/screenshot";
+        var surface;
+        var imageWidth, imageHeight;
 
         var wipeIn = function(args)
         {
@@ -125,24 +130,28 @@ define([
             domStyle.set("annoCommentsContainer", "height", (h-76-30-trayBarHeight)+"px");//104
 
             domStyle.set("appNameTextBox", "width", (viewPoint.w-30-6-10-40)+"px");
-            domStyle.set("screenshotTooltipDetail", "width", (viewPoint.w-screenshotMargin-viewPoint.w*0.10)+"px");
-
             domStyle.set("lightCover", {"width": (viewPoint.w)+"px", "height":(viewPoint.h)+'px'});
         };
 
         var screenshotImageOnload = function()
         {
+            console.error("screenshot loaded.");
+            if (!loadingDetailData)
+            {
+                annoUtil.hideLoadingIndicator();
+            }
+
+            loadingImage = false;
             annoTooltipY = null;
             window.setTimeout(function(){
 
                 var imgScreenshot = dom.byId('imgDetailScreenshot');
                 var viewPoint = win.getBox();
-                var tooltipWidget = registry.byId('textTooltip');
                 var deviceRatio = parseFloat((viewPoint.w/viewPoint.h).toFixed(2));
                 var orignialDeviceRatio = parseFloat((imgScreenshot.naturalWidth/imgScreenshot.naturalHeight).toFixed(2));
 
                 var orignialRatio = imgScreenshot.naturalHeight/imgScreenshot.naturalWidth;
-                var imageWidth, imageHeight;
+                //var imageWidth, imageHeight;
 
                 if (orignialDeviceRatio == deviceRatio)
                 {
@@ -151,28 +160,16 @@ define([
                     imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio;
 
                     console.error("image width: "+imageWidth+", image height: "+imageHeight);
-
-                    imgScreenshot.width = imageWidth;
-                    imgScreenshot.height = imageHeight;
                 }
                 else if (orignialDeviceRatio < deviceRatio) // taller than current device
                 {console.error('taller ratio: o:'+orignialDeviceRatio+", d:"+ deviceRatio);
-                    imageWidth = Math.round((viewPoint.h-8)/orignialRatio);
-                    imageHeight = (viewPoint.h-8);
-
-                    imgScreenshot.width = imageWidth;
-                    imgScreenshot.height = imageHeight;
-                    imgScreenshot.style.width = imageWidth+'px';
-
+                    imageWidth = Math.round((viewPoint.h-0)/orignialRatio);
+                    imageHeight = (viewPoint.h-0);
                 }
                 else if (orignialDeviceRatio > deviceRatio) // wider than current device
                 {console.error('wider ratio');
                     imageWidth = (viewPoint.w-screenshotMargin);
                     imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio;
-
-                    imgScreenshot.width = imageWidth;
-                    imgScreenshot.height = imageHeight;
-                    imgScreenshot.style.width = imageWidth+'px';
                 }
 
                 domStyle.set("lightCoverScreenshot", "width", (30)+"px");
@@ -186,67 +183,8 @@ define([
                     domStyle.set("lightCoverScreenshot", "height", (imageHeight+400)+"px");
                 }
 
-                imageWidth = imgScreenshot.width;
-                imageHeight = imgScreenshot.height;
-
-                var toolTipDivWidth = imageWidth - 40;
-                domStyle.set("screenshotTooltipDetail", "width", toolTipDivWidth+"px");
-
-                if (eventsModel.cursor.circleX != null)
-                {
-                    var tx = (imageWidth*eventsModel.cursor.circleX)/10000 -circleRadius;
-                    var ty = (imageHeight*eventsModel.cursor.circleY)/10000 -circleRadius;
-
-                    console.error("view w: "+viewPoint.w+", view h: "+viewPoint.h);
-                    console.error("image width2: "+imageWidth+", image height2: "+imageHeight);
-                    console.error("x: "+tx+", y: "+ty);
-
-                    domStyle.set("screenshotAnchorDetail", {
-                        top: ty+'px',
-                        left: tx+'px',
-                        display: ''
-                    });
-
-                    domStyle.set("screenshotAnchorInvisibleDetail", {
-                        top: ty+'px'
-                    });
-
-                    if (ty > (domStyle.get("screenshotTooltipDetail", "height")+14))
-                    {
-                        tooltipWidget.show(dom.byId('screenshotAnchorInvisibleDetail'), ['above-centered','below-centered','before','after']);
-                        annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))+14;
-                        domStyle.set(tooltipWidget.domNode, 'top', annoTooltipY+'px');
-                    }
-                    else
-                    {
-                        tooltipWidget.show(dom.byId('screenshotAnchorInvisibleDetail'), ['below-centered','below-centered','after','before']);
-                        annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))-14;
-                        domStyle.set(tooltipWidget.domNode, 'top', annoTooltipY+'px');
-                    }
-
-                    var pos = domGeom.position("screenshotAnchorDetail", true);
-                    var tpLeft = domStyle.get(tooltipWidget.domNode, 'left');
-                    domStyle.set(tooltipWidget.anchor, {
-                        left: (pos.x-tpLeft+2)+'px'
-                    });
-
-                    if (textDataAreaShown)
-                    {
-                        tooltipWidget.hide();
-                    }
-                }
-                else
-                {
-                    domStyle.set("screenshotAnchorDetail", "display", "none");
-                    tooltipWidget.show(dom.byId('screenshotDefaultAnchorDetail'), ['below-centered','below-centered','after','before']);
-                    annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))-14;
-                    domStyle.set(tooltipWidget.domNode, 'top', annoTooltipY+'px');
-
-                    if (textDataAreaShown)
-                    {
-                        tooltipWidget.hide();
-                    }
-                }
+                borderWidth = Math.floor(imageWidth*0.02);
+                applyAnnoLevelColor(eventsModel.cursor.level);
 
                 adjustNavBarZIndex();
 
@@ -271,7 +209,100 @@ define([
 
                 adjustNavBarSize();
 
+                redrawShapes();
             }, 10);
+        };
+
+        var screenshotImageOnerror = function()
+        {
+            console.error("screenshot loaded error.");
+            loadingImage = false;
+            if (!loadingDetailData)
+            {
+                annoUtil.hideLoadingIndicator();
+            }
+
+            surface.clear();
+            surface.hide();
+        };
+
+        var redrawShapes = function()
+        {
+            var drawElements = eventsModel.cursor.draw_elements;
+            var lineStrokeStyle = {color: eventsModel.cursor.level==1?annoUtil.level1Color:annoUtil.level2Color, width: 3};
+            if (drawElements)
+            {
+                var elementsObject = dojoJson.parse(drawElements);
+
+                surface.show();
+                domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', left:(-borderWidth)+'px',top:(-borderWidth)+'px'});
+
+                surface.borderWidth = borderWidth;
+                surface.setDimensions(imageWidth-borderWidth*2, imageHeight-borderWidth*2);
+
+                surface.parse(elementsObject, lineStrokeStyle);
+
+                console.error('redrawShapes end');
+            }
+            else
+            {
+
+                domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', left:(-borderWidth)+'px',top:(-borderWidth)+'px'});
+
+                surface.borderWidth = borderWidth;
+                surface.setDimensions(imageWidth-borderWidth*2, imageHeight-borderWidth*2);
+
+                surface.clear();
+                surface.show();
+
+                var earLow = !eventsModel.cursor.simple_circle_on_top;
+
+                var toolTipDivWidth = (imageWidth-borderWidth*2-60),
+                    pxPerChar = 8,
+                    charsPerLine = toolTipDivWidth/pxPerChar;
+
+                var commentText = eventsModel.cursor.annoText;
+                var lines = Math.max(Math.round(commentText.length/charsPerLine),1);
+
+                if (lines > 4 )
+                {
+                    lines = 4;
+                    //var shortText = commentText.substr(0, charsPerLine*4-10)+"...";
+                    //commentText = shortText;
+                }
+
+                var boxHeight = 34 + (lines-1)*22;
+                var epLineStyle, epFillStyle;
+
+                if (eventsModel.cursor.level==1)
+                {
+                    epLineStyle = {color:'#FFA500', width:1};
+                    epFillStyle = "rgba(255,165,0, 0.4)";
+                }
+                else
+                {
+                    epLineStyle = {color:'#FF0000',width:1};
+                    epFillStyle = "rgba(255,12,9, 0.4)";
+                }
+
+                var tx = Math.round(((imageWidth-borderWidth*2)*eventsModel.cursor.circleX)/10000);
+                var ty = Math.round(((imageHeight-borderWidth*2)*eventsModel.cursor.circleY)/10000);
+
+                var commentBox = surface.createSimpleCommentBox({
+                    deletable:false,
+                    startX:tx,
+                    startY: ty,
+                    selectable:false,
+                    shareBtnWidth:0,
+                    boxHeight:boxHeight,
+                    earLow:earLow,
+                    placeholder:commentText,
+                    commentText:eventsModel.cursor.annoText,
+                    lineStrokeStyle:lineStrokeStyle,
+                    endpointStrokeStyle:epLineStyle,
+                    endpointFillStyle:epFillStyle
+                });
+            }
         };
 
         var setDetailsContext = function (index)
@@ -281,7 +312,7 @@ define([
             if (idx < eventsModel.model.length)
             {
                 console.error("level:"+eventsModel.cursor.level);
-                applyAnnoLevelColor(eventsModel.cursor.level);
+                //applyAnnoLevelColor(eventsModel.cursor.level);
 
                 eventsModel.set("cursorIndex", idx);
                 currentIndex = idx;
@@ -305,25 +336,6 @@ define([
                     domClass.remove("navBtnPrevious", "navBtnDisabled");
                 }
 
-                var tooltipWidget = registry.byId('textTooltip');
-                var viewPoint = win.getBox();
-
-                // was (viewPoint.w-30-viewPoint.w*0.10)
-                var toolTipDivWidth = (viewPoint.w-30-viewPoint.w*0.10),
-                    pxPerChar = 8,
-                    charsPerLine = toolTipDivWidth/pxPerChar;
-
-                if (eventsModel.cursor.annoText.length >= charsPerLine*3)
-                {
-                    var shortText = eventsModel.cursor.annoText.substr(0, charsPerLine*3-3)+"...";
-
-                    dom.byId('screenshotTooltipDetail').innerHTML = shortText;
-                }
-
-                //dom.byId("imgDetailScreenshot").width = (viewPoint.w-30);
-                domStyle.set("screenshotTooltipDetail", "width", toolTipDivWidth+"px");
-
-
                 if (eventsModel.cursor.app == null||eventsModel.cursor.app == ''||eventsModel.cursor.app.toLowerCase() == 'unknown')
                 {
                     domStyle.set('editAppNameImg', 'display', '');
@@ -334,7 +346,7 @@ define([
                     domStyle.set('editAppNameImg', 'display', 'none');
                 }
 
-                if (eventsModel.cursor.vote == "true")
+                if (eventsModel.cursor.vote == true)
                 {
                     if (!domClass.contains('imgThumbsUp','icoImgActive'))
                     {
@@ -346,7 +358,7 @@ define([
                     domClass.remove('imgThumbsUp', 'icoImgActive');
                 }
 
-                if (eventsModel.cursor.flag == "true")
+                if (eventsModel.cursor.flag == true)
                 {
                     if (!domClass.contains('imgFlag','icoImgActive'))
                     {
@@ -364,17 +376,19 @@ define([
 
         var applyAnnoLevelColor = function(level)
         {
+            borderWidth = Math.floor(imageWidth*0.02);
             level = level||1;
             if (level == 1)
             {
-                domStyle.set('imgDetailScreenshot', 'borderColor', level1Color);
-                drawOrangeCircle(1);
+                console.error("img width:"+(imageWidth-borderWidth*2));
+
+                domStyle.set('screenshotContainerDetail', {width:(imageWidth-borderWidth*2)+'px',height:(imageHeight-borderWidth*2)+'px', 'borderColor': annoUtil.level1Color,'borderStyle':'solid', 'borderWidth':borderWidth+'px'});
+                domStyle.set('imgDetailScreenshot', {width:'100%',height:'100%'});
             }
             else if (level == 2)
             {
-                domStyle.set('imgDetailScreenshot', 'borderColor', level2Color);
-                console.error(domStyle.get('imgDetailScreenshot', 'border'));
-                drawOrangeCircle(2);
+                domStyle.set('screenshotContainerDetail', {width:(imageWidth-borderWidth*2)+'px',height:(imageHeight-borderWidth*2)+'px', 'borderColor': annoUtil.level2Color,'borderStyle':'solid', 'borderWidth':borderWidth+'px'});
+                domStyle.set('imgDetailScreenshot', {width:'100%',height:'100%'});
             }
         };
 
@@ -397,7 +411,7 @@ define([
                 var th = domStyle.get("textDataAreaContainer", "height");
                 var h = domStyle.get("annoCommentsContainer", "height");
 
-                domStyle.set("trayPlaceHolder", "height", (th-h-95)+"px");
+                domStyle.set("trayPlaceHolder", "height", (th-h-100)+"px");
             }
 
             var ach = domGeom.getMarginBox("annoCommentsSet");
@@ -444,11 +458,6 @@ define([
         {
             if (textDataAreaShown) return;
 
-            if (window.CMActivity)
-            {
-                window.CMActivity.disableBackButton();
-            }
-
             domStyle.set("imgDetailScreenshot", "opacity", '0.4');
             wipeIn({
                 node:"textDataAreaContainer",
@@ -459,19 +468,21 @@ define([
                     adjustAnnoCommentSize();
                 }
             }).play();
-            registry.byId('textTooltip').hide();
 
             textDataAreaShown = true;
             domStyle.set("headingDetail", "display", 'none');
+
+            document.addEventListener("backbutton", handleBackButton, false);
         };
 
-        var hideTextData = window.hideTrayScreen = function()
+        var handleBackButton = function()
+        {
+            hideTextData();
+        };
+
+        var hideTextData = function()
         {
             if (!textDataAreaShown) return;
-            if (window.CMActivity)
-            {
-                window.CMActivity.enableBackButton();
-            }
 
             domStyle.set("lightCoverScreenshot", "display", 'none');
             domStyle.set("imgDetailScreenshot", "opacity", '1');
@@ -484,41 +495,10 @@ define([
                 }
             }).play();
 
-            domClass.replace(registry.byId('textTooltip').domNode, "mblTooltipVisible" ,"mblTooltipHidden");
-
             textDataAreaShown = false;
 
             domStyle.set("headingDetail", "display", '');
-        };
-
-        var drawOrangeCircle = function(level)
-        {
-            level = level||1;
-            var lineColor, fillColor;
-
-            if (level == 1)
-            {
-                lineColor = "#FFA500";
-                fillColor = "rgba(255,165,0, 0.4)";
-            }
-            else
-            {
-                lineColor = "#FF0000";
-                fillColor = "rgba(255,12,9, 0.4)";
-            }
-
-            var ctx = dom.byId('screenshotAnchorDetail').getContext('2d');
-            var canvasWidth = 32;
-
-            ctx.clearRect(0, 0, 40, 40);
-            ctx.beginPath();
-            ctx.strokeStyle = lineColor;
-            ctx.lineWidth = 3;
-            ctx.arc(20, 20, canvasWidth/2, 0, 2 * Math.PI, true);
-            ctx.stroke();
-            ctx.fillStyle = fillColor;
-            ctx.arc(20, 20, canvasWidth/2-3, 0, 2 * Math.PI, true);
-            ctx.fill();
+            document.removeEventListener("backbutton", handleBackButton, false);
         };
 
         var showAppNameTextBox = function()
@@ -529,12 +509,10 @@ define([
 
             domStyle.set('appNameSpanDetail', 'display', 'none');
             domStyle.set('appNameTextBox', {display: '', top:pos.y+'px', left:pos.x+'px'});
-            //domStyle.set('lightCover', 'display', '');
 
             window.setTimeout(function(){
                 dom.byId('appNameTextBox').click();
                 dom.byId('appNameTextBox').focus();
-                //domStyle.set('lightCover', {'display': '','backgroundColor':'#000000', 'opacity':'0.8'});
             },300);
             dom.byId('hiddenBtn').focus();
 
@@ -557,143 +535,60 @@ define([
                 domStyle.set('editAppNameImg', 'display', '');
             }
 
-            showLoadingIndicator();
-            cordova.exec(
-                function (data)
-                {
-                    if (!data)
+            annoUtil.showLoadingIndicator();
+            OAuthUtil.getAccessToken(function(){
+                annoUtil.loadAPI(annoUtil.API.anno, function(){
+                    var annoApi = gapi.client.anno.anno.merge({id:id, app_name:newAppName});
+                    annoApi.execute(function (data)
                     {
-                        hideLoadingIndicator();
+                        if (!data)
+                        {
+                            annoUtil.hideLoadingIndicator();
 
+                            dom.byId('hiddenBtn').focus();
+
+                            domStyle.set('appNameSpanDetail', 'display', '');
+                            domStyle.set('appNameTextBox', {display: 'none'});
+                            domStyle.set('lightCover', 'display', 'none');
+                            domStyle.set('editAppNameImg', 'display', '');
+
+                            alert("Update app name returned from server is empty.");
+                        }
+
+                        if (data.error)
+                        {
+                            annoUtil.hideLoadingIndicator();
+
+                            dom.byId('hiddenBtn').focus();
+
+                            domStyle.set('appNameSpanDetail', 'display', '');
+                            domStyle.set('appNameTextBox', {display: 'none'});
+                            domStyle.set('lightCover', 'display', 'none');
+                            domStyle.set('editAppNameImg', 'display', '');
+
+                            alert(data.message);
+                            return;
+                        }
+                        console.error(JSON.stringify(data.result));
+
+                        var currentAnno = eventsModel.cursor;
+                        currentAnno.set('app', newAppName);
+
+                        annoUtil.hideLoadingIndicator();
                         dom.byId('hiddenBtn').focus();
 
                         domStyle.set('appNameSpanDetail', 'display', '');
                         domStyle.set('appNameTextBox', {display: 'none'});
                         domStyle.set('lightCover', 'display', 'none');
                         domStyle.set('editAppNameImg', 'display', '');
-
-                        alert("Update app name returned from server is empty.");
-                        return;
-                    }
-
-                    if (data.success != "true")
-                    {
-                        hideLoadingIndicator();
-
-                        dom.byId('hiddenBtn').focus();
-
-                        domStyle.set('appNameSpanDetail', 'display', '');
-                        domStyle.set('appNameTextBox', {display: 'none'});
-                        domStyle.set('lightCover', 'display', 'none');
-                        domStyle.set('editAppNameImg', 'display', '');
-
-                        alert(data.message);
-                        return;
-                    }
-
-
-                    var currentAnno = eventsModel.cursor;
-                    currentAnno.set('app', newAppName);
-
-                    hideLoadingIndicator();
-                    dom.byId('hiddenBtn').focus();
-
-                    domStyle.set('appNameSpanDetail', 'display', '');
-                    domStyle.set('appNameTextBox', {display: 'none'});
-                    domStyle.set('lightCover', 'display', 'none');
-                    domStyle.set('editAppNameImg', 'display', '');
-
-                },
-                function (err)
-                {
-                    hideLoadingIndicator();
-
-                    dom.byId('hiddenBtn').focus();
-
-                    domStyle.set('appNameSpanDetail', 'display', '');
-                    domStyle.set('appNameTextBox', {display: 'none'});
-                    domStyle.set('lightCover', 'display', 'none');
-                    domStyle.set('editAppNameImg', 'display', '');
-
-                    alert(err);
-                },
-                "CordovaHttpService",
-                "update_app_name",
-                [{anno_id: id, "app_name": newAppName}]
-
-            );
-        };
-
-        var showToastMsg = function(msg)
-        {
-            var vp = win.getBox(), msgContainer = dom.byId('toastMsgContainer');
-
-            msgContainer.innerHTML = msg;
-            domStyle.set(msgContainer, {
-                top: (vp.h-20)/2+'px',
-                left: (vp.w-230)/2+'px',
-                display:''
-            });
-
-            window.setTimeout(function(){
-                domStyle.set(msgContainer, {
-                    display:'none'
+                    });
                 });
-            }, 3000);
-
-            /*baseFX.fadeIn({
-                node: msgContainer,
-                start:0,
-                duration:750,
-                onEnd:function()
-                {
-                    window.setTimeout(function(){
-                        alert(baseFX+"3");
-                        baseFX.fadeOut({
-                            node: dom.byId('toastMsgContainer'),
-                            start:1,
-                            duration:750
-                        }).play();
-                    }, 3000);
-                }
-            }).play();*/
-        };
-
-        var showLoadingIndicator = function()
-        {
-            var cl = loadingIndicator;
-
-            if (!cl)
-            {
-                cl = loadingIndicator = new CanvasLoader('', {
-                    id: "detail_loading"
-                });
-                cl.setColor('#302730');
-                cl.setDiameter(50);
-                cl.setRange(0.9);
-            }
-
-            var viewPoint = win.getBox();
-            domStyle.set("detail_loading", {
-                position: 'absolute',
-                left: ((viewPoint.w-50)/2) + 'px',
-                top: ((viewPoint.h-50)/2) + 'px',
-                zIndex:4000
             });
-
-            cl.show();
-        };
-        var hideLoadingIndicator = function()
-        {
-            if (loadingIndicator)
-            {
-                loadingIndicator.hide();
-            }
         };
 
         var loadDetailData = function(cursor)
         {
-            if (loadingDetailData) return;
+            if (loadingDetailData||loadingImage) return;
 
             loadingDetailData = true;
             var previousAnno = eventsModel.cursor||eventsModel.model[0];
@@ -714,62 +609,75 @@ define([
                 id = eventsModel.cursor.id;
             }
 
-            showLoadingIndicator();
-            cordova.exec(
-                function (data)
-                {
-                    if (!data&&!data.anno)
+            loadingImage = true;
+            dom.byId('imgDetailScreenshot').src = imageBaseUrl+"?anno_id="+id;
+            console.error("image url: "+imageBaseUrl+"?anno_id="+id);
+
+            annoUtil.showLoadingIndicator();
+
+            OAuthUtil.getAccessToken(function(){
+                annoUtil.loadAPI(annoUtil.API.anno, function(){
+                    var getAnnoList = gapi.client.anno.anno.get({id:id});
+                    getAnnoList.execute(function (data)
                     {
+                        if (!data)
+                        {
+                            annoUtil.hideLoadingIndicator();
+                            loadingDetailData = false;
+                            alert("Annos returned from server are empty.");
+                            return;
+                        }
+
+                        if (data.error)
+                        {
+                            annoUtil.hideLoadingIndicator();
+                            loadingDetailData = false;
+
+                            alert("An error occurred when calling anno.get api: "+data.error.message);
+                            return;
+                        }
+                        console.error(JSON.stringify(data.result));
+                        var currentAnno = eventsModel.cursor||eventsModel.model[0], returnAnno = data.result, deviceInfo = '';
+
+                        currentAnno.set('circleX', parseInt(returnAnno.simple_x, 10));
+                        currentAnno.set('circleY', parseInt(returnAnno.simple_y, 10));
+
+                        if (returnAnno.followup_list)
+                        {
+                            for (var j=0;j<returnAnno.followup_list.length;j++)
+                            {
+                                returnAnno.followup_list[j].user_id = returnAnno.followup_list[j].creator.display_name||returnAnno.followup_list[j].creator.user_email||returnAnno.followup_list[j].creator.id;
+                            }
+                        }
+
+                        currentAnno.set('comments',new getStateful(returnAnno.followup_list||[]));
+
+                        deviceInfo = (returnAnno.device_model||'&nbsp;')+'&nbsp;'+(returnAnno.os_name||'&nbsp;')+(returnAnno.os_version||'&nbsp;');
+                        currentAnno.set('deviceInfo', deviceInfo);
+
+                        currentAnno.set('vote', returnAnno.is_my_vote);
+                        currentAnno.set('flag', returnAnno.is_my_flag);
+                        currentAnno.set('level', returnAnno.level);
+                        currentAnno.set('draw_elements', returnAnno.draw_elements||"");
+
                         loadingDetailData = false;
-                        hideLoadingIndicator();
-                        alert("Anno detail returned from server is empty.");
-                        return;
-                    }
 
-                    if (data.success != "true")
-                    {
-                        loadingDetailData = false;
-                        hideLoadingIndicator();
-                        alert(data.message);
-                        return;
-                    }
+                        if (!loadingImage)
+                        {
+                            annoUtil.hideLoadingIndicator();
+                            redrawShapes();
+                        }
 
-                    var currentAnno = eventsModel.cursor||eventsModel.model[0], returnAnno = data.anno, deviceInfo = '';
+                        setDetailsContext(cursor);
 
-                    currentAnno.set('circleX', parseInt(returnAnno.circleX, 10));
-                    currentAnno.set('circleY', parseInt(returnAnno.circleY, 10));
-
-                    currentAnno.set('screenshot', "data:image/png;base64,"+returnAnno.screenshot);
-
-                    currentAnno.set('comments',new getStateful(returnAnno.comments));
-
-                    deviceInfo = (returnAnno.deviceModel||'&nbsp;')+'&nbsp;'+(returnAnno.OSVersion||'&nbsp;');
-                    currentAnno.set('deviceInfo', deviceInfo);
-
-                    currentAnno.set('vote', returnAnno.vote);
-                    currentAnno.set('flag', returnAnno.flag);
-                    currentAnno.set('level', returnAnno.level);
-
-                    loadingDetailData = false;
-                    hideLoadingIndicator();
-                    setDetailsContext(cursor);
-
-                },
-                function (err)
-                {
-                    loadingDetailData = false;
-                    hideLoadingIndicator();
-                    alert(err);
-                },
-                "CordovaHttpService",
-                "get_anno_detail",
-                [{anno_id: id}]
-            );
+                    });
+                });
+            });
         };
 
         var saveComment = function(comment)
         {
-            var author = currentAuthor;
+            var author = currentUserInfo.nickname;
             var id;
             if (!eventsModel.cursor)
             {
@@ -780,41 +688,36 @@ define([
                 id = eventsModel.cursor.id;
             }
 
-            showLoadingIndicator();
-            cordova.exec(
-                function (data)
-                {
-                    if (!data)
+            annoUtil.showLoadingIndicator();
+
+            OAuthUtil.getAccessToken(function(){
+                annoUtil.loadAPI(annoUtil.API.followUp, function(){
+                    var getAnnoList = gapi.client.followup.followup.insert({anno_id:id, comment:comment});
+                    getAnnoList.execute(function (data)
                     {
-                        hideLoadingIndicator();
-                        alert("Add followup returned from server is empty.");
-                        return;
-                    }
+                        if (!data)
+                        {
+                            annoUtil.hideLoadingIndicator();
+                            alert("Annos returned from server are empty.");
+                            return;
+                        }
 
-                    if (data.success != "true")
-                    {
-                        hideLoadingIndicator();
-                        alert(data.message);
-                        return;
-                    }
+                        if (data.error)
+                        {
+                            annoUtil.hideLoadingIndicator();
+                            alert("An error occurred when calling anno.get api: "+data.error.message);
+                            return;
+                        }
+                        console.error(JSON.stringify(data.result));
 
-                    console.error(window.JSON.stringify(data));
-                    var currentAnno = eventsModel.cursor||eventsModel.model[0];
+                        var currentAnno = eventsModel.cursor||eventsModel.model[0];
 
-                    hideLoadingIndicator();
-                    currentAnno.comments.splice(0,0,new getStateful({author:author, comment:comment}));
-                    adjustAnnoCommentSize();
-                },
-                function (err)
-                {
-                    hideLoadingIndicator();
-                    alert(err);
-                },
-                "CordovaHttpService",
-                "add_follow_up",
-                [{anno_id: id, comment:comment}]
-
-            );
+                        annoUtil.hideLoadingIndicator();
+                        currentAnno.comments.splice(0,0,new getStateful({user_id:author, comment:comment}));
+                        adjustAnnoCommentSize();
+                    });
+                });
+            });
         };
 
         var saveVote = function(action)
@@ -831,48 +734,57 @@ define([
                 id = eventsModel.cursor.id;
             }
 
-            showLoadingIndicator();
-            cordova.exec(
-                function (data)
-                {
-                    if (!data)
-                    {
-                        hideLoadingIndicator();
-                        alert("Data returned from server is empty.");
-                        savingVote = false;
-                        return;
-                    }
+            annoUtil.showLoadingIndicator();
 
-                    if (data.success != "true")
-                    {
-                        hideLoadingIndicator();
-                        alert(data.message);
-                        savingVote = false;
-                        return;
-                    }
+            OAuthUtil.getAccessToken(function(){
+                annoUtil.loadAPI(annoUtil.API.vote, function(){
+                    var voteApi, apiName;
 
-                    if (action == "remove_vote")
+                    if (action == "add_vote")
                     {
-                        domClass.remove('imgThumbsUp', 'icoImgActive');
+                        voteApi = gapi.client.vote.vote.insert({anno_id:id});
+                        apiName = "vote.insert";
                     }
                     else
                     {
-                        domClass.add('imgThumbsUp', 'icoImgActive');
+                        voteApi = gapi.client.vote.vote.delete({anno_id:id});
+                        apiName = "vote.delete";
                     }
-                    hideLoadingIndicator();
-                    savingVote = false;
-                },
-                function (err)
-                {
-                    hideLoadingIndicator();
-                    alert(err);
-                    savingVote = false;
-                },
-                "CordovaHttpService",
-                action,
-                [{anno_id: id}]
 
-            );
+                    voteApi.execute(function (data)
+                    {
+                        if (!data)
+                        {
+                            annoUtil.hideLoadingIndicator();
+                            alert("vote api result returned from server are empty.");
+                            savingVote = false;
+                            return;
+                        }
+
+                        if (data.error)
+                        {
+                            annoUtil.hideLoadingIndicator();
+
+                            alert("An error occurred when calling "+apiName+" api: "+data.error.message);
+                            savingVote = false;
+                            return;
+                        }
+                        console.error(JSON.stringify(data.result));
+
+                        if (action == "remove_vote")
+                        {
+                            domClass.remove('imgThumbsUp', 'icoImgActive');
+                        }
+                        else
+                        {
+                            domClass.add('imgThumbsUp', 'icoImgActive');
+                        }
+
+                        savingVote = false;
+                        annoUtil.hideLoadingIndicator();
+                    });
+                });
+            });
         };
 
         var saveFlag = function(action)
@@ -889,48 +801,56 @@ define([
                 id = eventsModel.cursor.id;
             }
 
-            showLoadingIndicator();
-            cordova.exec(
-                function (data)
-                {
-                    if (!data)
-                    {
-                        hideLoadingIndicator();
-                        alert("Data returned from server is empty.");
-                        savingFlag = false;
-                        return;
-                    }
+            annoUtil.showLoadingIndicator();
 
-                    if (data.success != "true")
-                    {
-                        hideLoadingIndicator();
-                        alert(data.message);
-                        savingFlag = false;
-                        return;
-                    }
+            OAuthUtil.getAccessToken(function(){
+                annoUtil.loadAPI(annoUtil.API.flag, function(){
+                    var flatApi, apiName;
 
-                    if (action == "remove_flag")
+                    if (action == "add_flag")
                     {
-                        domClass.remove('imgFlag', 'icoImgActive');
+                        flatApi = gapi.client.flag.flag.insert({anno_id:id});
+                        apiName = "flag.insert";
                     }
                     else
                     {
-                        domClass.add('imgFlag', 'icoImgActive');
+                        flatApi = gapi.client.flag.flag.delete({anno_id:id});
+                        apiName = "flag.delete";
                     }
-                    hideLoadingIndicator();
-                    savingFlag = false;
-                },
-                function (err)
-                {
-                    hideLoadingIndicator();
-                    alert(err);
-                    savingFlag = false;
-                },
-                "CordovaHttpService",
-                action,
-                [{anno_id: id}]
 
-            );
+                    flatApi.execute(function (data)
+                    {
+                        if (!data)
+                        {
+                            annoUtil.hideLoadingIndicator();
+                            alert("vote api result returned from server are empty.");
+                            savingFlag = false;
+                            return;
+                        }
+
+                        if (data.error)
+                        {
+                            annoUtil.hideLoadingIndicator();
+
+                            alert("An error occurred when calling "+apiName+" api: "+data.error.message);
+                            savingFlag = false;
+                            return;
+                        }
+                        console.error(JSON.stringify(data.result));
+
+                        if (action == "remove_flag")
+                        {
+                            domClass.remove('imgFlag', 'icoImgActive');
+                        }
+                        else
+                        {
+                            domClass.add('imgFlag', 'icoImgActive');
+                        }
+                        annoUtil.hideLoadingIndicator();
+                        savingFlag = false;
+                    });
+                });
+            });
         };
 
         var touchStartOnTrayScreen = function(e)
@@ -970,7 +890,7 @@ define([
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('navBtnNext'), "click", function ()
-                {console.error('nextbtn');
+                {
                     goNextRecord();
                 }));
 
@@ -1038,7 +958,7 @@ define([
                     {
                         if (domClass.contains('imgFlag','icoImgActive'))
                         {
-                            showToastMsg("You must unflag the annotation up.");
+                            annoUtil.showToastMessage("You must unflag the annotation up.");
                             return;
                         }
 
@@ -1132,6 +1052,11 @@ define([
                     if (!textDataAreaShown)
                         showTextData();
                 }));
+                _connectResults.push(connect.connect(dom.byId("gfxCanvasContainer"), "click", function (e)
+                {
+                    if (!textDataAreaShown)
+                        showTextData();
+                }));
 
                 _connectResults.push(connect.connect(dom.byId('bottomPlaceholder'), "touchstart", touchStartOnTrayScreen));
 
@@ -1172,32 +1097,24 @@ define([
                     domStyle.set(registry.byId('textTooltip').domNode, 'top', (annoTooltipY-parentScrollTop)+'px');
                 }));
 
-                drawOrangeCircle();
-
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;
+                dom.byId("imgDetailScreenshot").onerror = screenshotImageOnerror;
                 domStyle.set('modelApp_detail','backgroundColor', '#333333');
 
-                cordova.exec(
-                    function (data)
-                    {
-                        if (data&&data.current_user)
-                        {
-                            currentAuthor = data.current_user;
-                        }
-                    },
-                    function (err)
-                    {
-                        alert(err);
-                    },
-                    "CordovaHttpService",
-                    'get_account_name',
-                    []
-                );
+                // create surface
+                surface = new Surface({
+                    container: dom.byId("gfxCanvasContainer"),
+                    width:500,
+                    height:500,
+                    editable:false,
+                    borderWidth:0
+                });
             },
             afterActivate: function()
             {
                 goingNextRecord = null;
                 loadingDetailData = false;
+                loadingImage = false;
 
                 var cursor = this.params["cursor"];
                 if (this.params["cursor"] != null)
@@ -1208,24 +1125,20 @@ define([
                 }
                 adjustSize();
 
-                domClass.replace(registry.byId('textTooltip').domNode, "mblTooltipVisible" ,"mblTooltipHidden");
                 textDataAreaShown = false;
                 domStyle.set("headingDetail", "display", '');
             },
             beforeDeactivate: function()
             {
-                registry.byId('textTooltip').hide();
                 domStyle.set('textDataAreaContainer', 'display', 'none');
                 domStyle.set("lightCoverScreenshot", "display", 'none');
 
                 domStyle.set("imgDetailScreenshot", "opacity", '1');
 
-                hideLoadingIndicator();
+                annoUtil.hideLoadingIndicator();
 
-                if (window.CMActivity)
-                {
-                    window.CMActivity.enableBackButton();
-                }
+                surface.clear();
+                surface.hide();
             },
             destroy:function ()
             {
