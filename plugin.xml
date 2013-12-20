@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        id="io.usersource.anno" version="0.2.3">
+    <name>Anno</name>
+    <description>Anno Plugin</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,anno</keywords>
+
+    <engines>
+        <engine name="cordova" version=">=3.0.0" />
+    </engines>
+
+    <!--<js-module src="www/device.js" name="device">
+        <clobbers target="device"/>
+    </js-module>-->
+
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="SQLitePlugin">
+                <param name="android-package" value="org.pgsqlite.SQLitePlugin"/>
+            </feature>
+        </config-file>
+
+        <source-file src="src/io/usersource/anno/AnnoDrawActivity.java" target-dir="src/io/usersource/anno"/>
+        <source-file src="src/io/usersource/anno/CommunityActivity.java" target-dir="src/io/usersource/anno"/>
+        <source-file src="src/io/usersource/anno/IntroActivity.java" target-dir="src/io/usersource/anno"/>
+        <source-file src="src/io/usersource/anno/OptionFeedbackActivity.java" target-dir="src/io/usersource/anno"/>
+
+        <source-file src="src/io/usersource/annoplugin/AnnoCordovaPlugin.java" target-dir="src/io/usersource/annoplugin"/>
+
+        <source-file src="src/io/usersource/annoplugin/gesture/ScreenshotGestureListener.java" target-dir="src/io/usersource/annoplugin/gesture"/>
+
+        <source-file src="src/io/usersource/annoplugin/utils/AnnoUtils.java" target-dir="src/io/usersource/annoplugin/utils"/>
+
+        <source-file src="res/raw/gestures" target-dir="res/raw" />
+    </platform>
+</plugin>
