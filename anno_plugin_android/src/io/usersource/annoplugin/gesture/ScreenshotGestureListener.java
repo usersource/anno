@@ -3,8 +3,8 @@
  */
 package io.usersource.annoplugin.gesture;
 
+import io.usersource.anno.*;
 import io.usersource.annoplugin.utils.AnnoUtils;
-import io.usersource.annoplugin.view.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,7 +35,7 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
 
   private static final String TAG = "ScreenshotGestureListener";
 
-  private static final String FEEDBACK_ACTIVITY = "io.usersource.annoplugin.view.AnnoDrawActivity";
+  private static final String FEEDBACK_ACTIVITY = "io.usersource.anno.AnnoDrawActivity";
   private static final String GESTURE_NAME_PATTERN = "UserSource spiral[0-9]";
   private static final String SCREENSHOTS_DIR_NAME = "Screenshots";
   private static final String TAKE_SCREENSHOT_FAIL_MESSAGE = "Take Screenshot Failed.";
@@ -43,9 +43,11 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
   private Activity activity;
   private GestureLibrary gestureLibrary = null;
 
-  public ScreenshotGestureListener(Activity activity, int rawResourceId) {
+  public ScreenshotGestureListener(Activity activity) {
     this.activity = activity;
-    gestureLibrary = GestureLibraries.fromRawResource(activity, rawResourceId);
+
+    int resourceId = activity.getResources().getIdentifier("raw/gestures", "raw", activity.getApplicationInfo().packageName);
+    gestureLibrary = GestureLibraries.fromRawResource(activity, resourceId);
     gestureLibrary.load();
   }
 

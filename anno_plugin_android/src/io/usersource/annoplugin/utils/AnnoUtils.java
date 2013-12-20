@@ -16,7 +16,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
 import android.text.format.DateFormat;
 import android.view.View;
-import io.usersource.annoplugin.view.R;
 import io.usersource.annoplugin.gesture.ScreenshotGestureListener;
 
 import java.io.File;
@@ -97,10 +96,8 @@ public class AnnoUtils
     if (activity != null) {
       if (enabled) {
         gestureOverlayView.setGestureVisible(false);
-        ScreenshotGestureListener gesturePerformedListener = new ScreenshotGestureListener(
-                activity, R.raw.gestures);
-        gestureOverlayView
-                .addOnGesturePerformedListener(gesturePerformedListener);
+        ScreenshotGestureListener gesturePerformedListener = new ScreenshotGestureListener(activity);
+        gestureOverlayView.addOnGesturePerformedListener(gesturePerformedListener);
       } else {
         gestureOverlayView.removeAllOnGesturePerformedListeners();
       }
