@@ -1,14 +1,13 @@
 define([
     "dojo/_base/lang",
     "dojo/request/xhr",
+    "anno/common/DBUtil",
     "anno/common/Util"
-], function (lang, xhr, annoUtil)
+], function (lang, xhr, DBUtil, annoUtil)
 {
 
     var oauthUtil = {
         oauthOptions: {
-            client_id: '955803277195.apps.googleusercontent.com',
-            client_secret: 'l5UwDYJuv2BdUUBF2tu9fsol',
             redirect_uri: 'http://localhost',
             scope: 'https://www.googleapis.com/auth/userinfo.email'
         },
@@ -31,8 +30,9 @@ define([
         openAuthWindow: function (authCallback)
         {
             this.authCallback = authCallback;
+            var apiConfig = annoUtil.getCEAPIConfig();
             var url = this.authUrl +
-                "?client_id=" + this.oauthOptions.client_id +
+                "?client_id=" + apiConfig.clientId +
                 "&redirect_uri=" + this.oauthOptions.redirect_uri +
                 "&response_type=code" +
                 "&origin=http://localhost:8080" +
@@ -63,12 +63,13 @@ define([
                 this.checkingAuthCode = true;
 
                 var self = this;
+                var apiConfig = annoUtil.getCEAPIConfig();
                 //Exchange the authorization code for an access token
                 xhr.post(this.tokenUrl, {
                     data: {
                         code: code[1],
-                        client_id: this.oauthOptions.client_id,
-                        client_secret: this.oauthOptions.client_secret,
+                        client_id: apiConfig.clientId,
+                        client_secret: apiConfig.clientSecret,
                         redirect_uri: this.oauthOptions.redirect_uri,
                         grant_type: this.grantTypes.AUTHORIZE
                     },
@@ -80,7 +81,7 @@ define([
                         if (data&&data.refresh_token)
                         {
                             self._saveRefreshToken(data);
-                            if (_hasUserInLocalDB)
+                            if (DBUtil.hasUserInLocalDB)
                             {
                                 if (self.authCallback)
                                 {
@@ -124,24 +125,36 @@ define([
         getUserInfo: function(token)
         {
             var self = this;
-            gapi.client.load('oauth2', 'v2', function() {
-                console.error("oauth loaded");
-                var request = gapi.client.oauth2.userinfo.get();
-                request.execute(function(userinfo){
-                    console.error("get userinfo res: "+ userinfo);
-                    if (userinfo.error)
-                    {
-                        alert("Get userinfo failed: "+ userinfo.error.message);
-                        return;
-                    }
+            gapi.client.load('oauth2', 'v2', function(res) {
 
-                    currentUserInfo = userinfo;
-
+                if (res&&res.error)
+                {
+                    alert("Load Google oauth2 API failed, "+res.error.message);
                     if (self.authCallback)
                     {
-                        self.authCallback({success:true, userInfo:userinfo, token:token});
+                        self.authCallback({success:false});
                     }
-                });
+                }
+                else
+                {
+                    console.error("oauth loaded");
+                    var request = gapi.client.oauth2.userinfo.get();
+                    request.execute(function(userinfo){
+                        console.error("get userinfo res: "+ userinfo);
+                        if (userinfo.error)
+                        {
+                            alert("Get userinfo failed: "+ userinfo.error.message);
+                            return;
+                        }
+
+                        currentUserInfo = userinfo;
+
+                        if (self.authCallback)
+                        {
+                            self.authCallback({success:true, userInfo:userinfo, token:token});
+                        }
+                    });
+                }
             });
         },
         _saveRefreshToken: function(token)
@@ -151,7 +164,6 @@ define([
         getAccessToken:function(callback, errorCallback)
         {
             var userInfo = annoUtil.getCurrentUserInfo();
-
             if (userInfo.signinmethod == this.signinMethod.anno)
             {
                 callback();
@@ -166,10 +178,11 @@ define([
 
             var self = this;
             //Exchange the refresh token for an access token
+            var apiConfig = annoUtil.getCEAPIConfig();
             xhr.post(this.tokenUrl, {
                 data: {
-                    client_id: this.oauthOptions.client_id,
-                    client_secret: this.oauthOptions.client_secret,
+                    client_id: apiConfig.clientId,
+                    client_secret: apiConfig.clientSecret,
                     refresh_token: this.getRefreshToken(),
                     grant_type: this.grantTypes.REFRESH
                 },
@@ -203,14 +216,13 @@ define([
             var signinMethod = params['signinmethod'];
             var ret = {authorized:false};
 
-            if (_hasUserInLocalDB)
+            if (DBUtil.hasUserInLocalDB)
             {
-                if (_localUserInfo.signinmethod == this.signinMethod.google)
+                if (DBUtil.localUserInfo.signinmethod == this.signinMethod.google)
                 {
                     var refreshToken = this.getRefreshToken();
                     if (refreshToken&&refreshToken!= 'undefined')
                     {
-                        console.error(typeof refreshToken);
                         ret = {
                             authorized:true,
                             newUser:newUser=='1',
@@ -242,6 +254,10 @@ define([
             var rt = window.localStorage.getItem(this.refreshTokenKey);
             console.error("refresh token:" + rt);
             return rt;
+        },
+        clearRefreshToken: function()
+        {
+            window.localStorage.setItem(this.refreshTokenKey, "");
         },
         _isTokenExpired: function()
         {
