@@ -36,6 +36,7 @@ require([
     var level1Color = "#ff9900",
         level2Color = "#ff0000";
     var level = 1;
+    var isAnno = false;
 
     connect.connect(dom.byId("barArrow"), touch.release, function()
     {
@@ -318,6 +319,7 @@ require([
                         console.error("sc Path: "+result);
                         screenShotPath = datas[0];
                         level = datas[1];
+                        isAnno = datas[2] == "true";
                         dom.byId('imageScreenshot').src = screenShotPath;
 
                         if (level == 1)
@@ -363,11 +365,31 @@ require([
 
         if (level == 1)
         {
-            // set share dialog size
-            domStyle.set('shareDialog', {
-                width: (viewPoint.w-shareDialogGap)+'px',
-                height: (viewPoint.h-shareDialogGap)+'px'
-            });
+            if (isAnno)
+            {
+                // set share dialog size
+                domStyle.set('shareDialog', {
+                    width: (viewPoint.w-shareDialogGap)+'px',
+                    height: (viewPoint.h-shareDialogGap)+'px'
+                });
+            }
+            else
+            {
+                domStyle.set('sdAppList','display','none');
+                domStyle.set('sdTitle','display','none');
+                domStyle.set('sdShareBtn','paddingTop','18px');
+                domStyle.set('sdBottom',{
+                    'paddingTop':'45px'
+                });
+
+
+                // set share dialog size
+                domStyle.set('shareDialog', {
+                    width: '300px',
+                    height: '150px'
+                });
+            }
+
         }
         else
         {
