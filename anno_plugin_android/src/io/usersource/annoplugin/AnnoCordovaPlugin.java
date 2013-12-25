@@ -78,7 +78,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
     }
     else if (GET_SCREENSHOT_PATH.equals(action)) {
       AnnoDrawActivity annoDrawActivity = (AnnoDrawActivity)this.cordova.getActivity();
-      callbackContext.success(annoDrawActivity.getScreenshotPath()+"|"+annoDrawActivity.getLevel());
+      callbackContext.success(annoDrawActivity.getScreenshotPath()+"|"+annoDrawActivity.getLevel()+"|"+AnnoUtils.isAnno(annoDrawActivity.getPackageName()));
       return true;
     }
     else if (GET_ANNO_SCREENSHOT_PATH.equals(action)) {
