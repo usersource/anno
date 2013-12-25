@@ -11,19 +11,15 @@
         <engine name="cordova" version=">=3.0.0" />
     </engines>
 
-    <!--<js-module src="www/device.js" name="device">
-        <clobbers target="device"/>
-    </js-module>-->
+    <asset src="anno_android/assets/www/pages/annodraw" target="pages/annodraw" />
+    <asset src="anno_android/assets/www/pages/auth" target="pages/auth" />
+    <asset src="anno_android/assets/www/pages/community" target="pages/community" />
+    <asset src="anno_android/assets/www/pages/feedback" target="pages/feedback" />
+    <asset src="anno_android/assets/www/pages/intro" target="pages/intro" />
 
-    <asset src="assets/www/pages/annodraw" target="pages/annodraw" />
-    <asset src="assets/www/pages/auth" target="pages/auth" />
-    <asset src="assets/www/pages/community" target="pages/community" />
-    <asset src="assets/www/pages/feedback" target="pages/feedback" />
-    <asset src="assets/www/pages/intro" target="pages/intro" />
-
-    <asset src="assets/www/scripts/anno" target="scripts/anno" />
-    <asset src="assets/www/scripts/dojo" target="scripts/dojo" />
-    <asset src="assets/www/scripts/dojox" target="scripts/dojox" />
+    <asset src="anno_android/assets/www/scripts/anno" target="scripts/anno" />
+    <asset src="anno_android/assets/www/scripts/dojo" target="scripts/dojo" />
+    <asset src="anno_android/assets/www/scripts/dojox" target="scripts/dojox" />
 
     <dependency id="org.apache.cordova.device" />
     <dependency id="org.apache.cordova.network-information" />
@@ -77,16 +73,16 @@
             </activity>
         </config-file>
 
-        <source-file src="src/io/usersource/anno/AnnoDrawActivity.java" target-dir="src/io/usersource/anno"/>
-        <source-file src="src/io/usersource/anno/CommunityActivity.java" target-dir="src/io/usersource/anno"/>
-        <source-file src="src/io/usersource/anno/IntroActivity.java" target-dir="src/io/usersource/anno"/>
-        <source-file src="src/io/usersource/anno/OptionFeedbackActivity.java" target-dir="src/io/usersource/anno"/>
+        <source-file src="anno_plugin_android/src/io/usersource/anno/AnnoDrawActivity.java" target-dir="src/io/usersource/anno"/>
+        <source-file src="anno_plugin_android/src/io/usersource/anno/CommunityActivity.java" target-dir="src/io/usersource/anno"/>
+        <source-file src="anno_plugin_android/src/io/usersource/anno/IntroActivity.java" target-dir="src/io/usersource/anno"/>
+        <source-file src="anno_plugin_android/src/io/usersource/anno/OptionFeedbackActivity.java" target-dir="src/io/usersource/anno"/>
 
-        <source-file src="src/io/usersource/annoplugin/AnnoCordovaPlugin.java" target-dir="src/io/usersource/annoplugin"/>
+        <source-file src="anno_plugin_android/src/io/usersource/annoplugin/AnnoCordovaPlugin.java" target-dir="src/io/usersource/annoplugin"/>
 
-        <source-file src="src/io/usersource/annoplugin/gesture/ScreenshotGestureListener.java" target-dir="src/io/usersource/annoplugin/gesture"/>
+        <source-file src="anno_plugin_android/src/io/usersource/annoplugin/gesture/ScreenshotGestureListener.java" target-dir="src/io/usersource/annoplugin/gesture"/>
 
-        <source-file src="src/io/usersource/annoplugin/utils/AnnoUtils.java" target-dir="src/io/usersource/annoplugin/utils"/>
+        <source-file src="anno_plugin_android/src/io/usersource/annoplugin/utils/AnnoUtils.java" target-dir="src/io/usersource/annoplugin/utils"/>
 
         <source-file src="res/raw/gestures" target-dir="res/raw" />
     </platform>
