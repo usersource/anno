@@ -21,7 +21,7 @@ define([
             domStyle.set("listContainerSettings", "height", (viewPoint.h-48)+"px");
         };
 
-        var onServerURLRadioButtonChange = function()
+        var onServerURLRadioButtonChange = function(value)
         {
             if (!this.checked) return;
 
@@ -29,8 +29,15 @@ define([
             annoUtil.saveSettings({item:"ServerURL", value:this.value}, function(success){
                 if (success)
                 {
-                    registry.byId('serverURLDialog').hide();
-                    dom.byId('settingValueServerURL').innerHTML = self.labelText;
+                    AnnoDataHandler.removeUser(function(){
+                        OAuthUtil.clearRefreshToken();
+                        registry.byId('serverURLDialog').hide();
+                        dom.byId('settingValueServerURL').innerHTML = self.labelText;
+
+                        annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the anno app.", function(){
+                            window.open("file:///android_asset/www/pages/community/main.html", '_self', 'location=no');
+                        });
+                    });
                 }
             });
         };
@@ -94,9 +101,15 @@ define([
                     {
                         if (radioButtons[i].value == settings.ServerURL)
                         {
-                            radioButtons[i].set('checked', true);
+                            radioButtons[i].set('checked', true, false);
                             dom.byId('settingValueServerURL').innerHTML = radioButtons[i].labelText;
                         }
+
+                    }
+
+                    for (var i= 0,c=radioButtons.length;i<c;i++)
+                    {
+                        radioButtons[i].onChange = onServerURLRadioButtonChange;
                     }
                 });
 
@@ -104,15 +117,6 @@ define([
                 {
                     var serverURLDialog = registry.byId('serverURLDialog');
 
-                    /*var radioButtons = serverURLDialog.getChildren();
-                    var settings = annoUtil.getSettings();
-                    for (var i= 0,c=radioButtons.length;i<c;i++)
-                    {
-                        if (radioButtons[i].value == settings.ServerURL)
-                        {
-                            radioButtons[i].set('checked', true);
-                        }
-                    }*/
                     serverURLDialog.show();
                     domStyle.set(serverURLDialog._cover[0], {"height": "100%", top:"0px"});
                 }));
@@ -126,10 +130,10 @@ define([
 
                 var radioButtons = registry.byId('serverURLDialog').getChildren();
 
-                for (var i= 0,c=radioButtons.length;i<c;i++)
+                /*for (var i= 0,c=radioButtons.length;i<c;i++)
                 {
                     radioButtons[i].onChange = onServerURLRadioButtonChange;
-                }
+                }*/
 
                 _connectResults.push(connect.connect(dom.byId("btnCancelServerURL"), 'click', function(e)
                 {
@@ -161,7 +165,6 @@ define([
                 {
                     domStyle.set('settingItemChangePassword', 'display', 'none');
                 }
-
             },
             afterActivate: function()
             {

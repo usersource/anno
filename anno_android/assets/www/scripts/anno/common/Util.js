@@ -6,8 +6,9 @@ define([
     "dojo/window",
     "dojox/mobile/SimpleDialog",
     "dojox/mobile/_ContentPaneMixin",
-    "dijit/registry"
-], function(declare, connect, domStyle, dojoJson, win, SimpleDialog, _ContentPaneMixin, registry){
+    "dijit/registry",
+    "anno/common/DBUtil"
+], function(declare, connect, domStyle, dojoJson, win, SimpleDialog, _ContentPaneMixin, registry, DBUtil){
 
     var util = {
         loadingIndicator:null,
@@ -20,7 +21,29 @@ define([
         level2Color:"#ff0000",
         annoScreenshotPath:null,
         API:{
-            apiRoot:"https://usersource-anno.appspot.com/_ah/api",
+            config:{
+                "1": { // Production
+                    apiRoot:"https://usersource-anno.appspot.com/_ah/api",
+                    clientId : "955803277195.apps.googleusercontent.com",
+                    clientSecret: "l5UwDYJuv2BdUUBF2tu9fsol"
+                },
+                "2": { // Test
+                    apiRoot:"https://usersource-anno.appspot.com/_ah/api",
+                    clientId : "955803277195.apps.googleusercontent.com",
+                    clientSecret: "l5UwDYJuv2BdUUBF2tu9fsol"
+                },
+                "3": { // Prod via proxy
+                    apiRoot:"https://usersource-anno.appspot.com/_ah/api",
+                    clientId : "955803277195.apps.googleusercontent.com",
+                    clientSecret: "l5UwDYJuv2BdUUBF2tu9fsol"
+                },
+                "4": { // Test via proxy
+                    apiRoot:"https://usersource-anno.appspot.com/_ah/api",
+                    clientId : "955803277195.apps.googleusercontent.com",
+                    clientSecret: "l5UwDYJuv2BdUUBF2tu9fsol"
+                }
+            },
+            //apiRoot:"https://annoserver-test.appspot.com/_ah/api",
             apiVersion:"1.0",
             anno:"anno",
             user:"user",
@@ -190,7 +213,7 @@ define([
             }
             var settingsSQl = "select * from app_settings";
             var self = this;
-            executeSelectSql(settingsSQl, [], function(res){
+            DBUtil.executeSelectSql(settingsSQl, [], function(res){
                 var rows = res.rows;
                 console.error("app_settings rows: "+rows.length);
 
@@ -211,7 +234,7 @@ define([
         {
             var settingsSQl = "update app_settings set value=? where item=?";
             var self = this;
-            executeUpdateSql(settingsSQl, [settingItem.value, settingItem.item], function(res){
+            DBUtil.executeUpdateSql(settingsSQl, [settingItem.value, settingItem.item], function(res){
                 self.settings[settingItem.item] = settingItem.value;
 
                 callback(true);
@@ -364,6 +387,7 @@ define([
         },
         loadAPI: function(apiId, callback, errorCallback)
         {
+            var self = this;
             gapi.client.load(apiId, this.API.apiVersion, function(res) {
 
                 if (res&&res.error)
@@ -376,8 +400,8 @@ define([
                     }
                     else
                     {
-                        alert('Load '+apiId+" failed, "+res.error.message);
-                        this.hideLoadingIndicator();
+                        alert('Load '+apiId+" API failed, "+res.error.message);
+                        self.hideLoadingIndicator();
                     }
                 }
                 else
@@ -385,11 +409,23 @@ define([
                     console.error(apiId+" API loaded.");
                     callback();
                 }
-            }, this.API.apiRoot);
+            }, this.getCEAPIRoot());
+        },
+        getCEAPIRoot: function()
+        {
+            var serverURL = this.settings.ServerURL;
+
+            return this.API.config[serverURL].apiRoot;
+        },
+        getCEAPIConfig: function()
+        {
+            var serverURL = this.settings.ServerURL;
+
+            return this.API.config[serverURL];
         },
         getCurrentUserInfo:function()
         {
-            return _localUserInfo;
+            return DBUtil.localUserInfo;
         }
     };
 
