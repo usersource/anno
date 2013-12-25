@@ -10,11 +10,12 @@ require([
     "dojo/touch",
     "dojo/window",
     "dijit/registry",
+    "anno/common/DBUtil",
     "anno/common/Util",
     "anno/common/OAuthUtil",
     "anno/anno/AnnoDataHandler",
     "dojo/domReady!"
-], function (Surface, connect, dom, domClass, domStyle, dojoJson, query, ready, touch, win, registry, annoUtil, OAuthUtil, AnnoDataHandler)
+], function (Surface, connect, dom, domClass, domStyle, dojoJson, query, ready, touch, win, registry, DBUtil, annoUtil, OAuthUtil, AnnoDataHandler)
 {
     var viewPoint,
         defaultShapeWidth = 160,
@@ -528,7 +529,7 @@ require([
 
     var init = function()
     {
-        if (_userChecked)
+        if (DBUtil.userChecked)
         {
             var authResult = OAuthUtil.isAuthorized();
             if (annoUtil.hasConnection()&&!authResult.authorized)
@@ -710,9 +711,18 @@ require([
         }
     };
 
-    ready(init);
-
     document.addEventListener("backbutton", function(){
         navigator.app.exitApp();
     }, false);
+
+    document.addEventListener("deviceready", function(){
+        DBUtil.initDB(function(){
+            console.error("DB is readay!");
+            annoUtil.readSettings(function(){
+
+            });
+        });
+    }, false);
+
+    ready(init);
 });

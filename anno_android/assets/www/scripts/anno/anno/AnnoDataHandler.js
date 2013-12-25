@@ -1,4 +1,4 @@
-define(["../common/Util","../common/OAuthUtil"], function(annoUtil, OAuthUtil){
+define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DBUtil, annoUtil, OAuthUtil){
 
     var insert_anno_draw_sql = "insert into feedback_comment(draw_elements,draw_is_anonymized,created,last_update,comment,screenshot_key,x,y,direction,app_version,os_version,is_moved,level,app_name,model,source,os_name,anno_type,synched)"+
         " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -10,11 +10,11 @@ define(["../common/Util","../common/OAuthUtil"], function(annoUtil, OAuthUtil){
     var select_userInfo_sql = "select * from app_users";
     var delete_userInfo_sql = "delete from app_users";
 
-    var onSQLError = function(err)
+    /*var onSQLError = function(err)
     {
         console.error(JSON.stringify(err));
         alert(JSON.stringify(err));
-    };
+    };*/
 
     var annoDataHandler = {
 
@@ -44,7 +44,7 @@ define(["../common/Util","../common/OAuthUtil"], function(annoUtil, OAuthUtil){
                 anno.anno_type,
                 0];
 
-            executeUpdateSql(insert_anno_draw_sql,params, function(res){
+            DBUtil.executeUpdateSql(insert_anno_draw_sql,params, function(res){
                 console.error(res);
             }, onSQLError);
 
@@ -174,19 +174,19 @@ define(["../common/Util","../common/OAuthUtil"], function(annoUtil, OAuthUtil){
         },
         updateAnnoSynchedStateByCreated: function(cloudKey, ct)
         {
-            executeUpdateSql(update_anno_synched_by_created_sql,[cloudKey, ct], function(res){
+            DBUtil.executeUpdateSql(update_anno_synched_by_created_sql,[cloudKey, ct], function(res){
 
             }, onSQLError);
         },
         updateAnnoSynchedStateById: function(cloudKey, ct)
         {
-            executeUpdateSql(update_anno_synched_by_id_sql,[cloudKey, ct], function(res){
+            DBUtil.executeUpdateSql(update_anno_synched_by_id_sql,[cloudKey, ct], function(res){
 
             }, onSQLError);
         },
         loadLocalAnnos: function(callback)
         {console.error("loadLocalAnnos: start");
-            executeUpdateSql(select_anno_sql,[], function(res){
+            DBUtil.executeUpdateSql(select_anno_sql,[], function(res){
                 var annos = [];
                 var cnt = res.rows.length;
                 console.error('local annos: '+cnt);
@@ -208,7 +208,7 @@ define(["../common/Util","../common/OAuthUtil"], function(annoUtil, OAuthUtil){
             if (!inAnnoApp) return;
 
             var self = this;
-            executeUpdateSql(select_anno_sync_sql,[], function(res){
+            DBUtil.executeUpdateSql(select_anno_sync_sql,[], function(res){
                 var cnt = res.rows.length;
 
                 if (cnt)
@@ -260,9 +260,9 @@ define(["../common/Util","../common/OAuthUtil"], function(annoUtil, OAuthUtil){
         },
         saveUserInfo: function(userInfo, callback)
         {
-            executeUpdateSql(delete_userInfo_sql,[], function(res){
+            DBUtil.executeUpdateSql(delete_userInfo_sql,[], function(res){
                 console.error("current userInfo deleted:"+ JSON.stringify(res));
-                executeUpdateSql(save_userInfo_sql,[userInfo.userId, userInfo.email, userInfo.signinMethod, userInfo.nickname, userInfo.password||''], function(res){
+                DBUtil.executeUpdateSql(save_userInfo_sql,[userInfo.userId, userInfo.email, userInfo.signinMethod, userInfo.nickname, userInfo.password||''], function(res){
                     console.error("save userInfo end:"+ JSON.stringify(res));
                     if (callback)
                     {
@@ -273,7 +273,7 @@ define(["../common/Util","../common/OAuthUtil"], function(annoUtil, OAuthUtil){
         },
         getCurrentUserInfo: function(callback)
         {
-            executeUpdateSql(select_userInfo_sql,[], function(res){
+            DBUtil.executeUpdateSql(select_userInfo_sql,[], function(res){
                 var cnt = res.rows.length;
                 console.error('user cnt: '+cnt);
                 var userInfo = {};
@@ -281,6 +281,7 @@ define(["../common/Util","../common/OAuthUtil"], function(annoUtil, OAuthUtil){
                 if (cnt >0)
                 {
                     var data = res.rows.item(0);
+
                     userInfo.userId = data.userid;
                     userInfo.email = data.email;
                     userInfo.password = data.password;
@@ -290,6 +291,15 @@ define(["../common/Util","../common/OAuthUtil"], function(annoUtil, OAuthUtil){
 
                 window.currentUserInfo = userInfo;
                 if (callback) callback(userInfo);
+            }, onSQLError);
+        },
+        removeUser: function(callback)
+        {
+            DBUtil.executeUpdateSql(delete_userInfo_sql,[], function(res){
+                if (callback)
+                {
+                    callback();
+                }
             }, onSQLError);
         }
     };
