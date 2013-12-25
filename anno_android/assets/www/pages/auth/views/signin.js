@@ -6,11 +6,12 @@ define([
     "dojo/window",
     "dijit/registry",
     "dojox/css3/transit",
+    "anno/common/DBUtil",
     "anno/common/Util",
     "anno/common/OAuthUtil",
     "anno/anno/AnnoDataHandler"
 ],
-    function (dom, domClass, domStyle, connect, win, registry, transit, annoUtil, OAuthUtil, AnnoDataHandler)
+    function (dom, domClass, domStyle, connect, win, registry, transit, DBUtil, annoUtil, OAuthUtil, AnnoDataHandler)
     {
         var _connectResults = []; // events connect results
         var app = null,
@@ -151,7 +152,7 @@ define([
             annoUtil.hideLoadingIndicator();
             if (result.success)
             {
-                if (!_hasUserInLocalDB)
+                if (!DBUtil.hasUserInLocalDB)
                 {
                     annoUtil.showLoadingIndicator();
                     annoUtil.loadAPI(annoUtil.API.user, function(){

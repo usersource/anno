@@ -76,6 +76,8 @@ function checkTables()
             firstInstall = true;
             initTables();
         }
+
+        console.error("dbIsReady! ");
     });
 }
 

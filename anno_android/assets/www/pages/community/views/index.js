@@ -15,11 +15,12 @@ define([
     "dojox/mvc/at",
     "dojo/store/Memory",
     "dojox/mvc/getStateful",
+    "anno/common/DBUtil",
     "anno/common/Util",
     "anno/common/OAuthUtil",
     "anno/anno/AnnoDataHandler"
 ],
-    function (arrayUtil, dom, domClass, domGeom, domStyle, query, touch, lang, connect, win, has, sniff, registry, at, Memory, getStateful, annoUtil, OAuthUtil, AnnoDataHandler)
+    function (arrayUtil, dom, domClass, domGeom, domStyle, query, touch, lang, connect, win, has, sniff, registry, at, Memory, getStateful, DBUtil, annoUtil, OAuthUtil, AnnoDataHandler)
     {
         var _connectResults = []; // events connect results
         var eventsModel = null;
@@ -161,7 +162,7 @@ define([
 
         var _init = function()
         {
-            if (_userChecked)
+            if (DBUtil.userChecked)
             {
                 var authResult = OAuthUtil.isAuthorized();
                 if (!authResult.authorized)
