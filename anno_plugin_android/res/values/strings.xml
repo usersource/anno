@@ -1,41 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="plugin_name">Anno</string>
-
-    <!-- action button names on action bar of FeedbackActivity -->
-    <string name="feedback_comment">Comment</string>
-    <string name="feedback_draw">Draw</string>
-    <string name="feedback_audio">Audio</string>
-    <string name="send_comment">Share</string>
-    <string name="go_home">Home</string>
-
-    <!-- error message -->
-    <string name="erorr_title">Error</string>
-    <string name="fail_take_screenshot">Screenshot failed.</string>
-    <string name="fail_create_directory">Failed to create directory %s </string>
-    <string name="fail_enough_sdcard_space">Not enough space on SD card</string>
-    <string name="fail_send_comment">Your anno has not been shared</string>
-    <string name="invalid_comment_empty">Empty anno</string>
-
-    <!-- success message -->
-    <string name="success_send_comment">Your anno has been shared</string>
-    <string name="title_activity_feedback_view">FeedbackViewActivity</string>
-
-    <!-- text hint -->
-    <string name="comment_hint">Propose a change and explain why</string>
-
-    <!-- settings -->
-    <string name="prefSyncServerUrl_Key">prefSyncServerUrl_Key</string>
-    <string name="prefSyncServerUrl_Title">Server URL</string>
-    <string name="prefSyncServerUrl_Default">http://annoserver.appspot.com</string>
-    <string name="main_menu_i_settings">Settings</string>
-    <string name="main_menu_i_intro">Intro</string>
-    <string name="main_menu_i_feedback">Feedback</string>
-    <string name="share_preference_global">SharePrefGlobal</string>
-    <string name="app_last_update_time">AppLastUpdateTime</string>
-    <string name="title_activity_welcome">WelcomeActivity</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
-
+    <string name="app_name">Anno</string>
 </resources>

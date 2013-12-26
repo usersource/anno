@@ -6,6 +6,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>Community MVP</title>
     <link type="text/css" href="./css/style.css" rel="stylesheet" />
+    <style>
+        html, body{
+            height: 100%;
+        }
+    </style>
     <script type="text/javascript">
         var dojoConfig = {
             parseOnLoad:false,
@@ -13,7 +18,13 @@
             mblAndroidWorkaround:false,
             mblAlwaysHideAddressBar:false,
             async:1,
-            mblUserAgent: 'iPhone'
+            mblUserAgent: 'iPhone',
+            packages:[
+                {
+                    name:'anno',
+                    location:'../anno'
+                }
+            ]
         };
     </script>
     <script type="text/javascript" src="../../scripts/dojo/dojo.js"></script>
@@ -22,16 +33,22 @@
 
         });
     </script>
-    <script type="text/javascript" src="cordova-min.js"></script>
+    <script type="text/javascript">
+        var currentUserInfo = {email:''};
+        function gce_init()
+        {
+        }
+    </script>
+    <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=gce_init"></script>
+    <script type="text/javascript" src="../../cordova.js"></script>
     <script type="text/javascript" src="heartcode-canvasloader-min.js"></script>
 </head>
 <body id="container">
-<!--<div id="loadingMessageDiv" style="width:300px;margin-top: 20px;margin-left:20px;">Loading...</div>-->
 <div id="lightCover" class="lightCover" style="display: none;"></div>
 <div id="lightCoverScreenshot" class="lightCoverScreenshot" style="display: none;"></div>
 <input id="appNameTextBox" style="display: none;z-index: 4000;position: absolute;" type="text" data-dojo-type="dojox/mobile/TextBox" class="commentTextbox" placeholder="Type app name here">
 <button id="hiddenBtn" style="position: absolute;left:-2000px;top: -2000px;">a</button>
 <div id="toastMsgContainer" style="display: none;" class="toastMsgContainer"></div>
-<div id="bottomPlaceholder" style="background-color: transparent;width: 100%;height: 30px;position: absolute;bottom: 0px;left: 0px;z-index: 2001"></div>
+<div id="bottomPlaceholder" style="display:none;background-color: transparent;width: 100%;height: 30px;position: absolute;bottom: 0px;left: 0px;z-index: 2001"></div>
 </body>
 </html>

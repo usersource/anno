@@ -6,13 +6,21 @@ require([
     "dojox/app/main",
     "dojox/json/ref",
     "dojox/mobile/_ContentPaneMixin",
+    "anno/common/DBUtil",
+    "anno/common/Util",
     "dojo/text!./app.json",
-    "dojo/sniff",
-    "./demodata.js"],
-    function (declare, dom, registry, domClass, Application, jsonRef, _ContentPaneMixin, config, has)
+    "dojo/sniff"],
+    function (declare, dom, registry, domClass, Application, jsonRef, _ContentPaneMixin, DBUtil, annoUtil, config, has)
     {
         var config = jsonRef.fromJson(config);
-        console.log("Worked!");
+        console.error("Worked!");
 
-        Application(config);
+        document.addEventListener("deviceready", function(){
+            DBUtil.initDB(function(){
+                console.error("DB is readay!");
+                annoUtil.readSettings(function(){
+                    Application(config);
+                });
+            });
+        }, false);
     });
