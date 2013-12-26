@@ -22,28 +22,31 @@ define([
         annoScreenshotPath:null,
         API:{
             config:{
-                "1": { // Production
-                    apiRoot:"https://usersource-anno.appspot.com/_ah/api",
-                    clientId : "955803277195.apps.googleusercontent.com",
-                    clientSecret: "l5UwDYJuv2BdUUBF2tu9fsol"
+                "1": { // Production https://usersource-anno.appspot.com/_ah/api  955803277195.apps.googleusercontent.com
+                    imageServiceURL:"https://annoserver-test.appspot.com/screenshot",
+                    apiRoot:"https://annoserver-test.appspot.com/_ah/api",
+                    clientId : "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com",
+                    clientSecret: "n0fJeoZ-4UFWZaIG41mNg41_"
                 },
                 "2": { // Test
-                    apiRoot:"https://usersource-anno.appspot.com/_ah/api",
-                    clientId : "955803277195.apps.googleusercontent.com",
-                    clientSecret: "l5UwDYJuv2BdUUBF2tu9fsol"
+                    imageServiceURL:"https://annoserver-test.appspot.com/screenshot",
+                    apiRoot:"https://annoserver-test.appspot.com/_ah/api",
+                    clientId : "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com",
+                    clientSecret: "n0fJeoZ-4UFWZaIG41mNg41_"
                 },
                 "3": { // Prod via proxy
+                    imageServiceURL:"https://usersource-anno.appspot.com/screenshot",
                     apiRoot:"https://usersource-anno.appspot.com/_ah/api",
                     clientId : "955803277195.apps.googleusercontent.com",
                     clientSecret: "l5UwDYJuv2BdUUBF2tu9fsol"
                 },
                 "4": { // Test via proxy
+                    imageServiceURL:"https://usersource-anno.appspot.com/screenshot",
                     apiRoot:"https://usersource-anno.appspot.com/_ah/api",
                     clientId : "955803277195.apps.googleusercontent.com",
                     clientSecret: "l5UwDYJuv2BdUUBF2tu9fsol"
                 }
             },
-            //apiRoot:"https://annoserver-test.appspot.com/_ah/api",
             apiVersion:"1.0",
             anno:"anno",
             user:"user",

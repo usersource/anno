@@ -39,7 +39,7 @@ define([
             trayScreenHeight = 0,
             borderWidth;
 
-        var imageBaseUrl = "https://usersource-anno.appspot.com/screenshot";
+        var imageBaseUrl = annoUtil.getCEAPIConfig().imageServiceURL;
         var surface;
         var imageWidth, imageHeight;
 
