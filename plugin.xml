@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        id="io.usersource.anno" version="0.2.3">
+    <name>Anno</name>
+    <description>Anno Plugin</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,anno</keywords>
+
+    <engines>
+        <engine name="cordova" version=">=3.0.0" />
+    </engines>
+
+    <asset src="anno_android/assets/www/pages/annodraw" target="pages/annodraw" />
+    <asset src="anno_android/assets/www/pages/auth" target="pages/auth" />
+    <asset src="anno_android/assets/www/pages/community" target="pages/community" />
+    <asset src="anno_android/assets/www/pages/feedback" target="pages/feedback" />
+    <asset src="anno_android/assets/www/pages/intro" target="pages/intro" />
+
+    <asset src="anno_android/assets/www/scripts/anno" target="scripts/anno" />
+    <asset src="anno_android/assets/www/scripts/dojo" target="scripts/dojo" />
+    <asset src="anno_android/assets/www/scripts/dojox" target="scripts/dojox" />
+
+    <dependency id="org.apache.cordova.device" />
+    <dependency id="org.apache.cordova.network-information" />
+    <dependency id="org.apache.cordova.inappbrowser" />
+    <dependency id="org.apache.cordova.file" />
+    <dependency id="com.phonegap.plugins.sqlite" url="https://github.com/lite4cordova/Cordova-SQLitePlugin" />
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <access origin="http://127.0.0.1*" />
+            <access origin="*" />
+            <preference name="fullscreen" value="false" />
+            <preference name="webviewbounce" value="true" />
+            <preference name="LoadUrlTimeoutValue" value="100000" />
+            <feature name="App">
+                <param name="android-package" value="org.apache.cordova.App" />
+            </feature>
+            <feature name="AnnoCordovaPlugin">
+                <param name="android-package" value="io.usersource.annoplugin.AnnoCordovaPlugin" />
+            </feature>
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+            <uses-permission android:name="android.permission.GET_TASKS" />
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <activity
+                    android:name="io.usersource.anno.AnnoDrawActivity"
+                    android:configChanges="orientation|keyboardHidden"
+                    android:screenOrientation="portrait"
+                    android:uiOptions="splitActionBarWhenNarrow" >
+            </activity>
+            <activity
+                    android:name="io.usersource.anno.CommunityActivity"
+                    android:configChanges="orientation|keyboardHidden"
+                    android:screenOrientation="portrait" >
+            </activity>
+            <activity
+                    android:name="io.usersource.anno.IntroActivity"
+                    android:configChanges="orientation|keyboardHidden"
+                    android:screenOrientation="portrait" >
+            </activity>
+            <activity
+                    android:name="io.usersource.anno.OptionFeedbackActivity"
+                    android:configChanges="orientation|keyboardHidden"
+                    android:screenOrientation="portrait" >
+            </activity>
+        </config-file>
+
+        <source-file src="anno_plugin_android/src/io/usersource/anno/AnnoDrawActivity.java" target-dir="src/io/usersource/anno"/>
+        <source-file src="anno_plugin_android/src/io/usersource/anno/CommunityActivity.java" target-dir="src/io/usersource/anno"/>
+        <source-file src="anno_plugin_android/src/io/usersource/anno/IntroActivity.java" target-dir="src/io/usersource/anno"/>
+        <source-file src="anno_plugin_android/src/io/usersource/anno/OptionFeedbackActivity.java" target-dir="src/io/usersource/anno"/>
+
+        <source-file src="anno_plugin_android/src/io/usersource/annoplugin/AnnoCordovaPlugin.java" target-dir="src/io/usersource/annoplugin"/>
+
+        <source-file src="anno_plugin_android/src/io/usersource/annoplugin/gesture/ScreenshotGestureListener.java" target-dir="src/io/usersource/annoplugin/gesture"/>
+
+        <source-file src="anno_plugin_android/src/io/usersource/annoplugin/utils/AnnoUtils.java" target-dir="src/io/usersource/annoplugin/utils"/>
+
+        <source-file src="anno_plugin_android/res/raw/gestures" target-dir="res/raw" />
+    </platform>
+</plugin>
