@@ -35,7 +35,7 @@ define([
                         dom.byId('settingValueServerURL').innerHTML = self.labelText;
 
                         annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the anno app.", function(){
-                            window.open("file:///android_asset/www/pages/community/main.html", '_self', 'location=no');
+                            window.open("file:///android_asset/www/anno/pages/community/main.html", '_self', 'location=no');
                         });
                     });
                 }

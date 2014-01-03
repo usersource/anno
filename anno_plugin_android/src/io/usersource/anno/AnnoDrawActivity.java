@@ -44,7 +44,7 @@ public class AnnoDrawActivity extends DroidGap
     setContentView(view);
     AnnoPlugin.setEnableGesture(this, view, true);*/
 
-    super.loadUrl("file:///android_asset/www/pages/annodraw/main.html");
+    super.loadUrl("file:///android_asset/www/anno/pages/annodraw/main.html");
 
     Intent intent = getIntent();
     level = intent.getIntExtra(AnnoUtils.LEVEL, 0);

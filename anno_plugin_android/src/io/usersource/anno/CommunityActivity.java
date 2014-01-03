@@ -55,7 +55,7 @@ public class CommunityActivity extends DroidGap {
     setContentView(view);
     AnnoUtils.setEnableGesture(this, view, true);
 
-    super.loadUrl("file:///android_asset/www/pages/community/main.html");
+    super.loadUrl("file:///android_asset/www/anno/pages/community/main.html");
 
     Intent intent = getIntent();
     level = intent.getIntExtra(AnnoUtils.LEVEL, 0);
