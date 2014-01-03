@@ -2,13 +2,15 @@ define([
     "dojo/_base/declare",
     "dojo/_base/connect",
     "dojo/_base/lang",
-    "dojo/window"
+    "dojo/window",
+    "../../common/Util"
 ],
     function (
         declare,
         connect,
         lang,
-        win
+        win,
+        annoUtil
         )
     {
         /**
@@ -18,12 +20,12 @@ define([
         return declare("anno.draw.shapes.BaseShape", null, {
             circleR: 16, // endpoint circle r
             hiddenStyle:"rgba(255, 255, 255, 0)",
-            endpointStrokeStyle:"rgba(253, 155, 0, 1)",
-            endpointFillStyle:"rgba(253, 155, 0, 0.5)",
-            endpointHiddenStrokeStyle:"rgba(253, 155, 0, 0)",
-            endpointHiddenFillStyle:"rgba(253, 155, 0, 0)",
+            endpointStrokeStyle:"rgba("+annoUtil.level1ColorRGB+", 1)",
+            endpointFillStyle:"rgba("+annoUtil.level1ColorRGB+", 0.5)",
+            endpointHiddenStrokeStyle:"rgba("+annoUtil.level1ColorRGB+", 0)",
+            endpointHiddenFillStyle:"rgba("+annoUtil.level1ColorRGB+", 0)",
             xFont:{family: "Helvetica", style: "normal", size: "16pt"},
-            xColor:"rgba(253, 155, 0, 1)",
+            xColor:"rgba("+annoUtil.level1ColorRGB+", 1)",
             xHiddenColor:"rgba(253, 155, 0, 0)",
             hiddenColor:"rgba(253, 155, 0, 0)",
             selected:false,

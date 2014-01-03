@@ -147,7 +147,7 @@ body{
     top: 0px;
     left: 0px;
     width: 100%;
-    border-color: #ff9900;
+    border-color: #f1572a;
     border-style: solid;
 }
 
@@ -224,8 +224,8 @@ body{
 .btn
 {
     color: #ffffff;
-    background-color: #FF9900;
-    border-color: #FF9900;
+    background-color: #f1572a;
+    border-color: #f1572a;
     display: inline-block;
     padding: 6px 12px;
     margin-bottom: 0;

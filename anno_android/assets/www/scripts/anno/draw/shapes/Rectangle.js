@@ -5,16 +5,17 @@ define([
     "dojo/touch",
     "dojox/gfx",
     "dojox/gfx/move",
-    "./BaseShape"
+    "./BaseShape",
+    "../../common/Util"
 ],
-    function (declare, connect, lang, touch, gfx, gfxMove, BaseShape)
+    function (declare, connect, lang, touch, gfx, gfxMove, BaseShape, annoUtil)
     {
         /**
          * @author David Lee
          * Rectangle class
          */
         return declare("anno.draw.shapes.Rectangle", [BaseShape], {
-            lineStrokeStyle: {color: '#ff9900', width: 3},
+            lineStrokeStyle: {color: annoUtil.level1Color, width: 3},
             shapeType: "Rectangle",
             minSize:50,
             createShape: function (args)

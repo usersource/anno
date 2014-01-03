@@ -276,13 +276,13 @@ define([
 
                 if (eventsModel.cursor.level==1)
                 {
-                    epLineStyle = {color:'#FFA500', width:1};
-                    epFillStyle = "rgba(255,165,0, 0.4)";
+                    epLineStyle = {color:annoUtil.level1Color, width:1};
+                    epFillStyle = "rgba("+annoUtil.level1ColorRGB+", 0.4)";
                 }
                 else
                 {
-                    epLineStyle = {color:'#FF0000',width:1};
-                    epFillStyle = "rgba(255,12,9, 0.4)";
+                    epLineStyle = {color:annoUtil.level2Color,width:1};
+                    epFillStyle = "rgba("+annoUtil.level2ColorRGB+", 0.4)";
                 }
 
                 var tx = Math.round(((imageWidth-borderWidth*2)*eventsModel.cursor.circleX)/10000);
@@ -1073,7 +1073,7 @@ define([
                         startX1 = e.touches[0].pageX;
                         startY1 = e.touches[0].pageY;
 
-                        domStyle.set('trayBottomBarSpin', 'backgroundColor', '#ff9900');
+                        domStyle.set('trayBottomBarSpin', 'backgroundColor', annoUtil.level1Color);
                     }
                 }));
 

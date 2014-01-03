@@ -33,8 +33,8 @@ require([
     var defaultCommentBox;
 
     var selectedAppName, screenShotPath;
-    var level1Color = "#ff9900",
-        level2Color = "#ff0000";
+    var level1Color = annoUtil.level1Color,
+        level2Color = annoUtil.level2Color;
     var level = 1;
     var isAnno = false;
 
@@ -672,8 +672,8 @@ require([
                         width: defaultShapeWidth,
                         height: defaultShapeHeight,
                         lineStrokeStyle:lineStrokeStyle,
-                        endpointStrokeStyle:epLineStyle,
-                        endpointFillStyle:epFillStyle
+                        endpointStrokeStyle2:epLineStyle,
+                        endpointFillStyle2:epFillStyle
                     });
 
                     connect.connect(defaultCommentBox.shareBtnNode, "click", function()
