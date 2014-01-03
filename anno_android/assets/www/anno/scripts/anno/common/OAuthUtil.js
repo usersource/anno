@@ -274,7 +274,7 @@ define([
         },
         openAuthPage: function()
         {
-            var url = "file:///android_asset/www/pages/auth/main.html?callback="+document.location.href;
+            var url = "file:///android_asset/www/anno/pages/auth/main.html?callback="+document.location.href;
             var ref2 = window.open(url, '_self', 'location=no');
         },
         processBasicAuthToken: function(userInfo)
