@@ -5,9 +5,10 @@ define([
     "dojo/touch",
     "dojox/gfx",
     "dojox/gfx/move",
-    "./BaseShape"
+    "./BaseShape",
+    "../../common/Util"
 ],
-    function (declare, connect, lang, touch, gfx, gfxMove, BaseShape)
+    function (declare, connect, lang, touch, gfx, gfxMove, BaseShape, annoUtil)
     {
         /**
          * @author David Lee
@@ -16,8 +17,8 @@ define([
         return declare("anno.draw.shapes.ArrowLine", [BaseShape], {
             arrowLength: 25,
             arrowAngle: Math.PI / 8,
-            lineStrokeStyle: {color: '#ff9900', width: 3},
-            arrowHeadFillStyle: "rgba(255, 153, 0, 1)",
+            lineStrokeStyle: {color: annoUtil.level1Color, width: 3},
+            arrowHeadFillStyle: "rgba("+annoUtil.level1ColorRGB+", 1)",
             shapeType: "ArrowLine",
             minSize:100,
             arrowPoints:null,

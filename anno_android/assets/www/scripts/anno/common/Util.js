@@ -17,8 +17,10 @@ define([
             SimpleComment:"simple comment",
             DrawComment:"draw comment"
         },
-        level1Color:"#ff9900",
+        level1Color:"#f1572a",
+        level1ColorRGB:"241, 87, 42",
         level2Color:"#ff0000",
+        level2ColorRGB:"255, 0, 0",
         annoScreenshotPath:null,
         API:{
             config:{
@@ -35,8 +37,8 @@ define([
                     clientSecret: "n0fJeoZ-4UFWZaIG41mNg41_"
                 },
                 "3": { // Prod via proxy
-                    imageServiceURL:"https://usersource-anno.appspot.com/screenshot",
-                    apiRoot:"https://usersource-anno.appspot.com/_ah/api",
+                    imageServiceURL:"https://ec2-54-201-219-246.us-west-2.compute.amazonaws.com/screenshot",
+                    apiRoot:"https://ec2-54-201-219-246.us-west-2.compute.amazonaws.com/_ah/api",
                     clientId : "955803277195.apps.googleusercontent.com",
                     clientSecret: "l5UwDYJuv2BdUUBF2tu9fsol"
                 },

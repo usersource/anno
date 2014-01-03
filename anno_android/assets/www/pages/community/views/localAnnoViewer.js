@@ -97,13 +97,13 @@ define([
 
                 if (annoItem.level==1)
                 {
-                    epLineStyle = {color:'#FFA500', width:1};
-                    epFillStyle = "rgba(255,165,0, 0.4)";
+                    epLineStyle = {color:Util.level1Color, width:1};
+                    epFillStyle = "rgba("+Util.level1ColorRGB+", 0.4)";
                 }
                 else
                 {
-                    epLineStyle = {color:'#FF0000',width:1};
-                    epFillStyle = "rgba(255,12,9, 0.4)";
+                    epLineStyle = {color:Util.level2Color,width:1};
+                    epFillStyle = "rgba("+Util.level2ColorRGB+", 0.4)";
                 }
 
                 var tx = Math.round(((imageWidth-borderWidth*2)*annoItem.x)/10000);
