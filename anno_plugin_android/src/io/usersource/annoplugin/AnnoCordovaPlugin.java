@@ -205,7 +205,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
       fos = new FileOutputStream(screenshotPath);
 
       is = activity.getAssets().open(
-              "www/pages/intro/css/images/defaultsht.jpg");
+              "www/anno/pages/intro/css/images/defaultsht.jpg");
       byte b[] = new byte[is.available()];
       is.read(b);
 
