@@ -11,15 +11,15 @@
         <engine name="cordova" version=">=3.0.0" />
     </engines>
 
-    <asset src="anno_android/assets/www/pages/annodraw" target="pages/annodraw" />
-    <asset src="anno_android/assets/www/pages/auth" target="pages/auth" />
-    <asset src="anno_android/assets/www/pages/community" target="pages/community" />
-    <asset src="anno_android/assets/www/pages/feedback" target="pages/feedback" />
-    <asset src="anno_android/assets/www/pages/intro" target="pages/intro" />
+    <asset src="anno_android/assets/www/anno/pages/annodraw" target="anno/pages/annodraw" />
+    <asset src="anno_android/assets/www/anno/pages/auth" target="anno/pages/auth" />
+    <asset src="anno_android/assets/www/anno/pages/community" target="anno/pages/community" />
+    <asset src="anno_android/assets/www/anno/pages/feedback" target="anno/pages/feedback" />
+    <asset src="anno_android/assets/www/anno/pages/intro" target="anno/pages/intro" />
 
-    <asset src="anno_android/assets/www/scripts/anno" target="scripts/anno" />
-    <asset src="anno_android/assets/www/scripts/dojo" target="scripts/dojo" />
-    <asset src="anno_android/assets/www/scripts/dojox" target="scripts/dojox" />
+    <asset src="anno_android/assets/www/anno/scripts/anno" target="anno/scripts/anno" />
+    <asset src="anno_android/assets/www/anno/scripts/dojo" target="anno/scripts/dojo" />
+    <asset src="anno_android/assets/www/anno/scripts/dojox" target="anno/scripts/dojox" />
 
     <dependency id="org.apache.cordova.device" />
     <dependency id="org.apache.cordova.network-information" />
