@@ -93,7 +93,7 @@
     content: "\e616";
 }
 
-#navBtnBackMyStuff
+#navBtnBackMyStuff, #navBtnBackSearchAnno
 {
     background-color: transparent;
     background: none;

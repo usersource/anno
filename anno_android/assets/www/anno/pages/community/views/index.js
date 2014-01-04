@@ -197,6 +197,12 @@ define([
                         app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
                     }));
 
+                    _connectResults.push(connect.connect(dom.byId("barSearchAnno"), 'click', function(e)
+                    {
+                        dojo.stopEvent(e);
+                        app.transitionToView(document.getElementById('modelApp_home'), {target:'searchAnno',url:'#searchAnno'});
+                    }));
+
                     _connectResults.push(connect.connect(dom.byId("menuItemSettings"), 'click', function(e)
                     {
                         {

@@ -108,6 +108,11 @@
             "controller" : "./views/settings",
             "dependencies":[],
             "template": "./templates/settings.html"
+        },
+        "searchAnno": {
+            "controller" : "./views/searchAnno",
+            "dependencies":[],
+            "template": "./templates/searchAnno.html"
         }
     }
 }
