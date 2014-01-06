@@ -694,10 +694,6 @@ require([
                                 domStyle.set(surface.container, 'top', shift+'px');
                                 domStyle.set('screenshotContainer', 'top', shift+'px');
 
-                                var top = parseInt(commentBox.txtNode.style.top);
-                                domStyle.set(commentBox.txtNode, 'top', (top+shift)+'px');
-                                domStyle.set(commentBox.inputNode, 'top', (top+shift)+'px');
-
                                 commentBox._shift = shift;
                             }
                         }
@@ -710,10 +706,6 @@ require([
                         {
                             domStyle.set(surface.container, 'top', '0px');
                             domStyle.set('screenshotContainer', 'top', '0px');
-
-                            var top = parseInt(commentBox.txtNode.style.top);
-                            domStyle.set(commentBox.txtNode, 'top', (top-commentBox._shift)+'px');
-                            domStyle.set(commentBox.inputNode, 'top', (top-commentBox._shift)+'px');
 
                             commentBox._shift = null;
                         }

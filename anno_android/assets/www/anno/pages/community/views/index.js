@@ -187,7 +187,10 @@ define([
                         annoUtil.showLoadingIndicator();
                         OAuthUtil.getAccessToken(function(){
                             annoUtil.loadAPI(annoUtil.API.anno, loadListData);
-                            AnnoDataHandler.startBackgroundSync();
+
+                            window.setTimeout(function(){
+                                AnnoDataHandler.startBackgroundSync();
+                            }, 5*1000);
                         });
                     });
 

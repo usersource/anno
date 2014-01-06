@@ -25,28 +25,28 @@ define([
         API:{
             config:{
                 "1": { // Production https://usersource-anno.appspot.com/_ah/api  955803277195.apps.googleusercontent.com
-                    imageServiceURL:"https://annoserver-test.appspot.com/screenshot",
-                    apiRoot:"https://annoserver-test.appspot.com/_ah/api",
-                    clientId : "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com",
-                    clientSecret: "n0fJeoZ-4UFWZaIG41mNg41_"
+                    imageServiceURL:"http://annoserver.appspot.com/screenshot",
+                    apiRoot:"https://annoserver.appspot.com/_ah/api",
+                    clientId : "22913132792.apps.googleusercontent.com",
+                    clientSecret: "LBlzLWXDgGXyvjlT-5gUjZGA"
                 },
                 "2": { // Test
-                    imageServiceURL:"https://annoserver-test.appspot.com/screenshot",
+                    imageServiceURL:"http://annoserver-test.appspot.com/screenshot",
                     apiRoot:"https://annoserver-test.appspot.com/_ah/api",
                     clientId : "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com",
                     clientSecret: "n0fJeoZ-4UFWZaIG41mNg41_"
                 },
                 "3": { // Prod via proxy
-                    imageServiceURL:"https://ec2-54-201-219-246.us-west-2.compute.amazonaws.com/screenshot",
-                    apiRoot:"https://ec2-54-201-219-246.us-west-2.compute.amazonaws.com/_ah/api",
-                    clientId : "955803277195.apps.googleusercontent.com",
-                    clientSecret: "l5UwDYJuv2BdUUBF2tu9fsol"
+                    imageServiceURL:"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/screenshot",
+                    apiRoot:"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/_ah/api",
+                    clientId : "22913132792.apps.googleusercontent.com",
+                    clientSecret: "LBlzLWXDgGXyvjlT-5gUjZGA"
                 },
                 "4": { // Test via proxy
-                    imageServiceURL:"https://usersource-anno.appspot.com/screenshot",
-                    apiRoot:"https://usersource-anno.appspot.com/_ah/api",
-                    clientId : "955803277195.apps.googleusercontent.com",
-                    clientSecret: "l5UwDYJuv2BdUUBF2tu9fsol"
+                    imageServiceURL:"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/annotest/screenshot",
+                    apiRoot:"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/annotest/_ah/api",
+                    clientId : "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com",
+                    clientSecret: "n0fJeoZ-4UFWZaIG41mNg41_"
                 }
             },
             apiVersion:"1.0",
