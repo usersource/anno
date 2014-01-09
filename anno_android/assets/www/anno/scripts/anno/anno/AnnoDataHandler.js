@@ -260,15 +260,15 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
         },
         saveUserInfo: function(userInfo, callback)
         {
-            DBUtil.executeUpdateSql(delete_userInfo_sql,[], function(res){
-                console.error("current userInfo deleted:"+ JSON.stringify(res));
-                DBUtil.executeUpdateSql(save_userInfo_sql,[userInfo.userId, userInfo.email, userInfo.signinMethod, userInfo.nickname, userInfo.password||''], function(res){
-                    console.error("save userInfo end:"+ JSON.stringify(res));
-                    if (callback)
-                    {
-                        callback();
-                    }
-                }, onSQLError);
+            console.error("saveUserInfo invoked.");
+
+            DBUtil.executeUpdateSql(save_userInfo_sql,[userInfo.userId, userInfo.email, userInfo.signinMethod, userInfo.nickname, userInfo.password||''], function(res){
+                console.error("save userInfo end:"+ JSON.stringify(res));
+                if (callback)
+                {
+                    console.error("saveUserInfo callback invoked.");
+                    callback();
+                }
             }, onSQLError);
         },
         getCurrentUserInfo: function(callback)
@@ -296,6 +296,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
         removeUser: function(callback)
         {
             DBUtil.executeUpdateSql(delete_userInfo_sql,[], function(res){
+                console.error("user removed.");
                 if (callback)
                 {
                     callback();

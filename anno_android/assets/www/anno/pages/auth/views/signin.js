@@ -149,6 +149,7 @@ define([
 
         var authCallback = function(result)
         {
+            console.error("authCallback invoked.");
             annoUtil.hideLoadingIndicator();
             if (result.success)
             {
