@@ -8,9 +8,10 @@ require([
     "dojox/mobile/_ContentPaneMixin",
     "anno/common/DBUtil",
     "anno/common/Util",
+    "anno/anno/AnnoDataHandler",
     "dojo/text!./app.json"
 ],
-    function (declare, dom, registry, domClass, Application, jsonRef, _ContentPaneMixin, DBUtil, annoUtil, config)
+    function (declare, dom, registry, domClass, Application, jsonRef, _ContentPaneMixin, DBUtil, annoUtil, AnnoDataHandler, config)
     {
         var config = jsonRef.fromJson(config);
         console.log("Worked!");
@@ -18,6 +19,7 @@ require([
         document.addEventListener("deviceready", function(){
             DBUtil.initDB(function(){
                 console.error("DB is readay!");
+                AnnoDataHandler.removeUser();
                 annoUtil.readSettings(function(){
                     Application(config);
                 });
