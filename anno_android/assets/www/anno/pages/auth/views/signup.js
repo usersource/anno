@@ -12,7 +12,7 @@ define([
     {
         var _connectResults = []; // events connect results
         var app = null,
-            margin = 30;
+            margin = 10;
 
         var _callbackURL;
 
@@ -23,6 +23,13 @@ define([
             domStyle.set('signupFormContainer', 'width', (viewPoint.w-margin*2)+'px');
         };
 
+        var setInputFocus = function(inputObject)
+        {
+            inputObject.focus();
+            inputObject.click();
+            annoUtil.showSoftKeyboard();
+        };
+
         var isInputValidate = function()
         {
             var email = dom.byId('signupEmail').value,
@@ -31,25 +38,41 @@ define([
 
             if (email.length <=0)
             {
-                annoUtil.showMessageDialog("Please enter email.");
+                annoUtil.showMessageDialog("Please enter email.", function(){
+                    window.setTimeout(function(){
+                        setInputFocus(dom.byId("signupEmail"));
+                    }, 100);
+                });
                 return false;
             }
 
             if (!/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(email))
             {
-                annoUtil.showMessageDialog("You must enter an email such as yourname@yourhost.com.");
+                annoUtil.showMessageDialog("You must enter an email such as yourname@yourhost.com.", function(){
+                    window.setTimeout(function(){
+                        setInputFocus(dom.byId("signupEmail"));
+                    }, 100);
+                });
                 return false;
             }
 
             if (pwd.length < 6)
             {
-                annoUtil.showMessageDialog("Password must be at least 6 characters long.");
+                annoUtil.showMessageDialog("Password must be at least 6 characters long.", function(){
+                    window.setTimeout(function(){
+                        setInputFocus(dom.byId("signupPwd"));
+                    }, 100);
+                });
                 return false;
             }
 
             if (nickname.length <= 0)
             {
-                annoUtil.showMessageDialog("Please enter nickname.");
+                annoUtil.showMessageDialog("Please enter nickname.", function(){
+                    window.setTimeout(function(){
+                        setInputFocus(dom.byId("nickNameSignup"));
+                    }, 100);
+                });
                 return false;
             }
 
@@ -169,11 +192,22 @@ define([
                     }
                 }));
 
+                _connectResults.push(connect.connect(dom.byId("submitAnnoSignup"), 'click', function(e)
+                {
+                    if (isInputValidate())
+                    {
+                        dom.byId('hiddenBtn').focus();
+                        submitSignUp();
+                    }
+                }));
+
                 adjustSize();
             },
             afterActivate: function()
             {
-
+                window.setTimeout(function(){
+                    setInputFocus(dom.byId("signupEmail"));
+                }, 500);
             },
             beforeDeactivate: function()
             {

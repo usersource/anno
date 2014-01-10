@@ -218,6 +218,54 @@
     opacity: 0.4;
 }
 
+.annoOrangeColor
+{
+    color: #f1572a;
+}
+
+.bigGreenBtn
+{
+    outline: none;
+    color: #ffffff;
+    background-color: #1c8436;
+    border-color: #1c8436;
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 16pt;
+    font-weight: bold;
+    line-height: 1.428571429;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    -webkit-user-select: none;
+}
+
+.signinWithGoogleBtn
+{
+    outline: none;
+    padding-top: 3px;
+    width: 206px;
+    height: 48px;
+    color: #3d83f0;
+    background-color: white;
+    border-color: #1c8436;
+    display: inline-block;
+    margin-bottom: 0;
+    font-size: 13pt;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 2px solid #3d83f0;
+    border-radius: 8px;
+    -webkit-user-select: none;
+}
+
 #headingStart, .topHeading
 {
     background-image: none;
