@@ -15,11 +15,12 @@ define([
     {
         var _connectResults = []; // events connect results
         var app = null,
-            margin = 30,
+            margin = 10,
             currentSignInUserInfo;
 
         var _callbackURL = "";
         var _currentAuthResult = null;
+        var inAnnoSignInView = false;
 
         var adjustSize = function()
         {
@@ -183,6 +184,8 @@ define([
                             {
                                 // goes to pick nick name screen
                                 domStyle.set('pickNickNameContainer', 'display', '');
+                                domStyle.set('annoSigninContainer', 'display', 'none');
+                                domStyle.set('modelApp_signin', 'backgroundColor', '#dddddd');
                                 domStyle.set('signinContainer', 'display', 'none');
 
                                 transit(null, dom.byId('pickNickNameContainer'), {
@@ -252,14 +255,36 @@ define([
             window.open(cbURL, "_self");
         };
 
+        var goBackToSignin = function()
+        {
+            domStyle.set('pickNickNameContainer', 'display', 'none');
+            domStyle.set('annoSigninContainer', 'display', 'none');
+            domStyle.set('modelApp_signin', 'backgroundColor', '#ffffff');
+            domStyle.set('signinContainer', 'display', '');
+            transit(null, dom.byId('signinContainer'), {
+                transition:"slide",
+                duration:300,
+                reverse: true
+            });
+        };
+
+        var exitApp = function()
+        {
+            if (inAnnoSignInView)
+            {
+                goBackToSignin();
+                inAnnoSignInView = false;
+            }
+            else
+            {
+                navigator.app.exitApp();
+            }
+        };
+
         return {
             // simple view init
             init:function ()
             {
-                document.addEventListener("backbutton", function(){
-                    navigator.app.exitApp();
-                }, false);
-
                 var params = annoUtil.parseUrlParams(document.location.search);
                 _callbackURL = params['callback'];
                 console.error("_callbackURL:"+_callbackURL);
@@ -278,13 +303,7 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId("btnBackToSignin"), 'click', function(e)
                 {
-                    domStyle.set('pickNickNameContainer', 'display', 'none');
-                    domStyle.set('signinContainer', 'display', '');
-                    transit(null, dom.byId('signinContainer'), {
-                        transition:"slide",
-                        duration:300,
-                        reverse: true
-                    });
+                    goBackToSignin();
                 }));
 
                 _connectResults.push(connect.connect(dom.byId("signinEmail"), 'keydown', function(e)
@@ -330,15 +349,39 @@ define([
                     doGoogleAuth();
                 }));
 
+                _connectResults.push(connect.connect(dom.byId("btnSigninWithAnno"), 'click', function(e)
+                {
+                    domStyle.set('pickNickNameContainer', 'display', 'none');
+                    domStyle.set('signinContainer', 'display', 'none');
+                    domStyle.set('annoSigninContainer', 'display', '');
+                    domStyle.set('modelApp_signin', 'backgroundColor', '#DDDDDD');
+
+                    transit(null, dom.byId('annoSigninContainer'), {
+                        transition:"slide",
+                        duration:300
+                    });
+
+                    inAnnoSignInView = true;
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("btnSubmitAnnoSignin"), 'click', function(e)
+                {
+                    if (isInputValidate())
+                    {
+                        dom.byId('hiddenBtn').focus();
+                        submitSignIn();
+                    }
+                }));
+
                 adjustSize();
             },
             afterActivate: function()
             {
-
+                document.addEventListener("backbutton", exitApp, false);
             },
             beforeDeactivate: function()
             {
-
+                document.removeEventListener("backbutton", exitApp, false);
             },
             destroy:function ()
             {
