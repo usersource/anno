@@ -52,12 +52,25 @@ def auth_user(headers):
         credential_pair = get_credential(headers)
         email = credential_pair[0]
         validate_email(email)
-        user = User.find_user_by_email(email)
         User.authenticate(credential_pair[0], md5(credential_pair[1]))
+        user = User.find_user_by_email(email)
     else:
         user = User.find_user_by_email(current_user.email())
     if user is None:
         raise endpoints.UnauthorizedException("No permission.")
+    return user
+
+def get_user(headers):
+    current_user = get_endpoints_current_user(raise_unauthorized=False)
+    user = None
+    if current_user is None:
+        credential_pair = get_credential(headers)
+        email = credential_pair[0]
+        validate_email(email)
+        User.authenticate(credential_pair[0], md5(credential_pair[1]))
+        user = User.find_user_by_email(email)
+    else:
+        user = User.find_user_by_email(current_user.email())
     return user
 
 def get_country_by_coordinate(latitude, longitude):
@@ -126,4 +139,12 @@ def get_credential(headers):
         raise endpoints.UnauthorizedException("No permission.")
     return credential_pair
 
+"""
+annoserver:
+anno_js_client_id = "22913132792.apps.googleusercontent.com"
+annoserver-test:
+anno_js_client_id = "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com"
+usersource-anno:
 anno_js_client_id = "955803277195.apps.googleusercontent.com"
+"""
+anno_js_client_id = "22913132792.apps.googleusercontent.com"

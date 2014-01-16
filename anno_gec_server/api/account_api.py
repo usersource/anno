@@ -35,7 +35,7 @@ class AccountApi(remote.Service):
         if user is not None:
             raise endpoints.BadRequestException("Display name(" + display_name + ") already exists.")
 
-        user = User.insert_user(email, display_name, md5(password))
+        user = User.insert_normal_user(email, display_name, md5(password))
         return UserMessage(id=user.key.id())
 
     @endpoints.method(AccountMessage, UserMessage, path='account/authenticate', http_method='POST',
@@ -68,5 +68,12 @@ class AccountApi(remote.Service):
         auth_source = request.auth_source
         if auth_source is None:
             auth_source = 'Google'
-        User.insert_user(current_user.email(), request.display_name, auth_source)
+        email = current_user.email()
+        user = User.find_user_by_email(email)
+        if user is not None:
+            user.auth_source = auth_source
+            user.display_name = request.display_name
+            user.put()
+        else:
+            User.insert_user(current_user.email(), request.display_name, auth_source)
         return message_types.VoidMessage()
