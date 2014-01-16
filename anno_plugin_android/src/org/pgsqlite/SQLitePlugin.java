@@ -30,17 +30,18 @@ public class SQLitePlugin extends CordovaPlugin
 {
   /**
    * Multiple database map (static).
+   * remove static -- by David Lee(allmywant@gmail.com)
    */
-  static HashMap<String, SQLiteDatabase> dbmap = new HashMap<String, SQLiteDatabase>();
+   HashMap<String, SQLiteDatabase> dbmap = new HashMap<String, SQLiteDatabase>();
 
   /**
    * Get a SQLiteDatabase reference from the db map (public static accessor).
-   *
+   * remove static -- by David Lee(allmywant@gmail.com)
    * @param dbname
    *            The name of the database.
    *
    */
-  public static SQLiteDatabase getSQLiteDatabase(String dbname)
+  public  SQLiteDatabase getSQLiteDatabase(String dbname)
   {
     return dbmap.get(dbname);
   }

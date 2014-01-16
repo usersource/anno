@@ -268,6 +268,41 @@ define([
             });
         };
 
+        var getUserDisplayName = function()
+        {
+            var email = dom.byId('signinEmail').value;
+
+            if (email.length <=0) return;
+
+            annoUtil.loadAPI(annoUtil.API.user, function(){
+                var getDisplayNameAPI = gapi.client.user.user.displayname.get({email:email});
+
+                getDisplayNameAPI.execute(function(resp){
+                    if (!resp)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        annoUtil.showMessageDialog("Response from server are empty when calling user.displayname.get api.");
+                        return;
+                    }
+
+                    if (resp.error)
+                    {
+                        annoUtil.hideLoadingIndicator();
+
+                        annoUtil.showMessageDialog("An error occurred when calling user.displayname.get api: "+resp.error.message);
+                        return;
+                    }
+
+                    console.error("user.displayname.get: "+ JSON.stringify(resp));
+
+                    if (resp.display_name)
+                    {
+                        dom.byId('nickNameSigninAnno').value = resp.display_name;
+                    }
+                });
+            });
+        };
+
         var exitApp = function()
         {
             if (inAnnoSignInView)
@@ -317,6 +352,11 @@ define([
                     }
                 }));
 
+                _connectResults.push(connect.connect(dom.byId("signinEmail"), 'blur', function(e)
+                {
+                    getUserDisplayName();
+                }));
+
                 _connectResults.push(connect.connect(dom.byId("signPwd"), 'keydown', function(e)
                 {
                     if (e.keyCode == 13)
@@ -354,6 +394,10 @@ define([
                     domStyle.set('pickNickNameContainer', 'display', 'none');
                     domStyle.set('signinContainer', 'display', 'none');
                     domStyle.set('annoSigninContainer', 'display', '');
+                    domStyle.set('signinMessage', 'display', 'none');
+                    dom.byId("signinEmail").value = "";
+                    dom.byId("signPwd").value = "";
+                    dom.byId("nickNameSigninAnno").value = "";
                     domStyle.set('modelApp_signin', 'backgroundColor', '#DDDDDD');
 
                     transit(null, dom.byId('annoSigninContainer'), {
@@ -378,6 +422,13 @@ define([
             afterActivate: function()
             {
                 document.addEventListener("backbutton", exitApp, false);
+                var gotoSignin = this.params["gotosignin"];
+
+                if (gotoSignin == "1")
+                {
+                    inAnnoSignInView = true;
+                    getUserDisplayName();
+                }
             },
             beforeDeactivate: function()
             {

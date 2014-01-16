@@ -105,7 +105,23 @@ define([
                     {
                         annoUtil.hideLoadingIndicator();
 
-                        annoUtil.showMessageDialog("An error occurred when calling account.register api: "+resp.error.message);
+                        if (resp.error.message == ("Email("+email+") already exists."))
+                        {
+                            domStyle.set('pickNickNameContainer', 'display', 'none');
+                            domStyle.set('signinContainer', 'display', 'none');
+                            dom.byId("signinMessage").innerHTML = "Email("+email+") already exists, please sign-in.";
+                            domStyle.set('signinMessage', 'display', '');
+                            domStyle.set('annoSigninContainer', 'display', '');
+                            domStyle.set('modelApp_signin', 'backgroundColor', '#DDDDDD');
+                            dom.byId("signinEmail").value = email;
+
+                            app.transitionToView(document.getElementById('modelApp_signup'), {target:'signin',url:'#signin',params:{"gotosignin":"1"}});
+                        }
+                        else
+                        {
+                            annoUtil.showMessageDialog("An error occurred when calling account.register api: "+resp.error.message);
+                        }
+
                         return;
                     }
 
@@ -142,42 +158,6 @@ define([
             window.open(cbURL, "_self");
         };
 
-        var checkUserExistence = function()
-        {
-            var email = dom.byId('signupEmail').value;
-            annoUtil.showLoadingIndicator();
-            annoUtil.loadAPI(annoUtil.API.user, function(){
-                var getDisplayNameAPI = gapi.client.user.user.displayname.get({email:email});
-
-                getDisplayNameAPI.execute(function(resp){
-                    if (!resp)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        annoUtil.showMessageDialog("Response from server are empty when calling user.displayname.get api.");
-                        return;
-                    }
-
-                    if (resp.error)
-                    {
-                        annoUtil.hideLoadingIndicator();
-
-                        annoUtil.showMessageDialog("An error occurred when calling user.displayname.get api: "+resp.error.message);
-                        return;
-                    }
-
-                    console.error("user.displayname.get: "+ JSON.stringify(resp));
-
-                    if (resp.display_name)
-                    {
-                        // goes to pick nick name screen
-                        console.error("user exists!");
-                    }
-
-                    annoUtil.hideLoadingIndicator();
-                });
-            });
-        };
-
         return {
             // simple view init
             init:function ()
@@ -201,8 +181,7 @@ define([
                         dom.byId("signupPwd").focus();
                         dom.byId("signupPwd").click();
 
-                        //annoUtil.showSoftKeyboard();
-                        checkUserExistence();
+                        annoUtil.showSoftKeyboard();
                     }
                 }));
 
@@ -245,6 +224,10 @@ define([
                 window.setTimeout(function(){
                     setInputFocus(dom.byId("signupEmail"));
                 }, 500);
+
+                dom.byId('signupEmail').value = "",
+                dom.byId('signupPwd').value = "";
+                dom.byId('nickNameSignup').value = "";
             },
             beforeDeactivate: function()
             {
