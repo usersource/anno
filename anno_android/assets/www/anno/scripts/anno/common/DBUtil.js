@@ -29,6 +29,11 @@ define([
                 localFileSystem = fs;
             });
         },
+        reconnectToDB:function()
+        {
+            this.annoDB = window.sqlitePlugin.openDatabase({name: "anno", bgType2: 1});
+            console.error("db reconnected.");
+        },
         checkTables: function()
         {
             var self = this;

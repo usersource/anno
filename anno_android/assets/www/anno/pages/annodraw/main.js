@@ -301,7 +301,7 @@ require([
         var hiddenImage = new Image();
         hiddenImage.onload = function()
         {
-            ctx.drawImage(hiddenImage, 0, 0, viewPoint.w-borderWidth*2, viewPoint.h-borderWidth*2);
+            ctx.drawImage(hiddenImage, 0, 0, viewPoint.w-totalSpace*2, viewPoint.h-borderWidth*2-barHeight);
         };
         hiddenImage.src = screenShotPath;
     };
