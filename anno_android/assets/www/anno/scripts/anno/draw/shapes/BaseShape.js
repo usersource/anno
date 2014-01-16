@@ -62,6 +62,7 @@ define([
                 if (sel&&this.deletable)
                 {
                     this.x.setStroke(this.xColor).setFill(this.xColor);
+                    this.x.moveToFront();
                 }
                 else
                 {
