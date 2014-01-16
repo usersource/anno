@@ -29,7 +29,7 @@ class User(ndb.Model):
         return user
 
     @classmethod
-    def insert_user(cls, email, username, password):
+    def insert_normal_user(cls, email, username, password):
         user = User(user_email=email, display_name=username, password=password, auth_source="Anno")
         user.put()
         return user
