@@ -24,7 +24,7 @@ require([
         borderWidth;
 
     var sdTitleHeight = 60,
-        sdBottom = 80;
+        sdBottom = 80, barHeight = 50, totalSpace = 0;
 
     var lastShapePos;
     var lastBlackRectanglePos;
@@ -146,7 +146,7 @@ require([
             lastShapePos.y2+= defaultShapeHeight+50;
         }
 
-        if (lastShapePos.y1 >= viewPoint.h||lastShapePos.y2 >= viewPoint.h)
+        if (lastShapePos.y1 >= (viewPoint.h-barHeight)||lastShapePos.y2 >= (viewPoint.h-barHeight))
         {
             lastShapePos.y1 = 100+defaultShapeHeight;
             lastShapePos.y2 = 100;
@@ -169,7 +169,7 @@ require([
             lastBlackRectanglePos.y2+= defaultShapeHeight+50;
         }
 
-        if (lastBlackRectanglePos.y1 >= viewPoint.h||lastBlackRectanglePos.y2 >= viewPoint.h)
+        if (lastBlackRectanglePos.y1 >= (viewPoint.h-barHeight)||lastBlackRectanglePos.y2 >= (viewPoint.h-barHeight))
         {
             lastBlackRectanglePos.y1 = 100+defaultShapeHeight;
             lastBlackRectanglePos.y2 = 100;
@@ -295,8 +295,8 @@ require([
     var drawImageHiddenCanvas = function()
     {
         var hiddenCanvas = dom.byId('hiddenCanvas');
-        hiddenCanvas.width = viewPoint.w-borderWidth*2;;
-        hiddenCanvas.height = viewPoint.h-borderWidth*2;;
+        hiddenCanvas.width = viewPoint.w-totalSpace*2;
+        hiddenCanvas.height = viewPoint.h-borderWidth*2-barHeight;
         var ctx = hiddenCanvas.getContext('2d');
         var hiddenImage = new Image();
         hiddenImage.onload = function()
@@ -578,7 +578,8 @@ require([
                 window.setTimeout(function(){
 
                     viewPoint = win.getBox();
-                    borderWidth = Math.floor(viewPoint.w*0.02);
+                    totalSpace = Math.floor(viewPoint.w*0.02);
+                    borderWidth = Math.round(totalSpace/2);
 
                     lastShapePos = {
                         x1:Math.round((viewPoint.w-defaultShapeWidth)/2),
@@ -596,13 +597,16 @@ require([
 
                     surface = window.surface = new Surface({
                         container: dom.byId("gfxCanvasContainer"),
-                        width:viewPoint.w-borderWidth*2,
-                        height:viewPoint.h-borderWidth*2,
+                        width:viewPoint.w-totalSpace*2,
+                        height:viewPoint.h-borderWidth*2-barHeight,
                         borderWidth:borderWidth,
                         drawMode:true
                     });
 
-                    domStyle.set(surface.container, 'borderWidth', borderWidth+'px');
+                    domStyle.set(surface.container, {
+                        'borderWidth': borderWidth+'px',
+                        'left': borderWidth+"px"
+                    });
 
                     connect.connect(surface, "onShapeRemoved", function()
                     {
@@ -643,9 +647,10 @@ require([
 
                     // set screenshot container size
                     domStyle.set('screenshotContainer', {
-                        width: (viewPoint.w-borderWidth*2)+'px',
-                        height: (viewPoint.h-borderWidth*2)+'px',
-                        borderWidth:borderWidth+"px"
+                        width: (viewPoint.w-totalSpace*2)+'px',
+                        height: (viewPoint.h-borderWidth*2-barHeight)+'px',
+                        borderWidth:borderWidth+"px",
+                        left: borderWidth+"px"
                     });
 
                     domStyle.set('sdTitle', 'height', sdTitleHeight+'px');

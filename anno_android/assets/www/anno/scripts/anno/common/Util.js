@@ -17,8 +17,8 @@ define([
             SimpleComment:"simple comment",
             DrawComment:"draw comment"
         },
-        level1Color:"#f1572a",
-        level1ColorRGB:"241, 87, 42",
+        level1Color:"#ff9900",
+        level1ColorRGB:"255, 153, 0",
         level2Color:"#ff0000",
         level2ColorRGB:"255, 0, 0",
         annoScreenshotPath:null,

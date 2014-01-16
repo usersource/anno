@@ -126,9 +126,6 @@ define([
                         if (this.inputElement.value)
                         {
                             domStyle.set(this.shareBtnNode, 'display', '');
-                            domStyle.set(dom.byId('btnHome'), 'display', 'none');
-                            domStyle.set(dom.byId('btnDraw'), 'display', 'none');
-                            domStyle.set(dom.byId('topBar'), 'display', 'none');
 
                             // handle simple-comment box grows in height up to 4 visible lines
                             this.handleBoxHeight();
@@ -158,7 +155,7 @@ define([
                     }));
 
                     this.shareBtnNode = domConstruct.create('button', {
-                        style: "display:none;position:absolute;top:"+(this.pathPoints[0].y-3+this.surface.borderWidth)+"px;left:"+(this.pathPoints[5].x+3+this.surface.borderWidth)+"px;",
+                        style: "display:none;position:absolute;top:"+(this.pathPoints[0].y-3+this.surface.borderWidth)+"px;left:"+(this.pathPoints[5].x+3+this.surface.borderWidth*2)+"px;",
                         "class": "btn",
                         innerHTML:"Share"
                     }, document.body, 'last');
@@ -198,10 +195,6 @@ define([
 
                             this.shareBtnNode.style.top = (this.pathPoints[0].y-3+this.surface.borderWidth)+'px';
                         }
-
-                        domStyle.set(dom.byId('btnHome'), 'display', 'none');
-                        domStyle.set(dom.byId('btnDraw'), 'display', 'none');
-                        domStyle.set(dom.byId('topBar'), 'display', 'none');
                     }));
 
                     this._connects.push(connect.connect(this.txtNode, touch.release, this, function (e)

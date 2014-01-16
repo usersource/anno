@@ -142,6 +142,42 @@ define([
             window.open(cbURL, "_self");
         };
 
+        var checkUserExistence = function()
+        {
+            var email = dom.byId('signupEmail').value;
+            annoUtil.showLoadingIndicator();
+            annoUtil.loadAPI(annoUtil.API.user, function(){
+                var getDisplayNameAPI = gapi.client.user.user.displayname.get({email:email});
+
+                getDisplayNameAPI.execute(function(resp){
+                    if (!resp)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        annoUtil.showMessageDialog("Response from server are empty when calling user.displayname.get api.");
+                        return;
+                    }
+
+                    if (resp.error)
+                    {
+                        annoUtil.hideLoadingIndicator();
+
+                        annoUtil.showMessageDialog("An error occurred when calling user.displayname.get api: "+resp.error.message);
+                        return;
+                    }
+
+                    console.error("user.displayname.get: "+ JSON.stringify(resp));
+
+                    if (resp.display_name)
+                    {
+                        // goes to pick nick name screen
+                        console.error("user exists!");
+                    }
+
+                    annoUtil.hideLoadingIndicator();
+                });
+            });
+        };
+
         return {
             // simple view init
             init:function ()
@@ -165,7 +201,8 @@ define([
                         dom.byId("signupPwd").focus();
                         dom.byId("signupPwd").click();
 
-                        annoUtil.showSoftKeyboard();
+                        //annoUtil.showSoftKeyboard();
+                        checkUserExistence();
                     }
                 }));
 

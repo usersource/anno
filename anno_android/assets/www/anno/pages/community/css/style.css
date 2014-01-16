@@ -220,7 +220,7 @@
 
 .annoOrangeColor
 {
-    color: #f1572a;
+    color: #ff9900;
 }
 
 .bigGreenBtn
@@ -285,7 +285,7 @@
 
 .barIconHighlight
 {
-    color: #f1572a;
+    color: #ff9900;
 }
 
 #headingDetail
@@ -321,7 +321,7 @@
     -o-transform: rotate(270deg);
     transform:rotate(270deg);
     white-space:nowrap;
-    background-color: #f1572a;
+    background-color: #ff9900;
     color: #333333;
     font-size: 14px;
     width: 68px;
@@ -422,7 +422,7 @@
 .annoTextDetail
 {
     width: 100%;
-    border: 2px solid #f1572a;
+    border: 2px solid #ff9900;
     padding-top: 2px;
     padding-bottom: 2px;
     padding-left: 2px;
@@ -489,7 +489,7 @@
 
 .icoImgActive
 {
-    color: #f1572a;
+    color: #ff9900;
     font-size: 30px;
 }
 
@@ -524,8 +524,8 @@
 .btn
 {
     color: #ffffff;
-    background-color: #f1572a;
-    border-color: #f1572a;
+    background-color: #ff9900;
+    border-color: #ff9900;
     display: inline-block;
     padding: 6px 12px;
     margin-bottom: 0;
@@ -547,7 +547,7 @@
     top: 0px;
     left: 0px;
     width: 100%;
-    border-color: #f1572a;
+    border-color: #ff9900;
     border-style: solid;
 }
 
