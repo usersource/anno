@@ -5,6 +5,7 @@ from google.appengine.ext import ndb
 from model.anno import Anno
 from model.base_model import BaseModel
 from message.flag_message import FlagMessage
+from message.user_message import UserMessage
 
 
 class Flag(BaseModel):
@@ -20,7 +21,8 @@ class Flag(BaseModel):
         message = FlagMessage()
         message.id = self.key.id()
         message.anno_id = self.anno_key.id()
-        message.user_id = self.creator.id()
+        if self.creator is not None:
+            message.creator = self.creator.get().to_message()
         return message
 
     @classmethod
