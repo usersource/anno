@@ -12,7 +12,7 @@ from message.vote_message import VoteMessage
 from message.vote_message import VoteListMessage
 from api.utils import get_endpoints_current_user
 from api.utils import anno_js_client_id
-from api.utils import handle_user
+from api.utils import auth_user
 from model.anno import Anno
 from model.user import User
 from model.vote import Vote
@@ -30,7 +30,7 @@ class VoteApi(remote.Service):
         """
         Exposes an API endpoint to insert a vote for the current user.
         """
-        user = handle_user(request.user_email)
+        user = auth_user(self.request_state.headers)
 
         anno = Anno.get_by_id(request.anno_id)
         if anno is None:
@@ -61,6 +61,7 @@ class VoteApi(remote.Service):
         """
         Exposes an API endpoint to delete an existing vote.
         """
+        user = auth_user(self.request_state.headers)
         if request.id is None and request.anno_id is None:
             raise endpoints.BadRequestException('id or anno_id field is required.')
         if request.id is not None:
@@ -72,7 +73,6 @@ class VoteApi(remote.Service):
             anno.vote_count -= 1
             anno.put()
         elif request.anno_id is not None:
-            user = User.find_user_by_email(get_endpoints_current_user().email())
             anno = Anno.get_by_id(request.anno_id)
             for key in Vote.query(Vote.anno_key == anno.key, Vote.creator == user.key).iter(keys_only=True):
                 key.delete()
@@ -86,6 +86,7 @@ class VoteApi(remote.Service):
         """
         Exposes an API endpoint to get a vote.
         """
+        user = auth_user(self.request_state.headers)
         if request.id is None:
             raise endpoints.BadRequestException('id field is required.')
         vote = Vote.get_by_id(request.id)
@@ -104,6 +105,7 @@ class VoteApi(remote.Service):
         """
         Exposes an API endpoint to retrieve a list of vote.
         """
+        user = auth_user(self.request_state.headers)
         limit = 10
         if request.limit is not None:
             limit = request.limit

@@ -10,11 +10,13 @@ from community import Community
 from testing import test
 from testing import sendPost
 from AccountManager import AccountManager
+from image_handler import ImageHandler
 
 application = webapp2.WSGIApplication([('/', AnnoSync),
                                        ('/community', Community), 
                                        ('/test', test.Test),
                                        ('/users', AccountManager),
                                        ('/sendPost', sendPost.SendPost), 
-                                       ('/sync', AnnoSync)], debug=True)
+                                       ('/sync', AnnoSync),
+                                       ('/screenshot', ImageHandler)], debug=True)
 application = ReverseProxyServer(application)

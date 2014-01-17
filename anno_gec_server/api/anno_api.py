@@ -10,8 +10,6 @@ from google.appengine.ext.db import BadValueError
 from protorpc import message_types
 from protorpc import messages
 from protorpc import remote
-from google.appengine.ext import ndb
-import datetime
 
 from message.anno_api_messages import AnnoMessage
 from message.anno_api_messages import AnnoMergeMessage
@@ -22,9 +20,8 @@ from model.user import User
 from model.vote import Vote
 from model.flag import Flag
 from model.follow_up import FollowUp
-from api.utils import get_endpoints_current_user
-from api.utils import handle_user
 from api.utils import anno_js_client_id
+from api.utils import auth_user
 
 
 @endpoints.api(name='anno', version='1.0', description='Anno API',
@@ -45,6 +42,8 @@ class AnnoApi(remote.Service):
         """
         Exposes an API endpoint to get an anno detail by the specified id.
         """
+        user = auth_user(self.request_state.headers)
+
         if request.id is None:
             raise endpoints.BadRequestException('id field is required.')
         anno = Anno.get_by_id(request.id)
@@ -59,10 +58,9 @@ class AnnoApi(remote.Service):
         # set anno association with votes/flags
         # if current user exists, then fetch vote/flag.
         current_user = endpoints.get_current_user()
-        if current_user is not None:
-            user = User.find_user_by_email(current_user.email())
-            anno_resp_message.is_my_vote = Vote.is_belongs_user(anno, user)
-            anno_resp_message.is_my_flag = Flag.is_belongs_user(anno, user)
+
+        anno_resp_message.is_my_vote = Vote.is_belongs_user(anno, user)
+        anno_resp_message.is_my_flag = Flag.is_belongs_user(anno, user)
         return anno_resp_message
 
 
@@ -80,6 +78,7 @@ class AnnoApi(remote.Service):
         """
         Exposes an API endpoint to retrieve a list of anno.
         """
+        user = auth_user(self.request_state.headers)
         limit = 10
         if request.limit is not None:
             limit = request.limit
@@ -118,7 +117,7 @@ class AnnoApi(remote.Service):
 
         if current user doesn't exist, the user will be created first.
         """
-        user = handle_user(request.creator_id)
+        user = auth_user(self.request_state.headers)
         entity = Anno.insert_anno(request, user)
         return entity.to_response_message()
 
@@ -134,6 +133,7 @@ class AnnoApi(remote.Service):
         """
         Exposes an API endpoint to merge(update only the specified properties) an anno.
         """
+        user = auth_user(self.request_state.headers)
         if request.id is None:
             raise endpoints.BadRequestException('id field is required.')
         anno = Anno.get_by_id(request.id)
@@ -150,6 +150,7 @@ class AnnoApi(remote.Service):
         """
         Exposes an API endpoint to delete an existing anno.
         """
+        user = auth_user(self.request_state.headers)
         if request.anno_id is None:
             raise endpoints.BadRequestException('id field is required.')
         anno = Anno.get_by_id(request.anno_id)

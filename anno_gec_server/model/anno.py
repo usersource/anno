@@ -52,10 +52,7 @@ class Anno(BaseModel):
         """
         user_message = None
         if self.creator is not None:
-            user_message = UserMessage()
-            user_message.id = self.creator.id()
-            user_message.user_id = self.creator.get().user_id
-            user_message.user_email = self.creator.get().user_email
+            user_message = self.creator.get().to_message()
         return AnnoResponseMessage(id=self.key.id(),
                                    anno_text=self.anno_text,
                                    simple_x=self.simple_x,
@@ -76,7 +73,7 @@ class Anno(BaseModel):
                                    latitude=self.latitude,
                                    longitude=self.longitude,
                                    country=self.country
-                                   )
+        )
 
     def to_response_message_by_projection(self, projection):
         """
@@ -85,11 +82,7 @@ class Anno(BaseModel):
         anno_resp_message = AnnoResponseMessage(id=self.key.id())
         for prop_name in projection:
             if prop_name == 'creator':
-                user_message = UserMessage()
-                user_message.id = self.creator.id()
-                user_message.user_id = self.creator.get().user_id
-                user_message.user_email = self.creator.get().user_email
-                anno_resp_message.creator = user_message
+                anno_resp_message.creator = self.creator.get().to_message()
             else:
                 anno_resp_message.__setattr__(prop_name, getattr(self, prop_name))
         return anno_resp_message
@@ -116,7 +109,7 @@ class Anno(BaseModel):
             # use google map api to retrieve country information and save into datastore.
         if message.latitude is not None and message.longitude is not None:
             entity.country = get_country_by_coordinate(message.latitude, message.longitude)
-        # set last update time & activity
+            # set last update time & activity
         entity.last_update_time = datetime.datetime.now()
         entity.last_activity = 'anno'
         entity.put()
@@ -160,7 +153,7 @@ class Anno(BaseModel):
             self.screenshot_is_anonymized = message.screenshot_is_anonymized
         if message.geo_position is not None:
             self.geo_position = message.geo_position
-        # TODO: can't merge latitude & longitude now, if to enable it, also needs to look up country again.
+            # TODO: can't merge latitude & longitude now, if to enable it, also needs to look up country again.
 
     @classmethod
     def query_by_app_by_created(cls, app_name, limit, projection, curs):

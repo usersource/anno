@@ -1,11 +1,11 @@
 __author__ = 'topcircler'
 
-
 from google.appengine.ext import ndb
 
 from model.anno import Anno
 from model.base_model import BaseModel
 from message.followup_message import FollowupMessage
+from message.user_message import UserMessage
 
 
 class FollowUp(BaseModel):
@@ -22,9 +22,10 @@ class FollowUp(BaseModel):
         message = FollowupMessage()
         message.id = self.key.id()
         message.anno_id = self.anno_key.id()
-        message.user_id = self.creator.id()
         message.comment = self.comment
         message.created = self.created
+        if self.creator is not None:
+            message.creator = self.creator.get().to_message()
         return message
 
     @classmethod

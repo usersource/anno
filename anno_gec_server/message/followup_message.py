@@ -2,6 +2,7 @@ __author__ = 'topcircler'
 
 from protorpc import message_types
 from protorpc import messages
+from message.user_message import UserMessage
 
 
 class FollowupMessage(messages.Message):
@@ -10,10 +11,9 @@ class FollowupMessage(messages.Message):
     """
     id = messages.IntegerField(1)
     anno_id = messages.IntegerField(2)
-    user_id = messages.IntegerField(3)
+    creator = messages.MessageField(UserMessage, 3)
     created = message_types.DateTimeField(4)
     comment = messages.StringField(5)
-    user_email = messages.StringField(6)
 
 
 class FollowupListMessage(messages.Message):

@@ -1,9 +1,11 @@
 __author__ = 'topcircler'
 
+import re
 import endpoints
 import httplib
 import json
 import logging
+import base64
 from model.user import User
 
 
@@ -43,6 +45,34 @@ def handle_user(creator_id):
             user = User.insert_user(current_user.email())
     return user
 
+def auth_user(headers):
+    current_user = get_endpoints_current_user(raise_unauthorized=False)
+    user = None
+    if current_user is None:
+        credential_pair = get_credential(headers)
+        email = credential_pair[0]
+        validate_email(email)
+        User.authenticate(credential_pair[0], md5(credential_pair[1]))
+        user = User.find_user_by_email(email)
+    else:
+        user = User.find_user_by_email(current_user.email())
+    if user is None:
+        raise endpoints.UnauthorizedException("No permission.")
+    return user
+
+def get_user(headers):
+    current_user = get_endpoints_current_user(raise_unauthorized=False)
+    user = None
+    if current_user is None:
+        credential_pair = get_credential(headers)
+        email = credential_pair[0]
+        validate_email(email)
+        User.authenticate(credential_pair[0], md5(credential_pair[1]))
+        user = User.find_user_by_email(email)
+    else:
+        user = User.find_user_by_email(current_user.email())
+    return user
+
 def get_country_by_coordinate(latitude, longitude):
     """
     This function returns country information by the specified coordinate.
@@ -72,4 +102,49 @@ def get_country_by_coordinate(latitude, longitude):
             return address_component['long_name']
 
 
+def validate_email_address_format(email):
+    em_re = re.compile("^[\w\.=-]+@[\w\.-]+\.[\w]{2,3}$")
+    return em_re.match(email)
+
+
+def validate_email(email):
+    if email is None or email == '':
+        raise endpoints.BadRequestException("Email is missing.")
+    if not validate_email_address_format(email):
+        raise endpoints.BadRequestException("Email format is incorrect.")
+
+
+def validate_password(password):
+    if password is None or password == '':
+        raise endpoints.BadRequestException("User password can't be empty.")
+
+
+def md5(content):
+    import hashlib
+    m = hashlib.md5()
+    m.update(content)
+    return m.hexdigest()
+
+
+def get_credential(headers):
+    authorization = headers["Authorization"]
+    if authorization is None:
+        raise endpoints.UnauthorizedException("No permission.")
+    basic_auth_string = authorization.split(' ')
+    if len(basic_auth_string) != 2:
+        raise endpoints.UnauthorizedException("No permission.")
+    credential = base64.b64decode(basic_auth_string[1])
+    credential_pair = credential.split(':')
+    if len(credential_pair) != 2:
+        raise endpoints.UnauthorizedException("No permission.")
+    return credential_pair
+
+"""
+annoserver:
+anno_js_client_id = "22913132792.apps.googleusercontent.com"
+annoserver-test:
+anno_js_client_id = "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com"
+usersource-anno:
 anno_js_client_id = "955803277195.apps.googleusercontent.com"
+"""
+anno_js_client_id = "22913132792.apps.googleusercontent.com"

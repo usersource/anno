@@ -1,8 +1,5 @@
-__author__ = 'topcircler'
-
 import webapp2
-from model.anno import Anno
-
+from model.FeedbackComment import FeedbackComment
 
 class ImageHandler(webapp2.RequestHandler):
     def get(self):
@@ -16,7 +13,7 @@ class ImageHandler(webapp2.RequestHandler):
             self.response.set_status(400)
             self.response.out.write(u'anno_id parameter is required.')
         else:
-            anno = Anno.get_by_id(long(anno_id))
+            anno = FeedbackComment.get_by_id(long(anno_id))
             if anno is None:
                 self.response.set_status(400)
                 self.response.out.write('No anno entity with the id "%s" exists.' % anno_id)
@@ -24,5 +21,4 @@ class ImageHandler(webapp2.RequestHandler):
                 self.response.set_status(404)
                 self.response.out.write("This anno doesn't contain screenshot")
             else:
-                self.response.headers['Content-Type'] = 'image/png'
                 self.response.out.write(anno.image)
