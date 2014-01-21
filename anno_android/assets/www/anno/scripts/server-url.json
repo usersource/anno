@@ -1,0 +1,18 @@
+{
+    "1": {
+        "serverId":"Production",
+        "serverName":"Production",
+        "imageServiceURL":"http://annoserver.appspot.com/screenshot",
+        "apiRoot":"https://annoserver.appspot.com/_ah/api",
+        "clientId" : "22913132792.apps.googleusercontent.com",
+        "clientSecret": "LBlzLWXDgGXyvjlT-5gUjZGA"
+    },
+    "2": {
+        "serverId":"ProductionViaEC2",
+        "serverName":"Production via EC2 proxy",
+        "imageServiceURL":"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/screenshot",
+        "apiRoot":"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/_ah/api",
+        "clientId" : "22913132792.apps.googleusercontent.com",
+        "clientSecret": "LBlzLWXDgGXyvjlT-5gUjZGA"
+    }
+}
