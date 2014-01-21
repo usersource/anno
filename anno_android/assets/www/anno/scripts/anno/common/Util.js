@@ -7,9 +7,12 @@ define([
     "dojox/mobile/SimpleDialog",
     "dojox/mobile/_ContentPaneMixin",
     "dijit/registry",
+    "dojo/text!../../server-url.json",
     "anno/common/DBUtil"
-], function(declare, connect, domStyle, dojoJson, win, SimpleDialog, _ContentPaneMixin, registry, DBUtil){
+], function(declare, connect, domStyle, dojoJson, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, DBUtil){
 
+    serverURLConfig = dojoJson.parse(serverURLConfig);
+    console.error("using server Url config:" + JSON.stringify(serverURLConfig));
     var util = {
         loadingIndicator:null,
         _parser:null,
@@ -23,32 +26,7 @@ define([
         level2ColorRGB:"255, 0, 0",
         annoScreenshotPath:null,
         API:{
-            config:{
-                "1": { // Production https://usersource-anno.appspot.com/_ah/api  955803277195.apps.googleusercontent.com
-                    imageServiceURL:"http://annoserver.appspot.com/screenshot",
-                    apiRoot:"https://annoserver.appspot.com/_ah/api",
-                    clientId : "22913132792.apps.googleusercontent.com",
-                    clientSecret: "LBlzLWXDgGXyvjlT-5gUjZGA"
-                },
-                "2": { // Test
-                    imageServiceURL:"http://annoserver-test.appspot.com/screenshot",
-                    apiRoot:"https://annoserver-test.appspot.com/_ah/api",
-                    clientId : "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com",
-                    clientSecret: "n0fJeoZ-4UFWZaIG41mNg41_"
-                },
-                "3": { // Prod via proxy
-                    imageServiceURL:"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/screenshot",
-                    apiRoot:"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/_ah/api",
-                    clientId : "22913132792.apps.googleusercontent.com",
-                    clientSecret: "LBlzLWXDgGXyvjlT-5gUjZGA"
-                },
-                "4": { // Test via proxy
-                    imageServiceURL:"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/annotest/screenshot",
-                    apiRoot:"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/annotest/_ah/api",
-                    clientId : "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com",
-                    clientSecret: "n0fJeoZ-4UFWZaIG41mNg41_"
-                }
-            },
+            config:serverURLConfig,
             apiVersion:"1.0",
             anno:"anno",
             user:"user",
