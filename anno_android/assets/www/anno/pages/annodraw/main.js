@@ -621,30 +621,6 @@ require([
                         }
                     });
 
-                    connect.connect(surface, "onShapeSelected", function(selected)
-                    {
-                        if (selected)
-                        {
-                            domClass.add(dom.byId("barArrow"), 'barIconDisabled');
-                            domClass.add(dom.byId("barRectangle"), 'barIconDisabled');
-                            domClass.add(dom.byId("barComment"), 'barIconDisabled');
-                            domClass.add(dom.byId("barShare"), 'barIconDisabled');
-                            /*domClass.remove(dom.byId("barBlackRectangle"), 'barBlackActive');
-                             domClass.add(dom.byId("barBlackRectangle"), 'barIconDisabled2');*/
-                            domClass.add(dom.byId("barBlackRectangleDone"), 'barIconDisabled');
-                        }
-                        else
-                        {
-                            domClass.remove(dom.byId("barArrow"), 'barIconDisabled');
-                            domClass.remove(dom.byId("barRectangle"), 'barIconDisabled');
-                            domClass.remove(dom.byId("barComment"), 'barIconDisabled');
-                            domClass.remove(dom.byId("barShare"), 'barIconDisabled');
-                            /*domClass.remove(dom.byId("barBlackRectangle"), 'barIconDisabled2');
-                             domClass.add(dom.byId("barBlackRectangle"), 'barBlackActive');*/
-                            domClass.remove(dom.byId("barBlackRectangleDone"), 'barIconDisabled');
-                        }
-                    });
-
                     // set screenshot container size
                     domStyle.set('screenshotContainer', {
                         width: (viewPoint.w-totalSpace*2)+'px',
