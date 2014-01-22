@@ -191,7 +191,6 @@
 
 #navBtnBackStart
 {
-    background-image: url(images/navigation_back.png);
     background-color: transparent;
     border-width: 0px;
     -webkit-box-shadow: none;
@@ -218,6 +217,54 @@
     opacity: 0.4;
 }
 
+.annoOrangeColor
+{
+    color: #ff9900;
+}
+
+.bigGreenBtn
+{
+    outline: none;
+    color: #ffffff;
+    background-color: #1c8436;
+    border-color: #1c8436;
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 16pt;
+    font-weight: bold;
+    line-height: 1.428571429;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    -webkit-user-select: none;
+}
+
+.signinWithGoogleBtn
+{
+    outline: none;
+    padding-top: 3px;
+    width: 206px;
+    height: 48px;
+    color: #3d83f0;
+    background-color: white;
+    border-color: #1c8436;
+    display: inline-block;
+    margin-bottom: 0;
+    font-size: 13pt;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 2px solid #3d83f0;
+    border-radius: 8px;
+    -webkit-user-select: none;
+}
+
 #headingStart, .topHeading
 {
     background-image: none;
@@ -237,7 +284,7 @@
 
 .barIconHighlight
 {
-    color: #f1572a;
+    color: #ff9900;
 }
 
 #headingDetail
@@ -273,7 +320,7 @@
     -o-transform: rotate(270deg);
     transform:rotate(270deg);
     white-space:nowrap;
-    background-color: #f1572a;
+    background-color: #ff9900;
     color: #333333;
     font-size: 14px;
     width: 68px;
@@ -374,7 +421,7 @@
 .annoTextDetail
 {
     width: 100%;
-    border: 2px solid #f1572a;
+    border: 2px solid #ff9900;
     padding-top: 2px;
     padding-bottom: 2px;
     padding-left: 2px;
@@ -441,7 +488,7 @@
 
 .icoImgActive
 {
-    color: #f1572a;
+    color: #ff9900;
     font-size: 30px;
 }
 
@@ -476,8 +523,8 @@
 .btn
 {
     color: #ffffff;
-    background-color: #f1572a;
-    border-color: #f1572a;
+    background-color: #ff9900;
+    border-color: #ff9900;
     display: inline-block;
     padding: 6px 12px;
     margin-bottom: 0;
@@ -499,7 +546,7 @@
     top: 0px;
     left: 0px;
     width: 100%;
-    border-color: #f1572a;
+    border-color: #ff9900;
     border-style: solid;
 }
 

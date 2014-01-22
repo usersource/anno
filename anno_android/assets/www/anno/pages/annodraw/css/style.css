@@ -122,9 +122,7 @@ body{
     left: 0px;
     height: 46px;
     width: 100%;
-    /*background-color: black;*/
-    /*opacity: 0.5;*/
-    background-color: rgba(0,0,0, 0.5);
+    background-color: #404040;
     color: white;
     padding-top: 4px;
 }
@@ -136,7 +134,7 @@ body{
     left: 0px;
     height: 46px;
     width: 100%;
-    background-color: rgba(0,0,0, 1);
+    background-color: #404040;
     padding-top: 4px;
     color: white;
 }
@@ -147,7 +145,7 @@ body{
     top: 0px;
     left: 0px;
     width: 100%;
-    border-color: #f1572a;
+    border-color: #ff9900;
     border-style: solid;
 }
 
@@ -224,8 +222,8 @@ body{
 .btn
 {
     color: #ffffff;
-    background-color: #f1572a;
-    border-color: #f1572a;
+    background-color: #ff9900;
+    border-color: #ff9900;
     display: inline-block;
     padding: 6px 12px;
     margin-bottom: 0;

@@ -7,9 +7,12 @@ define([
     "dojox/mobile/SimpleDialog",
     "dojox/mobile/_ContentPaneMixin",
     "dijit/registry",
+    "dojo/text!../../server-url.json",
     "anno/common/DBUtil"
-], function(declare, connect, domStyle, dojoJson, win, SimpleDialog, _ContentPaneMixin, registry, DBUtil){
+], function(declare, connect, domStyle, dojoJson, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, DBUtil){
 
+    serverURLConfig = dojoJson.parse(serverURLConfig);
+    console.error("using server Url config:" + JSON.stringify(serverURLConfig));
     var util = {
         loadingIndicator:null,
         _parser:null,
@@ -17,38 +20,13 @@ define([
             SimpleComment:"simple comment",
             DrawComment:"draw comment"
         },
-        level1Color:"#f1572a",
-        level1ColorRGB:"241, 87, 42",
+        level1Color:"#ff9900",
+        level1ColorRGB:"255, 153, 0",
         level2Color:"#ff0000",
         level2ColorRGB:"255, 0, 0",
         annoScreenshotPath:null,
         API:{
-            config:{
-                "1": { // Production https://usersource-anno.appspot.com/_ah/api  955803277195.apps.googleusercontent.com
-                    imageServiceURL:"http://annoserver.appspot.com/screenshot",
-                    apiRoot:"https://annoserver.appspot.com/_ah/api",
-                    clientId : "22913132792.apps.googleusercontent.com",
-                    clientSecret: "LBlzLWXDgGXyvjlT-5gUjZGA"
-                },
-                "2": { // Test
-                    imageServiceURL:"http://annoserver-test.appspot.com/screenshot",
-                    apiRoot:"https://annoserver-test.appspot.com/_ah/api",
-                    clientId : "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com",
-                    clientSecret: "n0fJeoZ-4UFWZaIG41mNg41_"
-                },
-                "3": { // Prod via proxy
-                    imageServiceURL:"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/screenshot",
-                    apiRoot:"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/_ah/api",
-                    clientId : "22913132792.apps.googleusercontent.com",
-                    clientSecret: "LBlzLWXDgGXyvjlT-5gUjZGA"
-                },
-                "4": { // Test via proxy
-                    imageServiceURL:"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/annotest/screenshot",
-                    apiRoot:"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/annotest/_ah/api",
-                    clientId : "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com",
-                    clientSecret: "n0fJeoZ-4UFWZaIG41mNg41_"
-                }
-            },
+            config:serverURLConfig,
             apiVersion:"1.0",
             anno:"anno",
             user:"user",
@@ -235,9 +213,14 @@ define([
                 callback(settings);
             }, onSQLError);
         },
-        saveSettings: function(settingItem, callback)
+        saveSettings: function(settingItem, callback, newRecord)
         {
             var settingsSQl = "update app_settings set value=? where item=?";
+
+            if (newRecord)
+            {
+                settingsSQl = "insert into app_settings(value, item) values(?,?)";
+            }
             var self = this;
             DBUtil.executeUpdateSql(settingsSQl, [settingItem.value, settingItem.item], function(res){
                 self.settings[settingItem.item] = settingItem.value;
@@ -431,6 +414,43 @@ define([
         getCurrentUserInfo:function()
         {
             return DBUtil.localUserInfo;
+        },
+        getCurrentPosition:function(callback, errorCallback)
+        {
+            navigator.geolocation.getCurrentPosition(callback, errorCallback);
+        },
+        inChina: function(callback)
+        {
+            console.error("invoke inChina");
+            var lat = [18.432217, 53.5106];
+            var longti = [73.077767, 135.029667];
+            this.getCurrentPosition(function(position){
+                var latitude = position.coords.latitude,
+                    longitude = position.coords.longitude;
+
+                console.error("current position: "+JSON.stringify(position));
+
+                if (latitude >= lat[0] && latitude <= lat[1] &&longitude >= longti[0] && longitude <= longti[1])
+                {
+                    console.error("Anno running in China!");
+                    callback(true);
+                }
+                else
+                {
+                    callback(false);
+                }
+            }, function(error){
+                console.error("get current position error: "+JSON.stringify(error));
+                callback(false);
+            });
+        },
+        chooseProxyServer:function()
+        {
+            var normalServerConfig = this.API.config["1"];
+            var proxyServerConfig = normalServerConfig.proxyKey;
+
+            this.saveSettings({item:"ServerURL", value:proxyServerConfig}, function(success){
+            }, true);
         }
     };
 
