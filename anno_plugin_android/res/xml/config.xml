@@ -36,4 +36,7 @@
     <feature name="File">
         <param name="android-package" value="org.apache.cordova.file.FileUtils" />
     </feature>
+    <feature name="Geolocation">
+        <param name="android-package" value="org.apache.cordova.geolocation.GeoBroker" />
+    </feature>
 </widget>
