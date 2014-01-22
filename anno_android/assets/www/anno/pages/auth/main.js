@@ -24,6 +24,7 @@ require([
                 annoUtil.readSettings(function(settings){
                     if (settings.ServerURL == null)
                     {
+                        annoUtil.showLoadingIndicator();
                         annoUtil.inChina(function(inChina){
                             if (inChina)
                             {
@@ -32,6 +33,8 @@ require([
 
                             Application(config);
                         });
+
+                        annoUtil.hideLoadingIndicator();
                     }
                     else
                     {
