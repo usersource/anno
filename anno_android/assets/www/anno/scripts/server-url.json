@@ -5,7 +5,8 @@
         "imageServiceURL":"http://annoserver.appspot.com/screenshot",
         "apiRoot":"https://annoserver.appspot.com/_ah/api",
         "clientId" : "22913132792.apps.googleusercontent.com",
-        "clientSecret": "LBlzLWXDgGXyvjlT-5gUjZGA"
+        "clientSecret": "LBlzLWXDgGXyvjlT-5gUjZGA",
+        "proxyKey":"3"
     },
     "2": {
         "serverId":"Test",
@@ -13,7 +14,8 @@
         "imageServiceURL":"http://annoserver-test.appspot.com/screenshot",
         "apiRoot":"https://annoserver-test.appspot.com/_ah/api",
         "clientId" : "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com",
-        "clientSecret": "n0fJeoZ-4UFWZaIG41mNg41_"
+        "clientSecret": "n0fJeoZ-4UFWZaIG41mNg41_",
+        "proxyKey":"4"
     },
     "3": {
         "serverId":"ProductionViaEC2",

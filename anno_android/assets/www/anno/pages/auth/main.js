@@ -20,8 +20,23 @@ require([
             DBUtil.initDB(function(){
                 console.error("DB is readay!");
                 AnnoDataHandler.removeUser();
-                annoUtil.readSettings(function(){
-                    Application(config);
+
+                annoUtil.readSettings(function(settings){
+                    if (settings.ServerURL == null)
+                    {
+                        annoUtil.inChina(function(inChina){
+                            if (inChina)
+                            {
+                                annoUtil.chooseProxyServer();
+                            }
+
+                            Application(config);
+                        });
+                    }
+                    else
+                    {
+                        Application(config);
+                    }
                 });
             });
         }, false);
