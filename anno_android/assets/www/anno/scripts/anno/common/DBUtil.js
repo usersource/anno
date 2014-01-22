@@ -29,6 +29,11 @@ define([
                 localFileSystem = fs;
             });
         },
+        reconnectToDB:function()
+        {
+            this.annoDB = window.sqlitePlugin.openDatabase({name: "anno", bgType2: 1});
+            console.error("db reconnected.");
+        },
         checkTables: function()
         {
             var self = this;
@@ -55,7 +60,7 @@ define([
                 tx.executeSql(self.createCommentTableIndexScript);
                 tx.executeSql(settingsSQL);
                 tx.executeSql(usersSQL);
-                tx.executeSql("insert into app_settings(item, value) values('ServerURL','1')");
+                //tx.executeSql("insert into app_settings(item, value) values('ServerURL','1')");
                 self.dbIsReady = true;
                 self.userChecked = true;
 
@@ -156,7 +161,7 @@ define([
                 if (res.rows.item(0).cnt == 0)
                 {
                     self.annoDB.executeSql(settingsSQL);
-                    self.annoDB.executeSql("insert into app_settings(item, value) values('ServerURL','1')");
+                    //self.annoDB.executeSql("insert into app_settings(item, value) values('ServerURL','1')");
 
                     if (self.callback)
                     {

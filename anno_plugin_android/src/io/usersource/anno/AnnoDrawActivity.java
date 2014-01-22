@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.gesture.GestureOverlayView;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -14,6 +15,8 @@ import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import io.usersource.annoplugin.utils.*;
 import org.apache.cordova.DroidGap;
 
@@ -30,7 +33,7 @@ public class AnnoDrawActivity extends DroidGap
     super.onCreate(savedInstanceState);
     super.init();
 
-    /*GestureOverlayView view = new GestureOverlayView(this);
+    GestureOverlayView view = new GestureOverlayView(this);
     view.setLayoutParams(new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.MATCH_PARENT, 1));
@@ -42,7 +45,7 @@ public class AnnoDrawActivity extends DroidGap
                     FrameLayout.LayoutParams.MATCH_PARENT, 1));
 
     setContentView(view);
-    AnnoPlugin.setEnableGesture(this, view, true);*/
+    AnnoUtils.setEnableGesture(this, view, true);
 
     super.loadUrl("file:///android_asset/www/anno/pages/annodraw/main.html");
 

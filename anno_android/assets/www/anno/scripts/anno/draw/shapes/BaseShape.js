@@ -24,7 +24,7 @@ define([
             endpointFillStyle:"rgba("+annoUtil.level1ColorRGB+", 0.5)",
             endpointHiddenStrokeStyle:"rgba("+annoUtil.level1ColorRGB+", 0)",
             endpointHiddenFillStyle:"rgba("+annoUtil.level1ColorRGB+", 0)",
-            xFont:{family: "Helvetica", style: "normal", size: "16pt"},
+            xFont:{family: "Helvetica", style: "normal", size: "24pt"},
             xColor:"rgba("+annoUtil.level1ColorRGB+", 1)",
             xHiddenColor:"rgba(253, 155, 0, 0)",
             hiddenColor:"rgba(253, 155, 0, 0)",
@@ -62,6 +62,7 @@ define([
                 if (sel&&this.deletable)
                 {
                     this.x.setStroke(this.xColor).setFill(this.xColor);
+                    this.x.moveToFront();
                 }
                 else
                 {

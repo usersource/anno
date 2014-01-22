@@ -3,13 +3,14 @@ define([
     "dojo/dom-class",
     "dojo/dom-style",
     "dojo/_base/connect",
+    "dojo/query",
     "dojo/window",
     "dijit/registry",
     "anno/common/Util",
     "anno/common/OAuthUtil",
     "anno/anno/AnnoDataHandler"
 ],
-    function (dom, domClass, domStyle, connect, win, registry, annoUtil, OAuthUtil, AnnoDataHandler)
+    function (dom, domClass, domStyle, connect, query, win, registry, annoUtil, OAuthUtil, AnnoDataHandler)
     {
         var _connectResults = []; // events connect results
         var app = null;
@@ -86,12 +87,27 @@ define([
             });
         };
 
+        var initServerUrlRadioButtons = function()
+        {
+            var serverURLConfig = annoUtil.API.config, configItem, configItemNode;
+
+            for (var p in serverURLConfig)
+            {
+                configItem = serverURLConfig[p];
+                configItemNode = dom.byId("divServerUrl"+configItem["serverId"]);
+                domStyle.set(configItemNode, "display", "");
+                configItemNode.children[0].innerHTML = configItem.serverName;
+                registry.byId("rdSU"+configItem["serverId"]).set({"labelText": configItem.serverName, value:p});
+            }
+        };
+
         return {
             // simple view init
             init:function ()
             {
                 app = this.app;
                 adjustSize();
+                initServerUrlRadioButtons();
 
                 annoUtil.readSettings(function(settings){
                     var serverURLDialog = registry.byId('serverURLDialog');
@@ -127,13 +143,6 @@ define([
                     changePwdDialog.show();
                     domStyle.set(changePwdDialog._cover[0], {"height": "100%", top:"0px"});
                 }));
-
-                var radioButtons = registry.byId('serverURLDialog').getChildren();
-
-                /*for (var i= 0,c=radioButtons.length;i<c;i++)
-                {
-                    radioButtons[i].onChange = onServerURLRadioButtonChange;
-                }*/
 
                 _connectResults.push(connect.connect(dom.byId("btnCancelServerURL"), 'click', function(e)
                 {
