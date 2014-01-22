@@ -213,9 +213,14 @@ define([
                 callback(settings);
             }, onSQLError);
         },
-        saveSettings: function(settingItem, callback)
+        saveSettings: function(settingItem, callback, newRecord)
         {
             var settingsSQl = "update app_settings set value=? where item=?";
+
+            if (newRecord)
+            {
+                settingsSQl = "insert into app_settings(value, item) values(?,?)";
+            }
             var self = this;
             DBUtil.executeUpdateSql(settingsSQl, [settingItem.value, settingItem.item], function(res){
                 self.settings[settingItem.item] = settingItem.value;
@@ -409,6 +414,43 @@ define([
         getCurrentUserInfo:function()
         {
             return DBUtil.localUserInfo;
+        },
+        getCurrentPosition:function(callback, errorCallback)
+        {
+            navigator.geolocation.getCurrentPosition(callback, errorCallback);
+        },
+        inChina: function(callback)
+        {
+            console.error("invoke inChina");
+            var lat = [18.432217, 53.5106];
+            var longti = [73.077767, 135.029667];
+            this.getCurrentPosition(function(position){
+                var latitude = position.coords.latitude,
+                    longitude = position.coords.longitude;
+
+                console.error("current position: "+JSON.stringify(position));
+
+                if (latitude >= lat[0] && latitude <= lat[1] &&longitude >= longti[0] && longitude <= longti[1])
+                {
+                    console.error("Anno running in China!");
+                    callback(true);
+                }
+                else
+                {
+                    callback(false);
+                }
+            }, function(error){
+                console.error("get current position error: "+JSON.stringify(error));
+                callback(false);
+            });
+        },
+        chooseProxyServer:function()
+        {
+            var normalServerConfig = this.API.config["1"];
+            var proxyServerConfig = normalServerConfig.proxyKey;
+
+            this.saveSettings({item:"ServerURL", value:proxyServerConfig}, function(success){
+            }, true);
         }
     };
 
