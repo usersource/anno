@@ -23,7 +23,13 @@
     <replaceregexp file="AndroidManifest.xml" match='${matchVersionName.start}[^"]*${match.end}' replace="${matchVersionName.start}${version.string}${match.end}" />
     <replaceregexp file="AndroidManifest.xml" match='${matchVersionCode.start}[^"]*${match.end}' replace="${matchVersionCode.start}${code}${match.end}" />
   </target>
+  <target name="pre-mode">
+    <property file="version.properties" />
+    <echo message="mode:${mode}" />
+    <copy file="assets/www/anno/scripts/server-url.json-${mode}" tofile="assets/www/anno/scripts/server-url.json" verbose="true" overwrite="true" />
+  </target>
   <target name="-pre-build">
     <antcall target="set-version-name" />
+    <antcall target="pre-mode" />
   </target>
 </project>
