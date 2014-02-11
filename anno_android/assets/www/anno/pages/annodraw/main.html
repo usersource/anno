@@ -28,7 +28,6 @@
         require(["dojo/parser","dojox/mobile/deviceTheme", "dojox/mobile/SimpleDialog", "dojox/mobile/CheckBox"]);
     </script>
     <script type="text/javascript" src="main.js"></script>
-    <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=gce_init"></script>
     <script type="text/javascript" src="../../../cordova.js"></script>
     <script type="text/javascript" src="../community/heartcode-canvasloader-min.js"></script>
     <link type="text/css" href="./css/style.css" rel="stylesheet" />
@@ -97,5 +96,12 @@
 </div>
 <button id="hiddenBtn" style="position: absolute;left:-2000px;top: -2000px;">a</button>
 <canvas id="hiddenCanvas" style="position: absolute;display: none"></canvas>
+<script type="text/javascript">
+    (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/client.js?onload=gce_init';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+    })();
+</script>
 </body>
 </html>

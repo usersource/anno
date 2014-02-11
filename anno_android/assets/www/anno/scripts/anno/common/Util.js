@@ -376,28 +376,37 @@ define([
         loadAPI: function(apiId, callback, errorCallback)
         {
             var self = this;
-            gapi.client.load(apiId, this.API.apiVersion, function(res) {
+            if (gapi&&gapi.client)
+            {
+                gapi.client.load(apiId, this.API.apiVersion, function(res) {
 
-                if (res&&res.error)
-                {
-                    console.error(apiId+" API load failed.");
-
-                    if (errorCallback)
+                    if (res&&res.error)
                     {
-                        errorCallback();
+                        console.error(apiId+" API load failed.");
+
+                        if (errorCallback)
+                        {
+                            errorCallback();
+                        }
+                        else
+                        {
+                            alert('Load '+apiId+" API failed, "+res.error.message);
+                            self.hideLoadingIndicator();
+                        }
                     }
                     else
                     {
-                        alert('Load '+apiId+" API failed, "+res.error.message);
-                        self.hideLoadingIndicator();
+                        console.error(apiId+" API loaded.");
+                        callback();
                     }
-                }
-                else
-                {
-                    console.error(apiId+" API loaded.");
-                    callback();
-                }
-            }, this.getCEAPIRoot());
+                }, this.getCEAPIRoot());
+            }
+            else
+            {
+                window.setTimeout(function(){
+                    self.loadAPI(apiId, callback, errorCallback);
+                }, 50)
+            }
         },
         getCEAPIRoot: function()
         {
@@ -417,7 +426,7 @@ define([
         },
         getCurrentPosition:function(callback, errorCallback)
         {
-            navigator.geolocation.getCurrentPosition(callback, errorCallback);
+            navigator.geolocation.getCurrentPosition(callback, errorCallback, {maximumAge: 1000*60*60, timeout: 5000, enableHighAccuracy: false});
         },
         inChina: function(callback)
         {
@@ -450,6 +459,11 @@ define([
             var proxyServerConfig = normalServerConfig.proxyKey;
 
             this.saveSettings({item:"ServerURL", value:proxyServerConfig}, function(success){
+            }, true);
+        },
+        setDefaultServer: function()
+        {
+            this.saveSettings({item:"ServerURL", value:"1"}, function(success){
             }, true);
         }
     };

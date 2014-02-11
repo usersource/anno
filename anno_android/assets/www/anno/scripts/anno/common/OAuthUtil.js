@@ -267,10 +267,22 @@ define([
         },
         setAccessToken: function(tokenObject)
         {
-            this.accessToken = tokenObject;
-            this.accessTokenTime = (new Date()).getTime();
-            console.error(gapi.auth);
-            gapi.auth.setToken(tokenObject);
+            if (gapi&&gapi.auth)
+            {
+                this.accessToken = tokenObject;
+                this.accessTokenTime = (new Date()).getTime();
+                console.error(gapi.auth);
+                gapi.auth.setToken(tokenObject);
+            }
+            else
+            {
+                var self = this;
+                window.setTimeout(function(){
+                    self.setAccessToken(tokenObject);
+                }, 50)
+            }
+
+
         },
         openAuthPage: function()
         {

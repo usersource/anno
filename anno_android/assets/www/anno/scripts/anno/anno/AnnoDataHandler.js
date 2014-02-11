@@ -18,7 +18,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
 
     var annoDataHandler = {
 
-        syncInterval: 20*1000,
+        syncInterval: 10*60*1000,
         //created, last_update,comment,screenshot_key,x,y,direction,app_version,os_version,is_moved,level,app_name,model,source,os_name,anno_type,synched
         saveAnno: function(anno, source, screenshotDirPath)
         {

@@ -30,6 +30,10 @@ require([
                             {
                                 annoUtil.chooseProxyServer();
                             }
+                            else
+                            {
+                                annoUtil.setDefaultServer();
+                            }
 
                             Application(config);
                         });

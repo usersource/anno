@@ -26,8 +26,11 @@
                 }
             ]
         };
+
+        var gceLoaded = false;
     </script>
     <script type="text/javascript" src="../../scripts/dojo/dojo.js"></script>
+    <script type="text/javascript" src="../../../cordova.js"></script>
     <script>
         require([ "dojox/mobile/deviceTheme","dojox/mvc/at", "./main.js" ], function(deviceTheme, at) {
 
@@ -35,12 +38,16 @@
     </script>
     <script type="text/javascript">
         var currentUserInfo = {email:''};
+
         function gce_init()
         {
+            var d2 = new Date();
+            console.error("Google CE Client lib(JavaScript) loaded in "+(d2-st)+" ms, gapi.client is "+gapi.client);
+            gceLoaded = true;
         }
+
+        var st = new Date();
     </script>
-    <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=gce_init"></script>
-    <script type="text/javascript" src="../../../cordova.js"></script>
     <script type="text/javascript" src="heartcode-canvasloader-min.js"></script>
 </head>
 <body id="container">
@@ -50,5 +57,12 @@
 <button id="hiddenBtn" style="position: absolute;left:-2000px;top: -2000px;">a</button>
 <div id="toastMsgContainer" style="display: none;" class="toastMsgContainer"></div>
 <div id="bottomPlaceholder" style="display:none;background-color: transparent;width: 100%;height: 30px;position: absolute;bottom: 0px;left: 0px;z-index: 2001"></div>
+<script type="text/javascript">
+    (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/client.js?onload=gce_init';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+    })();
+</script>
 </body>
 </html>
