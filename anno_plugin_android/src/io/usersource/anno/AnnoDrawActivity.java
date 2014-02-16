@@ -62,9 +62,11 @@ public class AnnoDrawActivity extends DroidGap
 
         if (consoleMessage.messageLevel() == ConsoleMessage.MessageLevel.ERROR)
         {
-          Log.e("Anno", consoleMessage.message() + " -- line "
+          if (AnnoUtils.debugEnabled) {
+            Log.e("Anno", consoleMessage.message() + " -- line "
                   + consoleMessage.lineNumber() + " of "
                   + consoleMessage.sourceId());
+          }
         }
 
         return false;
@@ -101,7 +103,9 @@ public class AnnoDrawActivity extends DroidGap
     this.isPractice = intent.getBooleanExtra(
             AnnoUtils.INTENT_EXTRA_IS_PRACTICE, false);
 
-    Log.d(TAG, "current level:" + this.level);
+    if (AnnoUtils.debugEnabled) {
+      Log.d(TAG, "current level:" + this.level);
+    }
     if (this.level == 2) {
       // todo red color
     }
@@ -134,7 +138,9 @@ public class AnnoDrawActivity extends DroidGap
           this.screenshotPath = realUrl;
         }
       } catch (Exception e) {
-        Log.e(TAG, e.getMessage(), e);
+        if (AnnoUtils.debugEnabled) {
+          Log.e(TAG, e.getMessage(), e);
+        }
       }
     }
 

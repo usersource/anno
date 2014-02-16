@@ -31,7 +31,7 @@ public class AnnoUtils
   // server.
   public static final String ANNO_SOURCE_PLUGIN = "plugin";
   public static final String ANNO_SOURCE_STANDALONE = "standalone";
-
+  public static final boolean debugEnabled = false;
 
   /**
    * Intent extra value: is_practice.
