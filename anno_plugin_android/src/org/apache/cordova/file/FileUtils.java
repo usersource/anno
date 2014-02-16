@@ -1076,7 +1076,6 @@ public class FileUtils extends CordovaPlugin {
                 } catch (FileNotFoundException e) {
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.IO_EXCEPTION, NOT_FOUND_ERR));
                 } catch (IOException e) {
-                    Log.d(LOG_TAG, e.getLocalizedMessage());
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.IO_EXCEPTION, NOT_READABLE_ERR));
                 }
             }

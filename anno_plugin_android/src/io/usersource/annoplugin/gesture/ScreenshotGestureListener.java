@@ -73,7 +73,9 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
 
 
     if (level >= 2) {
-      Log.d(TAG, "Already 2 levels, no recursive any more.");
+      if (AnnoUtils.debugEnabled) {
+        Log.d(TAG, "Already 2 levels, no recursive any more.");
+      }
       return;
     }
 
@@ -87,10 +89,14 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
               screenshotPath = takeScreenshot();
               launchAnnoPlugin(screenshotPath);
             } catch (FileNotFoundException e) {
-              Log.e(TAG, e.getMessage(), e);
+              if (AnnoUtils.debugEnabled) {
+                Log.e(TAG, e.getMessage(), e);
+              }
               AnnoUtils.displayError(activity, TAKE_SCREENSHOT_FAIL_MESSAGE);
             } catch (IOException e) {
-              Log.e(TAG, e.getMessage());
+              if (AnnoUtils.debugEnabled) {
+                Log.e(TAG, e.getMessage());
+              }
               AnnoUtils.displayError(activity, TAKE_SCREENSHOT_FAIL_MESSAGE);
             }
             break;
