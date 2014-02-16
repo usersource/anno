@@ -9,7 +9,7 @@ import datetime
 
 from message.anno_api_messages import AnnoResponseMessage
 from message.anno_api_messages import AnnoListMessage
-from message.user_message import UserMessage
+import logging
 from model.base_model import BaseModel
 from api.utils import get_country_by_coordinate
 
@@ -255,3 +255,27 @@ class Anno(BaseModel):
             return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
         else:
             return AnnoListMessage(anno_list=items, has_more=more)
+
+    @classmethod
+    def is_anno_exists(cls, user, message):
+        query = cls.query()\
+            .filter(cls.app_name == message.app_name)\
+            .filter(cls.anno_text == message.anno_text)\
+            .filter(cls.anno_type == message.anno_type)\
+            .filter(cls.app_version == message.app_version)\
+            .filter(cls.level == message.level)\
+            .filter(cls.os_name == message.os_name)\
+            .filter(cls.os_version == message.os_version)\
+            .filter(cls.device_model == message.device_model)\
+            .filter(cls.screenshot_is_anonymized == message.screenshot_is_anonymized)\
+            .filter(cls.created == message.created)\
+            .filter(cls.simple_circle_on_top == message.simple_circle_on_top)\
+            .filter(cls.simple_x == message.simple_x)\
+            .filter(cls.simple_y == message.simple_y)\
+            .filter(cls.simple_is_moved == message.simple_is_moved)
+        is_exists = False
+        for anno in query:
+            if anno.creator.id() == user.key.id():
+                is_exists = True
+                break
+        return is_exists
