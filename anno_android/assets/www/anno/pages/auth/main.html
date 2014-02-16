@@ -28,18 +28,33 @@
 
         });
     </script>
+    <script type="text/javascript">
+        function gce_init()
+        {
+            var d2 = new Date();
+            console.error("Google CE Client lib(JavaScript) loaded in "+(d2-st)+" ms, gapi.client is "+gapi.client);
+        }
+
+        var st = new Date();
+    </script>
     <style>
         .mblBackground
         {
             background-color: #ffffff;
         }
     </style>
-    <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=gce_init"></script>
     <script type="text/javascript" src="../../../cordova.js"></script>
     <script type="text/javascript" src="../community/heartcode-canvasloader-min.js"></script>
 </head>
 <body id="container">
 <!--<div id="loadingContainer" style="display:none;position: absolute;top: 0px;left: 0px">Signing in...</div>-->
 <button id="hiddenBtn" style="position: absolute;left:-2000px;top: -2000px;">a</button>
+<script type="text/javascript">
+    (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/client.js?onload=gce_init';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+    })();
+</script>
 </body>
 </html>
