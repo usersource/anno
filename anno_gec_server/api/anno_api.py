@@ -22,6 +22,7 @@ from model.flag import Flag
 from model.follow_up import FollowUp
 from api.utils import anno_js_client_id
 from api.utils import auth_user
+import logging
 
 
 @endpoints.api(name='anno', version='1.0', description='Anno API',
@@ -42,8 +43,10 @@ class AnnoApi(remote.Service):
         """
         Exposes an API endpoint to get an anno detail by the specified id.
         """
-        user = auth_user(self.request_state.headers)
-
+        try:
+            user = auth_user(self.request_state.headers)
+        except Exception:
+            user = None
         if request.id is None:
             raise endpoints.BadRequestException('id field is required.')
         anno = Anno.get_by_id(request.id)
@@ -57,10 +60,9 @@ class AnnoApi(remote.Service):
         anno_resp_message.followup_list = followup_messages
         # set anno association with votes/flags
         # if current user exists, then fetch vote/flag.
-        current_user = endpoints.get_current_user()
-
-        anno_resp_message.is_my_vote = Vote.is_belongs_user(anno, user)
-        anno_resp_message.is_my_flag = Flag.is_belongs_user(anno, user)
+        if user is not None:
+            anno_resp_message.is_my_vote = Vote.is_belongs_user(anno, user)
+            anno_resp_message.is_my_flag = Flag.is_belongs_user(anno, user)
         return anno_resp_message
 
 
@@ -118,6 +120,8 @@ class AnnoApi(remote.Service):
         if current user doesn't exist, the user will be created first.
         """
         user = auth_user(self.request_state.headers)
+        if Anno.is_anno_exists(user, request):
+            raise endpoints.BadRequestException("BUSINESS RULE: Duplicate Anno already exists.")
         entity = Anno.insert_anno(request, user)
         return entity.to_response_message()
 
