@@ -121,7 +121,7 @@ class AnnoApi(remote.Service):
         """
         user = auth_user(self.request_state.headers)
         if Anno.is_anno_exists(user, request):
-            raise endpoints.BadRequestException("BUSINESS RULE: Duplicate Anno already exists.")
+            raise endpoints.BadRequestException("Duplicate anno already exists.")
         entity = Anno.insert_anno(request, user)
         return entity.to_response_message()
 
