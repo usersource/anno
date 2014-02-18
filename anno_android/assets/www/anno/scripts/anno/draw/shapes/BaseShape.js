@@ -85,6 +85,10 @@ define([
                 {
                     endpoint.applyTransform({dy: -shift.dy, dx: -shift.dx});
                 }
+                else if (endpoint.declaredClass.indexOf("Line") > 0)
+                {
+                    endpoint.applyTransform({dy: -shift.dy, dx: -shift.dx});
+                }
                 else
                 {
                     endpoint.setShape({cx: o.cx-shift.dx, cy: o.cy-shift.dy});

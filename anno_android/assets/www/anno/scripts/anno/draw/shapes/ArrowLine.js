@@ -78,7 +78,7 @@ define([
 
                 var hiddenAreaPoints = arrowLinePoints.hiddenArea;
 
-                this.hiddenArea = surface.createLine({x1: hiddenAreaPoints[0].x, y1: hiddenAreaPoints[0].y, x2: hiddenAreaPoints[1].x, y2: hiddenAreaPoints[1].y}).setStroke({color: this.hiddenStyle, width: 60});
+                this.hiddenArea = surface.createLine({x1: hiddenAreaPoints[0].x, y1: hiddenAreaPoints[0].y, x2: hiddenAreaPoints[1].x, y2: hiddenAreaPoints[1].y}).setStroke({color: this.hiddenStyle, width: 40});
                 this.hiddenArea.isSelectTarget = true;
                 this.hiddenArea.sid = this.id;
 
@@ -200,8 +200,8 @@ define([
                 arrowPoints.line.push({x: fromX, y: fromY});
                 arrowPoints.line.push({x: toX, y: toY});
 
-                var newRatio = (dist - 28) / dist;
-                var newRatio2 = (dist - 50) / dist;
+                var newRatio = (dist - 20) / dist;
+                var newRatio2 = (dist - 40) / dist;
 
                 var hiddenXE = Math.round(x1 + (x2 - x1) * newRatio2);
                 var hiddenYE = Math.round(y1 + (y2 - y1) * newRatio2);
@@ -215,8 +215,8 @@ define([
                 //var xE = Math.round(x1 + (x2 - x1) * newRatioX);
                 //var yE = Math.round(y1 + (y2 - y1) * newRatioX);
 
-                var xE = Math.max(x2, x1) + 50;
-                var yE = Math.min(y2, y1) - 50;
+                var xE = x2 + 50;
+                var yE = y2 - 50;
 
                 arrowPoints.x.push({x: xE, y: yE});
 
