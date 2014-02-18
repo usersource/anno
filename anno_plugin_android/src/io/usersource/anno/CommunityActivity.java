@@ -68,9 +68,11 @@ public class CommunityActivity extends DroidGap {
 
         if (consoleMessage.messageLevel() == ConsoleMessage.MessageLevel.ERROR)
         {
-          Log.e("Anno", consoleMessage.message() + " -- line "
+          if (AnnoUtils.debugEnabled) {
+            Log.e("Anno", consoleMessage.message() + " -- line "
                   + consoleMessage.lineNumber() + " of "
                   + consoleMessage.sourceId());
+          }
         }
 
         return false;
