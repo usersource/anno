@@ -18,17 +18,30 @@ define([
          * @author David Lee
          * CommentBox class
          */
+        var EAR_DIRECTION = {
+            TOP:0,
+            TOP_LEFT:1,
+            LEFT:2,
+            LEFT_BOTTOM:3,
+            BOTTOM:4,
+            BOTTOM_RIGHT:5,
+            RIGHT:6,
+            RIGHT_BOTTOM:7,
+            TOP_RIGHT:8
+        };
         return declare("anno.draw.shapes.CommentBox", [BaseShape], {
             lineStrokeStyle: {color: '#000000', width: 3},
             shapeType: "CommentBox",
             minSize:44,
             shapePadding: 30,
-            earHeight:34,
-            earDistance: 44,
+            earHeight:22,
+            earDistance: 24,
             boxHeight:34,
+            earDirection:EAR_DIRECTION.TOP, // top
             placeholder:"Enter suggestion here",
             grayColor: "#A9A9A9",
             normalColor: "#000000",
+            earGap:10,
             createShape: function (args)
             {
                 this.createCommentBox(args);
@@ -50,6 +63,7 @@ define([
 
                 if (args.shapeJson)
                 {
+                    this.earDirection = args.shapeJson.ed;
                     this.translateValues();
 
                     pathPoints = this._getBoxPointsPathByShapeJson();
@@ -69,10 +83,9 @@ define([
 
                 this.endpoint1 = surface.createCircle({cx: pathPoints.endpointsPos[0].x, cy: pathPoints.endpointsPos[0].y, r: circleR}).setStroke(endPointStrokeStyle).setFill(endPointFillStyle);
                 this.endpoint2 = surface.createCircle({cx: pathPoints.endpointsPos[1].x, cy: pathPoints.endpointsPos[1].y, r: circleR}).setStroke(endPointStrokeStyle).setFill(endPointFillStyle);
-                this.endpoint3 = surface.createCircle({cx: pathPoints.endpointsPos[2].x, cy: pathPoints.endpointsPos[2].y, r: circleR}).setStroke(endPointStrokeStyle).setFill(endPointFillStyle);
+
                 this.endpoint1.sid = this.id;
                 this.endpoint2.sid = this.id;
-                this.endpoint3.sid = this.id;
 
                 this.x = surface.createText({x: pathPoints.xPos.x, y: pathPoints.xPos.y, text: "x", align: "middle"}).setFont(this.xFont).setStroke(xColor).setFill(xColor);
                 this.x.sid = this.id;
@@ -80,7 +93,7 @@ define([
 
                 // create text node
                 this.txtNode = domConstruct.create('div', {
-                    style: "background-color:transparent;position:absolute;top:"+(this.pathPoints[0].y+3)+"px;left:"+(this.pathPoints[0].x+3)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
+                    style: "background-color:transparent;position:absolute;top:"+(this.pathPoints[0].y+3)+"px;left:"+(this.pathPoints[0].x+3)+"px;width:"+(this.pathPoints[5].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
                     innerHTML:"<div id='textDiv_"+this.id+"' style='padding:3px;overflow:hidden;width:100%;height:100%;box-sizing: border-box;font-weight: normal;color: "+this.grayColor+";'>"+this.placeholder+"</div>"
                 }, this.surface.container, 'last');
 
@@ -88,7 +101,7 @@ define([
                 this.txtNode.children[0].gfxTarget = {isSelectTarget:true, sid:this.id}; //+this.surface.borderWidth
 
                 this.inputNode = domConstruct.create('div', {
-                    style: "background-color:transparent;display:none;position:absolute;top:"+(this.pathPoints[0].y+3)+"px;left:"+(this.pathPoints[0].x+3)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
+                    style: "background-color:transparent;display:none;position:absolute;top:"+(this.pathPoints[0].y+3)+"px;left:"+(this.pathPoints[0].x+3)+"px;width:"+(this.pathPoints[5].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
                     innerHTML:"<textarea id='input_"+this.id+"' placeholder='Enter suggestion here' style='font-family: helvetica, arial;font-size: 13pt;font-weight: normal;background-color:transparent;width:100%;height:100%;border-color:transparent;outline: none;'></textarea>"
                 }, this.surface.container, 'last');
                 this.inputElement = dom.byId("input_"+this.id);
@@ -142,7 +155,7 @@ define([
                     var commentBoxMover = new gfx.Moveable(ts);
                     connect.connect(commentBoxMover, "onMoved", this, function (mover, shift)
                     {
-                        if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint3, shift.dx, shift.dy))
+                        if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy))
                         {
                             return;
                         }
@@ -157,7 +170,6 @@ define([
                         this.path.applyTransform({dy: shift.dy, dx: shift.dx});
                         this.endpoint1.applyTransform({dy: shift.dy, dx: shift.dx});
                         this.endpoint2.applyTransform({dy: shift.dy, dx: shift.dx});
-                        this.endpoint3.applyTransform({dy: shift.dy, dx: shift.dx});
 
                         this.x.applyTransform({dy: shift.dy, dx: shift.dx});
                     });
@@ -165,11 +177,10 @@ define([
                     var pathMover = new gfx.Moveable(this.path);
                     var endpoint1Mover = new gfx.Moveable(this.endpoint1);
                     var endpoint2Mover = new gfx.Moveable(this.endpoint2);
-                    var endpoint3Mover = new gfx.Moveable(this.endpoint3);
 
                     this._connects.push(connect.connect(pathMover, "onMoved", this, function (mover, shift)
                     {
-                        if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint3, shift.dx, shift.dy))
+                        if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy))
                         {
                             this.rollbackEndpoint(mover.shape, shift);
                             return;
@@ -177,7 +188,6 @@ define([
 
                         this.endpoint1.applyTransform({dy: shift.dy, dx: shift.dx});
                         this.endpoint2.applyTransform({dy: shift.dy, dx: shift.dx});
-                        this.endpoint3.applyTransform({dy: shift.dy, dx: shift.dx});
 
                         this.x.applyTransform({dy: shift.dy, dx: shift.dx});
 
@@ -208,8 +218,8 @@ define([
                         this.path.setShape(pathPoints.path);
 
                         var mdx = this.path.matrix?this.path.matrix.dx:0;
-                        domStyle.set(this.txtNode, {left:(this.pathPoints[0].x+3+mdx)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
-                        domStyle.set(this.inputNode, {left:(this.pathPoints[0].x+3+mdx)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
+                        domStyle.set(this.txtNode, {left:(this.pathPoints[0].x+3+mdx)+'px', width:(this.pathPoints[5].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
+                        domStyle.set(this.inputNode, {left:(this.pathPoints[0].x+3+mdx)+'px', width:(this.pathPoints[5].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
                     }));
 
                     this._connects.push(connect.connect(endpoint2Mover, "onMoved", this, function (mover, shift)
@@ -220,40 +230,21 @@ define([
                             return;
                         }
 
-                        if (this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy)||!this._isEarMoveable(shift.dx, shift.dy))
-                        {
-                            this.rollbackEndpoint(mover.shape, shift);
-                            return;
-                        }
-
                         var pathPoints = this._getBoxPointsPathForEarChange(this.endpoint2, shift.dx, shift.dy);
 
-                        this.path.setShape(pathPoints.path);
+                        if (pathPoints)
+                            this.path.setShape(pathPoints.path);
                     }));
 
-                    this._connects.push(connect.connect(endpoint3Mover, "onMoved", this, function (mover, shift)
+                    this._connects.push(connect.connect(endpoint2Mover, "onMoveStop", this, function (mover)
                     {
-                        if (!this.isMoveable())
+                        if (this._needRestoreLastEarPos)
                         {
-                            this.rollbackEndpoint(mover.shape, shift);
-                            return;
+                            this._restoreEarEndPoint();
+                            this._needRestoreLastEarPos = false;
                         }
-
-                        if (this.isEndpointOutScreen(this.endpoint3, shift.dx, shift.dy)||!this._isEndpoint3Moveable(shift.dx, shift.dy))
-                        {
-                            this.rollbackEndpoint(mover.shape, shift);
-                            return;
-                        }
-
-                        var pathPoints = this._getBoxPointsPathForUREndpointChange(shift.dx, shift.dy);
-
-                        this.path.setShape(pathPoints.path);
-                        this.x.applyTransform({dy: shift.dy, dx: shift.dx});
-
-                        var mdy = this.path.matrix?this.path.matrix.dy: 0;
-                        domStyle.set(this.txtNode, {top:(this.pathPoints[0].y+3+mdy)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
-                        domStyle.set(this.inputNode, {top:(this.pathPoints[0].y+3+mdy)+'px', width:(this.pathPoints[4].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
                     }));
+
 
                     this._connects.push(this.x.on(touch.release, lang.hitch(this, this.onXTouched)));
 
@@ -347,163 +338,397 @@ define([
 
                 var boundingBox = ep.getTransformedBoundingBox();
 
-                var leftX = cp[0].x, rightX = cp[4].x;
-                var leftY1 = cp[0].y, leftY2 = cp[5].y;
+                var y1 = cp[0].y, y2 = cp[1].y, y3 = cp[2].y, y4 = cp[3].y, y5 = cp[4].y, y6 = cp[5].y, y7 = cp[6].y;
+                var x1 = cp[0].x, x2 = cp[1].x, x3 = cp[2].x, x4 = cp[3].x, x5 = cp[4].x, x6 = cp[5].x, x7 = cp[6].x;
 
-                var x2, x3, x4, mdx = this.path.matrix?this.path.matrix.dx:0;
+                var mdx = this.path.matrix?this.path.matrix.dx:0;
+                var mdy = this.path.matrix?this.path.matrix.dy:0;
 
-                x3 = cp[2].x = boundingBox[0].x+(Math.round((boundingBox[1].x-boundingBox[0].x)/2))-mdx;
-                if (((cp[1].x + eX) <= leftX)||((cp[2].x + eX) <=leftX))
+                x3 = boundingBox[0].x+(Math.round((boundingBox[1].x-boundingBox[0].x)/2))-mdx;
+                y3 = boundingBox[0].y+(Math.round((boundingBox[2].y-boundingBox[0].y)/2))-mdy;
+
+                var ed = this._getEarDirection(x3, y3, eX, eY), halfEar = this.earDistance/2;
+
+                if (ed == EAR_DIRECTION.TOP)
                 {
-                    x2 = cp[1].x = leftX + 10;
-                    x4 = cp[3].x = x2 + this.earDistance;
+                    // top
+                    x2 = cp[1].x = x3 - halfEar;
+                    y2 = cp[1].y = y1;
+
+                    x4 = cp[3].x = x3 + halfEar;
+                    y4 = cp[3].y = y1;
+
+                    x5 = cp[4].x = x6;
+                    y5 = cp[4].y = y1;
+
+                    x7 = cp[6].x = x1;
+                    y7 = cp[6].y = y6;
                 }
-                else if (((cp[3].x + eX) >= rightX)||((cp[2].x + eX) >= rightX))
+                else if (ed == EAR_DIRECTION.TOP_LEFT)
                 {
-                    x4 = cp[3].x = rightX -10;
-                    x2 = cp[1].x = x4 - this.earDistance;
+                    // top-left
+                    x2 = cp[1].x = x1 + this.earGap;
+                    y2 = cp[1].y = y1;
+
+                    x4 = cp[3].x = x2 + this.earDistance;
+                    y4 = cp[3].y = y1;
+
+                    x5 = cp[4].x = x6;
+                    y5 = cp[4].y = y1;
+
+                    x7 = cp[6].x = x1;
+                    y7 = cp[6].y = y6;
+                }
+                else if (ed == EAR_DIRECTION.LEFT)
+                {
+                    // left
+                    x2 = cp[1].x = x1;
+                    y2 = cp[1].y = y3 - halfEar;
+
+                    x4 = cp[3].x = x1;
+                    y4 = cp[3].y = y3 + halfEar;
+
+                    x5 = cp[4].x = x1;
+                    y5 = cp[4].y = y6;
+
+                    x7 = cp[6].x = x6;
+                    y7 = cp[6].y = y1;
+                }
+                else if (ed == EAR_DIRECTION.LEFT_BOTTOM)
+                {
+                    // left-bottom
+                    x2 = cp[1].x = x1;
+                    y2 = cp[1].y = y6 - this.earDistance - this.earGap;
+
+                    x4 = cp[3].x = x1;
+                    y4 = cp[3].y = y6 - this.earGap;
+
+                    x5 = cp[4].x = x1;
+                    y5 = cp[4].y = y6;
+
+                    x7 = cp[6].x = x6;
+                    y7 = cp[6].y = y1;
+                }
+                else if (ed == EAR_DIRECTION.BOTTOM)
+                {
+                    // bottom
+                    x2 = cp[1].x = x1;
+                    y2 = cp[1].y = y6;
+
+                    x4 = cp[3].x = x3;
+                    y4 = cp[3].y = y3;
+
+                    x5 = cp[4].x = x3 + halfEar;
+                    y5 = cp[4].y = y6;
+
+                    x3 = cp[2].x = x3 -halfEar;
+                    y3 = cp[2].y = y6;
+
+                    x7 = cp[6].x = x6;
+                    y7 = cp[6].y = y1;
+                }
+                else if (ed == EAR_DIRECTION.RIGHT_BOTTOM)
+                {
+                    // bottom-right
+                    x2 = cp[1].x = x1;
+                    y2 = cp[1].y = y6;
+
+                    x4 = cp[3].x = x3;
+                    y4 = cp[3].y = y3;
+
+                    x5 = cp[4].x = x6 - this.earGap;
+                    y5 = cp[4].y = y6;
+
+                    x3 = cp[2].x = x6 -this.earDistance - this.earGap;
+                    y3 = cp[2].y = y6;
+
+                    x7 = cp[6].x = x6;
+                    y7 = cp[6].y = y1;
+                }
+                else if (ed == EAR_DIRECTION.RIGHT)
+                {
+                    // right
+                    x2 = cp[1].x = x6;
+                    y2 = cp[1].y = y1;
+
+                    x4 = cp[3].x = x3;
+                    y4 = cp[3].y = y3;
+
+                    x5 = cp[4].x = x6;
+                    y5 = cp[4].y = y3 + halfEar;
+
+                    x3 = cp[2].x = x6;
+                    y3 = cp[2].y = y3 - halfEar;
+
+                    x7 = cp[6].x = x1;
+                    y7 = cp[6].y = y6;
+                }
+                else if (ed == EAR_DIRECTION.TOP_RIGHT)
+                {
+                    // top-right
+                    x2 = cp[1].x = x6 - this.earDistance - this.earGap;
+                    y2 = cp[1].y = y1;
+
+                    x4 = cp[3].x = x6 - this.earGap;
+                    y4 = cp[3].y = y1;
+
+                    x5 = cp[4].x = x6;
+                    y5 = cp[4].y = y1;
+
+                    x7 = cp[6].x = x1;
+                    y7 = cp[6].y = y6;
+                }
+
+                if (ed >=0)
+                {
+                    cp[2].x = x3;
+                    cp[2].y = y3;
+
+                    var path = "M"+x1+" "+y1 + " L"+x2+" "+y2+" L"+x3+" "+y3+" L"+x4+" "+y4+" L"+x5+" "+y5+
+                        " L"+x6+" "+y6+" L"+x7+" "+y7+ " L"+ x1+" "+y1 + " Z";
+
+                    this.earDirection = ed;
+                    this._needRestoreLastEarPos = false;
+
+                    return {
+                        path: path,
+                        endpointsPos:[
+                            {x: x1, y: y6},
+                            {x: x3, y: y3}],
+                        xPos:{x: x6-6, y:y1-40}
+                    };
                 }
                 else
                 {
-                    x2 = cp[1].x = cp[1].x + eX;
-                    x4 = cp[3].x = cp[3].x + eX;
+                    this._needRestoreLastEarPos = true;
+                }
+            },
+            _getEarDirection: function(earX, earY, dx, dy)
+            {
+                var d = -1;
+
+                if (this.isEndpointOutScreen(this.endpoint2, dx, dy))
+                {
+                    return d;
                 }
 
-                var y3 = cp[2].y = cp[2].y + eY;
+                var cp = this.pathPoints, tlX = cp[0].x, tlY = cp[0].y,
+                    brX = cp[5].x, brY = cp[5].y;
 
-                var path = "M"+leftX+" "+leftY1 + " L"+x2+" "+leftY1+" L"+x3+" "+y3+" L"+x4+" "+leftY1+" L"+rightX+" "+leftY1+
-                    " L"+rightX+" "+leftY2+" L"+leftX+" "+leftY2+ " L"+ leftX+" "+leftY1 + " Z";
+                var halfEar = this.earDistance/ 2, earH = this.earHeight;
 
-                this.earHeight += eY;
+                if (earX >= (tlX+this.earGap+halfEar) && earX <= (brX-this.earGap-halfEar))
+                {
+                    if (earY <= (tlY-earH))
+                    {
+                        d = EAR_DIRECTION.TOP;
+                    }
+                    else if (earY > (brY+earH))
+                    {
+                        d = EAR_DIRECTION.BOTTOM;
+                    }
+                }
+                else if (earX <=(tlX-earH))
+                {
+                    if (earY <= (tlY-earH))
+                    {
+                        d = EAR_DIRECTION.TOP_LEFT;
+                    }
+                    else if (earY > (brY+earH))
+                    {
+                        d = EAR_DIRECTION.LEFT_BOTTOM;
+                    }
+                    else if (earY > (tlY+halfEar+this.earGap) && earY < (brY-halfEar-this.earGap) )
+                    {
+                        d = EAR_DIRECTION.LEFT;
+                    }
+                }
+                else if (earX >= (brX+halfEar+this.earGap))
+                {
+                    if (earY < (tlY-earH))
+                    {
+                        d = EAR_DIRECTION.TOP_RIGHT;
+                    }
+                    else if (earY > (brY+earH))
+                    {
+                        d = EAR_DIRECTION.RIGHT_BOTTOM;
+                    }
+                    else if (earY > (tlY+halfEar+this.earGap) && earY < (brY-halfEar-this.earGap))
+                    {
+                        d = EAR_DIRECTION.RIGHT;
+                    }
+                }
 
-                return {
-                    path: path,
-                    endpointsPos:[
-                        {x: leftX, y: leftY2},
-                        {x: x3, y: y3},
-                        {x: rightX, y: leftY1}],
-                    xPos:{x: rightX-6, y:leftY1-40}
-                };
+                return d;
+            },
+            _restoreEarEndPoint: function()
+            {
+                var ep = this.endpoint2, epx, epy, ed = this.earDirection, cp = this.pathPoints;
+
+                if (ed == EAR_DIRECTION.TOP||ed == EAR_DIRECTION.TOP_LEFT||ed == EAR_DIRECTION.LEFT
+                    ||ed == EAR_DIRECTION.LEFT_BOTTOM||ed == EAR_DIRECTION.LEFT_BOTTOM
+                    ||ed == EAR_DIRECTION.TOP_RIGHT)
+                {
+                    epx = cp[2].x;
+                    epy = cp[2].y;
+                }
+                else if (ed == EAR_DIRECTION.BOTTOM||ed == EAR_DIRECTION.RIGHT_BOTTOM
+                    ||ed == EAR_DIRECTION.RIGHT||ed == EAR_DIRECTION.RIGHT)
+                {
+                    epx = cp[3].x;
+                    epy = cp[3].y;
+                }
+
+                var boundingBox = ep.getTransformedBoundingBox();
+                var mdx = this.path.matrix?this.path.matrix.dx:0;
+                var mdy = this.path.matrix?this.path.matrix.dy:0;
+
+                var x3 = boundingBox[0].x+(Math.round((boundingBox[1].x-boundingBox[0].x)/2))-mdx;
+                var y3 = boundingBox[0].y+(Math.round((boundingBox[2].y-boundingBox[0].y)/2))-mdy;
+
+                ep.applyTransform({dy: epy - y3, dx: epx - x3});
             },
             _getBoxPointsPathForBTEndpointChange: function(eX, eY)
             {
                 var cp = this.pathPoints;
+                var ed = this.earDirection;
 
-                var leftX = cp[0].x = cp[0].x + eX, rightX = cp[4].x;
-                var leftY1 = cp[0].y, leftY2 = cp[5].y = cp[5].y+eY;
+                if (ed == EAR_DIRECTION.TOP||ed == EAR_DIRECTION.TOP_LEFT||ed == EAR_DIRECTION.TOP_RIGHT)
+                {
+                    cp[0].x = cp[6].x = cp[0].x + eX;
+                    cp[5].y = cp[6].y = cp[5].y + eY;
+                }
+                else if (ed == EAR_DIRECTION.LEFT||ed == EAR_DIRECTION.LEFT_BOTTOM)
+                {
+                    cp[0].x = cp[4].x = cp[0].x + eX;
+                    cp[1].x = cp[3].x = cp[1].x + eX;
 
-                var x2 = cp[1].x;
-                var x3 = cp[2].x ;
-                var y3 = cp[2].y;
-                var x4 = cp[3].x;
+                    cp[4].y = cp[5].y= cp[4].y+eY;
+                }
+                else if (ed == EAR_DIRECTION.BOTTOM||ed == EAR_DIRECTION.RIGHT_BOTTOM)
+                {
+                    cp[0].x = cp[1].x = cp[0].x + eX;
 
-                var path = "M"+leftX+" "+leftY1 + " L"+x2+" "+leftY1+" L"+x3+" "+y3+" L"+x4+" "+leftY1+" L"+rightX+" "+leftY1+
-                    " L"+rightX+" "+leftY2+" L"+leftX+" "+leftY2+ " L"+ leftX+" "+leftY1 + " Z";
+                    cp[1].y = cp[5].y= cp[1].y+eY;
+                    cp[2].y = cp[4].y= cp[2].y+eY;
+                }
+                else if (ed == EAR_DIRECTION.RIGHT)
+                {
+                    cp[0].x = cp[6].x = cp[0].x + eX;
 
-                return {
-                    path: path,
-                    endpointsPos:[
-                        {x: leftX, y: leftY2},
-                        {x: x3, y: y3},
-                        {x: rightX, y: leftY1}],
-                    xPos:{x: rightX-6, y:leftY1-40}
-                };
-            },
-            _getBoxPointsPathForUREndpointChange: function(eX, eY)
-            {
-                var cp = this.pathPoints;
+                    cp[6].y = cp[5].y= cp[5].y+eY;
+                }
 
-                var leftX = cp[0].x, rightX = cp[4].x = cp[4].x+eX;
-                var leftY1 = cp[0].y = cp[0].y+eY, leftY2 = cp[5].y;
+                var y1 = cp[0].y, y2 = cp[1].y, y3 = cp[2].y, y4 = cp[3].y, y5 = cp[4].y, y6 = cp[5].y, y7 = cp[6].y;
+                var x1 = cp[0].x, x2 = cp[1].x, x3 = cp[2].x, x4 = cp[3].x, x5 = cp[4].x, x6 = cp[5].x, x7 = cp[6].x;
 
-                var x2 = cp[1].x;
-                var x3 = cp[2].x;
-                var y3 = cp[2].y;
-                var x4 = cp[3].x;
-
-                var path = "M"+leftX+" "+leftY1 + " L"+x2+" "+leftY1+" L"+x3+" "+y3+" L"+x4+" "+leftY1+" L"+rightX+" "+leftY1+
-                    " L"+rightX+" "+leftY2+" L"+leftX+" "+leftY2+ " L"+ leftX+" "+leftY1 + " Z";
+                var path = "M"+x1+" "+y1 + " L"+x2+" "+y2+" L"+x3+" "+y3+" L"+x4+" "+y4+" L"+x5+" "+y5+
+                    " L"+x6+" "+y6+" L"+x7+" "+y7+ " L"+ x1+" "+y1 + " Z";
 
                 return {
                     path: path,
                     endpointsPos:[
-                        {x: leftX, y: leftY2},
-                        {x: x3, y: y3},
-                        {x: rightX, y: leftY1}],
-                    xPos:{x: rightX-6, y:leftY1-40}
+                        {x: x1, y: y6},
+                        {x: x3, y: y3}],
+                    xPos:{x: x6-6, y:y1-40}
                 };
             },
             _getBoxPointsPathByShapeJson: function()
             {
                 var cp = this.pathPoints = this.shapeJson.points;
 
-                var leftX = cp[0].x, rightX = cp[4].x;
-                var leftY1 = cp[0].y, leftY2 = cp[5].y;
+                var y1 = cp[0].y, y2 = cp[1].y, y3 = cp[2].y, y4 = cp[3].y, y5 = cp[4].y, y6 = cp[5].y, y7 = cp[6].y;
+                var x1 = cp[0].x, x2 = cp[1].x, x3 = cp[2].x, x4 = cp[3].x, x5 = cp[4].x, x6 = cp[5].x, x7 = cp[6].x;
 
-                var x2 = cp[1].x;
-                var x3 = cp[2].x;
-                var y3 = cp[2].y;
-                var x4 = cp[3].x;
-
-                var path = "M"+leftX+" "+leftY1 + " L"+x2+" "+leftY1+" L"+x3+" "+y3+" L"+x4+" "+leftY1+" L"+rightX+" "+leftY1+
-                    " L"+rightX+" "+leftY2+" L"+leftX+" "+leftY2+ " L"+ leftX+" "+leftY1 + " Z";
+                var path = "M"+x1+" "+y1 + " L"+x2+" "+y2+" L"+x3+" "+y3+" L"+x4+" "+y4+" L"+x5+" "+y5+
+                    " L"+x6+" "+y6+" L"+x7+" "+y7+ " L"+ x1+" "+y1 + " Z";
 
                 return {
                     path: path,
                     endpointsPos:[
-                        {x: leftX, y: leftY2},
-                        {x: x3, y: y3},
-                        {x: rightX, y: leftY1}],
-                    xPos:{x: rightX-6, y:leftY1-40}
+                        {x: x1, y: y6},
+                        {x: x3, y: y3}],
+                    xPos:{x: x6-6, y:y1-40}
                 };
             },
             _isEarMoveable: function(dx, dy)
             {
-                var cp = this.pathPoints;
-
-                if ((cp[2].y + dy) >= (cp[0].y - this.circleR))
-                {
-                    return false;
-                }
-
                 return true;
             },
             _isEndpoint1Moveable: function(dx, dy)
             {
                 var cp = this.pathPoints;
-                var leftX = cp[0].x, leftY1 = cp[0].y, leftY2 = cp[5].y, x2 = cp[1].x;
+                var ed = this.earDirection;
 
-                if ((leftX + dx + 10) >= x2)
+                if (ed == EAR_DIRECTION.TOP||ed == EAR_DIRECTION.TOP_LEFT||ed == EAR_DIRECTION.TOP_RIGHT)
                 {
-                    return false;
+                    if ((cp[0].x + dx + this.earGap) >= cp[1].x)
+                    {
+                        return false;
+                    }
+
+                    if ((cp[5].y - cp[0].y + dy) >= (this.boxHeight*3) || (cp[5].y - cp[0].y + dy) < this.boxHeight)
+                    {
+                        return false;
+                    }
+                }
+                else if (ed == EAR_DIRECTION.LEFT||ed == EAR_DIRECTION.LEFT_BOTTOM)
+                {
+                    if ((cp[0].x + dx - cp[2].x) <= this.earHeight)
+                    {
+                        return false;
+                    }
+
+                    if ((cp[5].y + dy - cp[3].y) <= this.earGap)
+                    {
+                        return false;
+                    }
+
+                    if ((cp[5].y - cp[0].y + dy) >= (this.boxHeight*3) || (cp[5].y - cp[0].y + dy) < this.boxHeight)
+                    {
+                        return false;
+                    }
+                }
+                else if (ed == EAR_DIRECTION.BOTTOM||ed == EAR_DIRECTION.RIGHT_BOTTOM)
+                {
+                    if ((cp[3].y + dy - cp[5].y) <= this.earHeight)
+                    {
+                        return false;
+                    }
+
+                    if ((cp[2].x - (cp[1].x + dx) ) <= this.earGap)
+                    {
+                        return false;
+                    }
+
+                    if ((cp[5].y - cp[0].y + dy) >= (this.boxHeight*3) || (cp[5].y - cp[0].y + dy) < this.boxHeight)
+                    {
+                        return false;
+                    }
+                }
+                else if (ed == EAR_DIRECTION.RIGHT)
+                {
+                    if ((cp[3].x - (cp[5].x+dx)) <= this.earHeight)
+                    {
+                        return false;
+                    }
+
+                    if ((cp[5].y - cp[0].y + dy) >= (this.boxHeight*3) || (cp[5].y - cp[0].y + dy) < this.boxHeight)
+                    {
+                        return false;
+                    }
                 }
 
-                if ((leftY2 - leftY1 + dy) >= (this.boxHeight*3) || (leftY2 - leftY1 + dy) < this.boxHeight)
+                if (dx != 0)
                 {
-                    return false;
+                    var boxWidth = cp[5].x - cp[0].x - dx;
+
+                    if (boxWidth < this.viewPoint.w/3)
+                    {
+                        return false;
+                    }
                 }
 
-                return true;
-            },
-            _isEndpoint3Moveable: function(dx, dy)
-            {
-                var cp = this.pathPoints;
-                var rightX = cp[4].x, leftY1 = cp[0].y, leftY2 = cp[5].y, x4 = cp[3].x;
-
-                if ((rightX + dx - 10) <= x4)
-                {
-                    return false;
-                }
-
-                if ((leftY2 - leftY1 - dy) >= (this.boxHeight*3) || (leftY2 - leftY1 - dy) < this.boxHeight)
-                {
-                    return false;
-                }
-
-                if ((cp[2].y - dy) >= (cp[0].y - this.circleR))
-                {
-                    return false;
-                }
 
                 return true;
             },
@@ -516,7 +741,6 @@ define([
                 surface.remove(this.path);
                 surface.remove(this.endpoint1);
                 surface.remove(this.endpoint2);
-                surface.remove(this.endpoint3);
 
                 domConstruct.destroy(this.txtNode);
                 domConstruct.destroy(this.inputNode);
@@ -530,13 +754,11 @@ define([
                 {
                     this.endpoint1.setStroke(this.endpointStrokeStyle).setFill(this.endpointFillStyle);
                     this.endpoint2.setStroke(this.endpointStrokeStyle).setFill(this.endpointFillStyle);
-                    this.endpoint3.setStroke(this.endpointStrokeStyle).setFill(this.endpointFillStyle);
                 }
                 else
                 {
                     this.endpoint1.setStroke(this.endpointHiddenStrokeStyle).setFill(this.endpointHiddenFillStyle);
                     this.endpoint2.setStroke(this.endpointHiddenStrokeStyle).setFill(this.endpointHiddenFillStyle);
-                    this.endpoint3.setStroke(this.endpointHiddenStrokeStyle).setFill(this.endpointHiddenFillStyle);
                 }
             },
             setId: function (id)
@@ -570,7 +792,7 @@ define([
                     ps[i].y = this.toRelativeValue(ps[i].y, false);
                 }
 
-                return {type:this.shapeType, points:ps, comment:this.inputElement.value};
+                return {type:this.shapeType, points:ps, comment:this.inputElement.value, ed:this.earDirection};
             },
             translateValues:function()
             {
@@ -584,48 +806,197 @@ define([
                 }
 
                 // check the ear height and distance
-                var x2 = ps[1].x, x3 = ps[2].x, y1 = ps[0].y, y3 = ps[2].y, x4 = ps[3].x;
-
-                if ((x4 - x2) < this.earDistance)
-                {
-                    var dx = Math.round((this.earDistance-(x4 - x2))/2);
-                    ps[1].x = ps[1].x - dx;
-                    ps[3].x = ps[3].x + dx;
-                }
-                else if ((x4 - x2) > this.earDistance)
-                {
-                    var dx = Math.round(((x4 - x2)-this.earDistance)/2);
-                    ps[1].x = ps[1].x + dx;
-                    ps[3].x = ps[3].x - dx;
-                }
-
-                if ((y1-y3) <this.earHeight)
-                {
-                    var dy = this.earHeight - (y1-y3);
-
-                    ps[0].y += dy;
-                    ps[1].y += dy;
-                    ps[3].y += dy;
-                    ps[4].y += dy;
-                    ps[5].y += dy;
-                    ps[6].y += dy;
-                }
-                else if ((y1-y3) >this.earHeight)
-                {
-                    var dy = (y1-y3)-this.earHeight;
-
-                    ps[0].y -= dy;
-                    ps[1].y -= dy;
-                    ps[3].y -= dy;
-                    ps[4].y -= dy;
-                    ps[5].y -= dy;
-                    ps[6].y -= dy;
-                }
                 // check the box height and make sure it's should be up to 4 lines height
-                var leftY1 = ps[0].y, leftY2 = ps[5].y;
+                var ed = this.earDirection, boxWidth = ps[5].x - ps[0].x;
+                var lines = this._getLines(boxWidth), boxHeight = this.boxHeight + (lines-1)*20, tboxHeight;
 
-                var boxWidth = ps[4].x-ps[0].x,
-                    pxPerChar = 8,
+                if (ed == EAR_DIRECTION.TOP||ed == EAR_DIRECTION.TOP_LEFT||ed == EAR_DIRECTION.TOP_RIGHT)
+                {
+                    if ((ps[3].x - ps[1].x) < this.earDistance)
+                    {
+                        var dx = Math.round((this.earDistance-(ps[3].x - ps[1].x))/2);
+                        ps[1].x = ps[1].x - dx;
+                        ps[3].x = ps[3].x + dx;
+                    }
+                    else if ((ps[3].x - ps[1].x) > this.earDistance)
+                    {
+                        var dx = Math.round(((ps[3].x - ps[1].x)-this.earDistance)/2);
+                        ps[1].x = ps[1].x + dx;
+                        ps[3].x = ps[3].x - dx;
+                    }
+
+                    if ((ps[0].y-ps[2].y) <this.earHeight)
+                    {
+                        var dy = this.earHeight - (ps[0].y-ps[2].y);
+
+                        ps[0].y += dy;
+                        ps[1].y += dy;
+                        ps[3].y += dy;
+                        ps[4].y += dy;
+                        ps[5].y += dy;
+                        ps[6].y += dy;
+                    }
+
+                    ps[5].y = ps[6].y = ps[0].y+boxHeight;
+                }
+                else if (ed == EAR_DIRECTION.LEFT||ed == EAR_DIRECTION.LEFT_BOTTOM)
+                {
+                    if ((ps[3].y - ps[1].y) < this.earDistance)
+                    {
+                        var dy = Math.round((this.earDistance-(ps[3].y - ps[1].y))/2);
+                        ps[1].y = ps[1].y - dy;
+                        ps[3].y = ps[3].y + dy;
+                    }
+                    else if ((ps[3].y - ps[1].y) > this.earDistance)
+                    {
+                        var dy = Math.round(((ps[3].y - ps[1].y)-this.earDistance)/2);
+                        ps[1].y = ps[1].y + dy;
+                        ps[3].y = ps[3].y - dy;
+                    }
+
+                    if ((ps[0].x-ps[2].x) <this.earHeight)
+                    {
+                        var dx = this.earHeight - (ps[0].x-ps[2].x);
+
+                        ps[0].x += dx;
+                        ps[1].x += dx;
+                        ps[3].x += dx;
+                        ps[4].x += dx;
+                        ps[5].x += dx;
+                        ps[6].x += dx;
+                    }
+
+                    if (lines == 1)
+                    {
+                        boxHeight = this.boxHeight +10;
+                    }
+
+                    tboxHeight = ps[5].y - ps[0].y; // translated box height
+
+                    if (tboxHeight > boxHeight)
+                    {
+                        dy = tboxHeight - boxHeight;
+
+                        if ((ps[1].y - dy - ps[0].y) < this.earGap)
+                        {
+                            dy = dy - (this.earGap - (ps[1].y - dy - ps[0].y));
+
+                            ps[1].y -= dy;
+                            ps[3].y -= dy;
+                        }
+                        else if ((ps[0].y+boxHeight - dy - ps[3].y) < this.earGap)
+                        {
+                            dy = dy - (this.earGap - (ps[0].y+boxHeight - dy - ps[3].y));
+
+                            ps[1].y -= dy;
+                            ps[3].y -= dy;
+                        }
+                        else
+                        {
+                            ps[1].y -= dy;
+                            ps[3].y -= dy;
+                        }
+                    }
+
+                    {
+                        ps[4].y = ps[5].y = ps[0].y+boxHeight;
+                    }
+                }
+                else if (ed == EAR_DIRECTION.BOTTOM||ed == EAR_DIRECTION.RIGHT_BOTTOM)
+                {
+                    if ((ps[4].x - ps[2].x) < this.earDistance)
+                    {
+                        var dx = Math.round((this.earDistance-(ps[4].x - ps[2].x))/2);
+                        ps[2].x = ps[2].x - dx;
+                        ps[4].x = ps[4].x + dx;
+                    }
+                    else if ((ps[4].x - ps[2].x) > this.earDistance)
+                    {
+                        var dx = Math.round(((ps[4].x - ps[2].x)-this.earDistance)/2);
+                        ps[2].x = ps[2].x + dx;
+                        ps[4].x = ps[4].x - dx;
+                    }
+
+                    if ((ps[3].y-ps[5].y) <this.earHeight)
+                    {
+                        var dy = this.earHeight - (ps[3].y-ps[5].y);
+
+                        ps[0].y -= dy;
+                        ps[1].y -= dy;
+                        ps[2].y -= dy;
+                        ps[4].y -= dy;
+                        ps[5].y -= dy;
+                        ps[6].y -= dy;
+                    }
+
+                    ps[1].y = ps[2].y = ps[4].y = ps[5].y= ps[0].y+boxHeight;
+                }
+                else if (ed == EAR_DIRECTION.RIGHT)
+                {
+                    if ((ps[4].y - ps[2].y) < this.earDistance)
+                    {
+                        var dy = Math.round((this.earDistance-(ps[4].y - ps[2].y))/2);
+                        ps[2].y = ps[2].y - dy;
+                        ps[4].y = ps[4].y + dy;
+                    }
+                    else if ((ps[4].y - ps[2].y) > this.earDistance)
+                    {
+                        var dy = Math.round(((ps[4].y - ps[2].y)-this.earDistance)/2);
+                        ps[2].y = ps[2].y + dy;
+                        ps[4].y = ps[4].y - dy;
+                    }
+
+                    if ((ps[3].x-ps[5].x) <this.earHeight)
+                    {
+                        var dx = this.earHeight - (ps[3].x-ps[5].x);
+
+                        ps[0].x -= dx;
+                        ps[1].x -= dx;
+                        ps[2].x -= dx;
+                        ps[4].x -= dx;
+                        ps[5].x -= dx;
+                        ps[6].x -= dx;
+                    }
+
+                    if (lines == 1)
+                    {
+                        boxHeight = this.boxHeight +10;
+                    }
+
+                    tboxHeight = ps[5].y - ps[0].y; // translated box height
+
+                    if (tboxHeight > boxHeight)
+                    {
+                        dy = tboxHeight - boxHeight;
+
+                        if ((ps[2].y - dy - ps[1].y) < this.earGap)
+                        {
+                            dy = dy - (this.earGap - (ps[2].y - dy - ps[1].y));
+
+                            ps[2].y -= dy;
+                            ps[4].y -= dy;
+                        }
+                        else if ((ps[0].y+boxHeight - dy - ps[4].y) < this.earGap)
+                        {
+                            dy = dy - (this.earGap - (ps[0].y+boxHeight - dy - ps[4].y));
+
+                            ps[2].y -= dy;
+                            ps[4].y -= dy;
+                        }
+                        else
+                        {
+                            ps[2].y -= dy;
+                            ps[4].y -= dy;
+                        }
+                    }
+
+                    ps[5].y = ps[6].y = ps[0].y+boxHeight;
+                }
+
+            },
+            _getLines: function(boxWidth)
+            {
+                var pxPerChar = 8,
                     charsPerLine = boxWidth/pxPerChar;
 
                 var commentText = this.shapeJson.comment;
@@ -634,12 +1005,37 @@ define([
                 if (lines > 4 )
                 {
                     lines = 4;
-                    var shortText = commentText.substr(0, charsPerLine*4-Math.round(charsPerLine/2))+"...";
-                    //this.shortText = shortText;
                 }
 
-                var boxHeight = this.boxHeight + (lines-1)*20;
-                ps[5].y = ps[6].y = leftY1+boxHeight;
+                return lines;
+            },
+            animateEarControl: function()
+            {
+                var vp = this.viewPoint;
+                var dist = Math.round((vp.w - this.shapePadding*2)*0.3), mdist = 0, step = 10;
+
+                var self = this;
+                var intervalHandle = window.setInterval(function(){
+                    var ep = self.endpoint2;
+                    ep.applyTransform({dx: step});
+                    var pathPoints = self._getBoxPointsPathForEarChange(ep, 2, 0);
+
+                    if (pathPoints)
+                        self.path.setShape(pathPoints.path);
+
+                    mdist +=step;
+
+                    if (mdist >= dist)
+                    {
+                        step = - step;
+                    }
+
+                    if (mdist<=0)
+                    {
+                        window.clearInterval(intervalHandle);
+                    }
+
+                }, 50);
             }
         });
     });
