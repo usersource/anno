@@ -88,7 +88,7 @@ define([
                 this.endpoint2.sid = this.id;
 
                 var xPoints = arrowLinePoints.x;
-                this.x = surface.createText({x: xPoints[0].x, y: xPoints[0].y, text: "x", align: "middle"}).setFont(this.xFont).setStroke(xColor).setFill(xColor);
+                this.createX(xPoints[0].x, xPoints[0].y, xColor);
                 this.x.sid = this.id;
                 this.x.isX = true;
 
@@ -281,6 +281,17 @@ define([
                     this.endpoint1.setStroke(this.endpointHiddenStrokeStyle).setFill(this.endpointHiddenFillStyle);
                     this.endpoint2.setStroke(this.endpointHiddenStrokeStyle).setFill(this.endpointHiddenFillStyle);
                 }
+            },
+            moveToFront: function()
+            {
+                this.line.moveToFront();
+                this.arrowHead.moveToFront();
+                this.hiddenArea.moveToFront();
+
+                this.endpoint1.moveToFront();
+                this.endpoint2.moveToFront();
+
+                this.inherited(arguments);
             },
             setId: function(id)
             {

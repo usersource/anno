@@ -290,6 +290,10 @@ require([
         updateLastShapePos('Rectangle');
 
         surface.switchMode(true);
+
+        window.setTimeout(function(){
+            commentBox.animateEarControl();
+        }, 500);
     };
 
     var drawImageHiddenCanvas = function()
