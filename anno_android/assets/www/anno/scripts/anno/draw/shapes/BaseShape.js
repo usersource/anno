@@ -2,6 +2,7 @@ define([
     "dojo/_base/declare",
     "dojo/_base/connect",
     "dojo/_base/lang",
+    "dojo/dom-construct",
     "dojo/window",
     "../../common/Util"
 ],
@@ -9,6 +10,7 @@ define([
         declare,
         connect,
         lang,
+        domConstruct,
         win,
         annoUtil
         )
@@ -68,6 +70,15 @@ define([
                 {
                     this.x.setStroke(this.xHiddenColor).setFill(this.xHiddenColor);
                 }
+
+                if (sel)
+                {
+                    this.moveToFront();
+                }
+            },
+            moveToFront: function()
+            {
+                this.x.moveToFront();
             },
             isMoveable: function()
             {
@@ -102,10 +113,13 @@ define([
             {
                 // fired when delete x clicked or touched.
                 if (!this.deletable) return;
-                var x = e.gfxTarget;
-                if (!x) return;
+                if (!this.selected) return;
 
                 this.surface.removeShape(this);
+            },
+            createX: function(x, y, xColor)
+            {
+                this.x = this.surface.surface.createText({x: x, y: y, text: "x", align: "middle"}).setFont(this.xFont).setStroke(xColor).setFill(xColor);
             },
             isEndpointOutScreen: function(endpoint, dx, dy)
             {

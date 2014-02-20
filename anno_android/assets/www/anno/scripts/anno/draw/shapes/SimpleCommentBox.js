@@ -44,7 +44,7 @@ define([
             },
             createCommentBox: function (args)
             {
-                var startX = args.startX, startY = args.startY, width = args.width, height = args.height;
+                var width = args.width, height = args.height;
                 var circleR = this.circleR;
                 var surface = this.surface.surface;
 
@@ -56,7 +56,7 @@ define([
                 this.endpoint2 = surface.createCircle({cx: pathPoints.endpointsPos[1].x, cy: pathPoints.endpointsPos[1].y, r: circleR}).setStroke(this.endpointStrokeStyle).setFill(this.endpointFillStyle);
                 this.endpoint2.sid = this.id;
 
-                this.x = surface.createText({x: pathPoints.xPos.x, y: pathPoints.xPos.y, text: "x", align: "middle"}).setFont(this.xFont).setStroke(this.xHiddenColor).setFill(this.xHiddenColor);
+                this.createX(pathPoints.xPos.x, pathPoints.xPos.y, this.hiddenColor);
                 this.x.sid = this.id;
                 this.x.isX = true;
 

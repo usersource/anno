@@ -9,10 +9,11 @@ define([
     "dojo/touch",
     "dojox/gesture/tap",
     "dojox/gfx",
+    "dojox/gfx/shape",
     "dojox/gfx/move",
     "./BaseShape"
 ],
-    function (declare, connect, lang, dom, domConstruct, domStyle, dojoMoveable, touch, tap, gfx, gfxMove, BaseShape)
+    function (declare, connect, lang, dom, domConstruct, domStyle, dojoMoveable, touch, tap, gfx, gfxShape, gfxMove, BaseShape)
     {
         /**
          * @author David Lee
@@ -63,7 +64,11 @@ define([
 
                 if (args.shapeJson)
                 {
-                    this.earDirection = args.shapeJson.ed;
+                    if (args.shapeJson.ed != null)
+                    {
+                        this.earDirection = args.shapeJson.ed;
+                    }
+
                     this.translateValues();
 
                     pathPoints = this._getBoxPointsPathByShapeJson();
@@ -87,18 +92,14 @@ define([
                 this.endpoint1.sid = this.id;
                 this.endpoint2.sid = this.id;
 
-                this.x = surface.createText({x: pathPoints.xPos.x, y: pathPoints.xPos.y, text: "x", align: "middle"}).setFont(this.xFont).setStroke(xColor).setFill(xColor);
+                this.createX(pathPoints.xPos.x, pathPoints.xPos.y, xColor);
                 this.x.sid = this.id;
                 this.x.isX = true;
 
                 // create text node
-                this.txtNode = domConstruct.create('div', {
-                    style: "background-color:transparent;position:absolute;top:"+(this.pathPoints[0].y+3)+"px;left:"+(this.pathPoints[0].x+3)+"px;width:"+(this.pathPoints[5].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
-                    innerHTML:"<div id='textDiv_"+this.id+"' style='padding:3px;overflow:hidden;width:100%;height:100%;box-sizing: border-box;font-weight: normal;color: "+this.grayColor+";'>"+this.placeholder+"</div>"
-                }, this.surface.container, 'last');
-
+                this._createSVGForeignObject();
                 this.txtNode.gfxTarget = {isSelectTarget:true, sid:this.id};
-                this.txtNode.children[0].gfxTarget = {isSelectTarget:true, sid:this.id}; //+this.surface.borderWidth
+                //this.txtNode.children[0].gfxTarget = {isSelectTarget:true, sid:this.id};
 
                 this.inputNode = domConstruct.create('div', {
                     style: "background-color:transparent;display:none;position:absolute;top:"+(this.pathPoints[0].y+3)+"px;left:"+(this.pathPoints[0].x+3)+"px;width:"+(this.pathPoints[5].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
@@ -155,16 +156,18 @@ define([
                     var commentBoxMover = new gfx.Moveable(ts);
                     connect.connect(commentBoxMover, "onMoved", this, function (mover, shift)
                     {
-                        if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy))
+                        if (shift.dx != 0 || shift.dy !=0)
+                            this._commentBoxMoveStopped = true;
+                        if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy)||this._isTopRightSideOutOfScreen(shift.dx, shift.dy))
                         {
                             return;
                         }
 
-                        var top = parseInt(this.txtNode.style.top);
-                        this.txtNode.style.top = (top+shift.dy)+'px';
+                        var top = parseInt(this.txtNode.getAttribute("y"));
+                        this.txtNode.setAttribute("y", top+shift.dy);
                         this.inputNode.style.top = (top+shift.dy)+'px';
-                        var left = parseInt(this.txtNode.style.left);
-                        this.txtNode.style.left = (left+shift.dx)+'px';
+                        var left = parseInt(this.txtNode.getAttribute("x"));
+                        this.txtNode.setAttribute("x", (left+shift.dx));
                         this.inputNode.style.left = (left+shift.dx)+'px';
 
                         this.path.applyTransform({dy: shift.dy, dx: shift.dx});
@@ -180,7 +183,7 @@ define([
 
                     this._connects.push(connect.connect(pathMover, "onMoved", this, function (mover, shift)
                     {
-                        if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy))
+                        if (this.isEndpointOutScreen(this.endpoint1, shift.dx, shift.dy)||this.isEndpointOutScreen(this.endpoint2, shift.dx, shift.dy)||this._isTopRightSideOutOfScreen(shift.dx, shift.dy))
                         {
                             this.rollbackEndpoint(mover.shape, shift);
                             return;
@@ -191,11 +194,11 @@ define([
 
                         this.x.applyTransform({dy: shift.dy, dx: shift.dx});
 
-                        var top = parseInt(this.txtNode.style.top);
-                        this.txtNode.style.top = (top+shift.dy)+'px';
+                        var top = parseInt(this.txtNode.getAttribute("y"));
+                        this.txtNode.setAttribute("y", (top+shift.dy));
                         this.inputNode.style.top = (top+shift.dy)+'px';
-                        var left = parseInt(this.txtNode.style.left);
-                        this.txtNode.style.left = (left+shift.dx)+'px';
+                        var left = parseInt(this.txtNode.getAttribute("x"));
+                        this.txtNode.setAttribute("x", (left+shift.dx));
                         this.inputNode.style.left = (left+shift.dx)+'px';
                     }));
 
@@ -218,7 +221,12 @@ define([
                         this.path.setShape(pathPoints.path);
 
                         var mdx = this.path.matrix?this.path.matrix.dx:0;
-                        domStyle.set(this.txtNode, {left:(this.pathPoints[0].x+3+mdx)+'px', width:(this.pathPoints[5].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
+
+                        this.txtNode.setAttribute("x", this.pathPoints[0].x+3+mdx);
+                        this.txtNode.setAttribute("width", (this.pathPoints[5].x-this.pathPoints[0].x-6));
+                        this.txtNode.setAttribute("height", (this.pathPoints[5].y-this.pathPoints[0].y-6));
+
+                        domStyle.set(this.txtDiv, {width:(this.pathPoints[5].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
                         domStyle.set(this.inputNode, {left:(this.pathPoints[0].x+3+mdx)+'px', width:(this.pathPoints[5].x-this.pathPoints[0].x-6)+'px', height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+'px'});
                     }));
 
@@ -245,21 +253,73 @@ define([
                         }
                     }));
 
-
                     this._connects.push(this.x.on(touch.release, lang.hitch(this, this.onXTouched)));
 
                     this._connects.push(connect.connect(this.txtNode, touch.release, this, function (e)
                     {
-                        if (this.selected)
+                        if (this._commentBoxMoveStopped)
                         {
-                            this._openKeybord();
+                            if (!this.selected)
+                            {
+                                this.surface.selectShape(this);
+                            }
+
+                            this._commentBoxMoveStopped = false;
                         }
                         else
                         {
-                            this.surface.selectShape(this);
+                            if (this.selected)
+                            {
+                                this._openKeybord();
+                            }
+                            else
+                            {
+                                this.surface.selectShape(this);
+                            }
                         }
                     }));
                 }
+            },
+            _createSVGForeignObject: function()
+            {
+                var fo = document.createElementNS('http://www.w3.org/2000/svg', "foreignObject");
+                fo.setAttribute('x', (this.pathPoints[0].x+3));
+                fo.setAttribute('y', (this.pathPoints[0].y+3));
+                fo.setAttribute('width', (this.pathPoints[5].x-this.pathPoints[0].x-6));
+                fo.setAttribute('height', (this.pathPoints[5].y-this.pathPoints[0].y-6));
+
+                var body = document.createElement("body");
+                var txtDiv = document.createElement("div");
+
+                domStyle.set(txtDiv,{
+                    "background-color":"transparent",
+                    width:(this.pathPoints[5].x-this.pathPoints[0].x-6)+"px",
+                    height:(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px"
+                });
+
+                txtDiv.innerHTML = "<div id='textDiv_"+this.id+"' style='padding:3px;overflow:hidden;width:100%;height:100%;box-sizing: border-box;font-weight: normal;color: "+this.grayColor+";'>"+this.placeholder+"</div>";
+
+                fo.appendChild(body);
+                body.appendChild(txtDiv);
+                this.surface.container.children[0].appendChild(fo);
+
+                this.txtNode = fo;
+                this.txtDiv = txtDiv;
+
+                this.txtRect = new gfxShape.Rect(fo);
+                this.surface.surface.add(this.txtRect);
+                this.txtRect._moveToFront = function()
+                {
+                    this.rawNode.parentNode.appendChild(this.rawNode);
+                    return this;
+                };
+
+                this.txtRect._moveToBack = function(){
+                    this.rawNode.parentNode.insertBefore(this.rawNode, this.rawNode.parentNode.firstChild);
+                    return this;
+                };
+
+                this.txtRect._removeClipNode = function(){};
             },
             _openKeybord: function(e)
             {
@@ -281,7 +341,7 @@ define([
                 dom.byId("hiddenBtn").focus();
                 dom.byId("hiddenBtn").click();
 
-                if (cordova&&cordova.exec)
+                if (window.cordova&&cordova.exec)
                 {
                     cordova.exec(
                         function (result)
@@ -655,6 +715,50 @@ define([
             {
                 return true;
             },
+            _isTopRightSideOutOfScreen:function(dx, dy)
+            {
+                var mdx = 0, mdy = 0;
+                if (this.path.matrix)
+                {
+                    mdx = this.path.matrix.dx||0;
+                    mdy = this.path.matrix.dy||0;
+                }
+
+                var cp = this.pathPoints, topX = cp[5].x, topY, ed = this.earDirection;
+
+                if (ed == EAR_DIRECTION.TOP||ed == EAR_DIRECTION.TOP_LEFT||ed == EAR_DIRECTION.TOP_RIGHT)
+                {
+                    topY = cp[4].y;
+                }
+                else if (ed == EAR_DIRECTION.LEFT||ed == EAR_DIRECTION.LEFT_BOTTOM)
+                {
+                    topY = cp[6].y;
+                }
+                else if (ed == EAR_DIRECTION.BOTTOM||ed == EAR_DIRECTION.RIGHT_BOTTOM)
+                {
+                    topY = cp[6].y;
+                }
+                else if (ed == EAR_DIRECTION.RIGHT)
+                {
+                    topY = cp[1].y;
+                }
+
+                var vp = this.viewPoint;
+
+                topX = topX + mdx + dx + this.circleR;
+                topY = topY + mdy + dy - this.circleR;
+                if (topX >= vp.w)
+                {
+                    return true;
+                }
+
+                if (topY < 1)
+                {
+                    return true;
+                }
+
+                return false;
+            },
             _isEndpoint1Moveable: function(dx, dy)
             {
                 var cp = this.pathPoints;
@@ -741,8 +845,8 @@ define([
                 surface.remove(this.path);
                 surface.remove(this.endpoint1);
                 surface.remove(this.endpoint2);
+                surface.remove(this.txtRect);
 
-                domConstruct.destroy(this.txtNode);
                 domConstruct.destroy(this.inputNode);
             },
             setSelected: function (sel)
@@ -759,7 +863,31 @@ define([
                 {
                     this.endpoint1.setStroke(this.endpointHiddenStrokeStyle).setFill(this.endpointHiddenFillStyle);
                     this.endpoint2.setStroke(this.endpointHiddenStrokeStyle).setFill(this.endpointHiddenFillStyle);
+
+                    this._closeKeybord();
+
+                    var textDiv = dom.byId('textDiv_'+this.id);
+                    textDiv.innerHTML = this.inputElement.value.replace(/\n/g, "<br>");
+
+                    if (this.inputElement.value.length <=0)
+                    {
+                        textDiv.innerHTML = this.placeholder;
+                        domStyle.set(textDiv, 'color', this.grayColor);
+                    }
+                    else
+                    {
+                        domStyle.set(textDiv, 'color', this.normalColor);
+                    }
                 }
+            },
+            moveToFront: function()
+            {
+                this.path.moveToFront();
+                this.txtRect.moveToFront();
+                this.endpoint1.moveToFront();
+                this.endpoint2.moveToFront();
+
+                this.inherited(arguments);
             },
             setId: function (id)
             {
@@ -838,6 +966,12 @@ define([
                     }
 
                     ps[5].y = ps[6].y = ps[0].y+boxHeight;
+
+                    // fix the x7 error value generated in previously version
+                    if (ps[6].x != ps[0].x)
+                    {
+                        ps[6].x = ps[0].x;
+                    }
                 }
                 else if (ed == EAR_DIRECTION.LEFT||ed == EAR_DIRECTION.LEFT_BOTTOM)
                 {
@@ -884,9 +1018,9 @@ define([
                             ps[1].y -= dy;
                             ps[3].y -= dy;
                         }
-                        else if ((ps[0].y+boxHeight - dy - ps[3].y) < this.earGap)
+                        else if ((ps[0].y+boxHeight - (ps[3].y-dy)) < this.earGap)
                         {
-                            dy = dy - (this.earGap - (ps[0].y+boxHeight - dy - ps[3].y));
+                            dy = dy - (this.earGap - (ps[0].y+boxHeight - (ps[3].y-dy)));
 
                             ps[1].y -= dy;
                             ps[3].y -= dy;
@@ -976,9 +1110,9 @@ define([
                             ps[2].y -= dy;
                             ps[4].y -= dy;
                         }
-                        else if ((ps[0].y+boxHeight - dy - ps[4].y) < this.earGap)
+                        else if ((ps[0].y+boxHeight - (ps[4].y-dy)) < this.earGap)
                         {
-                            dy = dy - (this.earGap - (ps[0].y+boxHeight - dy - ps[4].y));
+                            dy = dy - (this.earGap - (ps[0].y+boxHeight - ps[4].y-dy));
 
                             ps[2].y -= dy;
                             ps[4].y -= dy;
