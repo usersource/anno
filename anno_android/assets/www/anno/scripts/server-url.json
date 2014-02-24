@@ -20,16 +20,16 @@
     "3": {
         "serverId":"ProductionViaEC2",
         "serverName":"Production via EC2 proxy",
-        "imageServiceURL":"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/screenshot",
-        "apiRoot":"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/_ah/api",
+        "imageServiceURL":"http://54.213.161.127/screenshot",
+        "apiRoot":"http://54.213.161.127/_ah/api",
         "clientId" : "22913132792.apps.googleusercontent.com",
         "clientSecret": "LBlzLWXDgGXyvjlT-5gUjZGA"
     },
     "4": {
         "serverId":"TestViaEC2",
         "serverName":"Test via EC2 proxy",
-        "imageServiceURL":"http://ec2-54-200-160-3.us-west-2.compute.amazonaws.com/screenshot",
-        "apiRoot":"http://ec2-54-200-160-3.us-west-2.compute.amazonaws.com/_ah/api",
+        "imageServiceURL":"http://54.200.160.3/screenshot",
+        "apiRoot":"http://54.200.160.3/_ah/api",
         "clientId" : "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com",
         "clientSecret": "n0fJeoZ-4UFWZaIG41mNg41_"
     }
