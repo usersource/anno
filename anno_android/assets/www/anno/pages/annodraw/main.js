@@ -24,7 +24,7 @@ require([
         borderWidth;
 
     var sdTitleHeight = 60,
-        sdBottom = 80, barHeight = 50, totalSpace = 0;
+        sdBottom = 50, barHeight = 50, totalSpace = 0;
 
     var lastShapePos;
     var lastBlackRectanglePos;
@@ -36,11 +36,11 @@ require([
     var level1Color = annoUtil.level1Color,
         level2Color = annoUtil.level2Color;
     var level = 1;
-    var isAnno = false;
+    var isAnno = false, appNameListFetched = false;
 
     connect.connect(dom.byId("barArrow"), touch.release, function()
     {
-        if (domClass.contains(dom.byId("barArrow"), 'barIconDisabled')) return;
+        if (domClass.contains(dom.byId("barArrow"), 'barIconInactive')) return;
 
         var arrowLine = surface.createArrowLine({x1:lastShapePos.x1, y1: lastShapePos.y1, x2: lastShapePos.x2, y2: lastShapePos.y2});
         updateLastShapePos(arrowLine.shapeType);
@@ -48,7 +48,7 @@ require([
 
     connect.connect(dom.byId("barRectangle"), touch.release, function()
     {
-        if (domClass.contains(dom.byId("barRectangle"), 'barIconDisabled')) return;
+        if (domClass.contains(dom.byId("barRectangle"), 'barIconInactive')) return;
 
         var rectangle = surface.createRectangle({startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight});
         updateLastShapePos(rectangle.shapeType);
@@ -56,63 +56,83 @@ require([
 
     connect.connect(dom.byId("barComment"), touch.release, function()
     {
-        if (domClass.contains(dom.byId("barComment"), 'barIconDisabled')) return;
+        if (domClass.contains(dom.byId("barComment"), 'barIconInactive')) return;
 
         var lineStrokeStyle = {color: level==1?level1Color:level2Color, width: 3};
         var commentBox = surface.createCommentBox({startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight,lineStrokeStyle:lineStrokeStyle});
         updateLastShapePos('Rectangle');
+
+        connect.connect(commentBox.inputElement, 'input', function(e)
+        {
+            checkBarShareState();
+        });
+
+        checkBarShareState();
     });
 
     connect.connect(dom.byId("barShare"), touch.release, function()
     {
-        openShareDialog();
+        if (domClass.contains(dom.byId("barShare"), 'barIconInactive')) return;
+
+        if (level == 2)
+        {
+            if (drawMode)
+            {
+                saveDrawCommentAnno();
+            }
+            else
+            {
+                saveSimpleCommentAnno();
+            }
+        }
+        else
+        {
+            openShareDialog();
+        }
+    });
+
+    connect.connect(dom.byId("txtAppName"), 'keydown', function(e)
+    {
+        if (e.keyCode == 13)
+        {
+            dom.byId("hiddenBtn").focus();
+            dom.byId("hiddenBtn").click();
+        }
     });
 
     var openShareDialog = function()
     {
+        adjustShareDialogSize();
         registry.byId('shareDialog').show();
 
-        cordova.exec(
-            function (result)
-            {
-                if (result&&result.length>0)
+        if (!appNameListFetched)
+        {
+            cordova.exec(
+                function (result)
                 {
-                    fillAppNameList(result);
-                }
-            },
-            function (err)
-            {
-                alert(err.message);
-            },
-            "AnnoCordovaPlugin",
-            'get_recent_applist',
-            [10]
-        );
+                    if (result&&result.length>0)
+                    {
+                        fillAppNameList(result);
+                    }
+
+                    appNameListFetched = true;
+                },
+                function (err)
+                {
+                    alert(err.message);
+                },
+                "AnnoCordovaPlugin",
+                'get_recent_applist',
+                [10]
+            );
+        }
     };
 
     connect.connect(dom.byId("barBlackRectangle"), touch.release, function()
     {
-        if (domClass.contains(dom.byId("barBlackRectangle"), 'barIconDisabled2')) return;
+        if (domClass.contains(dom.byId("barBlackRectangle"), 'barIconInactive')) return;
 
         createBlackRectangle();
-    });
-
-    connect.connect(dom.byId("barBlackRectangleDone"), touch.release, function()
-    {
-        if (domClass.contains(dom.byId("barBlackRectangle"), 'barIconDisabled')) return;
-
-        if (drawMode)
-        {
-            domStyle.set('bottomBarContainer', 'display', '');
-            domStyle.set('bottomBarBlackContainer', 'display', 'none');
-        }
-
-        registry.byId('shareDialog').show();
-    });
-
-    connect.connect(dom.byId("btnDraw"), touch.release, function()
-    {
-        switchMode(true);
     });
 
     var fillAppNameList = function(appList)
@@ -130,7 +150,7 @@ require([
             }
         }
 
-        dom.byId('sdAppList').innerHTML = content;
+        dom.byId('sdAppListContent').innerHTML = content;
     };
 
     var updateLastShapePos = function(shapeType)
@@ -188,27 +208,39 @@ require([
             itemNode = itemNode.parentNode;
         }
 
+        if (!domClass.contains(itemNode, 'appNameItem'))
+        {
+            return;
+        }
+
         var allItems = query('.appNameItem', dom.byId("sdAppList"));
 
         for (var i=0;i<allItems.length;i++)
         {
             domClass.add(allItems[i], 'appNameItem-gray');
+
+            if (allItems[i].children[0].tagName == "INPUT")
+            {
+                domStyle.set(allItems[i].children[0], "color", "gray");
+            }
         }
 
         domClass.remove(itemNode, 'appNameItem-gray');
 
-        selectedAppName = itemNode.children[0].innerHTML;
+        if (itemNode.children[0].tagName == "INPUT")
+        {
+            domStyle.set(itemNode.children[0], "color", "white");
+            selectedAppName = itemNode.children[0].innerHTML;
+        }
+        else
+        {
+            selectedAppName = itemNode.children[0].innerHTML;
+        }
     });
 
     // share button
     connect.connect(dom.byId("btnShare"), 'click', function(e)
     {
-        if (drawMode)
-        {
-            domStyle.set('bottomBarContainer', 'display', '');
-            domStyle.set('bottomBarBlackContainer', 'display', 'none');
-        }
-
         registry.byId('shareDialog').hide();
 
         if (drawMode)
@@ -222,7 +254,7 @@ require([
     });
 
     // home/feeds/cancel button
-    connect.connect(dom.byId("btnHome"), 'click', function(e)
+    connect.connect(dom.byId("menuItemFeed"), 'click', function(e)
     {
         var action;
         if (level == 1)
@@ -249,19 +281,6 @@ require([
         );
     });
 
-    window.onChkHidePersonalDataChange = function(e)
-    {
-        var checked = registry.byId('chkHidePersonalData').checked;
-
-        if (checked)
-        {
-            registry.byId('shareDialog').hide();
-            domStyle.set('bottomBarContainer', 'display', 'none');
-            domStyle.set('bottomBarBlackContainer', 'display', '');
-            createBlackRectangle();
-        }
-    };
-
     var createBlackRectangle = function()
     {
         var rectangle = surface.createAnonymizedRectangle({
@@ -277,12 +296,6 @@ require([
     var switchMode = function(mode)
     {
         drawMode = true;
-        // remove default comment box
-        surface.removeShape(defaultCommentBox);
-        domStyle.set('bottomBarContainer', 'display', '');
-        domStyle.set(dom.byId('btnHome'), 'display', 'none');
-        domStyle.set(dom.byId('btnDraw'), 'display', 'none');
-        domStyle.set(dom.byId('topBar'), 'display', 'none');
 
         // create default comment box
         var lineStrokeStyle = {color: level==1?level1Color:level2Color, width: 3};
@@ -294,6 +307,11 @@ require([
         window.setTimeout(function(){
             commentBox.animateEarControl();
         }, 500);
+
+        connect.connect(commentBox.inputElement, 'input', function(e)
+        {
+            checkBarShareState();
+        });
     };
 
     var drawImageHiddenCanvas = function()
@@ -333,7 +351,6 @@ require([
                         else
                         {
                             domStyle.set('screenshotContainer', 'borderColor', level2Color);
-                            dom.byId('btnHome').innerHTML = "Cancel";
                         }
 
 
@@ -423,6 +440,8 @@ require([
             return;
         }
 
+        selectedAppName = selectedAppName||dom.byId("txtAppName").value;
+
         annoUtil.showLoadingIndicator();
 
         var deviceInfo = annoUtil.getDeviceInfo();
@@ -475,9 +494,11 @@ require([
     {
         if (!surface.allCommentFilled())
         {
-            alert("Please enter suggestion.");
+            annoUtil.showMessageDialog("Please enter suggestion.");
             return;
         }
+
+        selectedAppName = selectedAppName||dom.byId("txtAppName").value;
 
         annoUtil.showLoadingIndicator();
 
@@ -553,6 +574,59 @@ require([
         return dataUrl;
     };
 
+    var hideMenuDialog = function()
+    {
+        var menusDialog = registry.byId('menusDialog');
+        menusDialog.hide();
+
+        domClass.remove(menusDialog._cover[0], "transparentBack");
+        domStyle.set(menusDialog._cover[0], {"height": "100%"});
+
+        domClass.remove("barComment", 'barIconInactive');
+        domClass.remove("barArrow", 'barIconInactive');
+        domClass.remove("barBlackRectangle", 'barIconInactive');
+        domClass.remove("barRectangle", 'barIconInactive');
+
+        if (surface.allCommentFilled())
+        {
+            domClass.remove("barShare", 'barIconInactive');
+        }
+
+        domClass.remove("barMoreMenu", 'barMoreMenuActive');
+    };
+
+    var showMenuDialog = function()
+    {
+        var viewPoint = win.getBox();
+
+        var menusDialog = registry.byId('menusDialog');
+        menusDialog.show();
+        domClass.add(menusDialog._cover[0], "transparentBack");
+        domStyle.set(menusDialog._cover[0], {"height": (viewPoint.h-barHeight)+"px"});
+
+        domClass.add("barComment", 'barIconInactive');
+        domClass.add("barArrow", 'barIconInactive');
+        domClass.add("barBlackRectangle", 'barIconInactive');
+        domClass.add("barRectangle", 'barIconInactive');
+        domClass.add("barShare", 'barIconInactive');
+
+        domClass.add("barMoreMenu", 'barMoreMenuActive');
+
+        surface.removeSelection();
+    };
+
+    var checkBarShareState = function()
+    {
+        if (surface.allCommentFilled())
+        {
+            domClass.remove("barShare", 'barIconInactive');
+        }
+        else
+        {
+            domClass.add("barShare", 'barIconInactive');
+        }
+    };
+
     var init = function()
     {
         if (DBUtil.userChecked)
@@ -623,6 +697,8 @@ require([
                                 y2:100
                             };
                         }
+
+                        checkBarShareState();
                     });
 
                     // set screenshot container size
@@ -637,70 +713,26 @@ require([
                     domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-sdBottom-shareDialogGap)+'px');
                     domStyle.set('sdBottom', 'height', sdBottom+'px');
 
-                    var lineStrokeStyle = {color: level==1?level1Color:level2Color, width: 3};
-                    var epLineStyle, epFillStyle;
+                    // reposition the menus dialog
+                    var menusDialog = registry.byId('menusDialog');
+                    menusDialog.top = (viewPoint.h-barHeight-44)+'px';
+                    menusDialog.left = (viewPoint.w-204)+'px';
+                    domStyle.set(menusDialog.domNode, "backgroundColor", "white");
 
-                    if (level==1)
+                    connect.connect(dom.byId("barMoreMenu"), 'click', function(e)
                     {
-                        epLineStyle = {color:'#FFA500', width:1};
-                        epFillStyle = "rgba(255,165,0, 0.4)";
-                    }
-                    else
-                    {
-                        epLineStyle = {color:'#FF0000',width:1};
-                        epFillStyle = "rgba(255,12,9, 0.4)";
-                    }
-                    defaultCommentBox = surface.createSimpleCommentBox({
-                        deletable:false,
-                        startX2:lastShapePos.x1,
-                        startY: lastShapePos.y1-defaultShapeHeight-50,
-                        width: defaultShapeWidth,
-                        height: defaultShapeHeight,
-                        lineStrokeStyle:lineStrokeStyle,
-                        endpointStrokeStyle2:epLineStyle,
-                        endpointFillStyle2:epFillStyle
+                        var menusDialog = registry.byId('menusDialog');
+                        if (menusDialog.domNode.style.display === "")
+                        {
+                            hideMenuDialog();
+                        }
+                        else
+                        {
+                            showMenuDialog();
+                        }
                     });
 
-                    connect.connect(defaultCommentBox.shareBtnNode, "click", function()
-                    {
-                        defaultCommentBox._closeKeybord();
-                        window.setTimeout(function(){
-                            openShareDialog();
-                        }, 300);
-                    });
-
-                    defaultCommentBox.onCommentBoxFocus = function(commentBox)
-                    {
-                        if (commentBox.earLow)
-                        {
-                            if ((commentBox.pathPoints[2].y+20+400) >= viewPoint.h)
-                            {
-                                var shift = viewPoint.h-(commentBox.pathPoints[2].y+20+400);
-                                domStyle.set(surface.container, 'top', shift+'px');
-                                domStyle.set('screenshotContainer', 'top', shift+'px');
-
-                                commentBox._shift = shift;
-                            }
-                        }
-                    };
-
-                    defaultCommentBox.onCommentBoxBlur = function (commentBox)
-                    {
-                        console.error(surface.container.style.top);
-                        if (commentBox._shift != null)
-                        {
-                            domStyle.set(surface.container, 'top', '0px');
-                            domStyle.set('screenshotContainer', 'top', '0px');
-
-                            commentBox._shift = null;
-                        }
-
-                        window.setTimeout(function(){
-                            openShareDialog();
-                        }, 300);
-
-                    };
-
+                    switchMode(true);
                 }, 500);
             }
         }
@@ -711,7 +743,21 @@ require([
     };
 
     document.addEventListener("backbutton", function(){
-        navigator.app.exitApp();
+
+        var menusDialog = registry.byId('menusDialog');
+        var shareDialog = registry.byId('shareDialog');
+        if (menusDialog.domNode.style.display === "")
+        {
+            hideMenuDialog();
+        }
+        else if (shareDialog.domNode.style.display === "")
+        {
+            shareDialog.hide();
+        }
+        else
+        {
+            navigator.app.exitApp();
+        }
     }, false);
 
     document.addEventListener("deviceready", function(){

@@ -20,34 +20,17 @@
     "4": {
         "serverId":"ProductionViaEC2",
         "serverName":"Production via EC2 proxy",
-        "imageServiceURL":"http://54.213.161.127/screenshot",
-        "apiRoot":"http://54.213.161.127/_ah/api",
+        "imageServiceURL":"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/screenshot",
+        "apiRoot":"http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/_ah/api",
         "clientId" : "22913132792.apps.googleusercontent.com",
         "clientSecret": "LBlzLWXDgGXyvjlT-5gUjZGA"
     },
     "3": {
         "serverId":"TestViaEC2",
         "serverName":"Test via EC2 proxy",
-        "imageServiceURL":"http://54.200.160.3/screenshot",
-        "apiRoot":"http://54.200.160.3/_ah/api",
+        "imageServiceURL":"http://ec2-54-200-160-3.us-west-2.compute.amazonaws.com/screenshot",
+        "apiRoot":"http://ec2-54-200-160-3.us-west-2.compute.amazonaws.com/_ah/api",
         "clientId" : "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com",
         "clientSecret": "n0fJeoZ-4UFWZaIG41mNg41_"
-    },
-    "5": {
-        "serverId":"Dev",
-        "serverName":"Dev",
-        "imageServiceURL":"http://usersource-anno.appspot.com/screenshot",
-        "apiRoot":"https://usersource-anno.appspot.com/_ah/api",
-        "clientId" : "955803277195.apps.googleusercontent.com",
-        "clientSecret": "l5UwDYJuv2BdUUBF2tu9fsol"
-        "proxyKey":"6"
-    },
-    "6": {
-        "serverId":"DevViaEC2",
-        "serverName":"Dev via EC2 proxy",
-        "imageServiceURL":"http://54.201.219.246/screenshot",
-        "apiRoot":"http://54.201.219.246/_ah/api",
-        "clientId" : "955803277195.apps.googleusercontent.com",
-        "clientSecret": "l5UwDYJuv2BdUUBF2tu9fsol"
     }
 }
