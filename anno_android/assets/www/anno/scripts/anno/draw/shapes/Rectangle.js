@@ -62,9 +62,7 @@ define([
                 this.endpoint2.sid = this.id;
                 this.endpoint4.sid = this.id;
 
-                this.x = surface.createText({x: startX + width + 50, y: startY - 30, text: "x", align: "middle"}).setFont(this.xFont).setStroke(xColor).setFill(xColor);
-                this.x.sid = this.id;
-                this.x.isX = true;
+                this.createX(startX + width + 50, startY - 30, this.hiddenColor);
 
                 if (this.selectable)
                 {
@@ -115,6 +113,7 @@ define([
                         }
 
                         this.rectangle.setShape({x: o.x, y: o.y + shift.dy, width: o.width + shift.dx, height: o.height - shift.dy});
+
                         this.x.applyTransform({dy: shift.dy, dx: shift.dx});
                     }));
 
@@ -177,6 +176,14 @@ define([
                     this.endpoint2.setStroke(this.endpointHiddenStrokeStyle).setFill(this.endpointHiddenFillStyle);
                     this.endpoint4.setStroke(this.endpointHiddenStrokeStyle).setFill(this.endpointHiddenFillStyle);
                 }
+            },
+            moveToFront: function()
+            {
+                this.rectangle.moveToFront();
+                this.endpoint2.moveToFront();
+                this.endpoint4.moveToFront();
+
+                this.inherited(arguments);
             },
             setId: function (id)
             {
