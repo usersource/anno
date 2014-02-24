@@ -35,9 +35,6 @@
 .icon-arrow-up-left:before {
     content: "\e603";
 }
-.icon-bubbles:before {
-    content: "\e604";
-}
 .icon-simplecomment:before {
     content: "\e607";
 }
@@ -293,7 +290,8 @@
     background-color: #dddddd;
     text-shadow:none;
     color: #333333;
-    border-bottom: 1px solid #aeaeae;
+    border-bottom: none;
+    border-top: none;
 }
 
 .imgDetailScreenshot{
