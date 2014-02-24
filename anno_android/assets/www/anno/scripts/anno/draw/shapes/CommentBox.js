@@ -943,8 +943,16 @@ define([
                     if ((ps[3].x - ps[1].x) < this.earDistance)
                     {
                         var dx = Math.round((this.earDistance-(ps[3].x - ps[1].x))/2);
-                        ps[1].x = ps[1].x - dx;
-                        ps[3].x = ps[3].x + dx;
+
+                        if ((ps[3].x + dx + this.earGap) > ps[4].x)
+                        {
+                            ps[1].x = ps[1].x - 2*dx;
+                        }
+                        else
+                        {
+                            ps[1].x = ps[1].x - dx;
+                            ps[3].x = ps[3].x + dx;
+                        }
                     }
                     else if ((ps[3].x - ps[1].x) > this.earDistance)
                     {
@@ -967,10 +975,15 @@ define([
 
                     ps[5].y = ps[6].y = ps[0].y+boxHeight;
 
-                    // fix the x7 error value generated in previously version
+                    // fix the x7, x5 error value generated in previously version
                     if (ps[6].x != ps[0].x)
                     {
                         ps[6].x = ps[0].x;
+                    }
+
+                    if (ps[4].x != ps[5].x)
+                    {
+                        ps[4].x = ps[5].x;
                     }
                 }
                 else if (ed == EAR_DIRECTION.LEFT||ed == EAR_DIRECTION.LEFT_BOTTOM)
@@ -1020,7 +1033,8 @@ define([
                         }
                         else if ((ps[0].y+boxHeight - (ps[3].y-dy)) < this.earGap)
                         {
-                            dy = dy - (this.earGap - (ps[0].y+boxHeight - (ps[3].y-dy)));
+                            var gap = (this.earGap - (ps[0].y+boxHeight - (ps[3].y-dy)));
+                            dy = dy + gap;
 
                             ps[1].y -= dy;
                             ps[3].y -= dy;
@@ -1041,8 +1055,16 @@ define([
                     if ((ps[4].x - ps[2].x) < this.earDistance)
                     {
                         var dx = Math.round((this.earDistance-(ps[4].x - ps[2].x))/2);
-                        ps[2].x = ps[2].x - dx;
-                        ps[4].x = ps[4].x + dx;
+
+                        if ((ps[4].x + dx + this.earGap) > ps[5].x)
+                        {
+                            ps[2].x = ps[2].x - 2*dx;
+                        }
+                        else
+                        {
+                            ps[2].x = ps[2].x - dx;
+                            ps[4].x = ps[4].x + dx;
+                        }
                     }
                     else if ((ps[4].x - ps[2].x) > this.earDistance)
                     {
@@ -1112,7 +1134,7 @@ define([
                         }
                         else if ((ps[0].y+boxHeight - (ps[4].y-dy)) < this.earGap)
                         {
-                            dy = dy - (this.earGap - (ps[0].y+boxHeight - ps[4].y-dy));
+                            dy = dy + (this.earGap - (ps[0].y+boxHeight - (ps[4].y-dy)));
 
                             ps[2].y -= dy;
                             ps[4].y -= dy;
