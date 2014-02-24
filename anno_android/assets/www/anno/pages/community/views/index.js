@@ -157,7 +157,17 @@ define([
 
         var exitApp = function()
         {
-            navigator.app.exitApp();
+            var menusDialog = registry.byId('menusDialog');
+            if (menusDialog.domNode.style.display === "")
+            {
+                registry.byId('menusDialog').hide();
+                domClass.remove("barMenus", 'barIconHighlight');
+                domClass.add("barFeed", 'barIconHighlight');
+            }
+            else
+            {
+                navigator.app.exitApp();
+            }
         };
 
         var _init = function()
@@ -197,12 +207,20 @@ define([
                     _connectResults.push(connect.connect(dom.byId("barMyStuff"), 'click', function(e)
                     {
                         dojo.stopEvent(e);
+                        registry.byId('menusDialog').hide();
+                        domClass.remove("barMenus", 'barIconHighlight');
+                        domClass.add("barFeed", 'barIconHighlight');
+
                         app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
                     }));
 
                     _connectResults.push(connect.connect(dom.byId("barSearchAnno"), 'click', function(e)
                     {
                         dojo.stopEvent(e);
+                        registry.byId('menusDialog').hide();
+                        domClass.remove("barMenus", 'barIconHighlight');
+                        domClass.add("barFeed", 'barIconHighlight');
+
                         app.transitionToView(document.getElementById('modelApp_home'), {target:'searchAnno',url:'#searchAnno'});
                     }));
 
@@ -210,6 +228,7 @@ define([
                     {
                         {
                             domClass.remove("barMenus", 'barIconHighlight');
+                            domClass.add("barFeed", 'barIconHighlight');
                             registry.byId('menusDialog').hide();
                             app.transitionToView(document.getElementById('modelApp_home'), {target:'settings',url:'#settings'});
                         }
@@ -217,11 +236,19 @@ define([
 
                     _connectResults.push(connect.connect(dom.byId("menuItemIntro"), 'click', function(e)
                     {
+                        registry.byId('menusDialog').hide();
+                        domClass.remove("barMenus", 'barIconHighlight');
+                        domClass.add("barFeed", 'barIconHighlight');
+
                         annoUtil.startActivity("Intro", false);
                     }));
 
                     _connectResults.push(connect.connect(dom.byId("menuItemFeedback"), 'click', function(e)
                     {
+                        registry.byId('menusDialog').hide();
+                        domClass.remove("barMenus", 'barIconHighlight');
+                        domClass.add("barFeed", 'barIconHighlight');
+
                         annoUtil.startActivity("Feedback", false);
                     }));
 
@@ -232,6 +259,7 @@ define([
                         {
                             registry.byId('menusDialog').hide();
                             domClass.remove("barMenus", 'barIconHighlight');
+                            domClass.add("barFeed", 'barIconHighlight');
                         }
                         else
                         {
@@ -239,6 +267,7 @@ define([
                             registry.byId('menusDialog').show();
                             domStyle.set(menusDialog._cover[0], {"height": (viewPoint.h-topBarHeight-bottomBarHeight)+"px", top:(topBarHeight)+"px"});
                             domClass.add("barMenus", 'barIconHighlight');
+                            domClass.remove("barFeed", 'barIconHighlight');
                         }
                     }));
 
@@ -292,6 +321,7 @@ define([
                 var listContainer = dom.byId('listContainerStart');
                 listContainer.scrollTop = listScrollTop;
 
+                document.removeEventListener("backbutton", exitApp, false);
                 document.addEventListener("backbutton", exitApp, false);
             },
             beforeDeactivate: function()
