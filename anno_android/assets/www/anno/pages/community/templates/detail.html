@@ -1,9 +1,13 @@
 <div id="detailView" class="view mblView" style="overflow-x: hidden;">
     <script type="dojo/require">at: "dojox/mvc/at"</script>
-    <div id="headingDetail" style="position: absolute;background-color2:#000000;background-color: rgba(0,0,0, 0.5);left:4.5px;top:4.5px;opacity2:0.5;z-index: 9000 " data-dojo-type="dojox/mobile/Heading">
-        <span id="navBtnPrevious" class="icon-arrow-left barIconHighlight" style="width: 60px;height: 32px;float: left;padding-left: 20px;padding-top: 10px;font-size: 25px;"></span>
-        <span id="navBtnTray" class="icon-bubbles barIconHighlight" style="width: 50px;height: 32px;padding-top: 10px;font-size: 25px;"></span>
-        <span id="navBtnNext" class="icon-arrow-right barIconHighlight" style="width: 60px;height: 30px;float: right;padding-right: 20px;padding-top: 10px;font-size: 25px;"></span>
+    <div id="headingDetail" style="position: absolute;background-color: rgba(0,0,0, 0.5);left:0px;bottom:0px;z-index: 9000" data-dojo-type="dojox/mobile/Heading">
+        <table width="100%">
+            <tr>
+                <td width="33.3%" align="left"><span id="navBtnPrevious" class="icon-arrow-left barIconHighlight" style="width: 60px;height: 32px;float: left;padding-left: 20px;font-size: 25px;"></span></td>
+                <td width="33.3%" align="center"><span id="navBtnTray" class="icon-bubbles barIconHighlight" style="width: 50px;height: 32px;padding-top: 10px;font-size: 25px;"></span></td>
+                <td width="33.3%" align="right"><span id="navBtnNext" class="icon-arrow-right barIconHighlight" style="width: 60px;height: 30px;float: right;padding-right: 20px;font-size: 25px;"></span></td>
+            </tr>
+        </table>
     </div>
 
     <div class="fieldset" data-dojo-type="dojox/mvc/Group"
@@ -13,7 +17,7 @@
                  data-dojo-props="src: at('rel:', 'screenshot')"/>
             <div id="gfxCanvasContainer" class="gfxCanvasContainer" style="width: 500px; height: 500px;display: none"></div>
         </div>
-        <div id="textDataAreaContainer" style="display: none" class="textDataAreaContainer">
+        <div id="textDataAreaContainer" style="display: none;-webkit-transition: all 500ms ease;" class="textDataAreaContainer">
             <div id="appNameContainer" class="appNameDetail" style="padding-left: 6px;">
                 <table cellpadding="0" cellspacing="0">
                     <tr>
@@ -95,7 +99,7 @@
                 </table>
             </div>
             <div id="trayPlaceHolder" style="width: 100%;height: 0px"></div>
-            <div id="trayBottomBar" style="height: 31px;background-color: #333333">
+            <div id="trayBottomBar" style="height: 29px;background-color: #333333">
                 <table width="100%">
                     <tr>
                         <td align="center" valign="middle" height="30">
