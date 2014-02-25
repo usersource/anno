@@ -269,10 +269,17 @@ define([
             dlg.show();
             domStyle.set(dlg._cover[0], {"height": "100%", top:"0px"});
         },
-        showSoftKeyboard: function()
+        showSoftKeyboard: function(activityName)
         {
             if (window.cordova&&cordova.exec)
             {
+                var param = [];
+
+                if (activityName)
+                {
+                    param[0] = activityName;
+                }
+
                 cordova.exec(
                     function (result)
                     {
@@ -283,7 +290,7 @@ define([
                     },
                     "AnnoCordovaPlugin",
                     'show_softkeyboard',
-                    []
+                    param
                 );
             }
         },
