@@ -62,10 +62,9 @@ require([
         var commentBox = surface.createCommentBox({startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight,lineStrokeStyle:lineStrokeStyle});
         updateLastShapePos('Rectangle');
 
-        connect.connect(commentBox.inputElement, 'input', function(e)
-        {
-            checkBarShareState();
-        });
+        commentBox.onCommentBoxInput = checkBarShareState;
+        commentBox.onCommentBoxFocus = hideBottomNavBar;
+        commentBox.onCommentBoxBlur = showBottomNavBar;
 
         checkBarShareState();
     });
@@ -308,10 +307,21 @@ require([
             commentBox.animateEarControl();
         }, 500);
 
-        connect.connect(commentBox.inputElement, 'input', function(e)
-        {
-            checkBarShareState();
-        });
+        commentBox.onCommentBoxInput = checkBarShareState;
+        commentBox.onCommentBoxFocus = hideBottomNavBar;
+        commentBox.onCommentBoxBlur = showBottomNavBar;
+    };
+
+    var showBottomNavBar = function()
+    {
+        window.setTimeout(function(){
+            domStyle.set("bottomBarContainer", "display", "");
+        }, 500);
+    };
+
+    var hideBottomNavBar = function()
+    {
+        domStyle.set("bottomBarContainer", "display", "none");
     };
 
     var drawImageHiddenCanvas = function()
