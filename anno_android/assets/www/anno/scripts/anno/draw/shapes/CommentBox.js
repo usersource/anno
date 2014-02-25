@@ -11,9 +11,10 @@ define([
     "dojox/gfx",
     "dojox/gfx/shape",
     "dojox/gfx/move",
-    "./BaseShape"
+    "./BaseShape",
+    "../../common/Util"
 ],
-    function (declare, connect, lang, dom, domConstruct, domStyle, dojoMoveable, touch, tap, gfx, gfxShape, gfxMove, BaseShape)
+    function (declare, connect, lang, dom, domConstruct, domStyle, dojoMoveable, touch, tap, gfx, gfxShape, gfxMove, BaseShape, annoUtil)
     {
         /**
          * @author David Lee
@@ -37,7 +38,7 @@ define([
             shapePadding: 30,
             earHeight:22,
             earDistance: 24,
-            boxHeight:34,
+            boxHeight:30,
             earDirection:EAR_DIRECTION.TOP, // top
             placeholder:"Enter suggestion here",
             grayColor: "#A9A9A9",
@@ -103,7 +104,7 @@ define([
 
                 this.inputNode = domConstruct.create('div', {
                     style: "background-color:transparent;display:none;position:absolute;top:"+(this.pathPoints[0].y+3)+"px;left:"+(this.pathPoints[0].x+3)+"px;width:"+(this.pathPoints[5].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
-                    innerHTML:"<textarea id='input_"+this.id+"' placeholder='Enter suggestion here' style='font-family: helvetica, arial;font-size: 13pt;font-weight: normal;background-color:transparent;width:100%;height:100%;border-color:transparent;outline: none;'></textarea>"
+                    innerHTML:"<textarea id='input_"+this.id+"' placeholder='Enter suggestion here' style='font-family: helvetica, arial;font-size: 13pt;font-weight: normal;background-color:transparent;width:100%;height:100%;border-color:transparent;outline: none;box-sizing: border-box;'></textarea>"
                 }, this.surface.container, 'last');
                 this.inputElement = dom.byId("input_"+this.id);
 
@@ -137,6 +138,11 @@ define([
                     }
 
                     dom.byId("hiddenBtn").focus();
+
+                    if (this.onCommentBoxBlur)
+                    {
+                        this.onCommentBoxBlur(this);
+                    }
                 }));
 
                 this._connects.push(connect.connect(this.inputElement, "keydown", this, function (e)
@@ -144,7 +150,23 @@ define([
                     if (e.keyCode == 13)
                     {
                         dojo.stopEvent(e);
-                        this._closeKeybord();
+                        this._closeKeyboard();
+                    }
+                }));
+
+                this._connects.push(connect.connect(this.inputElement, "focus", this, function (e)
+                {
+                    if (this.onCommentBoxFocus)
+                    {
+                        this.onCommentBoxFocus(this);
+                    }
+                }));
+
+                this._connects.push(connect.connect(this.inputElement, "input", this, function (e)
+                {
+                    if (this.onCommentBoxInput)
+                    {
+                        this.onCommentBoxInput(this);
                     }
                 }));
 
@@ -270,7 +292,7 @@ define([
                         {
                             if (this.selected)
                             {
-                                this._openKeybord();
+                                this._openKeyboard();
                             }
                             else
                             {
@@ -321,18 +343,16 @@ define([
 
                 this.txtRect._removeClipNode = function(){};
             },
-            _openKeybord: function(e)
+            _openKeyboard: function(e)
             {
                 domStyle.set(this.txtNode, 'display', 'none');
                 domStyle.set(this.inputNode, 'display', '');
 
-                var self = this;
-                window.setTimeout(function(){
-                    self.inputElement.focus();
-                }, 300);
-                dom.byId("hiddenBtn").focus();
+                this.inputElement.focus();
+                this.inputElement.click();
+                annoUtil.showSoftKeyboard("AnnoDraw");
             },
-            _closeKeybord: function(e)
+            _closeKeyboard: function(e)
             {
                 domStyle.set(this.txtNode, 'display', '');
                 domStyle.set(this.inputNode, 'display', 'none');
@@ -864,7 +884,7 @@ define([
                     this.endpoint1.setStroke(this.endpointHiddenStrokeStyle).setFill(this.endpointHiddenFillStyle);
                     this.endpoint2.setStroke(this.endpointHiddenStrokeStyle).setFill(this.endpointHiddenFillStyle);
 
-                    this._closeKeybord();
+                    this._closeKeyboard();
 
                     var textDiv = dom.byId('textDiv_'+this.id);
                     textDiv.innerHTML = this.inputElement.value.replace(/\n/g, "<br>");
