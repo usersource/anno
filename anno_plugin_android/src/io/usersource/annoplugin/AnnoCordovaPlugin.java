@@ -53,6 +53,8 @@ public class AnnoCordovaPlugin extends CordovaPlugin
   // activity names
   public static final String ACTIVITY_INTRO = "Intro";
   public static final String ACTIVITY_FEEDBACK = "Feedback";
+  public static final String ACTIVITY_ANNODRAW = "AnnoDraw";
+  public static final String ACTIVITY_COMMUNITY = "Community";
 
   private static final int COMPRESS_QUALITY = 40;
 
@@ -143,10 +145,23 @@ public class AnnoCordovaPlugin extends CordovaPlugin
       return true;
     }
     else if (SHOW_SOFTKEYBOARD.equals(action)) {
+      String activityName = ACTIVITY_COMMUNITY;
+      if (args.length() >0)
+      {
+        activityName = args.getString(0);
+      }
 
-      CommunityActivity activity = (CommunityActivity)this.cordova.getActivity();
+      Activity activity = this.cordova.getActivity();
       InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-      imm.showSoftInput(activity.getAppView(), InputMethodManager.SHOW_FORCED);
+
+      if (activityName.equalsIgnoreCase(ACTIVITY_COMMUNITY))
+      {
+        imm.showSoftInput(((CommunityActivity)activity).getAppView(), InputMethodManager.SHOW_FORCED);
+      }
+      else if (activityName.equalsIgnoreCase(ACTIVITY_ANNODRAW))
+      {
+        imm.showSoftInput(((AnnoDrawActivity)activity).getAppView(), InputMethodManager.SHOW_FORCED);
+      }
 
       callbackContext.success();
 
