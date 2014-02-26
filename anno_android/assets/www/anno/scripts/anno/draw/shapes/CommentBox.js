@@ -841,6 +841,11 @@ define([
                     {
                         return false;
                     }
+
+                    if ((cp[5].y - cp[4].y + dy) <= this.earGap)
+                    {
+                        return false;
+                    }
                 }
 
                 if (dx != 0)
