@@ -1,0 +1,34 @@
+{
+    "SCH-i535":
+    {
+        "osType": "Android",
+        "manufacturer": "Samsung",
+        "deviceName": "Galaxy S III",
+        "model": "SCH-i535",
+        "text": "Hold Power + Volume down buttons at the same time"
+    },
+    "Moto X":
+    {
+        "osType": "Android",
+        "manufacturer": "Motorola",
+        "deviceName": "Moto X",
+        "model": "Moto X",
+        "text": "Hold Power + Volume down buttons for 3 seconds"
+    },
+    "Nexus 10":
+    {
+        "osType": "Android",
+        "manufacturer": "Google",
+        "deviceName": "Nexus 10",
+        "model": "Nexus 10",
+        "text": "Hold Power + Volume down buttons at the same time"
+    },
+    "default":
+    {
+        "osType": "unknown",
+        "manufacturer": "unknown",
+        "deviceName": "unknown",
+        "model": "unknown",
+        "text": "Use your device's screenshot capability"
+    }
+}
