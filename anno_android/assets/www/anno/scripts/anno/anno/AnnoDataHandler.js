@@ -18,7 +18,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
 
     var annoDataHandler = {
         duplicateMsg:"Duplicate anno already exists.",
-        syncInterval: 1*60*1000,
+        syncInterval: 5*60*1000,
         localAnnoSaved: false,
         localAnnoCreatedTime: 0,
         //created, last_update,comment,screenshot_key,x,y,direction,app_version,os_version,is_moved,level,app_name,model,source,os_name,anno_type,synched
