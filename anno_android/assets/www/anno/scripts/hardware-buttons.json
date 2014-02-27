@@ -1,10 +1,10 @@
 {
-    "SCH-i535":
+    "SCH-I535":
     {
         "osType": "Android",
         "manufacturer": "Samsung",
         "deviceName": "Galaxy S III",
-        "model": "SCH-i535",
+        "model": "SCH-I535",
         "text": "Hold Power + Volume down buttons at the same time"
     },
     "Moto X":
@@ -22,6 +22,14 @@
         "deviceName": "Nexus 10",
         "model": "Nexus 10",
         "text": "Hold Power + Volume down buttons at the same time"
+    },
+    "Nexus 7":
+    {
+        "osType": "Android",
+        "manufacturer": "Google",
+        "deviceName": "Nexus 7",
+        "model": "Nexus 7",
+        "text": "(Nexus 7) Hold Power + Volume down buttons at the same time"
     },
     "default":
     {
