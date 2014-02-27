@@ -184,13 +184,13 @@ define([
                 {
                     AnnoDataHandler.getCurrentUserInfo(function(userInfo){
 
+                        if (authResult.newUser)
+                        {
+                            annoUtil.startActivity("Intro", false);
+                        }
+
                         if (userInfo.signinMethod == OAuthUtil.signinMethod.anno)
                         {
-                            if (authResult.newUser)
-                            {
-                                annoUtil.startActivity("Intro", false);
-                            }
-
                             OAuthUtil.processBasicAuthToken(userInfo);
                         }
 
