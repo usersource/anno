@@ -273,9 +273,7 @@ class Anno(BaseModel):
             .filter(cls.simple_x == message.simple_x)\
             .filter(cls.simple_y == message.simple_y)\
             .filter(cls.simple_is_moved == message.simple_is_moved)
-        is_exists = False
         for anno in query:
             if anno.creator.id() == user.key.id():
-                is_exists = True
-                break
-        return is_exists
+                return anno
+        return None

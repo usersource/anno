@@ -120,8 +120,9 @@ class AnnoApi(remote.Service):
         if current user doesn't exist, the user will be created first.
         """
         user = auth_user(self.request_state.headers)
-        if Anno.is_anno_exists(user, request):
-            raise endpoints.BadRequestException("Duplicate anno already exists.")
+        exist_anno = Anno.is_anno_exists(user, request)
+        if exist_anno is not None:
+            raise endpoints.BadRequestException("Duplicate anno(%s) already exists." % exist_anno.key.id())
         entity = Anno.insert_anno(request, user)
         return entity.to_response_message()
 

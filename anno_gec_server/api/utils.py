@@ -147,4 +147,4 @@ anno_js_client_id = "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleus
 usersource-anno:
 anno_js_client_id = "955803277195.apps.googleusercontent.com"
 """
-anno_js_client_id = "955803277195.apps.googleusercontent.com"
+anno_js_client_id = "22913132792.apps.googleusercontent.com"
