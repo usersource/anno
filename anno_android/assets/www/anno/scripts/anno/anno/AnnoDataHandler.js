@@ -19,36 +19,43 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
     var annoDataHandler = {
         duplicateMsg:"Duplicate anno already exists.",
         syncInterval: 1*60*1000,
+        localAnnoSaved: false,
+        localAnnoCreatedTime: 0,
         //created, last_update,comment,screenshot_key,x,y,direction,app_version,os_version,is_moved,level,app_name,model,source,os_name,anno_type,synched
         saveAnno: function(anno, source, screenshotDirPath)
         {
-            var createdTime = annoUtil.getTimeStamp();
-            var params = [
-                anno.draw_elements||'',
-                anno.screenshot_is_anonymized?1:0,
-                createdTime,
-                createdTime,
-                anno.anno_text,
-                anno.image,
-                anno.simple_x,
-                anno.simple_y,
-                anno.simple_circle_on_top?1:0,
-                anno.app_version,
-                anno.os_version,
-                anno.simple_is_moved?1:0,
-                anno.level,
-                anno.app_name,
-                anno.device_model,
-                source,
-                anno.os_name,
-                anno.anno_type,
-                0];
+            var createdTime, self = this;
+            if (!this.localAnnoSaved)
+            {
+                createdTime = this.localAnnoCreatedTime = annoUtil.getTimeStamp();
+                var params = [
+                    anno.draw_elements||'',
+                    anno.screenshot_is_anonymized?1:0,
+                    createdTime,
+                    createdTime,
+                    anno.anno_text,
+                    anno.image,
+                    anno.simple_x,
+                    anno.simple_y,
+                    anno.simple_circle_on_top?1:0,
+                    anno.app_version,
+                    anno.os_version,
+                    anno.simple_is_moved?1:0,
+                    anno.level,
+                    anno.app_name,
+                    anno.device_model,
+                    source,
+                    anno.os_name,
+                    anno.anno_type,
+                    0];
 
-            DBUtil.executeUpdateSql(insert_anno_draw_sql,params, function(res){
-                console.error(res);
-            }, onSQLError);
+                DBUtil.executeUpdateSql(insert_anno_draw_sql,params, function(res){
+                    console.error(res);
+                    self.localAnnoSaved = true;
+                }, onSQLError);
+            }
 
-            this.saveAnnoToCloud(anno, screenshotDirPath, createdTime, false);
+            this.saveAnnoToCloud(anno, screenshotDirPath, this.localAnnoCreatedTime, false);
         },
         saveAnnoToCloud: function(anno, screenshotDirPath, createdTime, background, callback)
         {
