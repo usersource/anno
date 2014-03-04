@@ -277,3 +277,13 @@ class Anno(BaseModel):
             if anno.creator.id() == user.key.id():
                 return anno
         return None
+
+    @classmethod
+    def query_by_last_modified(cls, user):
+        query = cls.query().filter(cls.creator == user.key).order(-cls.last_update_time)
+        anno_list = []
+        for anno in query:
+            anno_message = anno.to_response_message()
+            anno_message.last_update_time = anno.last_update_time
+            anno_list.append(anno_message)
+        return AnnoListMessage(anno_list=anno_list)
