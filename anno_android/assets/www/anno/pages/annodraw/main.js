@@ -73,7 +73,7 @@ require([
     {
         if (domClass.contains(dom.byId("barShare"), 'barIconInactive')) return;
 
-        if (level == 2)
+        if (level == 2 || !isAnno)
         {
             if (drawMode)
             {
