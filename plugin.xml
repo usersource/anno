@@ -20,11 +20,14 @@
     <asset src="anno_android/assets/www/anno/scripts/anno" target="anno/scripts/anno" />
     <asset src="anno_android/assets/www/anno/scripts/dojo" target="anno/scripts/dojo" />
     <asset src="anno_android/assets/www/anno/scripts/dojox" target="anno/scripts/dojox" />
+    <asset src="anno_android/assets/www/anno/scripts/server-url.json" target="anno/scripts/server-url.json" />
+    <asset src="anno_android/assets/www/anno/scripts/hardware-buttons.json" target="anno/scripts/hardware-buttons.json" />
 
     <dependency id="org.apache.cordova.device" />
     <dependency id="org.apache.cordova.network-information" />
     <dependency id="org.apache.cordova.inappbrowser" />
     <dependency id="org.apache.cordova.file" />
+    <dependency id="org.apache.cordova.geolocation" />
     <dependency id="com.phonegap.plugins.sqlite" url="https://github.com/lite4cordova/Cordova-SQLitePlugin" />
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
