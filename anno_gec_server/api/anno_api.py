@@ -23,6 +23,7 @@ from model.follow_up import FollowUp
 from api.utils import anno_js_client_id
 from api.utils import auth_user
 import logging
+import datetime
 
 
 @endpoints.api(name='anno', version='1.0', description='Anno API',
@@ -120,8 +121,9 @@ class AnnoApi(remote.Service):
         if current user doesn't exist, the user will be created first.
         """
         user = auth_user(self.request_state.headers)
-        if Anno.is_anno_exists(user, request):
-            raise endpoints.BadRequestException("Duplicate anno already exists.")
+        exist_anno = Anno.is_anno_exists(user, request)
+        if exist_anno is not None:
+            raise endpoints.BadRequestException("Duplicate anno(%s) already exists." % exist_anno.key.id())
         entity = Anno.insert_anno(request, user)
         return entity.to_response_message()
 
@@ -145,6 +147,9 @@ class AnnoApi(remote.Service):
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
 
         anno.merge_from_message(request)
+        # set last update time & activity
+        anno.last_update_time = datetime.datetime.now()
+        anno.last_activity = 'anno'
         anno.put()
         return anno.to_response_message()
 
@@ -162,3 +167,11 @@ class AnnoApi(remote.Service):
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
         anno.key.delete()
         return message_types.VoidMessage()
+
+    @endpoints.method(message_types.VoidMessage, AnnoListMessage, path='anno_my_stuff', http_method='GET', name='anno.mystuff')
+    def anno_my_stuff(self, request):
+        """
+        Exposes an API endpoint to return all my anno list.
+        """
+        user = auth_user(self.request_state.headers)
+        return Anno.query_by_last_modified(user)
