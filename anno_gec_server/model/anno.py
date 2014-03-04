@@ -273,9 +273,17 @@ class Anno(BaseModel):
             .filter(cls.simple_x == message.simple_x)\
             .filter(cls.simple_y == message.simple_y)\
             .filter(cls.simple_is_moved == message.simple_is_moved)
-        is_exists = False
         for anno in query:
             if anno.creator.id() == user.key.id():
-                is_exists = True
-                break
-        return is_exists
+                return anno
+        return None
+
+    @classmethod
+    def query_by_last_modified(cls, user):
+        query = cls.query().filter(cls.creator == user.key).order(-cls.last_update_time)
+        anno_list = []
+        for anno in query:
+            anno_message = anno.to_response_message()
+            anno_message.last_update_time = anno.last_update_time
+            anno_list.append(anno_message)
+        return AnnoListMessage(anno_list=anno_list)
