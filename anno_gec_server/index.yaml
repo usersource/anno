@@ -96,3 +96,9 @@ indexes:
   - name: app_name
   - name: vote_count
     direction: desc
+
+- kind: Anno
+  properties:
+  - name: creator
+  - name: last_update_time
+    direction: desc
