@@ -47,6 +47,7 @@ class FollowupApi(remote.Service):
         anno.followup_count += 1
         anno.last_update_time = datetime.datetime.now()
         anno.last_activity = 'follwup'
+        anno.last_update_type = 'create'
         anno.put()
         return followup.to_message()
 
