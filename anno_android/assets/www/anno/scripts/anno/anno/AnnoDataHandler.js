@@ -10,45 +10,51 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
     var select_userInfo_sql = "select * from app_users";
     var delete_userInfo_sql = "delete from app_users";
 
-    /*var onSQLError = function(err)
-    {
-        console.error(JSON.stringify(err));
-        alert(JSON.stringify(err));
-    };*/
-
     var annoDataHandler = {
-
-        syncInterval: 10*60*1000,
+        duplicateMsgPrefix:"Duplicate anno",
+        syncInterval: 5*60*1000,
+        localAnnoSaved: false,
+        localAnnoCreatedTime: 0,
+        localAnnoCreatedTimeString: "",
         //created, last_update,comment,screenshot_key,x,y,direction,app_version,os_version,is_moved,level,app_name,model,source,os_name,anno_type,synched
         saveAnno: function(anno, source, screenshotDirPath)
         {
-            var createdTime = annoUtil.getTimeStamp();
-            var params = [
-                anno.draw_elements||'',
-                anno.screenshot_is_anonymized?1:0,
-                createdTime,
-                createdTime,
-                anno.anno_text,
-                anno.image,
-                anno.simple_x,
-                anno.simple_y,
-                anno.simple_circle_on_top?1:0,
-                anno.app_version,
-                anno.os_version,
-                anno.simple_is_moved?1:0,
-                anno.level,
-                anno.app_name,
-                anno.device_model,
-                source,
-                anno.os_name,
-                anno.anno_type,
-                0];
+            var createdTime, self = this;
+            if (!this.localAnnoSaved)
+            {
+                createdTime = this.localAnnoCreatedTime = annoUtil.getTimeStamp();
+                var createdTimeObj = new Date(createdTime);
+                this.localAnnoCreatedTimeString = createdTimeObj.getFullYear()+'-'+(createdTimeObj.getMonth()+1)+'-'+createdTimeObj.getDate()+"T"+createdTimeObj.getHours()+":"+createdTimeObj.getMinutes()+":"+createdTimeObj.getSeconds();
 
-            DBUtil.executeUpdateSql(insert_anno_draw_sql,params, function(res){
-                console.error(res);
-            }, onSQLError);
+                var params = [
+                    anno.draw_elements||'',
+                    anno.screenshot_is_anonymized?1:0,
+                    createdTime,
+                    createdTime,
+                    anno.anno_text,
+                    anno.image,
+                    anno.simple_x,
+                    anno.simple_y,
+                    anno.simple_circle_on_top?1:0,
+                    anno.app_version,
+                    anno.os_version,
+                    anno.simple_is_moved?1:0,
+                    anno.level,
+                    anno.app_name,
+                    anno.device_model,
+                    source,
+                    anno.os_name,
+                    anno.anno_type,
+                    0];
 
-            this.saveAnnoToCloud(anno, screenshotDirPath, createdTime, false);
+                DBUtil.executeUpdateSql(insert_anno_draw_sql,params, function(res){
+                    console.error(res);
+                    self.localAnnoSaved = true;
+                }, onSQLError);
+            }
+
+            anno["created"] = this.localAnnoCreatedTimeString;
+            this.saveAnnoToCloud(anno, screenshotDirPath, this.localAnnoCreatedTime, false);
         },
         saveAnnoToCloud: function(anno, screenshotDirPath, createdTime, background, callback)
         {
@@ -121,14 +127,31 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                                     callback();
                                 }
 
-                                return;
+                                if (data.error.message.indexOf(self.duplicateMsgPrefix) != 0)
+                                {
+                                    return;
+                                }
                             }
 
                             console.error(JSON.stringify(data.result));
 
                             if (background)
                             {
-                                self.updateAnnoSynchedStateById(data.result.id, createdTime);
+                                var serverAnnoId;
+
+                                if (data.result)
+                                {
+                                    serverAnnoId = data.result.id;
+                                }
+                                else
+                                {
+                                    serverAnnoId = /\d+/.exec(data.error.message);
+
+                                    serverAnnoId = serverAnnoId?serverAnnoId[0]:"";
+                                }
+
+                                console.error("got serverAnnoId:"+serverAnnoId);
+                                self.updateAnnoSynchedStateById(serverAnnoId, createdTime);
                             }
                             else
                             {

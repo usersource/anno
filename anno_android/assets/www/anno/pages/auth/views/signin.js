@@ -134,6 +134,7 @@ define([
                     }
 
                     AnnoDataHandler.saveUserInfo(userInfo, function(){
+                        _currentAuthResult.newUser = true;
                         doCallback(_currentAuthResult);
                     });
 
@@ -236,6 +237,11 @@ define([
                 else
                 {
                     cbURL = _callbackURL+"?token="+JSON.stringify(result.token);
+                }
+
+                if (result.newUser)
+                {
+                    cbURL = cbURL + "&newuser=1";
                 }
             }
             else

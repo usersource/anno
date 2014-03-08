@@ -269,10 +269,17 @@ define([
             dlg.show();
             domStyle.set(dlg._cover[0], {"height": "100%", top:"0px"});
         },
-        showSoftKeyboard: function()
+        showSoftKeyboard: function(activityName)
         {
             if (window.cordova&&cordova.exec)
             {
+                var param = [];
+
+                if (activityName)
+                {
+                    param[0] = activityName;
+                }
+
                 cordova.exec(
                     function (result)
                     {
@@ -283,7 +290,7 @@ define([
                     },
                     "AnnoCordovaPlugin",
                     'show_softkeyboard',
-                    []
+                    param
                 );
             }
         },
@@ -426,7 +433,7 @@ define([
         },
         getCurrentPosition:function(callback, errorCallback)
         {
-            navigator.geolocation.getCurrentPosition(callback, errorCallback, {maximumAge: 1000*60*60, timeout: 5000, enableHighAccuracy: false});
+            navigator.geolocation.getCurrentPosition(callback, errorCallback, {maximumAge: 1000*60*60, timeout: 10000, enableHighAccuracy: false});
         },
         inChina: function(callback)
         {
@@ -438,10 +445,11 @@ define([
                     longitude = position.coords.longitude;
 
                 console.error("current position: "+JSON.stringify(position));
-
+                //alert("current position: latitude:"+latitude+", longitude:"+longitude);
                 if (latitude >= lat[0] && latitude <= lat[1] &&longitude >= longti[0] && longitude <= longti[1])
                 {
                     console.error("Anno running in China!");
+                    //alert("Anno running in China!");
                     callback(true);
                 }
                 else
@@ -450,6 +458,7 @@ define([
                 }
             }, function(error){
                 console.error("get current position error: "+JSON.stringify(error));
+                //alert("get current position error: "+JSON.stringify(error));
                 callback(false);
             });
         },

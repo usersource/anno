@@ -175,12 +175,64 @@ body{
 
 .barBlackRectangle
 {
-    width: 46px;height: 32px;border: 2px solid white;border-radius: 4px;opacity: 1;
+    width: 40px;
+    height: 24px;
+    border: 2px solid white;
+    border-radius: 4px;
+    opacity: 1;
+}
+
+.barMoreMenu
+{
+    width: 40px;
+    height: 40px;
+    background-image: url(images/ic_action_overflow.png);
+    background-repeat: no-repeat;
+    background-position: 60% 100%;
+    background-size: 100% 100%;
+}
+
+.barMoreMenuActive
+{
+    background-image: url(images/ic_action_overflow_active.png);
 }
 
 .barBlackActive
 {
-    background-color: black;
+    background-color: gray;
+}
+
+.barRectangle
+{
+    width: 40px;
+    height: 24px;
+    border: 2px solid white;
+    border-radius: 4px;
+    opacity: 1;
+    background-color: #ffffff;
+}
+
+.barIconInactive
+{
+    opacity: 0.4;
+}
+
+.transparentBack
+{
+    background-color: transparent;
+}
+
+.signin-input
+{
+    border: none;
+    height: 34px;
+    line-height: 20px;
+    margin: 0px;
+    font-size: 13pt;
+    vertical-align: middle;
+    padding: 6px 12px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /*overwirte dojo default style*/
@@ -191,6 +243,15 @@ body{
     border-radius: 2px;
     font-size: 20px;
     text-align:left;
+}
+
+.menuItem
+{
+    border-bottom: 1px solid #000000;
+    height: 30px;
+    padding-top: 8px;
+    padding-left: 12px;
+    color: #000000;
 }
 
 .appNameItem
