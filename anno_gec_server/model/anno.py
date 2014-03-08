@@ -72,7 +72,10 @@ class Anno(BaseModel):
                                    screenshot_is_anonymized=self.screenshot_is_anonymized,
                                    latitude=self.latitude,
                                    longitude=self.longitude,
-                                   country=self.country
+                                   country=self.country,
+                                   vote_count=self.vote_count,
+                                   flag_count=self.flag_count,
+                                   followup_count=self.followup_count
         )
 
     def to_response_message_by_projection(self, projection):
