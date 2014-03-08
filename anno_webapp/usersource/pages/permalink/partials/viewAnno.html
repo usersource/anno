@@ -1,0 +1,145 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default" style="margin-bottom: 2px;border-width: 0px">
+                <div class="panel-body" style="padding-bottom: 4px">
+                    <table>
+                        <tr>
+                            <td valign="middle">
+                                <span class="icon-thumbs-up icoImgActive"></span>
+                            </td>
+                            <td  valign="middle">
+                                <span style="font-size: 13pt;font-weight: bold;margin-left: 10px;">Votes:</span><span style="font-size: 13pt;font-weight: bold;margin-left: 4px;">23</span>
+                            </td>
+                            <td>
+                                <span class="icon-flag icoImgActive" style="margin-left: 40px"></span>
+                            </td>
+                            <td>
+                                <span style="font-size: 13pt;font-weight: bold;margin-left: 10px;">Flags:</span><span style="font-size: 13pt;font-weight: bold;margin-left: 4px;">0</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Screenshot</h3>
+                </div>
+                <div class="panel-body" id="screenshotPanel" style="position: relative;margin: 4px;">
+                    <div id="loadingIndicatorImage" style="height: 400px">
+                        <div style="text-align: center">
+                            <div class="throbber">
+                                Loading...
+                            </div>
+                        </div>
+                    </div>
+                    <div id="screenshotContainer" class="screenshotContainer">
+                        <img id="imgDetailScreenshot" class="imgDetailScreenshot" width="100%" style="display: none" imgonload="screenshotLoad()" src="{{imageBaseURL}}?anno_id={{params.annoId}}">
+                    </div>
+                    <div id="gfxCanvasContainer" class="gfxCanvasContainerLocal" style="width: 500px; height: 500px;display: none"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Detail</h3>
+                </div>
+                <div class="panel-body" style="position: relative;margin: 4px;padding-top: 4px;margin-top: 0px;">
+                    <div style="height: 400px">
+                        <div id="loadingIndicatorAnnoData" style="text-align: center;margin-top: 16px;">
+                            <div class="throbber">
+                                Loading...
+                            </div>
+                        </div>
+                        <div id="textDataAreaContainer" style="display: none;-webkit-transition: all 500ms ease;" class="textDataAreaContainer">
+                            <div id="appNameContainer" class="appNameDetail" style="padding-left: 6px;">
+                                <table cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td valign="middle"><span class="appNameTitleDetail">App:</span></td>
+                                        <td valign="middle">
+                                            <span id="appNameSpanDetail">{{annoData.app_name}}</span>
+                                        </td>
+                                        <td valign="middle"><img id="editAppNameImg" src="css/images/content_edit.png" width="24" style="display: none"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div id="annoCommentsContainer" style="padding-left: 6px;width: 100%;overflow-y: auto;overflow-x:hidden; ">
+                                <div>
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td height="32" width="32">
+                                                <span class="icon-user personImg"></span>
+                                            </td>
+                                            <td align="left">
+                                                <span class="authorDetail" data-dojo-props="value: at('rel:', 'author')">{{annoData.author}}</span><span class="authorDetail">'s anno</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div id="annoTextDetail" class="annoTextDetail">{{annoData.anno_text}}</div>
+                                <div style="padding-bottom: 8px;padding-top: 4px">
+                                    <table width="100%"  cellpadding="0" cellspacing="0" style="padding-top: 4px;">
+                                        <tr>
+                                            <td width="33%" align="right">
+                                                <span id="imgThumbsUp" class="icon-thumbs-up icoImgDeactive"></span>
+                                            </td>
+                                            <td width="33%">&nbsp;</td>
+                                            <td width="33%">
+                                                <span id="imgFlag" class="icon-flag icoImgDeactive"></span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div id="annoCommentsSet" ng-repeat="followup in annoData.followup_list" class="fieldset">
+                                    <div>
+                                        <table width="100%" cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td height="32" width="32">
+                                                    <span class="icon-user personImg"></span>
+                                                </td>
+                                                <td align="left">
+                                                    <span class="authorDetail">{{followup.user_id}}</span><span class="authorDetail">&nbsp;commented</span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="commentDetail">
+                                        <div style="width: 96%">{{followup.comment}}</div>
+                                    </div>
+                                </div>
+                                <div id="deviceInfoContainer" style="padding-bottom: 8px">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td width="32">
+                                                <span class="icon-mobile personImg"></span>
+                                            </td>
+                                            <td valign="middle">
+                                                <div class="deviceInfoDetail">{{annoData.deviceInfo}}</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div id="addCommentContainer" style="padding-left: 6px;border-top: 2px solid #aeebfc;">
+                                <table width="100%" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td height="32">
+                                            <div class="noJump"></div>
+                                            <input type="text" id="addCommentTextBox" class="commentTextbox" style="width: 100%" placeholder="Add a comment">
+                                        </td>
+                                        <td width="32"><img id="addCommentImg" src="css/images/addcomment.png"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
