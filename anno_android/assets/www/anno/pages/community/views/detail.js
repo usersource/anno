@@ -36,6 +36,7 @@ define([
             loadingDetailData = false,
             loadingImage = false,
             trayBarHeight = 30,
+            navBarHeight = 43,
             trayScreenHeight = 0,
             borderWidth;
 
@@ -45,74 +46,18 @@ define([
 
         var wipeIn = function(args)
         {
-            var node = args.node = dom.byId(args.node), s = node.style, o;
-            var currentHeight = domStyle.get(node, "height");
-            var anim = baseFX.animateProperty(lang.mixin({
-                properties: {
-                    height: {
-                        start: function(){
-                            o = s.overflow;
-                            s.overflow = "hidden";
-                            if(s.visibility == "hidden" || s.display == "none"){
-                                s.height = "1px";
-                                s.display = "";
-                                s.visibility = "";
-                                return 1;
-                            }else{
-                                var height = domStyle.get(node, "height");
-                                return Math.max(height, 1);
-                            }
-                        },
-                        end: function(){
-                            return currentHeight;
-                        }
-                    }
-                },
-                onEnd: function()
-                {
-                    s.height.display = "none";
-                    s.height = currentHeight+"px";
-                    s.overflow = o;
-
-                    if (args.onEnd)
-                    {
-                        args.onEnd();
-                    }
-                }
-            }, args));
-
-            return anim;
+            var node = args.node = dom.byId(args.node);
+            node.style.WebkitTransform = "translateY(0px)";
         };
 
         var wipeOut = function(args){
-            var node = args.node = dom.byId(args.node), s = node.style, o;
+            var node = args.node = dom.byId(args.node);
             var currentHeight = domStyle.get(node, "height");
-            var anim = baseFX.animateProperty(lang.mixin({
-                properties: {
-                    height: {
-                        end: 1
-                    }
-                },
-                onEnd: function()
-                {
-                    s.overflow = o;
-                    s.display = "none";
-                    s.height = currentHeight+"px";
+            node.style.WebkitTransform = "translateY("+currentHeight+"px)";
 
-                    if (args.onEnd)
-                    {
-                        args.onEnd();
-                    }
-                },
-                beforeBegin: function()
-                {
-                    o = s.overflow;
-                    s.overflow = "hidden";
-                    s.display = "";
-                }
-            }, args));
-
-            return anim;
+            window.setTimeout(function(){
+                node.style.display = "none";
+            }, 600);
         };
 
         var adjustSize = function()
@@ -125,6 +70,7 @@ define([
             domStyle.set("annoTextDetail", "width", (viewPoint.w-6-6-10-6)+"px");
 
             domStyle.set("textDataAreaContainer", "height", (h-40)+"px");
+            dom.byId("textDataAreaContainer").style.WebkitTransform = "translateY("+(h-40)+"px)";
             trayScreenHeight = h-40;
 
             domStyle.set("annoCommentsContainer", "height", (h-76-30-trayBarHeight)+"px");//104
@@ -149,27 +95,25 @@ define([
                 var viewPoint = win.getBox();
                 var deviceRatio = parseFloat((viewPoint.w/viewPoint.h).toFixed(2));
                 var orignialDeviceRatio = parseFloat((imgScreenshot.naturalWidth/imgScreenshot.naturalHeight).toFixed(2));
-
                 var orignialRatio = imgScreenshot.naturalHeight/imgScreenshot.naturalWidth;
-                //var imageWidth, imageHeight;
 
                 if (orignialDeviceRatio == deviceRatio)
                 {
                     console.error('same ratio');
-                    imageWidth = (viewPoint.w-screenshotMargin);
-                    imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio;
+                    imageHeight = viewPoint.h - navBarHeight;
+                    imageWidth = Math.round(imageHeight/orignialRatio);
 
                     console.error("image width: "+imageWidth+", image height: "+imageHeight);
                 }
                 else if (orignialDeviceRatio < deviceRatio) // taller than current device
                 {console.error('taller ratio: o:'+orignialDeviceRatio+", d:"+ deviceRatio);
-                    imageWidth = Math.round((viewPoint.h-0)/orignialRatio);
-                    imageHeight = (viewPoint.h-0);
+                    imageHeight = viewPoint.h-navBarHeight;
+                    imageWidth = Math.round(imageHeight/orignialRatio);
                 }
                 else if (orignialDeviceRatio > deviceRatio) // wider than current device
                 {console.error('wider ratio');
-                    imageWidth = (viewPoint.w-screenshotMargin);
-                    imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio;
+                    imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio - navBarHeight;
+                    imageWidth = Math.round(imageHeight/orignialRatio);
                 }
 
                 domStyle.set("lightCoverScreenshot", "width", (30)+"px");
@@ -423,8 +367,7 @@ define([
 
         var adjustNavBarSize = function ()
         {
-            var scSize = domGeom.getMarginBox('screenshotContainerDetail');
-            domStyle.set('headingDetail', 'width', (scSize.w-6)+'px');
+
         };
 
         var adjustNavBarZIndex = function()
@@ -459,18 +402,20 @@ define([
             if (textDataAreaShown) return;
 
             domStyle.set("imgDetailScreenshot", "opacity", '0.4');
-            wipeIn({
-                node:"textDataAreaContainer",
-                duration: 600,
-                onEnd:function()
-                {
-                    domStyle.set("textDataAreaContainer", "height", trayScreenHeight+"px");
-                    adjustAnnoCommentSize();
-                }
-            }).play();
+            domStyle.set("textDataAreaContainer", "display", "");
 
-            textDataAreaShown = true;
-            domStyle.set("headingDetail", "display", 'none');
+            window.setTimeout(function(){
+                wipeIn({
+                    node:"textDataAreaContainer"
+                });
+            }, 100);
+
+            window.setTimeout(function(){
+                adjustAnnoCommentSize();
+                textDataAreaShown = true;
+                domStyle.set("headingDetail", "display", 'none');
+                domStyle.set("bottomPlaceholder", "display", '');
+            }, 600);
 
             document.addEventListener("backbutton", handleBackButton, false);
         };
@@ -487,16 +432,12 @@ define([
             domStyle.set("lightCoverScreenshot", "display", 'none');
             domStyle.set("imgDetailScreenshot", "opacity", '1');
             wipeOut({
-                node:"textDataAreaContainer",
-                duration: 600,
-                onEnd:function()
-                {
-                    domStyle.set("textDataAreaContainer", {"height": trayScreenHeight+"px", display:'none'});
-                }
-            }).play();
+                node:"textDataAreaContainer"
+            });
 
             textDataAreaShown = false;
 
+            domStyle.set("bottomPlaceholder", "display", 'none');
             domStyle.set("headingDetail", "display", '');
             document.removeEventListener("backbutton", handleBackButton, false);
         };
@@ -869,10 +810,14 @@ define([
                 var endX1 = e.touches[0].pageX;
                 var endY1 = e.touches[0].pageY;
 
-                if (Math.abs(startX1-endX1) <10 &&startY1-endY1>=6)
+                if (Math.abs(startX1-endX1) <10 &&(endY1-startY1)>=6)
                 {
                     dojo.stopEvent(e);
                     hideTextData();
+                }
+                else if (startY1 > endY1)
+                {
+                    dojo.stopEvent(e);
                 }
             }
         };
