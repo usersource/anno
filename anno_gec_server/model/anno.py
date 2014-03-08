@@ -42,6 +42,7 @@ class Anno(BaseModel):
     followup_count = ndb.IntegerProperty(default=0)  # how many follow ups are there for this anno
     last_update_time = ndb.DateTimeProperty(auto_now_add=True)  # last time that vote/flag/followup creation.
     last_activity = ndb.StringProperty('anno')  # last activity, vote/flag/followup creation
+    last_update_type = ndb.StringProperty('create')  # create/edit
     latitude = ndb.FloatProperty()
     longitude = ndb.FloatProperty()
     country = ndb.StringProperty()
@@ -75,7 +76,10 @@ class Anno(BaseModel):
                                    country=self.country,
                                    vote_count=self.vote_count,
                                    flag_count=self.flag_count,
-                                   followup_count=self.followup_count
+                                   followup_count=self.followup_count,
+                                   last_update_time=self.last_update_time,
+                                   last_activity=self.last_activity,
+                                   last_update_type=self.last_update_type
         )
 
     def to_response_message_by_projection(self, projection):
@@ -115,6 +119,7 @@ class Anno(BaseModel):
             # set last update time & activity
         entity.last_update_time = datetime.datetime.now()
         entity.last_activity = 'anno'
+        entity.last_update_type = 'create'
         entity.put()
         return entity
 
@@ -287,6 +292,5 @@ class Anno(BaseModel):
         anno_list = []
         for anno in query:
             anno_message = anno.to_response_message()
-            anno_message.last_update_time = anno.last_update_time
             anno_list.append(anno_message)
         return AnnoListMessage(anno_list=anno_list)

@@ -46,6 +46,7 @@ class FlagApi(remote.Service):
         anno.flag_count += 1
         anno.last_update_time = datetime.datetime.now()
         anno.last_activity = 'flag'
+        anno.last_update_type = 'create'
         anno.put()
         return flag.to_message()
 
