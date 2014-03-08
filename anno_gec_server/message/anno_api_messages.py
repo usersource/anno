@@ -97,6 +97,7 @@ class AnnoResponseMessage(messages.Message):
     latitude = messages.FloatField(29)
     longitude = messages.FloatField(30)
     country = messages.StringField(31)
+    last_update_type = messages.StringField(32)
 
 
 class AnnoListMessage(messages.Message):
