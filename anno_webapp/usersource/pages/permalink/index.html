@@ -1,0 +1,49 @@
+<!doctype html>
+<html ng-app="annoApp">
+<head>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="stylesheet" href="http://css-spinners.com/css/spinner/throbber.css" type="text/css">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular-route.min.js"></script>
+    <script type="text/javascript">
+        var dojoConfig = {
+            parseOnLoad:false,
+            async:1,
+            packages:[
+                {
+                    name:'anno',
+                    location:'../anno'
+                }
+            ]
+        };
+    </script>
+    <script src="../../assets/scripts/dojo/dojo.js"></script>
+    <script src="constants.js"></script>
+    <script src="app.js"></script>
+    <script src="services.js"></script>
+    <script src="controllers.js"></script>
+    <script src="directives.js"></script>
+</head>
+<body>
+<div class="container">
+    <div style="padding-top: 8px;padding-bottom: 8px">
+        <img src="css/images/anno96.png" width="60">
+        <span style="font-size: 16pt;font-weight: bold">Anno web-app</span>
+    </div>
+</div>
+<div ng-controller="MainCtrl">
+    <div ng-view></div>
+</div>
+<script type="text/javascript">
+    (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/client.js?onload=gce_init';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+    })();
+</script>
+</body>
+</html>
