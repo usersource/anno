@@ -36,7 +36,7 @@ define([
             loadingDetailData = false,
             loadingImage = false,
             trayBarHeight = 30,
-            navBarHeight = 43,
+            navBarHeight = 50,
             trayScreenHeight = 0,
             borderWidth;
 
@@ -47,13 +47,14 @@ define([
         var wipeIn = function(args)
         {
             var node = args.node = dom.byId(args.node);
-            node.style.WebkitTransform = "translateY(0px)";
+            var currentHeight = domStyle.get(node, "height");
+            node.style.WebkitTransform = "translateY("+navBarHeight+"px)";
         };
 
         var wipeOut = function(args){
             var node = args.node = dom.byId(args.node);
-            var currentHeight = domStyle.get(node, "height");
-            node.style.WebkitTransform = "translateY("+currentHeight+"px)";
+            var viewPoint = win.getBox();
+            node.style.WebkitTransform = "translateY(-"+(viewPoint.h-6)+"px)";
 
             window.setTimeout(function(){
                 node.style.display = "none";
@@ -69,8 +70,8 @@ define([
             domStyle.set("textDataAreaContainer", "width", (viewPoint.w-6)+"px");
             domStyle.set("annoTextDetail", "width", (viewPoint.w-6-6-10-6)+"px");
 
-            domStyle.set("textDataAreaContainer", "height", (h-40)+"px");
-            dom.byId("textDataAreaContainer").style.WebkitTransform = "translateY("+(h-40)+"px)";
+            domStyle.set("textDataAreaContainer", "height", (h-40-navBarHeight)+"px");
+            dom.byId("textDataAreaContainer").style.WebkitTransform = "translateY(-"+(h)+"px)";
             trayScreenHeight = h-40;
 
             domStyle.set("annoCommentsContainer", "height", (h-76-30-trayBarHeight)+"px");//104
@@ -401,8 +402,9 @@ define([
         {
             if (textDataAreaShown) return;
 
-            domStyle.set("imgDetailScreenshot", "opacity", '0.4');
             domStyle.set("textDataAreaContainer", "display", "");
+            domClass.remove("navBtnScreenshot", "barIconHighlight");
+            domClass.add("navBtnTray", "barIconHighlight");
 
             window.setTimeout(function(){
                 wipeIn({
@@ -413,8 +415,9 @@ define([
             window.setTimeout(function(){
                 adjustAnnoCommentSize();
                 textDataAreaShown = true;
-                domStyle.set("headingDetail", "display", 'none');
                 domStyle.set("bottomPlaceholder", "display", '');
+                domStyle.set("imgDetailScreenshot", "opacity", '0.4');
+
             }, 600);
 
             document.addEventListener("backbutton", handleBackButton, false);
@@ -438,7 +441,8 @@ define([
             textDataAreaShown = false;
 
             domStyle.set("bottomPlaceholder", "display", 'none');
-            domStyle.set("headingDetail", "display", '');
+            domClass.add("navBtnScreenshot", "barIconHighlight");
+            domClass.remove("navBtnTray", "barIconHighlight");
             document.removeEventListener("backbutton", handleBackButton, false);
         };
 
@@ -810,7 +814,7 @@ define([
                 var endX1 = e.touches[0].pageX;
                 var endY1 = e.touches[0].pageY;
 
-                if (Math.abs(startX1-endX1) <10 &&(endY1-startY1)>=6)
+                if (Math.abs(startX1-endX1) <10 &&(startY1-endY1)>=6)
                 {
                     dojo.stopEvent(e);
                     hideTextData();
@@ -849,6 +853,11 @@ define([
                     {
                         showTextData();
                     }
+                }));
+
+                _connectResults.push(connect.connect(dom.byId('navBtnScreenshot'), "click", function ()
+                {
+                    hideTextData();
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('appNameTextBox'), "keydown", function (e)
@@ -1072,6 +1081,8 @@ define([
 
                 textDataAreaShown = false;
                 domStyle.set("headingDetail", "display", '');
+                domClass.add("navBtnScreenshot", "barIconHighlight");
+                domClass.remove("navBtnTray", "barIconHighlight");
             },
             beforeDeactivate: function()
             {
