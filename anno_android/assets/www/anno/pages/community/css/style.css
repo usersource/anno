@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'icomoon';
-    src:url('fonts/icomoon.eot?m7kssu');
-    src:url('fonts/icomoon.eot?#iefixm7kssu') format('embedded-opentype'),
-    url('fonts/icomoon.woff?m7kssu') format('woff'),
-    url('fonts/icomoon.ttf?m7kssu') format('truetype'),
-    url('fonts/icomoon.svg?m7kssu#icomoon') format('svg');
+    src:url('fonts/icomoon.eot?-ivsjxc');
+    src:url('fonts/icomoon.eot?#iefix-ivsjxc') format('embedded-opentype'),
+    url('fonts/icomoon.woff?-ivsjxc') format('woff'),
+    url('fonts/icomoon.ttf?-ivsjxc') format('truetype'),
+    url('fonts/icomoon.svg?-ivsjxc#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -95,9 +95,12 @@
 .icon-star:before {
     content: "\e616";
 }
+.icon-picture:before {
+    content: "\e618";
+}
 
 
-#navBtnBackMyStuff, #navBtnBackSearchAnno
+#navBtnBackMyStuff, #navBtnBackSearchAnno, #navBtnBackScreenshot
 {
     background-color: transparent;
     background: none;
@@ -218,7 +221,7 @@
 }
 
 .navBtnDisabled{
-    opacity: 0.4;
+    opacity: 0;
 }
 
 .annoOrangeColor
@@ -316,6 +319,7 @@
     /*padding-left: 2px;
     padding-top: 2px;*/
     position: absolute;
+    top: 50px;
 }
 
 .discussDivDetail{
