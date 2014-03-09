@@ -48,6 +48,7 @@ annoApp.controller("ViewAnnoCtrl", [
             angular.element(byId('loadingIndicatorAnnoData')).css('display', 'none');
             angular.element(byId('textDataAreaContainer')).css('display', '');
 
+
             this.$apply();
         };
 
