@@ -838,12 +838,13 @@ define([
                     //adjustSize();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('navBtnNext'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnNext'), "click", function ()
                 {
+                    hideTextData();
                     goNextRecord();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('navBtnTray'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnTray'), "click", function ()
                 {
                     if (textDataAreaShown)
                     {
@@ -855,9 +856,15 @@ define([
                     }
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('navBtnScreenshot'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnScreenshot'), "click", function ()
                 {
                     hideTextData();
+                }));
+
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnPrevious'), "click", function ()
+                {
+                    hideTextData();
+                    goPreviousRecord();
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('appNameTextBox'), "keydown", function (e)
@@ -876,11 +883,6 @@ define([
                     domStyle.set('appNameTextBox', {display: 'none'});
                     domStyle.set('lightCover', 'display', 'none');
                     domStyle.set('editAppNameImg', 'display', '');
-                }));
-
-                _connectResults.push(connect.connect(dom.byId('navBtnPrevious'), "click", function ()
-                {
-                    goPreviousRecord();
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('addCommentImg'), "click", function ()
