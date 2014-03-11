@@ -826,6 +826,17 @@ define([
             }
         };
 
+        var doSocialShare = function()
+        {
+            var id = eventsModel.cursor.id;
+
+            window.plugins.socialsharing.share(
+                '',
+                'UserSource permalink',
+                null,
+                annoUtil.annoPermaLinkBaseUrl+id);
+        };
+
         var startX, startY, startX1, startY1;
         return {
             // simple view init
@@ -932,6 +943,11 @@ define([
                     {
                         saveFlag('add_flag');
                     }
+                }));
+
+                _connectResults.push(connect.connect(dom.byId('imgSocialSharing'), "click", function ()
+                {
+                    doSocialShare();
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "focus", function ()

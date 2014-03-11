@@ -29,6 +29,7 @@
     <dependency id="org.apache.cordova.file" />
     <dependency id="org.apache.cordova.geolocation" />
     <dependency id="com.phonegap.plugins.sqlite" url="https://github.com/lite4cordova/Cordova-SQLitePlugin" />
+    <dependency id="nl.x-services.plugins.socialsharing" url="https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin" />
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <access origin="http://127.0.0.1*" />
