@@ -25,6 +25,7 @@ define([
         level2Color:"#ff0000",
         level2ColorRGB:"255, 0, 0",
         annoScreenshotPath:null,
+        annoPermaLinkBaseUrl:"http://anno-webapp.appspot.com/usersource/pages/permalink/index.html#/anno/",
         API:{
             config:serverURLConfig,
             apiVersion:"1.0",
