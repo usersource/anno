@@ -828,11 +828,19 @@ define([
 
         var doSocialShare = function()
         {
-            var id = eventsModel.cursor.id;
+            var id = eventsModel.cursor.id, annoText = eventsModel.cursor.annoText;
+            var subject = "Suggestion for "+eventsModel.cursor.app + ": ";
+
+            if (annoText.length >25)
+            {
+                annoText = annoText.substr(0, 25) + "...";
+            }
+
+            subject = subject + annoText;
 
             window.plugins.socialsharing.share(
                 '',
-                'UserSource permalink',
+                subject,
                 null,
                 annoUtil.annoPermaLinkBaseUrl+id);
         };
