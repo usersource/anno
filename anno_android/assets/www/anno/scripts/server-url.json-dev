@@ -5,7 +5,7 @@
         "imageServiceURL":"http://usersource-anno.appspot.com/screenshot",
         "apiRoot":"https://usersource-anno.appspot.com/_ah/api",
         "clientId" : "955803277195.apps.googleusercontent.com",
-        "clientSecret": "l5UwDYJuv2BdUUBF2tu9fsol"
+        "clientSecret": "l5UwDYJuv2BdUUBF2tu9fsol",
         "proxyKey":"3"
     },
     "3": {
