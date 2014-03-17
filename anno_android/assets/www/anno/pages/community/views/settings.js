@@ -20,6 +20,11 @@ define([
             var viewPoint = win.getBox();
 
             domStyle.set("listContainerSettings", "height", (viewPoint.h-48)+"px");
+
+            if (viewPoint.w < 450)
+            {
+                domStyle.set("serverURLDialog", "width", (viewPoint.w-40)+"px");
+            }
         };
 
         var onServerURLRadioButtonChange = function(value)

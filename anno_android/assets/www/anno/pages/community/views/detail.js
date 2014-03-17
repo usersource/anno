@@ -826,6 +826,25 @@ define([
             }
         };
 
+        var doSocialShare = function()
+        {
+            var id = eventsModel.cursor.id, annoText = eventsModel.cursor.annoText;
+            var subject = "Suggestion for "+eventsModel.cursor.app + ": ";
+
+            if (annoText.length >25)
+            {
+                annoText = annoText.substr(0, 25) + "...";
+            }
+
+            subject = subject + annoText;
+
+            window.plugins.socialsharing.share(
+                '',
+                subject,
+                null,
+                annoUtil.annoPermaLinkBaseUrl+id);
+        };
+
         var startX, startY, startX1, startY1;
         return {
             // simple view init
@@ -932,6 +951,11 @@ define([
                     {
                         saveFlag('add_flag');
                     }
+                }));
+
+                _connectResults.push(connect.connect(dom.byId('imgSocialSharing'), "click", function ()
+                {
+                    doSocialShare();
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "focus", function ()
