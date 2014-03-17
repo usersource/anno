@@ -16,6 +16,7 @@ from model.anno import Anno
 from model.follow_up import FollowUp
 from message.followup_message import FollowupMessage
 from message.followup_message import FollowupListMessage
+from api.utils import put_search_document
 
 
 @endpoints.api(name='followup', version='1.0', description='Followup API',
@@ -49,6 +50,8 @@ class FollowupApi(remote.Service):
         anno.last_activity = 'follwup'
         anno.last_update_type = 'create'
         anno.put()
+        # update search document
+        put_search_document(anno.generate_search_document())
         return followup.to_message()
 
     followup_with_id_resource_container = endpoints.ResourceContainer(
