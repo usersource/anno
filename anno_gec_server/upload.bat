@@ -1,0 +1,1 @@
+"C:\Python27\python" "C:\Program Files (x86)\Google\google_appengine\appcfg.py" update "C:\Users\lren\MyData\vmshare\anno_gec_server"
