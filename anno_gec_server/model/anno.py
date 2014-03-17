@@ -9,9 +9,10 @@ import datetime
 
 from message.anno_api_messages import AnnoResponseMessage
 from message.anno_api_messages import AnnoListMessage
-import logging
 from model.base_model import BaseModel
 from api.utils import get_country_by_coordinate
+from google.appengine.api import search
+import logging
 
 
 class Anno(BaseModel):
@@ -42,7 +43,7 @@ class Anno(BaseModel):
     followup_count = ndb.IntegerProperty(default=0)  # how many follow ups are there for this anno
     last_update_time = ndb.DateTimeProperty(auto_now_add=True)  # last time that vote/flag/followup creation.
     last_activity = ndb.StringProperty('anno')  # last activity, vote/flag/followup creation
-    last_update_type = ndb.StringProperty('create')  # create/edit
+    last_update_type = ndb.StringProperty(default='create')  # create/edit
     latitude = ndb.FloatProperty()
     longitude = ndb.FloatProperty()
     country = ndb.StringProperty()
@@ -107,7 +108,7 @@ class Anno(BaseModel):
                      os_name=message.os_name, os_version=message.os_version, creator=user.key,
                      draw_elements=message.draw_elements, screenshot_is_anonymized=message.screenshot_is_anonymized,
                      geo_position=message.geo_position, flag_count=0, vote_count=0, followup_count=0,
-                     last_activity='anno', latitude=message.latitude, longitude=message.longitude)
+                     last_activity='UserSource', latitude=message.latitude, longitude=message.longitude)
         # set image.
         entity.image = message.image
         # set created time if provided in the message.
@@ -118,7 +119,7 @@ class Anno(BaseModel):
             entity.country = get_country_by_coordinate(message.latitude, message.longitude)
             # set last update time & activity
         entity.last_update_time = datetime.datetime.now()
-        entity.last_activity = 'anno'
+        entity.last_activity = 'UserSource'
         entity.last_update_type = 'create'
         entity.put()
         return entity
@@ -294,3 +295,94 @@ class Anno(BaseModel):
             anno_message = anno.to_response_message()
             anno_list.append(anno_message)
         return AnnoListMessage(anno_list=anno_list)
+
+    @classmethod
+    def query_by_active(cls, search_string, app_name):
+        index = search.Index(name="anno_index")
+        query_string = Anno.get_query_string(search_string, app_name)
+        sort = search.SortExpression(expression="last_update_time",
+                                     direction=search.SortExpression.DESCENDING,
+                                     default_value=datetime.datetime.now())
+        sort_opts = search.SortOptions(expressions=[sort])
+        query_options = search.QueryOptions(
+            limit=1000,
+            sort_options=sort_opts,
+            returned_fields=['anno_text', 'app_name', 'last_update_time']
+        )
+        return Anno.convert_document_to_message(index, query_string, query_options)
+
+    @classmethod
+    def get_query_string(cls, search_string, app_name):
+        query_string = ""
+        has_search_string = (search_string is not None and search_string != "")
+        if has_search_string:
+            query_string += "anno_text = \"%s\"" % search_string
+        has_app_name = (app_name is not None and app_name != "")
+        if has_app_name:
+            if has_search_string:
+                query_string += " AND "
+            query_string += "app_name = \"%s\" " % app_name
+        return query_string
+
+    @classmethod
+    def query_by_recent(cls, search_string, app_name):
+        index = search.Index(name="anno_index")
+        # build query string
+        query_string = Anno.get_query_string(search_string, app_name)
+        # build query options
+        sort = search.SortExpression(expression="created",
+                                     direction=search.SortExpression.DESCENDING,
+                                     default_value=datetime.datetime.now())
+        sort_opts = search.SortOptions(expressions=[sort])
+        query_options = search.QueryOptions(
+            limit=1000,
+            sort_options=sort_opts,
+            returned_fields=['anno_text', 'app_name', 'created']
+        )
+        # execute query
+        return Anno.convert_document_to_message(index, query_string, query_options)
+
+    @classmethod
+    def query_by_popular(cls, search_string, app_name):
+        index = search.Index(name="anno_index")
+        # build query string
+        query_string = Anno.get_query_string(search_string, app_name)
+        # build query options
+        sort = search.SortExpression(expression="vote_count-flag_count",
+                                     direction=search.SortExpression.DESCENDING, default_value=0)
+        sort_opts = search.SortOptions(expressions=[sort])
+        query_options = search.QueryOptions(
+            limit=1000,
+            sort_options=sort_opts,
+            returned_fields=['anno_text', 'app_name', 'vote_count', 'flag_count']
+        )
+        # execute query
+        return Anno.convert_document_to_message(index, query_string, query_options)
+
+    @classmethod
+    def convert_document_to_message(cls, index, query_string, query_options):
+        query = search.Query(query_string=query_string, options=query_options)
+
+        results = index.search(query)
+        anno_list = []
+        for result in results:
+            anno = Anno.get_by_id(long(result.doc_id))
+            anno_list.append(anno.to_response_message())
+        return AnnoListMessage(anno_list=anno_list)
+
+    def generate_search_document(cls):
+        anno_id_string = "%d" % cls.key.id()
+        app_name = "%s" % cls.app_name
+        anno_text = "%s" % cls.anno_text
+        anno_document = search.Document(
+            doc_id=anno_id_string,
+            fields=[
+                search.TextField(name='app_name', value=app_name),
+                search.TextField(name='anno_text', value=anno_text),
+                search.NumberField(name='vote_count', value=cls.vote_count),
+                search.NumberField(name='flag_count', value=cls.flag_count),
+                search.DateField(name='created', value=cls.created),
+                search.DateField(name='last_update_time', value=cls.last_update_time)
+            ]
+        )
+        return anno_document

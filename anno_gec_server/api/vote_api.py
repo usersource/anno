@@ -13,6 +13,7 @@ from message.vote_message import VoteListMessage
 from api.utils import get_endpoints_current_user
 from api.utils import anno_js_client_id
 from api.utils import auth_user
+from api.utils import put_search_document
 from model.anno import Anno
 from model.user import User
 from model.vote import Vote
@@ -48,6 +49,10 @@ class VoteApi(remote.Service):
         anno.last_activity = 'vote'
         anno.last_update_type = 'create'
         anno.put()
+
+        # update vote in search document
+        put_search_document(anno.generate_search_document())
+
         return vote.to_message()
 
     vote_with_id_resource_container = endpoints.ResourceContainer(
@@ -63,6 +68,7 @@ class VoteApi(remote.Service):
         Exposes an API endpoint to delete an existing vote.
         """
         user = auth_user(self.request_state.headers)
+        anno = None
         if request.id is None and request.anno_id is None:
             raise endpoints.BadRequestException('id or anno_id field is required.')
         if request.id is not None:
@@ -79,6 +85,7 @@ class VoteApi(remote.Service):
                 key.delete()
                 anno.vote_count -= 1
                 anno.put()
+        put_search_document(anno.generate_search_document())
         return message_types.VoidMessage()
 
     @endpoints.method(vote_with_id_resource_container, VoteMessage, http_method='GET', path='vote/{id}',

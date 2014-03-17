@@ -16,6 +16,7 @@ from model.anno import Anno
 from api.utils import anno_js_client_id
 from api.utils import get_endpoints_current_user
 from api.utils import auth_user
+from api.utils import put_search_document
 
 
 @endpoints.api(name='flag', version='1.0', description='Flag API',
@@ -48,6 +49,10 @@ class FlagApi(remote.Service):
         anno.last_activity = 'flag'
         anno.last_update_type = 'create'
         anno.put()
+
+        # update flag in search document
+        put_search_document(anno.generate_search_document())
+
         return flag.to_message()
 
     flag_with_id_resource_container = endpoints.ResourceContainer(
@@ -63,6 +68,7 @@ class FlagApi(remote.Service):
         Exposes an API endpoint to delete an existing flag.
         """
         user = auth_user(self.request_state.headers)
+        anno = None
         if request.id is None and request.anno_id is None:
             raise endpoints.BadRequestException('id or anno_id field is required.')
         if request.id is not None:
@@ -80,6 +86,7 @@ class FlagApi(remote.Service):
                 key.delete()
                 anno.flag_count -= 1
                 anno.put()
+        put_search_document(anno.generate_search_document())
         return message_types.VoidMessage()
 
     @endpoints.method(flag_with_id_resource_container, FlagMessage, http_method='GET', path='flag/{id}',
