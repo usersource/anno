@@ -51,7 +51,7 @@ class FollowupApi(remote.Service):
         anno.last_update_type = 'create'
         anno.put()
         # update search document
-        put_search_document(anno.generate_search_document())
+        put_search_document(anno.generate_search_document)
         return followup.to_message()
 
     followup_with_id_resource_container = endpoints.ResourceContainer(

@@ -51,7 +51,7 @@ class VoteApi(remote.Service):
         anno.put()
 
         # update vote in search document
-        put_search_document(anno.generate_search_document())
+        put_search_document(anno.generate_search_document)
 
         return vote.to_message()
 
@@ -85,7 +85,7 @@ class VoteApi(remote.Service):
                 key.delete()
                 anno.vote_count -= 1
                 anno.put()
-        put_search_document(anno.generate_search_document())
+        put_search_document(anno.generate_search_document)
         return message_types.VoidMessage()
 
     @endpoints.method(vote_with_id_resource_container, VoteMessage, http_method='GET', path='vote/{id}',

@@ -130,7 +130,7 @@ class AnnoApi(remote.Service):
         entity = Anno.insert_anno(request, user)
 
         # index this document.
-        anno_document = entity.generate_search_document()
+        anno_document = entity.generate_search_document
         put_search_document(anno_document)
 
         return entity.to_response_message()
@@ -160,7 +160,7 @@ class AnnoApi(remote.Service):
         anno.last_activity = 'anno'
         anno.put()
         # update search document.
-        put_search_document(anno.generate_search_document())
+        put_search_document(anno.generate_search_document)
         return anno.to_response_message()
 
     @endpoints.method(anno_with_id_resource_container, message_types.VoidMessage, path='anno/{id}',
@@ -190,7 +190,10 @@ class AnnoApi(remote.Service):
     anno_search_resource_container = endpoints.ResourceContainer(
         search_string=messages.StringField(1, required=False),
         app_name=messages.StringField(2, required=False),
-        order_type=messages.StringField(3)
+        order_type=messages.StringField(3, required=True),
+        cursor=messages.StringField(4),  # can't make it work, not sure why. may check it in the future.
+        limit=messages.IntegerField(5),
+        offset=messages.IntegerField(6)
     )
 
     @endpoints.method(anno_search_resource_container, AnnoListMessage, path='anno_search', http_method='GET',
@@ -200,16 +203,17 @@ class AnnoApi(remote.Service):
         Exposes and API endpoint to search anno list.
         """
         # 1. authenticate
-        user = auth_user(self.request_state.headers)
+        auth_user(self.request_state.headers)
         # 2. validate parameter
         if request.order_type is None:
             raise endpoints.BadRequestException('order_type field is required.')
         if request.order_type != 'recent' and request.order_type != 'active' and request.order_type != 'popular':
             raise endpoints.BadRequestException(
                 'Invalid order_type field value, valid values are "recent", "active" and "popular"')
+        # 3. execute query
         if request.order_type == 'popular':
-            return Anno.query_by_popular(request.search_string, request.app_name)
+            return Anno.query_by_popular(request.limit, request.offset, request.search_string, request.app_name)
         elif request.order_type == 'active':
-            return Anno.query_by_active(request.search_string, request.app_name)
+            return Anno.query_by_active(request.limit, request.offset, request.search_string, request.app_name)
         else:
-            return Anno.query_by_recent(request.search_string, request.app_name)
+            return Anno.query_by_recent(request.limit, request.offset, request.search_string, request.app_name)
