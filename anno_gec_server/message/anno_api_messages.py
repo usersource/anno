@@ -107,3 +107,4 @@ class AnnoListMessage(messages.Message):
     anno_list = messages.MessageField(AnnoResponseMessage, 1, repeated=True)
     cursor = messages.StringField(2)
     has_more = messages.BooleanField(3)
+    offset = messages.IntegerField(4)
