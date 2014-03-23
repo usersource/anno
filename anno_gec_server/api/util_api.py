@@ -24,5 +24,5 @@ class UtilApi(remote.Service):
         """
         for anno in Anno.query():
             logging.info("generating search document for anno(%s)." % anno.key.id())
-            put_search_document(anno.generate_search_document())
+            put_search_document(anno.generate_search_document)
         return message_types.VoidMessage()

@@ -51,7 +51,7 @@ class FlagApi(remote.Service):
         anno.put()
 
         # update flag in search document
-        put_search_document(anno.generate_search_document())
+        put_search_document(anno.generate_search_document)
 
         return flag.to_message()
 
@@ -86,7 +86,7 @@ class FlagApi(remote.Service):
                 key.delete()
                 anno.flag_count -= 1
                 anno.put()
-        put_search_document(anno.generate_search_document())
+        put_search_document(anno.generate_search_document)
         return message_types.VoidMessage()
 
     @endpoints.method(flag_with_id_resource_container, FlagMessage, http_method='GET', path='flag/{id}',
