@@ -27,9 +27,10 @@ define([
         var app = null;
         var listScrollTop = 0;
         var loadingMoreData = false,
-            offset = 0, limit=30;
-        var hasMoreData = false;
-        var topBarHeight=48, bottomBarHeight = 50;
+            offset = 0, limit=30, searchOffset = 0;
+        var hasMoreData = false, hasMoreSearchData = false, inSearchMode = false, searchDone = false;
+        var searchOrder = "recent", originalData = null;
+        var topBarHeight=48, bottomBarHeight = 50, appNameDialogGap = 80, searchSortsBarHeight = 26;
         var emptyAnno = {
             "id": 0,
             "annoText": "0",
@@ -45,9 +46,14 @@ define([
                 comment:''
             }]
         };
+        var sdTitleHeight = 100,
+            sdBottom = 80;
+        var viewPoint;
 
-        var loadListData = function (poffset)
+        var loadListData = function (search, poffset, order, clearData)
         {
+            search = search == null?false:search;
+            clearData = clearData == null?false:clearData;
             annoUtil.hasConnection();
             if (poffset)
             {
@@ -55,14 +61,28 @@ define([
             }
             annoUtil.showLoadingIndicator();
 
-            var arg = {outcome: 'cursor,has_more,anno_list', limit: limit}
+            var arg = {outcome: 'cursor,has_more,anno_list', limit: limit};
+
+            if (search)
+            {
+                arg.order_type = order||"recent";
+                arg.search_string = dom.byId("txtSearchAnno").value;
+            }
 
             if (poffset)
             {
-                arg.cursor = poffset;
+                if (search)
+                {
+                    arg.offset = poffset;
+                }
+                else
+                {
+                    arg.cursor = poffset;
+                }
             }
 
-            var getAnnoList = gapi.client.anno.anno.list(arg);
+            console.error("anno "+(search?"search":"list")+"ing, args:"+JSON.stringify(arg));
+            var getAnnoList = search?gapi.client.anno.anno.search(arg):gapi.client.anno.anno.list(arg);
             getAnnoList.execute(function (data)
             {
                 if (!data)
@@ -78,13 +98,13 @@ define([
                     annoUtil.hideLoadingIndicator();
                     loadingMoreData = false;
 
-                    alert("An error occurred when calling anno.list api: "+data.error.message);
+                    alert("An error occurred when calling anno."+(search?"search":"list")+" api: "+data.error.message);
                     return;
                 }
 
                 var annoList = data.result.anno_list||[];
 
-                var spliceArgs = [eventsModel.model.length, 0];
+                var spliceArgs = clearData?[0, eventsModel.model.length]:[eventsModel.model.length, 0];
                 for (var i = 0, l = annoList.length; i < l; i++)
                 {
                     var eventData = lang.clone(emptyAnno);
@@ -102,40 +122,71 @@ define([
                     spliceArgs.push(new getStateful(eventData));
                 }
 
-                eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
+                if (clearData&&originalData == null)
+                {
+                    originalData = eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
+                }
+                else
+                {
+                    eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
+                }
 
                 annoUtil.hideLoadingIndicator();
                 loadingMoreData = false;
 
-                if (poffset)
+                if (search)
                 {
-                    offset = poffset;
+                    searchDone = true;
+                    searchOffset = data.result.offset;
+                    hasMoreSearchData = data.result.has_more;
+                }
+                else
+                {
+                    offset = data.result.cursor;
+                    hasMoreData = data.result.has_more;
                 }
 
-                hasMoreData = data.result.has_more;
-                offset = data.result.cursor;
             });
         };
 
         var loadMoreData = function()
         {
-            if (loadingMoreData||!hasMoreData) return;
+            if (loadingMoreData) return;
+            if (!hasMoreData&&!(inSearchMode&&searchDone)) return;
+            if (!hasMoreSearchData&&(inSearchMode&&searchDone)) return;
 
-            loadListData(offset);
+            if (inSearchMode&&searchDone)
+            {
+                loadListData(true, searchOffset, searchOrder);
+            }
+            else
+            {
+                loadListData(false, offset);
+            }
 
-            adjustSize();
+            //adjustSize();
         };
 
         var adjustSize = function()
         {
-            var viewPoint = win.getBox();
+            viewPoint = win.getBox();
 
-            domStyle.set("listContainerStart", "height", (viewPoint.h-topBarHeight-bottomBarHeight)+"px");
+            domStyle.set("listContainerStart", "height", (viewPoint.h-topBarHeight)+"px");
 
             // reposition the menus dialog
             var menusDialog = registry.byId('menusDialog');
-            menusDialog.top = (viewPoint.h-bottomBarHeight-120)+'px';
-            menusDialog.left = (viewPoint.w-304)+'px';
+            menusDialog.top = topBarHeight+'px';
+            menusDialog.left = (viewPoint.w-204)+'px';
+
+            // set share dialog size
+            domStyle.set('appNameDialog', {
+                width: (viewPoint.w-appNameDialogGap)+'px',
+                height: (viewPoint.h-appNameDialogGap)+'px'
+            });
+
+            domStyle.set('sdTitle', 'height', sdTitleHeight+'px');
+            domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-sdBottom-appNameDialogGap)+'px');
+            domStyle.set('sdBottom', 'height', sdBottom+'px');
         };
 
         var goBackActivity = function()
@@ -168,6 +219,60 @@ define([
             {
                 navigator.app.exitApp();
             }
+        };
+
+        var cancelSearch = function()
+        {
+            if (originalData)
+            {
+                originalData.splice(0,0, 0, originalData.length);
+                eventsModel.model.splice.apply(eventsModel.model, [0,eventsModel.model.length]);
+                eventsModel.model.splice.apply(eventsModel.model, originalData);
+                originalData = null;
+            }
+
+            domStyle.set('navBtnBackHome', 'display', 'none');
+            domStyle.set('navLogoTextHome', 'display', '');
+            domStyle.set('tdBarMyStuff', 'display', '');
+            domStyle.set('tdbarSearchAnno', 'display', '');
+            domStyle.set('txtSearchAnno', 'display', 'none');
+            dom.byId("txtSearchAnno").value = "";
+            domStyle.set('tdHeadingLeft', 'width', '212px');
+            domStyle.set('annoLogoHome', 'paddingLeft', '10px');
+            domStyle.set('searchSortsBarHome', 'display', 'none');
+
+            domStyle.set("listContainerStart", "height", (viewPoint.h-topBarHeight)+"px");
+
+            inSearchMode = false;
+            searchDone = false;
+        };
+
+        var hideMenuDialog = function()
+        {
+            var menusDialog = registry.byId('menusDialog');
+            menusDialog.hide();
+
+            domClass.remove(menusDialog._cover[0], "transparentBack");
+            domStyle.set(menusDialog._cover[0], {"height": "100%", top:"0px"});
+
+            domClass.remove("barMoreMenuHome", 'barMoreMenuActive');
+        };
+
+        var showMenuDialog = function()
+        {
+            var viewPoint = win.getBox();
+
+            var menusDialog = registry.byId('menusDialog');
+            menusDialog.show();
+            domClass.add(menusDialog._cover[0], "transparentBack");
+            domStyle.set(menusDialog._cover[0], {"height": (viewPoint.h-topBarHeight)+"px", top:topBarHeight+"px"});
+
+            domClass.add("barMoreMenuHome", 'barMoreMenuActive');
+        };
+
+        var showAppNameDialog = function()
+        {
+
         };
 
         var _init = function()
@@ -208,27 +313,60 @@ define([
                     {
                         dojo.stopEvent(e);
                         registry.byId('menusDialog').hide();
-                        domClass.remove("barMenus", 'barIconHighlight');
-                        domClass.add("barFeed", 'barIconHighlight');
 
                         app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
                     }));
 
-                    _connectResults.push(connect.connect(dom.byId("barSearchAnno"), 'click', function(e)
+                    _connectResults.push(connect.connect(dom.byId("tdbarSearchAnno"), 'click', function(e)
                     {
-                        dojo.stopEvent(e);
-                        registry.byId('menusDialog').hide();
-                        domClass.remove("barMenus", 'barIconHighlight');
-                        domClass.add("barFeed", 'barIconHighlight');
+                        domStyle.set("listContainerStart", "height", (viewPoint.h-topBarHeight-searchSortsBarHeight)+"px");
 
-                        app.transitionToView(document.getElementById('modelApp_home'), {target:'searchAnno',url:'#searchAnno'});
+                        domStyle.set('navBtnBackHome', 'display', '');
+                        domStyle.set('navLogoTextHome', 'display', 'none');
+                        domStyle.set('tdBarMyStuff', 'display', 'none');
+                        domStyle.set('tdbarSearchAnno', 'display', 'none');
+                        domStyle.set('txtSearchAnno', 'display', '');
+                        domStyle.set('tdHeadingLeft', 'width', '95px');
+                        domStyle.set('annoLogoHome', 'paddingLeft', '0px');
+                        domStyle.set('searchSortsBarHome', 'display', '');
+
+                        dom.byId('txtSearchAnno').focus();
+                        inSearchMode = true;
+                        //dojo.stopEvent(e);
+                        //app.transitionToView(document.getElementById('modelApp_home'), {target:'searchAnno',url:'#searchAnno'});
+                    }));
+
+                    _connectResults.push(connect.connect(dom.byId("barMoreMenuHome"), 'click', function(e)
+                    {
+                        if (inSearchMode)
+                        {
+                            window.setTimeout(function(){
+                                var appNameDialog = registry.byId('appNameDialog');
+                                appNameDialog.show();
+                            }, 500);
+                        }
+                        else
+                        {
+                            var menusDialog = registry.byId('menusDialog');
+                            if (menusDialog.domNode.style.display === "")
+                            {
+                                hideMenuDialog();
+                            }
+                            else
+                            {
+                                showMenuDialog();
+                            }
+                        }
+                    }));
+
+                    _connectResults.push(connect.connect(dom.byId("tdLogo"), 'click', function(e)
+                    {
+                        cancelSearch();
                     }));
 
                     _connectResults.push(connect.connect(dom.byId("menuItemSettings"), 'click', function(e)
                     {
                         {
-                            domClass.remove("barMenus", 'barIconHighlight');
-                            domClass.add("barFeed", 'barIconHighlight');
                             registry.byId('menusDialog').hide();
                             app.transitionToView(document.getElementById('modelApp_home'), {target:'settings',url:'#settings'});
                         }
@@ -237,8 +375,6 @@ define([
                     _connectResults.push(connect.connect(dom.byId("menuItemIntro"), 'click', function(e)
                     {
                         registry.byId('menusDialog').hide();
-                        domClass.remove("barMenus", 'barIconHighlight');
-                        domClass.add("barFeed", 'barIconHighlight');
 
                         annoUtil.startActivity("Intro", false);
                     }));
@@ -246,8 +382,6 @@ define([
                     _connectResults.push(connect.connect(dom.byId("menuItemFeedback"), 'click', function(e)
                     {
                         registry.byId('menusDialog').hide();
-                        domClass.remove("barMenus", 'barIconHighlight');
-                        domClass.add("barFeed", 'barIconHighlight');
 
                         annoUtil.startActivity("Feedback", false);
                     }));
@@ -281,9 +415,31 @@ define([
                         goBackActivity();
                     }));
 
-                    _connectResults.push(connect.connect(window, has("ios") ? "orientationchange" : "resize", this, function (e)
+                    _connectResults.push(connect.connect(dom.byId('searchSortsBarRecent'), "click", function ()
                     {
-                        adjustSize();
+                        searchOrder = "recent";
+                        loadListData(true, null, "recent", true);
+                    }));
+
+                    _connectResults.push(connect.connect(dom.byId('searchSortsBarActive'), "click", function ()
+                    {
+                        searchOrder = "active";
+                        loadListData(true, null, "active", true);
+                    }));
+
+                    _connectResults.push(connect.connect(dom.byId('searchSortsBarPopular'), "click", function ()
+                    {
+                        searchOrder = "popular";
+                        loadListData(true, null, "popular", true);
+                    }));
+
+                    _connectResults.push(connect.connect(dom.byId('txtSearchAnno'), "keydown", function (e)
+                    {
+                        if (e.keyCode == 13)
+                        {
+                            dom.byId("hiddenBtn").focus();
+                            loadListData(true, null, searchOrder, true);
+                        }
                     }));
 
                     _connectResults.push(connect.connect(dom.byId('listContainerStart'), "scroll", this, function(){
