@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'icomoon';
-    src:url('fonts/icomoon.eot?-ivsjxc');
-    src:url('fonts/icomoon.eot?#iefix-ivsjxc') format('embedded-opentype'),
-    url('fonts/icomoon.woff?-ivsjxc') format('woff'),
-    url('fonts/icomoon.ttf?-ivsjxc') format('truetype'),
-    url('fonts/icomoon.svg?-ivsjxc#icomoon') format('svg');
+    src:url('fonts/icomoon.eot?gtitpe');
+    src:url('fonts/icomoon.eot?#iefixgtitpe') format('embedded-opentype'),
+    url('fonts/icomoon.woff?gtitpe') format('woff'),
+    url('fonts/icomoon.ttf?gtitpe') format('truetype'),
+    url('fonts/icomoon.svg?gtitpe#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -80,6 +80,9 @@
 .icon-share:before {
     content: "\e617";
 }
+.icon-filter:before {
+    content: "\e619";
+}
 .icon-chat:before {
     content: "\e605";
 }
@@ -100,7 +103,8 @@
 }
 
 
-#navBtnBackMyStuff, #navBtnBackSearchAnno, #navBtnBackScreenshot
+
+#navBtnBackMyStuff, #navBtnBackSearchAnno, #navBtnBackScreenshot, #navBtnBackHome
 {
     background-color: transparent;
     background: none;
@@ -112,6 +116,78 @@
     margin-top: 8px;
     width: 12px;
     padding-left: 2px;
+}
+
+.barMoreMenu
+{
+    width: 40px;
+    height: 40px;
+    background-image: url(images/ic_action_overflow.png);
+    background-repeat: no-repeat;
+    background-position: 60% 100%;
+    background-size: 100% 100%;
+}
+
+.barMoreMenuActive
+{
+    background-image: url(images/ic_action_overflow_active.png);
+}
+
+#searchSortsBarHome td
+{
+    border: 1px solid black;
+    border-bottom: none;
+}
+
+.searchSortItemActive
+{
+    background-color: #95BCF2;
+}
+
+.searchInput
+{
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid gray;
+    outline: none;
+    height: 22px;
+    line-height: 22px;
+    font-size: 13pt;
+    color: #555555;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.appNameItem
+{
+    height: 34px;
+    border-bottom: 1px outset gray;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.appNameItem-gray
+{
+    color: gray;
+}
+
+.firstAppNameItem
+{
+    border-top: 1px outset gray;
+    margin-top: 2px;
+    padding-top: 10px;
+}
+
+.appNameValue
+{
+    padding-left: 10px;
+}
+
+#appNameDialog .mblSimpleDialogContainer
+{
+    color: white;background-color: #000000;background-image: none;border-radius: 2px;font-size: 20px;text-align:left;
 }
 
 .annoListItemIcon
@@ -282,6 +358,7 @@
     height: 44px;
     padding-top: 4px;
     border: none;
+    line-height: normal;
 }
 
 .barIcon
@@ -445,7 +522,7 @@
     padding-left: 46px;
     padding-right: 20px;
     box-sizing: border-box;
-/*    overflow-x: hidden;*/
+    /*    overflow-x: hidden;*/
 }
 
 .commentTextbox{

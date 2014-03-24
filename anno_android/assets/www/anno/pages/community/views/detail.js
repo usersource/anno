@@ -267,7 +267,15 @@ define([
 
                 if (idx == 0)
                 {
-                    domClass.remove("navBtnNext", "navBtnDisabled");
+                    if (eventsModel.model.length>1)
+                    {
+                        domClass.remove("navBtnNext", "navBtnDisabled");
+                    }
+                    else
+                    {
+                        domClass.add("navBtnNext", "navBtnDisabled");
+                    }
+
                     domClass.add("navBtnPrevious", "navBtnDisabled");
                 }
                 else if (idx == (eventsModel.model.length-1))
