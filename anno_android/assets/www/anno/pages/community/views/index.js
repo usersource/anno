@@ -301,6 +301,14 @@ define([
             domStyle.set('noSearchResultContainer', 'display', 'none');
             domStyle.set('searchAppNameContainer', 'display', 'none');
             dom.byId('searchAppName').innerHTML = "";
+
+            domClass.remove(dom.byId("searchSortsBarRecent").parentNode);
+            domClass.remove(dom.byId("searchSortsBarActive").parentNode);
+            domClass.remove(dom.byId("searchSortsBarPopular").parentNode);
+            domClass.add(dom.byId("searchSortsBarRecent").parentNode, "searchSortItemActive");
+
+            searchOrder = SEARCH_ORDER.RECENT;
+
             selectedAppName = "";
 
             inSearchMode = false;
@@ -401,6 +409,7 @@ define([
         var doFilterAppName = function()
         {
             var appName = dom.byId("txtSearchAppName").value.trim(), matchedAppNameList = [];
+            selectedAppName = "";
 
             if (appName.length > 0)
             {
@@ -419,8 +428,11 @@ define([
                 fillAppNameList(appNameList);
             }
 
-            dom.byId('btnAppNameDialogDone').disabled = true;
-            domClass.add('btnAppNameDialogDone', "disabledBtn");
+            if (appName.length <=0)
+            {
+                dom.byId('btnAppNameDialogDone').disabled = true;
+                domClass.add('btnAppNameDialogDone', "disabledBtn");
+            }
         };
 
         var onChkLimitToMyApps = window.onChkLimitToMyApps = function()
@@ -606,6 +618,20 @@ define([
                         }
                     }));
 
+                    _connectResults.push(connect.connect(dom.byId('txtSearchAppName'), "input", function (e)
+                    {
+                        if (dom.byId('txtSearchAppName').value.trim().length >0)
+                        {
+                            dom.byId('btnAppNameDialogDone').disabled = false;
+                            domClass.remove('btnAppNameDialogDone', "disabledBtn");
+                        }
+                        else
+                        {
+                            dom.byId('btnAppNameDialogDone').disabled = true;
+                            domClass.add('btnAppNameDialogDone', "disabledBtn");
+                        }
+                    }));
+
                     _connectResults.push(connect.connect(dom.byId('icoSearchAppName'), "click", function ()
                     {
                         dom.byId("hiddenBtn").focus();
@@ -648,10 +674,26 @@ define([
                             return;
                         }
 
+                        var appName = selectedAppName;
+
+                        if (!appName)
+                        {
+                            if (dom.byId('txtSearchAppName').value.trim().length >0)
+                            {
+                                appName = dom.byId('txtSearchAppName').value.trim();
+                                selectedAppName = appName;
+                            }
+                            else
+                            {
+                                annoUtil.showMessageDialog("Please select app in apps list or enter app in search text box.");
+                                return;
+                            }
+                        }
+
                         hideAppNameDialog();
 
                         domStyle.set('searchAppNameContainer', 'display', '');
-                        dom.byId('searchAppName').innerHTML = selectedAppName;
+                        dom.byId('searchAppName').innerHTML = appName;
 
                         domStyle.set("listContainerStart", "height", (viewPoint.h-topBarHeight-searchSortsBarHeight-searchAppNameContainerHeight)+"px");
                         loadListData(true, null, searchOrder, true);
