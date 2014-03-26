@@ -37,20 +37,28 @@
             </tr>
         </table>
     </div>
+    <div id="searchAppNameContainer" style="display:none;height: 26px;padding-top: 0px;box-sizing: border-box;padding-left: 102px;padding-right:10px;background-color: black;font-size: 13pt;color: #A9A9A9;font-weight: bold;">
+        <span style="float: left">App:</span>
+        <span id="searchAppName" style="float: left;padding-left:4px;width:60%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis"></span>
+        <span id="closeSearchAppName" style="float: right;width: 40px;font-size: 16pt;">X</span>
+    </div>
     <div id="searchSortsBarHome" style="height: 26px;-webkit-box-shadow:0px 6px 6px #888888;box-shadow: 0px 6px 6px #888888;position: relative;display: none;z-index: 10">
         <table width="100%" height="100%" style="border-spacing: 0px;">
             <tr>
                 <td width="33.3%" align="center" class="searchSortItemActive" style="border-left: none;">
                     <div id="searchSortsBarRecent">Recent</div>
                 </td>
-                <td width="33.3%" align="center">
+                <td width="33.3%" align="center" style="border-left: none;">
                     <div id="searchSortsBarActive">Active</div>
                 </td>
-                <td width="33.3%" align="center" style="border-right: none;">
+                <td width="33.3%" align="center" style="border-left: none;border-right: none;">
                     <div id="searchSortsBarPopular">Popular</div>
                 </td>
             </tr>
         </table>
+    </div>
+    <div id="noSearchResultContainer" style="display:none;text-align: center;margin-top: 20px;color: #D37011">
+        <div>No items matched your search.</div>
     </div>
     <div id="listContainerStart" style="width: 100%;overflow: auto">
         <ul data-dojo-type="dojox/mobile/EdgeToEdgeList">
@@ -98,24 +106,6 @@
 
         </ul>
     </div>
-    <div class="homeBottomBar" style="position: absolute;left: 0px;bottom: 0px;display: none">
-        <table width="100%">
-            <tr>
-                <td width="25%" align="center">
-                    <span id="barFeed" style="font-size: 24px;font-weight: bold;" class="barIconHighlight">Feed</span>
-                </td>
-                <td width="25%" align="center">
-                    <span id="barMyStuff2" style="font-weight: bold;" class="barIcon icon-star-empty"></span>
-                </td>
-                <td width="25%" align="center">
-                    <span id="barSearchAnno2" class="barIcon icon-search" style="font-size: 36px;"></span>
-                </td>
-                <td width="25%" align="center">
-                    <span id="barMenus" class="barIcon icon-cog"></span>
-                </td>
-            </tr>
-        </table>
-    </div>
     <div id="menusDialog" data-dojo-type="dojox/mobile/SimpleDialog" style="display: none;width: 200px;height: 116px;padding: 0px;border:2px solid black;border-top-color:black ">
         <div id="menuItemIntro" class="menuItem">Intro</div>
         <div id="menuItemFeedback" class="menuItem">Feedback</div>
@@ -128,39 +118,27 @@
                 <table width="100%">
                     <tr>
                         <td>
-                            <input type="text" placeholder="App name" class="searchInput">
+                            <input id="txtSearchAppName" type="search" placeholder="App name" class="searchInput">
                         </td>
                         <td width="50">
-                            <span class="icon-search" style="font-size: 30px;"></span>
+                            <span id="icoSearchAppName" class="icon-search" style="font-size: 30px;"></span>
                         </td>
                     </tr>
                 </table>
             </div>
         </div>
-        <div id="sdAppList">
+        <div id="sdAppList" style="overflow-y:auto">
             <div id="sdAppListContent">
-                <div class="appNameItem firstAppNameItem">
-                    <div class="appNameValue">Clock</div>
-                </div>
-                <div class="appNameItem">
-                    <div class="appNameValue">Dogfood</div>
-                </div>
-                <div class="appNameItem">
-                    <div class="appNameValue">Eggplant cookbook</div>
-                </div>
-                <div class="appNameItem">
-                    <div class="appNameValue">Groupon</div>
-                </div>
             </div>
         </div>
         <div id="sdBottom" style="padding-left: 20px">
             <div style="text-align: center">
-                <input id="chkHidePersonalData" type="checkbox" data-dojo-type="dojox/mobile/CheckBox" data-dojo-props="onChange2:'onChkHidePersonalDataChange'">
-                <label for="chkHidePersonalData">Limit to my apps</label>
+                <input id="chkLimitToMyApps" type="checkbox" data-dojo-type="dojox/mobile/CheckBox" data-dojo-props="onChange:onChkLimitToMyApps">
+                <label for="chkLimitToMyApps">Limit to my apps</label>
             </div>
-            <div style="text-align: center">
-                <button class="btn" id="btnShare33" type="button">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <button class="btn" id="btnShare" type="button">Done</button>
+            <div style="text-align: center;padding-top: 10px">
+                <button class="btn" id="btnAppNameDialogCancel" type="button">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="btn disabledBtn" id="btnAppNameDialogDone" disabled="disabled" type="button">Done</button>
             </div>
         </div>
     </div>

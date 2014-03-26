@@ -154,7 +154,7 @@
     height: 22px;
     line-height: 22px;
     font-size: 13pt;
-    color: #555555;
+    color: #A9A9A9;
     font-weight: bold;
     vertical-align: middle;
 }
@@ -624,6 +624,11 @@
     border: 1px solid transparent;
     border-radius: 4px;
     -webkit-user-select: none;
+}
+
+.disabledBtn
+{
+    opacity: 0.5;
 }
 
 .screenshotContainer
