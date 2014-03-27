@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -49,6 +52,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
   public static final String START_ACTIVITY = "start_activity";
   public static final String CLOSE_SOFTKEYBOARD = "close_softkeyboard";
   public static final String SHOW_SOFTKEYBOARD = "show_softkeyboard";
+  public static final String GET_INSTALLED_APP_LIST = "get_installed_app_list";
 
   // activity names
   public static final String ACTIVITY_INTRO = "Intro";
@@ -76,6 +80,10 @@ public class AnnoCordovaPlugin extends CordovaPlugin
     }
     else if (GET_RECENT_APPLIST.equals(action)) {
       getRecentTasks(args, callbackContext);
+      return true;
+    }
+    else if (GET_INSTALLED_APP_LIST.equals(action)) {
+      getInstalledAppList(args, callbackContext);
       return true;
     }
     else if (GET_SCREENSHOT_PATH.equals(action)) {
@@ -414,6 +422,38 @@ public class AnnoCordovaPlugin extends CordovaPlugin
 
       }
 
+    }
+
+    callbackContext.success(jsonArray);
+  }
+
+  /**
+   * get user installed app list
+   * @param args
+   * @param callbackContext
+   * @return
+   * @throws JSONException
+   */
+  private void getInstalledAppList(JSONArray args, CallbackContext callbackContext) throws JSONException
+  {
+    Activity activity = this.cordova.getActivity();
+
+    PackageManager packageManager = activity.getPackageManager();
+    List<PackageInfo> apps = packageManager.getInstalledPackages(0);
+
+    JSONArray jsonArray = new JSONArray();
+    JSONObject jso = null;
+    for (PackageInfo app : apps)
+    {
+      if ((app.applicationInfo.flags&ApplicationInfo.FLAG_SYSTEM)==0)
+      {
+        jso = new JSONObject();
+        jso.put("name", app.applicationInfo.loadLabel(packageManager).toString());
+        jso.put("packageName", app.packageName);
+        jso.put("versionCode", app.versionCode);
+
+        jsonArray.put(jso);
+      }
     }
 
     callbackContext.success(jsonArray);
