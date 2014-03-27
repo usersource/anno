@@ -129,8 +129,8 @@ class AnnoApi(remote.Service):
             raise endpoints.BadRequestException("Duplicate anno(%s) already exists." % exist_anno.key.id())
         entity = Anno.insert_anno(request, user)
 
-        # index this document.
-        anno_document = entity.generate_search_document
+        # index this document. strange exception here.
+        anno_document = entity.generate_search_document()
         put_search_document(anno_document)
 
         return entity.to_response_message()
