@@ -3,14 +3,17 @@ define([
     "dojo/_base/connect",
     "dojo/dom-style",
     "dojo/json",
+    "dojo/request/xhr",
     "dojo/window",
     "dojox/mobile/SimpleDialog",
     "dojox/mobile/_ContentPaneMixin",
     "dijit/registry",
+    "dojo/text!../../ChinaIpTable.json",
     "dojo/text!../../server-url.json",
     "anno/common/DBUtil"
-], function(declare, connect, domStyle, dojoJson, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, DBUtil){
+], function(declare, connect, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, ChinaIpTable, serverURLConfig, DBUtil){
 
+    ChinaIpTable = dojoJson.parse(ChinaIpTable);
     serverURLConfig = dojoJson.parse(serverURLConfig);
     console.error("using server Url config:" + JSON.stringify(serverURLConfig));
     var util = {
@@ -24,6 +27,8 @@ define([
         level1ColorRGB:"255, 153, 0",
         level2Color:"#ff0000",
         level2ColorRGB:"255, 0, 0",
+        ChinaIpTable:ChinaIpTable.ChinaIpTable,
+        myIPIsServiceUrl:"http://178.18.16.111/myipis",
         annoScreenshotPath:null,
         annoPermaLinkBaseUrl:"http://anno-webapp.appspot.com/usersource/pages/permalink/index.html#/anno/",
         API:{
@@ -439,29 +444,77 @@ define([
         inChina: function(callback)
         {
             console.error("invoke inChina");
-            var lat = [18.432217, 53.5106];
-            var longti = [73.077767, 135.029667];
-            this.getCurrentPosition(function(position){
-                var latitude = position.coords.latitude,
-                    longitude = position.coords.longitude;
 
-                console.error("current position: "+JSON.stringify(position));
-                //alert("current position: latitude:"+latitude+", longitude:"+longitude);
-                if (latitude >= lat[0] && latitude <= lat[1] &&longitude >= longti[0] && longitude <= longti[1])
-                {
-                    console.error("Anno running in China!");
-                    //alert("Anno running in China!");
-                    callback(true);
-                }
-                else
-                {
-                    callback(false);
-                }
-            }, function(error){
-                console.error("get current position error: "+JSON.stringify(error));
-                //alert("get current position error: "+JSON.stringify(error));
-                callback(false);
+            var self = this;
+            this.getIPAddress(function(ip){
+                callback(self.isIpInChina(ip));
             });
+        },
+        getIPAddress: function(callback)
+        {
+            this._getIpAddressFromServer(callback);
+        },
+        _getIpAddressFromServer: function(callback)
+        {
+            this.showLoadingIndicator();
+            var self = this;
+            xhr.get(this.myIPIsServiceUrl,
+                {
+                    handleAs: "text",
+                    headers:{"X-Requested-With":""}
+                }).then(function (res)
+                {
+                    console.error("got ip from myipis service: "+res);
+                    callback(res);
+                    self.hideLoadingIndicator();
+                },
+                function (res)
+                {
+                    self.hideLoadingIndicator();
+                    alert("getting IP Address from myipis service failed: "+res);
+                    navigator.app.exitApp();
+                });
+        },
+        isIpInChina: function(ip)
+        {
+            var iPTable = this.ChinaIpTable, ipItem, ipInt = this.ip2Int(ip);
+            console.error("user ip is: "+ip+", ipInt is: "+ ipInt);
+
+            for (var i= 0,c=iPTable.length;i<c;i++)
+            {
+                ipItem = iPTable[i];
+
+                if (ipInt >= ipItem.iSt && ipInt <= ipItem.iEd)
+                {
+                    console.error("user ip is in China.");
+                    return true;
+                }
+            }
+
+            console.error("user ip is not in China.");
+            return false;
+        },
+        ip2Int: function (s)
+        {
+            var r = '';
+            for (var i in a = s.split('.'))
+                r += parseInt(a[i]) <= 9 ?'0' + parseInt(a[i]).toString(16) :parseInt(a[i]).toString(16);
+
+            return parseInt('0x' + r);
+        },
+        int2Ip: function (s)
+        {
+            var ip = '', r;
+            s = parseInt(s).toString(16);
+            for (var i = 0; i < s.length; i++)
+            {
+                r = '';
+                r += s[i];
+                i++;
+                r += s[i];
+                ip += parseInt('0x' + r).toString(10) + '.';
+            }
+            return ip.substr(0, ip.length - 1);
         },
         chooseProxyServer:function()
         {
