@@ -4,7 +4,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
         " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     var update_anno_synched_by_created_sql = "update feedback_comment set synched=1,object_key=? where created=?";
     var update_anno_synched_by_id_sql = "update feedback_comment set synched=1,object_key=? where _id=?";
-    var select_anno_sql = "select * from feedback_comment";
+    var select_anno_sql = "select * from feedback_comment where synched=0";
     var select_anno_sync_sql = "select * from feedback_comment where synched=0 LIMIT 1";
     var save_userInfo_sql = "insert into app_users(userid,email,signinmethod,nickname,password) values (?,?,?,?,?)";
     var select_userInfo_sql = "select * from app_users";
@@ -208,7 +208,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
             }, onSQLError);
         },
         loadLocalAnnos: function(callback)
-        {console.error("loadLocalAnnos: start");
+        {
             DBUtil.executeUpdateSql(select_anno_sql,[], function(res){
                 var annos = [];
                 var cnt = res.rows.length;
@@ -222,7 +222,8 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                 callback(annos);
             }, function(err){
                 console.error("loadLocalAnnos: "+err);
-            });//onSQLError
+                callback([]);
+            });
         },
         startBackgroundSync: function()
         {

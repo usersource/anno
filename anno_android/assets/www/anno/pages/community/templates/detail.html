@@ -22,7 +22,7 @@
 
     </div>
 
-    <div class="fieldset" data-dojo-type="dojox/mvc/Group"
+    <div class="fieldset" id="mvcGroupDetail" data-dojo-type="dojox/mvc/Group"
          data-dojo-props="target: at(this.loadedModels.events, 'cursor')">
         <div id="screenshotContainerDetail" class="screenshotContainerDetail">
             <img id="imgDetailScreenshot" class="imgDetailScreenshot" style="background-color: #c5ccd3;width: 100%;height: 100%" width="100%" height="100%" data-dojo-type="dojox/mvc/Output"
@@ -54,7 +54,7 @@
                     </table>
                 </div>
                 <div id="annoTextDetail" class="annoTextDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'annoText')"></div>
-                <div style="padding-bottom: 8px">
+                <div id="voteFlagContainer" style="padding-bottom: 8px">
                     <table width="100%"  cellpadding="0" cellspacing="0" style="padding-top: 4px;">
                         <tr>
                             <td width="33%" align="center">
