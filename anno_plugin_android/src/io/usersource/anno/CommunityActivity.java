@@ -33,14 +33,9 @@ public class CommunityActivity extends DroidGap {
     super.onCreate(savedInstanceState);
     super.init();
 
-    /*File database=getApplicationContext().getDatabasePath("anno.db");
-
-    if (!database.exists())
-    {
-      Intent intent = new Intent(this, IntroActivity.class);
-      //startActivity(intent);
-    }*/
-
+    /**
+     * spiral gesture support start
+     */
     GestureOverlayView view = new GestureOverlayView(this);
     view.setLayoutParams(new LinearLayout.LayoutParams(
         LinearLayout.LayoutParams.MATCH_PARENT,
@@ -54,6 +49,9 @@ public class CommunityActivity extends DroidGap {
 
     setContentView(view);
     AnnoUtils.setEnableGesture(this, view, true);
+    /**
+     * spiral gesture support end
+     */
 
     super.loadUrl("file:///android_asset/www/anno/pages/community/main.html");
 

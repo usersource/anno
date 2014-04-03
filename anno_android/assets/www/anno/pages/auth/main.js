@@ -17,6 +17,15 @@ require([
         console.log("Worked!");
 
         document.addEventListener("deviceready", function(){
+
+            if (!annoUtil.hasConnection())
+            {
+                annoUtil.showMessageDialog("Please sign-up/sign-in when there is a connection.", function(){
+                    navigator.app.exitApp();
+                });
+                return;
+            }
+
             DBUtil.initDB(function(){
                 console.error("DB is readay!");
                 AnnoDataHandler.removeUser();
@@ -36,9 +45,8 @@ require([
                             }
 
                             Application(config);
+                            annoUtil.hideLoadingIndicator();
                         });
-
-                        annoUtil.hideLoadingIndicator();
                     }
                     else
                     {

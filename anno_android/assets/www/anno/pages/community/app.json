@@ -50,6 +50,12 @@
             "params":	{
                 "data": ""
             }
+        },
+        "mystuffStore":{
+            "type": "dojo/store/Memory",
+            "params":	{
+                "data": ""
+            }
         }
     },
 
@@ -59,6 +65,13 @@
             "type":"dojox/mvc/EditStoreRefListController",
             "params":{
                 "store":{"$ref":"#stores.eventsStore"}
+            }
+        },
+        "mystuff":{
+            "modelLoader":"dojox/app/utils/mvcModel",
+            "type":"dojox/mvc/EditStoreRefListController",
+            "params":{
+                "store":{"$ref":"#stores.mystuffStore"}
             }
         }
     },

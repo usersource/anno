@@ -16,11 +16,12 @@ define([
     "dojox/css3/transit",
     "dojo/store/Memory",
     "dojox/mvc/getStateful",
+    "dojox/mvc/at",
     "anno/draw/Surface",
     "anno/common/Util",
     "anno/common/OAuthUtil"
 ],
-    function (arrayUtil, baseFX, dom, domClass, domGeom, domStyle, dojoJson, query, lang, connect, win, has, sniff, registry, transit, Memory, getStateful, Surface, annoUtil, OAuthUtil)
+    function (arrayUtil, baseFX, dom, domClass, domGeom, domStyle, dojoJson, query, lang, connect, win, has, sniff, registry, transit, Memory, getStateful, at, Surface, annoUtil, OAuthUtil)
     {
         var _connectResults = [],
             eventsModel = null,
@@ -30,6 +31,7 @@ define([
         var app = null,
             savingVote = false,
             savingFlag = false,
+            localScreenshotPath = "",
             screenshotMargin = 0;
         var annoTooltipY,
             goingNextRecord = null,
@@ -267,7 +269,15 @@ define([
 
                 if (idx == 0)
                 {
-                    domClass.remove("navBtnNext", "navBtnDisabled");
+                    if (eventsModel.model.length>1)
+                    {
+                        domClass.remove("navBtnNext", "navBtnDisabled");
+                    }
+                    else
+                    {
+                        domClass.add("navBtnNext", "navBtnDisabled");
+                    }
+
                     domClass.add("navBtnPrevious", "navBtnDisabled");
                 }
                 else if (idx == (eventsModel.model.length-1))
@@ -531,6 +541,12 @@ define([
             });
         };
 
+        var showLocalAnno = function()
+        {
+            var currentAnno = eventsModel.cursor;
+            dom.byId('imgDetailScreenshot').src = localScreenshotPath+"/"+currentAnno.screenshot_key;
+        };
+
         var loadDetailData = function(cursor)
         {
             if (loadingDetailData||loadingImage) return;
@@ -552,6 +568,21 @@ define([
             else
             {
                 id = eventsModel.cursor.id;
+            }
+
+            if (id == null)
+            {
+                loadingDetailData = false;
+                domStyle.set('voteFlagContainer', 'visibility', 'hidden');
+                domStyle.set('addCommentContainer', 'visibility', 'hidden');
+                showLocalAnno();
+                setDetailsContext(cursor);
+                return;
+            }
+            else
+            {
+                domStyle.set('voteFlagContainer', 'visibility', 'visible');
+                domStyle.set('addCommentContainer', 'visibility', 'visible');
             }
 
             loadingImage = true;
@@ -851,6 +882,7 @@ define([
             init:function ()
             {
                 eventsModel = this.loadedModels.events;
+                localScreenshotPath = annoUtil.getAnnoScreenshotPath();
 
                 _connectResults.push(connect.connect(window, has("ios") ? "orientationchange" : "resize", this, function (e)
                 {
@@ -1099,6 +1131,18 @@ define([
                 var cursor = this.params["cursor"];
                 if (this.params["cursor"] != null)
                 {
+                    var source = this.params["source"];
+                    if (source == "mystuff")
+                    {
+                        eventsModel = this.loadedModels.mystuff;
+                        registry.byId("mvcGroupDetail").set('target',at(this.loadedModels.mystuff, 'cursor'));
+                    }
+                    else
+                    {
+                        eventsModel = this.loadedModels.events;
+                        registry.byId("mvcGroupDetail").set('target',at(this.loadedModels.events, 'cursor'));
+                    }
+
                     window.setTimeout(function(){
                         loadDetailData(cursor);
                     }, 50);

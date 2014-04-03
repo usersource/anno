@@ -26,8 +26,9 @@ import android.os.Environment;
 import android.util.Log;
 
 /**
- * Screenshot gesture listener, detect and process spiral gesture.
- * 
+ * Screenshot gesture listener,
+ * this class will detect and process spiral gesture.
+ * if spiral gesture detected, will take screenshot then launch AnnoDrawActivity
  * @author topcircler
  * 
  */
