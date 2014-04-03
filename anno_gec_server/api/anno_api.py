@@ -129,9 +129,8 @@ class AnnoApi(remote.Service):
             raise endpoints.BadRequestException("Duplicate anno(%s) already exists." % exist_anno.key.id())
         entity = Anno.insert_anno(request, user)
 
-        # index this document.
-        anno_document = entity.generate_search_document
-        put_search_document(anno_document)
+        # index this document. strange exception here.
+        put_search_document(entity.generate_search_document())
 
         return entity.to_response_message()
 
@@ -160,7 +159,7 @@ class AnnoApi(remote.Service):
         anno.last_activity = 'anno'
         anno.put()
         # update search document.
-        put_search_document(anno.generate_search_document)
+        put_search_document(anno.generate_search_document())
         return anno.to_response_message()
 
     @endpoints.method(anno_with_id_resource_container, message_types.VoidMessage, path='anno/{id}',
