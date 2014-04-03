@@ -284,10 +284,29 @@ define([
 
 
         },
-        openAuthPage: function()
+        getPhoneGapPath:function(source)
         {
-            var url = "file:///android_asset/www/anno/pages/auth/main.html?callback="+document.location.href;
+            source = source||"home";
+            var path = window.location.pathname;
+            if (source == "home")
+            {
+                // for anno/pages/community/main.html
+                path = path.substr(0, path.length - 30);
+            }
+            else
+            {
+                // for anno/pages/annodraw/main.html
+                path = path.substr(0, path.length - 29);
+            }
+
+            return 'file://' + path;
+        },
+        openAuthPage: function(source)
+        {
+            var url = this.getPhoneGapPath(source)+"anno/pages/auth/main.html?callback="+document.location.href;
             var ref2 = window.open(url, '_self', 'location=no');
+
+            console.error("anno auth page url: "+url);
         },
         processBasicAuthToken: function(userInfo)
         {

@@ -644,7 +644,7 @@ require([
             var authResult = OAuthUtil.isAuthorized();
             if (annoUtil.hasConnection()&&!authResult.authorized)
             {
-                OAuthUtil.openAuthPage();
+                OAuthUtil.openAuthPage("annodraw");
                 return;
             }
             else
