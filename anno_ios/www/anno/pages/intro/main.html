@@ -1,0 +1,280 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <title>Community MVP</title>
+    <link type="text/css" href="../community/css/style.css" rel="stylesheet"/>
+    <script type="text/javascript">
+        var dojoConfig = {
+            parseOnLoad: true,
+            mblHideAddressBar: false,
+            mblAndroidWorkaround: false,
+            mblAlwaysHideAddressBar: false,
+            async: 1,
+            mblUserAgent: 'iPhone'
+        };
+    </script>
+    <script type="text/javascript" src="../../scripts/dojo/dojo.js"></script>
+    <script>
+        var wentToMainActivity = false;
+
+        var gotoMainActivity = function ()
+        {
+            navigator.app.exitApp();
+        };
+
+        require([
+            "dojo/ready",
+            "dojo/_base/connect",
+            "dojo/dom",
+            "dojo/json",
+            "dijit/registry",
+            "dojo/text!../../scripts/hardware-buttons.json",
+            "dojox/mobile/deviceTheme",
+            "dojo/parser",
+            "dojox/mobile/compat"], function (ready, connect, dom, dojoJson, registry, hardwareButtons)
+        {
+            hardwareButtons = dojoJson.parse(hardwareButtons);
+            console.error(hardwareButtons);
+
+            document.addEventListener("deviceready", function(){
+                var model = window.device.model;
+                console.error("Device model is "+model);
+                if (hardwareButtons[model])
+                {
+                    dom.byId("divTSDescription").innerHTML = hardwareButtons[model].text;
+                }
+                else
+                {
+                    if (hardwareButtons["default"])
+                    {
+                        dom.byId("divTSDescription").innerHTML = hardwareButtons["default"].text;
+                    }
+                    else
+                    {
+                        dom.byId("divTSDescription").innerHTML = "Use your device's screenshot capability";
+                    }
+                }
+            }, false);
+
+            ready(function ()
+            {
+                connect.connect(dom.byId("closeMark"), "click", function (e)
+                {
+                    gotoMainActivity();
+                });
+
+                connect.connect(dom.byId("greenBlockTS"), "click", function (e)
+                {
+                    registry.byId('homeView').performTransition("page1View", 1, "slide", null);
+                });
+
+                connect.connect(dom.byId("greenBlockAS"), "click", function (e)
+                {
+                    registry.byId('homeView').performTransition("page2View", 1, "slide", null);
+                });
+
+                connect.connect(dom.byId("btnGotItHome"), "click", function (e)
+                {
+                    gotoMainActivity();
+                });
+
+                connect.connect(dom.byId("btnGotItPage1"), "click", function (e)
+                {
+                    registry.byId('page1View').performTransition("homeView", -1, "slide", null);
+                });
+
+                connect.connect(dom.byId("btnGotItPage2"), "click", function (e)
+                {
+                    registry.byId('page2View').performTransition("homeView", -1, "slide", null);
+                });
+            });
+        });
+    </script>
+    <script type="text/javascript" src="../../../cordova.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: #404040;
+            color: #ffffff;
+        }
+
+        .mblBackground {
+            background-color: #404040;
+        }
+
+        .annoOrangeColor {
+            color: #F1582A;
+        }
+
+        .greenBlock
+        {
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            border: 1px solid #1C8436;
+            border-radius: 8px;
+            background-color: #1C8436;
+            color: #ffffff;
+            font-size: 16pt;
+            padding: 10px 8px 10px 8px;
+        }
+
+        .closeMark
+        {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 2000;
+            width: 20px;
+            text-align: center;
+            color: #989892;
+            font-weight: bold;
+            font-size: 15pt;
+        }
+    </style>
+</head>
+<body id="container">
+<div id="closeMark" class="closeMark">X</div>
+<div id="homeView" style="background-color: #404040;" data-dojo-type="dojox/mobile/View" selected="true">
+    <div style="text-align: center;padding-top: 20px">
+        <table width="100%">
+            <tr>
+                <td align="right" width="50%">
+                    <img src="../community/css/images/anno96.png" alt="">
+                </td>
+                <td align="left" width="50%" style="vertical-align: top;">
+                    <div style="font-size: 22pt;font-weight: bold;" class="annoOrangeColor">UserSource</div>
+                    <div style="font-size: 16pt;">a great way to<br> improve apps</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div style="padding-top: 30px">
+        <div id="greenBlockTS" style="width: 310px;" class="greenBlock">
+            <table>
+                <tr>
+                    <td>
+                        <div style="font-size: 28pt;padding-right: 10px;">1</div>
+                    </td>
+                    <td>
+                        <div style="text-align: left">
+                            Take a screenshot and open<br>it with UserSource &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &gt&gt
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div style="padding-top: 20px">
+        <div id="greenBlockAS" style="width: 310px;height: 52px;padding-top: 14px;" class="greenBlock">
+            <table>
+                <tr>
+                    <td>
+                        <div style="font-size: 28pt;padding-right: 10px;">2</div>
+                    </td>
+                    <td>
+                        <div style="text-align: left">
+                            Annotate and share &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &gt&gt
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div style="text-align: center;padding-top: 50px;">
+        <button id="btnGotItHome" class="bigGreenBtn" style="width: 206px;height: 48px;">Got it!</button>
+    </div>
+</div>
+<div id="page1View" style="background-color: #404040;" data-dojo-type="dojox/mobile/View">
+    <div style="text-align: center;padding-top: 20px;width: 298px;margin-left: auto;margin-right: auto;">
+        <table width="100%" style="border-spacing: 0px;">
+            <tr>
+                <td align="left" width="48">
+                    <img src="../community/css/images/anno.png" alt="">
+                </td>
+                <td align="left">
+                    <div style="font-size: 22pt;font-weight: bold;padding-left: 8px" class="annoOrangeColor">UserSource</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div style="padding-top: 6px">
+        <div style="width: 280px;padding-top: 2px;padding-bottom: 2px;" class="greenBlock">
+            <table>
+                <tr>
+                    <td>
+                        <div style="font-size: 28pt;padding-right: 10px;">1</div>
+                    </td>
+                    <td>
+                        <div style="text-align: left">
+                            Take a screenshot and<br>open it with UserSource
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div style="text-align: left;width: 298px;margin-left: auto;margin-right: auto;padding-top: 16px;">
+        <div style="font-size: 16pt;">Take a screenshot</div>
+        <div id="divTSDescription" style="padding-top: 8px;padding-left: 16px;">Hold Power + Volume down buttons at the same time</div>
+    </div>
+    <div style="text-align: left;width: 298px;margin-left: auto;margin-right: auto;padding-top: 26px;">
+        <div style="font-size: 16pt;">Open it with UserSource</div>
+        <div style="padding-top: 8px;padding-left: 16px;">Find your screenshot in System bar at top of screen, tap <span class="icon-share" style="font-size: 16pt;"></span> (Share), select UserSource</div>
+    </div>
+    <div style="text-align: center;padding-top: 60px;">
+        <button id="btnGotItPage1" class="bigGreenBtn" style="width: 206px;height: 48px;">Got it!</button>
+    </div>
+</div>
+<div id="page2View" style="background-color: #404040;" data-dojo-type="dojox/mobile/View">
+    <div style="text-align: center;padding-top: 20px;width: 298px;margin-left: auto;margin-right: auto;">
+        <table width="100%" style="border-spacing: 0px;">
+            <tr>
+                <td align="left" width="48">
+                    <img src="../community/css/images/anno.png" alt="">
+                </td>
+                <td align="left">
+                    <div style="font-size: 22pt;font-weight: bold;padding-left: 8px" class="annoOrangeColor">UserSource</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div style="padding-top: 6px">
+        <div style="width: 280px;padding-top: 2px;padding-bottom: 2px;" class="greenBlock">
+            <table>
+                <tr>
+                    <td>
+                        <div style="font-size: 28pt;padding-right: 10px;">2</div>
+                    </td>
+                    <td>
+                        <div style="text-align: left">
+                            Annotate and share
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div style="text-align: left;width: 298px;margin-left: auto;margin-right: auto;padding-top: 16px;">
+        <div style="font-size: 16pt;">Highlight or hide</div>
+        <div style="padding-top: 8px;padding-left: 16px;">Use the drawing tools to draw on your screenshot</div>
+    </div>
+    <div style="text-align: left;width: 298px;margin-left: auto;margin-right: auto;padding-top: 12px;">
+        <div style="font-size: 16pt;">Make suggestions</div>
+        <div style="padding-top: 8px;padding-left: 16px;">Write your ideas as clearly as possible</div>
+    </div>
+    <div style="text-align: left;width: 298px;margin-left: auto;margin-right: auto;padding-top: 12px;">
+        <div style="font-size: 16pt;">Tap "Share"</div>
+        <div style="padding-top: 8px;padding-left: 16px;">Announce your ideas to the UserSource community</div>
+    </div>
+    <div style="text-align: center;padding-top: 20px;">
+        <button id="btnGotItPage2" class="bigGreenBtn" style="width: 206px;height: 48px;">Got it!</button>
+    </div>
+</div>
+</body>
+</html>
