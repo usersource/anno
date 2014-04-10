@@ -1,4 +1,4 @@
-cordova.define("org.apache.cordova.file.FileUploadResult", function(require, exports, module) {/*
+cordova.define("org.apache.cordova.file.iosEntry", function(require, exports, module) {/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -19,12 +19,18 @@ cordova.define("org.apache.cordova.file.FileUploadResult", function(require, exp
  *
 */
 
-/**
- * FileUploadResult
- * @constructor
- */
-module.exports = function FileUploadResult(size, code, content) {
-	this.bytesSent = size;
-	this.responseCode = code;
-	this.response = content;
- };});
+module.exports = {
+    toURL:function() {
+        // TODO: refactor path in a cross-platform way so we can eliminate
+        // these kinds of platform-specific hacks.
+        if (this.filesystem && this.filesystem.__format__) {
+          return this.filesystem.__format__(this.fullPath);
+        }
+        return "file://localhost" + this.fullPath;
+    },
+    toURI: function() {
+        console.log("DEPRECATED: Update your code to use 'toURL'");
+        return this.toURL();
+    }
+};
+});

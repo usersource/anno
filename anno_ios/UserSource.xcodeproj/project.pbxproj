@@ -8,12 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		0E1E5C163305482D9FE92DFB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 994E9862B7E0481DAE979731 /* SystemConfiguration.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		1D02161518EECEE100E97738 /* libCordova.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D02161418EECEE100E97738 /* libCordova.a */; };
 		1D02161718EED12600E97738 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D02161618EED12600E97738 /* Social.framework */; };
 		1D0F183D18EFD9AA004719E0 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D02161818EED18600E97738 /* MessageUI.framework */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D933EBA18F26F6400C82F37 /* AnnoCordovaPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D933EB918F26F6400C82F37 /* AnnoCordovaPlugin.m */; };
+		1DCEDDD918F65BEB006313FD /* libCordova.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DCEDDD818F65BEB006313FD /* libCordova.a */; };
 		1DDCA4EB18F41A2B006E63FE /* AnnoDrawViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDCA4E418F41A2B006E63FE /* AnnoDrawViewController.m */; };
 		1DDCA4EC18F41A2B006E63FE /* CommunityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDCA4E618F41A2B006E63FE /* CommunityViewController.m */; };
 		1DDCA4ED18F41A2B006E63FE /* IntroViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDCA4E818F41A2B006E63FE /* IntroViewController.m */; };
@@ -89,6 +89,7 @@
 		1D6058910D05DD3D006BFB54 /* UserSource.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UserSource.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D933EB818F26F6400C82F37 /* AnnoCordovaPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnnoCordovaPlugin.h; sourceTree = "<group>"; };
 		1D933EB918F26F6400C82F37 /* AnnoCordovaPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnnoCordovaPlugin.m; sourceTree = "<group>"; };
+		1DCEDDD818F65BEB006313FD /* libCordova.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCordova.a; path = UserSource/libCordova.a; sourceTree = "<group>"; };
 		1DDCA4E318F41A2B006E63FE /* AnnoDrawViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnnoDrawViewController.h; sourceTree = "<group>"; };
 		1DDCA4E418F41A2B006E63FE /* AnnoDrawViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnnoDrawViewController.m; sourceTree = "<group>"; };
 		1DDCA4E518F41A2B006E63FE /* CommunityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityViewController.h; sourceTree = "<group>"; };
@@ -162,9 +163,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1DCEDDD918F65BEB006313FD /* libCordova.a in Frameworks */,
 				1D0F183D18EFD9AA004719E0 /* MessageUI.framework in Frameworks */,
 				1D02161718EED12600E97738 /* Social.framework in Frameworks */,
-				1D02161518EECEE100E97738 /* libCordova.a in Frameworks */,
 				5B1594DD16A7569C00FEF299 /* AssetsLibrary.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
 				305D5FD1115AB8F900A74A75 /* MobileCoreServices.framework in Frameworks */,
@@ -266,6 +267,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1DCEDDD818F65BEB006313FD /* libCordova.a */,
 				1D0F183B18EFD943004719E0 /* StoreKit.framework */,
 				1D02161818EED18600E97738 /* MessageUI.framework */,
 				1D02161618EED12600E97738 /* Social.framework */,
@@ -586,6 +588,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/emulator",
 					"$(PROJECT_DIR)/build/device",
+					"$(PROJECT_DIR)/UserSource",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
@@ -625,6 +628,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/emulator",
 					"$(PROJECT_DIR)/build/device",
+					"$(PROJECT_DIR)/UserSource",
 				);
 				OTHER_LDFLAGS = (
 					"-weak_framework",
