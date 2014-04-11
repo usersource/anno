@@ -6,11 +6,12 @@ define([
     "dojo/query",
     "dojo/window",
     "dijit/registry",
+    "anno/common/DBUtil",
     "anno/common/Util",
     "anno/common/OAuthUtil",
     "anno/anno/AnnoDataHandler"
 ],
-    function (dom, domClass, domStyle, connect, query, win, registry, annoUtil, OAuthUtil, AnnoDataHandler)
+    function (dom, domClass, domStyle, connect, query, win, registry, DBUtil, annoUtil, OAuthUtil, AnnoDataHandler)
     {
         var _connectResults = []; // events connect results
         var app = null;
@@ -35,15 +36,89 @@ define([
             annoUtil.saveSettings({item:"ServerURL", value:this.value}, function(success){
                 if (success)
                 {
-                    AnnoDataHandler.removeUser(function(){
-                        OAuthUtil.clearRefreshToken();
-                        registry.byId('serverURLDialog').hide();
-                        dom.byId('settingValueServerURL').innerHTML = self.labelText;
+                    var phoneGapPath = OAuthUtil.getPhoneGapPath();
+                    if (DBUtil.localUserInfo.signinmethod == OAuthUtil.signinMethod.google)
+                    {
+                        AnnoDataHandler.removeUser(function(){
+                            OAuthUtil.clearRefreshToken();
+                            registry.byId('serverURLDialog').hide();
+                            dom.byId('settingValueServerURL').innerHTML = self.labelText;
 
-                        annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the anno app.", function(){
-                            window.open("file:///android_asset/www/anno/pages/community/main.html", '_self', 'location=no');
+                            annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
+                                window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
+                            });
                         });
-                    });
+                    }
+                    else
+                    {
+                        // use anno account, try to do sign-up to new server, TODO: handle api calling exception
+                        var self = this;
+                        var email = DBUtil.localUserInfo.email,
+                            nickname = DBUtil.localUserInfo.nickname,
+                            pwd = DBUtil.localUserInfo.password;
+
+                        annoUtil.showLoadingIndicator();
+                        annoUtil.loadAPI(annoUtil.API.account, function(){
+                            var registerAPI = gapi.client.account.account.register({
+                                'display_name':nickname,
+                                'password':pwd,
+                                'user_email':email
+                            });
+
+                            registerAPI.execute(function(resp){
+                                if (!resp)
+                                {
+                                    annoUtil.hideLoadingIndicator();
+                                    return;
+                                }
+
+                                var emailExist = false;
+                                if (resp.error)
+                                {
+                                    if (resp.error.message == ("Email("+email+") already exists."))
+                                    {
+                                        emailExist = true;
+                                    }
+                                    else
+                                    {
+                                        if (self._callback)
+                                        {
+                                            self._callback({
+                                                success: 0,
+                                                message: "An error occurred when calling account.register api: "+resp.error.message
+                                            });
+                                        }
+
+                                        annoUtil.hideLoadingIndicator();
+                                        return;
+                                    }
+                                }
+
+                                if (!emailExist&&!resp.result)
+                                {
+                                    if (self._callback)
+                                    {
+                                        self._callback({
+                                            success: 0,
+                                            message: "Response from server are empty when calling account.register api."
+                                        });
+                                    }
+
+                                    annoUtil.hideLoadingIndicator();
+                                    return;
+                                }
+
+                                annoUtil.hideLoadingIndicator();
+                                registry.byId('serverURLDialog').hide();
+                                dom.byId('settingValueServerURL').innerHTML = self.labelText;
+
+                                annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
+                                    window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
+                                });
+                            });
+                        });
+
+                    }
                 }
             });
         };
