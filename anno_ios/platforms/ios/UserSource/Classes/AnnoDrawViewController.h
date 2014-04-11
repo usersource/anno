@@ -31,6 +31,9 @@
 
 @interface AnnoDrawViewController : CDVViewController
 
++ (void) handleFromShareImage:(NSString *)imageURI;
++ (NSString*) getScreenshotPath;
+
 @end
 
 @interface AnnoDrawCommandDelegate : CDVCommandDelegateImpl

@@ -94,7 +94,7 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
  This method shows annodraw page
  Set appdelegate's viewController to annoDrawViewController
  */
-- (void) showAnnoDraw {
+- (void) showAnnoDraw:(NSString*)imageURI {
     AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     
     if (appDelegate.annoDrawViewController == nil) {
@@ -106,6 +106,7 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
         
         [appDelegate.window addSubview:appDelegate.annoDrawViewController.view];
         self.viewController = appDelegate.annoDrawViewController;
+        [[AnnoDrawViewController class] handleFromShareImage:imageURI];
     } else {
         AnnoDrawViewController *currentViewController = (AnnoDrawViewController*)appDelegate.annoDrawViewController;
         [appDelegate.viewController presentViewController:currentViewController animated:YES completion:nil];
@@ -211,9 +212,10 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
  */
 - (void) start_anno_draw:(CDVInvokedUrlCommand*)command {
     NSString *payload = nil;
+    NSString *imageURI = [command.arguments objectAtIndex:0];
 
     @try {
-        [self showAnnoDraw];
+        [self showAnnoDraw:imageURI];
     }
     @catch (NSException *exception) {
         NSLog(@"Exception in start_anno_draw: %@", exception);
@@ -221,6 +223,15 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) get_screenshot_path:(CDVInvokedUrlCommand*)command {
+    [self.commandDelegate runInBackground:^{
+        NSString *payload = [[[AnnoDrawViewController class] getScreenshotPath] stringByAppendingString:@"|1|true"];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                          messageAsString:payload];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
 }
 
 /*!
@@ -265,18 +276,6 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
 }
 
 - (void)get_recent_applist:(CDVInvokedUrlCommand*)command
-{
-    // Check command.arguments here.
-    [self.commandDelegate runInBackground:^{
-        NSString* payload = nil;
-        // Some blocking logic...
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        // The sendPluginResult method is thread-safe.
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
-}
-
-- (void)get_screenshot_path:(CDVInvokedUrlCommand*)command
 {
     // Check command.arguments here.
     [self.commandDelegate runInBackground:^{

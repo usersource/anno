@@ -29,6 +29,8 @@
 
 @implementation AnnoDrawViewController
 
+NSString *screenshotPath;
+
 - (id)initWithNibName:(NSString*)nibNameOrNil bundle:(NSBundle*)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -53,6 +55,14 @@
         // _commandQueue = [[MainCommandQueue alloc] initWithViewController:self];
     }
     return self;
+}
+
++ (void) handleFromShareImage:(NSString *)imageURI {
+    screenshotPath = imageURI;
+}
+
++ (NSString*) getScreenshotPath {
+    return screenshotPath;
 }
 
 - (void)didReceiveMemoryWarning
