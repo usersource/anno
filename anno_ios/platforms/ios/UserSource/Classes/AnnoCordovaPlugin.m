@@ -39,7 +39,9 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
     AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     CommunityViewController *currentViewController = (CommunityViewController*)appDelegate.communityViewController;
 
-    if (!currentViewController.isBeingPresented) {
+    if (self.viewController == nil && currentViewController.isViewLoaded) {
+        self.viewController = currentViewController;
+    } else {
         [self.viewController presentViewController:currentViewController animated:YES completion:nil];
     }
 }
@@ -108,7 +110,22 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
 }
 
 - (void) exitActivity {
-    [self.viewController.view removeFromSuperview];
+    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+
+    if (self.viewController == appDelegate.communityViewController) {
+        [appDelegate.communityViewController.view removeFromSuperview];
+        appDelegate.communityViewController = nil;
+    } else if (self.viewController == appDelegate.introViewController) {
+        [appDelegate.introViewController.view removeFromSuperview];
+        appDelegate.introViewController = nil;
+    } else if (self.viewController == appDelegate.optionFeedbackViewController) {
+        [appDelegate.optionFeedbackViewController.view removeFromSuperview];
+        appDelegate.optionFeedbackViewController = nil;
+    } else if (self.viewController == appDelegate.annoDrawViewController) {
+        [appDelegate.annoDrawViewController.view removeFromSuperview];
+        appDelegate.annoDrawViewController = nil;
+    }
+
     self.viewController = nil;
 }
 
