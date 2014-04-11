@@ -61,6 +61,7 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
         #endif
         
         [appDelegate.window addSubview:appDelegate.introViewController.view];
+        self.viewController = appDelegate.introViewController;
     } else {
         IntroViewController *currentViewController = (IntroViewController*)appDelegate.introViewController;
         [appDelegate.viewController presentViewController:currentViewController animated:YES completion:nil];
@@ -82,6 +83,7 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
         #endif
         
         [appDelegate.window addSubview:appDelegate.optionFeedbackViewController.view];
+        self.viewController = appDelegate.optionFeedbackViewController;
     } else {
         OptionFeedbackViewController *currentViewController = (OptionFeedbackViewController*)appDelegate.optionFeedbackViewController;
         [appDelegate.viewController presentViewController:currentViewController animated:YES completion:nil];
@@ -103,6 +105,7 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
         #endif
         
         [appDelegate.window addSubview:appDelegate.annoDrawViewController.view];
+        self.viewController = appDelegate.annoDrawViewController;
     } else {
         AnnoDrawViewController *currentViewController = (AnnoDrawViewController*)appDelegate.annoDrawViewController;
         [appDelegate.viewController presentViewController:currentViewController animated:YES completion:nil];
@@ -207,13 +210,13 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
  This send callback result as success.
  */
 - (void) start_anno_draw:(CDVInvokedUrlCommand*)command {
-    NSString* payload = nil;
+    NSString *payload = nil;
 
     @try {
         [self showAnnoDraw];
     }
     @catch (NSException *exception) {
-        NSLog(@"Exception in start_anno_draw_ios: %@", exception);
+        NSLog(@"Exception in start_anno_draw: %@", exception);
     }
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
