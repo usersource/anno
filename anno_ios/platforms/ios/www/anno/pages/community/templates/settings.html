@@ -1,0 +1,66 @@
+<div class="view mblView" style="background-color: white">
+    <div id="headingSettings" data-dojo-type="dojox/mobile/Heading" class="topHeading">
+        <img src="css/images/anno.png" alt="" width="40" class="headingIcon">
+        <span class="barIcon icon-cog barIconHighlight" style="float: left;font-size: 28px;margin-top: 6px;padding-left: 10px;"></span>
+    </div>
+    <div id="listContainerSettings" style="width: 100%;overflow: auto;">
+        <ul data-dojo-type="dojox/mobile/EdgeToEdgeList">
+            <li id="settingItemServerUrl" class="row" style="margin-left: 8px;margin-right: 8px"
+                data-dojo-type="dojox/mobile/ListItem"
+                data-dojo-props="variableHeight:true,clickable:true,noArrow:true">
+                <div>Server URL</div>
+                <div id="settingValueServerURL" style="font-size: 14px;font-weight: normal">Production</div>
+            </li>
+            <li id="settingItemChangePassword" class="row" style="margin-left: 8px;margin-right: 8px"
+                data-dojo-type="dojox/mobile/ListItem"
+                data-dojo-props="variableHeight:true,clickable:true,noArrow:true">
+                <div>Change Password</div>
+                <div style="font-size: 14px;font-weight: normal">&nbsp;</div>
+            </li>
+        </ul>
+    </div>
+    <div id="serverURLDialog" data-dojo-type="dojox/mobile/SimpleDialog" style="display: none;width: 400px;height2: 116px;padding: 0px;border:2px solid black;border-top-color:black ">
+        <div class="menuItem" style="padding-right: 12px;color: #2B78E4;border-bottom: 2px solid #2B78E4">
+            Server URL
+        </div>
+        <div class="menuItem" id="divServerUrlProduction" style="padding-right: 12px;margin-left: 6px;margin-right: 6px;display: none">
+            <label for="rdSUProduction" style="float: left">Production</label>
+            <input type="radio" value="1" data-dojo-props="labelText:'Production'" checked="true" id="rdSUProduction" name="rdServerURL" style="float: right;margin-top: -7px;" data-dojo-type="dojox/mobile/RadioButton">
+        </div>
+        <div class="menuItem" id="divServerUrlTest" style="padding-right: 12px;margin-left: 6px;margin-right: 6px;display: none">
+            <label for="rdSUTest" style="float: left">Test</label>
+            <input type="radio" value="2" data-dojo-props="labelText:'Test'" id="rdSUTest" name="rdServerURL" style="float: right;margin-top: -7px;" data-dojo-type="dojox/mobile/RadioButton">
+        </div>
+        <div class="menuItem" id="divServerUrlDev" style="padding-right: 12px;margin-left: 6px;margin-right: 6px;display: none">
+            <label for="rdSUDev" style="float: left">Dev</label>
+            <input type="radio" value="2" data-dojo-props="labelText:'Dev'" id="rdSUDev" name="rdServerURL" style="float: right;margin-top: -7px;" data-dojo-type="dojox/mobile/RadioButton">
+        </div>
+        <div class="menuItem" id="divServerUrlProductionViaEC2" style="padding-right: 12px;margin-left: 6px;margin-right: 6px;display: none">
+            <label for="rdSUProductionViaEC2" style="float: left">Production via EC2 proxy</label>
+            <input type="radio" value="3" data-dojo-props="labelText:'Production via EC2 proxy'" id="rdSUProductionViaEC2" name="rdServerURL" style="float: right;margin-top: -7px;" data-dojo-type="dojox/mobile/RadioButton">
+        </div>
+        <div class="menuItem" id="divServerUrlTestViaEC2" style="padding-right: 12px;margin-left: 6px;margin-right: 6px;display: none">
+            <label for="rdSUTestViaEC2" style="float: left">Test via EC2 proxy</label>
+            <input type="radio" value="4" data-dojo-props="labelText:'Test via EC2 proxy'" id="rdSUTestViaEC2" name="rdServerURL" style="float: right;margin-top: -7px;" data-dojo-type="dojox/mobile/RadioButton">
+        </div>
+        <div class="menuItem" id="divServerUrlDevViaEC2" style="padding-right: 12px;margin-left: 6px;margin-right: 6px;display: none">
+            <label for="rdSUDevViaEC2" style="float: left">Dev via EC2 proxy</label>
+            <input type="radio" value="4" data-dojo-props="labelText:'Dev via EC2 proxy'" id="rdSUDevViaEC2" name="rdServerURL" style="float: right;margin-top: -7px;" data-dojo-type="dojox/mobile/RadioButton">
+        </div>
+        <div id="btnCancelServerURL" class="menuItem" style="padding-right: 12px;margin-left: 6px;margin-right: 6px;border-bottom-width: 0px;text-align: center;color: #808080">
+            Cancel
+        </div>
+    </div>
+    <div id="changePwdDialog" data-dojo-type="dojox/mobile/SimpleDialog" style="display: none;width: 400px;height2: 60px;padding: 0px;border:2px solid black;border-top-color:black ">
+        <div class="menuItem" style="padding-right: 12px;color: #2B78E4;border-bottom: 2px solid #2B78E4">
+            Change Password
+        </div>
+        <div class="menuItem" style="padding-right: 0px;padding-left:0px;padding-top: 0px;height:34px;margin-left: 0px;margin-right: 0px">
+            <input type="password" id="txt_changePwd" placeholder="at least 6 characters" class="signin-input" style="font-weight: bold;">
+        </div>
+        <div class="menuItem" style="padding-right: 12px;margin-left: 60px;margin-right: 60px;border-bottom-width: 0px;text-align: center;color: #808080">
+            <div id="btnDoneChangePwd" style="float: left;width: 80px;">Done</div>
+            <div id="btnCancelChangePwd" style="float: right;width: 80px">Cancel</div>
+        </div>
+    </div>
+</div>
