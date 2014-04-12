@@ -165,6 +165,21 @@ def delete_all_in_index(index_name):
         doc_index.delete(document_ids)
 
 
+def tokenize_string(string_value):
+    """find all words in the given string value"""
+    return re.findall(r'(\w+)', string_value)
+
+
+def is_empty_string(string_value):
+    """
+    Checks if the given string value is empty.
+    """
+    if string_value is None:
+        return True
+    if re.match(r'\s+', string_value) is not None:
+        return True
+    return False
+
 """
 annoserver:
 anno_js_client_id = "22913132792.apps.googleusercontent.com"

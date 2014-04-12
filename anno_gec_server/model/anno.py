@@ -4,15 +4,17 @@ __author__ = 'topcircler'
 Anno data store model definition.
 """
 
+from google.appengine.api import search
 from google.appengine.ext import ndb
 import datetime
+import logging
 
 from message.anno_api_messages import AnnoResponseMessage
 from message.anno_api_messages import AnnoListMessage
 from model.base_model import BaseModel
 from api.utils import get_country_by_coordinate
-from google.appengine.api import search
-import logging
+from api.utils import tokenize_string
+from api.utils import is_empty_string
 
 
 class Anno(BaseModel):
@@ -333,15 +335,47 @@ class Anno(BaseModel):
         :param app_name: app name which full-matches to app_name, this parameter is a single app name, not an app list.
         """
         query_string = ""
-        has_search_string = (search_string is not None and search_string != "")
+        has_search_string = not is_empty_string(search_string)
         if has_search_string:
-            query_string += "anno_text = \"%s\"" % search_string
-        has_app_name = (app_name is not None and app_name != "")
-        if has_app_name:
-            if has_search_string:
-                query_string += " AND "
+            words = tokenize_string(search_string)
+            query_string = Anno.get_query_string_for_all_fields(["anno_text", "app_name"], words)
+        if not is_empty_string(app_name):
+            if has_search_string and query_string is not None:
+                query_string = "(" + query_string + ") AND "
             query_string += "app_name = \"%s\" " % app_name
+        logging.debug("query_string:%s" % query_string)
         return query_string
+
+    @classmethod
+    def get_query_string_for_field(cls, field, words):
+        """
+        This method generates query string for a certain field against the given words.
+        """
+        if words is None or len(words) <= 0:
+            return None
+        query_string_for_field = field + " = ("
+        for index, word in enumerate(words):
+            query_string_for_field += "~%s" % word  # stemming
+            if index != len(words) - 1:
+                query_string_for_field += " OR "
+        query_string_for_field += ")"
+        return query_string_for_field
+
+    @classmethod
+    def get_query_string_for_all_fields(cls, fields, words):
+        """
+        This method generates query string for different fields against the given words.
+        :param fields: different field names. As for now, we only support anno_text and app_name.
+        :param words: tokens to match
+        """
+        if fields is not None and len(fields) > 0 and words is not None and len(words) > 0:
+            query_string = ""
+            for index, field in enumerate(fields):
+                query_string += Anno.get_query_string_for_field(field, words)
+                if index != len(fields) - 1:
+                    query_string += " OR "
+            return query_string
+        return None
 
     @classmethod
     def query_by_recent(cls, limit, offset, search_string, app_name):
