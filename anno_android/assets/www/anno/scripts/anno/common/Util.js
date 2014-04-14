@@ -203,6 +203,8 @@ define([
             var settingsSQl = "select * from app_settings";
             var self = this;
             DBUtil.executeSelectSql(settingsSQl, [], function(res){
+                if (!res) return;
+
                 var rows = res.rows;
                 console.error("app_settings rows: "+rows.length);
 
@@ -229,10 +231,13 @@ define([
             }
             var self = this;
             DBUtil.executeUpdateSql(settingsSQl, [settingItem.value, settingItem.item], function(res){
+                if (!res) return;
                 self.settings[settingItem.item] = settingItem.value;
 
                 callback(true);
-            }, callback(false));
+            }, function(err){
+                callback(false);
+            });
         },
         getSettings: function()
         {
@@ -496,11 +501,10 @@ define([
         },
         ip2Int: function (s)
         {
-            var r = '';
-            for (var i in a = s.split('.'))
-                r += parseInt(a[i]) <= 9 ?'0' + parseInt(a[i]).toString(16) :parseInt(a[i]).toString(16);
+            var parts = s.split(".");
+            var sum = parseInt(parts[0], 10)*16777216 + parseInt(parts[1], 10)*65536 +parseInt(parts[2], 10)*256 +parseInt(parts[3], 10);
 
-            return parseInt('0x' + r);
+            return sum;
         },
         int2Ip: function (s)
         {
@@ -530,9 +534,6 @@ define([
             }, true);
         }
     };
-
-
-    //document.addEventListener("deviceready", initDB, false);
 
     return util;
 });

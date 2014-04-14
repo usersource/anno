@@ -8,7 +8,7 @@ define([
     var onSQLError = window.onSQLError = function (err)
     {
         console.error(JSON.stringify(err));
-        alert(JSON.stringify(err));
+        //alert(JSON.stringify(err));
     };
 
     var dbUtil = {
@@ -38,6 +38,8 @@ define([
         {
             var self = this;
             this.annoDB.executeSql("SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name='feedback_comment'", [], function(res) {
+                if (!res) return;
+
                 if (res.rows.item(0).cnt == 1)
                 {
                     self.doUpgrade();
@@ -76,6 +78,8 @@ define([
         {
             var self = this;
             this.annoDB.executeSql("SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name='app_users'", [], function(res) {
+                if (!res) return;
+
                 console.error("app_users "+res.rows.item(0).cnt);
 
                 if (res.rows.item(0).cnt == 0)
@@ -101,6 +105,8 @@ define([
 
             // check if the db schema need be upgraded.
             this.annoDB.executeSql("pragma table_info (feedback_comment);", [], function(res) {
+                if (!res) return;
+
                 var rows = res.rows;
                 var tempObj = {};
                 for (var i=0;i<rows.length;i++)
@@ -157,6 +163,8 @@ define([
             });
 
             this.annoDB.executeSql("SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name='app_settings'", [], function(res) {
+                if (!res) return;
+
                 console.error("app_settings "+res.rows.item(0).cnt);
                 if (res.rows.item(0).cnt == 0)
                 {

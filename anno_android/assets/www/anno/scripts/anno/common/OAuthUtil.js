@@ -190,9 +190,7 @@ define([
             }).then(function (data)
                 {
                     console.error("access token res: " + JSON.stringify(data));
-                    self.setAccessToken(data);
-
-                    callback();
+                    self.setAccessToken(data, callback);
                 }, function (err)
                 {
                     console.error("refresh access token error: " + err);
@@ -265,24 +263,27 @@ define([
 
             return !(currentTime < (this.accessTokenTime + this.accessTokenExpiryLimit));
         },
-        setAccessToken: function(tokenObject)
+        setAccessToken: function(tokenObject, callback)
         {
-            if (gapi&&gapi.auth)
+            if (window.gapi&&window.gapi.auth)
             {
                 this.accessToken = tokenObject;
                 this.accessTokenTime = (new Date()).getTime();
                 console.error(gapi.auth);
                 gapi.auth.setToken(tokenObject);
+
+                if (callback)
+                {
+                    callback();
+                }
             }
             else
             {
                 var self = this;
                 window.setTimeout(function(){
-                    self.setAccessToken(tokenObject);
+                    self.setAccessToken(tokenObject, callback);
                 }, 50)
             }
-
-
         },
         getPhoneGapPath:function(source)
         {
@@ -320,7 +321,7 @@ define([
         },
         setBasicAuthToken: function(token)
         {
-            if (gapi&&gapi.auth)
+            if (window.gapi&&window.gapi.auth)
             {
                 gapi.auth.setToken(token);
             }

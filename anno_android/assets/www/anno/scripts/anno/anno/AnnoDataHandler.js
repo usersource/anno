@@ -62,6 +62,32 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
             {
                 annoUtil.hideLoadingIndicator();
 
+                if (!background)
+                {
+                    cordova.exec(
+                        function (result)
+                        {
+                            cordova.exec(
+                                function (result)
+                                {
+                                },
+                                function (err)
+                                {
+                                },
+                                "AnnoCordovaPlugin",
+                                'exit_current_activity',
+                                []
+                            );
+                        },
+                        function (err)
+                        {
+                        },
+                        "AnnoCordovaPlugin",
+                        'show_toast',
+                        ["Your comment has been saved."]
+                    );
+                }
+
                 if (callback)
                 {
                     callback();
@@ -210,6 +236,8 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
         loadLocalAnnos: function(callback)
         {
             DBUtil.executeUpdateSql(select_anno_sql,[], function(res){
+                if (!res) return;
+
                 var annos = [];
                 var cnt = res.rows.length;
                 console.error('local annos: '+cnt);
@@ -233,6 +261,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
 
             var self = this;
             DBUtil.executeUpdateSql(select_anno_sync_sql,[], function(res){
+                if (!res) return;
                 var cnt = res.rows.length;
 
                 if (cnt)
@@ -287,6 +316,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
             console.error("saveUserInfo invoked.");
 
             DBUtil.executeUpdateSql(save_userInfo_sql,[userInfo.userId, userInfo.email, userInfo.signinMethod, userInfo.nickname, userInfo.password||''], function(res){
+                if (!res) return;
                 console.error("save userInfo end:"+ JSON.stringify(res));
                 if (callback)
                 {
@@ -298,6 +328,8 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
         getCurrentUserInfo: function(callback)
         {
             DBUtil.executeUpdateSql(select_userInfo_sql,[], function(res){
+                if (!res) return;
+
                 var cnt = res.rows.length;
                 console.error('user cnt: '+cnt);
                 var userInfo = {};
