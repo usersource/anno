@@ -394,7 +394,7 @@ define([
         loadAPI: function(apiId, callback, errorCallback)
         {
             var self = this;
-            if (gapi&&gapi.client)
+            if (window.gapi&&window.gapi.client)
             {
                 gapi.client.load(apiId, this.API.apiVersion, function(res) {
 
@@ -527,11 +527,13 @@ define([
 
             this.saveSettings({item:"ServerURL", value:proxyServerConfig}, function(success){
             }, true);
+            this.settings.ServerURL = proxyServerConfig;
         },
         setDefaultServer: function()
         {
             this.saveSettings({item:"ServerURL", value:"1"}, function(success){
             }, true);
+            this.settings.ServerURL = "1";
         }
     };
 

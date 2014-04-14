@@ -5,5 +5,6 @@ create table if not exists app_users
     email text not null,
     password text,
     signinmethod VARCHAR not null default 'google',
-    nickname text
+    nickname text,
+    signedup integer default 0
 )

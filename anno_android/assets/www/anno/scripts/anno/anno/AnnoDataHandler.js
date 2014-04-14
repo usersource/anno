@@ -6,7 +6,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
     var update_anno_synched_by_id_sql = "update feedback_comment set synched=1,object_key=? where _id=?";
     var select_anno_sql = "select * from feedback_comment where synched=0";
     var select_anno_sync_sql = "select * from feedback_comment where synched=0 LIMIT 1";
-    var save_userInfo_sql = "insert into app_users(userid,email,signinmethod,nickname,password) values (?,?,?,?,?)";
+    var save_userInfo_sql = "insert into app_users(userid,email,signinmethod,nickname,password,signedup) values (?,?,?,?,?,?)";
     var select_userInfo_sql = "select * from app_users";
     var delete_userInfo_sql = "delete from app_users";
 
@@ -93,6 +93,43 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                     callback();
                 }
                 return;
+            }
+            else
+            {
+                if (!DBUtil.localUserInfo.signedup)
+                {
+                    if (!background)
+                    {
+                        cordova.exec(
+                            function (result)
+                            {
+                                cordova.exec(
+                                    function (result)
+                                    {
+                                    },
+                                    function (err)
+                                    {
+                                    },
+                                    "AnnoCordovaPlugin",
+                                    'exit_current_activity',
+                                    []
+                                );
+                            },
+                            function (err)
+                            {
+                            },
+                            "AnnoCordovaPlugin",
+                            'show_toast',
+                            ["Your comment has been saved."]
+                        );
+                    }
+
+                    if (callback)
+                    {
+                        callback();
+                    }
+                    return;
+                }
             }
 
             var self = this;
@@ -256,8 +293,8 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
         startBackgroundSync: function()
         {
             var inAnnoApp = document.getElementById('modelApp_home')!= null;
-
-            if (!inAnnoApp) return;
+            var appKey = annoUtil.getSettings().appKey;
+            if (!inAnnoApp&&!appKey) return;
 
             var self = this;
             DBUtil.executeUpdateSql(select_anno_sync_sql,[], function(res){
@@ -314,16 +351,17 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
         saveUserInfo: function(userInfo, callback)
         {
             console.error("saveUserInfo invoked.");
-
-            DBUtil.executeUpdateSql(save_userInfo_sql,[userInfo.userId, userInfo.email, userInfo.signinMethod, userInfo.nickname, userInfo.password||''], function(res){
-                if (!res) return;
-                console.error("save userInfo end:"+ JSON.stringify(res));
-                if (callback)
-                {
-                    console.error("saveUserInfo callback invoked.");
-                    callback();
-                }
-            }, onSQLError);
+            this.removeUser(function(){
+                DBUtil.executeUpdateSql(save_userInfo_sql,[userInfo.userId, userInfo.email, userInfo.signinMethod, userInfo.nickname, userInfo.password||'', userInfo.signedup==null?1:userInfo.signedup], function(res){
+                    if (!res) return;
+                    console.error("save userInfo end:"+ JSON.stringify(res));
+                    if (callback)
+                    {
+                        console.error("saveUserInfo callback invoked.");
+                        callback();
+                    }
+                }, onSQLError);
+            });
         },
         getCurrentUserInfo: function(callback)
         {
@@ -343,6 +381,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                     userInfo.password = data.password;
                     userInfo.signinMethod = data.signinmethod;
                     userInfo.nickname = data.nickname;
+                    userInfo.signedup = data.signedup;
                 }
 
                 window.currentUserInfo = userInfo;
@@ -352,6 +391,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
         removeUser: function(callback)
         {
             DBUtil.executeUpdateSql(delete_userInfo_sql,[], function(res){
+                if (!res) return;
                 console.error("user removed.");
                 if (callback)
                 {
