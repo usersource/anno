@@ -203,10 +203,6 @@ define([
             var settingsSQl = "select * from app_settings";
             var self = this;
             DBUtil.executeSelectSql(settingsSQl, [], function(res){
-                /**
-                 * Added by Ignite
-                 * Sometimes result is undefined value, so returning when there is no result.
-                 */
                 if (!res) return;
 
                 var rows = res.rows;
@@ -235,10 +231,13 @@ define([
             }
             var self = this;
             DBUtil.executeUpdateSql(settingsSQl, [settingItem.value, settingItem.item], function(res){
+                if (!res) return;
                 self.settings[settingItem.item] = settingItem.value;
 
                 callback(true);
-            }, callback(false));
+            }, function(err){
+                callback(false);
+            });
         },
         getSettings: function()
         {
@@ -395,7 +394,7 @@ define([
         loadAPI: function(apiId, callback, errorCallback)
         {
             var self = this;
-            if (gapi&&gapi.client)
+            if (window.gapi&&window.gapi.client)
             {
                 gapi.client.load(apiId, this.API.apiVersion, function(res) {
 
@@ -502,11 +501,10 @@ define([
         },
         ip2Int: function (s)
         {
-            var r = '';
-            for (var i in a = s.split('.'))
-                r += parseInt(a[i]) <= 9 ?'0' + parseInt(a[i]).toString(16) :parseInt(a[i]).toString(16);
+            var parts = s.split(".");
+            var sum = parseInt(parts[0], 10)*16777216 + parseInt(parts[1], 10)*65536 +parseInt(parts[2], 10)*256 +parseInt(parts[3], 10);
 
-            return parseInt('0x' + r);
+            return sum;
         },
         int2Ip: function (s)
         {
@@ -529,16 +527,15 @@ define([
 
             this.saveSettings({item:"ServerURL", value:proxyServerConfig}, function(success){
             }, true);
+            this.settings.ServerURL = proxyServerConfig;
         },
         setDefaultServer: function()
         {
             this.saveSettings({item:"ServerURL", value:"1"}, function(success){
             }, true);
+            this.settings.ServerURL = "1";
         }
     };
-
-
-    //document.addEventListener("deviceready", initDB, false);
 
     return util;
 });
