@@ -8,7 +8,7 @@ define([
     var onSQLError = window.onSQLError = function (err)
     {
         console.error(JSON.stringify(err));
-        alert(JSON.stringify(err));
+        //alert(JSON.stringify(err));
     };
 
     var dbUtil = {
@@ -38,6 +38,8 @@ define([
         {
             var self = this;
             this.annoDB.executeSql("SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name='feedback_comment'", [], function(res) {
+                if (!res) return;
+
                 if (res.rows.item(0).cnt == 1)
                 {
                     self.doUpgrade();
@@ -76,6 +78,8 @@ define([
         {
             var self = this;
             this.annoDB.executeSql("SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name='app_users'", [], function(res) {
+                if (!res) return;
+
                 console.error("app_users "+res.rows.item(0).cnt);
 
                 if (res.rows.item(0).cnt == 0)
@@ -85,22 +89,66 @@ define([
                 }
                 else
                 {
-                    self.annoDB.executeSql("select * from app_users", [], function(ures){
-                        if (ures)
+                    // check if the db schema need be upgraded.
+                    self.annoDB.executeSql("pragma table_info (app_users);", [], function(pres) {
+                        if (!pres) return;
+
+                        var rows = pres.rows;
+                        var tempObj = {};
+                        for (var i=0;i<rows.length;i++)
                         {
-                            console.error("app_users2: "+ures.rows.length);
-                            self.hasUserInLocalDB = ures.rows.length>0;
-                            if (ures.rows.length>0)
-                                self.localUserInfo = ures.rows.item(0);
-                            self.userChecked = true;
-                            console.error("app_users: "+JSON.stringify(self.localUserInfo));
+                            var item = rows.item(i);
+                            tempObj[item.name] = item;
                         }
+
+                        console.error("doUpgrade "+JSON.stringify(tempObj));
+
+                        if (!tempObj["signedup"])
+                        {
+                            self.annoDB.executeSql("alter table app_users add column signedup integer default 0", [], function(pures){
+                                console.error("signedup column added.");
+
+                                self.annoDB.executeSql("update app_users set signedup=?", [1], function(pures){
+                                    if (pures)
+                                    {
+                                        self.annoDB.executeSql("select * from app_users", [], function(psres){
+                                            if (psres)
+                                            {
+                                                console.error("app_users2: "+psres.rows.length);
+                                                self.hasUserInLocalDB = psres.rows.length>0;
+                                                if (psres.rows.length>0)
+                                                    self.localUserInfo = psres.rows.item(0);
+                                                self.userChecked = true;
+                                                console.error("app_users: "+JSON.stringify(self.localUserInfo));
+                                            }
+                                        });
+                                    }
+                                });
+                            });
+                        }
+                        else
+                        {
+                            self.annoDB.executeSql("select * from app_users", [], function(ures){
+                                if (ures)
+                                {
+                                    console.error("app_users2: "+ures.rows.length);
+                                    self.hasUserInLocalDB = ures.rows.length>0;
+                                    if (ures.rows.length>0)
+                                        self.localUserInfo = ures.rows.item(0);
+                                    self.userChecked = true;
+                                    console.error("app_users: "+JSON.stringify(self.localUserInfo));
+                                }
+                            });
+                        }
+
                     });
                 }
             });
 
             // check if the db schema need be upgraded.
             this.annoDB.executeSql("pragma table_info (feedback_comment);", [], function(res) {
+                if (!res) return;
+
                 var rows = res.rows;
                 var tempObj = {};
                 for (var i=0;i<rows.length;i++)
@@ -157,6 +205,8 @@ define([
             });
 
             this.annoDB.executeSql("SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name='app_settings'", [], function(res) {
+                if (!res) return;
+
                 console.error("app_settings "+res.rows.item(0).cnt);
                 if (res.rows.item(0).cnt == 0)
                 {

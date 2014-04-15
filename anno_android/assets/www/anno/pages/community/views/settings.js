@@ -32,7 +32,7 @@ define([
         {
             if (!this.checked) return;
 
-            var self = this;
+            var self = this, labelText = this.labelText;
             annoUtil.saveSettings({item:"ServerURL", value:this.value}, function(success){
                 if (success)
                 {
@@ -42,7 +42,7 @@ define([
                         AnnoDataHandler.removeUser(function(){
                             OAuthUtil.clearRefreshToken();
                             registry.byId('serverURLDialog').hide();
-                            dom.byId('settingValueServerURL').innerHTML = self.labelText;
+                            dom.byId('settingValueServerURL').innerHTML = labelText;
 
                             annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
                                 window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
@@ -110,7 +110,7 @@ define([
 
                                 annoUtil.hideLoadingIndicator();
                                 registry.byId('serverURLDialog').hide();
-                                dom.byId('settingValueServerURL').innerHTML = self.labelText;
+                                dom.byId('settingValueServerURL').innerHTML = labelText;
 
                                 annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
                                     window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
