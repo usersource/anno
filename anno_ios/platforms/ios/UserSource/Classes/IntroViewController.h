@@ -31,6 +31,8 @@
 
 @interface IntroViewController : CDVViewController
 
++ (int) getLevel;
+
 @end
 
 @interface IntroCommandDelegate : CDVCommandDelegateImpl

@@ -81,6 +81,8 @@
     #else
         self.communityViewController = [[[CommunityViewController alloc] init] autorelease];
     #endif
+    
+    self.annoUtils = [[AnnoUtils alloc] init];
 
     // Set your app's start page by setting the <content src='foo.html' /> tag in config.xml.
     // If necessary, uncomment the line below to override it.

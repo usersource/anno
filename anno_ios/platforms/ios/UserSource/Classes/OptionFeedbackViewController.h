@@ -31,6 +31,8 @@
 
 @interface OptionFeedbackViewController : CDVViewController
 
++ (int) getLevel;
+
 @end
 
 @interface OptionFeedbackCommandDelegate : CDVCommandDelegateImpl

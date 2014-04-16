@@ -5,29 +5,8 @@
 NSString *ACTIVITY_INTRO = @"Intro";
 NSString *ACTIVITY_FEEDBACK = @"Feedback";
 
-//        EXIT_CURRENT_ACTIVITY= @"exit_current_activity";
-//        SHOW_TOAST = @"show_toast";
-//        GOTO_ANNO_HOME = @"goto_anno_home";
-//
-//        EXIT_INTRO= @"exit_intro";
-//        PROCESS_IMAGE_AND_APPINFO = @"process_image_and_appinfo";
-//        GET_RECENT_APPLIST = @"get_recent_applist";
-//        GET_SCREENSHOT_PATH = @"get_screenshot_path";
-//        GET_ANNO_SCREENSHOT_PATH = @"get_anno_screenshot_path";
-//        START_ACTIVITY = @"start_activity";
-//        CLOSE_SOFTKEYBOARD = @"close_softkeyboard";
-//        SHOW_SOFTKEYBOARD = @"show_softkeyboard";
-//        ACTIVITY_INTRO = @"Intro";
-//        ACTIVITY_FEEDBACK = @"Feedback";
-//        ACTIVITY_ANNODRAW = @"AnnoDraw";
-//        ACTIVITY_COMMUNITY = @"Community";
-
 - (id) init {
     self = [super init];
-    if (self) {
-        COMPRESS_QUALITY = 40;
-    }
-
     return self;
 }
 
@@ -106,7 +85,7 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
         
         [appDelegate.window addSubview:appDelegate.annoDrawViewController.view];
         self.viewController = appDelegate.annoDrawViewController;
-        [[AnnoDrawViewController class] handleFromShareImage:imageURI];
+        [[AnnoDrawViewController class] handleFromShareImage:imageURI levelValue:0 isPracticeValue:false];
     } else {
         AnnoDrawViewController *currentViewController = (AnnoDrawViewController*)appDelegate.annoDrawViewController;
         [appDelegate.viewController presentViewController:currentViewController animated:YES completion:nil];
@@ -151,12 +130,16 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
  */
 - (void) show_toast:(CDVInvokedUrlCommand*)command {
     NSString* message = [command.arguments objectAtIndex:0];
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"UserSource"
+    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:appDelegate.annoUtils.PROJECT_NAME
                                                         message:message
                                                        delegate:self
                                               cancelButtonTitle:@"Ok"
                                               otherButtonTitles:nil];
     [alertView show];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 /*!
@@ -227,28 +210,105 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
 
 - (void) get_screenshot_path:(CDVInvokedUrlCommand*)command {
     [self.commandDelegate runInBackground:^{
-        NSString *payload = [[[AnnoDrawViewController class] getScreenshotPath] stringByAppendingString:@"|1|true"];
+        AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+
+        NSString *screenshotPath = [[AnnoDrawViewController class] getScreenshotPath];
+        NSString *level = [NSString stringWithFormat:@"%d", [[AnnoDrawViewController class] getLevel]];
+        NSString *isAnno = [appDelegate.annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] ? @"true" : @"false";
+        NSString *payload = [NSString stringWithFormat:@"%@|%@|%@", screenshotPath, level, isAnno];
+
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                                           messageAsString:payload];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
 
-/*!
- */
-- (void) process_image_and_appinfo:(CDVInvokedUrlCommand*)command {
+- (void) get_anno_screenshot_path:(CDVInvokedUrlCommand*)command {
+    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    
+    NSString *appLocation = appDelegate.annoUtils.dataLocation;
+    NSString *screenshotDirName = appDelegate.annoUtils.screenshotDirName;
+    NSString *screenshotDirPath = [appLocation stringByAppendingPathComponent:screenshotDirName];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:screenshotDirPath];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void)show_softkeyboard:(CDVInvokedUrlCommand*)command
-{
-    // Check command.arguments here.
+- (void) process_image_and_appinfo:(CDVInvokedUrlCommand*)command {
     [self.commandDelegate runInBackground:^{
-        NSString* payload = nil;
-        // Some blocking logic...
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        // The sendPluginResult method is thread-safe.
+        NSDictionary *imageAttrs = [self doSaveImage:command.arguments];
+        NSDictionary *appInfo = [self getAppInfo];
+    
+        NSDictionary *jsonData = @{
+            @"imageAttrs" : imageAttrs,
+            @"appInfo" : appInfo,
+            @"success" : @true
+        };
+
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                          messageAsString:(NSString*)jsonData];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
+}
+
+- (NSDictionary*) doSaveImage:(NSArray*)args {
+    NSString *base64Str = @"";
+    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    
+    if ([args count] > 0) {
+        base64Str = [args objectAtIndex:0];
+    }
+
+    NSString *appLocation = appDelegate.annoUtils.dataLocation;
+    NSString *screenshotDirName = appDelegate.annoUtils.screenshotDirName;
+    NSString *screenshotDirPath = [appLocation stringByAppendingPathComponent:screenshotDirName];
+    [appDelegate.annoUtils mkdirs:screenshotDirPath];
+    
+    NSString *imageKey = [self generateUniqueImageKey];
+    NSData *imageData;
+    
+    if ([base64Str length] > 0) {
+        imageData = [[NSData alloc] initWithBase64Encoding:base64Str];
+    } else {
+        imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[AnnoDrawViewController class] getScreenshotPath]]];
+    }
+
+    UIImage *image = [UIImage imageWithData:imageData];
+    NSString *fullPath = [screenshotDirPath stringByAppendingPathComponent:imageKey];
+    
+    [[NSFileManager defaultManager] createFileAtPath:fullPath
+                                            contents:UIImagePNGRepresentation(image)
+                                          attributes:nil];
+    
+    NSLog(@"fullPath in doSaveImage: %@", fullPath);
+    return @{@"imageKey" : imageKey, @"screenshotPath" : screenshotDirPath};
+}
+
+- (NSString*) generateUniqueImageKey {
+    return (NSString *) CFBridgingRelease(CFUUIDCreateString(NULL, CFUUIDCreate(NULL)));
+}
+
+- (NSDictionary*) getAppInfo {
+    NSString *source, *appName, *appVersion;
+    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    
+    if ([appDelegate.annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] && ([[AnnoDrawViewController class] getLevel] != 2)) {
+        source = appDelegate.annoUtils.ANNO_SOURCE_STANDALONE;
+        appName = appDelegate.annoUtils.UNKNOWN_APP_NAME;
+    } else {
+        source = appDelegate.annoUtils.ANNO_SOURCE_PLUGIN;
+        appName = [appDelegate.annoUtils getAppName];
+    }
+    
+    appVersion = [appDelegate.annoUtils getAppVersion];
+    
+    NSDictionary * result = @{
+        @"source" : source,
+        @"appName" : appName,
+        @"appVersion" : appVersion,
+        @"level" : [NSNumber numberWithInt:[[AnnoDrawViewController class] getLevel]]
+    };
+    
+    return result;
 }
 
 - (void) exit_intro:(CDVInvokedUrlCommand*)command {
@@ -275,92 +335,36 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
     }];*/
 }
 
-- (void)get_recent_applist:(CDVInvokedUrlCommand*)command
-{
-    // Check command.arguments here.
+- (void) get_recent_applist:(CDVInvokedUrlCommand*)command {
     [self.commandDelegate runInBackground:^{
         NSString* payload = nil;
-        // Some blocking logic...
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        // The sendPluginResult method is thread-safe.
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
 
-- (void)get_anno_screenshot_path:(CDVInvokedUrlCommand*)command
-{
-    // Check command.arguments here.
+- (void) get_installed_app_list:(CDVInvokedUrlCommand*)command {
     [self.commandDelegate runInBackground:^{
         NSString* payload = nil;
-        // Some blocking logic...
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        // The sendPluginResult method is thread-safe.
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
 
-- (void)close_softkeyboard:(CDVInvokedUrlCommand*)command
-{
-    // Check command.arguments here.
+- (void) show_softkeyboard:(CDVInvokedUrlCommand*)command {
     [self.commandDelegate runInBackground:^{
         NSString* payload = nil;
-        // Some blocking logic...
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        // The sendPluginResult method is thread-safe.
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
 
-- (void)Intro:(CDVInvokedUrlCommand*)command
-{
-    // Check command.arguments here.
+- (void) close_softkeyboard:(CDVInvokedUrlCommand*)command {
     [self.commandDelegate runInBackground:^{
         NSString* payload = nil;
-        // Some blocking logic...
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        // The sendPluginResult method is thread-safe.
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
-}
-
-- (void)Community:(CDVInvokedUrlCommand*)command
-{
-    // Check command.arguments here.
-    [self.commandDelegate runInBackground:^{
-        NSString* payload = nil;
-        // Some blocking logic...
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        // The sendPluginResult method is thread-safe.
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
-}
-
-- (void)Feedback:(CDVInvokedUrlCommand*)command
-{
-    // Check command.arguments here.
-    [self.commandDelegate runInBackground:^{
-        NSString* payload = nil;
-        // Some blocking logic...
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        // The sendPluginResult method is thread-safe.
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
-}
-
-- (void)AnnoDraw:(CDVInvokedUrlCommand*)command
-{
-    // Check command.arguments here.
-    [self.commandDelegate runInBackground:^{
-        NSString* payload = nil;
-        // Some blocking logic...
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        // The sendPluginResult method is thread-safe.
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
-}
-
-- (NSDictionary*) actionProcess {
-    return false;
 }
 
 @end

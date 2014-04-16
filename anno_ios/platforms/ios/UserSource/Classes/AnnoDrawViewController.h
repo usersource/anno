@@ -31,8 +31,9 @@
 
 @interface AnnoDrawViewController : CDVViewController
 
-+ (void) handleFromShareImage:(NSString *)imageURI;
++ (void) handleFromShareImage:(NSString *)imageURI levelValue:(int)levelValue isPracticeValue:(BOOL)isPracticeValue;
 + (NSString*) getScreenshotPath;
++ (int) getLevel;
 
 @end
 

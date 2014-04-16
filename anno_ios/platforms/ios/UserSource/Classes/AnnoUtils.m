@@ -1,5 +1,4 @@
 #import "AnnoUtils.h"
-#import <AssetsLibrary/AssetsLibrary.h>
 
 @implementation AnnoUtils
 
@@ -18,10 +17,11 @@
         self.SCREENSHOT_TIME_FORMAT = @"yyyy-MM-dd-kk-mm-ss";
         self.PNG_SUFFIX = @".png";
         self.LEVEL = @"level";
-        self.FAIL_CREATE_DIRECTORY = @"Create directory %s failed.";
+        self.FAIL_CREATE_DIRECTORY = @"Create directory '%@' failed.";
         self.ERROR_TITLE = @"Error";
 
-        self.dataLocation = [NSString stringWithFormat:@"%@/Anno", [[NSBundle mainBundle] bundlePath]];
+        NSString *documentDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        self.dataLocation = [documentDirectory stringByAppendingPathComponent:@"UserSource"];
         self.screenshotDirName = @"screenshot";
 
         self.ANNO_PACKAGE_NAME = @"io.usersource.anno";
@@ -49,80 +49,63 @@
     return orientation;
 }
 
-- (UIImage*) rotateImage:(UIImage*)drawableImage degree:(int)degree {
-    return [[UIImage alloc] initWithCGImage:drawableImage.CGImage
-                                      scale:(degree / 90.0)
-                                orientation:UIImageOrientationLeft];
+- (UIImage*) rotateImage:(UIImage*)image rotatedByDegrees:(CGFloat)degrees {
+    CGImageRef imgRef = image.CGImage;
+    CGFloat angleInRadians = degrees * (M_PI / 180);
+    CGFloat width = CGImageGetWidth(imgRef);
+    CGFloat height = CGImageGetHeight(imgRef);
+    CGRect imgRect = CGRectMake(0, 0, width, height);
+    CGAffineTransform transform = CGAffineTransformMakeRotation(angleInRadians);
+    CGRect rotatedRect = CGRectApplyAffineTransform(imgRect, transform);
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef bmContext = CGBitmapContextCreate(NULL, rotatedRect.size.width, rotatedRect.size.height, 8, 0, colorSpace, kCGImageAlphaPremultipliedFirst);
+    CGContextSetAllowsAntialiasing(bmContext, YES);
+    CGContextSetShouldAntialias(bmContext, YES);
+    CGContextSetInterpolationQuality(bmContext, kCGInterpolationHigh);
+    CGColorSpaceRelease(colorSpace);
+    CGContextTranslateCTM(bmContext, +(rotatedRect.size.width/2), +(rotatedRect.size.height/2));
+    CGContextRotateCTM(bmContext, angleInRadians);
+    CGContextTranslateCTM(bmContext, -(rotatedRect.size.height/2), -(rotatedRect.size.width/2));
+    CGContextDrawImage(bmContext, CGRectMake(0, 0, rotatedRect.size.height, rotatedRect.size.width), imgRef);
+    
+    CGImageRef rotatedImage = CGBitmapContextCreateImage(bmContext);
+    CFRelease(bmContext);
+    UIImage *finalImage = [UIImage imageWithCGImage:rotatedImage];
+    return finalImage;
 }
 
-- (void) saveImage:(UIImage*)image inAlbum:(NSString*)album completionBlock:(completionFunction)completionBlock {
-    ALAssetsLibrary *assetsLibrary = [[ALAssetsLibrary alloc] init];
+- (NSString*) saveImageToTemp:(UIImage*)image {
+    NSURL *tmpDirURL = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
+    NSString *timeStamp = [NSString stringWithFormat:@"%d", (int)[[NSDate date] timeIntervalSince1970]];
+    NSString *fileName = [[@"anno_" stringByAppendingString:timeStamp] stringByAppendingPathExtension:@"jpg"];
+    NSString *fullPath = [[tmpDirURL path] stringByAppendingPathComponent:fileName];
+    [[NSFileManager defaultManager] createFileAtPath:fullPath
+                                            contents:UIImageJPEGRepresentation(image, 1.0)
+                                          attributes:nil];
+    return [[NSURL fileURLWithPath:fullPath] absoluteString];
+}
+
+- (void) mkdirs:(NSString *)path {
+    BOOL dirCreated = [[NSFileManager defaultManager] createDirectoryAtPath:path
+                                                withIntermediateDirectories:YES
+                                                                 attributes:nil
+                                                                      error:nil];
     
-    [assetsLibrary writeImageToSavedPhotosAlbum:image.CGImage
-                                    orientation:(ALAssetOrientation)image.imageOrientation
-                                completionBlock:^(NSURL* assetURL, NSError* error) {
-                                    if (error != nil) {
-                                        completionBlock(error);
-                                        return;
-                                    }
-//                                    __block BOOL albumWasFound = NO;
-//                                    
-//                                    //search all photo albums in the library
-//                                    [assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum
-//                                                                 usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-//                                                                     
-//                                                                     //compare the names of the albums
-//                                                                     if ([album compare: [group valueForProperty:ALAssetsGroupPropertyName]]==NSOrderedSame) {
-//                                                                         
-//                                                                         //target album is found
-//                                                                         albumWasFound = YES;
-//                                                                         
-//                                                                         //get a hold of the photo's asset instance
-//                                                                         [assetsLibrary assetForURL: assetURL
-//                                                                                        resultBlock:^(ALAsset *asset) {
-//                                                                                            
-//                                                                                            //add photo to the target album
-//                                                                                            [group addAsset: asset];
-//                                                                                            
-//                                                                                            //run the completion block
-//                                                                                            completionBlock(nil);
-//                                                                                            
-//                                                                                        } failureBlock: completionBlock];
-//                                                                         
-//                                                                         //album was found, bail out of the method
-//                                                                         return;
-//                                                                     }
-//                                                                     
-//                                                                     if (group==nil && albumWasFound==NO) {
-//                                                                         //photo albums are over, target album does not exist, thus create it
-//                                                                         
-//                                                                         __weak ALAssetsLibrary* weakSelf = assetsLibrary;
-//                                                                         
-//                                                                         //create new assets album
-//                                                                         [assetsLibrary addAssetsGroupAlbumWithName:album
-//                                                                                                        resultBlock:^(ALAssetsGroup *group) {
-//                                                                                                            
-//                                                                                                            //get the photo's instance
-//                                                                                                            [weakSelf assetForURL: assetURL
-//                                                                                                                      resultBlock:^(ALAsset *asset) {
-//                                                                                                                          
-//                                                                                                                          //add photo to the newly created album
-//                                                                                                                          [group addAsset: asset];
-//                                                                                                                          
-//                                                                                                                          //call the completion block
-//                                                                                                                          completionBlock(nil);
-//                                                                                                                          
-//                                                                                                                      } failureBlock: completionBlock];
-//                                                                                                            
-//                                                                                                        } failureBlock: completionBlock];
-//                                                                         
-//                                                                         //should be the last iteration anyway, but just in case
-//                                                                         return;
-//                                                                     }
-//                                                                     
-//                                                                 } failureBlock: completionBlock];
-//                                }
-     ];
+    if (!dirCreated) {
+        NSLog(self.FAIL_CREATE_DIRECTORY, path);
+    }
+}
+
+- (BOOL) isAnno:(NSString*)bundleID {
+    return [self.ANNO_PACKAGE_NAME isEqualToString:bundleID];
+}
+
+- (NSString*) getAppName {
+    return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+}
+
+- (NSString*) getAppVersion {
+    return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
 }
 
 @end

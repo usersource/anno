@@ -29,11 +29,14 @@
 
 @implementation OptionFeedbackViewController
 
+int level;
+
 - (id)initWithNibName:(NSString*)nibNameOrNil bundle:(NSBundle*)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         self.startPage = @"anno/pages/feedback/main.html";
+        level = 0;
         // Uncomment to override the CDVCommandDelegateImpl used
         // _commandDelegate = [[MainCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
@@ -47,12 +50,17 @@
     self = [super init];
     if (self) {
         self.startPage = @"anno/pages/feedback/main.html";
+        level = 0;
         // Uncomment to override the CDVCommandDelegateImpl used
         // _commandDelegate = [[MainCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
         // _commandQueue = [[MainCommandQueue alloc] initWithViewController:self];
     }
     return self;
+}
+
++ (int) getLevel {
+    return level;
 }
 
 - (void)didReceiveMemoryWarning

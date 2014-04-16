@@ -31,6 +31,8 @@
 
 @interface CommunityViewController : CDVViewController
 
++ (int) getLevel;
+
 @end
 
 @interface CommunityCommandDelegate : CDVCommandDelegateImpl

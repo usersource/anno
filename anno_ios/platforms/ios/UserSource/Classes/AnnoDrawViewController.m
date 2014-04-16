@@ -26,9 +26,12 @@
 //
 
 #import "AnnoDrawViewController.h"
+#import "AppDelegate.h"
 
 @implementation AnnoDrawViewController
 
+bool isPractice;
+int level;
 NSString *screenshotPath;
 
 - (id)initWithNibName:(NSString*)nibNameOrNil bundle:(NSBundle*)nibBundleOrNil
@@ -36,6 +39,7 @@ NSString *screenshotPath;
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         self.startPage = @"anno/pages/annodraw/main.html";
+        level = 0;
         // Uncomment to override the CDVCommandDelegateImpl used
         // _commandDelegate = [[MainCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
@@ -49,6 +53,7 @@ NSString *screenshotPath;
     self = [super init];
     if (self) {
         self.startPage = @"anno/pages/annodraw/main.html";
+        level = 0;
         // Uncomment to override the CDVCommandDelegateImpl used
         // _commandDelegate = [[MainCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
@@ -57,12 +62,39 @@ NSString *screenshotPath;
     return self;
 }
 
-+ (void) handleFromShareImage:(NSString *)imageURI {
-    screenshotPath = imageURI;
++ (void) handleFromShareImage:(NSString *)imageURI levelValue:(int)levelValue isPracticeValue:(BOOL)isPracticeValue {
+    screenshotPath = @"";
+    level = levelValue + 1;
+    isPractice = isPracticeValue;
+    
+    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    
+    if (imageURI != nil) {
+        UIImage *drawableImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:imageURI]]];
+        
+        @try {
+            NSString *orientation = [appDelegate.annoUtils isLandscapeOrPortrait:drawableImage];
+            if ([appDelegate.annoUtils.IMAGE_ORIENTATION_LANDSCAPE isEqualToString:orientation]) {
+                drawableImage = [appDelegate.annoUtils rotateImage:drawableImage rotatedByDegrees:90.0];
+                screenshotPath = [appDelegate.annoUtils saveImageToTemp:drawableImage];
+            } else {
+                screenshotPath = imageURI;
+            }
+        }
+        @catch (NSException *exception) {
+            if (appDelegate.annoUtils.debugEnabled) {
+                NSLog(@"Exception while handling from share image: %@", exception);
+            }
+        }
+    }
 }
 
 + (NSString*) getScreenshotPath {
     return screenshotPath;
+}
+
++ (int) getLevel {
+    return level;
 }
 
 - (void)didReceiveMemoryWarning

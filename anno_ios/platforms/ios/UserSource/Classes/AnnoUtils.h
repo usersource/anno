@@ -2,11 +2,13 @@
 
 @interface AnnoUtils : NSObject
 
-typedef void(^completionFunction)(NSError* error);
-
 - (NSString*) isLandscapeOrPortrait:(UIImage*)drawableImage;
-- (UIImage*) rotateImage:(UIImage*)drawableImage degree:(int)degree;
-- (void) saveImage:(UIImage*)image inAlbum:(NSString*)album completionBlock:(completionFunction)completionBlock;
+- (UIImage*) rotateImage:(UIImage*)image rotatedByDegrees:(CGFloat)degrees;
+- (NSString*) saveImageToTemp:(UIImage*)image;
+- (void) mkdirs:(NSString*)path;
+- (BOOL) isAnno:(NSString*)bundleID;
+- (NSString*) getAppName;
+- (NSString*) getAppVersion;
 
 @property NSString *ANNO_SOURCE_PLUGIN;
 @property NSString *ANNO_SOURCE_STANDALONE;
