@@ -52,13 +52,15 @@
 - (UIImage*) rotateImage:(UIImage*)image rotatedByDegrees:(CGFloat)degrees {
     CGImageRef imgRef = image.CGImage;
     CGFloat angleInRadians = degrees * (M_PI / 180);
-    CGFloat width = CGImageGetWidth(imgRef);
-    CGFloat height = CGImageGetHeight(imgRef);
-    CGRect imgRect = CGRectMake(0, 0, width, height);
+
+    CGRect imgRect = CGRectMake(0, 0, CGImageGetWidth(imgRef), CGImageGetHeight(imgRef));
     CGAffineTransform transform = CGAffineTransformMakeRotation(angleInRadians);
+
     CGRect rotatedRect = CGRectApplyAffineTransform(imgRect, transform);
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef bmContext = CGBitmapContextCreate(NULL, rotatedRect.size.width, rotatedRect.size.height, 8, 0, colorSpace, kCGImageAlphaPremultipliedFirst);
+    CGContextRef bmContext = CGBitmapContextCreate(NULL, rotatedRect.size.width, rotatedRect.size.height, 8, 0, colorSpace,
+                                                   (CGBitmapInfo)kCGImageAlphaPremultipliedFirst);
+
     CGContextSetAllowsAntialiasing(bmContext, YES);
     CGContextSetShouldAntialias(bmContext, YES);
     CGContextSetInterpolationQuality(bmContext, kCGInterpolationHigh);
@@ -70,8 +72,7 @@
     
     CGImageRef rotatedImage = CGBitmapContextCreateImage(bmContext);
     CFRelease(bmContext);
-    UIImage *finalImage = [UIImage imageWithCGImage:rotatedImage];
-    return finalImage;
+    return [UIImage imageWithCGImage:rotatedImage];
 }
 
 - (NSString*) saveImageToTemp:(UIImage*)image {
