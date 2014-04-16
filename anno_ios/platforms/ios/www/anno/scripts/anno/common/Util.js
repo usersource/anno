@@ -67,6 +67,9 @@ define([
             };
         },
        // CHANGES BY IGNITE -- START
+       // In iOS, for localFileSystem.root.getFile to find file on filePath location, filePath
+       // should be relative to rootPath.
+       // rootPath for iOS device is '/var/mobile/Applications/<application UUID>/Documents'.
         getBase64FileContent: function(filePath, callback)
         {
             function getiOSRelativePath(rootPath, filePath) {
