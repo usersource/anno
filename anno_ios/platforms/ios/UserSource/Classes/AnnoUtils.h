@@ -7,15 +7,14 @@
 - (NSString*) saveImageToTemp:(UIImage*)image;
 - (void) mkdirs:(NSString*)path;
 - (BOOL) isAnno:(NSString*)bundleID;
-- (NSString*) getAppName;
-- (NSString*) getAppVersion;
++ (NSString*) getAppName;
++ (NSString*) getAppVersion;
 
 @property NSString *ANNO_SOURCE_PLUGIN;
 @property NSString *ANNO_SOURCE_STANDALONE;
 @property Boolean debugEnabled;
 
 @property NSString *INTENT_EXTRA_IS_PRACTICE;
-
 @property NSString *UNKNOWN_APP_NAME;
 
 @property NSString *SCREENSHOT_TIME_FORMAT;

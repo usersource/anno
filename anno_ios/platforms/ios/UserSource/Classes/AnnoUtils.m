@@ -11,7 +11,6 @@
         self.debugEnabled = true;
 
         self.INTENT_EXTRA_IS_PRACTICE = @"is_practice";
-
         self.UNKNOWN_APP_NAME = @"Unknown";
 
         self.SCREENSHOT_TIME_FORMAT = @"yyyy-MM-dd-kk-mm-ss";
@@ -101,11 +100,11 @@
     return [self.ANNO_PACKAGE_NAME isEqualToString:bundleID];
 }
 
-- (NSString*) getAppName {
++ (NSString*) getAppName {
     return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
 }
 
-- (NSString*) getAppVersion {
++ (NSString*) getAppVersion {
     return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
 }
 

@@ -85,7 +85,7 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
         
         [appDelegate.window addSubview:appDelegate.annoDrawViewController.view];
         self.viewController = appDelegate.annoDrawViewController;
-        [[AnnoDrawViewController class] handleFromShareImage:imageURI levelValue:0 isPracticeValue:false];
+        [AnnoDrawViewController handleFromShareImage:imageURI levelValue:0 isPracticeValue:false];
     } else {
         AnnoDrawViewController *currentViewController = (AnnoDrawViewController*)appDelegate.annoDrawViewController;
         [appDelegate.viewController presentViewController:currentViewController animated:YES completion:nil];
@@ -212,8 +212,8 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
     [self.commandDelegate runInBackground:^{
         AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
 
-        NSString *screenshotPath = [[AnnoDrawViewController class] getScreenshotPath];
-        NSString *level = [NSString stringWithFormat:@"%d", [[AnnoDrawViewController class] getLevel]];
+        NSString *screenshotPath = [AnnoDrawViewController getScreenshotPath];
+        NSString *level = [NSString stringWithFormat:@"%d", [AnnoDrawViewController getLevel]];
         NSString *isAnno = [appDelegate.annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] ? @"true" : @"false";
         NSString *payload = [NSString stringWithFormat:@"%@|%@|%@", screenshotPath, level, isAnno];
 
@@ -269,7 +269,7 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
     if ([base64Str length] > 0) {
         imageData = [[NSData alloc] initWithBase64Encoding:base64Str];
     } else {
-        imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[AnnoDrawViewController class] getScreenshotPath]]];
+        imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[AnnoDrawViewController getScreenshotPath]]];
     }
 
     UIImage *image = [UIImage imageWithData:imageData];
@@ -278,61 +278,40 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
     [[NSFileManager defaultManager] createFileAtPath:fullPath
                                             contents:UIImagePNGRepresentation(image)
                                           attributes:nil];
-    
-    NSLog(@"fullPath in doSaveImage: %@", fullPath);
+
     return @{@"imageKey" : imageKey, @"screenshotPath" : screenshotDirPath};
 }
 
 - (NSString*) generateUniqueImageKey {
-    return (NSString *) CFBridgingRelease(CFUUIDCreateString(NULL, CFUUIDCreate(NULL)));
+    return (NSString*)CFBridgingRelease(CFUUIDCreateString(NULL, CFUUIDCreate(NULL)));
 }
 
 - (NSDictionary*) getAppInfo {
-    NSString *source, *appName, *appVersion;
+    NSString *source, *appName;
     AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     
-    if ([appDelegate.annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] && ([[AnnoDrawViewController class] getLevel] != 2)) {
+    if ([appDelegate.annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] && ([AnnoDrawViewController getLevel] != 2)) {
         source = appDelegate.annoUtils.ANNO_SOURCE_STANDALONE;
         appName = appDelegate.annoUtils.UNKNOWN_APP_NAME;
     } else {
         source = appDelegate.annoUtils.ANNO_SOURCE_PLUGIN;
-        appName = [appDelegate.annoUtils getAppName];
+        appName = [AnnoUtils getAppName];
     }
     
-    appVersion = [appDelegate.annoUtils getAppVersion];
+    NSString *appVersion = [AnnoUtils getAppVersion];
     
     NSDictionary * result = @{
         @"source" : source,
         @"appName" : appName,
         @"appVersion" : appVersion,
-        @"level" : [NSNumber numberWithInt:[[AnnoDrawViewController class] getLevel]]
+        @"level" : [NSNumber numberWithInt:[AnnoDrawViewController getLevel]]
     };
     
     return result;
 }
 
 - (void) exit_intro:(CDVInvokedUrlCommand*)command {
-    // Check command.arguments here.
-    /*[self.commandDelegate runInBackground:^{
-        NSString* payload = nil;
-
-        
-        // load intro page
-        AppDelegate* appDelegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
-        MainViewController* viewController = (MainViewController*)appDelegate.viewController;
-        
-        NSString *fullURL = [[NSBundle mainBundle] pathForResource:@"main" ofType:@"html" inDirectory:@"www/anno/pages/community"];
-        NSURL *url = [NSURL fileURLWithPath:fullURL];
-        NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
-        [viewController.webView loadRequest:requestObj];
-        
-        // end load
-        
-        
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        // The sendPluginResult method is thread-safe.
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];*/
+    [self exitActivity];
 }
 
 - (void) get_recent_applist:(CDVInvokedUrlCommand*)command {
