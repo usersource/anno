@@ -102,3 +102,22 @@ indexes:
   - name: creator
   - name: last_update_time
     direction: desc
+
+- kind: Vote
+  properties:
+  - name: creator
+  - name: created
+    direction: desc
+
+- kind: Flag
+  properties:
+  - name: creator
+  - name: created
+    direction: desc
+
+
+- kind: FollowUp
+  properties:
+  - name: creator
+  - name: created
+    direction: desc

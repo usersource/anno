@@ -16,6 +16,7 @@ from message.anno_api_messages import AnnoMessage
 from message.anno_api_messages import AnnoMergeMessage
 from message.anno_api_messages import AnnoListMessage
 from message.anno_api_messages import AnnoResponseMessage
+from message.anno_api_messages import MyContributionMessage
 from model.anno import Anno
 from model.user import User
 from model.vote import Vote
@@ -177,14 +178,18 @@ class AnnoApi(remote.Service):
         anno.key.delete()
         return message_types.VoidMessage()
 
-    @endpoints.method(message_types.VoidMessage, AnnoListMessage, path='anno_my_stuff', http_method='GET',
+    @endpoints.method(message_types.VoidMessage, MyContributionMessage, path='anno_my_stuff', http_method='GET',
                       name='anno.mystuff')
     def anno_my_stuff(self, request):
         """
         Exposes an API endpoint to return all my anno list.
         """
         user = auth_user(self.request_state.headers)
-        return Anno.query_by_last_modified(user)
+        anno_list = Anno.query_my_anno(user)
+        vote_list = Vote.query_vote_by_author(user)
+        flag_list = Flag.query_flag_by_author(user)
+        followup_list = FollowUp.query_followup_by_author(user)
+        return MyContributionMessage(anno_list=anno_list, vote_list=vote_list, flag_list=flag_list, followup_list=followup_list)
 
     anno_search_resource_container = endpoints.ResourceContainer(
         search_string=messages.StringField(1, required=False),

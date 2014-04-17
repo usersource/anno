@@ -35,3 +35,11 @@ class FollowUp(BaseModel):
         for followup in FollowUp.query(FollowUp.anno_key == anno.key):
             followups.append(followup)
         return followups
+
+    @classmethod
+    def query_followup_by_author(cls, user):
+        query = cls.query(cls.creator == user.key).order(-cls.created)
+        followup_list = []
+        for followup in query:
+            followup_list.append(followup.to_message())
+        return followup_list

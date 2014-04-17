@@ -9,6 +9,8 @@ from protorpc import message_types
 
 from message.user_message import UserMessage
 from message.followup_message import FollowupMessage
+from message.flag_message import FlagMessage
+from message.vote_message import VoteMessage
 
 
 class AnnoMessage(messages.Message):
@@ -108,3 +110,13 @@ class AnnoListMessage(messages.Message):
     cursor = messages.StringField(2)
     has_more = messages.BooleanField(3)
     offset = messages.IntegerField(4)
+
+
+class MyContributionMessage(messages.Message):
+    """
+    ProtoRPC message definition to represent vote, flag and followup that someone has contributed.
+    """
+    anno_list = messages.MessageField(AnnoResponseMessage, 1, repeated=True)
+    vote_list = messages.MessageField(VoteMessage, 2, repeated=True)
+    flag_list = messages.MessageField(FlagMessage, 3, repeated=True)
+    followup_list = messages.MessageField(FollowupMessage, 4, repeated=True)
