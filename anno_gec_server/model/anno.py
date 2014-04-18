@@ -290,13 +290,14 @@ class Anno(BaseModel):
         return None
 
     @classmethod
-    def query_by_last_modified(cls, user):
+    def query_my_anno(cls, user):
         query = cls.query().filter(cls.creator == user.key).order(-cls.last_update_time)
         anno_list = []
         for anno in query:
             anno_message = anno.to_response_message()
             anno_list.append(anno_message)
-        return AnnoListMessage(anno_list=anno_list)
+        return anno_list
+
 
     @classmethod
     def query_by_active(cls, limit, offset, search_string, app_name):
