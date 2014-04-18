@@ -41,5 +41,5 @@ class FollowUp(BaseModel):
         query = cls.query(cls.creator == user.key).order(-cls.created)
         followup_list = []
         for followup in query:
-            followup_list.append(followup.to_message())
+            followup_list.append(followup)
         return followup_list
