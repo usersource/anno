@@ -36,5 +36,5 @@ class Flag(BaseModel):
         query = cls.query(cls.creator == user.key).order(-cls.created)
         flag_list = []
         for flag in query:
-            flag_list.append(flag.to_message())
+            flag_list.append(flag)
         return flag_list

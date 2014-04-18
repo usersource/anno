@@ -36,5 +36,5 @@ class Vote(BaseModel):
         query = cls.query(cls.creator == user.key).order(-cls.created)
         vote_list = []
         for vote in query:
-            vote_list.append(vote.to_message())
+            vote_list.append(vote)
         return vote_list
