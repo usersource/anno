@@ -83,12 +83,8 @@
 
 /* Begin PBXFileReference section */
 		02D37BE39E244D0CBE31F43E /* CDVExif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVExif.h; path = org.apache.cordova.camera/CDVExif.h; sourceTree = "<group>"; };
-		1D02161018EECEBC00E97738 /* platform_www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = platform_www; sourceTree = "<group>"; };
-		1D02161218EECECF00E97738 /* libCordova.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCordova.a; path = build/emulator/libCordova.a; sourceTree = "<group>"; };
-		1D02161418EECEE100E97738 /* libCordova.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCordova.a; path = build/device/libCordova.a; sourceTree = "<group>"; };
 		1D02161618EED12600E97738 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		1D02161818EED18600E97738 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
-		1D0F183B18EFD943004719E0 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		1D44E81B18F7FEF5007A1635 /* AnnoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnnoUtils.h; sourceTree = "<group>"; };
@@ -283,12 +279,8 @@
 			isa = PBXGroup;
 			children = (
 				1DD1F1C518F6633000D5083A /* libCordova.a */,
-				1D0F183B18EFD943004719E0 /* StoreKit.framework */,
 				1D02161818EED18600E97738 /* MessageUI.framework */,
 				1D02161618EED12600E97738 /* Social.framework */,
-				1D02161418EECEE100E97738 /* libCordova.a */,
-				1D02161218EECECF00E97738 /* libCordova.a */,
-				1D02161018EECEBC00E97738 /* platform_www */,
 				5AEE5B34173C68D80009041E /* CoreLocation.framework */,
 				5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */,
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
