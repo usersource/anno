@@ -5,7 +5,6 @@ from google.appengine.ext import ndb
 from model.anno import Anno
 from model.base_model import BaseModel
 from message.flag_message import FlagMessage
-from message.user_message import UserMessage
 
 
 class Flag(BaseModel):

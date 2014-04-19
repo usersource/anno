@@ -2,6 +2,7 @@ __author__ = 'topcircler'
 
 from protorpc import message_types
 from protorpc import messages
+
 from message.user_message import UserMessage
 
 

@@ -5,10 +5,8 @@ Anno API implemented using Google Cloud Endpoints.
 """
 
 import endpoints
-import logging
 from google.appengine.datastore.datastore_query import Cursor
 from google.appengine.ext.db import BadValueError
-
 from protorpc import message_types
 from protorpc import messages
 from protorpc import remote
@@ -18,6 +16,7 @@ from anno_api_messages import AnnoMergeMessage
 from anno_api_messages import AnnoListMessage
 from anno_api_messages import AnnoResponseMessage
 from model.anno import Anno
+
 
 package = 'core'
 
@@ -59,7 +58,7 @@ class AnnoApi(remote.Service):
         """
         Exposes an API endpoint to retrieve a list of anno.
         """
-        limit = 10 # default limit is 10.
+        limit = 10  # default limit is 10.
         if request.limit is not None:
             limit = request.limit
 
@@ -138,5 +137,6 @@ class AnnoApi(remote.Service):
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
         anno.key.delete()
         return message_types.VoidMessage()
+
 
 APPLICATION = endpoints.api_server([AnnoApi], restricted=False)

@@ -1,13 +1,15 @@
 __author__ = 'topcircler'
 
 import re
-import endpoints
 import httplib
 import json
 import logging
 import base64
-from model.user import User
+
+import endpoints
 from google.appengine.api import search
+
+from model.user import User
 
 
 def get_endpoints_current_user(raise_unauthorized=True):
@@ -46,6 +48,7 @@ def handle_user(creator_id):
             user = User.insert_user(current_user.email())
     return user
 
+
 def auth_user(headers):
     current_user = get_endpoints_current_user(raise_unauthorized=False)
     user = None
@@ -61,6 +64,7 @@ def auth_user(headers):
         raise endpoints.UnauthorizedException("No permission.")
     return user
 
+
 def get_user(headers):
     current_user = get_endpoints_current_user(raise_unauthorized=False)
     user = None
@@ -73,6 +77,7 @@ def get_user(headers):
     else:
         user = User.find_user_by_email(current_user.email())
     return user
+
 
 def get_country_by_coordinate(latitude, longitude):
     """
@@ -122,6 +127,7 @@ def validate_password(password):
 
 def md5(content):
     import hashlib
+
     m = hashlib.md5()
     m.update(content)
     return m.hexdigest()
@@ -179,6 +185,7 @@ def is_empty_string(string_value):
     if re.match(r'\s+', string_value) is not None:
         return True
     return False
+
 
 """
 annoserver:

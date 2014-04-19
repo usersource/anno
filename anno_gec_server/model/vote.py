@@ -3,9 +3,9 @@ __author__ = 'topcircler'
 from google.appengine.ext import ndb
 
 from model.anno import Anno
+
 from model.base_model import BaseModel
 from message.vote_message import VoteMessage
-from message.user_message import UserMessage
 
 
 class Vote(BaseModel):

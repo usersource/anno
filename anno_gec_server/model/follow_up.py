@@ -5,7 +5,6 @@ from google.appengine.ext import ndb
 from model.anno import Anno
 from model.base_model import BaseModel
 from message.followup_message import FollowupMessage
-from message.user_message import UserMessage
 
 
 class FollowUp(BaseModel):

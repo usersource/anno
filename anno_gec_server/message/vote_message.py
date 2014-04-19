@@ -5,6 +5,7 @@ from protorpc import message_types
 
 from message.user_message import UserMessage
 
+
 class VoteMessage(messages.Message):
     """
     Reprensents vote message.

@@ -9,8 +9,6 @@ from protorpc import message_types
 
 from message.user_message import UserMessage
 from message.followup_message import FollowupMessage
-from message.flag_message import FlagMessage
-from message.vote_message import VoteMessage
 
 
 class AnnoMessage(messages.Message):
@@ -23,7 +21,7 @@ class AnnoMessage(messages.Message):
     anno_text = messages.StringField(2, required=True)
     simple_x = messages.FloatField(3, required=True)
     simple_y = messages.FloatField(4, required=True)
-    image = messages.BytesField(5) #todo add required=True
+    image = messages.BytesField(5)  #todo add required=True
     anno_type = messages.StringField(6, default='simple comment')
     simple_circle_on_top = messages.BooleanField(7, required=True)
     simple_is_moved = messages.BooleanField(8, required=True)

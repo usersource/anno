@@ -38,6 +38,7 @@ class UserApi(remote.Service):
         message_types.VoidMessage,
         email=messages.StringField(1)
     )
+
     @endpoints.method(user_email_resource_container, UserMessage, path='user/display_name', http_method='GET',
                       name='user.displayname.get')
     def user_display_name_get(self, request):
