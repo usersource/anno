@@ -203,7 +203,8 @@ class AnnoApi(remote.Service):
             anno = Anno.get_by_id(anno_id)
             if anno is not None:
                 anno_list.append(anno.to_response_message())
-        return AnnoListMessage(anno_list=anno_list)
+        anno_set = list(set(anno_list))
+        return AnnoListMessage(anno_list=anno_set)
 
     anno_search_resource_container = endpoints.ResourceContainer(
         search_string=messages.StringField(1, required=False),
