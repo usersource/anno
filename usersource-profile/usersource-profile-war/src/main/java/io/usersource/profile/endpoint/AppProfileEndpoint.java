@@ -2,6 +2,8 @@ package io.usersource.profile.endpoint;
 
 import io.usersource.profile.Constants;
 
+import javax.inject.Named;
+
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -13,8 +15,9 @@ import com.google.appengine.api.datastore.Entity;
 public class AppProfileEndpoint {
 
 	@ApiMethod(name = "uploadAppIcon", path = "uploadAppIcon", httpMethod = "post")
-	public void uploadAppIcon(String appName, String appVersion,
-			byte[] appIconData) {
+	public void uploadAppIcon(@Named("appName") String appName,
+			@Named("appVersion") String appVersion,
+			@Named("appIconData") byte[] appIconData) {
 		Entity app = new Entity("AppInfo");
 		app.setProperty("appName", appName);
 		app.setProperty("appVersion", appIconData);
@@ -24,5 +27,5 @@ public class AppProfileEndpoint {
 				.getDatastoreService();
 		datastore.put(app);
 	}
-	
+
 }
