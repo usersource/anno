@@ -4,7 +4,7 @@ package io.usersource.profile;
  * Contains the client IDs and scopes for allowed clients.
  */
 public class Constants {
-	public static final String WEB_CLIENT_ID = "605162073654-q4vuk8hh2kgg8sjhe9foo1q0de3p69k1.apps.googleusercontent.com";
+	public static final String WEB_CLIENT_ID = "898021837040.apps.googleusercontent.com";
 	public static final String ANDROID_CLIENT_ID = "replace this with your Android client ID";
 	public static final String IOS_CLIENT_ID = "replace this with your iOS client ID";
 	public static final String ANDROID_AUDIENCE = WEB_CLIENT_ID;

@@ -24,7 +24,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.users.User;
 
-@Api(name = "userProfile", version = "v1", scopes = { Constants.EMAIL_SCOPE }, clientIds = {
+@Api(name = "userProfile", version = "v1", description = "This API provides services for managing user profiles.", scopes = { Constants.EMAIL_SCOPE }, clientIds = {
 		Constants.WEB_CLIENT_ID, Constants.API_EXPLORER_CLIENT_ID })
 public class UserProfileEndpoint {
 
@@ -56,7 +56,7 @@ public class UserProfileEndpoint {
 		return appList;
 	}
 
-	@ApiMethod(name = "updateInstalledApp", path = "updateInstalledApp", httpMethod = HttpMethod.POST)
+	@ApiMethod(name = "updateInstalledAppList", path = "updateInstalledAppList", httpMethod = HttpMethod.POST)
 	public void updateInstalledAppsForUser(User user, AppList appList)
 			throws UnauthorizedException, BadRequestException {
 		if (user == null) {
