@@ -1,13 +1,15 @@
 __author__ = 'topcircler'
 
+import logging
+
 import endpoints
 from protorpc import remote
 from protorpc import message_types
-from protorpc import messages
-import logging
+
 from api.utils import put_search_document
 from model.anno import Anno
 from api.utils import anno_js_client_id
+
 
 @endpoints.api(name='util', version='1.0', description='Util API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])

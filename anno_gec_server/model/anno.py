@@ -4,10 +4,11 @@ __author__ = 'topcircler'
 Anno data store model definition.
 """
 
-from google.appengine.api import search
-from google.appengine.ext import ndb
 import datetime
 import logging
+
+from google.appengine.api import search
+from google.appengine.ext import ndb
 
 from message.anno_api_messages import AnnoResponseMessage
 from message.anno_api_messages import AnnoListMessage
@@ -269,20 +270,20 @@ class Anno(BaseModel):
 
     @classmethod
     def is_anno_exists(cls, user, message):
-        query = cls.query()\
-            .filter(cls.app_name == message.app_name)\
-            .filter(cls.anno_text == message.anno_text)\
-            .filter(cls.anno_type == message.anno_type)\
-            .filter(cls.app_version == message.app_version)\
-            .filter(cls.level == message.level)\
-            .filter(cls.os_name == message.os_name)\
-            .filter(cls.os_version == message.os_version)\
-            .filter(cls.device_model == message.device_model)\
-            .filter(cls.screenshot_is_anonymized == message.screenshot_is_anonymized)\
-            .filter(cls.created == message.created)\
-            .filter(cls.simple_circle_on_top == message.simple_circle_on_top)\
-            .filter(cls.simple_x == message.simple_x)\
-            .filter(cls.simple_y == message.simple_y)\
+        query = cls.query() \
+            .filter(cls.app_name == message.app_name) \
+            .filter(cls.anno_text == message.anno_text) \
+            .filter(cls.anno_type == message.anno_type) \
+            .filter(cls.app_version == message.app_version) \
+            .filter(cls.level == message.level) \
+            .filter(cls.os_name == message.os_name) \
+            .filter(cls.os_version == message.os_version) \
+            .filter(cls.device_model == message.device_model) \
+            .filter(cls.screenshot_is_anonymized == message.screenshot_is_anonymized) \
+            .filter(cls.created == message.created) \
+            .filter(cls.simple_circle_on_top == message.simple_circle_on_top) \
+            .filter(cls.simple_x == message.simple_x) \
+            .filter(cls.simple_y == message.simple_y) \
             .filter(cls.simple_is_moved == message.simple_is_moved)
         for anno in query:
             if anno.creator.id() == user.key.id():
@@ -300,14 +301,15 @@ class Anno(BaseModel):
 
 
     @classmethod
-    def query_by_active(cls, limit, offset, search_string, app_name):
+    def query_by_recent(cls, limit, offset, search_string, app_name, app_set):
         """
-        This method queries anno records by 'active' order.
-        'active' = last_update_time
-        :param limit how many anno records to retrieve
+        This method queries anno records by 'recent' order.
+        'recent' = created
+        :param limit how many anno records to query.
         :param offset query offset which represents starting from which anno record.
         :param search_string search string which partial-matches to anno_text.
         :param app_name app name which full-matches to app_name, this parameter is a single app name, not an app list.
+        :param app_set app name set.
         """
         index = search.Index(name="anno_index")
         # prepare pagination
@@ -315,7 +317,72 @@ class Anno(BaseModel):
             limit = 20  # default page size is 20.
         if offset is None:
             offset = 0
-        query_string = Anno.get_query_string(search_string, app_name)
+        # build query string
+        query_string = Anno.get_query_string(search_string, app_name, app_set)
+        # build query options
+        sort = search.SortExpression(expression="created",
+                                     direction=search.SortExpression.DESCENDING,
+                                     default_value=datetime.datetime.now())
+        sort_opts = search.SortOptions(expressions=[sort])
+        query_options = search.QueryOptions(
+            limit=limit,
+            offset=offset,
+            sort_options=sort_opts,
+            returned_fields=['anno_text', 'app_name', 'created']
+        )
+        # execute query
+        return Anno.convert_document_to_message(index, query_string, query_options, offset, limit)
+
+    @classmethod
+    def query_by_popular(cls, limit, offset, search_string, app_name, app_set):
+        """
+        This method queries anno records by 'popular' order.
+        'popular' = vote_count - flag_count
+        :param limit how many anno records to query.
+        :param offset query offset which represents starting from which anno record.
+        :param search_string search string which partial-matches to anno_text.
+        :param app_name app name which full-matches to app_name, this parameter is a single app name, not an app list.
+        :param app_set app name set.
+        """
+        index = search.Index(name="anno_index")
+        # prepare pagination
+        if limit is None:
+            limit = 20  # default page size is 20.
+        if offset is None:
+            offset = 0
+        # build query string
+        query_string = Anno.get_query_string(search_string, app_name, app_set)
+        # build query options
+        sort = search.SortExpression(expression="vote_count-flag_count",
+                                     direction=search.SortExpression.DESCENDING, default_value=0)
+        sort_opts = search.SortOptions(expressions=[sort])
+        query_options = search.QueryOptions(
+            limit=limit,
+            offset=offset,
+            sort_options=sort_opts,
+            returned_fields=['anno_text', 'app_name', 'vote_count', 'flag_count']
+        )
+        # execute query
+        return Anno.convert_document_to_message(index, query_string, query_options, offset, limit)
+
+    @classmethod
+    def query_by_active(cls, limit, offset, search_string, app_name, app_set):
+        """
+        This method queries anno records by 'active' order.
+        'active' = last_update_time
+        :param limit how many anno records to retrieve
+        :param offset query offset which represents starting from which anno record.
+        :param search_string search string which partial-matches to anno_text.
+        :param app_name app name which full-matches to app_name, this parameter is a single app name, not an app list.
+        :param app_set app name set.
+        """
+        index = search.Index(name="anno_index")
+        # prepare pagination
+        if limit is None:
+            limit = 20  # default page size is 20.
+        if offset is None:
+            offset = 0
+        query_string = Anno.get_query_string(search_string, app_name, app_set)
         sort = search.SortExpression(expression="last_update_time",
                                      direction=search.SortExpression.DESCENDING,
                                      default_value=datetime.datetime.now())
@@ -329,22 +396,30 @@ class Anno(BaseModel):
         return Anno.convert_document_to_message(index, query_string, query_options, offset, limit)
 
     @classmethod
-    def get_query_string(cls, search_string, app_name):
+    def get_query_string(cls, search_string, app_name, app_set):
         """
         This method returns search query string based on the given search_string and app_name.
         :param search_string: search string which partial-matches to anno_text.
         :param app_name: app name which full-matches to app_name, this parameter is a single app name, not an app list.
+        :param app_set: app name set.
         """
-        query_string = ""
-        has_search_string = not is_empty_string(search_string)
-        if has_search_string:
+        query_string_parts = []
+        if app_set is not None:  # 'limit to my app' is on
+            if len(app_set) == 0:
+                logging.info("final query string= 1 = 0")
+                return "1 = 0"
+            else:
+                app_name_query_list = []
+                for app in app_set:
+                    app_name_query_list.append("app_name = \"%s\"" % app)
+                query_string_parts.append("(" + ' OR '.join(app_name_query_list) + ")")
+        if not is_empty_string(search_string):
             words = tokenize_string(search_string)
-            query_string = Anno.get_query_string_for_all_fields(["anno_text", "app_name"], words)
+            query_string_parts.append(Anno.get_query_string_for_all_fields(["anno_text", "app_name"], words))
         if not is_empty_string(app_name):
-            if has_search_string and query_string is not None:
-                query_string = "(" + query_string + ") AND "
-            query_string += "app_name = \"%s\" " % app_name
-        logging.debug("query_string:%s" % query_string)
+            query_string_parts.append("( app_name = \"%s\" )" % app_name)
+        query_string = ' AND '.join(query_string_parts)
+        logging.info("final query string=%s" % query_string)
         return query_string
 
     @classmethod
@@ -370,76 +445,14 @@ class Anno(BaseModel):
         :param words: tokens to match
         """
         if fields is not None and len(fields) > 0 and words is not None and len(words) > 0:
-            query_string = ""
+            query_string = " ( "
             for index, field in enumerate(fields):
                 query_string += Anno.get_query_string_for_field(field, words)
                 if index != len(fields) - 1:
                     query_string += " OR "
+            query_string += " ) "
             return query_string
         return None
-
-    @classmethod
-    def query_by_recent(cls, limit, offset, search_string, app_name):
-        """
-        This method queries anno records by 'recent' order.
-        'recent' = created
-        :param limit how many anno records to query.
-        :param offset query offset which represents starting from which anno record.
-        :param search_string search string which partial-matches to anno_text.
-        :param app_name app name which full-matches to app_name, this parameter is a single app name, not an app list.
-        """
-        index = search.Index(name="anno_index")
-        # prepare pagination
-        if limit is None:
-            limit = 20  # default page size is 20.
-        if offset is None:
-            offset = 0
-        # build query string
-        query_string = Anno.get_query_string(search_string, app_name)
-        # build query options
-        sort = search.SortExpression(expression="created",
-                                     direction=search.SortExpression.DESCENDING,
-                                     default_value=datetime.datetime.now())
-        sort_opts = search.SortOptions(expressions=[sort])
-        query_options = search.QueryOptions(
-            limit=limit,
-            offset=offset,
-            sort_options=sort_opts,
-            returned_fields=['anno_text', 'app_name', 'created']
-        )
-        # execute query
-        return Anno.convert_document_to_message(index, query_string, query_options, offset, limit)
-
-    @classmethod
-    def query_by_popular(cls, limit, offset, search_string, app_name):
-        """
-        This method queries anno records by 'popular' order.
-        'popular' = vote_count - flag_count
-        :param limit how many anno records to query.
-        :param offset query offset which represents starting from which anno record.
-        :param search_string search string which partial-matches to anno_text.
-        :param app_name app name which full-matches to app_name, this parameter is a single app name, not an app list.
-        """
-        index = search.Index(name="anno_index")
-        # prepare pagination
-        if limit is None:
-            limit = 20  # default page size is 20.
-        if offset is None:
-            offset = 0
-        # build query string
-        query_string = Anno.get_query_string(search_string, app_name)
-        # build query options
-        sort = search.SortExpression(expression="vote_count-flag_count",
-                                     direction=search.SortExpression.DESCENDING, default_value=0)
-        sort_opts = search.SortOptions(expressions=[sort])
-        query_options = search.QueryOptions(
-            limit=limit,
-            offset=offset,
-            sort_options=sort_opts,
-            returned_fields=['anno_text', 'app_name', 'vote_count', 'flag_count']
-        )
-        # execute query
-        return Anno.convert_document_to_message(index, query_string, query_options, offset, limit)
 
     @classmethod
     def convert_document_to_message(cls, index, query_string, query_options, offset, limit):
@@ -475,3 +488,14 @@ class Anno(BaseModel):
             ]
         )
         return anno_document
+
+    @classmethod
+    def query_anno_by_author(cls, user):
+        """
+        This methods return all annos created by the given user.
+        """
+        query = cls.query().filter(cls.creator == user.key).order(-cls.last_update_time)
+        anno_list = []
+        for anno in query:
+            anno_list.append(anno)
+        return anno_list

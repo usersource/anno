@@ -4,29 +4,27 @@ __author__ = 'topcircler'
 Anno API implemented using Google Cloud Endpoints.
 """
 
+import datetime
+import logging
+
 import endpoints
 from google.appengine.datastore.datastore_query import Cursor
 from google.appengine.ext.db import BadValueError
 from protorpc import message_types
 from protorpc import messages
 from protorpc import remote
-from google.appengine.api import search
 
 from message.anno_api_messages import AnnoMessage
 from message.anno_api_messages import AnnoMergeMessage
 from message.anno_api_messages import AnnoListMessage
 from message.anno_api_messages import AnnoResponseMessage
 from model.anno import Anno
-from model.user import User
 from model.vote import Vote
 from model.flag import Flag
 from model.follow_up import FollowUp
 from api.utils import anno_js_client_id
 from api.utils import auth_user
 from api.utils import put_search_document
-from api.utils import delete_all_in_index
-import logging
-import datetime
 
 
 @endpoints.api(name='anno', version='1.0', description='Anno API',
@@ -212,7 +210,8 @@ class AnnoApi(remote.Service):
         order_type=messages.StringField(3, required=True),
         cursor=messages.StringField(4),  # can't make it work, not sure why. may check it in the future.
         limit=messages.IntegerField(5),
-        offset=messages.IntegerField(6)
+        offset=messages.IntegerField(6),
+        only_my_apps=messages.BooleanField(7)
     )
 
     @endpoints.method(anno_search_resource_container, AnnoListMessage, path='anno_search', http_method='GET',
@@ -221,18 +220,38 @@ class AnnoApi(remote.Service):
         """
         Exposes and API endpoint to search anno list.
         """
-        # 1. authenticate
-        auth_user(self.request_state.headers)
-        # 2. validate parameter
+        user = auth_user(self.request_state.headers)
+
         if request.order_type is None:
             raise endpoints.BadRequestException('order_type field is required.')
         if request.order_type != 'recent' and request.order_type != 'active' and request.order_type != 'popular':
             raise endpoints.BadRequestException(
                 'Invalid order_type field value, valid values are "recent", "active" and "popular"')
-        # 3. execute query
+
+        app_set = None
+        logging.info("only_my_apps=%s" % request.only_my_apps)
+        if request.only_my_apps:
+            app_set = set()
+            for anno in Anno.query_anno_by_author(user):
+                app_set.add(anno.app_name)
+            for vote in Vote.query_vote_by_author(user):
+                anno = Anno.get_by_id(vote.anno_key.id())
+                if anno is not None:
+                    app_set.add(anno.app_name)
+            for flag in Flag.query_flag_by_author(user):
+                anno = Anno.get_by_id(flag.anno_key.id())
+                if anno is not None:
+                    app_set.add(anno.app_name)
+            for followup in FollowUp.query_followup_by_author(user):
+                anno = Anno.get_by_id(followup.anno_key.id())
+                if anno is not None:
+                    app_set.add(anno.app_name)
+        logging.info("appset:" + ','.join(app_set))
+
         if request.order_type == 'popular':
-            return Anno.query_by_popular(request.limit, request.offset, request.search_string, request.app_name)
+            return Anno.query_by_popular(request.limit, request.offset,
+                                         request.search_string, request.app_name, app_set)
         elif request.order_type == 'active':
-            return Anno.query_by_active(request.limit, request.offset, request.search_string, request.app_name)
+            return Anno.query_by_active(request.limit, request.offset, request.search_string, request.app_name, app_set)
         else:
-            return Anno.query_by_recent(request.limit, request.offset, request.search_string, request.app_name)
+            return Anno.query_by_recent(request.limit, request.offset, request.search_string, request.app_name, app_set)

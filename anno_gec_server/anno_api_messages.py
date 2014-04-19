@@ -18,7 +18,7 @@ class AnnoMessage(messages.Message):
     anno_text = messages.StringField(2, required=True)
     x = messages.FloatField(3, required=True)
     y = messages.FloatField(4, required=True)
-    image = messages.BytesField(5) #todo add required=True
+    image = messages.BytesField(5)  #todo add required=True
     anno_type = messages.StringField(6, default='simple comment')
     is_circle_on_top = messages.BooleanField(7, required=True)
     is_moved = messages.BooleanField(8, required=True)
