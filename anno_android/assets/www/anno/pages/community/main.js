@@ -16,21 +16,6 @@ require([
         console.error("Worked!");
 
         document.addEventListener("deviceready", function(){
-
-            /*cordova.exec(
-                function (data)
-                {
-
-                },
-                function (err)
-                {
-                    alert(err);
-                },
-                "AnnoCordovaPlugin",
-                'set_proxy',
-                []
-            );*/
-
             DBUtil.initDB(function(){
                 console.error("DB is readay!");
                 annoUtil.readSettings(function(){
