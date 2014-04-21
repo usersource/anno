@@ -20,5 +20,6 @@
 - (void) exit_intro:(CDVInvokedUrlCommand*)command;
 - (void) get_recent_applist:(CDVInvokedUrlCommand*)command;
 - (void) get_installed_app_list:(CDVInvokedUrlCommand*)command;
+- (void) enable_native_gesture_listener:(CDVInvokedUrlCommand*)command;
 
 @end

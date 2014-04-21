@@ -301,6 +301,26 @@ define([
                     });
                 });
             });
+        },
+        enableNativeGesture:function()
+        {
+            annoUtil.enableNativeGesture();
+        },
+        disableNativeGesture: function()
+        {
+            annoUtil.disableNativeGesture();
+        },
+        enableJSGesture:function()
+        {
+            annoUtil.enableJSGesture();
+        },
+        disableJSGesture:function()
+        {
+            annoUtil.disableJSGesture();
+        },
+        triggerCreateAnno:function()
+        {
+            annoUtil.triggerCreateAnno();
         }
     };
 

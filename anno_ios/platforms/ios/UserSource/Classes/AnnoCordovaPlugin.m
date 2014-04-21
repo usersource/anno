@@ -346,4 +346,12 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
     }];
 }
 
+- (void) enable_native_gesture_listener:(CDVInvokedUrlCommand*)command {
+    [self.commandDelegate runInBackground:^{
+        NSString* payload = nil;
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
+}
+
 @end
