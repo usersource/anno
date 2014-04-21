@@ -22,4 +22,9 @@
 - (void) get_installed_app_list:(CDVInvokedUrlCommand*)command;
 - (void) enable_native_gesture_listener:(CDVInvokedUrlCommand*)command;
 
+- (void) showCommunityPage;
+- (void) ShowIntroPage;
+- (void) showOptionFeedback;
+- (void) showAnnoDraw:(NSString*)imageURI;
+
 @end
