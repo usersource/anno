@@ -5,7 +5,6 @@ from google.appengine.ext import ndb
 from model.anno import Anno
 from model.base_model import BaseModel
 from message.followup_message import FollowupMessage
-from message.user_message import UserMessage
 
 
 class FollowUp(BaseModel):
@@ -35,3 +34,11 @@ class FollowUp(BaseModel):
         for followup in FollowUp.query(FollowUp.anno_key == anno.key):
             followups.append(followup)
         return followups
+
+    @classmethod
+    def query_followup_by_author(cls, user):
+        query = cls.query(cls.creator == user.key).order(-cls.created)
+        followup_list = []
+        for followup in query:
+            followup_list.append(followup)
+        return followup_list

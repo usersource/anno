@@ -33,6 +33,26 @@ public class AnnoDrawActivity extends DroidGap
     super.onCreate(savedInstanceState);
     super.init();
 
+    /**
+     * spiral gesture support start
+     */
+    GestureOverlayView view = new GestureOverlayView(this);
+    view.setLayoutParams(new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.MATCH_PARENT, 1));
+
+    setContentView(view);
+    view.addView((View) appView.getParent()); // adds the PhoneGap browser
+    view.getChildAt(0).setLayoutParams(
+            new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT, 1));
+
+    setContentView(view);
+    view.setGestureVisible(false);
+    /**
+     * spiral gesture support end
+     */
+
     super.loadUrl("file:///android_asset/www/anno/pages/annodraw/main.html");
 
     Intent intent = getIntent();

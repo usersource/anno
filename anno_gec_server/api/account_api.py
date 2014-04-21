@@ -62,7 +62,8 @@ class AccountApi(remote.Service):
             # send reset password email
         return message_types.VoidMessage()
 
-    @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/bind_account', http_method='POST', name='account.bind_account')
+    @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/bind_account', http_method='POST',
+                      name='account.bind_account')
     def bind_account(self, request):
         current_user = get_endpoints_current_user(raise_unauthorized=True)
         auth_source = request.auth_source

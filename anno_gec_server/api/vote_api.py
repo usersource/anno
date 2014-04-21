@@ -1,21 +1,20 @@
 __author__ = 'topcircler'
 
+import datetime
+
 import endpoints
 from protorpc import message_types
 from protorpc import messages
 from protorpc import remote
 from google.appengine.datastore.datastore_query import Cursor
 from google.appengine.ext.db import BadValueError
-import datetime
 
 from message.vote_message import VoteMessage
 from message.vote_message import VoteListMessage
-from api.utils import get_endpoints_current_user
 from api.utils import anno_js_client_id
 from api.utils import auth_user
 from api.utils import put_search_document
 from model.anno import Anno
-from model.user import User
 from model.vote import Vote
 
 

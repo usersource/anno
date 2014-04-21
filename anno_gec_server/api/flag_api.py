@@ -1,20 +1,19 @@
 __author__ = 'topcircler'
 
+import datetime
+
 import endpoints
 from protorpc import remote
 from protorpc import message_types
 from protorpc import messages
 from google.appengine.datastore.datastore_query import Cursor
 from google.appengine.ext.db import BadValueError
-import datetime
 
 from message.flag_message import FlagMessage
 from message.flag_message import FlagListMessage
 from model.flag import Flag
-from model.user import User
 from model.anno import Anno
 from api.utils import anno_js_client_id
-from api.utils import get_endpoints_current_user
 from api.utils import auth_user
 from api.utils import put_search_document
 

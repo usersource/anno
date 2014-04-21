@@ -10,8 +10,9 @@ define([
     "dijit/registry",
     "dojo/text!../../ChinaIpTable.json",
     "dojo/text!../../server-url.json",
-    "anno/common/DBUtil"
-], function(declare, connect, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, ChinaIpTable, serverURLConfig, DBUtil){
+    "anno/common/DBUtil",
+    "anno/common/GestureHandler"
+], function(declare, connect, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, ChinaIpTable, serverURLConfig, DBUtil, GestureHandler){
 
     ChinaIpTable = dojoJson.parse(ChinaIpTable);
     serverURLConfig = dojoJson.parse(serverURLConfig);
@@ -534,6 +535,71 @@ define([
             this.saveSettings({item:"ServerURL", value:"1"}, function(success){
             }, true);
             this.settings.ServerURL = "1";
+        },
+        triggerCreateAnno: function()
+        {
+            if (window.cordova&&cordova.exec)
+            {
+                cordova.exec(
+                    function (data)
+                    {
+
+                    },
+                    function (err)
+                    {
+                        alert(err);
+                    },
+                    "AnnoCordovaPlugin",
+                    'trigger_create_anno',
+                    []
+                );
+            }
+        },
+        enableJSGesture: function()
+        {
+            GestureHandler.enableJSGesture();
+        },
+        disableJSGesture: function()
+        {
+            GestureHandler.disableJSGesture();
+        },
+        enableNativeGesture: function()
+        {
+            if (window.cordova&&cordova.exec)
+            {
+                cordova.exec(
+                    function (data)
+                    {
+
+                    },
+                    function (err)
+                    {
+                        alert(err);
+                    },
+                    "AnnoCordovaPlugin",
+                    'enable_native_gesture_listener',
+                    [true]
+                );
+            }
+        },
+        disableNativeGesture: function()
+        {
+            if (window.cordova&&cordova.exec)
+            {
+                cordova.exec(
+                    function (data)
+                    {
+
+                    },
+                    function (err)
+                    {
+                        alert(err);
+                    },
+                    "AnnoCordovaPlugin",
+                    'enable_native_gesture_listener',
+                    [false]
+                );
+            }
         }
     };
 

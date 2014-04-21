@@ -103,6 +103,9 @@ require([
     {
         adjustShareDialogSize();
         registry.byId('shareDialog').show();
+        // disable JS gesture listener, enable native gesture listener
+        annoUtil.disableJSGesture();
+        annoUtil.enableNativeGesture();
 
         if (!appNameListFetched)
         {
@@ -241,6 +244,9 @@ require([
     connect.connect(dom.byId("btnShare"), 'click', function(e)
     {
         registry.byId('shareDialog').hide();
+        // enable JS gesture listener, disable native gesture
+        annoUtil.enableJSGesture();
+        annoUtil.disableNativeGesture();
 
         if (drawMode)
         {
@@ -746,6 +752,10 @@ require([
                     switchMode(true);
                 }, 500);
             }
+
+            // enable JS gesture listener, disable native gesture
+            annoUtil.enableJSGesture();
+            annoUtil.disableNativeGesture();
         }
         else
         {
@@ -764,6 +774,9 @@ require([
         else if (shareDialog.domNode.style.display === "")
         {
             shareDialog.hide();
+            // enable JS gesture listener, disable native gesture
+            annoUtil.enableJSGesture();
+            annoUtil.disableNativeGesture();
         }
         else
         {

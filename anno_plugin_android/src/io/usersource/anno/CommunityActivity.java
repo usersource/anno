@@ -78,17 +78,6 @@ public class CommunityActivity extends DroidGap {
 
     });
 
-    /*//this.getAssets().open("www/pages/community/main.html");
-
-    try
-    {
-      AssetFileDescriptor fd = this.getAssets().openFd("www/pages/community/main.html");
-    }
-    catch (Exception e)
-    {
-
-    }*/
-
   }
 
   public int getLevel() {
