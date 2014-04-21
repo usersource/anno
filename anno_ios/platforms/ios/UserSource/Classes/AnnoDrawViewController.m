@@ -26,7 +26,7 @@
 //
 
 #import "AnnoDrawViewController.h"
-#import "AppDelegate.h"
+#import "AnnoCordovaPlugin.h"
 
 @implementation AnnoDrawViewController
 
@@ -67,22 +67,20 @@ NSString *screenshotPath;
     level = levelValue + 1;
     isPractice = isPracticeValue;
     
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    
     if (imageURI != nil) {
         UIImage *drawableImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:imageURI]]];
         
         @try {
-            NSString *orientation = [appDelegate.annoUtils isLandscapeOrPortrait:drawableImage];
-            if ([appDelegate.annoUtils.IMAGE_ORIENTATION_LANDSCAPE isEqualToString:orientation]) {
-                drawableImage = [appDelegate.annoUtils rotateImage:drawableImage rotatedByDegrees:90.0];
-                screenshotPath = [appDelegate.annoUtils saveImageToTemp:drawableImage];
+            NSString *orientation = [annoUtils isLandscapeOrPortrait:drawableImage];
+            if ([annoUtils.IMAGE_ORIENTATION_LANDSCAPE isEqualToString:orientation]) {
+                drawableImage = [annoUtils rotateImage:drawableImage rotatedByDegrees:90.0];
+                screenshotPath = [annoUtils saveImageToTemp:drawableImage];
             } else {
                 screenshotPath = imageURI;
             }
         }
         @catch (NSException *exception) {
-            if (appDelegate.annoUtils.debugEnabled) {
+            if (annoUtils.debugEnabled) {
                 NSLog(@"Exception while handling from share image: %@", exception);
             }
         }

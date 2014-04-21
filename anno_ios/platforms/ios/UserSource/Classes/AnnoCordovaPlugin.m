@@ -5,9 +5,10 @@
 NSString *ACTIVITY_INTRO = @"Intro";
 NSString *ACTIVITY_FEEDBACK = @"Feedback";
 
-- (id) init {
-    self = [super init];
-    return self;
+AnnoUtils *annoUtils;
+
+- (void) pluginInitialize {
+    annoUtils = [[AnnoUtils alloc] init];
 }
 
 /*!
@@ -130,13 +131,13 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
  */
 - (void) show_toast:(CDVInvokedUrlCommand*)command {
     NSString* message = [command.arguments objectAtIndex:0];
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
 
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:appDelegate.annoUtils.PROJECT_NAME
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:annoUtils.PROJECT_NAME
                                                         message:message
                                                        delegate:self
                                               cancelButtonTitle:@"Ok"
                                               otherButtonTitles:nil];
+
     [alertView show];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -210,24 +211,19 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
 
 - (void) get_screenshot_path:(CDVInvokedUrlCommand*)command {
     [self.commandDelegate runInBackground:^{
-        AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-
         NSString *screenshotPath = [AnnoDrawViewController getScreenshotPath];
         NSString *level = [NSString stringWithFormat:@"%d", [AnnoDrawViewController getLevel]];
-        NSString *isAnno = [appDelegate.annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] ? @"true" : @"false";
+        NSString *isAnno = [annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] ? @"true" : @"false";
         NSString *payload = [NSString stringWithFormat:@"%@|%@|%@", screenshotPath, level, isAnno];
 
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                                          messageAsString:payload];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
 
 - (void) get_anno_screenshot_path:(CDVInvokedUrlCommand*)command {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    
-    NSString *appLocation = appDelegate.annoUtils.dataLocation;
-    NSString *screenshotDirName = appDelegate.annoUtils.screenshotDirName;
+    NSString *appLocation = annoUtils.dataLocation;
+    NSString *screenshotDirName = annoUtils.screenshotDirName;
     NSString *screenshotDirPath = [appLocation stringByAppendingPathComponent:screenshotDirName];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:screenshotDirPath];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -252,16 +248,15 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
 
 - (NSDictionary*) doSaveImage:(NSArray*)args {
     NSString *base64Str = @"";
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     
     if ([args count] > 0) {
         base64Str = [args objectAtIndex:0];
     }
 
-    NSString *appLocation = appDelegate.annoUtils.dataLocation;
-    NSString *screenshotDirName = appDelegate.annoUtils.screenshotDirName;
+    NSString *appLocation = annoUtils.dataLocation;
+    NSString *screenshotDirName = annoUtils.screenshotDirName;
     NSString *screenshotDirPath = [appLocation stringByAppendingPathComponent:screenshotDirName];
-    [appDelegate.annoUtils mkdirs:screenshotDirPath];
+    [annoUtils mkdirs:screenshotDirPath];
     
     NSString *imageKey = [self generateUniqueImageKey];
     NSData *imageData;
@@ -288,13 +283,12 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
 
 - (NSDictionary*) getAppInfo {
     NSString *source, *appName;
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     
-    if ([appDelegate.annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] && ([AnnoDrawViewController getLevel] != 2)) {
-        source = appDelegate.annoUtils.ANNO_SOURCE_STANDALONE;
-        appName = appDelegate.annoUtils.UNKNOWN_APP_NAME;
+    if ([annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] && ([AnnoDrawViewController getLevel] != 2)) {
+        source = annoUtils.ANNO_SOURCE_STANDALONE;
+        appName = annoUtils.UNKNOWN_APP_NAME;
     } else {
-        source = appDelegate.annoUtils.ANNO_SOURCE_PLUGIN;
+        source = annoUtils.ANNO_SOURCE_PLUGIN;
         appName = [AnnoUtils getAppName];
     }
     

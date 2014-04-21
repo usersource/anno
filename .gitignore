@@ -10,3 +10,4 @@ anno_android/local.properties
 anno_android/version.properties
 *.pyc
 .idea
+.DS_Store
