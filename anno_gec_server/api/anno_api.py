@@ -182,27 +182,28 @@ class AnnoApi(remote.Service):
         Exposes an API endpoint to return all my anno list.
         """
         user = auth_user(self.request_state.headers)
-        anno_list = Anno.query_my_anno(user)
+        anno_list = Anno.query_anno_by_author(user)
         vote_list = Vote.query_vote_by_author(user)
         for vote in vote_list:
-            anno_id = vote.anno_key.id()
-            anno = Anno.get_by_id(anno_id)
+            anno = Anno.get_by_id(vote.anno_key.id())
             if anno is not None:
-                anno_list.append(anno.to_response_message())
+                anno_list.append(anno)
         flag_list = Flag.query_flag_by_author(user)
         for flag in flag_list:
-            anno_id = flag.anno_key.id()
-            anno = Anno.get_by_id(anno_id)
+            anno = Anno.get_by_id(flag.anno_key.id())
             if anno is not None:
-                anno_list.append(anno.to_response_message())
+                anno_list.append(anno)
         followup_list = FollowUp.query_followup_by_author(user)
         for followup in followup_list:
-            anno_id = followup.anno_key.id()
-            anno = Anno.get_by_id(anno_id)
+            anno = Anno.get_by_id(followup.anno_key.id())
             if anno is not None:
-                anno_list.append(anno.to_response_message())
+                anno_list.append(anno)
         anno_set = list(set(anno_list))
-        return AnnoListMessage(anno_list=anno_set)
+
+        anno_message_list = []
+        for anno in anno_set:
+            anno_message_list.append(anno.to_response_message())
+        return AnnoListMessage(anno_list=anno_message_list)
 
     anno_search_resource_container = endpoints.ResourceContainer(
         search_string=messages.StringField(1, required=False),
@@ -246,7 +247,6 @@ class AnnoApi(remote.Service):
                 anno = Anno.get_by_id(followup.anno_key.id())
                 if anno is not None:
                     app_set.add(anno.app_name)
-        logging.info("appset:" + ','.join(app_set))
 
         if request.order_type == 'popular':
             return Anno.query_by_popular(request.limit, request.offset,

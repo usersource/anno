@@ -182,7 +182,7 @@ def is_empty_string(string_value):
     """
     if string_value is None:
         return True
-    if re.match(r'\s+', string_value) is not None:
+    if re.match(r'^\s*$', string_value) is not None:
         return True
     return False
 
