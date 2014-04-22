@@ -6,9 +6,23 @@ NSString *ACTIVITY_INTRO = @"Intro";
 NSString *ACTIVITY_FEEDBACK = @"Feedback";
 
 AnnoUtils *annoUtils;
+AppDelegate *appDelegate;
+
+CDVViewController *communityViewController, *annoDrawViewController, *introViewController, *optionFeedbackViewController;
 
 - (void) pluginInitialize {
+    appDelegate = [[UIApplication sharedApplication] delegate];
     annoUtils = [[AnnoUtils alloc] init];
+
+    if (appDelegate.communityViewController == nil) {
+        #if __has_feature(objc_arc)
+            communityViewController = [[CommunityViewController alloc] init];
+        #else
+            communityViewController = [[[CommunityViewController alloc] init] autorelease];
+        #endif
+    } else {
+        communityViewController = appDelegate.communityViewController;
+    }
 }
 
 /*!
@@ -16,13 +30,10 @@ AnnoUtils *annoUtils;
  Set appdelegate's viewController to communityViewController
  */
 - (void) showCommunityPage {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    CommunityViewController *currentViewController = (CommunityViewController*)appDelegate.communityViewController;
-
-    if (self.viewController == nil && currentViewController.isViewLoaded) {
-        self.viewController = currentViewController;
+    if (self.viewController == nil && communityViewController.isViewLoaded) {
+        self.viewController = communityViewController;
     } else {
-        [self.viewController presentViewController:currentViewController animated:YES completion:nil];
+        [self.viewController presentViewController:communityViewController animated:YES completion:nil];
     }
 }
 
@@ -31,20 +42,17 @@ AnnoUtils *annoUtils;
  Set appdelegate's viewController to introViewController
  */
 - (void) ShowIntroPage {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-
-    if (appDelegate.introViewController == nil) {
+    if (introViewController == nil) {
         #if __has_feature(objc_arc)
-            appDelegate.introViewController = [[IntroViewController alloc] init];
+            introViewController = [[IntroViewController alloc] init];
         #else
-            appDelegate.introViewController = [[[IntroViewController alloc] init] autorelease];
+            introViewController = [[[IntroViewController alloc] init] autorelease];
         #endif
         
-        [appDelegate.window addSubview:appDelegate.introViewController.view];
-        self.viewController = appDelegate.introViewController;
+        [appDelegate.window addSubview:introViewController.view];
+        self.viewController = introViewController;
     } else {
-        IntroViewController *currentViewController = (IntroViewController*)appDelegate.introViewController;
-        [appDelegate.viewController presentViewController:currentViewController animated:YES completion:nil];
+        [appDelegate.viewController presentViewController:introViewController animated:YES completion:nil];
     }
 }
 
@@ -53,20 +61,17 @@ AnnoUtils *annoUtils;
  Set appdelegate's viewController to optionFeedbackViewController
  */
 - (void) showOptionFeedback {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-
-    if (appDelegate.optionFeedbackViewController == nil) {
+    if (optionFeedbackViewController == nil) {
         #if __has_feature(objc_arc)
-            appDelegate.optionFeedbackViewController = [[OptionFeedbackViewController alloc] init];
+            optionFeedbackViewController = [[OptionFeedbackViewController alloc] init];
         #else
-            appDelegate.optionFeedbackViewController = [[[OptionFeedbackViewController alloc] init] autorelease];
+            optionFeedbackViewController = [[[OptionFeedbackViewController alloc] init] autorelease];
         #endif
         
-        [appDelegate.window addSubview:appDelegate.optionFeedbackViewController.view];
-        self.viewController = appDelegate.optionFeedbackViewController;
+        [appDelegate.window addSubview:optionFeedbackViewController.view];
+        self.viewController = optionFeedbackViewController;
     } else {
-        OptionFeedbackViewController *currentViewController = (OptionFeedbackViewController*)appDelegate.optionFeedbackViewController;
-        [appDelegate.viewController presentViewController:currentViewController animated:YES completion:nil];
+        [appDelegate.viewController presentViewController:optionFeedbackViewController animated:YES completion:nil];
     }
 }
 
@@ -75,39 +80,34 @@ AnnoUtils *annoUtils;
  Set appdelegate's viewController to annoDrawViewController
  */
 - (void) showAnnoDraw:(NSString*)imageURI {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    
-    if (appDelegate.annoDrawViewController == nil) {
+    if (annoDrawViewController == nil) {
         #if __has_feature(objc_arc)
-            appDelegate.annoDrawViewController = [[AnnoDrawViewController alloc] init];
+            annoDrawViewController = [[AnnoDrawViewController alloc] init];
         #else
-            appDelegate.annoDrawViewController = [[[AnnoDrawViewController alloc] init] autorelease];
+            annoDrawViewController = [[[AnnoDrawViewController alloc] init] autorelease];
         #endif
         
-        [appDelegate.window addSubview:appDelegate.annoDrawViewController.view];
-        self.viewController = appDelegate.annoDrawViewController;
+        [appDelegate.window addSubview:annoDrawViewController.view];
+        self.viewController = annoDrawViewController;
         [AnnoDrawViewController handleFromShareImage:imageURI levelValue:0 isPracticeValue:false];
     } else {
-        AnnoDrawViewController *currentViewController = (AnnoDrawViewController*)appDelegate.annoDrawViewController;
-        [appDelegate.viewController presentViewController:currentViewController animated:YES completion:nil];
+        [appDelegate.viewController presentViewController:annoDrawViewController animated:YES completion:nil];
     }
 }
 
 - (void) exitActivity {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-
-    if (self.viewController == appDelegate.communityViewController) {
-        [appDelegate.communityViewController.view removeFromSuperview];
-        appDelegate.communityViewController = nil;
-    } else if (self.viewController == appDelegate.introViewController) {
-        [appDelegate.introViewController.view removeFromSuperview];
-        appDelegate.introViewController = nil;
-    } else if (self.viewController == appDelegate.optionFeedbackViewController) {
-        [appDelegate.optionFeedbackViewController.view removeFromSuperview];
-        appDelegate.optionFeedbackViewController = nil;
-    } else if (self.viewController == appDelegate.annoDrawViewController) {
-        [appDelegate.annoDrawViewController.view removeFromSuperview];
-        appDelegate.annoDrawViewController = nil;
+    if (self.viewController == communityViewController) {
+        [communityViewController.view removeFromSuperview];
+        communityViewController = nil;
+    } else if (self.viewController == introViewController) {
+        [introViewController.view removeFromSuperview];
+        introViewController = nil;
+    } else if (self.viewController == optionFeedbackViewController) {
+        [optionFeedbackViewController.view removeFromSuperview];
+        optionFeedbackViewController = nil;
+    } else if (self.viewController == annoDrawViewController) {
+        [annoDrawViewController.view removeFromSuperview];
+        annoDrawViewController = nil;
     }
 
     self.viewController = nil;

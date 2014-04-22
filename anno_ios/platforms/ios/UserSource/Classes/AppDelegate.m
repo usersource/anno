@@ -32,8 +32,7 @@
 
 @implementation AppDelegate
 
-@synthesize window;
-@synthesize viewController, annoDrawViewController, introViewController, optionFeedbackViewController;
+@synthesize window, viewController;
 
 - (id)init
 {
@@ -71,8 +70,7 @@
         self.window = [[[UIWindow alloc] initWithFrame:screenBounds] autorelease];
     #endif
     self.window.autoresizesSubviews = YES;
-
-    // initializing CDVViewController
+    
     #if __has_feature(objc_arc)
         self.communityViewController = [[CommunityViewController alloc] init];
     #else
