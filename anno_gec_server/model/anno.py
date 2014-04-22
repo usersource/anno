@@ -51,6 +51,12 @@ class Anno(BaseModel):
     longitude = ndb.FloatProperty()
     country = ndb.StringProperty()
 
+    def __eq__(self, other):
+        return self.key.id() == other.key.id()
+
+    def __hash__(self):
+        return hash(self.key.id())
+
     def to_response_message(self):
         """
         Convert anno model to AnnoResponseMessage.
