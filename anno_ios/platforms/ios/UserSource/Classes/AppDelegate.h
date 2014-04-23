@@ -26,7 +26,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "AnnoUtils.h"
 #import <Cordova/CDVViewController.h>
 
 @interface AppDelegate : NSObject <UIApplicationDelegate> {}
@@ -36,12 +35,8 @@
 // a simple tutorial can be found here :
 // http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
 
-@property AnnoUtils *annoUtils;
-@property (nonatomic, strong) IBOutlet UIWindow* window;
-@property (nonatomic, strong) IBOutlet CDVViewController* viewController;
-@property (nonatomic, strong) IBOutlet CDVViewController* communityViewController;
-@property (nonatomic, strong) IBOutlet CDVViewController* annoDrawViewController;
-@property (nonatomic, strong) IBOutlet CDVViewController* introViewController;
-@property (nonatomic, strong) IBOutlet CDVViewController* optionFeedbackViewController;
+@property (nonatomic, strong) IBOutlet UIWindow *window;
+@property (nonatomic, strong) IBOutlet CDVViewController *viewController;
+@property (nonatomic, strong) IBOutlet CDVViewController *communityViewController;
 
 @end

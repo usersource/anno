@@ -4,8 +4,11 @@
 #import "CommunityViewController.h"
 #import "IntroViewController.h"
 #import "OptionFeedbackViewController.h"
+#import "AnnoUtils.h"
 
 @interface AnnoCordovaPlugin : CDVPlugin {}
+
+extern AnnoUtils *annoUtils;
 
 - (void) exit_current_activity:(CDVInvokedUrlCommand*)command;
 - (void) show_toast:(CDVInvokedUrlCommand*)command;

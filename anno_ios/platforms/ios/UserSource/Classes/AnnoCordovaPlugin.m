@@ -5,9 +5,27 @@
 NSString *ACTIVITY_INTRO = @"Intro";
 NSString *ACTIVITY_FEEDBACK = @"Feedback";
 
-- (id) init {
-    self = [super init];
-    return self;
+AnnoUtils *annoUtils;
+AppDelegate *appDelegate;
+
+UIViewController *currentViewController;
+CDVViewController *communityViewController, *annoDrawViewController, *introViewController, *optionFeedbackViewController;
+
+- (void) pluginInitialize {
+    appDelegate = [[UIApplication sharedApplication] delegate];
+    annoUtils = [[AnnoUtils alloc] init];
+
+    if ([annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]]) {
+        communityViewController = [appDelegate valueForKey:@"communityViewController"];
+    } else {
+        #if __has_feature(objc_arc)
+            communityViewController = [[CommunityViewController alloc] init];
+        #else
+            communityViewController = [[[CommunityViewController alloc] init] autorelease];
+        #endif
+    }
+
+    currentViewController = appDelegate.window.rootViewController;
 }
 
 /*!
@@ -15,13 +33,8 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
  Set appdelegate's viewController to communityViewController
  */
 - (void) showCommunityPage {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    CommunityViewController *currentViewController = (CommunityViewController*)appDelegate.communityViewController;
-
-    if (self.viewController == nil && currentViewController.isViewLoaded) {
-        self.viewController = currentViewController;
-    } else {
-        [self.viewController presentViewController:currentViewController animated:YES completion:nil];
+    if (currentViewController != communityViewController) {
+        [currentViewController presentViewController:communityViewController animated:YES completion:nil];
     }
 }
 
@@ -30,20 +43,17 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
  Set appdelegate's viewController to introViewController
  */
 - (void) ShowIntroPage {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-
-    if (appDelegate.introViewController == nil) {
+    if (introViewController == nil) {
         #if __has_feature(objc_arc)
-            appDelegate.introViewController = [[IntroViewController alloc] init];
+            introViewController = [[IntroViewController alloc] init];
         #else
-            appDelegate.introViewController = [[[IntroViewController alloc] init] autorelease];
+            introViewController = [[[IntroViewController alloc] init] autorelease];
         #endif
         
-        [appDelegate.window addSubview:appDelegate.introViewController.view];
-        self.viewController = appDelegate.introViewController;
+        [appDelegate.window addSubview:introViewController.view];
+        currentViewController = introViewController;
     } else {
-        IntroViewController *currentViewController = (IntroViewController*)appDelegate.introViewController;
-        [appDelegate.viewController presentViewController:currentViewController animated:YES completion:nil];
+        [appDelegate.viewController presentViewController:introViewController animated:YES completion:nil];
     }
 }
 
@@ -52,20 +62,17 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
  Set appdelegate's viewController to optionFeedbackViewController
  */
 - (void) showOptionFeedback {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-
-    if (appDelegate.optionFeedbackViewController == nil) {
+    if (optionFeedbackViewController == nil) {
         #if __has_feature(objc_arc)
-            appDelegate.optionFeedbackViewController = [[OptionFeedbackViewController alloc] init];
+            optionFeedbackViewController = [[OptionFeedbackViewController alloc] init];
         #else
-            appDelegate.optionFeedbackViewController = [[[OptionFeedbackViewController alloc] init] autorelease];
+            optionFeedbackViewController = [[[OptionFeedbackViewController alloc] init] autorelease];
         #endif
         
-        [appDelegate.window addSubview:appDelegate.optionFeedbackViewController.view];
-        self.viewController = appDelegate.optionFeedbackViewController;
+        [appDelegate.window addSubview:optionFeedbackViewController.view];
+        currentViewController = optionFeedbackViewController;
     } else {
-        OptionFeedbackViewController *currentViewController = (OptionFeedbackViewController*)appDelegate.optionFeedbackViewController;
-        [appDelegate.viewController presentViewController:currentViewController animated:YES completion:nil];
+        [appDelegate.viewController presentViewController:optionFeedbackViewController animated:YES completion:nil];
     }
 }
 
@@ -74,42 +81,37 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
  Set appdelegate's viewController to annoDrawViewController
  */
 - (void) showAnnoDraw:(NSString*)imageURI {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    
-    if (appDelegate.annoDrawViewController == nil) {
+    if (annoDrawViewController == nil) {
         #if __has_feature(objc_arc)
-            appDelegate.annoDrawViewController = [[AnnoDrawViewController alloc] init];
+            annoDrawViewController = [[AnnoDrawViewController alloc] init];
         #else
-            appDelegate.annoDrawViewController = [[[AnnoDrawViewController alloc] init] autorelease];
+            annoDrawViewController = [[[AnnoDrawViewController alloc] init] autorelease];
         #endif
         
-        [appDelegate.window addSubview:appDelegate.annoDrawViewController.view];
-        self.viewController = appDelegate.annoDrawViewController;
+        [appDelegate.window addSubview:annoDrawViewController.view];
+        currentViewController = annoDrawViewController;
         [AnnoDrawViewController handleFromShareImage:imageURI levelValue:0 isPracticeValue:false];
     } else {
-        AnnoDrawViewController *currentViewController = (AnnoDrawViewController*)appDelegate.annoDrawViewController;
-        [appDelegate.viewController presentViewController:currentViewController animated:YES completion:nil];
+        [appDelegate.viewController presentViewController:annoDrawViewController animated:YES completion:nil];
     }
 }
 
 - (void) exitActivity {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-
-    if (self.viewController == appDelegate.communityViewController) {
-        [appDelegate.communityViewController.view removeFromSuperview];
-        appDelegate.communityViewController = nil;
-    } else if (self.viewController == appDelegate.introViewController) {
-        [appDelegate.introViewController.view removeFromSuperview];
-        appDelegate.introViewController = nil;
-    } else if (self.viewController == appDelegate.optionFeedbackViewController) {
-        [appDelegate.optionFeedbackViewController.view removeFromSuperview];
-        appDelegate.optionFeedbackViewController = nil;
-    } else if (self.viewController == appDelegate.annoDrawViewController) {
-        [appDelegate.annoDrawViewController.view removeFromSuperview];
-        appDelegate.annoDrawViewController = nil;
+    if (currentViewController == communityViewController) {
+        [communityViewController.view removeFromSuperview];
+        communityViewController = nil;
+    } else if (currentViewController == introViewController) {
+        [introViewController.view removeFromSuperview];
+        introViewController = nil;
+    } else if (currentViewController == optionFeedbackViewController) {
+        [optionFeedbackViewController.view removeFromSuperview];
+        optionFeedbackViewController = nil;
+    } else if (currentViewController == annoDrawViewController) {
+        [annoDrawViewController.view removeFromSuperview];
+        annoDrawViewController = nil;
     }
 
-    self.viewController = nil;
+    currentViewController = appDelegate.window.rootViewController;
 }
 
 /*!
@@ -117,12 +119,9 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
  In iOS, there is no way to exit app programmatically.
  */
 - (void) exit_current_activity:(CDVInvokedUrlCommand*)command {
-    [self.commandDelegate runInBackground:^{
-        NSString* payload = nil;
-        [self exitActivity];
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    [self exitActivity];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 /*!
@@ -130,13 +129,13 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
  */
 - (void) show_toast:(CDVInvokedUrlCommand*)command {
     NSString* message = [command.arguments objectAtIndex:0];
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
 
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:appDelegate.annoUtils.PROJECT_NAME
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:annoUtils.PROJECT_NAME
                                                         message:message
                                                        delegate:self
                                               cancelButtonTitle:@"Ok"
                                               otherButtonTitles:nil];
+
     [alertView show];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -210,24 +209,19 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
 
 - (void) get_screenshot_path:(CDVInvokedUrlCommand*)command {
     [self.commandDelegate runInBackground:^{
-        AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-
         NSString *screenshotPath = [AnnoDrawViewController getScreenshotPath];
         NSString *level = [NSString stringWithFormat:@"%d", [AnnoDrawViewController getLevel]];
-        NSString *isAnno = [appDelegate.annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] ? @"true" : @"false";
+        NSString *isAnno = [annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] ? @"true" : @"false";
         NSString *payload = [NSString stringWithFormat:@"%@|%@|%@", screenshotPath, level, isAnno];
 
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                                          messageAsString:payload];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
 
 - (void) get_anno_screenshot_path:(CDVInvokedUrlCommand*)command {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    
-    NSString *appLocation = appDelegate.annoUtils.dataLocation;
-    NSString *screenshotDirName = appDelegate.annoUtils.screenshotDirName;
+    NSString *appLocation = annoUtils.dataLocation;
+    NSString *screenshotDirName = annoUtils.screenshotDirName;
     NSString *screenshotDirPath = [appLocation stringByAppendingPathComponent:screenshotDirName];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:screenshotDirPath];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -252,16 +246,15 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
 
 - (NSDictionary*) doSaveImage:(NSArray*)args {
     NSString *base64Str = @"";
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     
     if ([args count] > 0) {
         base64Str = [args objectAtIndex:0];
     }
 
-    NSString *appLocation = appDelegate.annoUtils.dataLocation;
-    NSString *screenshotDirName = appDelegate.annoUtils.screenshotDirName;
+    NSString *appLocation = annoUtils.dataLocation;
+    NSString *screenshotDirName = annoUtils.screenshotDirName;
     NSString *screenshotDirPath = [appLocation stringByAppendingPathComponent:screenshotDirName];
-    [appDelegate.annoUtils mkdirs:screenshotDirPath];
+    [annoUtils mkdirs:screenshotDirPath];
     
     NSString *imageKey = [self generateUniqueImageKey];
     NSData *imageData;
@@ -288,13 +281,12 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
 
 - (NSDictionary*) getAppInfo {
     NSString *source, *appName;
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     
-    if ([appDelegate.annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] && ([AnnoDrawViewController getLevel] != 2)) {
-        source = appDelegate.annoUtils.ANNO_SOURCE_STANDALONE;
-        appName = appDelegate.annoUtils.UNKNOWN_APP_NAME;
+    if ([annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] && ([AnnoDrawViewController getLevel] != 2)) {
+        source = annoUtils.ANNO_SOURCE_STANDALONE;
+        appName = annoUtils.UNKNOWN_APP_NAME;
     } else {
-        source = appDelegate.annoUtils.ANNO_SOURCE_PLUGIN;
+        source = annoUtils.ANNO_SOURCE_PLUGIN;
         appName = [AnnoUtils getAppName];
     }
     

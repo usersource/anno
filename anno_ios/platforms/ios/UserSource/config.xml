@@ -47,6 +47,7 @@
     </feature>
     <feature name="AnnoCordovaPlugin">
         <param name="ios-package" value="AnnoCordovaPlugin" />
+        <param name="onload" value="true" />
     </feature>
     <plugin name="AnnoCordovaPlugin" value="AnnoCordovaPlugin" />
     <feature name="Camera">

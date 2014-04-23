@@ -26,17 +26,13 @@
 //
 
 #import "AppDelegate.h"
-#import "AnnoDrawViewController.h"
 #import "CommunityViewController.h"
-#import "IntroViewController.h"
-#import "OptionFeedbackViewController.h"
 
 #import <Cordova/CDVPlugin.h>
 
 @implementation AppDelegate
 
-@synthesize window;
-@synthesize viewController, annoDrawViewController, introViewController, optionFeedbackViewController;
+@synthesize window, viewController;
 
 - (id)init
 {
@@ -74,15 +70,12 @@
         self.window = [[[UIWindow alloc] initWithFrame:screenBounds] autorelease];
     #endif
     self.window.autoresizesSubviews = YES;
-
-    // initializing CDVViewController
+    
     #if __has_feature(objc_arc)
         self.communityViewController = [[CommunityViewController alloc] init];
     #else
         self.communityViewController = [[[CommunityViewController alloc] init] autorelease];
     #endif
-    
-    self.annoUtils = [[AnnoUtils alloc] init];
 
     // Set your app's start page by setting the <content src='foo.html' /> tag in config.xml.
     // If necessary, uncomment the line below to override it.
