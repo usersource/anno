@@ -86,6 +86,16 @@ define([
                 {
                     arg.app_name = selectedAppName;
                 }
+
+                if (registry.byId("chkLimitToMyApps").checked)
+                {
+                    arg["only_my_apps"] = true;
+                }
+                else
+                {
+                    arg["only_my_apps"] = false;
+                }
+
             }
 
             if (poffset)
@@ -290,9 +300,7 @@ define([
             domStyle.set('navBtnBackHome', 'display', 'none');
             domStyle.set('navLogoTextHome', 'display', '');
             domStyle.set('tdBarMyStuff', 'display', '');
-            // Added by Ignite -- START
             domStyle.set('tdBarAddImage', 'display', '');
-            // Added by Ignite -- END
             domStyle.set('tdbarSearchAnno', 'display', '');
             domStyle.set('txtSearchAnno', 'display', 'none');
             dom.byId("txtSearchAnno").value = "";
@@ -440,9 +448,18 @@ define([
 
         var onChkLimitToMyApps = window.onChkLimitToMyApps = function()
         {
-            fillAppNameList(appNameList);
-            dom.byId('btnAppNameDialogDone').disabled = true;
-            domClass.add('btnAppNameDialogDone', "disabledBtn");
+            if (registry.byId("chkLimitToMyApps").checked)
+            {
+                fillAppNameList(appNameList);
+                dom.byId('btnAppNameDialogDone').disabled = false;
+                domClass.remove('btnAppNameDialogDone', "disabledBtn");
+            }
+            else
+            {
+                fillAppNameList(appNameList);
+                dom.byId('btnAppNameDialogDone').disabled = true;
+                domClass.add('btnAppNameDialogDone', "disabledBtn");
+            }
         };
 
         var _init = function()
@@ -487,7 +504,6 @@ define([
                         app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
                     }));
 
-                    // Added by Ignite -- START
                     _connectResults.push(connect.connect(dom.byId("barAddImage"), 'click', function(e) {
                         var options = {
                             destinationType : Camera.DestinationType.FILE_URI,
@@ -495,23 +511,60 @@ define([
                             mediaType : Camera.MediaType.PICTURE
                         };
 
+                        if (annoUtil.isAndroid())
+                        {
+                            options.sourceType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
+                            options.destinationType = Camera.DestinationType.NATIVE_URI;
+                        }
+
+
                         navigator.camera.getPicture(onSuccess, OnFail, options);
 
                         function onSuccess(imageURI) {
-                            // Setting timeout as AnnoDrawViewController doesn't come up
-                            // when photo library is dismissing.
-                            setTimeout(function() {
+                            console.error("imageURI: "+imageURI);
+                            // only support local image uri, TODO: show a message box?
+                            if (imageURI.indexOf("https%3A%2F%2F") >0 || imageURI.indexOf("http%3A%2F%2F") >0)
+                            {
+                                cordova.exec(
+                                    function (result)
+                                    {
+                                    },
+                                    function (err)
+                                    {
+                                    },
+                                    "AnnoCordovaPlugin",
+                                    'show_toast',
+                                    ["UserSource support local images files only."]
+                                );
+
+                                return;
+                            }
+
+                            if (annoUtil.isAndroid())
+                            {
                                 cordova.exec(
                                     function (result) {},
                                     function (err) {},
                                     "AnnoCordovaPlugin", 'start_anno_draw', [imageURI]
                                 );
-                            }, 1000);
+                            }
+                            else
+                            {
+                                // iOS: Setting timeout as AnnoDrawViewController doesn't come up
+                                // when photo library is dismissing.
+                                setTimeout(function() {
+                                    cordova.exec(
+                                        function (result) {},
+                                        function (err) {},
+                                        "AnnoCordovaPlugin", 'start_anno_draw', [imageURI]
+                                    );
+                                }, 1000);
+                            }
+
                         }
 
                         function OnFail() {}
                     }));
-                    // Added by Ignite -- END
 
                     _connectResults.push(connect.connect(dom.byId("tdbarSearchAnno"), 'click', function(e)
                     {
@@ -522,6 +575,7 @@ define([
                         domStyle.set('navBtnBackHome', 'display', '');
                         domStyle.set('navLogoTextHome', 'display', 'none');
                         domStyle.set('tdBarMyStuff', 'display', 'none');
+                        domStyle.set('tdBarAddImage', 'display', 'none');
                         domStyle.set('tdbarSearchAnno', 'display', 'none');
                         domStyle.set('txtSearchAnno', 'display', '');
                         domStyle.set('tdHeadingLeft', 'width', '95px');
@@ -712,7 +766,7 @@ define([
                                 appName = dom.byId('txtSearchAppName').value.trim();
                                 selectedAppName = appName;
                             }
-                            else
+                            else if(!registry.byId("chkLimitToMyApps").checked)
                             {
                                 annoUtil.showMessageDialog("Please select app in apps list or enter app in search text box.");
                                 return;
@@ -721,8 +775,16 @@ define([
 
                         hideAppNameDialog();
 
-                        domStyle.set('searchAppNameContainer', 'display', '');
-                        dom.byId('searchAppName').innerHTML = appName;
+                        if (appName)
+                        {
+                            domStyle.set('searchAppNameContainer', 'display', '');
+                            dom.byId('searchAppName').innerHTML = appName;
+                        }
+                        else
+                        {
+                            domStyle.set('searchAppNameContainer', 'display', 'none');
+                            dom.byId('searchAppName').innerHTML = "";
+                        }
 
                         domStyle.set("listContainerStart", "height", (viewPoint.h-topBarHeight-searchSortsBarHeight-searchAppNameContainerHeight)+"px");
                         loadListData(true, null, searchOrder, true);

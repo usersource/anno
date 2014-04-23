@@ -329,7 +329,7 @@ define([
             {
                 var self = this;
                 window.setTimeout(function(){
-                    self.setAuthToken(token);
+                    self.setBasicAuthToken(token);
                 }, 50)
             }
         }

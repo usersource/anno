@@ -67,10 +67,6 @@ define([
                 osVersion:device.version
             };
         },
-       // CHANGES BY IGNITE -- START
-       // In iOS, for localFileSystem.root.getFile to find file on filePath location, filePath
-       // should be relative to rootPath.
-       // rootPath for iOS device is '/var/mobile/Applications/<application UUID>/Documents'.
         getBase64FileContent: function(filePath, callback)
         {
             function getiOSRelativePath(rootPath, filePath) {
@@ -78,23 +74,23 @@ define([
                 var rootPathArray = rootPath.split("/");
                 var filePathArray = filePath.split("/");
                 var relativePath = "";
-                                   
+
                 for (i=0;i<rootPathArray.length;i++) {
                     if (rootPathArray[i] != filePathArray[i]) {
                         break;
                     }
                 }
-                                            
+
                 for(j=0;j<(rootPathArray.length-i);j++){
                     relativePath += "../";
                 }
-                                            
+
                 relativePath += filePathArray.splice(i, filePathArray.length-i).join("/");
                 console.log(relativePath);
                 return relativePath;
             }
-       
-            if (device.platform == "iOS") {
+
+            if (this.isIOS()) {
                 var rootPath;
                 localFileSystem.root.getParent(function(f) {
                     rootPath = f.nativeURL;
@@ -104,25 +100,24 @@ define([
             } else {
                 beforeCallback();
             }
-       
+
             function beforeCallback() {
                 console.error(filePath);
                 localFileSystem.root.getFile(filePath, {create:false,exclusive: false}, function(f){
-                	f.file(function(e){
-                    		var reader = new FileReader();
-                    		reader.onloadend = function (evt) {
-                        		console.error("file read end:");
-                        		var pos = evt.target.result.lastIndexOf(",");
-                        		callback(evt.target.result.substr(pos+1));
-                    		};
-                    	reader.readAsDataURL(e);
-                	});
-            	}, function(e) {
-                	console.error(JSON.stringify(e));
-                	alert(JSON.stringify(e));
-               });}
+                    f.file(function(e){
+                        var reader = new FileReader();
+                        reader.onloadend = function (evt) {
+                            console.error("file read end:");
+                            var pos = evt.target.result.lastIndexOf(",");
+                            callback(evt.target.result.substr(pos+1));
+                        };
+                        reader.readAsDataURL(e);
+                    });
+                }, function(e) {
+                    console.error(JSON.stringify(e));
+                    alert(JSON.stringify(e));
+                });}
         },
-        // CHANGES BY IGNITE -- END
         showLoadingIndicator: function ()
         {
             var cl = this.loadingIndicator;
@@ -571,7 +566,7 @@ define([
             }, true);
             this.settings.ServerURL = "1";
         },
-	triggerCreateAnno: function()
+        triggerCreateAnno: function()
         {
             if (window.cordova&&cordova.exec)
             {
@@ -635,7 +630,15 @@ define([
                     [false]
                 );
             }
-	}
+        },
+        isIOS: function()
+        {
+            return device.platform == "iOS";
+        },
+        isAndroid: function()
+        {
+            return device.platform == "Android";
+        }
     };
 
     return util;
