@@ -11,18 +11,18 @@
         <engine name="cordova" version=">=3.0.0" />
     </engines>
 
-    <asset src="anno_ios/platforms/ios/www/anno/pages/annodraw" target="anno/pages/annodraw" />
-    <asset src="anno_ios/platforms/ios/www/anno/pages/auth" target="anno/pages/auth" />
-    <asset src="anno_ios/platforms/ios/www/anno/pages/community" target="anno/pages/community" />
-    <asset src="anno_ios/platforms/ios/www/anno/pages/feedback" target="anno/pages/feedback" />
-    <asset src="anno_ios/platforms/ios/www/anno/pages/intro" target="anno/pages/intro" />
+    <asset src="anno_android/assets/www/anno/pages/annodraw" target="anno/pages/annodraw" />
+    <asset src="anno_android/assets/www/anno/pages/auth" target="anno/pages/auth" />
+    <asset src="anno_android/assets/www/anno/pages/community" target="anno/pages/community" />
+    <asset src="anno_android/assets/www/anno/pages/feedback" target="anno/pages/feedback" />
+    <asset src="anno_android/assets/www/anno/pages/intro" target="anno/pages/intro" />
 
-    <asset src="anno_ios/platforms/ios/www/anno/scripts/anno" target="anno/scripts/anno" />
-    <asset src="anno_ios/platforms/ios/www/anno/scripts/dojo" target="anno/scripts/dojo" />
-    <asset src="anno_ios/platforms/ios/www/anno/scripts/dojox" target="anno/scripts/dojox" />
-    <asset src="anno_ios/platforms/ios/www/anno/scripts/server-url.json" target="anno/scripts/server-url.json" />
-    <asset src="anno_ios/platforms/ios/www/anno/scripts/hardware-buttons.json" target="anno/scripts/hardware-buttons.json" />
-    <aseet src="anno_ios/platforms/ios/www/anno/scripts/ChinaIpTable.json" target="anno/scripts/ChinaIpTable.json" />
+    <asset src="anno_android/assets/www/anno/scripts/anno" target="anno/scripts/anno" />
+    <asset src="anno_android/assets/www/anno/scripts/dojo" target="anno/scripts/dojo" />
+    <asset src="anno_android/assets/www/anno/scripts/dojox" target="anno/scripts/dojox" />
+    <asset src="anno_android/assets/www/anno/scripts/server-url.json" target="anno/scripts/server-url.json" />
+    <asset src="anno_android/assets/www/anno/scripts/hardware-buttons.json" target="anno/scripts/hardware-buttons.json" />
+    <aseet src="anno_android/assets/www/anno/scripts/ChinaIpTable.json" target="anno/scripts/ChinaIpTable.json" />
 
     <dependency id="org.apache.cordova.device" />
     <dependency id="org.apache.cordova.network-information" />
