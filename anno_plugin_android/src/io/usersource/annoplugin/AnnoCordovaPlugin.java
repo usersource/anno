@@ -56,6 +56,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
   public static final String GET_INSTALLED_APP_LIST = "get_installed_app_list";
   public static final String ENABLE_NATIVE_GESTURE_LISTENER = "enable_native_gesture_listener";
   public static final String TRIGGER_CREATE_ANNO = "trigger_create_anno";
+  public static final String START_ANNO_DRAW = "start_anno_draw";
 
   // activity names
   public static final String ACTIVITY_INTRO = "Intro";
@@ -218,6 +219,26 @@ public class AnnoCordovaPlugin extends CordovaPlugin
       Activity activity = this.cordova.getActivity();
       AnnoUtils.triggerCreateAnno(activity);
       callbackContext.success();
+
+      return true;
+    }
+    else if (START_ANNO_DRAW.equals(action))
+    {
+      String imageURI = args.getString(0);
+      Activity activity = this.cordova.getActivity();
+      String packageName = activity.getPackageName();
+
+      Intent intent = new Intent(Intent.ACTION_SEND);
+      intent.setClassName(packageName,
+              "io.usersource.anno.AnnoDrawActivity");
+      intent.setType("image/*");
+      // set this flag for FeedbackEditActivity to know it's practice.
+      File imageFile = new File(imageURI);
+      Uri imageUri = Uri.parse(imageURI);
+      intent.putExtra(Intent.EXTRA_STREAM, imageUri);
+      intent.putExtra(AnnoUtils.LEVEL, 0);
+
+      activity.startActivity(intent);
 
       return true;
     }

@@ -21,53 +21,49 @@
     <asset src="anno_ios/platforms/ios/www/anno/scripts/dojo" target="anno/scripts/dojo" />
     <asset src="anno_ios/platforms/ios/www/anno/scripts/dojox" target="anno/scripts/dojox" />
     <asset src="anno_ios/platforms/ios/www/anno/scripts/server-url.json" target="anno/scripts/server-url.json" />
-    <aseet src="anno_ios/platforms/ios/www/anno/scripts/ChinaIpTable.json" target="anno/scripts/ChinaIpTable.json" />
     <asset src="anno_ios/platforms/ios/www/anno/scripts/hardware-buttons.json" target="anno/scripts/hardware-buttons.json" />
+    <aseet src="anno_ios/platforms/ios/www/anno/scripts/ChinaIpTable.json" target="anno/scripts/ChinaIpTable.json" />
 
     <dependency id="org.apache.cordova.device" />
     <dependency id="org.apache.cordova.network-information" />
     <dependency id="org.apache.cordova.inappbrowser" />
     <dependency id="org.apache.cordova.file" />
     <dependency id="org.apache.cordova.geolocation" />
+    <dependency id="org.apache.cordova.camera" />
     <dependency id="com.phonegap.plugins.sqlite" url="https://github.com/lite4cordova/Cordova-SQLitePlugin" />
     <dependency id="nl.x-services.plugins.socialsharing" url="https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin" />
 
     <platform name="ios">
-	<config-file target="config.xml" parent="/*">
-	    <access origin="*" />
-	    <feature name="AnnoCordovaPlugin">
-        	<param name="ios-package" value="AnnoCordovaPlugin"/>
-		<param name="onload" value="true" />
+        <config-file target="config.xml" parent="/*">
+            <access origin="*" />
+            <feature name="AnnoCordovaPlugin">
+                <param name="ios-package" value="AnnoCordovaPlugin"/>
+                <param name="onload" value="true" />
       	    </feature>
     	</config-file>
 
-	<header-file src="anno_ios/platforms/ios/UserSource/Classes/AnnoCordovaPlugin.h"/>
+        <header-file src="anno_ios/platforms/ios/UserSource/Classes/AnnoCordovaPlugin.h"/>
     	<source-file src="anno_ios/platforms/ios/UserSource/Classes/AnnoCordovaPlugin.m"/>
-
-	<header-file src="anno_ios/platforms/ios/UserSource/Classes/AnnoDrawViewController.h"/>
+        <header-file src="anno_ios/platforms/ios/UserSource/Classes/AnnoDrawViewController.h"/>
     	<source-file src="anno_ios/platforms/ios/UserSource/Classes/AnnoDrawViewController.m"/>
-
-	<header-file src="anno_ios/platforms/ios/UserSource/Classes/AnnoUtils.h"/>
+        <header-file src="anno_ios/platforms/ios/UserSource/Classes/AnnoUtils.h"/>
     	<source-file src="anno_ios/platforms/ios/UserSource/Classes/AnnoUtils.m"/>
-
-	<header-file src="anno_ios/platforms/ios/UserSource/Classes/CommunityViewController.h"/>
+        <header-file src="anno_ios/platforms/ios/UserSource/Classes/CommunityViewController.h"/>
     	<source-file src="anno_ios/platforms/ios/UserSource/Classes/CommunityViewController.m"/>
-
-	<header-file src="anno_ios/platforms/ios/UserSource/Classes/IntroViewController.h"/>
+        <header-file src="anno_ios/platforms/ios/UserSource/Classes/IntroViewController.h"/>
     	<source-file src="anno_ios/platforms/ios/UserSource/Classes/IntroViewController.m"/>
-
-	<header-file src="anno_ios/platforms/ios/UserSource/Classes/OptionFeedbackViewController.h"/>
+        <header-file src="anno_ios/platforms/ios/UserSource/Classes/OptionFeedbackViewController.h"/>
     	<source-file src="anno_ios/platforms/ios/UserSource/Classes/OptionFeedbackViewController.m"/>
 
-	<framework src="AssetsLibrary.framework" />
-	<framework src="MessageUI.framework" />
-	<framework src="Social.framework" />
-	<framework src="CoreGraphics.framework" />
-	<framework src="MobileCoreServices.framework" />
-	<framework src="CoreLocation.framework" />
-	<framework src="SystemConfiguration.framework" />
-	<framework src="ImageIO.framework" />
-	<framework src="libsqlite3.dylib" />
+        <framework src="AssetsLibrary.framework" />
+        <framework src="MessageUI.framework" />
+        <framework src="Social.framework" />
+        <framework src="CoreGraphics.framework" />
+        <framework src="MobileCoreServices.framework" />
+        <framework src="CoreLocation.framework" />
+        <framework src="SystemConfiguration.framework" />
+        <framework src="ImageIO.framework" />
+        <framework src="libsqlite3.dylib" />
     </platform>
 
     <platform name="android">

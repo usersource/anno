@@ -69,24 +69,54 @@ define([
         },
         getBase64FileContent: function(filePath, callback)
         {
-            console.error(filePath);
-            localFileSystem.root.getFile(filePath, {create:false,exclusive: false}, function(f){
-                f.file(function(e){
-                    var reader = new FileReader();
-                    reader.onloadend = function (evt)
-                    {
-                        console.error("file read end:");
-                        var pos = evt.target.result.lastIndexOf(",");
-                        callback(evt.target.result.substr(pos+1));
-                    };
-                    reader.readAsDataURL(e);
-                });
+            function getiOSRelativePath(rootPath, filePath) {
+                rootPath = rootPath.replace(/^file:\/\//, "");
+                var rootPathArray = rootPath.split("/");
+                var filePathArray = filePath.split("/");
+                var relativePath = "";
 
-            }, function(e)
-            {
-                console.error(JSON.stringify(e));
-                alert(JSON.stringify(e));
-            });
+                for (i=0;i<rootPathArray.length;i++) {
+                    if (rootPathArray[i] != filePathArray[i]) {
+                        break;
+                    }
+                }
+
+                for(j=0;j<(rootPathArray.length-i);j++){
+                    relativePath += "../";
+                }
+
+                relativePath += filePathArray.splice(i, filePathArray.length-i).join("/");
+                console.log(relativePath);
+                return relativePath;
+            }
+
+            if (this.isIOS()) {
+                var rootPath;
+                localFileSystem.root.getParent(function(f) {
+                    rootPath = f.nativeURL;
+                    filePath = getiOSRelativePath(rootPath, filePath);
+                    beforeCallback();
+                });
+            } else {
+                beforeCallback();
+            }
+
+            function beforeCallback() {
+                console.error(filePath);
+                localFileSystem.root.getFile(filePath, {create:false,exclusive: false}, function(f){
+                    f.file(function(e){
+                        var reader = new FileReader();
+                        reader.onloadend = function (evt) {
+                            console.error("file read end:");
+                            var pos = evt.target.result.lastIndexOf(",");
+                            callback(evt.target.result.substr(pos+1));
+                        };
+                        reader.readAsDataURL(e);
+                    });
+                }, function(e) {
+                    console.error(JSON.stringify(e));
+                    alert(JSON.stringify(e));
+                });}
         },
         showLoadingIndicator: function ()
         {
@@ -600,6 +630,14 @@ define([
                     [false]
                 );
             }
+        },
+        isIOS: function()
+        {
+            return device.platform == "iOS";
+        },
+        isAndroid: function()
+        {
+            return device.platform == "Android";
         }
     };
 
