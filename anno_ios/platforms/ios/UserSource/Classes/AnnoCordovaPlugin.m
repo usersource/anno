@@ -8,21 +8,24 @@ NSString *ACTIVITY_FEEDBACK = @"Feedback";
 AnnoUtils *annoUtils;
 AppDelegate *appDelegate;
 
+UIViewController *currentViewController;
 CDVViewController *communityViewController, *annoDrawViewController, *introViewController, *optionFeedbackViewController;
 
 - (void) pluginInitialize {
     appDelegate = [[UIApplication sharedApplication] delegate];
     annoUtils = [[AnnoUtils alloc] init];
 
-    if (appDelegate.communityViewController == nil) {
+    if ([annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]]) {
+        communityViewController = [appDelegate valueForKey:@"communityViewController"];
+    } else {
         #if __has_feature(objc_arc)
             communityViewController = [[CommunityViewController alloc] init];
         #else
             communityViewController = [[[CommunityViewController alloc] init] autorelease];
         #endif
-    } else {
-        communityViewController = appDelegate.communityViewController;
     }
+
+    currentViewController = appDelegate.window.rootViewController;
 }
 
 /*!
@@ -30,10 +33,8 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
  Set appdelegate's viewController to communityViewController
  */
 - (void) showCommunityPage {
-    if (self.viewController == nil && communityViewController.isViewLoaded) {
-        self.viewController = communityViewController;
-    } else {
-        [self.viewController presentViewController:communityViewController animated:YES completion:nil];
+    if (currentViewController != communityViewController) {
+        [currentViewController presentViewController:communityViewController animated:YES completion:nil];
     }
 }
 
@@ -50,7 +51,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
         #endif
         
         [appDelegate.window addSubview:introViewController.view];
-        self.viewController = introViewController;
+        currentViewController = introViewController;
     } else {
         [appDelegate.viewController presentViewController:introViewController animated:YES completion:nil];
     }
@@ -69,7 +70,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
         #endif
         
         [appDelegate.window addSubview:optionFeedbackViewController.view];
-        self.viewController = optionFeedbackViewController;
+        currentViewController = optionFeedbackViewController;
     } else {
         [appDelegate.viewController presentViewController:optionFeedbackViewController animated:YES completion:nil];
     }
@@ -88,7 +89,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
         #endif
         
         [appDelegate.window addSubview:annoDrawViewController.view];
-        self.viewController = annoDrawViewController;
+        currentViewController = annoDrawViewController;
         [AnnoDrawViewController handleFromShareImage:imageURI levelValue:0 isPracticeValue:false];
     } else {
         [appDelegate.viewController presentViewController:annoDrawViewController animated:YES completion:nil];
@@ -96,21 +97,21 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
 }
 
 - (void) exitActivity {
-    if (self.viewController == communityViewController) {
+    if (currentViewController == communityViewController) {
         [communityViewController.view removeFromSuperview];
         communityViewController = nil;
-    } else if (self.viewController == introViewController) {
+    } else if (currentViewController == introViewController) {
         [introViewController.view removeFromSuperview];
         introViewController = nil;
-    } else if (self.viewController == optionFeedbackViewController) {
+    } else if (currentViewController == optionFeedbackViewController) {
         [optionFeedbackViewController.view removeFromSuperview];
         optionFeedbackViewController = nil;
-    } else if (self.viewController == annoDrawViewController) {
+    } else if (currentViewController == annoDrawViewController) {
         [annoDrawViewController.view removeFromSuperview];
         annoDrawViewController = nil;
     }
 
-    self.viewController = nil;
+    currentViewController = appDelegate.window.rootViewController;
 }
 
 /*!
@@ -118,12 +119,9 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
  In iOS, there is no way to exit app programmatically.
  */
 - (void) exit_current_activity:(CDVInvokedUrlCommand*)command {
-    [self.commandDelegate runInBackground:^{
-        NSString* payload = nil;
-        [self exitActivity];
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    [self exitActivity];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 /*!
