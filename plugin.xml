@@ -22,7 +22,7 @@
     <asset src="anno_android/assets/www/anno/scripts/dojox" target="anno/scripts/dojox" />
     <asset src="anno_android/assets/www/anno/scripts/server-url.json" target="anno/scripts/server-url.json" />
     <asset src="anno_android/assets/www/anno/scripts/hardware-buttons.json" target="anno/scripts/hardware-buttons.json" />
-    <aseet src="anno_android/assets/www/anno/scripts/ChinaIpTable.json" target="anno/scripts/ChinaIpTable.json" />
+    <asset src="anno_android/assets/www/anno/scripts/ChinaIpTable.json" target="anno/scripts/ChinaIpTable.json" />
 
     <dependency id="org.apache.cordova.device" />
     <dependency id="org.apache.cordova.network-information" />
@@ -35,6 +35,7 @@
 
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
+            <access origin="http://127.0.0.1*" />
             <access origin="*" />
             <feature name="AnnoCordovaPlugin">
                 <param name="ios-package" value="AnnoCordovaPlugin"/>
@@ -54,6 +55,8 @@
     	<source-file src="anno_ios/platforms/ios/UserSource/Classes/IntroViewController.m"/>
         <header-file src="anno_ios/platforms/ios/UserSource/Classes/OptionFeedbackViewController.h"/>
     	<source-file src="anno_ios/platforms/ios/UserSource/Classes/OptionFeedbackViewController.m"/>
+        <header-file src="anno_ios/platforms/ios/UserSource/Classes/ScreenshotGestureListener.h"/>
+        <source-file src="anno_ios/platforms/ios/UserSource/Classes/ScreenshotGestureListener.m"/>
 
         <framework src="AssetsLibrary.framework" />
         <framework src="MessageUI.framework" />

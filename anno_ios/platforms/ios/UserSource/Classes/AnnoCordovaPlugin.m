@@ -1,3 +1,11 @@
+//
+//  AnnoCordovaPlugin.m
+//  UserSource
+//
+//  Created by Imran Ahmed on 11/04/14.
+//
+//
+
 #import "AnnoCordovaPlugin.h"
 
 @implementation AnnoCordovaPlugin
@@ -6,6 +14,7 @@ NSString *ACTIVITY_INTRO = @"Intro";
 NSString *ACTIVITY_FEEDBACK = @"Feedback";
 
 AnnoUtils *annoUtils;
+ScreenshotGestureListener *screenshotGestureListener;
 AppDelegate *appDelegate;
 
 UIViewController *currentViewController;
@@ -14,6 +23,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
 - (void) pluginInitialize {
     appDelegate = [[UIApplication sharedApplication] delegate];
     annoUtils = [[AnnoUtils alloc] init];
+    screenshotGestureListener = [[ScreenshotGestureListener alloc] init];
 
     if ([annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]]) {
         communityViewController = [appDelegate valueForKey:@"communityViewController"];
@@ -28,20 +38,12 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
     currentViewController = appDelegate.window.rootViewController;
 }
 
-/*!
- This method shows community page
- Set appdelegate's viewController to communityViewController
- */
 - (void) showCommunityPage {
     if (currentViewController != communityViewController) {
         [currentViewController presentViewController:communityViewController animated:YES completion:nil];
     }
 }
 
-/*!
- This method shows intro page
- Set appdelegate's viewController to introViewController
- */
 - (void) ShowIntroPage {
     if (introViewController == nil) {
         #if __has_feature(objc_arc)
@@ -57,10 +59,6 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
     }
 }
 
-/*!
- This method shows feedback page
- Set appdelegate's viewController to optionFeedbackViewController
- */
 - (void) showOptionFeedback {
     if (optionFeedbackViewController == nil) {
         #if __has_feature(objc_arc)
@@ -76,11 +74,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
     }
 }
 
-/*!
- This method shows annodraw page
- Set appdelegate's viewController to annoDrawViewController
- */
-- (void) showAnnoDraw:(NSString*)imageURI {
++ (void) showAnnoDraw:(NSString*)imageURI levelValue:(int)levelValue {
     if (annoDrawViewController == nil) {
         #if __has_feature(objc_arc)
             annoDrawViewController = [[AnnoDrawViewController alloc] init];
@@ -90,7 +84,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
         
         [appDelegate.window addSubview:annoDrawViewController.view];
         currentViewController = annoDrawViewController;
-        [AnnoDrawViewController handleFromShareImage:imageURI levelValue:0 isPracticeValue:false];
+        [AnnoDrawViewController handleFromShareImage:imageURI levelValue:levelValue isPracticeValue:false];
     } else {
         [appDelegate.viewController presentViewController:annoDrawViewController animated:YES completion:nil];
     }
@@ -114,10 +108,6 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
     currentViewController = appDelegate.window.rootViewController;
 }
 
-/*!
- This method is used to exit app.
- In iOS, there is no way to exit app programmatically.
- */
 - (void) exit_current_activity:(CDVInvokedUrlCommand*)command {
     [self exitActivity];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
@@ -197,7 +187,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
     NSString *imageURI = [command.arguments objectAtIndex:0];
 
     @try {
-        [self showAnnoDraw:imageURI];
+        [AnnoCordovaPlugin showAnnoDraw:imageURI levelValue:0];
     }
     @catch (NSException *exception) {
         NSLog(@"Exception in start_anno_draw: %@", exception);
@@ -208,15 +198,13 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
 }
 
 - (void) get_screenshot_path:(CDVInvokedUrlCommand*)command {
-    [self.commandDelegate runInBackground:^{
-        NSString *screenshotPath = [AnnoDrawViewController getScreenshotPath];
-        NSString *level = [NSString stringWithFormat:@"%d", [AnnoDrawViewController getLevel]];
-        NSString *isAnno = [annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] ? @"true" : @"false";
-        NSString *payload = [NSString stringWithFormat:@"%@|%@|%@", screenshotPath, level, isAnno];
+    NSString *screenshotPath = [AnnoDrawViewController getScreenshotPath];
+    NSString *level = [NSString stringWithFormat:@"%d", [AnnoDrawViewController getLevel]];
+    NSString *isAnno = [annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] ? @"true" : @"false";
+    NSString *payload = [NSString stringWithFormat:@"%@|%@|%@", screenshotPath, level, isAnno];
 
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) get_anno_screenshot_path:(CDVInvokedUrlCommand*)command {
@@ -287,10 +275,10 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
         appName = annoUtils.UNKNOWN_APP_NAME;
     } else {
         source = annoUtils.ANNO_SOURCE_PLUGIN;
-        appName = [AnnoUtils getAppName];
+        appName = [annoUtils getAppName];
     }
     
-    NSString *appVersion = [AnnoUtils getAppVersion];
+    NSString *appVersion = [annoUtils getAppVersion];
     
     NSDictionary * result = @{
         @"source" : source,
@@ -307,43 +295,34 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
 }
 
 - (void) get_recent_applist:(CDVInvokedUrlCommand*)command {
-    [self.commandDelegate runInBackground:^{
-        NSString* payload = nil;
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) get_installed_app_list:(CDVInvokedUrlCommand*)command {
-    [self.commandDelegate runInBackground:^{
-        NSString* payload = nil;
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) show_softkeyboard:(CDVInvokedUrlCommand*)command {
-    [self.commandDelegate runInBackground:^{
-        NSString* payload = nil;
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) close_softkeyboard:(CDVInvokedUrlCommand*)command {
-    [self.commandDelegate runInBackground:^{
-        NSString* payload = nil;
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) enable_native_gesture_listener:(CDVInvokedUrlCommand*)command {
-    [self.commandDelegate runInBackground:^{
-        NSString* payload = nil;
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) trigger_create_anno:(CDVInvokedUrlCommand*)command {
+    [annoUtils triggerCreateAnno:currentViewController];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 @end

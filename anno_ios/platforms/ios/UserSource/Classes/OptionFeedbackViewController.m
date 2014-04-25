@@ -1,28 +1,9 @@
-/*
- Licensed to the Apache Software Foundation (ASF) under one
- or more contributor license agreements.  See the NOTICE file
- distributed with this work for additional information
- regarding copyright ownership.  The ASF licenses this file
- to you under the Apache License, Version 2.0 (the
- "License"); you may not use this file except in compliance
- with the License.  You may obtain a copy of the License at
-
- http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing,
- software distributed under the License is distributed on an
- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- KIND, either express or implied.  See the License for the
- specific language governing permissions and limitations
- under the License.
- */
-
 //
-//  MainViewController.h
+//  OptionFeedbackViewController.m
 //  UserSource
 //
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
+//  Created by Imran Ahmed on 08/04/14.
+//
 //
 
 #import "OptionFeedbackViewController.h"
@@ -38,9 +19,9 @@ int level;
         self.startPage = @"anno/pages/feedback/main.html";
         level = 0;
         // Uncomment to override the CDVCommandDelegateImpl used
-        // _commandDelegate = [[MainCommandDelegate alloc] initWithViewController:self];
+        // _commandDelegate = [[OptionFeedbackCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
-        // _commandQueue = [[MainCommandQueue alloc] initWithViewController:self];
+        // _commandQueue = [[OptionFeedbackCommandQueue alloc] initWithViewController:self];
     }
     return self;
 }
@@ -52,15 +33,19 @@ int level;
         self.startPage = @"anno/pages/feedback/main.html";
         level = 0;
         // Uncomment to override the CDVCommandDelegateImpl used
-        // _commandDelegate = [[MainCommandDelegate alloc] initWithViewController:self];
+        // _commandDelegate = [[OptionFeedbackCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
-        // _commandQueue = [[MainCommandQueue alloc] initWithViewController:self];
+        // _commandQueue = [[OptionFeedbackCommandQueue alloc] initWithViewController:self];
     }
     return self;
 }
 
 + (int) getLevel {
     return level;
+}
+
++ (void) setLevel:(int)levelValue {
+    level = levelValue;
 }
 
 - (void)didReceiveMemoryWarning
@@ -144,7 +129,7 @@ int level;
 @implementation OptionFeedbackCommandDelegate
 
 /* To override the methods, uncomment the line in the init function(s)
-   in MainViewController.m
+   in OptionFeedbackViewController.m
  */
 
 #pragma mark CDVCommandDelegate implementation
@@ -157,7 +142,7 @@ int level;
 /*
    NOTE: this will only inspect execute calls coming explicitly from native plugins,
    not the commandQueue (from JavaScript). To see execute calls from JavaScript, see
-   MainCommandQueue below
+   OptionFeedbackCommandQueue below
 */
 - (BOOL)execute:(CDVInvokedUrlCommand*)command
 {
@@ -174,7 +159,7 @@ int level;
 @implementation OptionFeedbackCommandQueue
 
 /* To override, uncomment the line in the init function(s)
-   in MainViewController.m
+   in OptionFeedbackViewController.m
  */
 - (BOOL)execute:(CDVInvokedUrlCommand*)command
 {
