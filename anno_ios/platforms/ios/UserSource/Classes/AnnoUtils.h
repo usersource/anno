@@ -1,4 +1,13 @@
+//
+//  AnnoUtils.h
+//  UserSource
+//
+//  Created by Imran Ahmed on 08/04/14.
+//
+//
+
 #import <Foundation/Foundation.h>
+#import <QuartzCore/QuartzCore.h>
 
 @interface AnnoUtils : NSObject
 
@@ -7,8 +16,12 @@
 - (NSString*) saveImageToTemp:(UIImage*)image;
 - (void) mkdirs:(NSString*)path;
 - (BOOL) isAnno:(NSString*)bundleID;
-+ (NSString*) getAppName;
-+ (NSString*) getAppVersion;
+- (NSString*) getAppName;
+- (NSString*) getAppVersion;
+- (NSString*) generateScreenshotName;
+- (UIImage*) takeScreenshot;
+- (void) displayError:(NSString*)message;
+- (void) triggerCreateAnno:(UIViewController*)viewController;
 
 @property NSString *ANNO_SOURCE_PLUGIN;
 @property NSString *ANNO_SOURCE_STANDALONE;

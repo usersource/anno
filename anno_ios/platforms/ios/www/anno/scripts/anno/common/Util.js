@@ -74,9 +74,10 @@ define([
                 var rootPathArray = rootPath.split("/");
                 var filePathArray = filePath.split("/");
                 var relativePath = "";
+                if (rootPathArray[0] == "localhost") rootPathArray[0] = "";
 
                 for (i=0;i<rootPathArray.length;i++) {
-                    if (rootPathArray[i] != filePathArray[i]) {
+                    if (decodeURI(rootPathArray[i]) != decodeURI(filePathArray[i])) {
                         break;
                     }
                 }

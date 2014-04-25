@@ -1,4 +1,13 @@
+//
+//  AnnoUtils.m
+//  UserSource
+//
+//  Created by Imran Ahmed on 08/04/14.
+//
+//
+
 #import "AnnoUtils.h"
+#import "AnnoCordovaPlugin.h"
 
 @implementation AnnoUtils
 
@@ -100,12 +109,69 @@
     return [self.ANNO_PACKAGE_NAME isEqualToString:bundleID];
 }
 
-+ (NSString*) getAppName {
+- (NSString*) getAppName {
     return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
 }
 
-+ (NSString*) getAppVersion {
+- (NSString*) getAppVersion {
     return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+}
+
+- (NSString*) generateScreenshotName {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:self.SCREENSHOT_TIME_FORMAT];
+    NSString *formattedDateString = [dateFormatter stringFromDate:[NSDate date]];
+    return [NSString stringWithFormat:@"%@%@%@", @"Screenshot_", formattedDateString, self.PNG_SUFFIX];
+}
+
+- (UIImage*) takeScreenshot {
+    UIGraphicsBeginImageContextWithOptions(appDelegate.window.bounds.size, YES, 0.0);
+    [appDelegate.window.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
+- (void) displayError:(NSString*)message {
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:annoUtils.ERROR_TITLE
+                                                        message:message
+                                                       delegate:self
+                                              cancelButtonTitle:@"Ok"
+                                              otherButtonTitles:nil];
+    
+    [alertView show];
+}
+
+- (void) triggerCreateAnno:(UIViewController*)viewController {
+    int level = 0;
+
+    if ([viewController isKindOfClass:[CommunityViewController class]]) {
+        level = [CommunityViewController getLevel];
+    } else if ([viewController isKindOfClass:[OptionFeedbackViewController class]]) {
+        level = [OptionFeedbackViewController getLevel];
+    } else if ([viewController isKindOfClass:[IntroViewController class]]) {
+        level = [IntroViewController getLevel];
+    } else if ([viewController isKindOfClass:[AnnoDrawViewController class]]) {
+        level = [AnnoDrawViewController getLevel];
+    }
+
+    if (level >= 2) {
+        if (self.debugEnabled) {
+            NSLog(@"Already 2 levels, no recursive any more.");
+        }
+        return;
+    }
+
+    @try {
+        NSString *screenshotPath = [screenshotGestureListener takeScreenshot];
+        [screenshotGestureListener launchAnnoPlugin:viewController screenshotPath:screenshotPath];
+    }
+    @catch (NSException *exception) {
+        if (annoUtils.debugEnabled) {
+            NSLog(@"Exception in triggerCreateAnno: %@", exception);
+        }
+        [annoUtils displayError:screenshotGestureListener.TAKE_SCREENSHOT_FAIL_MESSAGE];
+    }
 }
 
 @end
