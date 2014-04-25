@@ -19,9 +19,9 @@ int level;
         self.startPage = @"anno/pages/intro/main.html";
         level = 0;
         // Uncomment to override the CDVCommandDelegateImpl used
-        // _commandDelegate = [[MainCommandDelegate alloc] initWithViewController:self];
+        // _commandDelegate = [[IntroCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
-        // _commandQueue = [[MainCommandQueue alloc] initWithViewController:self];
+        // _commandQueue = [[IntroCommandQueue alloc] initWithViewController:self];
     }
     return self;
 }
@@ -33,9 +33,9 @@ int level;
         self.startPage = @"anno/pages/intro/main.html";
         level = 0;
         // Uncomment to override the CDVCommandDelegateImpl used
-        // _commandDelegate = [[MainCommandDelegate alloc] initWithViewController:self];
+        // _commandDelegate = [[IntroCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
-        // _commandQueue = [[MainCommandQueue alloc] initWithViewController:self];
+        // _commandQueue = [[IntroCommandQueue alloc] initWithViewController:self];
     }
     return self;
 }
@@ -129,7 +129,7 @@ int level;
 @implementation IntroCommandDelegate
 
 /* To override the methods, uncomment the line in the init function(s)
-   in MainViewController.m
+   in IntroViewController.m
  */
 
 #pragma mark CDVCommandDelegate implementation
@@ -142,7 +142,7 @@ int level;
 /*
    NOTE: this will only inspect execute calls coming explicitly from native plugins,
    not the commandQueue (from JavaScript). To see execute calls from JavaScript, see
-   MainCommandQueue below
+   IntroCommandQueue below
 */
 - (BOOL)execute:(CDVInvokedUrlCommand*)command
 {
@@ -159,7 +159,7 @@ int level;
 @implementation IntroCommandQueue
 
 /* To override, uncomment the line in the init function(s)
-   in MainViewController.m
+   in IntroViewController.m
  */
 - (BOOL)execute:(CDVInvokedUrlCommand*)command
 {

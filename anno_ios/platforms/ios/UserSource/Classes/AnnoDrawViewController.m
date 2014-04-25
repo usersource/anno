@@ -22,9 +22,9 @@ NSString *screenshotPath;
         self.startPage = @"anno/pages/annodraw/main.html";
         level = 0;
         // Uncomment to override the CDVCommandDelegateImpl used
-        // _commandDelegate = [[MainCommandDelegate alloc] initWithViewController:self];
+        // _commandDelegate = [[AnnoDrawCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
-        // _commandQueue = [[MainCommandQueue alloc] initWithViewController:self];
+        // _commandQueue = [[AnnoDrawCommandQueue alloc] initWithViewController:self];
     }
     return self;
 }
@@ -36,9 +36,9 @@ NSString *screenshotPath;
         self.startPage = @"anno/pages/annodraw/main.html";
         level = 0;
         // Uncomment to override the CDVCommandDelegateImpl used
-        // _commandDelegate = [[MainCommandDelegate alloc] initWithViewController:self];
+        // _commandDelegate = [[AnnoDrawCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
-        // _commandQueue = [[MainCommandQueue alloc] initWithViewController:self];
+        // _commandQueue = [[AnnoDrawCommandQueue alloc] initWithViewController:self];
     }
     return self;
 }
@@ -161,7 +161,7 @@ NSString *screenshotPath;
 @implementation AnnoDrawCommandDelegate
 
 /* To override the methods, uncomment the line in the init function(s)
-   in MainViewController.m
+   in AnnoDrawViewController.m
  */
 
 #pragma mark CDVCommandDelegate implementation
@@ -174,7 +174,7 @@ NSString *screenshotPath;
 /*
    NOTE: this will only inspect execute calls coming explicitly from native plugins,
    not the commandQueue (from JavaScript). To see execute calls from JavaScript, see
-   MainCommandQueue below
+   AnnoDrawCommandQueue below
 */
 - (BOOL)execute:(CDVInvokedUrlCommand*)command
 {
@@ -191,7 +191,7 @@ NSString *screenshotPath;
 @implementation AnnoDrawCommandQueue
 
 /* To override, uncomment the line in the init function(s)
-   in MainViewController.m
+   in AnnoDrawViewController.m
  */
 - (BOOL)execute:(CDVInvokedUrlCommand*)command
 {

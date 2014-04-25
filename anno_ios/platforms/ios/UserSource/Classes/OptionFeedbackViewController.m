@@ -19,9 +19,9 @@ int level;
         self.startPage = @"anno/pages/feedback/main.html";
         level = 0;
         // Uncomment to override the CDVCommandDelegateImpl used
-        // _commandDelegate = [[MainCommandDelegate alloc] initWithViewController:self];
+        // _commandDelegate = [[OptionFeedbackCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
-        // _commandQueue = [[MainCommandQueue alloc] initWithViewController:self];
+        // _commandQueue = [[OptionFeedbackCommandQueue alloc] initWithViewController:self];
     }
     return self;
 }
@@ -33,9 +33,9 @@ int level;
         self.startPage = @"anno/pages/feedback/main.html";
         level = 0;
         // Uncomment to override the CDVCommandDelegateImpl used
-        // _commandDelegate = [[MainCommandDelegate alloc] initWithViewController:self];
+        // _commandDelegate = [[OptionFeedbackCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
-        // _commandQueue = [[MainCommandQueue alloc] initWithViewController:self];
+        // _commandQueue = [[OptionFeedbackCommandQueue alloc] initWithViewController:self];
     }
     return self;
 }
@@ -129,7 +129,7 @@ int level;
 @implementation OptionFeedbackCommandDelegate
 
 /* To override the methods, uncomment the line in the init function(s)
-   in MainViewController.m
+   in OptionFeedbackViewController.m
  */
 
 #pragma mark CDVCommandDelegate implementation
@@ -142,7 +142,7 @@ int level;
 /*
    NOTE: this will only inspect execute calls coming explicitly from native plugins,
    not the commandQueue (from JavaScript). To see execute calls from JavaScript, see
-   MainCommandQueue below
+   OptionFeedbackCommandQueue below
 */
 - (BOOL)execute:(CDVInvokedUrlCommand*)command
 {
@@ -159,7 +159,7 @@ int level;
 @implementation OptionFeedbackCommandQueue
 
 /* To override, uncomment the line in the init function(s)
-   in MainViewController.m
+   in OptionFeedbackViewController.m
  */
 - (BOOL)execute:(CDVInvokedUrlCommand*)command
 {
