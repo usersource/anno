@@ -43,6 +43,12 @@
     return self;
 }
 
+/**
+ Determine if the image orientation is landscape or portrait.
+ @param drawableImage
+        UIImage of image file
+ @return orientation of image
+ */
 - (NSString*) isLandscapeOrPortrait:(UIImage*)drawableImage {
     int width = drawableImage.size.width;
     int height  = drawableImage.size.height;
