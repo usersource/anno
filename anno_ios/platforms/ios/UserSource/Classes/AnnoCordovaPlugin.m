@@ -4,7 +4,6 @@
 //
 //  Created by Imran Ahmed on 11/04/14.
 //
-//
 
 #import "AnnoCordovaPlugin.h"
 

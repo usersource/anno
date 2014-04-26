@@ -4,7 +4,6 @@
 //
 //  Created by Imran Ahmed on 08/04/14.
 //
-//
 
 #import "AnnoDrawViewController.h"
 #import "AnnoCordovaPlugin.h"
@@ -43,18 +42,33 @@ NSString *screenshotPath;
     return self;
 }
 
+/**
+ Saves URL of image which is to be shared via UserSource
+ @param imageURI
+        URL of image which is to be shared
+ @param levelValue
+        level value for viewcontroller
+ @param isPracticeValue
+        YES if it is for practice else NO
+ */
 + (void) handleFromShareImage:(NSString *)imageURI levelValue:(int)levelValue isPracticeValue:(BOOL)isPracticeValue {
     screenshotPath = @"";
     level = levelValue + 1;
     isPractice = isPracticeValue;
     
     if (imageURI != nil) {
+        // getting UIImage of specified image
+        // for this, first we are getting NSData of image using URL of image
+        // and then we are making UIImage from NSData
         UIImage *drawableImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:imageURI]]];
         
         @try {
             NSString *orientation = [annoUtils isLandscapeOrPortrait:drawableImage];
             if ([annoUtils.IMAGE_ORIENTATION_LANDSCAPE isEqualToString:orientation]) {
+                // rotating image by 90 degrees if image is landscape
                 drawableImage = [annoUtils rotateImage:drawableImage rotatedByDegrees:90.0];
+
+                // saving rotated image in 'tmp' directory
                 screenshotPath = [annoUtils saveImageToTemp:drawableImage];
             } else {
                 screenshotPath = imageURI;
@@ -68,14 +82,27 @@ NSString *screenshotPath;
     }
 }
 
+/**
+ Get screenshot path associated with that viewcontroller
+ @return path of screenshot
+ */
 + (NSString*) getScreenshotPath {
     return screenshotPath;
 }
 
+/**
+ Get level associated with that viewcontroller
+ @return value of level
+ */
 + (int) getLevel {
     return level;
 }
 
+/**
+ Set level value associated with viewcontroller
+ @param levelValue
+        value for level
+ */
 + (void) setLevel:(int)levelValue {
     level = levelValue;
 }

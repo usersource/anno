@@ -4,7 +4,6 @@
 //
 //  Created by Imran Ahmed on 24/04/14.
 //
-//
 
 #import "ScreenshotGestureListener.h"
 #import "AnnoCordovaPlugin.h"
