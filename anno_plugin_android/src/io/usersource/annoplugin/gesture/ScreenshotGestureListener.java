@@ -34,12 +34,12 @@ import android.util.Log;
  */
 public class ScreenshotGestureListener implements OnGesturePerformedListener {
 
-  private static final String TAG = "ScreenshotGestureListener";
+  public static final String TAG = "ScreenshotGestureListener";
 
   private static final String FEEDBACK_ACTIVITY = "io.usersource.anno.AnnoDrawActivity";
   private static final String GESTURE_NAME_PATTERN = "UserSource spiral[0-9]";
   private static final String SCREENSHOTS_DIR_NAME = "Screenshots";
-  private static final String TAKE_SCREENSHOT_FAIL_MESSAGE = "Take Screenshot Failed.";
+  public static final String TAKE_SCREENSHOT_FAIL_MESSAGE = "Take Screenshot Failed.";
 
   private Activity activity;
   private GestureLibrary gestureLibrary = null;
@@ -87,8 +87,8 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
           if (prediction.score > 1) {
             String screenshotPath;
             try {
-              screenshotPath = takeScreenshot();
-              launchAnnoPlugin(screenshotPath);
+              screenshotPath = takeScreenshot(activity);
+              launchAnnoPlugin(activity, screenshotPath);
             } catch (FileNotFoundException e) {
               if (AnnoUtils.debugEnabled) {
                 Log.e(TAG, e.getMessage(), e);
@@ -107,7 +107,7 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
     }
   }
 
-  private void launchAnnoPlugin(String screenshotPath) {
+  public static void launchAnnoPlugin(Activity activity, String screenshotPath) {
     String packageName = activity.getPackageName();
 
     Intent intent = new Intent(Intent.ACTION_SEND);
@@ -131,7 +131,7 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
     activity.startActivity(intent);
   }
 
-  private String takeScreenshot() throws IOException {
+  public static String takeScreenshot(Activity activity) throws IOException {
     Bitmap b = AnnoUtils.takeScreenshot(activity);
     FileOutputStream fos = null;
     try {

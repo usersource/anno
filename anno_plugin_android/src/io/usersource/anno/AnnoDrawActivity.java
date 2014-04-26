@@ -33,6 +33,26 @@ public class AnnoDrawActivity extends DroidGap
     super.onCreate(savedInstanceState);
     super.init();
 
+    /**
+     * spiral gesture support start
+     */
+    GestureOverlayView view = new GestureOverlayView(this);
+    view.setLayoutParams(new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.MATCH_PARENT, 1));
+
+    setContentView(view);
+    view.addView((View) appView.getParent()); // adds the PhoneGap browser
+    view.getChildAt(0).setLayoutParams(
+            new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT, 1));
+
+    setContentView(view);
+    view.setGestureVisible(false);
+    /**
+     * spiral gesture support end
+     */
+
     super.loadUrl("file:///android_asset/www/anno/pages/annodraw/main.html");
 
     Intent intent = getIntent();
@@ -97,7 +117,7 @@ public class AnnoDrawActivity extends DroidGap
     }
 
     Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-    String realUrl = getRealPathFromURI(this, imageUri);
+    String realUrl = AnnoUtils.getFilePathByURI(this, imageUri);
 
 
     if (imageUri != null)
@@ -130,27 +150,6 @@ public class AnnoDrawActivity extends DroidGap
       }
     }
 
-  }
-
-  public String getRealPathFromURI(Context context, Uri contentUri) {
-
-    if (contentUri.toString().startsWith("file://"))
-    {
-      return contentUri.getPath();
-    }
-
-    Cursor cursor = null;
-    try {
-      String[] proj = { MediaStore.Images.Media.DATA };
-      cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
-      int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-      cursor.moveToFirst();
-      return cursor.getString(column_index);
-    } finally {
-      if (cursor != null) {
-        cursor.close();
-      }
-    }
   }
 
   public String getScreenshotPath()

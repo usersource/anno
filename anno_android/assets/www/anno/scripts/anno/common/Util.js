@@ -10,8 +10,9 @@ define([
     "dijit/registry",
     "dojo/text!../../ChinaIpTable.json",
     "dojo/text!../../server-url.json",
-    "anno/common/DBUtil"
-], function(declare, connect, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, ChinaIpTable, serverURLConfig, DBUtil){
+    "anno/common/DBUtil",
+    "anno/common/GestureHandler"
+], function(declare, connect, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, ChinaIpTable, serverURLConfig, DBUtil, GestureHandler){
 
     ChinaIpTable = dojoJson.parse(ChinaIpTable);
     serverURLConfig = dojoJson.parse(serverURLConfig);
@@ -68,24 +69,54 @@ define([
         },
         getBase64FileContent: function(filePath, callback)
         {
-            console.error(filePath);
-            localFileSystem.root.getFile(filePath, {create:false,exclusive: false}, function(f){
-                f.file(function(e){
-                    var reader = new FileReader();
-                    reader.onloadend = function (evt)
-                    {
-                        console.error("file read end:");
-                        var pos = evt.target.result.lastIndexOf(",");
-                        callback(evt.target.result.substr(pos+1));
-                    };
-                    reader.readAsDataURL(e);
-                });
+            function getiOSRelativePath(rootPath, filePath) {
+                rootPath = rootPath.replace(/^file:\/\//, "");
+                var rootPathArray = rootPath.split("/");
+                var filePathArray = filePath.split("/");
+                var relativePath = "";
 
-            }, function(e)
-            {
-                console.error(JSON.stringify(e));
-                alert(JSON.stringify(e));
-            });
+                for (i=0;i<rootPathArray.length;i++) {
+                    if (rootPathArray[i] != filePathArray[i]) {
+                        break;
+                    }
+                }
+
+                for(j=0;j<(rootPathArray.length-i);j++){
+                    relativePath += "../";
+                }
+
+                relativePath += filePathArray.splice(i, filePathArray.length-i).join("/");
+                console.log(relativePath);
+                return relativePath;
+            }
+
+            if (this.isIOS()) {
+                var rootPath;
+                localFileSystem.root.getParent(function(f) {
+                    rootPath = f.nativeURL;
+                    filePath = getiOSRelativePath(rootPath, filePath);
+                    beforeCallback();
+                });
+            } else {
+                beforeCallback();
+            }
+
+            function beforeCallback() {
+                console.error(filePath);
+                localFileSystem.root.getFile(filePath, {create:false,exclusive: false}, function(f){
+                    f.file(function(e){
+                        var reader = new FileReader();
+                        reader.onloadend = function (evt) {
+                            console.error("file read end:");
+                            var pos = evt.target.result.lastIndexOf(",");
+                            callback(evt.target.result.substr(pos+1));
+                        };
+                        reader.readAsDataURL(e);
+                    });
+                }, function(e) {
+                    console.error(JSON.stringify(e));
+                    alert(JSON.stringify(e));
+                });}
         },
         showLoadingIndicator: function ()
         {
@@ -203,6 +234,8 @@ define([
             var settingsSQl = "select * from app_settings";
             var self = this;
             DBUtil.executeSelectSql(settingsSQl, [], function(res){
+                if (!res) return;
+
                 var rows = res.rows;
                 console.error("app_settings rows: "+rows.length);
 
@@ -229,10 +262,13 @@ define([
             }
             var self = this;
             DBUtil.executeUpdateSql(settingsSQl, [settingItem.value, settingItem.item], function(res){
+                if (!res) return;
                 self.settings[settingItem.item] = settingItem.value;
 
                 callback(true);
-            }, callback(false));
+            }, function(err){
+                callback(false);
+            });
         },
         getSettings: function()
         {
@@ -389,7 +425,7 @@ define([
         loadAPI: function(apiId, callback, errorCallback)
         {
             var self = this;
-            if (gapi&&gapi.client)
+            if (window.gapi&&window.gapi.client)
             {
                 gapi.client.load(apiId, this.API.apiVersion, function(res) {
 
@@ -496,11 +532,10 @@ define([
         },
         ip2Int: function (s)
         {
-            var r = '';
-            for (var i in a = s.split('.'))
-                r += parseInt(a[i]) <= 9 ?'0' + parseInt(a[i]).toString(16) :parseInt(a[i]).toString(16);
+            var parts = s.split(".");
+            var sum = parseInt(parts[0], 10)*16777216 + parseInt(parts[1], 10)*65536 +parseInt(parts[2], 10)*256 +parseInt(parts[3], 10);
 
-            return parseInt('0x' + r);
+            return sum;
         },
         int2Ip: function (s)
         {
@@ -523,16 +558,88 @@ define([
 
             this.saveSettings({item:"ServerURL", value:proxyServerConfig}, function(success){
             }, true);
+            this.settings.ServerURL = proxyServerConfig;
         },
         setDefaultServer: function()
         {
             this.saveSettings({item:"ServerURL", value:"1"}, function(success){
             }, true);
+            this.settings.ServerURL = "1";
+        },
+        triggerCreateAnno: function()
+        {
+            if (window.cordova&&cordova.exec)
+            {
+                cordova.exec(
+                    function (data)
+                    {
+
+                    },
+                    function (err)
+                    {
+                        alert(err);
+                    },
+                    "AnnoCordovaPlugin",
+                    'trigger_create_anno',
+                    []
+                );
+            }
+        },
+        enableJSGesture: function()
+        {
+            GestureHandler.enableJSGesture();
+        },
+        disableJSGesture: function()
+        {
+            GestureHandler.disableJSGesture();
+        },
+        enableNativeGesture: function()
+        {
+            if (window.cordova&&cordova.exec)
+            {
+                cordova.exec(
+                    function (data)
+                    {
+
+                    },
+                    function (err)
+                    {
+                        alert(err);
+                    },
+                    "AnnoCordovaPlugin",
+                    'enable_native_gesture_listener',
+                    [true]
+                );
+            }
+        },
+        disableNativeGesture: function()
+        {
+            if (window.cordova&&cordova.exec)
+            {
+                cordova.exec(
+                    function (data)
+                    {
+
+                    },
+                    function (err)
+                    {
+                        alert(err);
+                    },
+                    "AnnoCordovaPlugin",
+                    'enable_native_gesture_listener',
+                    [false]
+                );
+            }
+        },
+        isIOS: function()
+        {
+            return device.platform == "iOS";
+        },
+        isAndroid: function()
+        {
+            return device.platform == "Android";
         }
     };
-
-
-    //document.addEventListener("deviceready", initDB, false);
 
     return util;
 });
