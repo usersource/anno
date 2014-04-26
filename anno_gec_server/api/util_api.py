@@ -1,12 +1,10 @@
 __author__ = 'topcircler'
 
 import logging
-import uuid
 
 import endpoints
 from protorpc import remote
 from protorpc import message_types
-from protorpc import messages
 
 from api.utils import put_search_document
 from model.anno import Anno
@@ -43,6 +41,9 @@ class UtilApi(remote.Service):
         app_name = request.app_name
         if is_empty_string(app_name):
             raise endpoints.BadRequestException('app_name is required.')
+        company_name = request.company_name
+        if is_empty_string(company_name):
+            raise endpoints.BadRequestException('company_name is required.')
 
         appinfo = AppInfo.get_appinfo(request)
         exists = (appinfo is not None)

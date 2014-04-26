@@ -15,9 +15,9 @@ class AppInfo(ndb.Model):
     private_data = ndb.BooleanProperty(required=True)
     created = ndb.DateTimeProperty(required=True, auto_now_add=True)
     # below fields are optional.
-    app_version = ndb.StringProperty()  # not sure if we will assign app key for each app version.
     contact_email = ndb.StringProperty()  # 3rd-party app developer contact email.
-    company_name = ndb.StringProperty()  # 3rd-party app company.
+    company_name = ndb.StringProperty(required=True)  # 3rd-party app company.
+    app_urls = ndb.StringProperty() # 3rd-party app store urls.
 
 
     @classmethod
@@ -37,13 +37,12 @@ class AppInfo(ndb.Model):
     def insert_appinfo(cls, message):
         app_key = str(uuid.uuid4())
         entity = cls(app_key=app_key, app_name=message.app_name,
-                     private_data=message.private_data, app_version=message.app_version,
-                     contact_email=message.contact_email, company_name=message.company_name)
+                     private_data=message.private_data, contact_email=message.contact_email,
+                     company_name=message.company_name, app_urls=message.app_urls)
         entity.put()
         return entity
 
     def to_message(self):
-        return AppInfoMessage(app_key=self.app_key, app_name=self.app_name,
-                              app_version=self.app_version, company_name=self.company_name,
+        return AppInfoMessage(app_key=self.app_key, app_name=self.app_name, company_name=self.company_name,
                               private_data=self.private_data, created=self.created,
-                              contact_email=self.contact_email)
+                              contact_email=self.contact_email, app_urls=self.app_urls)
