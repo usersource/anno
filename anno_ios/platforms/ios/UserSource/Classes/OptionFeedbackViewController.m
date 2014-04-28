@@ -4,7 +4,6 @@
 //
 //  Created by Imran Ahmed on 08/04/14.
 //
-//
 
 #import "OptionFeedbackViewController.h"
 
@@ -40,10 +39,19 @@ int level;
     return self;
 }
 
+/**
+ Get level associated with that viewcontroller
+ @return value of level
+ */
 + (int) getLevel {
     return level;
 }
 
+/**
+ Set level value associated with viewcontroller
+ @param levelValue
+ value for level
+ */
 + (void) setLevel:(int)levelValue {
     level = levelValue;
 }

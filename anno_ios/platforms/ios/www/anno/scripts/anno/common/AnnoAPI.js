@@ -8,6 +8,7 @@ define([
 {
     var annoAPI = {
         defaultPwd: "123456",
+        networkCheckerInterval: 6*1000, // 60 seconds
         setAppKey: function(appKey, callback)
         {
             if (!appKey)
@@ -65,29 +66,9 @@ define([
                                     if (annoUtil.hasConnection())
                                     {
                                         // choose Server URL
-                                        annoUtil.readSettings(function(settings){
-                                            if (settings.ServerURL == null)
-                                            {
-                                                annoUtil.inChina(function(inChina){
-                                                    if (inChina)
-                                                    {
-                                                        console.error("in China, chooseProxyServer");
-                                                        annoUtil.chooseProxyServer();console.error("in China, chooseProxyServer2");
-                                                    }
-                                                    else
-                                                    {
-                                                        annoUtil.setDefaultServer();
-                                                    }
-
-                                                    // call sign-up flow
-                                                    annoAPI._doSignUpFlow();
-                                                });
-                                            }
-                                            else
-                                            {
-                                                // call sign-up flow
-                                                annoAPI._doSignUpFlow();
-                                            }
+                                        annoAPI._chooseServer(function(){
+                                            // call sign-up flow
+                                            annoAPI._doSignUpFlow();
                                         });
                                     }
                                     else
@@ -99,6 +80,15 @@ define([
                                                 message: "User "+ userEmail +" is already sign-up."
                                             });
                                         }
+
+                                        window.setTimeout(function(){
+                                            annoAPI._checkNetwork(function(){
+                                                annoAPI._chooseServer(function(){
+                                                    // call sign-up flow
+                                                    annoAPI._doSignUpFlow();
+                                                });
+                                            });
+                                        }, annoAPI.networkCheckerInterval);
                                     }
                                 }
                                 else
@@ -112,6 +102,18 @@ define([
                                             window.setTimeout(function(){
                                                 AnnoDataHandler.startBackgroundSync();
                                             }, 5*1000);
+                                        }
+                                        else
+                                        {
+                                            window.setTimeout(function(){
+                                                annoAPI._checkNetwork(function(){
+                                                    OAuthUtil.processBasicAuthToken({email:userEmail, password:annoAPI.defaultPwd});
+                                                    // start background sync
+                                                    window.setTimeout(function(){
+                                                        AnnoDataHandler.startBackgroundSync();
+                                                    }, 5*1000);
+                                                });
+                                            }, annoAPI.networkCheckerInterval);
                                         }
 
                                         annoAPI._callback({
@@ -128,29 +130,9 @@ define([
                                 if (annoUtil.hasConnection())
                                 {
                                     // choose Server URL
-                                    annoUtil.readSettings(function(settings){
-                                        if (settings.ServerURL == null)
-                                        {
-                                            annoUtil.inChina(function(inChina){
-                                                if (inChina)
-                                                {
-                                                    console.error("in China, chooseProxyServer");
-                                                    annoUtil.chooseProxyServer();console.error("in China, chooseProxyServer2");
-                                                }
-                                                else
-                                                {
-                                                    annoUtil.setDefaultServer();
-                                                }
-
-                                                // call sign-up flow
-                                                annoAPI._doSignUpFlow();
-                                            });
-                                        }
-                                        else
-                                        {
-                                            // call sign-up flow
-                                            annoAPI._doSignUpFlow();
-                                        }
+                                    annoAPI._chooseServer(function(){
+                                        // call sign-up flow
+                                        annoAPI._doSignUpFlow();
                                     });
                                 }
                                 else
@@ -174,6 +156,15 @@ define([
 
                                         annoUtil.hideLoadingIndicator();
                                     });
+
+                                    window.setTimeout(function(){
+                                        annoAPI._checkNetwork(function(){
+                                            annoAPI._chooseServer(function(){
+                                                // call sign-up flow
+                                                annoAPI._doSignUpFlow();
+                                            });
+                                        });
+                                    }, annoAPI.networkCheckerInterval);
                                 }
                             }
                         });
@@ -182,9 +173,8 @@ define([
             }
             else
             {
-                var self = this;
                 window.setTimeout(function(){
-                    annoAPI.signUp(userEmail);
+                    annoAPI.signUp(userEmail, userNickname, callback);
                 }, 20);
             }
         },
@@ -196,6 +186,7 @@ define([
         },
         _doSignUpFlow: function()
         {
+            document.getElementById('networkMsg').innerHTML = "call backend sign-up...";
             // call sign-up API
             var nickname = this._userNickname,
                 email = this._userName,
@@ -288,10 +279,11 @@ define([
                                 });
                             }
 
-                            DBUtil.localUserInfo.signedup = 1;
+                            DBUtil.loadLocalUserInfo();
 
                             OAuthUtil.processBasicAuthToken(userInfo);
                             // start background sync
+                            document.getElementById('networkMsg').innerHTML = "background sync running...";
                             window.setTimeout(function(){
                                 AnnoDataHandler.startBackgroundSync();
                             }, 5*1000);
@@ -300,6 +292,84 @@ define([
                         annoUtil.hideLoadingIndicator();
                     });
                 });
+            });
+        },
+        _reloadGCEClientLib: function()
+        {
+            var defaultGCELibSrc = "https://apis.google.com/js/client.js?onload=gce_init";
+            var scriptTags = document.getElementsByTagName("script"), gceClientLibScriptTag;
+
+            for (var i= 0,c=scriptTags.length;i<c;i++)
+            {
+                if (!scriptTags[i].src) continue;
+                if (scriptTags[i].src.indexOf("http://apis.google.com/js/client.js") == 0 ||scriptTags[i].src.indexOf("https://apis.google.com/js/client.js") == 0)
+                {
+                    gceClientLibScriptTag = scriptTags[i];
+                    break;
+                }
+            }
+
+
+            if (gceClientLibScriptTag && gceClientLibScriptTag.getAttribute('gapi_processed') == 'true')
+            {
+                // GCE client lib was loaded successfully already, we don't need do anything.
+                return;
+            }
+
+            if (gceClientLibScriptTag)
+            {
+                defaultGCELibSrc = gceClientLibScriptTag.src;
+                gceClientLibScriptTag.remove();
+            }
+
+            // insert Google CE client lib script tag.
+            var gceClientLibScriptTag = document.createElement('script'); gceClientLibScriptTag.type = 'text/javascript'; gceClientLibScriptTag.async = true;
+            gceClientLibScriptTag.src = defaultGCELibSrc;
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gceClientLibScriptTag, s);
+        },
+        _checkNetwork: function(callback)
+        {
+            document.getElementById('networkMsg').innerHTML = "checking network connection...";
+            // check if network connection is available, if available, reload GCE client lib then call callback after 10 seconds, if not, wait a networkCheckerInterval value then check again.
+            if (annoUtil.hasConnection())
+            {
+                document.getElementById('networkMsg').innerHTML = "Network connection on";
+                annoAPI._reloadGCEClientLib();
+                document.getElementById('networkMsg').innerHTML = "reloading Google CE client lib";
+                window.setTimeout(callback, 10*1000);
+            }
+            else
+            {
+                window.setTimeout(function(){
+                    annoAPI._checkNetwork(callback);
+                }, annoAPI.networkCheckerInterval);
+            }
+        },
+        _chooseServer: function(callback)
+        {
+            // choose default server or proxy server depends on if app running in China
+            annoUtil.readSettings(function(settings){
+                if (settings.ServerURL == null)
+                {
+                    annoUtil.inChina(function(inChina){
+                        if (inChina)
+                        {
+                            console.error("in China, chooseProxyServer");
+                            annoUtil.chooseProxyServer();
+                        }
+                        else
+                        {
+                            console.error("not in China, choose default Server");
+                            annoUtil.setDefaultServer();
+                        }
+
+                        callback();
+                    });
+                }
+                else
+                {
+                    callback();
+                }
             });
         },
         enableNativeGesture:function()
@@ -321,6 +391,10 @@ define([
         triggerCreateAnno:function()
         {
             annoUtil.triggerCreateAnno();
+        },
+        setNetworkCheckerInterval: function(value)
+        {
+            this.networkCheckerInterval = value;
         }
     };
 

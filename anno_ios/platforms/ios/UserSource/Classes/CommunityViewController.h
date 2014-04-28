@@ -4,7 +4,6 @@
 //
 //  Created by Imran Ahmed on 08/04/14.
 //
-//
 
 #import <Cordova/CDVViewController.h>
 #import <Cordova/CDVCommandDelegateImpl.h>

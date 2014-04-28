@@ -231,6 +231,20 @@ define([
                 }
             });
         },
+        loadLocalUserInfo: function()
+        {
+            var self = this;
+            this.annoDB.executeSql("select * from app_users", [], function(psres){
+                if (psres)
+                {
+                    self.hasUserInLocalDB = psres.rows.length>0;
+                    if (psres.rows.length>0)
+                        self.localUserInfo = psres.rows.item(0);
+                    self.userChecked = true;
+                    console.error("app_users: "+JSON.stringify(self.localUserInfo));
+                }
+            });
+        },
         executeSelectSql: function(sql, params, onSuccess, onFail)
         {
             this.annoDB.executeSql(sql, params, onSuccess, onFail);

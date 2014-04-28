@@ -13,41 +13,34 @@
 @interface UserSourceTests : XCTestCase
 @end
 
-AppDelegate *appDelegate;
-AnnoCordovaPlugin *annoCordovaPlugin;
-
 @implementation UserSourceTests
 
+AppDelegate *appDelegate;
+
+// XCTest works only for iOS 7 or later
 - (void) setUp {
     [super setUp];
     appDelegate = [[UIApplication sharedApplication] delegate];
-    annoCordovaPlugin = [[AnnoCordovaPlugin alloc] init];
 }
 
 - (void) tearDown {
     [super tearDown];
 }
 
+/**
+ Testing whether community viewcontroller is created or not
+ */
 - (void) testCommunityViewControllerInstantion {
     XCTAssertNotNil(appDelegate.communityViewController, @"Community ViewController isn't created");
 }
 
-- (void) testAnnoUtilsInstantion {
-    XCTAssertNotNil(appDelegate.annoUtils, @"AnnoUtils isn't created");
-}
-
+/**
+ Testing whether rootViewController is community viewcontroller or not
+ */
 - (void) testRootViewController {
     UIViewController *rootViewController = appDelegate.window.rootViewController;
     CDVViewController *communityViewController = appDelegate.communityViewController;
     XCTAssertEqualObjects(rootViewController, communityViewController, @"Root ViewController isn't Community ViewController");
-}
-
-- (void) testAnnoCordovaPlugin {
-    XCTAssertNotNil(annoCordovaPlugin, @"AnnoCordovaPlugin isn't present");
-}
-
-- (void) testShowCommunityPage {
-    [annoCordovaPlugin showCommunityPage];
 }
 
 @end
