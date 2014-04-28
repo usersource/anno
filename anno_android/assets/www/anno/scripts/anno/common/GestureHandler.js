@@ -22,26 +22,23 @@ define([], function ()
 
     var gestureHandler = {
         start: false,
-        touchPoints:{
-            start:{}
-        },
-        minRadius: 50,
+        movePoints:[],
+        lastMovePoint:[],
+        minMoves: 25,
         _clearPoints: function()
         {
-            this.touchPoints = {
-                start:{}
-            };
+            this.movePoints.length = 0;
         },
         _touchStart: function(e)
         {
-            this._clearPoints();
             if (e.touches.length == 1)
             {
-                this.touchPoints.start.x = e.touches[0].pageX;
-                this.touchPoints.start.y = e.touches[0].pageY;
+                this._clearPoints();
 
-                console.log("touch start at ("+this.touchPoints.start.x+","+this.touchPoints.start.y+")");
                 console.log("Detecting spiral gesture......");
+                this.lastMovePoint[0] = e.touches[0].pageX;
+                this.lastMovePoint[1] = e.touches[0].pageX;
+                this.movePoints.push([this.lastMovePoint[0], this.lastMovePoint[1]]);
             }
         },
         _touchMove: function(e)
@@ -49,145 +46,146 @@ define([], function ()
             if (e.touches.length == 1)
             {
                 e.preventDefault();
-                var x = e.touches[0].pageX, y = e.touches[0].pageY, startX = this.touchPoints.start.x, startY = this.touchPoints.start.y;
-
-                if (!this.touchPoints.p1)
+                var x = e.touches[0].pageX, y = e.touches[0].pageY;
+                // only record moves that distance > 1
+                if (Math.abs(x-this.lastMovePoint[0])>1 &&Math.abs(y-this.lastMovePoint[1])>1)
                 {
-                    this.handleP1(e);
-                }
-                else
-                {
-                    if (x > this.touchPoints.p1.x && y > this.touchPoints.p1.y)
-                    {
-                        this.handleP1(e);
-                    }
-                    else
-                    {
-                        if (!this.touchPoints.p2)
-                        {
-                            this.handleP2(e);
-                        }
-                        else
-                        {
-                            if (!this.touchPoints.p3)
-                            {
-                                this.handleP3(e);
-                            }
-                            else
-                            {
-                                if (!this.touchPoints.p4)
-                                {
-                                    this.handleP4(e);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                console.log("touch move at ("+x+","+y+")");
-            }
-        },
-        _touchEnd: function(e)
-        {
-            if (this.touchPoints.start
-                && this.touchPoints.p1
-                && this.touchPoints.p2
-                && this.touchPoints.p3
-                && this.touchPoints.p4
-                )
-            {
-                console.log("spiral gesture detected!");
-                this._clearPoints();
-                if (window.cordova&&cordova.exec)
-                {
-                    cordova.exec(
-                        function (data)
-                        {
-
-                        },
-                        function (err)
-                        {
-                            alert(err);
-                        },
-                        "AnnoCordovaPlugin",
-                        'trigger_create_anno',
-                        []
-                    );
+                    this.movePoints.push([x, y]);
+                    this.lastMovePoint[0] = x;
+                    this.lastMovePoint[1] = y;
                 }
             }
             else
             {
-                console.log("spiral gesture not detected!");
                 this._clearPoints();
             }
+        },
+        _touchEnd: function(e)
+        {
+            this._recognize();
+            this._clearPoints();
+        },
+        _recognize: function()
+        {
+            /*
+             -----p1----
+             |         |
+             p4   p5   p2
+             |         |
+             ----p3----
+             */
+            var points = this.movePoints, x, y;
+            if (points.length < this.minMoves)
+            {
+                return;
+            }
+
+            var p1 = [points[0][0], points[0][1]], p2 = [points[0][0], points[0][1]],
+                p3 = [points[0][0], points[0][1]], p4 = [points[0][0], points[0][1]],
+                p5 = [];
+
+            for (var i= 1,c=points.length;i<c;i++)
+            {
+                x = points[i][0];
+                y = points[i][1];
+
+                if (y < p1[1])
+                {
+                    p1[0] = x;
+                    p1[1] = y;
+                }
+
+                if (x > p2[0])
+                {
+                    p2[0] = x;
+                    p2[1] = y;
+                }
+
+                if (y > p3[1])
+                {
+                    p3[0] = x;
+                    p3[1] = y;
+                }
+
+                if (x < p4[0])
+                {
+                    p4[0] = x;
+                    p4[1] = y;
+                }
+            }
+
+            var startX = points[0][0], startY = points[0][1];
+            var endX = points[points.length-1][0], endY = points[points.length-1][1];
+
+            if (startY > (p1[1]+20) && startY < (p3[1]-20)&&startX > (p4[0]+20) && startX < (p2[0]-20))
+            {
+                p5[0] = startX;
+                p5[1] = startY;
+            }
+            else
+            {
+                p5[0] = endX;
+                p5[1] = endY;
+            }
+
+            var distanceP5P1 = this.getDistance(p5, p1),
+                distanceP5P2 = this.getDistance(p5, p2),
+                distanceP5P3 = this.getDistance(p5, p3),
+                distanceP5P4 = this.getDistance(p5, p4);
+
+            if (distanceP5P1 ==0 || distanceP5P2 ==0 || distanceP5P3 ==0 || distanceP5P4 ==0)
+            {
+                console.log("spiral gesture not detected!");
+            }
+            else
+            {
+                var averageDistance = (distanceP5P1+distanceP5P2+distanceP5P3+distanceP5P4)/4;
+                var delta = averageDistance;//Math.max(distanceP5P1, distanceP5P2, distanceP5P3,distanceP5P4)/1.5;
+
+                if (Math.abs(distanceP5P1 - averageDistance) < delta &&
+                    Math.abs(distanceP5P2 - averageDistance) < delta &&
+                    Math.abs(distanceP5P3 - averageDistance) < delta &&
+                    Math.abs(distanceP5P4 - averageDistance) < delta)
+                {
+                    console.log("spiral gesture detected!");
+
+                    if (window.cordova&&cordova.exec)
+                    {
+                        cordova.exec(
+                            function (data)
+                            {
+
+                            },
+                            function (err)
+                            {
+                                alert(err);
+                            },
+                            "AnnoCordovaPlugin",
+                            'trigger_create_anno',
+                            []
+                        );
+                    }
+                }
+                else
+                {
+                    console.log("spiral gesture not detected!");
+                }
+            }
+        },
+        getDistance: function(p1, p2)
+        {
+            var xs = p2[0] - p1[0];
+            var ys = p2[1] - p1[1];
+
+            xs = xs * xs;
+            ys = ys * ys;
+
+            return Math.sqrt( xs + ys );
         },
         _touchCancel: function(e)
         {
             this._clearPoints();
             console.log("_touchCancel");
-        },
-        handleP1: function(e)
-        {
-            var x = e.touches[0].pageX, y = e.touches[0].pageY, startX = this.touchPoints.start.x, startY = this.touchPoints.start.y;
-
-            if (!this.touchPoints.p1)
-            {
-                if ((x >= (startX+this.minRadius)) && (y >= (startY+this.minRadius)))
-                {
-                    this.touchPoints.p1 = {x: x, y:y};
-                    console.log("got P1 at ("+x+","+y+")");
-                }
-            }
-            else
-            {
-                this.touchPoints.p1.x = x;
-                this.touchPoints.p1.y = y;
-                console.log("got P1 at ("+x+","+y+")");
-            }
-        },
-        handleP2: function(e)
-        {
-            var x = e.touches[0].pageX, y = e.touches[0].pageY, p1x = this.touchPoints.p1.x, p1y = this.touchPoints.p1.y;
-            var startX = this.touchPoints.start.x, startY = this.touchPoints.start.y;
-            var r = p1y - startY, delta = r*0.5;
-
-            if (!this.touchPoints.p2)
-            {
-                if (Math.abs(x - startX) <=delta && (((y - p1y) >=r*0.5)&&((y - p1y) <=r*1.5)))
-                {
-                    this.touchPoints.p2 = {x: x, y:y};
-                    console.log("got P2 at ("+x+","+y+")");
-                }
-            }
-        },
-        handleP3: function(e)
-        {
-            var x = e.touches[0].pageX, y = e.touches[0].pageY, p2x = this.touchPoints.p2.x;
-            var p1y = this.touchPoints.p1.y, p2y = this.touchPoints.p2.y, startY = this.touchPoints.start.y;
-            var r = p1y - startY, delta = r*0.5;
-
-            if (!this.touchPoints.p3)
-            {
-                if (((p2x - x) >=delta&&(p2x - x) <=(r*1.5)) && ((p2y - y) >=delta&&(p2y - y) <=(r*1.5)))
-                {
-                    this.touchPoints.p3 = {x: x, y:y};
-                    console.log("got P3 at ("+x+","+y+")");
-                }
-            }
-        },
-        handleP4: function(e)
-        {
-            var x = e.touches[0].pageX, y = e.touches[0].pageY, p3x = this.touchPoints.p3.x;
-            var p3y = this.touchPoints.p3.y, p1x = this.touchPoints.p1.x, startY = this.touchPoints.start.y;
-
-            if (!this.touchPoints.p4)
-            {
-                if (((x > (p3x+2)) && (x < p1x)) && ((y< p3y)&&(y>=startY)) )
-                {
-                    this.touchPoints.p4 = {x: x, y:y};
-                    console.log("got P4 at ("+x+","+y+")");
-                }
-            }
         },
         enableJSGesture: function()
         {
