@@ -26,7 +26,7 @@ define([
         var eventsModel = null;
         var app = null;
         var listScrollTop = 0;
-        var loadingMoreData = false,
+        var loadingData = false, firstListLoaded = false,
             offset = 0, limit=30, searchOffset = 0;
         var hasMoreData = false,
             hasMoreSearchData = false,
@@ -62,18 +62,19 @@ define([
 
         var sdTitleHeight = 100,
             sdBottom = 90;
-        var viewPoint;
+        var viewPoint, initialized = false;
+        var startPull = false, pullStartY= 0, touchStartY = 0, doRefreshing = false;
 
         var loadListData = function (search, poffset, order, clearData)
         {
+            loadingData = true;
             search = search == null?false:search;
             clearData = clearData == null?false:clearData;
-            annoUtil.hasConnection();
-            if (poffset)
+
+            if (!doRefreshing)
             {
-                loadingMoreData = true;
+                annoUtil.showLoadingIndicator();
             }
-            annoUtil.showLoadingIndicator();
 
             var arg = {outcome: 'cursor,has_more,anno_list', limit: limit};
 
@@ -117,7 +118,12 @@ define([
                 if (!data)
                 {
                     annoUtil.hideLoadingIndicator();
-                    loadingMoreData = false;
+                    loadingData = false;
+                    doRefreshing = false;
+                    firstListLoaded = true;
+                    registry.byId('progressBar').stopIndeterminateProgress();
+                    hideStartRefreshMessage();
+
                     domStyle.set('noSearchResultContainer', 'display', 'none');
                     alert("Annos returned from server are empty.");
                     return;
@@ -126,11 +132,19 @@ define([
                 if (data.error)
                 {
                     annoUtil.hideLoadingIndicator();
-                    loadingMoreData = false;
+                    loadingData = false;
+                    doRefreshing = false;
+                    firstListLoaded = true;
+                    registry.byId('progressBar').stopIndeterminateProgress();
+                    hideStartRefreshMessage();
+
                     domStyle.set('noSearchResultContainer', 'display', 'none');
                     alert("An error occurred when calling anno."+(search?"search":"list")+" api: "+data.error.message);
                     return;
                 }
+
+                registry.byId('progressBar').stopIndeterminateProgress();
+                hideStartRefreshMessage();
 
                 var annoList = data.result.anno_list||[];
 
@@ -162,7 +176,9 @@ define([
                 }
 
                 annoUtil.hideLoadingIndicator();
-                loadingMoreData = false;
+                loadingData = false;
+                doRefreshing = false;
+                firstListLoaded = true;
 
                 if (search)
                 {
@@ -210,7 +226,7 @@ define([
 
         var loadMoreData = function()
         {
-            if (loadingMoreData) return;
+            if (loadingData) return;
             if (!hasMoreData&&!(inSearchMode&&searchDone)) return;
             if (!hasMoreSearchData&&(inSearchMode&&searchDone)) return;
 
@@ -246,6 +262,9 @@ define([
             domStyle.set('sdTitle', 'height', sdTitleHeight+'px');
             domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-sdBottom-appNameDialogGap)+'px');
             domStyle.set('sdBottom', 'height', sdBottom+'px');
+
+            registry.byId('progressBar').set('width', viewPoint.w);
+            domStyle.set('pullToRefreshMsg', 'left', (viewPoint.w-180)/2+'px');
         };
 
         var goBackActivity = function()
@@ -460,6 +479,43 @@ define([
                 dom.byId('btnAppNameDialogDone').disabled = true;
                 domClass.add('btnAppNameDialogDone', "disabledBtn");
             }
+        };
+
+        // pull to refresh
+
+        var showPullToRefreshMessage = function()
+        {
+            domStyle.set('headingStartTable', 'display', 'none');
+            dom.byId('pullToRefreshMsg').innerHTML = "Pull down to refresh";
+            domStyle.set('pullToRefreshMsg', 'display', '');
+        };
+
+        var showStartRefreshMessage = function()
+        {
+            domStyle.set('headingStartTable', 'display', 'none');
+            dom.byId('pullToRefreshMsg').innerHTML = "Refreshing anno feed";
+            domStyle.set('pullToRefreshMsg', 'display', '');
+        };
+
+        var hidePullToRefreshMessage = function()
+        {
+            domStyle.set('headingStartTable', 'display', '');
+            domStyle.set('pullToRefreshMsg', 'display', 'none');
+        };
+
+        var hideStartRefreshMessage = function()
+        {
+            domStyle.set('headingStartTable', 'display', '');
+            domStyle.set('pullToRefreshMsg', 'display', 'none');
+        };
+
+        var doRefresh = function()
+        {
+            doRefreshing = true;
+            loadListData(null, null, null, true);
+
+            // hide start refresh message 1 seconds later.
+            window.setTimeout(hideStartRefreshMessage, 1000);
         };
 
         var _init = function()
@@ -811,7 +867,96 @@ define([
                         }
                     }));
 
+                    // pull to refresh
+                    _connectResults.push(connect.connect(dom.byId('listContainerStart'), "touchmove", this, function(e){
+
+                        if (!loadingData&&firstListLoaded&&!inSearchMode)
+                        {
+                            var listContainer = dom.byId('listContainerStart');
+
+                            if (startPull)
+                            {
+                                e.preventDefault();
+
+                                var delta = e.touches[0].pageY - pullStartY;
+                                registry.byId('progressBar').showSmoothProgress(delta);
+                            }
+                            else
+                            {
+                                if (listContainer.scrollTop <=0 && (e.touches[0].pageY-touchStartY)>0)
+                                {
+                                    e.preventDefault();
+
+                                    startPull = true;
+                                    pullStartY = e.touches[0].pageY;
+
+                                    showPullToRefreshMessage();
+                                }
+                            }
+                        }
+                    }));
+
+                    _connectResults.push(connect.connect(dom.byId('listContainerStart'), "touchstart", this, function(e){
+                        startPull = false;
+
+                        pullStartY = 0;
+                        touchStartY = e.touches[0].pageY;
+                    }));
+
+                    _connectResults.push(connect.connect(registry.byId('progressBar'), "onSmoothProgressComplete", this, function(){
+                        // now we can start refreshing anno feeds
+                        hidePullToRefreshMessage();
+                        showStartRefreshMessage();
+                        registry.byId('progressBar').showIndeterminateProgress();
+
+                        doRefresh();
+                    }));
+
+                    _connectResults.push(connect.connect(dom.byId('listContainerStart'), "touchend", this, function(e){
+
+                        if (!loadingData)
+                        {
+                            var progressBar = registry.byId('progressBar');
+
+                            if (startPull&&!progressBar.showingIndeterminateProgress)
+                            {
+                                registry.byId('progressBar').showSmoothProgress(0);
+                                hidePullToRefreshMessage();
+                            }
+
+                            startPull = false;
+
+                            pullStartY = 0;
+                            touchStartY = 0;
+                        }
+
+                    }));
+
+                    _connectResults.push(connect.connect(dom.byId('listContainerStart'), "touchcancel", this, function(e){
+
+                        if (!loadingData)
+                        {
+                            var progressBar = registry.byId('progressBar');
+
+                            if (startPull&&!progressBar.showingIndeterminateProgress)
+                            {
+                                registry.byId('progressBar').showSmoothProgress(0);
+                                hidePullToRefreshMessage();
+                            }
+
+                            startPull = false;
+
+                            pullStartY = 0;
+                            touchStartY = 0;
+                        }
+
+                    }));
+
+                    // pull to refresh end
+
                     adjustSize();
+
+                    initialized = true;
                 }
             }
             else
