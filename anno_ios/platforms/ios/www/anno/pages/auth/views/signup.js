@@ -221,10 +221,6 @@ define([
             },
             afterActivate: function()
             {
-                window.setTimeout(function(){
-                    setInputFocus(dom.byId("signupEmail"));
-                }, 500);
-
                 dom.byId('signupEmail').value = "",
                 dom.byId('signupPwd').value = "";
                 dom.byId('nickNameSignup').value = "";

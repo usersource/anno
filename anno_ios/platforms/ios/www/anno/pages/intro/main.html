@@ -59,6 +59,22 @@
                 }
             }, false);
 
+            // goto first level page from second level page1
+            var gotoFirstLevelPage1 = function()
+            {
+                registry.byId('page1View').performTransition("homeView", -1, "slide", null, function(){
+                    document.removeEventListener("backbutton", gotoFirstLevelPage1, false);
+                });
+            };
+
+            // goto first level page from second level page1
+            var gotoFirstLevelPage2 = function()
+            {
+                registry.byId('page2View').performTransition("homeView", -1, "slide", null, function(){
+                    document.removeEventListener("backbutton", gotoFirstLevelPage2, false);
+                });
+            };
+
             ready(function ()
             {
                 connect.connect(dom.byId("closeMark"), "click", function (e)
@@ -68,12 +84,16 @@
 
                 connect.connect(dom.byId("greenBlockTS"), "click", function (e)
                 {
-                    registry.byId('homeView').performTransition("page1View", 1, "slide", null);
+                    registry.byId('homeView').performTransition("page1View", 1, "slide", null, function(){
+                        document.addEventListener("backbutton", gotoFirstLevelPage1, false);
+                    });
                 });
 
                 connect.connect(dom.byId("greenBlockAS"), "click", function (e)
                 {
-                    registry.byId('homeView').performTransition("page2View", 1, "slide", null);
+                    registry.byId('homeView').performTransition("page2View", 1, "slide", null, function(){
+                        document.addEventListener("backbutton", gotoFirstLevelPage2, false);
+                    });
                 });
 
                 connect.connect(dom.byId("btnGotItHome"), "click", function (e)
@@ -81,15 +101,9 @@
                     gotoMainActivity();
                 });
 
-                connect.connect(dom.byId("btnGotItPage1"), "click", function (e)
-                {
-                    registry.byId('page1View').performTransition("homeView", -1, "slide", null);
-                });
+                connect.connect(dom.byId("btnGotItPage1"), "click", gotoFirstLevelPage1);
 
-                connect.connect(dom.byId("btnGotItPage2"), "click", function (e)
-                {
-                    registry.byId('page2View').performTransition("homeView", -1, "slide", null);
-                });
+                connect.connect(dom.byId("btnGotItPage2"), "click", gotoFirstLevelPage2);
             });
         });
     </script>
