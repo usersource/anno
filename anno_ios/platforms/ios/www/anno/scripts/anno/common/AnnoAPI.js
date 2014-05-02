@@ -8,7 +8,7 @@ define([
 {
     var annoAPI = {
         defaultPwd: "123456",
-        networkCheckerInterval: 6*1000, // 60 seconds
+        networkCheckerInterval: 60*1000, // 60 seconds
         setAppKey: function(appKey, callback)
         {
             if (!appKey)
