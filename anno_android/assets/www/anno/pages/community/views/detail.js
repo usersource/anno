@@ -70,7 +70,8 @@ define([
 
             var h = (viewPoint.h-6);
             domStyle.set("textDataAreaContainer", "width", (viewPoint.w-6)+"px");
-            domStyle.set("annoTextDetail", "width", (viewPoint.w-6-6-10-6)+"px");
+            domStyle.set("annoTextDetail", "width", (viewPoint.w-6-6-10-6-28)+"px");
+            domStyle.set("voteFlagContainer", "width", (viewPoint.w-6-6-10-6-28)+"px");
 
             domStyle.set("textDataAreaContainer", "height", (h-40-navBarHeight)+"px");
             dom.byId("textDataAreaContainer").style.WebkitTransform = "translateY(-"+(h)+"px)";
@@ -80,6 +81,7 @@ define([
 
             domStyle.set("appNameTextBox", "width", (viewPoint.w-30-6-10-40)+"px");
             domStyle.set("lightCover", {"width": (viewPoint.w)+"px", "height":(viewPoint.h)+'px'});
+            domStyle.set("lightCoverScreenshot", "height", (viewPoint.h+800)+"px");
         };
 
         var screenshotImageOnload = function()
@@ -123,11 +125,11 @@ define([
 
                 if (imageHeight< viewPoint.h)
                 {
-                    domStyle.set("lightCoverScreenshot", "height", (viewPoint.h+400)+"px");
+                    domStyle.set("lightCoverScreenshot", "height", (viewPoint.h+800)+"px");
                 }
                 else
                 {
-                    domStyle.set("lightCoverScreenshot", "height", (imageHeight+400)+"px");
+                    domStyle.set("lightCoverScreenshot", "height", (imageHeight+800)+"px");
                 }
 
                 borderWidth = Math.floor(imageWidth*0.02);
@@ -354,10 +356,10 @@ define([
             var viewPoint = win.getBox();
             var h = (viewPoint.h-6);
 
-            domStyle.set("annoCommentsContainer", "height", (h-76-30-trayBarHeight)+"px")
+            domStyle.set("annoCommentsContainer", "height", (h-76-66-30-trayBarHeight)+"px");
             if (annoContainer.scrollHeight > annoContainer.clientHeight)
             {
-                domStyle.set("annoCommentsContainer", "height", (h-76-30-trayBarHeight)+"px");
+                domStyle.set("annoCommentsContainer", "height", (h-76-66-30-trayBarHeight)+"px");
                 domStyle.set("trayPlaceHolder", "height", "0px");
             }
             else
@@ -366,13 +368,13 @@ define([
                 var th = domStyle.get("textDataAreaContainer", "height");
                 var h = domStyle.get("annoCommentsContainer", "height");
 
-                domStyle.set("trayPlaceHolder", "height", (th-h-100)+"px");
+                domStyle.set("trayPlaceHolder", "height", (th-h-106 - 22)+"px");
             }
 
             var ach = domGeom.getMarginBox("annoCommentsSet");
-            if ((ach.h +parentBox.h+30) > (viewPoint.h-400))
+            if ((ach.h +parentBox.h+72) > (viewPoint.h-800))
             {
-                domStyle.set("lightCoverScreenshot", "height", (ach.h +parentBox.h+30+400)+"px");
+                domStyle.set("lightCoverScreenshot", "height", (ach.h +parentBox.h+72+800)+"px");
             }
         };
 
@@ -600,7 +602,7 @@ define([
                         {
                             annoUtil.hideLoadingIndicator();
                             loadingDetailData = false;
-                            alert("Annos returned from server are empty.");
+                            alert("Items returned from server are empty.");
                             return;
                         }
 
@@ -674,7 +676,7 @@ define([
                         if (!data)
                         {
                             annoUtil.hideLoadingIndicator();
-                            alert("Annos returned from server are empty.");
+                            alert("Items returned from server are empty.");
                             return;
                         }
 
@@ -936,7 +938,7 @@ define([
                     domStyle.set('editAppNameImg', 'display', '');
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('addCommentImg'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('tdAddCommentImg'), "click", function ()
                 {
                     var text = dom.byId('addCommentTextBox').value.trim();
 
@@ -992,6 +994,7 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "focus", function ()
                 {
+                    //domStyle.set('addCommentTextBox', {position:'relative', bottom:'340px'});
                     var viewPoint = win.getBox();
                     window.setTimeout(function(){
                         domStyle.set('modelApp_detail', 'height', (viewPoint.h+400)+'px');

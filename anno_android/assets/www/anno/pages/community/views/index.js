@@ -54,6 +54,7 @@ define([
             circleY:0,
             level:1,
             deviceInfo:" ",
+            created: "",
             comments:[{
                 author:'',
                 comment:''
@@ -125,7 +126,7 @@ define([
                     hideStartRefreshMessage();
 
                     domStyle.set('noSearchResultContainer', 'display', 'none');
-                    alert("Annos returned from server are empty.");
+                    alert("Items returned from server are empty.");
                     return;
                 }
 
@@ -162,6 +163,7 @@ define([
                     eventData.circleX = parseInt(annoList[i].simple_x, 10);
                     eventData.circleY = parseInt(annoList[i].simple_y, 10);
                     eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
+                    eventData.created = annoUtil.getTimeAgoString(annoList[i].created);
 
                     spliceArgs.push(new getStateful(eventData));
                 }
@@ -493,7 +495,7 @@ define([
         var showStartRefreshMessage = function()
         {
             domStyle.set('headingStartTable', 'display', 'none');
-            dom.byId('pullToRefreshMsg').innerHTML = "Refreshing anno feed";
+            dom.byId('pullToRefreshMsg').innerHTML = "Refreshing UserSource feed";
             domStyle.set('pullToRefreshMsg', 'display', '');
         };
 

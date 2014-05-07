@@ -26,7 +26,7 @@
                                 <span id="barAddImage" class="barIcon icon-plus" style="font-size: 26px"></span>
                             </td>
                             <td id="tdBarMyStuff" width="80" align="center">
-                                <span id="barMyStuff" class="barIcon icon-comment"></span>
+                                <span id="barMyStuff" class="barIcon icon-stack3"></span>
                             </td>
                             <td id="tdbarSearchAnno" width="80" align="center">
                                 <span id="barSearchAnno" class="barIcon icon-search" style="font-size: 36px;"></span>
@@ -80,8 +80,18 @@
                                     <span data-dojo-props="class: at('rel:#{this.index}', 'annoIcon')" data-dojo-type="dojox/mvc/Output" class="annoListItemIcon"></span>
                                 </td>
                                 <td width="95%">
-                                    <div class="listTitle" data-dojo-type="dojox/mvc/Output"
-                                         data-dojo-props="value: at('rel:#{this.index}', 'annoText')"></div>
+                                    <table style="width: 100%;table-layout: fixed;">
+                                        <tr>
+                                            <td style="width: 85%;text-align: left">
+                                                <div class="listTitle" data-dojo-type="dojox/mvc/Output"
+                                                     data-dojo-props="value: at('rel:#{this.index}', 'annoText')"></div>
+                                            </td>
+                                            <td style="width: 122px;text-align: right">
+                                                <div class="listAuthor" data-dojo-type="dojox/mvc/Output"
+                                                     data-dojo-props="value: at('rel:#{this.index}', 'created')"></div>
+                                            </td>
+                                        </tr>
+                                    </table>
                                     <table style="width: 100%">
                                         <tr>
                                             <td style="width: 60%;text-align: left">

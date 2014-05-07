@@ -53,7 +53,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                 }, onSQLError);
             }
 
-            anno["created"] = this.localAnnoCreatedTimeString;
+            //anno["created"] = this.localAnnoCreatedTimeString;
             this.saveAnnoToCloud(anno, screenshotDirPath, this.localAnnoCreatedTime, false);
         },
         saveAnnoToCloud: function(anno, screenshotDirPath, createdTime, background, callback)
@@ -157,11 +157,11 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
 
                                 if (background)
                                 {
-                                    console.error("Anno returned from server are empty.");
+                                    console.error("response returned from server are empty.");
                                 }
                                 else
                                 {
-                                    alert("Anno returned from server are empty.");
+                                    alert("response returned from server are empty.");
                                 }
 
                                 if (callback)
