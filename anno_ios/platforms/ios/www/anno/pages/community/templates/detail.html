@@ -33,34 +33,45 @@
             <div id="appNameContainer" class="appNameDetail" style="padding-left: 6px;">
                 <table cellpadding="0" cellspacing="0">
                     <tr>
-                        <td valign="middle"><span class="appNameTitleDetail">App:</span></td>
+                        <td valign="middle"><span class="appNameTitleDetail">About:</span></td>
                         <td valign="middle">
                             <span id="appNameSpanDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'app')"></span>
-                            <!--<input id="appNameTextBox" style="display: none;" type="text" data-dojo-type="dojox/mobile/TextBox" class="commentTextbox" placeholder="Type app name here">-->
                         </td>
                         <td valign="middle"><img id="editAppNameImg" src="css/images/content_edit.png" width="24"></td>
                     </tr>
                 </table>
             </div>
             <div id="annoCommentsContainer" data-dojo-type2="dojox/mobile/ScrollableView" data-dojo-props="weight:1" style="padding-left: 6px;width: 100%;overflow-y: auto;overflow-x:hidden; ">
-                <div>
+                <div id="deviceInfoContainer" style="padding-bottom: 8px">
                     <table width="100%" cellpadding="0" cellspacing="0">
                         <tr>
-                            <td height="32" width="32">
+                            <td width="52" align="center">
+                                <span class="icon-mobile personImg"></span>
+                            </td>
+                            <td valign="middle">
+                                <div class="deviceInfoDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'deviceInfo')"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="padding-bottom: 4px">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td height="32" width="52" align="center">
                                 <span class="icon-user personImg"></span>
                             </td>
-                            <td align="left"><span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'author')"></span><span class="authorDetail">'s anno</span></td>
+                            <td align="left"><span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'author')"></span></td>
+                            <td align="right" style="padding-right: 28px;"><span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'created')"></span></td>
                         </tr>
                     </table>
                 </div>
                 <div id="annoTextDetail" class="annoTextDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'annoText')"></div>
-                <div id="voteFlagContainer" style="padding-bottom: 8px">
+                <div id="voteFlagContainer" style="padding-bottom: 8px;padding-top: 4px;margin-bottom: 8px;margin-left: 14px;margin-right: 4px;border-bottom: 1px solid #cccccc">
                     <table width="100%"  cellpadding="0" cellspacing="0" style="padding-top: 4px;">
                         <tr>
                             <td width="33%" align="center">
                                 <span id="imgThumbsUp" class="icon-thumbs-up icoImgDeactive"></span>
                             </td>
-                            <!--<td width="33%">&nbsp;</td>-->
                             <td width="33%" align="center">
                                 <span id="imgFlag" class="icon-flag icoImgDeactive"></span>
                             </td>
@@ -76,7 +87,7 @@
                     <div>
                         <table width="100%" cellpadding="0" cellspacing="0">
                             <tr>
-                                <td height="32" width="32">
+                                <td height="32" width="52" align="center">
                                     <span class="icon-user personImg"></span>
                                 </td>
                                 <td align="left">
@@ -89,32 +100,21 @@
                         <div data-dojo-type="dojox/mvc/Output" style="width: 96%" data-dojo-props="value: at('rel:*{this.index}', 'comment')"></div>
                     </div>
                 </div>
-                <div id="deviceInfoContainer" style="padding-bottom: 8px">
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                        <tr>
-                            <td width="32">
-                                <span class="icon-mobile personImg"></span>
-                            </td>
-                            <td valign="middle">
-                                <div class="deviceInfoDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'deviceInfo')"></div>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+
             </div>
-            <div id="addCommentContainer" style="padding-left: 6px;border-top: 2px solid #aeebfc;position2: absolute">
+            <div id="addCommentContainer" style="padding-left: 6px;border-top: 2px solid #aeebfc;width2: 100%;background-color: #ffffff">
                 <table width="100%" cellpadding="0" cellspacing="0">
                     <tr>
-                        <td height="32">
+                        <td height="72">
                             <div class="noJump"></div>
-                                <input type="text" id="addCommentTextBox" data-dojo-type2="dojox/mobile/TextBox" class="commentTextbox" style="width: 100%" placeholder="Add a comment">
+                                <textarea type="text" id="addCommentTextBox" class="commentTextbox" rows="3" style="width: 100%" placeholder="Add a comment"></textarea>
                         </td>
-                        <td width="32"><img id="addCommentImg" src="css/images/addcomment.png"></td>
+                        <td id="tdAddCommentImg" width="40"><img id="addCommentImg" width="40" src="css/images/addcomment.png"></td>
                     </tr>
                 </table>
             </div>
-            <div id="trayPlaceHolder" style="width: 100%;height: 0px"></div>
-            <div id="trayBottomBar" style="height: 29px;background-color: #333333">
+            <div id="trayPlaceHolder" style="width: 100%;height: 0px;background-color: #ffffff"></div>
+            <div id="trayBottomBar" style="height: 29px;background-color: #333333;display: none">
                 <table width="100%">
                     <tr>
                         <td align="center" valign="middle" height="30">
@@ -125,5 +125,4 @@
             </div>
         </div>
     </div>
-    <!--<div id="dummyDiv" style="width: 100%;height: 1000px;display: block">hh</div>-->
 </div>

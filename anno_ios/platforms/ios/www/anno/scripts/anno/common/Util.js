@@ -42,6 +42,23 @@ define([
             vote:"vote",
             flag:"flag"
         },
+        timeString:{
+            prefixAgo: "",
+            suffixAgo: "ago",
+            seconds: "%d seconds",
+            minute: "a minute",
+            minutes: "%d minutes",
+            hour: "an hour",
+            hours: "%d hours",
+            day: "a day",
+            days: "%d days",
+            month: "a month",
+            months: "%d months",
+            year: "a year",
+            years: "%d years",
+            wordSeparator: " ",
+            numbers: []
+        },
         hasConnection: function()
         {
             var networkState = navigator.connection.type;
@@ -639,6 +656,48 @@ define([
         isAndroid: function()
         {
             return device.platform == "Android";
+        },
+        getTimeAgoString: function(s)
+        {
+            // translate timestamp string to "N minutes/hours/days/months ago" format
+            var date1 = new Date(s);
+
+            function distance(date)
+            {
+                return (new Date().getTime() - date.getTime());
+            }
+
+            var distanceMillis = distance(date1);
+            var ts = this.timeString;
+            var prefix = ts.prefixAgo;
+            var suffix = ts.suffixAgo;
+
+            var seconds = Math.abs(distanceMillis) / 1000;
+            var minutes = seconds / 60;
+            var hours = minutes / 60;
+            var days = hours / 24;
+            var years = days / 365;
+
+            function substitute(string, number)
+            {
+                return string.replace(/%d/i, number);
+            }
+
+            var words = seconds < 45 && substitute(ts.seconds, Math.round(seconds)) ||
+                seconds < 90 && substitute(ts.minute, 1) ||
+                minutes < 45 && substitute(ts.minutes, Math.round(minutes)) ||
+                minutes < 90 && substitute(ts.hour, 1) ||
+                hours < 24 && substitute(ts.hours, Math.round(hours)) ||
+                hours < 42 && substitute(ts.day, 1) ||
+                days < 30 && substitute(ts.days, Math.round(days)) ||
+                days < 45 && substitute(ts.month, 1) ||
+                days < 365 && substitute(ts.months, Math.round(days / 30)) ||
+                years < 1.5 && substitute(ts.year, 1) ||
+                substitute(ts.years, Math.round(years));
+
+            var separator = ts.wordSeparator || "";
+
+            return [words, suffix].join(separator);
         }
     };
 
