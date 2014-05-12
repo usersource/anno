@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="custom_rules" default="release">
+	<target name="set-version-name">
+	    <property name="build.env" value="version.properties" />
+	    <!-- change file readonly attribute -->
+	    <copy file="${build.env}" toFile="${build.env}.2" overwrite="true" />
+	    <copy file="${build.env}.2" toFile="${build.env}" overwrite="true" />
+	    <delete file="${build.env}.2" />
+	    <!-- record build number -->
+	    <tstamp prefix="build" />
+	    <propertyfile file="${build.env}">
+	      <entry key="build.number" default="0" type="int" operation="+" value="1" />
+	      <entry key="code" default="0" type="int" operation="+" value="1" />
+	      <entry key="build.date" value="${build.TODAY}" />
+	    </propertyfile>
+	    <property file="${build.env}" />
+	    <property name="version.string" value="${major.number}.${minor.number}.${build.number}" />
+	    <echo message="---- Version ${version.string} ${code} ----" />
+
+	    <property name="match.end" value='"' />
+	    <property name="matchVersionName.start" value='android:versionName="' />
+	    <property name="matchVersionCode.start" value='android:versionCode="' />
+	    <replaceregexp file="AndroidManifest.xml" match='${matchVersionName.start}[^"]*${match.end}' replace="${matchVersionName.start}${version.string}${match.end}" />
+	    <replaceregexp file="AndroidManifest.xml" match='${matchVersionCode.start}[^"]*${match.end}' replace="${matchVersionCode.start}${code}${match.end}" />
+	</target>
+
+	<target name="pre-mode">
+		<property file="version.properties" />
+		<echo message="mode:${mode}" />
+		<copy file="assets/www/anno/scripts/server-url.json-${mode}" tofile="assets/www/anno/scripts/server-url.json" verbose="true" overwrite="true" />
+	</target>
+
+    <target name="-pre-compile">
+        <!-- Fix library references due to bug in build.xml: See: https://groups.google.com/forum/#!topic/android-developers/0ivH-YqCjzg -->
+        <pathconvert property="fixedJarsPath" refid="project.all.jars.path">
+          <filtermapper>
+            <replacestring from="/bin/" to="/ant-build/"/>
+            <replacestring from="\bin\" to="\ant-build\"/>
+          </filtermapper>
+        </pathconvert>
+        <path id="project.all.jars.path">
+          <pathelement path="${fixedJarsPath}"/>
+        </path>
+        <echo message="Set jars path to: ${toString:project.all.jars.path}"/>
+    </target>
+
+    <target name="-pre-build">
+		<antcall target="set-version-name" />
+		<antcall target="pre-mode" />
+	</target>
+
+    <target name="-post-build">
+        <move file="ant-build/AndroidManifest.xml" tofile="ant-build/AndroidManifest.cordova.xml" failonerror="false" overwrite="true" />
+        <move file="CordovaLib/ant-build/AndroidManifest.xml" tofile="CordovaLib/ant-build/AndroidManifest.cordova.xml" failonerror="false" overwrite="true" />
+    </target>
+</project>
