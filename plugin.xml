@@ -120,13 +120,9 @@
         <source-file src="anno_app/platforms/android/src/io/usersource/anno/CommunityActivity.java" target-dir="src/io/usersource/anno"/>
         <source-file src="anno_app/platforms/android/src/io/usersource/anno/IntroActivity.java" target-dir="src/io/usersource/anno"/>
         <source-file src="anno_app/platforms/android/src/io/usersource/anno/OptionFeedbackActivity.java" target-dir="src/io/usersource/anno"/>
-
         <source-file src="anno_app/platforms/android/src/io/usersource/annoplugin/AnnoCordovaPlugin.java" target-dir="src/io/usersource/annoplugin"/>
-
         <source-file src="anno_app/platforms/android/src/io/usersource/annoplugin/gesture/ScreenshotGestureListener.java" target-dir="src/io/usersource/annoplugin/gesture"/>
-
         <source-file src="anno_app/platforms/android/src/io/usersource/annoplugin/utils/AnnoUtils.java" target-dir="src/io/usersource/annoplugin/utils"/>
-
         <source-file src="anno_app/platforms/android/res/raw/gestures" target-dir="res/raw" />
     </platform>
 </plugin>
