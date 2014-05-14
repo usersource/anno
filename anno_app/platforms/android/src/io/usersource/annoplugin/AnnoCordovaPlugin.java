@@ -2,7 +2,9 @@ package io.usersource.annoplugin;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -57,6 +59,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
   public static final String ENABLE_NATIVE_GESTURE_LISTENER = "enable_native_gesture_listener";
   public static final String TRIGGER_CREATE_ANNO = "trigger_create_anno";
   public static final String START_ANNO_DRAW = "start_anno_draw";
+  public static final String SHOW_ALERT_DIALOG = "show_alert_dialog";
 
   // activity names
   public static final String ACTIVITY_INTRO = "Intro";
@@ -242,7 +245,26 @@ public class AnnoCordovaPlugin extends CordovaPlugin
 
       return true;
     }
+    else if (SHOW_ALERT_DIALOG.equals(action))
+    {
+		String message = args.getString(0);
+		String title = args.getString(1);
+		Activity activity = this.cordova.getActivity();
 
+		if (title.equals("")) {
+			title = AnnoUtils.PROJECT_NAME;
+		}
+
+		DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		};
+
+		new AlertDialog.Builder(activity).setTitle(title)
+				.setMessage(message)
+				.setNeutralButton(android.R.string.ok, listener).show();
+    }
 
     return false;
   }

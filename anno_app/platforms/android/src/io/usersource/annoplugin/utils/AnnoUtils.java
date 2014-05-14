@@ -87,6 +87,11 @@ public class AnnoUtils
   public static final String IMAGE_ORIENTATION_LANDSCAPE = "landscape";
 
   /**
+   * Project Name
+   */
+  public static final String PROJECT_NAME = "UserSource";
+
+  /**
    * Enable taking screenshot by certain gesture.
    *
    * @param activity
