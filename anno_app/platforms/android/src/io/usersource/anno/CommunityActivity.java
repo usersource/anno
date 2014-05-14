@@ -54,30 +54,9 @@ public class CommunityActivity extends DroidGap {
      */
 
     super.loadUrl("file:///android_asset/www/anno/pages/community/main.html");
-
+    WebView.setWebContentsDebuggingEnabled(true);
     Intent intent = getIntent();
     level = intent.getIntExtra(AnnoUtils.LEVEL, 0);
-
-    WebView myWebView = this.appView;
-    myWebView.setWebChromeClient(new WebChromeClient() {
-      public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-        onConsoleMessage(consoleMessage.message(), consoleMessage.lineNumber(),
-                consoleMessage.sourceId());
-
-        if (consoleMessage.messageLevel() == ConsoleMessage.MessageLevel.ERROR)
-        {
-          if (AnnoUtils.debugEnabled) {
-            Log.e("Anno", consoleMessage.message() + " -- line "
-                  + consoleMessage.lineNumber() + " of "
-                  + consoleMessage.sourceId());
-          }
-        }
-
-        return false;
-      }
-
-    });
-
   }
 
   public int getLevel() {

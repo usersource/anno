@@ -17,7 +17,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
         localAnnoCreatedTime: 0,
         localAnnoCreatedTimeString: "",
         //created, last_update,comment,screenshot_key,x,y,direction,app_version,os_version,is_moved,level,app_name,model,source,os_name,anno_type,synched
-        saveAnno: function(anno, source, screenshotDirPath)
+        insertAnno: function(anno, source, screenshotDirPath)
         {
             var createdTime, self = this;
             if (!this.localAnnoSaved)
@@ -54,9 +54,9 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
             }
 
             //anno["created"] = this.localAnnoCreatedTimeString;
-            this.saveAnnoToCloud(anno, screenshotDirPath, this.localAnnoCreatedTime, false);
+            this.insertAnnoToCloud(anno, screenshotDirPath, this.localAnnoCreatedTime, false);
         },
-        saveAnnoToCloud: function(anno, screenshotDirPath, createdTime, background, callback)
+        insertAnnoToCloud: function(anno, screenshotDirPath, createdTime, background, callback)
         {
             if (!annoUtil.hasConnection())
             {
@@ -330,7 +330,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                     };
 
                     annoUtil.getAnnoScreenshotPath(function(scPath){
-                        self.saveAnnoToCloud(annoItem, scPath, item._id, true, function(){
+                        self.insertAnnoToCloud(annoItem, scPath, item._id, true, function(){
                             window.setTimeout(function(){
                                 annoDataHandler.startBackgroundSync();
                             }, annoDataHandler.syncInterval);

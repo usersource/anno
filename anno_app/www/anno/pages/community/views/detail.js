@@ -12,6 +12,7 @@ define([
     "dojo/window",
     "dojo/has",
     "dojo/sniff",
+    "dojo/touch",
     "dijit/registry",
     "dojox/css3/transit",
     "dojo/store/Memory",
@@ -21,16 +22,18 @@ define([
     "anno/common/Util",
     "anno/common/OAuthUtil"
 ],
-    function (arrayUtil, baseFX, dom, domClass, domGeom, domStyle, dojoJson, query, lang, connect, win, has, sniff, registry, transit, Memory, getStateful, at, Surface, annoUtil, OAuthUtil)
+    function (arrayUtil, baseFX, dom, domClass, domGeom, domStyle, dojoJson, query, lang, connect, win, has, sniff, touch, registry, transit, Memory, getStateful, at, Surface, annoUtil, OAuthUtil)
     {
         var _connectResults = [],
             eventsModel = null,
             currentIndex = 0,
             textDataAreaShown = false,
+            scrollAnimateHandle = null,
             loadingIndicator = null;
         var app = null,
             savingVote = false,
             savingFlag = false,
+            showAnnotations = true,
             localScreenshotPath = "",
             screenshotMargin = 0;
         var annoTooltipY,
@@ -40,6 +43,7 @@ define([
             trayBarHeight = 30,
             navBarHeight = 50,
             trayScreenHeight = 0,
+            screenshotControlsHeight = 30,
             borderWidth;
 
         var imageBaseUrl = annoUtil.getCEAPIConfig().imageServiceURL;
@@ -47,13 +51,14 @@ define([
         var imageWidth, imageHeight;
 
         var wipeIn = function(args)
-        {
+        {return;
             var node = args.node = dom.byId(args.node);
             var currentHeight = domStyle.get(node, "height");
             node.style.WebkitTransform = "translateY("+navBarHeight+"px)";
         };
 
         var wipeOut = function(args){
+            return;
             var node = args.node = dom.byId(args.node);
             var viewPoint = win.getBox();
             node.style.WebkitTransform = "translateY(-"+(viewPoint.h-6)+"px)";
@@ -74,7 +79,6 @@ define([
             domStyle.set("voteFlagContainer", "width", (viewPoint.w-6-6-10-6-28)+"px");
 
             domStyle.set("textDataAreaContainer", "height", (h-40-navBarHeight)+"px");
-            dom.byId("textDataAreaContainer").style.WebkitTransform = "translateY(-"+(h)+"px)";
             trayScreenHeight = h-40;
 
             domStyle.set("annoCommentsContainer", "height", (h-76-30-trayBarHeight)+"px");//104
@@ -105,14 +109,14 @@ define([
                 if (orignialDeviceRatio == deviceRatio)
                 {
                     console.error('same ratio');
-                    imageHeight = viewPoint.h - navBarHeight;
+                    imageHeight = viewPoint.h - navBarHeight - screenshotControlsHeight;
                     imageWidth = Math.round(imageHeight/orignialRatio);
 
                     console.error("image width: "+imageWidth+", image height: "+imageHeight);
                 }
                 else if (orignialDeviceRatio < deviceRatio) // taller than current device
                 {console.error('taller ratio: o:'+orignialDeviceRatio+", d:"+ deviceRatio);
-                    imageHeight = viewPoint.h-navBarHeight;
+                    imageHeight = viewPoint.h-navBarHeight - screenshotControlsHeight;
                     imageWidth = Math.round(imageHeight/orignialRatio);
                 }
                 else if (orignialDeviceRatio > deviceRatio) // wider than current device
@@ -133,6 +137,8 @@ define([
                 }
 
                 borderWidth = Math.floor(imageWidth*0.02);
+                domStyle.set('tbl_screenshotControls', 'width', imageWidth+'px');
+
                 applyAnnoLevelColor(eventsModel.cursor.level);
 
                 adjustNavBarZIndex();
@@ -144,7 +150,7 @@ define([
                         transit(null, dom.byId('screenshotContainerDetail'), {
                             transition:"slide",
                             duration:600
-                        });
+                        }).then(redrawShapes);
                     }
                     else
                     {
@@ -152,13 +158,14 @@ define([
                             transition:"slide",
                             duration:600,
                             reverse: true
-                        });
+                        }).then(redrawShapes);
                     }
                 }
+                else
+                {
+                    redrawShapes();
+                }
 
-                adjustNavBarSize();
-
-                redrawShapes();
             }, 10);
         };
 
@@ -184,8 +191,7 @@ define([
                 var elementsObject = dojoJson.parse(drawElements);
 
                 surface.show();
-                domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', left:(-borderWidth)+'px',top:(-borderWidth)+'px'});
-
+                domStyle.set(surface.container, {'border': borderWidth+'px solid transparent'});
                 surface.borderWidth = borderWidth;
                 surface.setDimensions(imageWidth-borderWidth*2, imageHeight-borderWidth*2);
 
@@ -195,8 +201,7 @@ define([
             }
             else
             {
-
-                domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', left:(-borderWidth)+'px',top:(-borderWidth)+'px'});
+                domStyle.set(surface.container, {'border': borderWidth+'px solid transparent'});
 
                 surface.borderWidth = borderWidth;
                 surface.setDimensions(imageWidth-borderWidth*2, imageHeight-borderWidth*2);
@@ -378,11 +383,6 @@ define([
             }
         };
 
-        var adjustNavBarSize = function ()
-        {
-
-        };
-
         var adjustNavBarZIndex = function()
         {
 
@@ -428,7 +428,6 @@ define([
                 adjustAnnoCommentSize();
                 textDataAreaShown = true;
                 domStyle.set("bottomPlaceholder", "display", '');
-                domStyle.set("imgDetailScreenshot", "opacity", '0.4');
 
             }, 600);
 
@@ -445,7 +444,6 @@ define([
             if (!textDataAreaShown) return;
 
             domStyle.set("lightCoverScreenshot", "display", 'none');
-            domStyle.set("imgDetailScreenshot", "opacity", '1');
             wipeOut({
                 node:"textDataAreaContainer"
             });
@@ -456,6 +454,59 @@ define([
             domClass.add("navBtnScreenshot", "barIconHighlight");
             domClass.remove("navBtnTray", "barIconHighlight");
             document.removeEventListener("backbutton", handleBackButton, false);
+        };
+
+        var scrollToScreenshot = function()
+        {
+            var detailContentContainer = dom.byId('detailContentContainer');
+
+            if (scrollAnimateHandle)
+            {
+                connect.disconnect(scrollAnimateHandle);
+            }
+
+            if (detailContentContainer.parentNode.scrollTop <=0)
+            {
+                return;
+            }
+
+            detailContentContainer.style.webkitTransition = "all 0ms ease";
+            var st = detailContentContainer.parentNode.scrollTop;
+            detailContentContainer.parentNode.scrollTop = 0;
+            detailContentContainer.style.WebkitTransform = "translateY(-"+st+"px)";
+
+            window.setTimeout(function(){
+                scrollAnimateHandle = connect.connect(detailContentContainer, "webkitTransitionEnd", function ()
+                {
+                    detailContentContainer.parentNode.scrollTop = 0;
+                    detailContentContainer.style.webkitTransition = "none";
+                    detailContentContainer.style.WebkitTransform = "none";
+                });
+
+                detailContentContainer.style.webkitTransition = "all 600ms ease";
+                detailContentContainer.style.WebkitTransform = "translateY(0px)";
+            }, 5);
+        };
+
+        var scrollToTalkArea = function()
+        {
+            var detailContentContainer = dom.byId('detailContentContainer');
+
+            if (scrollAnimateHandle)
+            {
+                connect.disconnect(scrollAnimateHandle);
+            }
+
+            scrollAnimateHandle = connect.connect(detailContentContainer, "webkitTransitionEnd", function ()
+            {
+                detailContentContainer.parentNode.scrollTop = imageHeight+44;
+                detailContentContainer.style.webkitTransition = "all 0ms ease";
+                detailContentContainer.style.WebkitTransform = "none";
+            });
+
+            detailContentContainer.style.webkitTransition = "all 600ms ease";
+            var st = detailContentContainer.parentNode.scrollTop;
+            detailContentContainer.style.WebkitTransform = "translateY(-"+(imageHeight+44-st)+"px)";
         };
 
         var showAppNameTextBox = function()
@@ -831,34 +882,6 @@ define([
             });
         };
 
-        var touchStartOnTrayScreen = function(e)
-        {
-            if( e.touches.length == 1 )
-            {
-                startX1 = e.touches[0].pageX;
-                startY1 = e.touches[0].pageY;
-            }
-        };
-
-        var touchMoveOnTrayScreen = function(e)
-        {
-            if( e.touches.length == 1 )
-            {
-                var endX1 = e.touches[0].pageX;
-                var endY1 = e.touches[0].pageY;
-
-                if (Math.abs(startX1-endX1) <10 &&(startY1-endY1)>=6)
-                {
-                    dojo.stopEvent(e);
-                    hideTextData();
-                }
-                else if (startY1 > endY1)
-                {
-                    dojo.stopEvent(e);
-                }
-            }
-        };
-
         var doSocialShare = function()
         {
             var id = eventsModel.cursor.id, annoText = eventsModel.cursor.annoText;
@@ -878,7 +901,68 @@ define([
                 annoUtil.annoPermaLinkBaseUrl+id);
         };
 
-        var startX, startY, startX1, startY1;
+        // screenshot controls
+        var toggleAnnotations = function()
+        {
+            if (showAnnotations)
+            {
+                showAnnotations = false;
+                dom.byId('td_shtCtrl_hideAnnotations').children[0].innerHTML = "show annotations";
+                surface.hide();
+            }
+            else
+            {
+                showAnnotations = true;
+                dom.byId('td_shtCtrl_hideAnnotations').children[0].innerHTML = "hide annotations";
+                surface.show();
+            }
+        };
+
+        var callingEditAnnoItem = false;
+        var editAnnoItem = function()
+        {
+            if (callingEditAnnoItem) return;
+
+            callingEditAnnoItem = true;
+            var annoItem = eventsModel.cursor;
+            var imageData = outputImage();
+
+            cordova.exec(
+                function (result)
+                {
+                    callingEditAnnoItem = false;
+                },
+                function (err)
+                {
+                    callingEditAnnoItem = false;
+                },
+                "AnnoCordovaPlugin",
+                'start_edit_anno_draw',
+                [imageData, annoItem.app, annoItem.level, annoItem.draw_elements]
+            );
+
+            // sometimes the click/touch event is fired twice
+            window.setTimeout(function(){
+                callingEditAnnoItem = false;
+            }, 1000);
+        };
+
+        var outputImage = function()
+        {
+            var hiddenCanvas = dom.byId('backgroundCanvas');
+            var imgScreenshot = dom.byId('imgDetailScreenshot');
+            hiddenCanvas.width = imgScreenshot.naturalWidth;
+            hiddenCanvas.height = imgScreenshot.naturalHeight;
+            var ctx = hiddenCanvas.getContext('2d');
+            ctx.drawImage(imgScreenshot, 0, 0, imgScreenshot.naturalWidth, imgScreenshot.naturalHeight);
+
+            var dataUrl = hiddenCanvas.toDataURL("image/png");
+            var pos = dataUrl.lastIndexOf(",");
+            dataUrl = dataUrl.substr(pos+1);
+            return dataUrl;
+        };
+
+        var startX, startY;
         return {
             // simple view init
             init:function ()
@@ -891,30 +975,23 @@ define([
                     //adjustSize();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnNext'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnNext'), touch.release, function ()
                 {
                     hideTextData();
                     goNextRecord();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnTray'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnTray'), touch.release, function ()
                 {
-                    if (textDataAreaShown)
-                    {
-                        hideTextData();
-                    }
-                    else
-                    {
-                        showTextData();
-                    }
+                    scrollToTalkArea();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnScreenshot'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnScreenshot'), touch.release, function ()
                 {
-                    hideTextData();
+                    scrollToScreenshot();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnPrevious'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnPrevious'), touch.release, function ()
                 {
                     hideTextData();
                     goPreviousRecord();
@@ -938,7 +1015,7 @@ define([
                     domStyle.set('editAppNameImg', 'display', '');
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdAddCommentImg'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('tdAddCommentImg'), touch.release, function ()
                 {
                     var text = dom.byId('addCommentTextBox').value.trim();
 
@@ -957,7 +1034,7 @@ define([
                     dom.byId('hiddenBtn').focus();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('imgThumbsUp'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('imgThumbsUp'), touch.release, function ()
                 {
                     if (domClass.contains('imgThumbsUp','icoImgActive'))
                     {
@@ -975,7 +1052,7 @@ define([
                     }
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('imgFlag'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('imgFlag'), touch.release, function ()
                 {
                     if (domClass.contains('imgFlag','icoImgActive'))
                     {
@@ -987,7 +1064,7 @@ define([
                     }
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('imgSocialSharing'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('imgSocialSharing'), touch.release, function ()
                 {
                     doSocialShare();
                 }));
@@ -1062,59 +1139,58 @@ define([
                         }
                     }
                 }));
+
                 _connectResults.push(connect.connect(dom.byId('imgDetailScreenshot'), "click", function (e)
                 {
                     if (!textDataAreaShown)
                         showTextData();
                 }));
+
                 _connectResults.push(connect.connect(dom.byId("gfxCanvasContainer"), "click", function (e)
                 {
                     if (!textDataAreaShown)
                         showTextData();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('bottomPlaceholder'), "touchstart", touchStartOnTrayScreen));
-
-                _connectResults.push(connect.connect(dom.byId('bottomPlaceholder'), "touchmove", touchMoveOnTrayScreen));
-
-                _connectResults.push(connect.connect(dom.byId('trayPlaceHolder'), "touchstart", touchStartOnTrayScreen));
-
-                _connectResults.push(connect.connect(dom.byId('trayPlaceHolder'), "touchmove", touchMoveOnTrayScreen));
-
-                _connectResults.push(connect.connect(dom.byId('trayBottomBar'), "touchstart", function(e)
-                {
-                    if( e.touches.length == 1 )
-                    {
-                        startX1 = e.touches[0].pageX;
-                        startY1 = e.touches[0].pageY;
-
-                        domStyle.set('trayBottomBarSpin', 'backgroundColor', annoUtil.level1Color);
-                    }
-                }));
-
-                _connectResults.push(connect.connect(dom.byId('trayBottomBar'), "touchend", function(e)
-                {
-                    domStyle.set('trayBottomBarSpin', 'backgroundColor', 'gray');
-                }));
-
-                _connectResults.push(connect.connect(dom.byId('trayBottomBar'), "touchmove", touchMoveOnTrayScreen));
-
-                _connectResults.push(connect.connect(dom.byId('editAppNameImg'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('editAppNameImg'), touch.release, function ()
                 {
                     showAppNameTextBox();
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('modelApp_detail'), "scroll", function (e)
                 {
-                    if (annoTooltipY == null) return;
-                    var parentScrollTop = dom.byId('modelApp_detail').scrollTop;
+                    var scrollTop = dom.byId('modelApp_detail').scrollTop;
 
-                    domStyle.set(registry.byId('textTooltip').domNode, 'top', (annoTooltipY-parentScrollTop)+'px');
+                    if (scrollTop >=imageHeight)
+                    {
+                        domClass.add('navBtnScreenshot', 'barIconDisabled');
+                        domClass.remove('navBtnTray', 'barIconDisabled');
+                        domClass.add('navBtnTray', 'barIconHighlight');
+                    }
+                    else
+                    {
+                        domClass.remove('navBtnScreenshot', 'barIconDisabled');
+                        domClass.add('navBtnTray', 'barIconDisabled');
+                        domClass.remove('navBtnTray', 'barIconHighlight');
+                    }
+
                 }));
+
+                // screenshot controls
+                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_hideAnnotations'), touch.release, function ()
+                {
+                    toggleAnnotations();
+                }));
+
+                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_edit'), touch.release, function ()
+                {
+                    editAnnoItem();
+                }));
+
 
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;
                 dom.byId("imgDetailScreenshot").onerror = screenshotImageOnerror;
-                domStyle.set('modelApp_detail','backgroundColor', '#333333');
+                dom.byId("imgDetailScreenshot").crossOrigin = "anonymous";
 
                 // create surface
                 surface = new Surface({
