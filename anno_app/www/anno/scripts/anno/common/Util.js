@@ -698,6 +698,20 @@ define([
             var separator = ts.wordSeparator || "";
 
             return [words, suffix].join(separator);
+        },
+        showAlertDialog: function(msg, title) {
+            var msgTitle = "";
+
+            if (title !== undefined) {
+                msgTitle = title;
+            }
+
+            cordova.exec(
+                function (data) {},
+                function (err) {},
+                "AnnoCordovaPlugin", 'show_alert_dialog',
+                [msg, msgTitle]
+            );
         }
     };
 
