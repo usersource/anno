@@ -96,7 +96,8 @@ define([
                         }
                         else
                         {
-                            alert("Get access token error, please login again.");
+                            // alert("Get access token error, please login again.");
+                            annoUtil.showAlertDialog("Get access token error, please login again.");
                             if (self.authCallback)
                             {
                                 self.authCallback({success: false});
@@ -105,7 +106,8 @@ define([
                     }, function (err)
                     {
                         console.error("post res error: " + err);
-                        alert("Get access token error: " + err);
+                        // alert("Get access token error: " + err);
+                        annoUtil.showAlertDialog("Get access token error: " + err);
                         if (self.authCallback)
                         {
                             self.authCallback({success: false});
@@ -115,7 +117,8 @@ define([
             else if (error)
             {
                 console.error("error: " + error[1]);
-                alert("Auth error: " + error[1]);
+                // alert("Auth error: " + error[1]);
+                annoUtil.showAlertDialog("Auth error: " + error[1]);
                 if (self.authCallback)
                 {
                     self.authCallback({success: false});
@@ -129,7 +132,8 @@ define([
 
                 if (res&&res.error)
                 {
-                    alert("Load Google oauth2 API failed, "+res.error.message);
+                    // alert("Load Google oauth2 API failed, "+res.error.message);
+                    annoUtil.showAlertDialog("Load Google oauth2 API failed, "+res.error.message);
                     if (self.authCallback)
                     {
                         self.authCallback({success:false});
@@ -143,7 +147,8 @@ define([
                         console.error("get userinfo res: "+ userinfo);
                         if (userinfo.error)
                         {
-                            alert("Get userinfo failed: "+ userinfo.error.message);
+                            // alert("Get userinfo failed: "+ userinfo.error.message);
+                            annoUtil.showAlertDialog("Get userinfo failed: "+ userinfo.error.message);
                             return;
                         }
 
@@ -194,7 +199,8 @@ define([
                 }, function (err)
                 {
                     console.error("refresh access token error: " + err);
-                    alert("refresh access token error: " + err);
+                    // alert("refresh access token error: " + err);
+                    annoUtil.showAlertDialog("refresh access token error: " + err);
                     if (errorCallback)
                     {
                         errorCallback();

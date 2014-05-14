@@ -8,7 +8,8 @@ define([
     var onSQLError = window.onSQLError = function (err)
     {
         console.error(JSON.stringify(err));
-        //alert(JSON.stringify(err));
+        // alert(JSON.stringify(err));
+        annoUtil.showAlertDialog(JSON.stringify(err));
     };
 
     var dbUtil = {

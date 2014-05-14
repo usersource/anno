@@ -126,7 +126,8 @@ define([
                     hideStartRefreshMessage();
 
                     domStyle.set('noSearchResultContainer', 'display', 'none');
-                    alert("Items returned from server are empty.");
+                    // alert("Items returned from server are empty.");
+                    annoUtil.showAlertDialog("Items returned from server are empty.");
                     return;
                 }
 
@@ -140,7 +141,8 @@ define([
                     hideStartRefreshMessage();
 
                     domStyle.set('noSearchResultContainer', 'display', 'none');
-                    alert("An error occurred when calling anno."+(search?"search":"list")+" api: "+data.error.message);
+                    // alert("An error occurred when calling anno."+(search?"search":"list")+" api: "+data.error.message);
+                    annoUtil.showAlertDialog("An error occurred when calling anno."+(search?"search":"list")+" api: "+data.error.message);
                     return;
                 }
 
@@ -278,7 +280,8 @@ define([
                 },
                 function (err)
                 {
-                    alert(err);
+                    // alert(err);
+                    annoUtil.showAlertDialog(err);
                 },
                 "AnnoCordovaPlugin",
                 'exit_current_activity',
@@ -398,7 +401,8 @@ define([
                     },
                     function (err)
                     {
-                        alert(err.message);
+                        // alert(err.message);
+                        annoUtil.showAlertDialog(err.message);
                     },
                     "AnnoCordovaPlugin",
                     'get_installed_app_list',

@@ -161,7 +161,8 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                                 }
                                 else
                                 {
-                                    alert("response returned from server are empty.");
+                                    // alert("response returned from server are empty.");
+                                    annoUtil.showAlertDialog("Response returned from server are empty.");
                                 }
 
                                 if (callback)
@@ -182,7 +183,8 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                                 }
                                 else
                                 {
-                                    alert("An error occurred when calling anno.insert api: "+data.error.message);
+                                    // alert("An error occurred when calling anno.insert api: "+data.error.message);
+                                    annoUtil.showAlertDialog("An error occurred when calling anno.insert api: " + data.error.message);
                                 }
 
                                 if (callback)

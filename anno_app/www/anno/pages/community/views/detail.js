@@ -509,7 +509,8 @@ define([
                             domStyle.set('lightCover', 'display', 'none');
                             domStyle.set('editAppNameImg', 'display', '');
 
-                            alert("Update app name returned from server is empty.");
+                            // alert("Update app name returned from server is empty.");
+                            annoUtil.showAlertDialog("Update app name returned from server is empty.");
                         }
 
                         if (data.error)
@@ -523,7 +524,8 @@ define([
                             domStyle.set('lightCover', 'display', 'none');
                             domStyle.set('editAppNameImg', 'display', '');
 
-                            alert(data.message);
+                            // alert(data.message);
+                            annoUtil.showAlertDialog(data.message);
                             return;
                         }
                         console.error(JSON.stringify(data.result));
@@ -602,7 +604,8 @@ define([
                         {
                             annoUtil.hideLoadingIndicator();
                             loadingDetailData = false;
-                            alert("Items returned from server are empty.");
+                            // alert("Items returned from server are empty.");
+                            annoUtil.showAlertDialog("Items returned from server are empty.");
                             return;
                         }
 
@@ -611,7 +614,8 @@ define([
                             annoUtil.hideLoadingIndicator();
                             loadingDetailData = false;
 
-                            alert("An error occurred when calling anno.get api: "+data.error.message);
+                            // alert("An error occurred when calling anno.get api: "+data.error.message);
+                            annoUtil.showAlertDialog("An error occurred when calling anno.get api: "+data.error.message);
                             return;
                         }
                         console.error(JSON.stringify(data.result));
@@ -676,14 +680,16 @@ define([
                         if (!data)
                         {
                             annoUtil.hideLoadingIndicator();
-                            alert("Items returned from server are empty.");
+                            // alert("Items returned from server are empty.");
+                            annoUtil.showAlertDialog("Items returned from server are empty.");
                             return;
                         }
 
                         if (data.error)
                         {
                             annoUtil.hideLoadingIndicator();
-                            alert("An error occurred when calling anno.get api: "+data.error.message);
+                            // alert("An error occurred when calling anno.get api: "+data.error.message);
+                            annoUtil.showAlertDialog("An error occurred when calling anno.get api: "+data.error.message);
                             return;
                         }
                         console.error(JSON.stringify(data.result));
@@ -734,7 +740,8 @@ define([
                         if (!data)
                         {
                             annoUtil.hideLoadingIndicator();
-                            alert("vote api result returned from server are empty.");
+                            // alert("vote api result returned from server are empty.");
+                            annoUtil.showAlertDialog("Vote api result returned from server are empty.");
                             savingVote = false;
                             return;
                         }
@@ -742,8 +749,8 @@ define([
                         if (data.error)
                         {
                             annoUtil.hideLoadingIndicator();
-
-                            alert("An error occurred when calling "+apiName+" api: "+data.error.message);
+                            // alert("An error occurred when calling "+apiName+" api: "+data.error.message);
+                            annoUtil.showAlertDialog("An error occurred when calling "+apiName+" api: "+data.error.message);
                             savingVote = false;
                             return;
                         }
@@ -801,7 +808,8 @@ define([
                         if (!data)
                         {
                             annoUtil.hideLoadingIndicator();
-                            alert("vote api result returned from server are empty.");
+                            // alert("vote api result returned from server are empty.");
+                            annoUtil.showAlertDialog("vote api result returned from server are empty.");
                             savingFlag = false;
                             return;
                         }
@@ -809,8 +817,8 @@ define([
                         if (data.error)
                         {
                             annoUtil.hideLoadingIndicator();
-
-                            alert("An error occurred when calling "+apiName+" api: "+data.error.message);
+                            // alert("An error occurred when calling "+apiName+" api: "+data.error.message);
+                            annoUtil.showAlertDialog("An error occurred when calling "+apiName+" api: "+data.error.message);
                             savingFlag = false;
                             return;
                         }
@@ -944,7 +952,8 @@ define([
 
                     if (!text)
                     {
-                        alert('Please enter comment.');
+                        // alert('Please enter comment.');
+                        annoUtil.showAlertDialog('Please enter comment.');
                         dom.byId('addCommentTextBox').focus();
                         return;
                     }
@@ -1020,7 +1029,8 @@ define([
 
                         if (!text)
                         {
-                            alert('Please enter comment.');
+                            // alert('Please enter comment.');
+                            annoUtil.showAlertDialog('Please enter comment.');
                             dom.byId('addCommentTextBox').focus();
                             return;
                         }

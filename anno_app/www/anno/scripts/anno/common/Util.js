@@ -133,7 +133,8 @@ define([
                     });
                 }, function(e) {
                     console.error(JSON.stringify(e));
-                    alert(JSON.stringify(e));
+                    // alert(JSON.stringify(e));
+                    annoUtil.showAlertDialog(JSON.stringify(e));
                 });}
         },
         showLoadingIndicator: function ()
@@ -202,7 +203,8 @@ define([
                 },
                 function (err)
                 {
-                    alert(err);
+                    // alert(err);
+                    annoUtil.showAlertDialog(err);
                 },
                 "AnnoCordovaPlugin",
                 'start_activity',
@@ -233,7 +235,8 @@ define([
                 },
                 function (err)
                 {
-                    alert(err);
+                    // alert(err);
+                    annoUtil.showAlertDialog(err);
                 },
                 "AnnoCordovaPlugin",
                 'get_anno_screenshot_path',
@@ -346,7 +349,8 @@ define([
                     },
                     function (err)
                     {
-                        alert(err);
+                        // alert(err);
+                        annoUtil.showAlertDialog(err);
                     },
                     "AnnoCordovaPlugin",
                     'show_softkeyboard',
@@ -457,7 +461,8 @@ define([
                         }
                         else
                         {
-                            alert('Load '+apiId+" API failed, "+res.error.message);
+                            // alert('Load '+apiId+" API failed, "+res.error.message);
+                            annoUtil.showAlertDialog('Load '+apiId+" API failed, "+res.error.message);
                             self.hideLoadingIndicator();
                         }
                     }
@@ -525,7 +530,8 @@ define([
                 function (res)
                 {
                     self.hideLoadingIndicator();
-                    alert("getting IP Address from myipis service failed: "+res);
+                    // alert("getting IP Address from myipis service failed: "+res);
+                    annoUtil.showAlertDialog("getting IP Address from myipis service failed: "+res);
                     navigator.app.exitApp();
                 });
         },
@@ -595,7 +601,8 @@ define([
                     },
                     function (err)
                     {
-                        alert(err);
+                        // alert(err);
+                        annoUtil.showAlertDialog(err);
                     },
                     "AnnoCordovaPlugin",
                     'trigger_create_anno',
@@ -622,7 +629,8 @@ define([
                     },
                     function (err)
                     {
-                        alert(err);
+                        // alert(err);
+                        annoUtil.showAlertDialog(err);
                     },
                     "AnnoCordovaPlugin",
                     'enable_native_gesture_listener',
@@ -641,7 +649,8 @@ define([
                     },
                     function (err)
                     {
-                        alert(err);
+                        // alert(err);
+                        annoUtil.showAlertDialog(err);
                     },
                     "AnnoCordovaPlugin",
                     'enable_native_gesture_listener',
