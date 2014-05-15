@@ -49,7 +49,7 @@ define([
             "annoText": "0",
             "app": "0",
             "author": "0",
-            "screenshot":"0",
+            "screenshot":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=",
             circleX: 0,
             circleY:0,
             level:1,

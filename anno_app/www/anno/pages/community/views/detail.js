@@ -45,6 +45,7 @@ define([
         var imageBaseUrl = annoUtil.getCEAPIConfig().imageServiceURL;
         var surface;
         var imageWidth, imageHeight;
+        var tiniestImageData = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=";
 
         var wipeIn = function(args)
         {
@@ -177,7 +178,13 @@ define([
 
         var redrawShapes = function()
         {
-            var drawElements = eventsModel.cursor.draw_elements;
+            // don't draw annotations when imageWidth or imageHeight is undefined or zero
+        	if (!imageWidth || !imageHeight) return;
+
+        	// don't draw annotations when imgDetailScreenshot's src is tiniestImageData
+            if (dom.byId('imgDetailScreenshot').src === tiniestImageData) return;
+
+        	var drawElements = eventsModel.cursor.draw_elements;
             var lineStrokeStyle = {color: eventsModel.cursor.level==1?annoUtil.level1Color:annoUtil.level2Color, width: 3};
             if (drawElements)
             {
@@ -393,6 +400,8 @@ define([
             if ( (currentIndex+1)< eventsModel.model.length)
             {
                 window.setTimeout(function(){
+                	surface.clear();
+                	surface.hide();
                     loadDetailData(currentIndex+1);
                     goingNextRecord = true;
                 }, 50);
@@ -404,6 +413,8 @@ define([
             if ( (currentIndex-1)>=0)
             {
                 window.setTimeout(function(){
+                	surface.clear();
+                	surface.hide();
                     loadDetailData(currentIndex-1);
                     goingNextRecord = false;
                 }, 50);
@@ -551,6 +562,17 @@ define([
             dom.byId('imgDetailScreenshot').src = localScreenshotPath+"/"+currentAnno.screenshot_key;
         };
 
+        /**
+         * Make detail screenshot as null.
+         * For this, setting src of imgDetailScreenshot as tiniestImageData
+         * and clearing all annotations.
+         */
+        var setDetailScreenshotNull = function() {
+        	dom.byId('imgDetailScreenshot').src = tiniestImageData;
+        	surface.clear();
+        	surface.hide();
+        };
+
         var loadDetailData = function(cursor)
         {
             if (loadingDetailData||loadingImage) return;
@@ -560,7 +582,7 @@ define([
 
             if (previousAnno) {
                 // showing tiniest gif image instead of empty image data
-            	previousAnno.set('screenshot', "data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=");
+            	previousAnno.set('screenshot', tiniestImageData);
             }
 
             eventsModel.set("cursorIndex", cursor);
@@ -1120,6 +1142,13 @@ define([
                     var parentScrollTop = dom.byId('modelApp_detail').scrollTop;
 
                     domStyle.set(registry.byId('textTooltip').domNode, 'top', (annoTooltipY-parentScrollTop)+'px');
+                }));
+
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnBackScreenshot'), "click", function (e) {
+                	history.back();
+                	// calling setDetailScreenshotNull after 300ms so that imgDetailScreenshot will
+                	// not clear out before going back to community page
+                	window.setTimeout(setDetailScreenshotNull, 400);
                 }));
 
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;
