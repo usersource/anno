@@ -558,9 +558,9 @@ define([
             loadingDetailData = true;
             var previousAnno = eventsModel.cursor||eventsModel.model[0];
 
-            if (previousAnno)
-            {
-                previousAnno.set('screenshot', "data:image/png;base64,");
+            if (previousAnno) {
+                // showing tiniest gif image instead of empty image data
+            	previousAnno.set('screenshot', "data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=");
             }
 
             eventsModel.set("cursorIndex", cursor);
