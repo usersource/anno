@@ -63,10 +63,7 @@ public class AnnoUtils
   public static final String SCREENSHOT_TIME_FORMAT = "yyyy-MM-dd-kk-mm-ss";
   public static final String PNG_SUFFIX = ".png";
   public static final String LEVEL = "level";
-  public static final String APP_NAME = "app_name";
-  public static final String DRAW_ELEMENTS_JSON = "draw_elements_json";
   public static final String EDIT_ANNO_MODE = "edit_anno_mode";
-  public static final String IMAGE_DATAURL = "image_dataurl";
   public static final String FAIL_CREATE_DIRECTORY = "Create directory %s failed.";
   public static final String ERROR_TITILE = "Error";
 

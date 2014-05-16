@@ -40,6 +40,7 @@ define([
             goingNextRecord = null,
             loadingDetailData = false,
             loadingImage = false,
+            deletingData = false,
             trayBarHeight = 30,
             navBarHeight = 50,
             trayScreenHeight = 0,
@@ -142,6 +143,7 @@ define([
                 applyAnnoLevelColor(eventsModel.cursor.level);
 
                 adjustNavBarZIndex();
+                setControlsState();
 
                 if (goingNextRecord != null)
                 {
@@ -265,39 +267,46 @@ define([
             var idx = parseInt(index);
             if (idx < eventsModel.model.length)
             {
-                console.error("level:"+eventsModel.cursor.level);
-                //applyAnnoLevelColor(eventsModel.cursor.level);
-
                 eventsModel.set("cursorIndex", idx);
                 currentIndex = idx;
 
-                domClass.remove('imgFlag', 'icoImgActive');
-                domClass.remove('imgThumbsUp', 'icoImgActive');
+                setControlsState();
+                adjustAnnoCommentSize();
+            }
+        };
 
-                if (idx == 0)
-                {
-                    if (eventsModel.model.length>1)
-                    {
-                        domClass.remove("navBtnNext", "navBtnDisabled");
-                    }
-                    else
-                    {
-                        domClass.add("navBtnNext", "navBtnDisabled");
-                    }
+        var setControlsState = function()
+        {
+            var idx = currentIndex;
+            domClass.remove('imgFlag', 'icoImgActive');
+            domClass.remove('imgThumbsUp', 'icoImgActive');
 
-                    domClass.add("navBtnPrevious", "navBtnDisabled");
-                }
-                else if (idx == (eventsModel.model.length-1))
+            if (idx == 0)
+            {
+                if (eventsModel.model.length>1)
                 {
-                    domClass.add("navBtnNext", "navBtnDisabled");
-                    domClass.remove("navBtnPrevious", "navBtnDisabled");
+                    domClass.remove("navBtnNext", "navBtnDisabled");
                 }
                 else
                 {
-                    domClass.remove("navBtnNext", "navBtnDisabled");
-                    domClass.remove("navBtnPrevious", "navBtnDisabled");
+                    domClass.add("navBtnNext", "navBtnDisabled");
                 }
 
+                domClass.add("navBtnPrevious", "navBtnDisabled");
+            }
+            else if (idx == (eventsModel.model.length-1))
+            {
+                domClass.add("navBtnNext", "navBtnDisabled");
+                domClass.remove("navBtnPrevious", "navBtnDisabled");
+            }
+            else
+            {
+                domClass.remove("navBtnNext", "navBtnDisabled");
+                domClass.remove("navBtnPrevious", "navBtnDisabled");
+            }
+
+            if (eventsModel.cursor)
+            {
                 if (eventsModel.cursor.app == null||eventsModel.cursor.app == ''||eventsModel.cursor.app.toLowerCase() == 'unknown')
                 {
                     domStyle.set('editAppNameImg', 'display', '');
@@ -331,9 +340,47 @@ define([
                 {
                     domClass.remove('imgFlag', 'icoImgActive');
                 }
-
-                adjustAnnoCommentSize();
             }
+
+
+            if (loadingDetailData||loadingImage||deletingData)
+            {
+                domClass.add('td_shtCtrl_hideAnnotations', 'barIconDisabled');
+                domClass.add('td_shtCtrl_edit', 'barIconDisabled');
+                domClass.add('td_shtCtrl_remove', 'barIconDisabled');
+            }
+            else
+            {
+                domClass.remove('td_shtCtrl_hideAnnotations', 'barIconDisabled');
+                domClass.remove('td_shtCtrl_edit', 'barIconDisabled');
+                domClass.remove('td_shtCtrl_remove', 'barIconDisabled');
+
+                if (creatorIsMe())
+                {
+                    domStyle.set('td_shtCtrl_edit', 'display', '');
+                    domStyle.set('td_shtCtrl_remove', 'display', '');
+                }
+                else
+                {
+                    domStyle.set('td_shtCtrl_edit', 'display', 'none');
+                    domStyle.set('td_shtCtrl_remove', 'display', 'none');
+                }
+            }
+        };
+
+        var creatorIsMe = function()
+        {
+            if (!eventsModel.cursor) return false;
+
+            var creator = eventsModel.cursor.author;
+            var currentUserInfo = annoUtil.getCurrentUserInfo();
+
+            if (creator ==currentUserInfo.userid||creator ==currentUserInfo.email||creator ==currentUserInfo.nickname)
+            {
+                return true;
+            }
+
+            return false;
         };
 
         var applyAnnoLevelColor = function(level)
@@ -396,7 +443,11 @@ define([
                     loadDetailData(currentIndex+1);
                     goingNextRecord = true;
                 }, 50);
+
+                return true;
             }
+
+            return false;
         };
 
         var goPreviousRecord = function()
@@ -407,7 +458,11 @@ define([
                     loadDetailData(currentIndex-1);
                     goingNextRecord = false;
                 }, 50);
+
+                return true;
             }
+
+            return false;
         };
 
         var showTextData = function()
@@ -605,6 +660,8 @@ define([
             if (loadingDetailData||loadingImage) return;
 
             loadingDetailData = true;
+            setControlsState();
+
             var previousAnno = eventsModel.cursor||eventsModel.model[0];
 
             if (previousAnno)
@@ -918,33 +975,78 @@ define([
             }
         };
 
-        var callingEditAnnoItem = false;
         var editAnnoItem = function()
         {
-            if (callingEditAnnoItem) return;
-
-            callingEditAnnoItem = true;
+            clearEditRelatedStorage();
             var annoItem = eventsModel.cursor;
             var imageData = outputImage();
+
+            saveCurrentAnnoDataforEdit(annoItem, imageData);
 
             cordova.exec(
                 function (result)
                 {
-                    callingEditAnnoItem = false;
                 },
                 function (err)
                 {
-                    callingEditAnnoItem = false;
                 },
                 "AnnoCordovaPlugin",
                 'start_edit_anno_draw',
-                [imageData, annoItem.app, annoItem.level, annoItem.draw_elements]
+                []
             );
 
-            // sometimes the click/touch event is fired twice
-            window.setTimeout(function(){
-                callingEditAnnoItem = false;
-            }, 1000);
+            checkEditAnnoResult();
+        };
+
+        var saveCurrentAnnoDataforEdit = function(annoItem, imageData)
+        {
+            var annoData = {
+                id: annoItem.id,
+                app: annoItem.app,
+                level: annoItem.level,
+                draw_elements: annoItem.draw_elements
+            };
+
+            window.localStorage.setItem(annoUtil.localStorageKeys.currentAnnoData, dojoJson.stringify(annoData));
+            window.localStorage.setItem(annoUtil.localStorageKeys.currentImageData, imageData);
+        };
+
+        var checkEditAnnoResult = function()
+        {
+            var editResult = window.localStorage.getItem(annoUtil.localStorageKeys.editAnnoDone);
+
+            if (editResult)
+            {
+                console.log("checkEditAnnoResult: "+editResult);
+
+                if (editResult == "done")
+                {
+                    console.log(window.localStorage.getItem(annoUtil.localStorageKeys.updatedAnnoData));
+                    var updatedAnnoData = dojoJson.parse(window.localStorage.getItem(annoUtil.localStorageKeys.updatedAnnoData));
+                    var currentAnno = eventsModel.cursor;
+
+                    currentAnno.set('app', updatedAnnoData.appName);
+                    currentAnno.set('annoText', updatedAnnoData.comment);
+                    currentAnno.set('draw_elements', updatedAnnoData.draw_elements);
+
+                    if (updatedAnnoData.image)
+                    {
+                        dom.byId('imgDetailScreenshot').src = updatedAnnoData.image;
+                    }
+
+                    redrawShapes();
+                }
+            }
+            else
+            {
+                window.setTimeout(checkEditAnnoResult, 500);
+            }
+        };
+
+        var clearEditRelatedStorage = function()
+        {
+            window.localStorage.removeItem(annoUtil.localStorageKeys.editAnnoDone);
+            window.localStorage.removeItem(annoUtil.localStorageKeys.updatedAnnoData);
         };
 
         var outputImage = function()
@@ -957,9 +1059,66 @@ define([
             ctx.drawImage(imgScreenshot, 0, 0, imgScreenshot.naturalWidth, imgScreenshot.naturalHeight);
 
             var dataUrl = hiddenCanvas.toDataURL("image/png");
-            var pos = dataUrl.lastIndexOf(",");
-            dataUrl = dataUrl.substr(pos+1);
             return dataUrl;
+        };
+
+        var deleteAnnoItem = function()
+        {
+            var annoId = eventsModel.cursor.id;
+            deletingData = true;
+            setControlsState();
+
+            annoUtil.showLoadingIndicator();
+            OAuthUtil.getAccessToken(function(){
+                annoUtil.loadAPI(annoUtil.API.anno, function(){
+                    var deleteAnnoApi = gapi.client.anno.anno.delete({id:annoId});
+                    console.log("start delete anno.");
+                    deleteAnnoApi.execute(function (data)
+                    {
+                        if (!data)
+                        {
+                            deletingData = false;
+                            annoUtil.hideLoadingIndicator();
+                            alert("response returned from server are empty.");
+                            return;
+                        }
+
+                        if (data.error)
+                        {
+                            deletingData = false;
+                            annoUtil.hideLoadingIndicator();
+
+                            console.error("An error occurred when calling anno.merge api: "+data.error.message);
+                            alert("An error occurred when calling anno.merge api: "+data.error.message);
+
+                            return;
+                        }
+
+                        console.log("delete anno succeeded.");
+                        deletingData = false;
+                        annoUtil.hideLoadingIndicator();
+
+                        eventsModel.model.splice(currentIndex, 1);
+
+                        if (eventsModel.model.length <=0)
+                        {
+                            // no available records, go back.
+                            history.back();
+                        }
+                        else if (currentIndex < eventsModel.model.length)
+                        {
+                            loadDetailData(currentIndex);
+                        }
+                        else
+                        {
+                            if (!goNextRecord())
+                            {
+                                goPreviousRecord();
+                            }
+                        }
+                    });
+                });
+            });
         };
 
         var startX, startY;
@@ -1179,12 +1338,25 @@ define([
                 // screenshot controls
                 _connectResults.push(connect.connect(dom.byId('td_shtCtrl_hideAnnotations'), touch.release, function ()
                 {
+                    if (domClass.contains('td_shtCtrl_hideAnnotations', 'barIconDisabled')) return;
                     toggleAnnotations();
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('td_shtCtrl_edit'), touch.release, function ()
                 {
+                    if (domClass.contains('td_shtCtrl_edit', 'barIconDisabled')) return;
                     editAnnoItem();
+                }));
+
+                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_remove'), touch.release, function ()
+                {
+                    if (domClass.contains('td_shtCtrl_remove', 'barIconDisabled')) return;
+                    annoUtil.showConfirmMessageDialog("This will delete the item and all followup discussion. Are you sure?", function(ret){
+                        if (ret)
+                        {
+                            deleteAnnoItem();
+                        }
+                    });
                 }));
 
 

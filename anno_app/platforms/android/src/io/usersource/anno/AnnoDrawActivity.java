@@ -30,8 +30,6 @@ public class AnnoDrawActivity extends DroidGap
   private boolean editMode;
   private int level;
   private String screenshotPath;
-  private String appName;
-  private String drawElementsJson;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -88,7 +86,6 @@ public class AnnoDrawActivity extends DroidGap
         if (intent.getBooleanExtra(AnnoUtils.EDIT_ANNO_MODE, false))
         {
           this.editMode = true;
-          handleEditAnnoData(intent);
         }
         else
         {
@@ -97,14 +94,6 @@ public class AnnoDrawActivity extends DroidGap
         }
       }
     }
-  }
-
-  private void handleEditAnnoData(Intent intent)
-  {
-    this.screenshotPath = intent.getStringExtra(AnnoUtils.IMAGE_DATAURL);
-    this.level = intent.getIntExtra(AnnoUtils.LEVEL, 0);
-    this.appName = intent.getStringExtra(AnnoUtils.APP_NAME);
-    this.drawElementsJson = intent.getStringExtra(AnnoUtils.DRAW_ELEMENTS_JSON);
   }
 
   private void handleFromShareImage(Intent intent)
@@ -157,16 +146,6 @@ public class AnnoDrawActivity extends DroidGap
   public String getScreenshotPath()
   {
     return screenshotPath;
-  }
-
-  public String getAppName()
-  {
-    return appName;
-  }
-
-  public String getDrawElementsJson()
-  {
-    return drawElementsJson;
   }
 
   public boolean isEditMode()

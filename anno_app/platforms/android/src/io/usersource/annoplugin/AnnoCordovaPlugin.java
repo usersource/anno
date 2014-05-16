@@ -24,6 +24,7 @@ import io.usersource.anno.OptionFeedbackActivity;
 import io.usersource.annoplugin.utils.*;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -99,8 +100,6 @@ public class AnnoCordovaPlugin extends CordovaPlugin
       jo.put("screenshotPath", annoDrawActivity.getScreenshotPath());
       jo.put("level", annoDrawActivity.getLevel());
       jo.put("isAnno", AnnoUtils.isAnno(annoDrawActivity.getPackageName()));
-      jo.put("appName", annoDrawActivity.getAppName());
-      jo.put("drawElementsJson", annoDrawActivity.getDrawElementsJson());
       jo.put("editMode", annoDrawActivity.isEditMode());
 
       callbackContext.success(jo);
@@ -253,23 +252,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
     }
     else if (START_EDIT_ANNO_DRAW.equals(action))
     {
-      String imageDate = args.getString(0);
-      String appName = args.getString(1);
-      int level = args.getInt(2);
-      String drawElementsJson = args.getString(3);
-      String tempImagePath;
-
       Activity activity = this.cordova.getActivity();
-
-      try
-      {
-        tempImagePath = saveImageToCacheDir(activity, imageDate);
-      }
-      catch (Exception e)
-      {
-        callbackContext.error("An error occurred when saving image to CacheDir: "+e.getMessage());
-        return false;
-      }
 
       String packageName = activity.getPackageName();
 
@@ -277,11 +260,6 @@ public class AnnoCordovaPlugin extends CordovaPlugin
       intent.setClassName(packageName,
               "io.usersource.anno.AnnoDrawActivity");
       intent.setType("image/*");
-      //intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(tempImagePath));
-      intent.putExtra(AnnoUtils.IMAGE_DATAURL, tempImagePath);
-      intent.putExtra(AnnoUtils.APP_NAME, appName);
-      intent.putExtra(AnnoUtils.LEVEL, level);
-      intent.putExtra(AnnoUtils.DRAW_ELEMENTS_JSON, drawElementsJson);
       intent.putExtra(AnnoUtils.EDIT_ANNO_MODE, true);
 
       activity.startActivity(intent);
@@ -291,24 +269,6 @@ public class AnnoCordovaPlugin extends CordovaPlugin
 
 
     return false;
-  }
-
-  private String saveImageToCacheDir(Activity activity, String imageData) throws Exception
-  {
-    String imagePath = "";
-    String cachePath = activity.getCacheDir().getAbsolutePath();
-    String imageKey = AnnoUtils.generateUniqueImageKey();
-    File cacheFile = new File(cachePath, imageKey);
-    FileOutputStream out = new FileOutputStream(cacheFile);
-    String base64Str = imageData;
-
-    byte bytes[] = Base64.decode(base64Str, Base64.DEFAULT);
-    out.write(bytes);
-    out.flush();
-    out.close();
-
-    imagePath = cacheFile.getAbsolutePath();
-    return imagePath;
   }
 
   /**

@@ -343,10 +343,10 @@ define([
                     {
                         this.createRectangle({shapeJson:item, selectable:selectable});
                     }
-                    /*else if (item.type == this.shapeTypes.AnonymizedRectangle)
+                    else if (item.type == this.shapeTypes.AnonymizedRectangle)
                     {
-                        this.createAnonymizedRectangle({shapeJson:item, selectable:false});
-                    }*/
+                        this._generateShapeId(item.type);
+                    }
                     else if (item.type == this.shapeTypes.CommentBox)
                     {
                         this.createCommentBox({shapeJson:item, selectable:selectable, lineStrokeStyle:cbxStrokeStyle});

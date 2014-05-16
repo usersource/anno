@@ -38,6 +38,9 @@ require([
     var level = 1;
     var isAnno = false, appNameListFetched = false;
     var editMode = false, editAppName = "",
+        editAnnoId = "",
+        originalGrayBoxes,
+        originalGrayBoxCnt = 0,
         editDrawElementsJson = "";
 
     connect.connect(dom.byId("barArrow"), touch.release, function()
@@ -75,20 +78,34 @@ require([
     {
         if (domClass.contains(dom.byId("barShare"), 'barIconInactive')) return;
 
-        if (level == 2 || !isAnno)
+        if (editMode)
         {
-            if (drawMode)
+            if (level == 2 || !isAnno)
             {
-                insertDrawCommentAnno();
+                updateDrawCommentAnno();
             }
             else
             {
-                insertSimpleCommentAnno();
+                openShareDialog();
             }
         }
         else
         {
-            openShareDialog();
+            if (level == 2 || !isAnno)
+            {
+                if (drawMode)
+                {
+                    insertDrawCommentAnno();
+                }
+                else
+                {
+                    insertSimpleCommentAnno();
+                }
+            }
+            else
+            {
+                openShareDialog();
+            }
         }
     });
 
@@ -250,14 +267,22 @@ require([
         annoUtil.enableJSGesture();
         annoUtil.disableNativeGesture();
 
-        if (drawMode)
+        if (editMode)
         {
-            insertDrawCommentAnno();
+            updateDrawCommentAnno();
         }
         else
         {
-            insertSimpleCommentAnno();
+            if (drawMode)
+            {
+                insertDrawCommentAnno();
+            }
+            else
+            {
+                insertSimpleCommentAnno();
+            }
         }
+
     });
 
     // home/feeds/cancel button
@@ -272,6 +297,8 @@ require([
         {
             action = "exit_current_activity";
         }
+
+        window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "cancel");
 
         cordova.exec(
             function (result)
@@ -303,17 +330,50 @@ require([
     var switchMode = function(mode)
     {
         drawMode = true;
-        var lineStrokeStyle = {color: level==1?level1Color:level2Color, width: 3};
+        var lineStrokeStyle = {color: level==1?level1Color:level2Color, width: 3},
+            drawElements, drawItem;
+        var commentBox;
 
         if (editMode)
         {
+            originalGrayBoxes = {};
+            originalGrayBoxCnt = 0;
+            drawElements = dojoJson.parse(editDrawElementsJson);
+
             surface.switchMode(true);
-            surface.parse(dojoJson.parse(editDrawElementsJson), lineStrokeStyle, true);
+            surface.parse(drawElements, lineStrokeStyle, true);
+
+            for (var p in drawElements)
+            {
+                drawItem = drawElements[p];
+
+                if (drawItem.type == surface.shapeTypes.AnonymizedRectangle)
+                {
+                    originalGrayBoxes[p] = drawItem;
+                    originalGrayBoxCnt++;
+                }
+            }
+
+            for (var p in surface.registry)
+            {
+                commentBox = surface.registry[p];
+
+                if (commentBox.shapeType == surface.shapeTypes.CommentBox)
+                {
+                    commentBox.onCommentBoxInput = checkBarShareState;
+                    commentBox.onCommentBoxFocus = hideBottomNavBar;
+                    commentBox.onCommentBoxBlur = showBottomNavBar;
+                }
+            }
+
+            checkBarShareState();
+
+            dom.byId('menuItemFeed').innerHTML = "Cancel";
         }
         else
         {
             // create default comment box
-            var commentBox = surface.createCommentBox({deletable:false, startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight,lineStrokeStyle:lineStrokeStyle});
+            commentBox = surface.createCommentBox({deletable:false, startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight,lineStrokeStyle:lineStrokeStyle});
             updateLastShapePos('Rectangle');
 
             surface.switchMode(true);
@@ -351,7 +411,18 @@ require([
         {
             ctx.drawImage(hiddenImage, 0, 0, viewPoint.w-totalSpace*2, viewPoint.h-borderWidth*2-barHeight);
         };
-        hiddenImage.src = screenShotPath;
+
+        if (editMode)
+        {
+            hiddenImage.src = window.localStorage.getItem(annoUtil.localStorageKeys.currentImageData);
+            window.setTimeout(function(){
+                window.localStorage.removeItem(annoUtil.localStorageKeys.currentImageData);
+            }, 5000);
+        }
+        else
+        {
+            hiddenImage.src = screenShotPath;
+        }
     };
 
     var initBackgroundImage = function()
@@ -367,10 +438,23 @@ require([
                         level = result.level;
                         isAnno = result.isAnno;
                         editMode = result.editMode;
-                        editAppName = result.appName;
-                        editDrawElementsJson = result.drawElementsJson;
 
-                        dom.byId('imageScreenshot').src = screenShotPath;
+                        if (editMode)
+                        {
+                            dom.byId('imageScreenshot').src = window.localStorage.getItem(annoUtil.localStorageKeys.currentImageData);
+                            var currentAnnoData = dojoJson.parse(window.localStorage.getItem(annoUtil.localStorageKeys.currentAnnoData));
+
+                            level = currentAnnoData.level;
+                            editAnnoId = currentAnnoData.id;
+                            editAppName = currentAnnoData.app;
+                            editDrawElementsJson = currentAnnoData.draw_elements;
+
+                            window.localStorage.removeItem(annoUtil.localStorageKeys.currentAnnoData);
+                        }
+                        else
+                        {
+                            dom.byId('imageScreenshot').src = screenShotPath;
+                        }
 
                         if (level == 1)
                         {
@@ -527,7 +611,7 @@ require([
             return;
         }
 
-        selectedAppName = selectedAppName||dom.byId("txtAppName").value;
+        selectedAppName = selectedAppName||dom.byId("txtAppName").value.trim();
 
         annoUtil.showLoadingIndicator();
 
@@ -588,41 +672,82 @@ require([
 
         annoUtil.showLoadingIndicator();
 
-        var deviceInfo = annoUtil.getDeviceInfo();
-        console.error(JSON.stringify(deviceInfo));
+        var pluginParam = [], isScreenshotAnonymized = surface.isScreenshotAnonymized(),
+            shapesJson = surface.toJSON();
+        var appName = selectedAppName||dom.byId("txtAppName").value.trim()||editAppName;
+        var annoItem, callbackAnnoItem;
 
-        var pluginParam = [], isScreenshotAnonymized = surface.isScreenshotAnonymized();
+        for (var p in originalGrayBoxes)
+        {
+            shapesJson[p] = originalGrayBoxes[p];
+        }
 
         if (isScreenshotAnonymized)
         {
             pluginParam[0] = outputImage();
         }
 
-        cordova.exec(
-            function (result)
-            {
-                var imageKey = result.imageAttrs.imageKey;
-                var screenshotDirPath = result.imageAttrs.screenshotPath;
-                var appInfo = result.appInfo;
+        if (isScreenshotAnonymized)
+        {
+            cordova.exec(
+                function (result)
+                {
+                    var imageKey = result.imageAttrs.imageKey;
+                    var screenshotDirPath = result.imageAttrs.screenshotPath;
 
-                var annoItem = {
-                    "anno_text":surface.getConcatenatedComment(),
-                    "image":imageKey,
-                    "app_name":editAppName,
-                    "draw_elements":dojoJson.stringify(surface.toJSON()),
-                    "screenshot_is_anonymized":isScreenshotAnonymized
-                };
+                    annoItem = {
+                        "anno_text":surface.getConcatenatedComment(),
+                        "app_name":appName,
+                        "image":imageKey,
+                        "draw_elements":dojoJson.stringify(shapesJson),
+                        "screenshot_is_anonymized":isScreenshotAnonymized,
+                        "anno_type":"draw comment",
+                        "level":level
+                    };
 
-                AnnoDataHandler.insertAnno(annoItem, appInfo.source, screenshotDirPath);
-            },
-            function (err)
-            {
-                alert(err.message);
-            },
-            "AnnoCordovaPlugin",
-            'process_image_and_appinfo',
-            pluginParam
-        );
+                    callbackAnnoItem = {
+                        "comment":annoItem["anno_text"],
+                        "appName":annoItem["app_name"],
+                        "draw_elements":annoItem["draw_elements"],
+                        "image":screenshotDirPath+"/"+annoItem["image"]
+                    };
+                    AnnoDataHandler.updateAnno(editAnnoId, annoItem, screenshotDirPath, function(){
+                        window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "done");
+                        window.localStorage.setItem(annoUtil.localStorageKeys.updatedAnnoData, dojoJson.stringify(callbackAnnoItem));
+                    });
+                },
+                function (err)
+                {
+                    alert(err.message);
+                },
+                "AnnoCordovaPlugin",
+                'process_image_and_appinfo',
+                pluginParam
+            );
+        }
+        else
+        {
+            isScreenshotAnonymized =isScreenshotAnonymized||originalGrayBoxCnt>0;
+            annoItem = {
+                "anno_text":surface.getConcatenatedComment(),
+                "app_name":appName,
+                "draw_elements":dojoJson.stringify(shapesJson),
+                "screenshot_is_anonymized":isScreenshotAnonymized,
+                "anno_type":"draw comment",
+                "level":level
+            };
+
+            callbackAnnoItem = {
+                "comment":annoItem["anno_text"],
+                "appName":annoItem["app_name"],
+                "draw_elements":annoItem["draw_elements"]
+            };
+
+            AnnoDataHandler.updateAnno(editAnnoId, annoItem, "", function(){
+                window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "done");
+                window.localStorage.setItem(annoUtil.localStorageKeys.updatedAnnoData, dojoJson.stringify(callbackAnnoItem));
+            });
+        }
     };
 
     var outputImage = function()
@@ -773,9 +898,13 @@ require([
                                 x2:Math.round((viewPoint.w-defaultShapeWidth)/2)+defaultShapeWidth,
                                 y2:100
                             };
-                        }
 
-                        checkBarShareState();
+                            domClass.add("barShare", 'barIconInactive');
+                        }
+                        else
+                        {
+                            checkBarShareState();
+                        }
                     });
 
                     // set screenshot container size
@@ -838,6 +967,8 @@ require([
         }
         else
         {
+            window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "cancel");
+
             navigator.app.exitApp();
         }
     }, false);
