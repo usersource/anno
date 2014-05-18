@@ -27,7 +27,6 @@ define([
         var _connectResults = [],
             eventsModel = null,
             currentIndex = 0,
-            textDataAreaShown = false,
             scrollAnimateHandle = null,
             loadingIndicator = null;
         var app = null,
@@ -51,42 +50,19 @@ define([
         var surface;
         var imageWidth, imageHeight;
 
-        var wipeIn = function(args)
-        {return;
-            var node = args.node = dom.byId(args.node);
-            var currentHeight = domStyle.get(node, "height");
-            node.style.WebkitTransform = "translateY("+navBarHeight+"px)";
-        };
-
-        var wipeOut = function(args){
-            return;
-            var node = args.node = dom.byId(args.node);
-            var viewPoint = win.getBox();
-            node.style.WebkitTransform = "translateY(-"+(viewPoint.h-6)+"px)";
-
-            window.setTimeout(function(){
-                node.style.display = "none";
-            }, 600);
-        };
-
         var adjustSize = function()
         {
             var viewPoint = win.getBox();
             domStyle.set("imgDetailScreenshot", "width", (viewPoint.w-screenshotMargin)+"px");
 
             var h = (viewPoint.h-6);
-            domStyle.set("textDataAreaContainer", "width", (viewPoint.w-6)+"px");
             domStyle.set("annoTextDetail", "width", (viewPoint.w-6-6-10-6-28)+"px");
             domStyle.set("voteFlagContainer", "width", (viewPoint.w-6-6-10-6-28)+"px");
 
-            domStyle.set("textDataAreaContainer", "height", (h-40-navBarHeight)+"px");
             trayScreenHeight = h-40;
-
-            domStyle.set("annoCommentsContainer", "height", (h-76-30-trayBarHeight)+"px");//104
 
             domStyle.set("appNameTextBox", "width", (viewPoint.w-30-6-10-40)+"px");
             domStyle.set("lightCover", {"width": (viewPoint.w)+"px", "height":(viewPoint.h)+'px'});
-            domStyle.set("lightCoverScreenshot", "height", (viewPoint.h+800)+"px");
         };
 
         var screenshotImageOnload = function()
@@ -122,19 +98,8 @@ define([
                 }
                 else if (orignialDeviceRatio > deviceRatio) // wider than current device
                 {console.error('wider ratio');
-                    imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio - navBarHeight;
+                    imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio - navBarHeight - screenshotControlsHeight;
                     imageWidth = Math.round(imageHeight/orignialRatio);
-                }
-
-                domStyle.set("lightCoverScreenshot", "width", (30)+"px");
-
-                if (imageHeight< viewPoint.h)
-                {
-                    domStyle.set("lightCoverScreenshot", "height", (viewPoint.h+800)+"px");
-                }
-                else
-                {
-                    domStyle.set("lightCoverScreenshot", "height", (imageHeight+800)+"px");
                 }
 
                 borderWidth = Math.floor(imageWidth*0.02);
@@ -192,7 +157,15 @@ define([
             {
                 var elementsObject = dojoJson.parse(drawElements);
 
-                surface.show();
+                if (showAnnotations)
+                {
+                    surface.show();
+                }
+                else
+                {
+                    surface.hide();
+                }
+
                 domStyle.set(surface.container, {'border': borderWidth+'px solid transparent'});
                 surface.borderWidth = borderWidth;
                 surface.setDimensions(imageWidth-borderWidth*2, imageHeight-borderWidth*2);
@@ -403,31 +376,6 @@ define([
 
         var adjustAnnoCommentSize = function()
         {
-            var annoContainer = dom.byId('annoCommentsContainer');
-            var parentBox = domGeom.getMarginBox("headingDetail");
-            var viewPoint = win.getBox();
-            var h = (viewPoint.h-6);
-
-            domStyle.set("annoCommentsContainer", "height", (h-76-66-30-trayBarHeight)+"px");
-            if (annoContainer.scrollHeight > annoContainer.clientHeight)
-            {
-                domStyle.set("annoCommentsContainer", "height", (h-76-66-30-trayBarHeight)+"px");
-                domStyle.set("trayPlaceHolder", "height", "0px");
-            }
-            else
-            {
-                domStyle.set("annoCommentsContainer", "height", 'auto');
-                var th = domStyle.get("textDataAreaContainer", "height");
-                var h = domStyle.get("annoCommentsContainer", "height");
-
-                domStyle.set("trayPlaceHolder", "height", (th-h-106 - 22)+"px");
-            }
-
-            var ach = domGeom.getMarginBox("annoCommentsSet");
-            if ((ach.h +parentBox.h+72) > (viewPoint.h-800))
-            {
-                domStyle.set("lightCoverScreenshot", "height", (ach.h +parentBox.h+72+800)+"px");
-            }
         };
 
         var adjustNavBarZIndex = function()
@@ -465,50 +413,20 @@ define([
             return false;
         };
 
-        var showTextData = function()
-        {
-            if (textDataAreaShown) return;
-
-            domStyle.set("textDataAreaContainer", "display", "");
-            domClass.remove("navBtnScreenshot", "barIconHighlight");
-            domClass.add("navBtnTray", "barIconHighlight");
-
-            window.setTimeout(function(){
-                wipeIn({
-                    node:"textDataAreaContainer"
-                });
-            }, 100);
-
-            window.setTimeout(function(){
-                adjustAnnoCommentSize();
-                textDataAreaShown = true;
-                domStyle.set("bottomPlaceholder", "display", '');
-
-            }, 600);
-
-            document.addEventListener("backbutton", handleBackButton, false);
-        };
-
         var handleBackButton = function()
         {
-            hideTextData();
-        };
+            var dlg = registry.byId('dlg_common_confirm_message');
 
-        var hideTextData = function()
-        {
-            if (!textDataAreaShown) return;
-
-            domStyle.set("lightCoverScreenshot", "display", 'none');
-            wipeOut({
-                node:"textDataAreaContainer"
-            });
-
-            textDataAreaShown = false;
-
-            domStyle.set("bottomPlaceholder", "display", 'none');
-            domClass.add("navBtnScreenshot", "barIconHighlight");
-            domClass.remove("navBtnTray", "barIconHighlight");
-            document.removeEventListener("backbutton", handleBackButton, false);
+            if (dlg)
+            {
+                document.removeEventListener("backbutton", handleBackButton, false);
+                dlg.hide();
+            }
+            else
+            {
+                document.removeEventListener("backbutton", handleBackButton, false);
+                history.back();
+            }
         };
 
         var scrollToScreenshot = function()
@@ -536,10 +454,14 @@ define([
                     detailContentContainer.parentNode.scrollTop = 0;
                     detailContentContainer.style.webkitTransition = "none";
                     detailContentContainer.style.WebkitTransform = "none";
+
+                    setAddCommentContainerState();
+                    setScreenshotTalkAreaState();
                 });
 
                 detailContentContainer.style.webkitTransition = "all 600ms ease";
                 detailContentContainer.style.WebkitTransform = "translateY(0px)";
+
             }, 5);
         };
 
@@ -557,11 +479,17 @@ define([
                 detailContentContainer.parentNode.scrollTop = imageHeight+44;
                 detailContentContainer.style.webkitTransition = "all 0ms ease";
                 detailContentContainer.style.WebkitTransform = "none";
+
+                setAddCommentContainerState();
             });
 
+            domStyle.set('addCommentContainer', 'display', 'none');
             detailContentContainer.style.webkitTransition = "all 600ms ease";
-            var st = detailContentContainer.parentNode.scrollTop;
-            detailContentContainer.style.WebkitTransform = "translateY(-"+(imageHeight+44-st)+"px)";
+            var st = imageHeight+44-detailContentContainer.parentNode.scrollTop;
+            var max = detailContentContainer.parentNode.scrollHeight-detailContentContainer.parentNode.clientHeight-detailContentContainer.parentNode.scrollTop;
+            if (st > max) st = max;
+
+            detailContentContainer.style.WebkitTransform = "translateY(-"+(st)+"px)";
         };
 
         var showAppNameTextBox = function()
@@ -975,6 +903,87 @@ define([
             }
         };
 
+        var setScreenshotTalkAreaState = function()
+        {
+            var screenshotVisible = isScreenshotVisible();
+            if (screenshotVisible)
+            {
+                domClass.remove('navBtnScreenshot', 'barIconDisabled');
+            }
+            else
+            {
+                domClass.add('navBtnScreenshot', 'barIconDisabled');
+            }
+
+            if (isBottomPlaceHolderVisible()||!screenshotVisible)
+            {
+                domClass.remove('navBtnTray', 'barIconDisabled');
+                domClass.add('navBtnTray', 'barIconHighlight');
+            }
+            else
+            {
+                domClass.add('navBtnTray', 'barIconDisabled');
+                domClass.remove('navBtnTray', 'barIconHighlight');
+            }
+        };
+
+        var isVoteFlagContainerVisible = function()
+        {
+            var pos = domGeom.position(dom.byId('voteFlagContainer'));
+            var viewPoint = win.getBox();
+
+            if ((pos.y + 50) <= viewPoint.h)
+            {
+                return true;
+            }
+
+            return false;
+        };
+
+        var isBottomPlaceHolderVisible = function()
+        {
+            var pos = domGeom.position(dom.byId('detailBottomPlaceholder'));
+            var viewPoint = win.getBox();
+
+            if ((pos.y + 50) <= viewPoint.h)
+            {
+                return true;
+            }
+
+            return false;
+        };
+
+        var isScreenshotVisible = function()
+        {
+            var pos = domGeom.position(dom.byId('screenshotContainerDetail'));
+
+            if (pos.y >=0) return true;
+
+            if (Math.abs(pos.y) >= pos.h)
+            {
+                return false;
+            }
+
+            if ((Math.abs(pos.y)+50) <= pos.h)
+            {
+                return true;
+            }
+
+            return false;
+        };
+
+        var setAddCommentContainerState = function()
+        {
+            if (isVoteFlagContainerVisible())
+            {
+                domStyle.set('addCommentContainer', 'display', '');
+            }
+            else
+            {
+                domStyle.set('addCommentContainer', 'display', 'none');
+            }
+        };
+
         var editAnnoItem = function()
         {
             clearEditRelatedStorage();
@@ -1080,6 +1089,7 @@ define([
                             deletingData = false;
                             annoUtil.hideLoadingIndicator();
                             alert("response returned from server are empty.");
+                            setControlsState();
                             return;
                         }
 
@@ -1088,9 +1098,9 @@ define([
                             deletingData = false;
                             annoUtil.hideLoadingIndicator();
 
-                            console.error("An error occurred when calling anno.merge api: "+data.error.message);
-                            alert("An error occurred when calling anno.merge api: "+data.error.message);
-
+                            console.error("An error occurred when calling anno.delete api: "+data.error.message);
+                            alert("An error occurred when calling anno.delete api: "+data.error.message);
+                            setControlsState();
                             return;
                         }
 
@@ -1136,7 +1146,6 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId('tdNavBtnNext'), touch.release, function ()
                 {
-                    hideTextData();
                     goNextRecord();
                 }));
 
@@ -1152,7 +1161,6 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId('tdNavBtnPrevious'), touch.release, function ()
                 {
-                    hideTextData();
                     goPreviousRecord();
                 }));
 
@@ -1230,21 +1238,15 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "focus", function ()
                 {
-                    //domStyle.set('addCommentTextBox', {position:'relative', bottom:'340px'});
-                    var viewPoint = win.getBox();
                     window.setTimeout(function(){
-                        domStyle.set('modelApp_detail', 'height', (viewPoint.h+400)+'px');
-                        domStyle.set("lightCoverScreenshot", "display", '');
+                        dom.byId('addCommentTextBox').rows = "4";
                     }, 500);
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "blur", function ()
                 {
                     window.setTimeout(function(){
-                        var viewPoint = win.getBox();
-                        adjustAnnoCommentSize();
-                        domStyle.set('modelApp_detail', 'height', (viewPoint.h)+'px');
-                        domStyle.set("lightCoverScreenshot", "display", 'none');
+                        dom.byId('addCommentTextBox').rows = "1";
                     }, 500);
                 }));
 
@@ -1299,18 +1301,6 @@ define([
                     }
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('imgDetailScreenshot'), "click", function (e)
-                {
-                    if (!textDataAreaShown)
-                        showTextData();
-                }));
-
-                _connectResults.push(connect.connect(dom.byId("gfxCanvasContainer"), "click", function (e)
-                {
-                    if (!textDataAreaShown)
-                        showTextData();
-                }));
-
                 _connectResults.push(connect.connect(dom.byId('editAppNameImg'), touch.release, function ()
                 {
                     showAppNameTextBox();
@@ -1318,21 +1308,8 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId('modelApp_detail'), "scroll", function (e)
                 {
-                    var scrollTop = dom.byId('modelApp_detail').scrollTop;
-
-                    if (scrollTop >=imageHeight)
-                    {
-                        domClass.add('navBtnScreenshot', 'barIconDisabled');
-                        domClass.remove('navBtnTray', 'barIconDisabled');
-                        domClass.add('navBtnTray', 'barIconHighlight');
-                    }
-                    else
-                    {
-                        domClass.remove('navBtnScreenshot', 'barIconDisabled');
-                        domClass.add('navBtnTray', 'barIconDisabled');
-                        domClass.remove('navBtnTray', 'barIconHighlight');
-                    }
-
+                    setScreenshotTalkAreaState();
+                    setAddCommentContainerState();
                 }));
 
                 // screenshot controls
@@ -1351,7 +1328,10 @@ define([
                 _connectResults.push(connect.connect(dom.byId('td_shtCtrl_remove'), touch.release, function ()
                 {
                     if (domClass.contains('td_shtCtrl_remove', 'barIconDisabled')) return;
+
+                    document.addEventListener("backbutton", handleBackButton, false);
                     annoUtil.showConfirmMessageDialog("This will delete the item and all followup discussion. Are you sure?", function(ret){
+                        document.removeEventListener("backbutton", handleBackButton, false);
                         if (ret)
                         {
                             deleteAnnoItem();
@@ -1400,16 +1380,15 @@ define([
                 }
                 adjustSize();
 
-                textDataAreaShown = false;
                 domStyle.set("headingDetail", "display", '');
                 domClass.add("navBtnScreenshot", "barIconHighlight");
                 domClass.remove("navBtnTray", "barIconHighlight");
+                domClass.add("navBtnTray", "barIconDisabled");
+
+                dom.byId('detailContentContainer').parentNode.scrollTop = 0;
             },
             beforeDeactivate: function()
             {
-                domStyle.set('textDataAreaContainer', 'display', 'none');
-                domStyle.set("lightCoverScreenshot", "display", 'none');
-
                 domStyle.set("imgDetailScreenshot", "opacity", '1');
 
                 annoUtil.hideLoadingIndicator();

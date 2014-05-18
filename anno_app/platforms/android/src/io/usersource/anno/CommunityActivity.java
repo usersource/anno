@@ -54,7 +54,7 @@ public class CommunityActivity extends DroidGap {
      */
 
     super.loadUrl("file:///android_asset/www/anno/pages/community/main.html");
-    WebView.setWebContentsDebuggingEnabled(true);
+    //WebView.setWebContentsDebuggingEnabled(true);
     Intent intent = getIntent();
     level = intent.getIntExtra(AnnoUtils.LEVEL, 0);
   }
