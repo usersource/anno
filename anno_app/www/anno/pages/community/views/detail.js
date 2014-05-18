@@ -12,6 +12,7 @@ define([
     "dojo/window",
     "dojo/has",
     "dojo/sniff",
+    "dojo/touch",
     "dijit/registry",
     "dojox/css3/transit",
     "dojo/store/Memory",
@@ -21,47 +22,33 @@ define([
     "anno/common/Util",
     "anno/common/OAuthUtil"
 ],
-    function (arrayUtil, baseFX, dom, domClass, domGeom, domStyle, dojoJson, query, lang, connect, win, has, sniff, registry, transit, Memory, getStateful, at, Surface, annoUtil, OAuthUtil)
+    function (arrayUtil, baseFX, dom, domClass, domGeom, domStyle, dojoJson, query, lang, connect, win, has, sniff, touch, registry, transit, Memory, getStateful, at, Surface, annoUtil, OAuthUtil)
     {
         var _connectResults = [],
             eventsModel = null,
             currentIndex = 0,
-            textDataAreaShown = false,
+            scrollAnimateHandle = null,
             loadingIndicator = null;
         var app = null,
             savingVote = false,
             savingFlag = false,
+            showAnnotations = true,
             localScreenshotPath = "",
             screenshotMargin = 0;
         var annoTooltipY,
             goingNextRecord = null,
             loadingDetailData = false,
             loadingImage = false,
+            deletingData = false,
             trayBarHeight = 30,
             navBarHeight = 50,
             trayScreenHeight = 0,
+            screenshotControlsHeight = 30,
             borderWidth;
 
         var imageBaseUrl = annoUtil.getCEAPIConfig().imageServiceURL;
         var surface;
         var imageWidth, imageHeight;
-
-        var wipeIn = function(args)
-        {
-            var node = args.node = dom.byId(args.node);
-            var currentHeight = domStyle.get(node, "height");
-            node.style.WebkitTransform = "translateY("+navBarHeight+"px)";
-        };
-
-        var wipeOut = function(args){
-            var node = args.node = dom.byId(args.node);
-            var viewPoint = win.getBox();
-            node.style.WebkitTransform = "translateY(-"+(viewPoint.h-6)+"px)";
-
-            window.setTimeout(function(){
-                node.style.display = "none";
-            }, 600);
-        };
 
         var adjustSize = function()
         {
@@ -69,19 +56,13 @@ define([
             domStyle.set("imgDetailScreenshot", "width", (viewPoint.w-screenshotMargin)+"px");
 
             var h = (viewPoint.h-6);
-            domStyle.set("textDataAreaContainer", "width", (viewPoint.w-6)+"px");
             domStyle.set("annoTextDetail", "width", (viewPoint.w-6-6-10-6-28)+"px");
             domStyle.set("voteFlagContainer", "width", (viewPoint.w-6-6-10-6-28)+"px");
 
-            domStyle.set("textDataAreaContainer", "height", (h-40-navBarHeight)+"px");
-            dom.byId("textDataAreaContainer").style.WebkitTransform = "translateY(-"+(h)+"px)";
             trayScreenHeight = h-40;
-
-            domStyle.set("annoCommentsContainer", "height", (h-76-30-trayBarHeight)+"px");//104
 
             domStyle.set("appNameTextBox", "width", (viewPoint.w-30-6-10-40)+"px");
             domStyle.set("lightCover", {"width": (viewPoint.w)+"px", "height":(viewPoint.h)+'px'});
-            domStyle.set("lightCoverScreenshot", "height", (viewPoint.h+800)+"px");
         };
 
         var screenshotImageOnload = function()
@@ -105,37 +86,29 @@ define([
                 if (orignialDeviceRatio == deviceRatio)
                 {
                     console.error('same ratio');
-                    imageHeight = viewPoint.h - navBarHeight;
+                    imageHeight = viewPoint.h - navBarHeight - screenshotControlsHeight;
                     imageWidth = Math.round(imageHeight/orignialRatio);
 
                     console.error("image width: "+imageWidth+", image height: "+imageHeight);
                 }
                 else if (orignialDeviceRatio < deviceRatio) // taller than current device
                 {console.error('taller ratio: o:'+orignialDeviceRatio+", d:"+ deviceRatio);
-                    imageHeight = viewPoint.h-navBarHeight;
+                    imageHeight = viewPoint.h-navBarHeight - screenshotControlsHeight;
                     imageWidth = Math.round(imageHeight/orignialRatio);
                 }
                 else if (orignialDeviceRatio > deviceRatio) // wider than current device
                 {console.error('wider ratio');
-                    imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio - navBarHeight;
+                    imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio - navBarHeight - screenshotControlsHeight;
                     imageWidth = Math.round(imageHeight/orignialRatio);
                 }
 
-                domStyle.set("lightCoverScreenshot", "width", (30)+"px");
-
-                if (imageHeight< viewPoint.h)
-                {
-                    domStyle.set("lightCoverScreenshot", "height", (viewPoint.h+800)+"px");
-                }
-                else
-                {
-                    domStyle.set("lightCoverScreenshot", "height", (imageHeight+800)+"px");
-                }
-
                 borderWidth = Math.floor(imageWidth*0.02);
+                domStyle.set('tbl_screenshotControls', 'width', imageWidth+'px');
+
                 applyAnnoLevelColor(eventsModel.cursor.level);
 
                 adjustNavBarZIndex();
+                setControlsState();
 
                 if (goingNextRecord != null)
                 {
@@ -144,7 +117,7 @@ define([
                         transit(null, dom.byId('screenshotContainerDetail'), {
                             transition:"slide",
                             duration:600
-                        });
+                        }).then(redrawShapes);
                     }
                     else
                     {
@@ -152,13 +125,14 @@ define([
                             transition:"slide",
                             duration:600,
                             reverse: true
-                        });
+                        }).then(redrawShapes);
                     }
                 }
+                else
+                {
+                    redrawShapes();
+                }
 
-                adjustNavBarSize();
-
-                redrawShapes();
             }, 10);
         };
 
@@ -183,9 +157,16 @@ define([
             {
                 var elementsObject = dojoJson.parse(drawElements);
 
-                surface.show();
-                domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', left:(-borderWidth)+'px',top:(-borderWidth)+'px'});
+                if (showAnnotations)
+                {
+                    surface.show();
+                }
+                else
+                {
+                    surface.hide();
+                }
 
+                domStyle.set(surface.container, {'border': borderWidth+'px solid transparent'});
                 surface.borderWidth = borderWidth;
                 surface.setDimensions(imageWidth-borderWidth*2, imageHeight-borderWidth*2);
 
@@ -195,8 +176,7 @@ define([
             }
             else
             {
-
-                domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', left:(-borderWidth)+'px',top:(-borderWidth)+'px'});
+                domStyle.set(surface.container, {'border': borderWidth+'px solid transparent'});
 
                 surface.borderWidth = borderWidth;
                 surface.setDimensions(imageWidth-borderWidth*2, imageHeight-borderWidth*2);
@@ -260,39 +240,46 @@ define([
             var idx = parseInt(index);
             if (idx < eventsModel.model.length)
             {
-                console.error("level:"+eventsModel.cursor.level);
-                //applyAnnoLevelColor(eventsModel.cursor.level);
-
                 eventsModel.set("cursorIndex", idx);
                 currentIndex = idx;
 
-                domClass.remove('imgFlag', 'icoImgActive');
-                domClass.remove('imgThumbsUp', 'icoImgActive');
+                setControlsState();
+                adjustAnnoCommentSize();
+            }
+        };
 
-                if (idx == 0)
-                {
-                    if (eventsModel.model.length>1)
-                    {
-                        domClass.remove("navBtnNext", "navBtnDisabled");
-                    }
-                    else
-                    {
-                        domClass.add("navBtnNext", "navBtnDisabled");
-                    }
+        var setControlsState = function()
+        {
+            var idx = currentIndex;
+            domClass.remove('imgFlag', 'icoImgActive');
+            domClass.remove('imgThumbsUp', 'icoImgActive');
 
-                    domClass.add("navBtnPrevious", "navBtnDisabled");
-                }
-                else if (idx == (eventsModel.model.length-1))
+            if (idx == 0)
+            {
+                if (eventsModel.model.length>1)
                 {
-                    domClass.add("navBtnNext", "navBtnDisabled");
-                    domClass.remove("navBtnPrevious", "navBtnDisabled");
+                    domClass.remove("navBtnNext", "navBtnDisabled");
                 }
                 else
                 {
-                    domClass.remove("navBtnNext", "navBtnDisabled");
-                    domClass.remove("navBtnPrevious", "navBtnDisabled");
+                    domClass.add("navBtnNext", "navBtnDisabled");
                 }
 
+                domClass.add("navBtnPrevious", "navBtnDisabled");
+            }
+            else if (idx == (eventsModel.model.length-1))
+            {
+                domClass.add("navBtnNext", "navBtnDisabled");
+                domClass.remove("navBtnPrevious", "navBtnDisabled");
+            }
+            else
+            {
+                domClass.remove("navBtnNext", "navBtnDisabled");
+                domClass.remove("navBtnPrevious", "navBtnDisabled");
+            }
+
+            if (eventsModel.cursor)
+            {
                 if (eventsModel.cursor.app == null||eventsModel.cursor.app == ''||eventsModel.cursor.app.toLowerCase() == 'unknown')
                 {
                     domStyle.set('editAppNameImg', 'display', '');
@@ -326,9 +313,47 @@ define([
                 {
                     domClass.remove('imgFlag', 'icoImgActive');
                 }
-
-                adjustAnnoCommentSize();
             }
+
+
+            if (loadingDetailData||loadingImage||deletingData)
+            {
+                domClass.add('td_shtCtrl_hideAnnotations', 'barIconDisabled');
+                domClass.add('td_shtCtrl_edit', 'barIconDisabled');
+                domClass.add('td_shtCtrl_remove', 'barIconDisabled');
+            }
+            else
+            {
+                domClass.remove('td_shtCtrl_hideAnnotations', 'barIconDisabled');
+                domClass.remove('td_shtCtrl_edit', 'barIconDisabled');
+                domClass.remove('td_shtCtrl_remove', 'barIconDisabled');
+
+                if (creatorIsMe())
+                {
+                    domStyle.set('td_shtCtrl_edit', 'display', '');
+                    domStyle.set('td_shtCtrl_remove', 'display', '');
+                }
+                else
+                {
+                    domStyle.set('td_shtCtrl_edit', 'display', 'none');
+                    domStyle.set('td_shtCtrl_remove', 'display', 'none');
+                }
+            }
+        };
+
+        var creatorIsMe = function()
+        {
+            if (!eventsModel.cursor) return false;
+
+            var creator = eventsModel.cursor.author;
+            var currentUserInfo = annoUtil.getCurrentUserInfo();
+
+            if (creator ==currentUserInfo.userid||creator ==currentUserInfo.email||creator ==currentUserInfo.nickname)
+            {
+                return true;
+            }
+
+            return false;
         };
 
         var applyAnnoLevelColor = function(level)
@@ -351,36 +376,6 @@ define([
 
         var adjustAnnoCommentSize = function()
         {
-            var annoContainer = dom.byId('annoCommentsContainer');
-            var parentBox = domGeom.getMarginBox("headingDetail");
-            var viewPoint = win.getBox();
-            var h = (viewPoint.h-6);
-
-            domStyle.set("annoCommentsContainer", "height", (h-76-66-30-trayBarHeight)+"px");
-            if (annoContainer.scrollHeight > annoContainer.clientHeight)
-            {
-                domStyle.set("annoCommentsContainer", "height", (h-76-66-30-trayBarHeight)+"px");
-                domStyle.set("trayPlaceHolder", "height", "0px");
-            }
-            else
-            {
-                domStyle.set("annoCommentsContainer", "height", 'auto');
-                var th = domStyle.get("textDataAreaContainer", "height");
-                var h = domStyle.get("annoCommentsContainer", "height");
-
-                domStyle.set("trayPlaceHolder", "height", (th-h-106 - 22)+"px");
-            }
-
-            var ach = domGeom.getMarginBox("annoCommentsSet");
-            if ((ach.h +parentBox.h+72) > (viewPoint.h-800))
-            {
-                domStyle.set("lightCoverScreenshot", "height", (ach.h +parentBox.h+72+800)+"px");
-            }
-        };
-
-        var adjustNavBarSize = function ()
-        {
-
         };
 
         var adjustNavBarZIndex = function()
@@ -396,7 +391,11 @@ define([
                     loadDetailData(currentIndex+1);
                     goingNextRecord = true;
                 }, 50);
+
+                return true;
             }
+
+            return false;
         };
 
         var goPreviousRecord = function()
@@ -407,55 +406,90 @@ define([
                     loadDetailData(currentIndex-1);
                     goingNextRecord = false;
                 }, 50);
+
+                return true;
             }
-        };
 
-        var showTextData = function()
-        {
-            if (textDataAreaShown) return;
-
-            domStyle.set("textDataAreaContainer", "display", "");
-            domClass.remove("navBtnScreenshot", "barIconHighlight");
-            domClass.add("navBtnTray", "barIconHighlight");
-
-            window.setTimeout(function(){
-                wipeIn({
-                    node:"textDataAreaContainer"
-                });
-            }, 100);
-
-            window.setTimeout(function(){
-                adjustAnnoCommentSize();
-                textDataAreaShown = true;
-                domStyle.set("bottomPlaceholder", "display", '');
-                domStyle.set("imgDetailScreenshot", "opacity", '0.4');
-
-            }, 600);
-
-            document.addEventListener("backbutton", handleBackButton, false);
+            return false;
         };
 
         var handleBackButton = function()
         {
-            hideTextData();
+            var dlg = registry.byId('dlg_common_confirm_message');
+
+            if (dlg)
+            {
+                document.removeEventListener("backbutton", handleBackButton, false);
+                dlg.hide();
+            }
+            else
+            {
+                document.removeEventListener("backbutton", handleBackButton, false);
+                history.back();
+            }
         };
 
-        var hideTextData = function()
+        var scrollToScreenshot = function()
         {
-            if (!textDataAreaShown) return;
+            var detailContentContainer = dom.byId('detailContentContainer');
 
-            domStyle.set("lightCoverScreenshot", "display", 'none');
-            domStyle.set("imgDetailScreenshot", "opacity", '1');
-            wipeOut({
-                node:"textDataAreaContainer"
+            if (scrollAnimateHandle)
+            {
+                connect.disconnect(scrollAnimateHandle);
+            }
+
+            if (detailContentContainer.parentNode.scrollTop <=0)
+            {
+                return;
+            }
+
+            detailContentContainer.style.webkitTransition = "all 0ms ease";
+            var st = detailContentContainer.parentNode.scrollTop;
+            detailContentContainer.parentNode.scrollTop = 0;
+            detailContentContainer.style.WebkitTransform = "translateY(-"+st+"px)";
+
+            window.setTimeout(function(){
+                scrollAnimateHandle = connect.connect(detailContentContainer, "webkitTransitionEnd", function ()
+                {
+                    detailContentContainer.parentNode.scrollTop = 0;
+                    detailContentContainer.style.webkitTransition = "none";
+                    detailContentContainer.style.WebkitTransform = "none";
+
+                    setAddCommentContainerState();
+                    setScreenshotTalkAreaState();
+                });
+
+                detailContentContainer.style.webkitTransition = "all 600ms ease";
+                detailContentContainer.style.WebkitTransform = "translateY(0px)";
+
+            }, 5);
+        };
+
+        var scrollToTalkArea = function()
+        {
+            var detailContentContainer = dom.byId('detailContentContainer');
+
+            if (scrollAnimateHandle)
+            {
+                connect.disconnect(scrollAnimateHandle);
+            }
+
+            scrollAnimateHandle = connect.connect(detailContentContainer, "webkitTransitionEnd", function ()
+            {
+                detailContentContainer.parentNode.scrollTop = imageHeight+44;
+                detailContentContainer.style.webkitTransition = "all 0ms ease";
+                detailContentContainer.style.WebkitTransform = "none";
+
+                setAddCommentContainerState();
             });
 
-            textDataAreaShown = false;
+            domStyle.set('addCommentContainer', 'display', 'none');
+            detailContentContainer.style.webkitTransition = "all 600ms ease";
+            var st = imageHeight+44-detailContentContainer.parentNode.scrollTop;
+            var max = detailContentContainer.parentNode.scrollHeight-detailContentContainer.parentNode.clientHeight-detailContentContainer.parentNode.scrollTop;
+            if (st > max) st = max;
 
-            domStyle.set("bottomPlaceholder", "display", 'none');
-            domClass.add("navBtnScreenshot", "barIconHighlight");
-            domClass.remove("navBtnTray", "barIconHighlight");
-            document.removeEventListener("backbutton", handleBackButton, false);
+            detailContentContainer.style.WebkitTransform = "translateY(-"+(st)+"px)";
         };
 
         var showAppNameTextBox = function()
@@ -554,6 +588,8 @@ define([
             if (loadingDetailData||loadingImage) return;
 
             loadingDetailData = true;
+            setControlsState();
+
             var previousAnno = eventsModel.cursor||eventsModel.model[0];
 
             if (previousAnno)
@@ -831,34 +867,6 @@ define([
             });
         };
 
-        var touchStartOnTrayScreen = function(e)
-        {
-            if( e.touches.length == 1 )
-            {
-                startX1 = e.touches[0].pageX;
-                startY1 = e.touches[0].pageY;
-            }
-        };
-
-        var touchMoveOnTrayScreen = function(e)
-        {
-            if( e.touches.length == 1 )
-            {
-                var endX1 = e.touches[0].pageX;
-                var endY1 = e.touches[0].pageY;
-
-                if (Math.abs(startX1-endX1) <10 &&(startY1-endY1)>=6)
-                {
-                    dojo.stopEvent(e);
-                    hideTextData();
-                }
-                else if (startY1 > endY1)
-                {
-                    dojo.stopEvent(e);
-                }
-            }
-        };
-
         var doSocialShare = function()
         {
             var id = eventsModel.cursor.id, annoText = eventsModel.cursor.annoText;
@@ -878,7 +886,252 @@ define([
                 annoUtil.annoPermaLinkBaseUrl+id);
         };
 
-        var startX, startY, startX1, startY1;
+        // screenshot controls
+        var toggleAnnotations = function()
+        {
+            if (showAnnotations)
+            {
+                showAnnotations = false;
+                dom.byId('td_shtCtrl_hideAnnotations').children[0].innerHTML = "show annotations";
+                surface.hide();
+            }
+            else
+            {
+                showAnnotations = true;
+                dom.byId('td_shtCtrl_hideAnnotations').children[0].innerHTML = "hide annotations";
+                surface.show();
+            }
+        };
+
+        var setScreenshotTalkAreaState = function()
+        {
+            var screenshotVisible = isScreenshotVisible();
+            if (screenshotVisible)
+            {
+                domClass.remove('navBtnScreenshot', 'barIconDisabled');
+            }
+            else
+            {
+                domClass.add('navBtnScreenshot', 'barIconDisabled');
+            }
+
+            if (isBottomPlaceHolderVisible()||!screenshotVisible)
+            {
+                domClass.remove('navBtnTray', 'barIconDisabled');
+                domClass.add('navBtnTray', 'barIconHighlight');
+            }
+            else
+            {
+                domClass.add('navBtnTray', 'barIconDisabled');
+                domClass.remove('navBtnTray', 'barIconHighlight');
+            }
+        };
+
+        var isVoteFlagContainerVisible = function()
+        {
+            var pos = domGeom.position(dom.byId('voteFlagContainer'));
+            var viewPoint = win.getBox();
+
+            if ((pos.y + 50) <= viewPoint.h)
+            {
+                return true;
+            }
+
+            return false;
+        };
+
+        var isBottomPlaceHolderVisible = function()
+        {
+            var pos = domGeom.position(dom.byId('detailBottomPlaceholder'));
+            var viewPoint = win.getBox();
+
+            if ((pos.y + 50) <= viewPoint.h)
+            {
+                return true;
+            }
+
+            return false;
+        };
+
+        var isScreenshotVisible = function()
+        {
+            var pos = domGeom.position(dom.byId('screenshotContainerDetail'));
+
+            if (pos.y >=0) return true;
+
+            if (Math.abs(pos.y) >= pos.h)
+            {
+                return false;
+            }
+
+            if ((Math.abs(pos.y)+50) <= pos.h)
+            {
+                return true;
+            }
+
+            return false;
+        };
+
+        var setAddCommentContainerState = function()
+        {
+            if (isVoteFlagContainerVisible())
+            {
+                domStyle.set('addCommentContainer', 'display', '');
+            }
+            else
+            {
+                domStyle.set('addCommentContainer', 'display', 'none');
+            }
+        };
+
+        var editAnnoItem = function()
+        {
+            clearEditRelatedStorage();
+            var annoItem = eventsModel.cursor;
+            var imageData = outputImage();
+
+            saveCurrentAnnoDataforEdit(annoItem, imageData);
+
+            cordova.exec(
+                function (result)
+                {
+                },
+                function (err)
+                {
+                },
+                "AnnoCordovaPlugin",
+                'start_edit_anno_draw',
+                []
+            );
+
+            checkEditAnnoResult();
+        };
+
+        var saveCurrentAnnoDataforEdit = function(annoItem, imageData)
+        {
+            var annoData = {
+                id: annoItem.id,
+                app: annoItem.app,
+                level: annoItem.level,
+                draw_elements: annoItem.draw_elements
+            };
+
+            window.localStorage.setItem(annoUtil.localStorageKeys.currentAnnoData, dojoJson.stringify(annoData));
+            window.localStorage.setItem(annoUtil.localStorageKeys.currentImageData, imageData);
+        };
+
+        var checkEditAnnoResult = function()
+        {
+            var editResult = window.localStorage.getItem(annoUtil.localStorageKeys.editAnnoDone);
+
+            if (editResult)
+            {
+                console.log("checkEditAnnoResult: "+editResult);
+
+                if (editResult == "done")
+                {
+                    console.log(window.localStorage.getItem(annoUtil.localStorageKeys.updatedAnnoData));
+                    var updatedAnnoData = dojoJson.parse(window.localStorage.getItem(annoUtil.localStorageKeys.updatedAnnoData));
+                    var currentAnno = eventsModel.cursor;
+
+                    currentAnno.set('app', updatedAnnoData.appName);
+                    currentAnno.set('annoText', updatedAnnoData.comment);
+                    currentAnno.set('draw_elements', updatedAnnoData.draw_elements);
+
+                    if (updatedAnnoData.image)
+                    {
+                        dom.byId('imgDetailScreenshot').src = updatedAnnoData.image;
+                    }
+
+                    redrawShapes();
+                }
+            }
+            else
+            {
+                window.setTimeout(checkEditAnnoResult, 500);
+            }
+        };
+
+        var clearEditRelatedStorage = function()
+        {
+            window.localStorage.removeItem(annoUtil.localStorageKeys.editAnnoDone);
+            window.localStorage.removeItem(annoUtil.localStorageKeys.updatedAnnoData);
+        };
+
+        var outputImage = function()
+        {
+            var hiddenCanvas = dom.byId('backgroundCanvas');
+            var imgScreenshot = dom.byId('imgDetailScreenshot');
+            hiddenCanvas.width = imgScreenshot.naturalWidth;
+            hiddenCanvas.height = imgScreenshot.naturalHeight;
+            var ctx = hiddenCanvas.getContext('2d');
+            ctx.drawImage(imgScreenshot, 0, 0, imgScreenshot.naturalWidth, imgScreenshot.naturalHeight);
+
+            var dataUrl = hiddenCanvas.toDataURL("image/png");
+            return dataUrl;
+        };
+
+        var deleteAnnoItem = function()
+        {
+            var annoId = eventsModel.cursor.id;
+            deletingData = true;
+            setControlsState();
+
+            annoUtil.showLoadingIndicator();
+            OAuthUtil.getAccessToken(function(){
+                annoUtil.loadAPI(annoUtil.API.anno, function(){
+                    var deleteAnnoApi = gapi.client.anno.anno.delete({id:annoId});
+                    console.log("start delete anno.");
+                    deleteAnnoApi.execute(function (data)
+                    {
+                        if (!data)
+                        {
+                            deletingData = false;
+                            annoUtil.hideLoadingIndicator();
+                            alert("response returned from server are empty.");
+                            setControlsState();
+                            return;
+                        }
+
+                        if (data.error)
+                        {
+                            deletingData = false;
+                            annoUtil.hideLoadingIndicator();
+
+                            console.error("An error occurred when calling anno.delete api: "+data.error.message);
+                            alert("An error occurred when calling anno.delete api: "+data.error.message);
+                            setControlsState();
+                            return;
+                        }
+
+                        console.log("delete anno succeeded.");
+                        deletingData = false;
+                        annoUtil.hideLoadingIndicator();
+
+                        eventsModel.model.splice(currentIndex, 1);
+
+                        if (eventsModel.model.length <=0)
+                        {
+                            // no available records, go back.
+                            history.back();
+                        }
+                        else if (currentIndex < eventsModel.model.length)
+                        {
+                            loadDetailData(currentIndex);
+                        }
+                        else
+                        {
+                            if (!goNextRecord())
+                            {
+                                goPreviousRecord();
+                            }
+                        }
+                    });
+                });
+            });
+        };
+
+        var startX, startY;
         return {
             // simple view init
             init:function ()
@@ -891,32 +1144,23 @@ define([
                     //adjustSize();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnNext'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnNext'), touch.release, function ()
                 {
-                    hideTextData();
                     goNextRecord();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnTray'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnTray'), touch.release, function ()
                 {
-                    if (textDataAreaShown)
-                    {
-                        hideTextData();
-                    }
-                    else
-                    {
-                        showTextData();
-                    }
+                    scrollToTalkArea();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnScreenshot'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnScreenshot'), touch.release, function ()
                 {
-                    hideTextData();
+                    scrollToScreenshot();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnPrevious'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnPrevious'), touch.release, function ()
                 {
-                    hideTextData();
                     goPreviousRecord();
                 }));
 
@@ -938,7 +1182,7 @@ define([
                     domStyle.set('editAppNameImg', 'display', '');
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdAddCommentImg'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('tdAddCommentImg'), touch.release, function ()
                 {
                     var text = dom.byId('addCommentTextBox').value.trim();
 
@@ -957,7 +1201,7 @@ define([
                     dom.byId('hiddenBtn').focus();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('imgThumbsUp'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('imgThumbsUp'), touch.release, function ()
                 {
                     if (domClass.contains('imgThumbsUp','icoImgActive'))
                     {
@@ -975,7 +1219,7 @@ define([
                     }
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('imgFlag'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('imgFlag'), touch.release, function ()
                 {
                     if (domClass.contains('imgFlag','icoImgActive'))
                     {
@@ -987,28 +1231,22 @@ define([
                     }
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('imgSocialSharing'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('imgSocialSharing'), touch.release, function ()
                 {
                     doSocialShare();
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "focus", function ()
                 {
-                    //domStyle.set('addCommentTextBox', {position:'relative', bottom:'340px'});
-                    var viewPoint = win.getBox();
                     window.setTimeout(function(){
-                        domStyle.set('modelApp_detail', 'height', (viewPoint.h+400)+'px');
-                        domStyle.set("lightCoverScreenshot", "display", '');
+                        dom.byId('addCommentTextBox').rows = "4";
                     }, 500);
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "blur", function ()
                 {
                     window.setTimeout(function(){
-                        var viewPoint = win.getBox();
-                        adjustAnnoCommentSize();
-                        domStyle.set('modelApp_detail', 'height', (viewPoint.h)+'px');
-                        domStyle.set("lightCoverScreenshot", "display", 'none');
+                        dom.byId('addCommentTextBox').rows = "1";
                     }, 500);
                 }));
 
@@ -1062,59 +1300,49 @@ define([
                         }
                     }
                 }));
-                _connectResults.push(connect.connect(dom.byId('imgDetailScreenshot'), "click", function (e)
-                {
-                    if (!textDataAreaShown)
-                        showTextData();
-                }));
-                _connectResults.push(connect.connect(dom.byId("gfxCanvasContainer"), "click", function (e)
-                {
-                    if (!textDataAreaShown)
-                        showTextData();
-                }));
 
-                _connectResults.push(connect.connect(dom.byId('bottomPlaceholder'), "touchstart", touchStartOnTrayScreen));
-
-                _connectResults.push(connect.connect(dom.byId('bottomPlaceholder'), "touchmove", touchMoveOnTrayScreen));
-
-                _connectResults.push(connect.connect(dom.byId('trayPlaceHolder'), "touchstart", touchStartOnTrayScreen));
-
-                _connectResults.push(connect.connect(dom.byId('trayPlaceHolder'), "touchmove", touchMoveOnTrayScreen));
-
-                _connectResults.push(connect.connect(dom.byId('trayBottomBar'), "touchstart", function(e)
-                {
-                    if( e.touches.length == 1 )
-                    {
-                        startX1 = e.touches[0].pageX;
-                        startY1 = e.touches[0].pageY;
-
-                        domStyle.set('trayBottomBarSpin', 'backgroundColor', annoUtil.level1Color);
-                    }
-                }));
-
-                _connectResults.push(connect.connect(dom.byId('trayBottomBar'), "touchend", function(e)
-                {
-                    domStyle.set('trayBottomBarSpin', 'backgroundColor', 'gray');
-                }));
-
-                _connectResults.push(connect.connect(dom.byId('trayBottomBar'), "touchmove", touchMoveOnTrayScreen));
-
-                _connectResults.push(connect.connect(dom.byId('editAppNameImg'), "click", function ()
+                _connectResults.push(connect.connect(dom.byId('editAppNameImg'), touch.release, function ()
                 {
                     showAppNameTextBox();
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('modelApp_detail'), "scroll", function (e)
                 {
-                    if (annoTooltipY == null) return;
-                    var parentScrollTop = dom.byId('modelApp_detail').scrollTop;
-
-                    domStyle.set(registry.byId('textTooltip').domNode, 'top', (annoTooltipY-parentScrollTop)+'px');
+                    setScreenshotTalkAreaState();
+                    setAddCommentContainerState();
                 }));
+
+                // screenshot controls
+                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_hideAnnotations'), touch.release, function ()
+                {
+                    if (domClass.contains('td_shtCtrl_hideAnnotations', 'barIconDisabled')) return;
+                    toggleAnnotations();
+                }));
+
+                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_edit'), touch.release, function ()
+                {
+                    if (domClass.contains('td_shtCtrl_edit', 'barIconDisabled')) return;
+                    editAnnoItem();
+                }));
+
+                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_remove'), touch.release, function ()
+                {
+                    if (domClass.contains('td_shtCtrl_remove', 'barIconDisabled')) return;
+
+                    document.addEventListener("backbutton", handleBackButton, false);
+                    annoUtil.showConfirmMessageDialog("This will delete the item and all followup discussion. Are you sure?", function(ret){
+                        document.removeEventListener("backbutton", handleBackButton, false);
+                        if (ret)
+                        {
+                            deleteAnnoItem();
+                        }
+                    });
+                }));
+
 
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;
                 dom.byId("imgDetailScreenshot").onerror = screenshotImageOnerror;
-                domStyle.set('modelApp_detail','backgroundColor', '#333333');
+                dom.byId("imgDetailScreenshot").crossOrigin = "anonymous";
 
                 // create surface
                 surface = new Surface({
@@ -1152,16 +1380,15 @@ define([
                 }
                 adjustSize();
 
-                textDataAreaShown = false;
                 domStyle.set("headingDetail", "display", '');
                 domClass.add("navBtnScreenshot", "barIconHighlight");
                 domClass.remove("navBtnTray", "barIconHighlight");
+                domClass.add("navBtnTray", "barIconDisabled");
+
+                dom.byId('detailContentContainer').parentNode.scrollTop = 0;
             },
             beforeDeactivate: function()
             {
-                domStyle.set('textDataAreaContainer', 'display', 'none');
-                domStyle.set("lightCoverScreenshot", "display", 'none');
-
                 domStyle.set("imgDetailScreenshot", "opacity", '1');
 
                 annoUtil.hideLoadingIndicator();
