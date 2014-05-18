@@ -1131,7 +1131,7 @@ define([
             });
         };
 
-        var startX, startY;
+        var startX, startY, commentTextBoxFocused = false;
         return {
             // simple view init
             init:function ()
@@ -1238,6 +1238,7 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "focus", function ()
                 {
+                    commentTextBoxFocused = true;
                     window.setTimeout(function(){
                         dom.byId('addCommentTextBox').rows = "4";
                     }, 500);
@@ -1245,6 +1246,7 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "blur", function ()
                 {
+                    commentTextBoxFocused = false;
                     window.setTimeout(function(){
                         dom.byId('addCommentTextBox').rows = "1";
                     }, 500);
@@ -1309,7 +1311,11 @@ define([
                 _connectResults.push(connect.connect(dom.byId('modelApp_detail'), "scroll", function (e)
                 {
                     setScreenshotTalkAreaState();
-                    setAddCommentContainerState();
+
+                    if (!commentTextBoxFocused)
+                    {
+                        setAddCommentContainerState();
+                    }
                 }));
 
                 // screenshot controls
