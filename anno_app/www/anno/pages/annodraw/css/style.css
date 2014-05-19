@@ -299,3 +299,22 @@ body{
     border-radius: 4px;
     -webkit-user-select: none;
 }
+
+.tabContainer
+{
+    margin-left: 10px;
+    margin-right: 10px;
+    padding-bottom: 4px;
+}
+
+.tabContainer td
+{
+    border: 1px solid gray;
+    padding-bottom: 4px;
+    padding-top: 2px;
+}
+
+.tabContainer .active
+{
+    color: #ff9900;
+}

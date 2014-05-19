@@ -10,12 +10,14 @@ define([
     "dijit/registry",
     "dojo/text!../../ChinaIpTable.json",
     "dojo/text!../../server-url.json",
+    "dojo/text!../../strings.json",
     "anno/common/DBUtil",
     "anno/common/GestureHandler"
-], function(declare, connect, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, ChinaIpTable, serverURLConfig, DBUtil, GestureHandler){
+], function(declare, connect, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, ChinaIpTable, serverURLConfig, stringsRes, DBUtil, GestureHandler){
 
     ChinaIpTable = dojoJson.parse(ChinaIpTable);
     serverURLConfig = dojoJson.parse(serverURLConfig);
+    stringsRes = dojoJson.parse(stringsRes);
     console.error("using server Url config:" + JSON.stringify(serverURLConfig));
     var util = {
         loadingIndicator:null,
@@ -760,6 +762,10 @@ define([
             var separator = ts.wordSeparator || "";
 
             return [words, suffix].join(separator);
+        },
+        getResourceString: function(key)
+        {
+            return stringsRes[key];
         }
     };
 
