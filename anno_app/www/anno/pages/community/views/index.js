@@ -973,6 +973,10 @@ define([
             {
                 eventsModel = this.loadedModels.events;
                 app = this.app;
+                app.inSearchMode = function()
+                {
+                    return inSearchMode;
+                };
 
                 _init();
             },

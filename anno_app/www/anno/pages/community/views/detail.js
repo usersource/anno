@@ -1366,18 +1366,29 @@ define([
                 loadingImage = false;
 
                 var cursor = this.params["cursor"];
-                if (this.params["cursor"] != null)
+                if (cursor != null)
                 {
                     var source = this.params["source"];
                     if (source == "mystuff")
                     {
                         eventsModel = this.loadedModels.mystuff;
                         registry.byId("mvcGroupDetail").set('target',at(this.loadedModels.mystuff, 'cursor'));
+
+                        dom.byId('detailPageName').innerHTML = "Activity";
                     }
                     else
                     {
                         eventsModel = this.loadedModels.events;
                         registry.byId("mvcGroupDetail").set('target',at(this.loadedModels.events, 'cursor'));
+
+                        if (this.app.inSearchMode())
+                        {
+                            dom.byId('detailPageName').innerHTML = "Search";
+                        }
+                        else
+                        {
+                            dom.byId('detailPageName').innerHTML = "Explore";
+                        }
                     }
 
                     window.setTimeout(function(){
