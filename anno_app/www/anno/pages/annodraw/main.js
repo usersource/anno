@@ -833,7 +833,7 @@ require([
         if (DBUtil.userChecked)
         {
             var authResult = OAuthUtil.isAuthorized();
-            if (annoUtil.hasConnection()&&!authResult.authorized)
+            if (annoUtil.hasConnection()&&!annoUtil.isRunningAsPlugin()&&!authResult.authorized)
             {
                 OAuthUtil.openAuthPage("annodraw");
                 return;
@@ -977,10 +977,8 @@ require([
         DBUtil.initDB(function(){
             console.error("DB is readay!");
             annoUtil.readSettings(function(){
-
+                init();
             });
         });
     }, false);
-
-    ready(init);
 });
