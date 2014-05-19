@@ -706,6 +706,10 @@ define([
         {
             return device.platform == "Android";
         },
+        isRunningAsPlugin: function()
+        {
+            return this.getSettings().appKey != null;
+        },
         getTimeAgoString: function(s)
         {
             // translate timestamp string to "N minutes/hours/days/months ago" format
