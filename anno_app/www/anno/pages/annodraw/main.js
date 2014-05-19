@@ -23,7 +23,7 @@ require([
         shareDialogGap = 80,
         borderWidth;
 
-    var sdTitleHeight = 60,
+    var sdTitleHeight = 60, sdTabBarHeight = 30,
         sdBottom = 50, barHeight = 50, totalSpace = 0;
 
     var lastShapePos;
@@ -118,106 +118,12 @@ require([
         }
     });
 
-    var openShareDialog = function()
-    {
-        adjustShareDialogSize();
-        registry.byId('shareDialog').show();
-        // disable JS gesture listener, enable native gesture listener
-        annoUtil.disableJSGesture();
-        annoUtil.enableNativeGesture();
-
-        if (!appNameListFetched)
-        {
-            cordova.exec(
-                function (result)
-                {
-                    if (result&&result.length>0)
-                    {
-                        fillAppNameList(result);
-                    }
-
-                    appNameListFetched = true;
-                },
-                function (err)
-                {
-                    alert(err.message);
-                },
-                "AnnoCordovaPlugin",
-                'get_recent_applist',
-                [10]
-            );
-        }
-    };
-
     connect.connect(dom.byId("barBlackRectangle"), touch.release, function()
     {
         if (domClass.contains(dom.byId("barBlackRectangle"), 'barIconInactive')) return;
 
         createBlackRectangle();
     });
-
-    var fillAppNameList = function(appList)
-    {
-        var content = "";
-        for (var i= 0,c=appList.length;i<c;i++)
-        {
-            if (i == 0)
-            {
-                content = content + '<div class="appNameItem firstAppNameItem"><div class="appNameValue">'+appList[i]+'</div></div>'
-            }
-            else
-            {
-                content = content + '<div class="appNameItem"><div class="appNameValue">'+appList[i]+'</div></div>'
-            }
-        }
-
-        dom.byId('sdAppListContent').innerHTML = content;
-    };
-
-    var updateLastShapePos = function(shapeType)
-    {
-        if (shapeType == "ArrowLine")
-        {
-            lastShapePos.y1+= 50;
-            lastShapePos.y2+= 50;
-        }
-        else if (shapeType == "Rectangle")
-        {
-            lastShapePos.y1+= defaultShapeHeight+50;
-            lastShapePos.y2+= defaultShapeHeight+50;
-        }
-
-        if (lastShapePos.y1 >= (viewPoint.h-barHeight)||lastShapePos.y2 >= (viewPoint.h-barHeight))
-        {
-            lastShapePos.y1 = 100+defaultShapeHeight;
-            lastShapePos.y2 = 100;
-        }
-    };
-
-    var toLeft = false;
-    var updateLastBlackRectanglePos = function()
-    {
-        if (toLeft)
-        {
-            lastBlackRectanglePos.x1-= 100;
-            lastBlackRectanglePos.y1+= defaultShapeHeight+50;
-            lastBlackRectanglePos.y2+= defaultShapeHeight+50;
-        }
-        else
-        {
-            lastBlackRectanglePos.x1+= 100;
-            lastBlackRectanglePos.y1+= defaultShapeHeight+50;
-            lastBlackRectanglePos.y2+= defaultShapeHeight+50;
-        }
-
-        if (lastBlackRectanglePos.y1 >= (viewPoint.h-barHeight)||lastBlackRectanglePos.y2 >= (viewPoint.h-barHeight))
-        {
-            lastBlackRectanglePos.y1 = 100+defaultShapeHeight;
-            lastBlackRectanglePos.y2 = 100;
-        }
-
-        toLeft = !toLeft;
-    };
 
     // handle app name list click event
     connect.connect(dom.byId("sdAppList"), 'click', function(e)
@@ -307,13 +213,183 @@ require([
             },
             function (err)
             {
-                alert(err.message);
+                // alert(err.message);
+                annoUtil.showMessageDialog(err.message);
             },
             "AnnoCordovaPlugin",
             action,
             []
         );
     });
+
+    // app tabs
+    connect.connect(dom.byId("barRecentApps"), 'click', function(e)
+    {
+        if (domClass.contains(dom.byId('barRecentApps').parentNode, 'active'))
+        {
+            return;
+        }
+
+        domClass.add(dom.byId('barRecentApps').parentNode, 'active');
+        domClass.remove(dom.byId('barAllApps').parentNode);
+        domClass.remove(dom.byId('barElseApps').parentNode);
+
+        domStyle.set('sdAllAppsListContent', 'display', 'none');
+        domStyle.set('sdElseAppListContent', 'display', 'none');
+        domStyle.set('sdRecentAppsListContent', 'display', '');
+    });
+
+    connect.connect(dom.byId("barAllApps"), 'click', function(e)
+    {
+        if (domClass.contains(dom.byId('barAllApps').parentNode, 'active'))
+        {
+            return;
+        }
+
+        domClass.add(dom.byId('barAllApps').parentNode, 'active');
+        domClass.remove(dom.byId('barRecentApps').parentNode);
+        domClass.remove(dom.byId('barElseApps').parentNode);
+
+        domStyle.set('sdRecentAppsListContent', 'display', 'none');
+        domStyle.set('sdElseAppListContent', 'display', 'none');
+        domStyle.set('sdAllAppsListContent', 'display', '');
+    });
+
+    connect.connect(dom.byId("barElseApps"), 'click', function(e)
+    {
+        if (domClass.contains(dom.byId('barElseApps').parentNode, 'active'))
+        {
+            return;
+        }
+
+        domClass.add(dom.byId('barElseApps').parentNode, 'active');
+        domClass.remove(dom.byId('barRecentApps').parentNode);
+        domClass.remove(dom.byId('barAllApps').parentNode);
+
+        domStyle.set('sdRecentAppsListContent', 'display', 'none');
+        domStyle.set('sdAllAppsListContent', 'display', 'none');
+        domStyle.set('sdElseAppListContent', 'display', '');
+    });
+
+    var openShareDialog = function()
+    {
+        adjustShareDialogSize();
+        registry.byId('shareDialog').show();
+        // disable JS gesture listener, enable native gesture listener
+        annoUtil.disableJSGesture();
+        annoUtil.enableNativeGesture();
+
+        if (!appNameListFetched)
+        {
+            cordova.exec(
+                function (result)
+                {
+                    if (result&&result.length>0)
+                    {
+                        fillAppNameList(result, true);
+                    }
+
+                    appNameListFetched = true;
+                },
+                function (err)
+                {
+                    alert(err.message);
+                },
+                "AnnoCordovaPlugin",
+                'get_recent_applist',
+                [10]
+            );
+
+            cordova.exec(
+                function (result)
+                {
+                    if (result&&result.length>0)
+                    {
+                        appNameList = result;
+                        fillAppNameList(result, false);
+                        appNameListFetched = true;
+                    }
+                },
+                function (err)
+                {
+                    alert(err.message);
+                },
+                "AnnoCordovaPlugin",
+                'get_installed_app_list',
+                []
+            );
+        }
+    };
+
+    var fillAppNameList = function(appList, recentApp)
+    {
+        var content = "";
+        for (var i= 0,c=appList.length;i<c;i++)
+        {
+            if (recentApp)
+            {
+                content = content + '<div class="appNameItem"><div class="appNameValue">'+appList[i]+'</div></div>'
+            }
+            else
+            {
+                content = content + '<div class="appNameItem"><div class="appNameValue">'+appList[i].name+'</div></div>'
+            }
+        }
+
+        if (recentApp)
+        {
+            dom.byId('sdRecentAppsListContent').innerHTML = content;
+        }
+        else
+        {
+            dom.byId('sdAllAppsListContent').innerHTML = content;
+        }
+    };
+
+    var updateLastShapePos = function(shapeType)
+    {
+        if (shapeType == "ArrowLine")
+        {
+            lastShapePos.y1+= 50;
+            lastShapePos.y2+= 50;
+        }
+        else if (shapeType == "Rectangle")
+        {
+            lastShapePos.y1+= defaultShapeHeight+50;
+            lastShapePos.y2+= defaultShapeHeight+50;
+        }
+
+        if (lastShapePos.y1 >= (viewPoint.h-barHeight)||lastShapePos.y2 >= (viewPoint.h-barHeight))
+        {
+            lastShapePos.y1 = 100+defaultShapeHeight;
+            lastShapePos.y2 = 100;
+        }
+    };
+
+    var toLeft = false;
+    var updateLastBlackRectanglePos = function()
+    {
+        if (toLeft)
+        {
+            lastBlackRectanglePos.x1-= 100;
+            lastBlackRectanglePos.y1+= defaultShapeHeight+50;
+            lastBlackRectanglePos.y2+= defaultShapeHeight+50;
+        }
+        else
+        {
+            lastBlackRectanglePos.x1+= 100;
+            lastBlackRectanglePos.y1+= defaultShapeHeight+50;
+            lastBlackRectanglePos.y2+= defaultShapeHeight+50;
+        }
+
+        if (lastBlackRectanglePos.y1 >= (viewPoint.h-barHeight)||lastBlackRectanglePos.y2 >= (viewPoint.h-barHeight))
+        {
+            lastBlackRectanglePos.y1 = 100+defaultShapeHeight;
+            lastBlackRectanglePos.y2 = 100;
+        }
+
+        toLeft = !toLeft;
+    };
 
     var createBlackRectangle = function()
     {
@@ -479,7 +555,8 @@ require([
                 },
                 function (err)
                 {
-                    alert(err.message);
+                    // alert(err.message);
+                    annoUtil.showMessageDialog(err.message);
                 },
                 "AnnoCordovaPlugin",
                 'get_screenshot_path',
@@ -549,7 +626,8 @@ require([
 
         if (commentText.length <=0)
         {
-            alert("Please enter suggestion.");
+            // alert("Please enter suggestion.");
+            annoUtil.showMessageDialog("Please enter suggestion.");
             return;
         }
 
@@ -595,7 +673,8 @@ require([
             },
             function (err)
             {
-                alert(err.message);
+                // alert(err.message);
+                annoUtil.showMessageDialog(err.message);
             },
             "AnnoCordovaPlugin",
             'process_image_and_appinfo',
@@ -654,7 +733,8 @@ require([
             },
             function (err)
             {
-                alert(err.message);
+                // alert(err.message);
+                annoUtil.showMessageDialog(err.message);
             },
             "AnnoCordovaPlugin",
             'process_image_and_appinfo',
@@ -916,7 +996,7 @@ require([
                     });
 
                     domStyle.set('sdTitle', 'height', sdTitleHeight+'px');
-                    domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-sdBottom-shareDialogGap)+'px');
+                    domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-sdTabBarHeight-sdBottom-shareDialogGap)+'px');
                     domStyle.set('sdBottom', 'height', sdBottom+'px');
 
                     // reposition the menus dialog
@@ -943,6 +1023,10 @@ require([
             // enable JS gesture listener, disable native gesture
             annoUtil.enableJSGesture();
             annoUtil.disableNativeGesture();
+
+            // set the pick list dialog title
+            dom.byId('sdTitle').children[0].innerHTML = annoUtil.getResourceString("title_app_pick_list");
+            dom.byId('appOsName').innerHTML = annoUtil.isIOS()?"iOS":"Android";
         }
         else
         {

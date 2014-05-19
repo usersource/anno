@@ -49,6 +49,7 @@ define([
         var imageBaseUrl = annoUtil.getCEAPIConfig().imageServiceURL;
         var surface;
         var imageWidth, imageHeight;
+        var tiniestImageData = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=";
 
         var adjustSize = function()
         {
@@ -151,7 +152,13 @@ define([
 
         var redrawShapes = function()
         {
-            var drawElements = eventsModel.cursor.draw_elements;
+            // don't draw annotations when imageWidth or imageHeight is undefined or zero
+        	if (!imageWidth || !imageHeight) return;
+
+        	// don't draw annotations when imgDetailScreenshot's src is tiniestImageData
+            if (dom.byId('imgDetailScreenshot').src === tiniestImageData) return;
+
+        	var drawElements = eventsModel.cursor.draw_elements;
             var lineStrokeStyle = {color: eventsModel.cursor.level==1?annoUtil.level1Color:annoUtil.level2Color, width: 3};
             if (drawElements)
             {
@@ -388,6 +395,8 @@ define([
             if ( (currentIndex+1)< eventsModel.model.length)
             {
                 window.setTimeout(function(){
+                	surface.clear();
+                	surface.hide();
                     loadDetailData(currentIndex+1);
                     goingNextRecord = true;
                 }, 50);
@@ -403,6 +412,8 @@ define([
             if ( (currentIndex-1)>=0)
             {
                 window.setTimeout(function(){
+                	surface.clear();
+                	surface.hide();
                     loadDetailData(currentIndex-1);
                     goingNextRecord = false;
                 }, 50);
@@ -543,7 +554,8 @@ define([
                             domStyle.set('lightCover', 'display', 'none');
                             domStyle.set('editAppNameImg', 'display', '');
 
-                            alert("Update app name returned from server is empty.");
+                            // alert("Update app name returned from server is empty.");
+                            annoUtil.showToastDialog("Update app name returned from server is empty.");
                         }
 
                         if (data.error)
@@ -557,7 +569,8 @@ define([
                             domStyle.set('lightCover', 'display', 'none');
                             domStyle.set('editAppNameImg', 'display', '');
 
-                            alert(data.message);
+                            // alert(data.message);
+                            annoUtil.showMessageDialog(data.message);
                             return;
                         }
                         console.error(JSON.stringify(data.result));
@@ -583,6 +596,17 @@ define([
             dom.byId('imgDetailScreenshot').src = localScreenshotPath+"/"+currentAnno.screenshot_key;
         };
 
+        /**
+         * Make detail screenshot as null.
+         * For this, setting src of imgDetailScreenshot as tiniestImageData
+         * and clearing all annotations.
+         */
+        var setDetailScreenshotNull = function() {
+        	dom.byId('imgDetailScreenshot').src = tiniestImageData;
+        	surface.clear();
+        	surface.hide();
+        };
+
         var loadDetailData = function(cursor)
         {
             if (loadingDetailData||loadingImage) return;
@@ -592,9 +616,9 @@ define([
 
             var previousAnno = eventsModel.cursor||eventsModel.model[0];
 
-            if (previousAnno)
-            {
-                previousAnno.set('screenshot', "data:image/png;base64,");
+            if (previousAnno) {
+                // showing tiniest gif image instead of empty image data
+            	previousAnno.set('screenshot', tiniestImageData);
             }
 
             eventsModel.set("cursorIndex", cursor);
@@ -638,7 +662,8 @@ define([
                         {
                             annoUtil.hideLoadingIndicator();
                             loadingDetailData = false;
-                            alert("Items returned from server are empty.");
+                            // alert("Items returned from server are empty.");
+                            annoUtil.showToastDialog("Items returned from server are empty.");
                             return;
                         }
 
@@ -647,7 +672,8 @@ define([
                             annoUtil.hideLoadingIndicator();
                             loadingDetailData = false;
 
-                            alert("An error occurred when calling anno.get api: "+data.error.message);
+                            // alert("An error occurred when calling anno.get api: "+data.error.message);
+                            annoUtil.showMessageDialog("An error occurred when calling anno.get api: "+data.error.message);
                             return;
                         }
                         console.error(JSON.stringify(data.result));
@@ -712,14 +738,16 @@ define([
                         if (!data)
                         {
                             annoUtil.hideLoadingIndicator();
-                            alert("Items returned from server are empty.");
+                            // alert("Items returned from server are empty.");
+                            annoUtil.showToastDialog("Items returned from server are empty.");
                             return;
                         }
 
                         if (data.error)
                         {
                             annoUtil.hideLoadingIndicator();
-                            alert("An error occurred when calling anno.get api: "+data.error.message);
+                            // alert("An error occurred when calling anno.get api: "+data.error.message);
+                            annoUtil.showMessageDialog("An error occurred when calling anno.get api: "+data.error.message);
                             return;
                         }
                         console.error(JSON.stringify(data.result));
@@ -770,7 +798,8 @@ define([
                         if (!data)
                         {
                             annoUtil.hideLoadingIndicator();
-                            alert("vote api result returned from server are empty.");
+                            // alert("vote api result returned from server are empty.");
+                            annoUtil.showToastDialog("Vote api result returned from server are empty.");
                             savingVote = false;
                             return;
                         }
@@ -778,8 +807,8 @@ define([
                         if (data.error)
                         {
                             annoUtil.hideLoadingIndicator();
-
-                            alert("An error occurred when calling "+apiName+" api: "+data.error.message);
+                            // alert("An error occurred when calling "+apiName+" api: "+data.error.message);
+                            annoUtil.showMessageDialog("An error occurred when calling "+apiName+" api: "+data.error.message);
                             savingVote = false;
                             return;
                         }
@@ -837,7 +866,8 @@ define([
                         if (!data)
                         {
                             annoUtil.hideLoadingIndicator();
-                            alert("vote api result returned from server are empty.");
+                            // alert("vote api result returned from server are empty.");
+                            annoUtil.showToastDialog("vote api result returned from server are empty.");
                             savingFlag = false;
                             return;
                         }
@@ -845,8 +875,8 @@ define([
                         if (data.error)
                         {
                             annoUtil.hideLoadingIndicator();
-
-                            alert("An error occurred when calling "+apiName+" api: "+data.error.message);
+                            // alert("An error occurred when calling "+apiName+" api: "+data.error.message);
+                            annoUtil.showMessageDialog("An error occurred when calling "+apiName+" api: "+data.error.message);
                             savingFlag = false;
                             return;
                         }
@@ -1188,7 +1218,8 @@ define([
 
                     if (!text)
                     {
-                        alert('Please enter comment.');
+                        // alert('Please enter comment.');
+                        annoUtil.showMessageDialog('Please enter comment.');
                         dom.byId('addCommentTextBox').focus();
                         return;
                     }
@@ -1260,7 +1291,8 @@ define([
 
                         if (!text)
                         {
-                            alert('Please enter comment.');
+                            // alert('Please enter comment.');
+                            annoUtil.showMessageDialog('Please enter comment.');
                             dom.byId('addCommentTextBox').focus();
                             return;
                         }
@@ -1345,6 +1377,12 @@ define([
                     });
                 }));
 
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnBackScreenshot'), "click", function (e) {
+                	history.back();
+                	// calling setDetailScreenshotNull after 300ms so that imgDetailScreenshot will
+                	// not clear out before going back to community page
+                	window.setTimeout(setDetailScreenshotNull, 400);
+                }));
 
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;
                 dom.byId("imgDetailScreenshot").onerror = screenshotImageOnerror;
@@ -1366,18 +1404,29 @@ define([
                 loadingImage = false;
 
                 var cursor = this.params["cursor"];
-                if (this.params["cursor"] != null)
+                if (cursor != null)
                 {
                     var source = this.params["source"];
                     if (source == "mystuff")
                     {
                         eventsModel = this.loadedModels.mystuff;
                         registry.byId("mvcGroupDetail").set('target',at(this.loadedModels.mystuff, 'cursor'));
+
+                        dom.byId('detailPageName').innerHTML = "Activity";
                     }
                     else
                     {
                         eventsModel = this.loadedModels.events;
                         registry.byId("mvcGroupDetail").set('target',at(this.loadedModels.events, 'cursor'));
+
+                        if (this.app.inSearchMode())
+                        {
+                            dom.byId('detailPageName').innerHTML = "Search";
+                        }
+                        else
+                        {
+                            dom.byId('detailPageName').innerHTML = "Explore";
+                        }
                     }
 
                     window.setTimeout(function(){

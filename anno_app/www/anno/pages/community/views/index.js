@@ -49,7 +49,7 @@ define([
             "annoText": "0",
             "app": "0",
             "author": "0",
-            "screenshot":"",
+            "screenshot":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=",
             circleX: 0,
             circleY:0,
             level:1,
@@ -126,7 +126,8 @@ define([
                     hideStartRefreshMessage();
 
                     domStyle.set('noSearchResultContainer', 'display', 'none');
-                    alert("Items returned from server are empty.");
+                    // alert("Items returned from server are empty.");
+                    annoUtil.showToastDialog("Items returned from server are empty.");
                     return;
                 }
 
@@ -140,7 +141,8 @@ define([
                     hideStartRefreshMessage();
 
                     domStyle.set('noSearchResultContainer', 'display', 'none');
-                    alert("An error occurred when calling anno."+(search?"search":"list")+" api: "+data.error.message);
+                    // alert("An error occurred when calling anno."+(search?"search":"list")+" api: "+data.error.message);
+                    annoUtil.showMessageDialog("An error occurred when calling anno."+(search?"search":"list")+" api: "+data.error.message);
                     return;
                 }
 
@@ -278,7 +280,8 @@ define([
                 },
                 function (err)
                 {
-                    alert(err);
+                    // alert(err);
+                    annoUtil.showMessageDialog(err);
                 },
                 "AnnoCordovaPlugin",
                 'exit_current_activity',
@@ -398,7 +401,8 @@ define([
                     },
                     function (err)
                     {
-                        alert(err.message);
+                        // alert(err.message);
+                        annoUtil.showMessageDialog(err.message);
                     },
                     "AnnoCordovaPlugin",
                     'get_installed_app_list',
@@ -973,6 +977,10 @@ define([
             {
                 eventsModel = this.loadedModels.events;
                 app = this.app;
+                app.inSearchMode = function()
+                {
+                    return inSearchMode;
+                };
 
                 _init();
             },

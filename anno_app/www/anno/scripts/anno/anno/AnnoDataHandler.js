@@ -171,7 +171,8 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                                 }
                                 else
                                 {
-                                    alert("response returned from server are empty.");
+                                    // alert("response returned from server are empty.");
+                                    annoUtil.showToastDialog("Response returned from server are empty.");
                                 }
 
                                 if (callback)
@@ -193,7 +194,8 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                                 }
                                 else
                                 {
-                                    alert("An error occurred when calling anno.insert api: "+data.error.message);
+                                    // alert("An error occurred when calling anno.insert api: "+data.error.message);
+                                    annoUtil.showMessageDialog("An error occurred when calling anno.insert api: " + data.error.message);
                                 }
 
                                 if (callback)
@@ -626,9 +628,6 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
 
                     if (synchedState == 0)
                     {
-                        var createdTime = new Date(parseInt(item.created));
-                        var formattedCreatedTime = createdTime.getFullYear()+'-'+(createdTime.getMonth()+1)+'-'+createdTime.getDate()+"T"+createdTime.getHours()+":"+createdTime.getMinutes()+":"+createdTime.getSeconds();
-
                         console.error('startBackgroundSync annos: '+JSON.stringify(item));
                         annoItem = {
                             "anno_text":item.comment,
@@ -645,8 +644,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                             "os_version":item.os_version,
                             "anno_type":item.anno_type,
                             "screenshot_is_anonymized":item.draw_is_anonymized==1,
-                            "draw_elements":item.draw_elements,
-                            "created":formattedCreatedTime
+                            "draw_elements":item.draw_elements
                         };
 
                         annoUtil.getAnnoScreenshotPath(function(scPath){

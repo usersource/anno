@@ -267,7 +267,6 @@ public class AnnoCordovaPlugin extends CordovaPlugin
       return true;
     }
 
-
     return false;
   }
 

@@ -117,15 +117,19 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
  This method show alertView instead of toast as toast doesn't exit in iOS
  */
 - (void) show_toast:(CDVInvokedUrlCommand*)command {
-    NSString* message = [command.arguments objectAtIndex:0];
+    NSString *message = [command.arguments objectAtIndex:0];
+    NSString *title = [command.arguments objectAtIndex:1];
 
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:annoUtils.PROJECT_NAME
-                                                        message:message
-                                                       delegate:self
-                                              cancelButtonTitle:@"Ok"
-                                              otherButtonTitles:nil];
+    if ([title isEqualToString:@""]) {
+        title = annoUtils.PROJECT_NAME;
+    }
 
-    [alertView show];
+    [[[UIAlertView alloc] initWithTitle:title
+                                message:message
+                               delegate:self
+                      cancelButtonTitle:@"Ok"
+                      otherButtonTitles:nil] show];
+
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }

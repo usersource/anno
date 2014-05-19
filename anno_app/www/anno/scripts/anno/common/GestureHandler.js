@@ -158,7 +158,8 @@ define([], function ()
                             },
                             function (err)
                             {
-                                alert(err);
+                                // alert(err);
+                                // annoUtil.showMessageDialog(err);
                             },
                             "AnnoCordovaPlugin",
                             'trigger_create_anno',
