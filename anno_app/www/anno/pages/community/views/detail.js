@@ -555,7 +555,7 @@ define([
                             domStyle.set('editAppNameImg', 'display', '');
 
                             // alert("Update app name returned from server is empty.");
-                            annoUtil.showMessageDialog("Update app name returned from server is empty.");
+                            annoUtil.showToastDialog("Update app name returned from server is empty.");
                         }
 
                         if (data.error)
@@ -663,7 +663,7 @@ define([
                             annoUtil.hideLoadingIndicator();
                             loadingDetailData = false;
                             // alert("Items returned from server are empty.");
-                            annoUtil.showMessageDialog("Items returned from server are empty.");
+                            annoUtil.showToastDialog("Items returned from server are empty.");
                             return;
                         }
 
@@ -739,7 +739,7 @@ define([
                         {
                             annoUtil.hideLoadingIndicator();
                             // alert("Items returned from server are empty.");
-                            annoUtil.showMessageDialog("Items returned from server are empty.");
+                            annoUtil.showToastDialog("Items returned from server are empty.");
                             return;
                         }
 
@@ -799,7 +799,7 @@ define([
                         {
                             annoUtil.hideLoadingIndicator();
                             // alert("vote api result returned from server are empty.");
-                            annoUtil.showMessageDialog("Vote api result returned from server are empty.");
+                            annoUtil.showToastDialog("Vote api result returned from server are empty.");
                             savingVote = false;
                             return;
                         }
@@ -867,7 +867,7 @@ define([
                         {
                             annoUtil.hideLoadingIndicator();
                             // alert("vote api result returned from server are empty.");
-                            annoUtil.showMessageDialog("vote api result returned from server are empty.");
+                            annoUtil.showToastDialog("vote api result returned from server are empty.");
                             savingFlag = false;
                             return;
                         }

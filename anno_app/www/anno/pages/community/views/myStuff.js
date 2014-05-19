@@ -50,7 +50,7 @@ define([
                             {
                                 Util.hideLoadingIndicator();
                                 // alert("Items returned from server are empty.");
-                                Util.showMessageDialog("Items returned from server are empty.");
+                                Util.showToastDialog("Items returned from server are empty.");
                             }
 
                             if (data.error)

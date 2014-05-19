@@ -127,7 +127,7 @@ define([
 
                     domStyle.set('noSearchResultContainer', 'display', 'none');
                     // alert("Items returned from server are empty.");
-                    annoUtil.showMessageDialog("Items returned from server are empty.");
+                    annoUtil.showToastDialog("Items returned from server are empty.");
                     return;
                 }
 

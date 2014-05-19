@@ -172,7 +172,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                                 else
                                 {
                                     // alert("response returned from server are empty.");
-                                    annoUtil.showMessageDialog("Response returned from server are empty.");
+                                    annoUtil.showToastDialog("Response returned from server are empty.");
                                 }
 
                                 if (callback)
