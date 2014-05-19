@@ -342,6 +342,32 @@ define([
             domStyle.set(dlg.domNode, {"text-align" : "center"});
             domStyle.set(dlg.containerNode.firstChild, {"margin" : "0 0 3px 0"});
         },
+        showToastDialog: function (message, timeOut) {
+            var dlg = registry.byId('dlg_common_toast');
+
+            if (timeOut === undefined) {
+                timeOut = 2000;
+            }
+
+            if (!dlg) {
+                dlg = new (declare([SimpleDialog, _ContentPaneMixin]))({
+                    id : "dlg_common_toast",
+                    content : '<div id="div_cancel_common_toast_message" class="mblSimpleDialogText">' + message + '</div>'
+                });
+                dlg.startup();
+            } else {
+                document.getElementById("div_cancel_common_toast_message").innerHTML = message;
+            }
+
+            domStyle.set(dlg._cover[0], { "height" : "100%", top : "0px" });
+            domStyle.set(dlg.domNode, { "text-align" : "center" });
+            domStyle.set(dlg.containerNode.firstChild, { "margin" : "0 0 3px 0" });
+            dlg.show();
+
+            setTimeout(function() {
+                registry.byId('dlg_common_toast').hide();
+            }, timeOut);
+        },
         showConfirmMessageDialog: function (message, callback)
         {
             var dlg = registry.byId('dlg_common_confirm_message');
