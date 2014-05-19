@@ -369,7 +369,8 @@ define([
                         },
                         function (err)
                         {
-                            alert(err);
+                            // alert(err);
+                            annoUtil.showMessageDialog(err);
                         },
                         "AnnoCordovaPlugin",
                         'close_softkeyboard',

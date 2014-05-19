@@ -10,9 +10,10 @@ define([
     "dojox/gesture/tap",
     "dojox/gfx",
     "dojox/gfx/move",
-    "./BaseShape"
+    "./BaseShape",
+    "anno/common/Util"
 ],
-    function (declare, connect, lang, dom, domConstruct, domStyle, dojoMoveable, touch, tap, gfx, gfxMove, BaseShape)
+    function (declare, connect, lang, dom, domConstruct, domStyle, dojoMoveable, touch, tap, gfx, gfxMove, BaseShape, annoUtil)
     {
         /**
          * @author David Lee
@@ -238,7 +239,8 @@ define([
                         },
                         function (err)
                         {
-                            alert(err);
+                            // alert(err);
+                            annoUtil.showMessageDialog(err);
                         },
                         "AnnoCordovaPlugin",
                         'close_softkeyboard',
