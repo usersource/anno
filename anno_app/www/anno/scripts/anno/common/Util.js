@@ -10,12 +10,14 @@ define([
     "dijit/registry",
     "dojo/text!../../ChinaIpTable.json",
     "dojo/text!../../server-url.json",
+    "dojo/text!../../strings.json",
     "anno/common/DBUtil",
     "anno/common/GestureHandler"
-], function(declare, connect, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, ChinaIpTable, serverURLConfig, DBUtil, GestureHandler){
+], function(declare, connect, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, ChinaIpTable, serverURLConfig, stringsRes, DBUtil, GestureHandler){
 
     ChinaIpTable = dojoJson.parse(ChinaIpTable);
     serverURLConfig = dojoJson.parse(serverURLConfig);
+    stringsRes = dojoJson.parse(stringsRes);
     console.error("using server Url config:" + JSON.stringify(serverURLConfig));
     var util = {
         loadingIndicator:null,
@@ -58,6 +60,12 @@ define([
             years: "%d years",
             wordSeparator: " ",
             numbers: []
+        },
+        localStorageKeys:{
+            editAnnoDone: "editAnnoDone",
+            updatedAnnoData: "updatedAnnoData",
+            currentAnnoData: "currentAnnoData",
+            currentImageData: "currentImageData"
         },
         hasConnection: function()
         {
@@ -134,7 +142,7 @@ define([
                 }, function(e) {
                     console.error(JSON.stringify(e));
                     // alert(JSON.stringify(e));
-                    annoUtil.showAlertDialog(JSON.stringify(e));
+                    annoUtil.showMessageDialog(JSON.stringify(e));
                 });}
         },
         showLoadingIndicator: function ()
@@ -204,7 +212,7 @@ define([
                 function (err)
                 {
                     // alert(err);
-                    annoUtil.showAlertDialog(err);
+                    annoUtil.showMessageDialog(err);
                 },
                 "AnnoCordovaPlugin",
                 'start_activity',
@@ -236,7 +244,7 @@ define([
                 function (err)
                 {
                     // alert(err);
-                    annoUtil.showAlertDialog(err);
+                    annoUtil.showMessageDialog(err);
                 },
                 "AnnoCordovaPlugin",
                 'get_anno_screenshot_path',
@@ -332,6 +340,49 @@ define([
             dlg.show();
             domStyle.set(dlg._cover[0], {"height": "100%", top:"0px"});
         },
+        showConfirmMessageDialog: function (message, callback)
+        {
+            var dlg = registry.byId('dlg_common_confirm_message');
+
+            if (!dlg)
+            {
+                dlg = new (declare([SimpleDialog, _ContentPaneMixin]))({
+                    id: "dlg_common_confirm_message",
+                    content: '' +
+                        '<div id="div_cancel_confirm_message_message" class="mblSimpleDialogText">' + message + '</div>' +
+                        '<div style="text-align: center"><button id="btn_ok_confirm_message" class="btn">OK</button><button id="btn_cancel_confirm_message" class="btn">Cancel</button></div>'
+                });
+                dlg.startup();
+
+                connect.connect(document.getElementById('btn_cancel_confirm_message'), 'click', function ()
+                {
+                    registry.byId('dlg_common_confirm_message').hide();
+
+                    if (dlg._callback)
+                    {
+                        dlg._callback(false);
+                    }
+                });
+
+                connect.connect(document.getElementById('btn_ok_confirm_message'), 'click', function ()
+                {
+                    registry.byId('dlg_common_confirm_message').hide();
+
+                    if (dlg._callback)
+                    {
+                        dlg._callback(true);
+                    }
+                });
+            }
+            else
+            {
+                document.getElementById("div_cancel_confirm_message_message").innerHTML = message;
+            }
+
+            dlg._callback = callback;
+            dlg.show();
+            domStyle.set(dlg._cover[0], {"height": "100%", top:"0px"});
+        },
         showSoftKeyboard: function(activityName)
         {
             if (window.cordova&&cordova.exec)
@@ -350,7 +401,7 @@ define([
                     function (err)
                     {
                         // alert(err);
-                        annoUtil.showAlertDialog(err);
+                        annoUtil.showMessageDialog(err);
                     },
                     "AnnoCordovaPlugin",
                     'show_softkeyboard',
@@ -462,7 +513,7 @@ define([
                         else
                         {
                             // alert('Load '+apiId+" API failed, "+res.error.message);
-                            annoUtil.showAlertDialog('Load '+apiId+" API failed, "+res.error.message);
+                            annoUtil.showMessageDialog('Load '+apiId+" API failed, "+res.error.message);
                             self.hideLoadingIndicator();
                         }
                     }
@@ -531,7 +582,7 @@ define([
                 {
                     self.hideLoadingIndicator();
                     // alert("getting IP Address from myipis service failed: "+res);
-                    annoUtil.showAlertDialog("getting IP Address from myipis service failed: "+res);
+                    annoUtil.showMessageDialog("getting IP Address from myipis service failed: "+res);
                     navigator.app.exitApp();
                 });
         },
@@ -602,7 +653,7 @@ define([
                     function (err)
                     {
                         // alert(err);
-                        annoUtil.showAlertDialog(err);
+                        annoUtil.showMessageDialog(err);
                     },
                     "AnnoCordovaPlugin",
                     'trigger_create_anno',
@@ -630,7 +681,7 @@ define([
                     function (err)
                     {
                         // alert(err);
-                        annoUtil.showAlertDialog(err);
+                        annoUtil.showMessageDialog(err);
                     },
                     "AnnoCordovaPlugin",
                     'enable_native_gesture_listener',
@@ -650,7 +701,7 @@ define([
                     function (err)
                     {
                         // alert(err);
-                        annoUtil.showAlertDialog(err);
+                        annoUtil.showMessageDialog(err);
                     },
                     "AnnoCordovaPlugin",
                     'enable_native_gesture_listener',
@@ -665,6 +716,10 @@ define([
         isAndroid: function()
         {
             return device.platform == "Android";
+        },
+        isRunningAsPlugin: function()
+        {
+            return this.getSettings().appKey != null;
         },
         getTimeAgoString: function(s)
         {
@@ -708,19 +763,9 @@ define([
 
             return [words, suffix].join(separator);
         },
-        showAlertDialog: function(msg, title) {
-            var msgTitle = "";
-
-            if (title !== undefined) {
-                msgTitle = title;
-            }
-
-            cordova.exec(
-                function (data) {},
-                function (err) {},
-                "AnnoCordovaPlugin", 'show_alert_dialog',
-                [msg, msgTitle]
-            );
+        getResourceString: function(key)
+        {
+            return stringsRes[key];
         }
     };
 

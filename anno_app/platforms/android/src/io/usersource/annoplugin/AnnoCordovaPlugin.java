@@ -2,9 +2,7 @@ package io.usersource.annoplugin;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -15,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -25,6 +24,7 @@ import io.usersource.anno.OptionFeedbackActivity;
 import io.usersource.annoplugin.utils.*;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,7 +59,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
   public static final String ENABLE_NATIVE_GESTURE_LISTENER = "enable_native_gesture_listener";
   public static final String TRIGGER_CREATE_ANNO = "trigger_create_anno";
   public static final String START_ANNO_DRAW = "start_anno_draw";
-  public static final String SHOW_ALERT_DIALOG = "show_alert_dialog";
+  public static final String START_EDIT_ANNO_DRAW = "start_edit_anno_draw";
 
   // activity names
   public static final String ACTIVITY_INTRO = "Intro";
@@ -95,7 +95,14 @@ public class AnnoCordovaPlugin extends CordovaPlugin
     }
     else if (GET_SCREENSHOT_PATH.equals(action)) {
       AnnoDrawActivity annoDrawActivity = (AnnoDrawActivity)this.cordova.getActivity();
-      callbackContext.success(annoDrawActivity.getScreenshotPath()+"|"+annoDrawActivity.getLevel()+"|"+AnnoUtils.isAnno(annoDrawActivity.getPackageName()));
+      JSONObject jo = new JSONObject();
+
+      jo.put("screenshotPath", annoDrawActivity.getScreenshotPath());
+      jo.put("level", annoDrawActivity.getLevel());
+      jo.put("isAnno", AnnoUtils.isAnno(annoDrawActivity.getPackageName()));
+      jo.put("editMode", annoDrawActivity.isEditMode());
+
+      callbackContext.success(jo);
       return true;
     }
     else if (GET_ANNO_SCREENSHOT_PATH.equals(action)) {
@@ -235,8 +242,6 @@ public class AnnoCordovaPlugin extends CordovaPlugin
       intent.setClassName(packageName,
               "io.usersource.anno.AnnoDrawActivity");
       intent.setType("image/*");
-      // set this flag for FeedbackEditActivity to know it's practice.
-      File imageFile = new File(imageURI);
       Uri imageUri = Uri.parse(imageURI);
       intent.putExtra(Intent.EXTRA_STREAM, imageUri);
       intent.putExtra(AnnoUtils.LEVEL, 0);
@@ -245,25 +250,21 @@ public class AnnoCordovaPlugin extends CordovaPlugin
 
       return true;
     }
-    else if (SHOW_ALERT_DIALOG.equals(action))
+    else if (START_EDIT_ANNO_DRAW.equals(action))
     {
-		String message = args.getString(0);
-		String title = args.getString(1);
-		Activity activity = this.cordova.getActivity();
+      Activity activity = this.cordova.getActivity();
 
-		if (title.equals("")) {
-			title = AnnoUtils.PROJECT_NAME;
-		}
+      String packageName = activity.getPackageName();
 
-		DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-			}
-		};
+      Intent intent = new Intent(Intent.ACTION_SEND);
+      intent.setClassName(packageName,
+              "io.usersource.anno.AnnoDrawActivity");
+      intent.setType("image/*");
+      intent.putExtra(AnnoUtils.EDIT_ANNO_MODE, true);
 
-		new AlertDialog.Builder(activity).setTitle(title)
-				.setMessage(message)
-				.setNeutralButton(android.R.string.ok, listener).show();
+      activity.startActivity(intent);
+
+      return true;
     }
 
     return false;
@@ -419,7 +420,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
     AnnoUtils.mkdirs(annoDrawActivity, screenshotDirPath);
     //checkEnoughSpace(bitmap.getByteCount());
 
-    String imageKey = generateUniqueImageKey();
+    String imageKey = AnnoUtils.generateUniqueImageKey();
     FileOutputStream out = new FileOutputStream(new File(screenshotDirPath,
             imageKey));
 
@@ -441,11 +442,6 @@ public class AnnoCordovaPlugin extends CordovaPlugin
     jso.put("screenshotPath", screenshotDirPath);
 
     return jso;
-  }
-
-  private String generateUniqueImageKey()
-  {
-    return UUID.randomUUID().toString();
   }
 
   /**

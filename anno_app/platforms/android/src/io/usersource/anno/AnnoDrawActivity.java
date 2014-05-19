@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.gesture.GestureOverlayView;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.webkit.ConsoleMessage;
@@ -25,6 +27,7 @@ import java.io.*;
 public class AnnoDrawActivity extends DroidGap
 {
   private boolean isPractice;
+  private boolean editMode;
   private int level;
   private String screenshotPath;
 
@@ -59,26 +62,6 @@ public class AnnoDrawActivity extends DroidGap
     level = intent.getIntExtra(AnnoUtils.LEVEL, 0);
 
     handleIntent();
-
-    WebView myWebView = this.appView;
-    myWebView.setWebChromeClient(new WebChromeClient() {
-      public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-        onConsoleMessage(consoleMessage.message(), consoleMessage.lineNumber(),
-                consoleMessage.sourceId());
-
-        if (consoleMessage.messageLevel() == ConsoleMessage.MessageLevel.ERROR)
-        {
-          if (AnnoUtils.debugEnabled) {
-            Log.e("Anno", consoleMessage.message() + " -- line "
-                  + consoleMessage.lineNumber() + " of "
-                  + consoleMessage.sourceId());
-          }
-        }
-
-        return false;
-      }
-
-    });
   }
 
   public int getLevel() {
@@ -90,14 +73,25 @@ public class AnnoDrawActivity extends DroidGap
     return this.appView;
   }
 
-  private void handleIntent() {
+  private void handleIntent()
+  {
     Intent intent = getIntent();
     String action = intent.getAction();
     String type = intent.getType();
 
-    if (Intent.ACTION_SEND.equals(action) && type != null) {
-      if (type.startsWith("image/")) {
-        handleFromShareImage(intent);
+    if (Intent.ACTION_SEND.equals(action) && type != null)
+    {
+      if (type.startsWith("image/"))
+      {
+        if (intent.getBooleanExtra(AnnoUtils.EDIT_ANNO_MODE, false))
+        {
+          this.editMode = true;
+        }
+        else
+        {
+          this.editMode = false;
+          handleFromShareImage(intent);
+        }
       }
     }
   }
@@ -111,9 +105,6 @@ public class AnnoDrawActivity extends DroidGap
 
     if (AnnoUtils.debugEnabled) {
       Log.d(TAG, "current level:" + this.level);
-    }
-    if (this.level == 2) {
-      // todo red color
     }
 
     Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
@@ -155,5 +146,10 @@ public class AnnoDrawActivity extends DroidGap
   public String getScreenshotPath()
   {
     return screenshotPath;
+  }
+
+  public boolean isEditMode()
+  {
+    return editMode;
   }
 }

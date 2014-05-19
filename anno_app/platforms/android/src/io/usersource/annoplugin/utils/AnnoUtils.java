@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.UUID;
 
 /**
  * Anno Util class
@@ -62,6 +63,7 @@ public class AnnoUtils
   public static final String SCREENSHOT_TIME_FORMAT = "yyyy-MM-dd-kk-mm-ss";
   public static final String PNG_SUFFIX = ".png";
   public static final String LEVEL = "level";
+  public static final String EDIT_ANNO_MODE = "edit_anno_mode";
   public static final String FAIL_CREATE_DIRECTORY = "Create directory %s failed.";
   public static final String ERROR_TITILE = "Error";
 
@@ -85,11 +87,6 @@ public class AnnoUtils
    * Image Orientation constants - landscape.
    */
   public static final String IMAGE_ORIENTATION_LANDSCAPE = "landscape";
-
-  /**
-   * Project Name
-   */
-  public static final String PROJECT_NAME = "UserSource";
 
   /**
    * Enable taking screenshot by certain gesture.
@@ -499,5 +496,14 @@ public class AnnoUtils
    */
   private static boolean isMediaDocument(Uri uri) {
     return "com.android.providers.media.documents".equals(uri.getAuthority());
+  }
+
+  /**
+   * generate Unique Image Key
+   * @return String
+   */
+  public static String generateUniqueImageKey()
+  {
+    return UUID.randomUUID().toString();
   }
 }

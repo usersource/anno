@@ -50,14 +50,14 @@ define([
                             {
                                 Util.hideLoadingIndicator();
                                 // alert("Items returned from server are empty.");
-                                annoUtil.showAlertDialog("Items returned from server are empty.");
+                                Util.showMessageDialog("Items returned from server are empty.");
                             }
 
                             if (data.error)
                             {
                                 Util.hideLoadingIndicator();
                                 // alert("An error occurred when calling anno.mystuff api: "+data.error.message);
-                                annoUtil.showAlertDialog("An error occurred when calling anno.mystuff api: "+data.error.message);
+                                Util.showMessageDialog("An error occurred when calling anno.mystuff api: " + data.error.message);
                             }
 
                             var annoList = [];

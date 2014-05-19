@@ -22,7 +22,6 @@ extern AppDelegate *appDelegate;
 
 - (void) exit_current_activity:(CDVInvokedUrlCommand*)command;
 - (void) show_toast:(CDVInvokedUrlCommand*)command;
-- (void) show_alert_dialog:(CDVInvokedUrlCommand*)command;
 - (void) goto_anno_home:(CDVInvokedUrlCommand*)command;
 - (void) start_activity:(CDVInvokedUrlCommand*)command;
 - (void) process_image_and_appinfo:(CDVInvokedUrlCommand*)command;

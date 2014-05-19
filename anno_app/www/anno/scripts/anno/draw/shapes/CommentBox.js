@@ -370,7 +370,7 @@ define([
                         function (err)
                         {
                             // alert(err);
-                            annoUtil.showAlertDialog(err);
+                            annoUtil.showMessageDialog(err);
                         },
                         "AnnoCordovaPlugin",
                         'close_softkeyboard',
