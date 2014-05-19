@@ -346,7 +346,7 @@ define([
             var dlg = registry.byId('dlg_common_toast');
 
             if (timeOut === undefined) {
-                timeOut = 2000;
+                timeOut = 5000;
             }
 
             if (!dlg) {
@@ -359,10 +359,10 @@ define([
                 document.getElementById("div_cancel_common_toast_message").innerHTML = message;
             }
 
-            domStyle.set(dlg._cover[0], { "height" : "100%", top : "0px" });
-            domStyle.set(dlg.domNode, { "text-align" : "center" });
-            domStyle.set(dlg.containerNode.firstChild, { "margin" : "0 0 3px 0" });
             dlg.show();
+            domStyle.set(dlg._cover[0], { "height" : "100%", "top" : "0" });
+            domStyle.set(dlg.domNode, { "text-align" : "center", "top" : "initial", "bottom" : "50px" });
+            domStyle.set(dlg.containerNode.firstChild, { "margin" : "0" });
 
             setTimeout(function() {
                 registry.byId('dlg_common_toast').hide();
