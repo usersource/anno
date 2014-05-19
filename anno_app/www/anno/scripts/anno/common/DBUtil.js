@@ -9,7 +9,7 @@ define([
     {
         console.error(JSON.stringify(err));
         // alert(JSON.stringify(err));
-        annoUtil.showAlertDialog(JSON.stringify(err));
+        // annoUtil.showMessageDialog(JSON.stringify(err));
     };
 
     var dbUtil = {

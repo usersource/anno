@@ -141,7 +141,7 @@ require([
                 function (err)
                 {
                     //alert(err.message);
-                    annoUtil.showAlertDialog(err.message);
+                    annoUtil.showMessageDialog(err.message);
                 },
                 "AnnoCordovaPlugin",
                 'get_recent_applist',
@@ -309,7 +309,7 @@ require([
             function (err)
             {
                 // alert(err.message);
-                annoUtil.showAlertDialog(err.message);
+                annoUtil.showMessageDialog(err.message);
             },
             "AnnoCordovaPlugin",
             action,
@@ -482,7 +482,7 @@ require([
                 function (err)
                 {
                     // alert(err.message);
-                    annoUtil.showAlertDialog(err.message);
+                    annoUtil.showMessageDialog(err.message);
                 },
                 "AnnoCordovaPlugin",
                 'get_screenshot_path',
@@ -553,7 +553,7 @@ require([
         if (commentText.length <=0)
         {
             // alert("Please enter suggestion.");
-            annoUtil.showAlertDialog("Please enter suggestion.");
+            annoUtil.showMessageDialog("Please enter suggestion.");
             return;
         }
 
@@ -600,7 +600,7 @@ require([
             function (err)
             {
                 // alert(err.message);
-                annoUtil.showAlertDialog(err.message);
+                annoUtil.showMessageDialog(err.message);
             },
             "AnnoCordovaPlugin",
             'process_image_and_appinfo',
@@ -660,7 +660,7 @@ require([
             function (err)
             {
                 // alert(err.message);
-                annoUtil.showAlertDialog(err.message);
+                annoUtil.showMessageDialog(err.message);
             },
             "AnnoCordovaPlugin",
             'process_image_and_appinfo',

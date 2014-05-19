@@ -134,10 +134,6 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void) show_alert_dialog:(CDVInvokedUrlCommand*)command {
-    [self show_toast:command];
-}
-
 /*!
  This method show community page.
  This send callback result as success.
