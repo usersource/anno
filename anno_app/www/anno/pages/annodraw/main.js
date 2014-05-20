@@ -294,7 +294,8 @@ require([
                 },
                 function (err)
                 {
-                    alert(err.message);
+                    // alert(err.message);
+                    annoUtil.showMessageDialog(err.message);
                 },
                 "AnnoCordovaPlugin",
                 'get_recent_applist',
@@ -313,7 +314,8 @@ require([
                 },
                 function (err)
                 {
-                    alert(err.message);
+                    // alert(err.message);
+                    annoUtil.showMessageDialog(err.message);
                 },
                 "AnnoCordovaPlugin",
                 'get_installed_app_list',
@@ -808,7 +810,8 @@ require([
                 },
                 function (err)
                 {
-                    alert(err.message);
+                    // alert(err.message);
+                    annoUtil.showMessageDialog(err.message);
                 },
                 "AnnoCordovaPlugin",
                 'process_image_and_appinfo',

@@ -1118,7 +1118,8 @@ define([
                         {
                             deletingData = false;
                             annoUtil.hideLoadingIndicator();
-                            alert("response returned from server are empty.");
+                            // alert("response returned from server are empty.");
+                            annoUtil.showToastDialog("response returned from server are empty.");
                             setControlsState();
                             return;
                         }
@@ -1129,7 +1130,8 @@ define([
                             annoUtil.hideLoadingIndicator();
 
                             console.error("An error occurred when calling anno.delete api: "+data.error.message);
-                            alert("An error occurred when calling anno.delete api: "+data.error.message);
+                            // alert("An error occurred when calling anno.delete api: "+data.error.message);
+                            annoUtil.showMessageDialog("An error occurred when calling anno.delete api: "+data.error.message);
                             setControlsState();
                             return;
                         }
