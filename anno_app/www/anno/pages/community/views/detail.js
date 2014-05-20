@@ -602,9 +602,9 @@ define([
          * and clearing all annotations.
          */
         var setDetailScreenshotNull = function() {
-        	dom.byId('imgDetailScreenshot').src = tiniestImageData;
-        	surface.clear();
-        	surface.hide();
+            surface.clear();
+            surface.hide();
+            dom.byId('imgDetailScreenshot').src = tiniestImageData;
         };
 
         var loadDetailData = function(cursor)
@@ -1379,13 +1379,6 @@ define([
                     });
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnBackScreenshot'), "click", function (e) {
-                	history.back();
-                	// calling setDetailScreenshotNull after 300ms so that imgDetailScreenshot will
-                	// not clear out before going back to community page
-                	window.setTimeout(setDetailScreenshotNull, 400);
-                }));
-
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;
                 dom.byId("imgDetailScreenshot").onerror = screenshotImageOnerror;
                 dom.byId("imgDetailScreenshot").crossOrigin = "anonymous";
@@ -1447,11 +1440,11 @@ define([
             beforeDeactivate: function()
             {
                 domStyle.set("imgDetailScreenshot", "opacity", '1');
-
                 annoUtil.hideLoadingIndicator();
 
-                surface.clear();
-                surface.hide();
+                // calling setDetailScreenshotNull after 300ms so that imgDetailScreenshot will
+                // not clear out before going back to community page
+                setTimeout(setDetailScreenshotNull, 310);
             },
             destroy:function ()
             {
