@@ -90,7 +90,7 @@ define([
                                 eventData.level = localAnnos[i].level;
                                 eventData.draw_elements = localAnnos[i].draw_elements||"";
                                 eventData.comments = [];
-                                eventData.created = Util.getTimeAgoString(localAnnos[i].created);
+                                eventData.created = Util.getTimeAgoString(parseInt(localAnnos[i].created));
 
                                 spliceArgs.push(new getStateful(eventData));
                             }
