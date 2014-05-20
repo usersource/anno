@@ -3,6 +3,7 @@ require([
     "dojo/_base/connect",
     "dojo/dom",
     "dojo/dom-class",
+    "dojo/dom-geometry",
     "dojo/dom-style",
     "dojo/json",
     "dojo/query",
@@ -15,7 +16,7 @@ require([
     "anno/common/OAuthUtil",
     "anno/anno/AnnoDataHandler",
     "dojo/domReady!"
-], function (Surface, connect, dom, domClass, domStyle, dojoJson, query, ready, touch, win, registry, DBUtil, annoUtil, OAuthUtil, AnnoDataHandler)
+], function (Surface, connect, dom, domClass, domGeom, domStyle, dojoJson, query, ready, touch, win, registry, DBUtil, annoUtil, OAuthUtil, AnnoDataHandler)
 {
     var viewPoint,
         defaultShapeWidth = 160,
@@ -317,6 +318,15 @@ require([
                 'get_installed_app_list',
                 []
             );
+        }
+
+        var tabBox = domGeom.getMarginBox('tabContainer');
+        domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-tabBox.h-sdBottom-shareDialogGap)+'px');
+
+        if (annoUtil.isIOS())
+        {
+            // highlight 'something else' tab on iOS
+            dom.byId('barElseApps').click();
         }
     };
 
