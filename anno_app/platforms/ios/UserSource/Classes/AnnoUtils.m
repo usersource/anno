@@ -244,4 +244,8 @@
     }
 }
 
+- (NSString*) generateUniqueImageKey {
+    return (NSString*)CFBridgingRelease(CFUUIDCreateString(NULL, CFUUIDCreate(NULL)));
+}
+
 @end

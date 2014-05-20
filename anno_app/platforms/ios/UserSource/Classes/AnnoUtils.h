@@ -21,6 +21,7 @@
 - (UIImage*) takeScreenshot;
 - (void) displayError:(NSString*)message;
 - (void) triggerCreateAnno:(UIViewController*)viewController;
+- (NSString*) generateUniqueImageKey;
 
 @property NSString *ANNO_SOURCE_PLUGIN;
 @property NSString *ANNO_SOURCE_STANDALONE;

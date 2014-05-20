@@ -73,7 +73,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
     }
 }
 
-+ (void) showAnnoDraw:(NSString*)imageURI levelValue:(int)levelValue {
++ (void) showAnnoDraw:(NSString*)imageURI levelValue:(int)levelValue editModeValue:(BOOL)editModeValue {
     if (annoDrawViewController == nil) {
         #if __has_feature(objc_arc)
             annoDrawViewController = [[AnnoDrawViewController alloc] init];
@@ -83,7 +83,10 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
         
         [appDelegate.window addSubview:annoDrawViewController.view];
         currentViewController = annoDrawViewController;
-        [AnnoDrawViewController handleFromShareImage:imageURI levelValue:levelValue isPracticeValue:false];
+        [AnnoDrawViewController handleFromShareImage:imageURI
+                                          levelValue:levelValue
+                                     isPracticeValue:false
+                                       editModeValue:editModeValue];
     } else {
         [appDelegate.viewController presentViewController:annoDrawViewController animated:YES completion:nil];
     }
@@ -118,10 +121,10 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
  */
 - (void) show_toast:(CDVInvokedUrlCommand*)command {
     NSString *message = [command.arguments objectAtIndex:0];
-    NSString *title = [command.arguments objectAtIndex:1];
+    NSString *title = annoUtils.PROJECT_NAME;
 
-    if ([title isEqualToString:@""]) {
-        title = annoUtils.PROJECT_NAME;
+    if ([command.arguments count] > 1) {
+        title = [command.arguments objectAtIndex:1];
     }
 
     [[[UIAlertView alloc] initWithTitle:title
@@ -186,27 +189,44 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
  This send callback result as success.
  */
 - (void) start_anno_draw:(CDVInvokedUrlCommand*)command {
-    NSString *payload = nil;
     NSString *imageURI = [command.arguments objectAtIndex:0];
 
     @try {
-        [AnnoCordovaPlugin showAnnoDraw:imageURI levelValue:0];
+        [AnnoCordovaPlugin showAnnoDraw:imageURI levelValue:0 editModeValue:FALSE];
     }
     @catch (NSException *exception) {
         NSLog(@"Exception in start_anno_draw: %@", exception);
     }
 
-    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) start_edit_anno_draw:(CDVInvokedUrlCommand*)command {
+    @try {
+        [AnnoCordovaPlugin showAnnoDraw:@"" levelValue:0 editModeValue:TRUE];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception in start_anno_draw: %@", exception);
+    }
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) get_screenshot_path:(CDVInvokedUrlCommand*)command {
-    NSString *screenshotPath = [AnnoDrawViewController getScreenshotPath];
     NSString *level = [NSString stringWithFormat:@"%d", [AnnoDrawViewController getLevel]];
     NSString *isAnno = [annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] ? @"true" : @"false";
-    NSString *payload = [NSString stringWithFormat:@"%@|%@|%@", screenshotPath, level, isAnno];
 
-    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
+    NSDictionary *jsonData = @{
+        @"screenshotPath" : [AnnoDrawViewController getScreenshotPath],
+        @"level" : level,
+        @"isAnno" : isAnno,
+        @"editMode" : [NSNumber numberWithBool:[AnnoDrawViewController isEditMode]]
+    };
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                      messageAsString:(NSString*)jsonData];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
@@ -247,7 +267,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
     NSString *screenshotDirPath = [appLocation stringByAppendingPathComponent:screenshotDirName];
     [annoUtils mkdirs:screenshotDirPath];
     
-    NSString *imageKey = [self generateUniqueImageKey];
+    NSString *imageKey = [annoUtils generateUniqueImageKey];
     NSData *imageData;
     
     if ([base64Str length] > 0) {
@@ -264,10 +284,6 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
                                           attributes:nil];
 
     return @{@"imageKey" : imageKey, @"screenshotPath" : screenshotDirPath};
-}
-
-- (NSString*) generateUniqueImageKey {
-    return (NSString*)CFBridgingRelease(CFUUIDCreateString(NULL, CFUUIDCreate(NULL)));
 }
 
 - (NSDictionary*) getAppInfo {

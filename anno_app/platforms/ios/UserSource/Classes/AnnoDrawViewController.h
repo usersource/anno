@@ -11,10 +11,15 @@
 
 @interface AnnoDrawViewController : CDVViewController
 
-+ (void) handleFromShareImage:(NSString *)imageURI levelValue:(int)levelValue isPracticeValue:(BOOL)isPracticeValue;
++ (void) handleFromShareImage:(NSString *)imageURI
+                   levelValue:(int)levelValue
+              isPracticeValue:(BOOL)isPracticeValue
+                editModeValue:(BOOL)editModeValue;
 + (NSString*) getScreenshotPath;
 + (int) getLevel;
++ (BOOL) isEditMode;
 + (void) setLevel:(int)levelValue;
++ (void) setEditMode:(BOOL)editModeValue;
 
 @end
 
