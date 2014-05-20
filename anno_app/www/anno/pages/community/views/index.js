@@ -49,7 +49,7 @@ define([
             "annoText": "0",
             "app": "0",
             "author": "0",
-            "screenshot":"0",
+            "screenshot":"",
             circleX: 0,
             circleY:0,
             level:1,

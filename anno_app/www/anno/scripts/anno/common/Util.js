@@ -10,12 +10,14 @@ define([
     "dijit/registry",
     "dojo/text!../../ChinaIpTable.json",
     "dojo/text!../../server-url.json",
+    "dojo/text!../../strings.json",
     "anno/common/DBUtil",
     "anno/common/GestureHandler"
-], function(declare, connect, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, ChinaIpTable, serverURLConfig, DBUtil, GestureHandler){
+], function(declare, connect, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, ChinaIpTable, serverURLConfig, stringsRes, DBUtil, GestureHandler){
 
     ChinaIpTable = dojoJson.parse(ChinaIpTable);
     serverURLConfig = dojoJson.parse(serverURLConfig);
+    stringsRes = dojoJson.parse(stringsRes);
     console.error("using server Url config:" + JSON.stringify(serverURLConfig));
     var util = {
         loadingIndicator:null,
@@ -58,6 +60,12 @@ define([
             years: "%d years",
             wordSeparator: " ",
             numbers: []
+        },
+        localStorageKeys:{
+            editAnnoDone: "editAnnoDone",
+            updatedAnnoData: "updatedAnnoData",
+            currentAnnoData: "currentAnnoData",
+            currentImageData: "currentImageData"
         },
         hasConnection: function()
         {
@@ -323,6 +331,49 @@ define([
             else
             {
                 document.getElementById("div_cancel_common_message_message").innerHTML = message;
+            }
+
+            dlg._callback = callback;
+            dlg.show();
+            domStyle.set(dlg._cover[0], {"height": "100%", top:"0px"});
+        },
+        showConfirmMessageDialog: function (message, callback)
+        {
+            var dlg = registry.byId('dlg_common_confirm_message');
+
+            if (!dlg)
+            {
+                dlg = new (declare([SimpleDialog, _ContentPaneMixin]))({
+                    id: "dlg_common_confirm_message",
+                    content: '' +
+                        '<div id="div_cancel_confirm_message_message" class="mblSimpleDialogText">' + message + '</div>' +
+                        '<div style="text-align: center"><button id="btn_ok_confirm_message" class="btn">OK</button><button id="btn_cancel_confirm_message" class="btn">Cancel</button></div>'
+                });
+                dlg.startup();
+
+                connect.connect(document.getElementById('btn_cancel_confirm_message'), 'click', function ()
+                {
+                    registry.byId('dlg_common_confirm_message').hide();
+
+                    if (dlg._callback)
+                    {
+                        dlg._callback(false);
+                    }
+                });
+
+                connect.connect(document.getElementById('btn_ok_confirm_message'), 'click', function ()
+                {
+                    registry.byId('dlg_common_confirm_message').hide();
+
+                    if (dlg._callback)
+                    {
+                        dlg._callback(true);
+                    }
+                });
+            }
+            else
+            {
+                document.getElementById("div_cancel_confirm_message_message").innerHTML = message;
             }
 
             dlg._callback = callback;
@@ -657,6 +708,10 @@ define([
         {
             return device.platform == "Android";
         },
+        isRunningAsPlugin: function()
+        {
+            return this.getSettings().appKey != null;
+        },
         getTimeAgoString: function(s)
         {
             // translate timestamp string to "N minutes/hours/days/months ago" format
@@ -698,6 +753,10 @@ define([
             var separator = ts.wordSeparator || "";
 
             return [words, suffix].join(separator);
+        },
+        getResourceString: function(key)
+        {
+            return stringsRes[key];
         }
     };
 

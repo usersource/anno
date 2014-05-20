@@ -14,7 +14,6 @@
             async: 1,
             mblUserAgent: 'iPhone',
             forceGfxRenderer2:'canvas',
-            mblThemeFiles2: ['base','SimpleDialog', 'CheckBox'],
             packages:[
                 {
                     name:'anno',
@@ -25,7 +24,7 @@
     </script>
     <script type="text/javascript" src="../../scripts/dojo/dojo.js"></script>
     <script type="text/javascript">
-        require(["dojo/parser","dojox/mobile/deviceTheme", "dojox/mobile/SimpleDialog", "dojox/mobile/CheckBox"]);
+        require(["dojo/parser","dojox/mobile/deviceTheme", "dojox/mobile/SimpleDialog"]);
     </script>
     <script type="text/javascript" src="main.js"></script>
     <script type="text/javascript" src="../../../cordova.js"></script>
@@ -63,13 +62,36 @@
 </div>
 <div id="shareDialog" data-dojo-type="dojox/mobile/SimpleDialog" style="display: none">
     <div id="sdTitle">
-        <div style="padding-left: 36px;padding-top: 16px;">Annotation of: </div>
+        <div style="text-align:center;padding-top: 16px;"></div>
     </div>
-    <div id="sdAppList" style="overflow-y:auto">
-        <div id="sdAppListContent"></div>
-        <div>
+    <div id="tabContainer" class="tabContainer">
+        <table width="100%" height="100%" style="border-spacing: 0px;">
+            <tr>
+                <td width="33.3%" align="center" class="active">
+                    <div id="barRecentApps">Recent Apps</div>
+                </td>
+                <td width="33.3%" align="center" style="border-left: none;">
+                    <div id="barAllApps">All Apps</div>
+                </td>
+                <td width="33.3%" align="center" style="border-left: none;">
+                    <div id="barElseApps">Something Else</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="sdAppList">
+        <div id="sdRecentAppsListContent" style="overflow-y:auto;height: 100%">
+            <div style="margin-left: 10px;margin-right: 10px;padding-top: 4px;">This functionality is not currently available on iOS.</div>
+        </div>
+        <div id="sdAllAppsListContent" style="display: none;overflow-y:auto;height: 100%">
+            <div style="margin-left: 10px;margin-right: 10px;padding-top: 4px;">This functionality is not currently available on iOS.</div>
+        </div>
+        <div id="sdElseAppListContent" style="display: none;overflow-y:auto;height: 100%">
             <div class="appNameItem" style="margin-top: 6px;height: 38px;">
-                <input type="text" id="txtAppName" placeholder="other" class="appNameValue signin-input"
+                <div id="appOsName" class="appNameValue"></div>
+            </div>
+            <div class="appNameItem" style="margin-top: 6px;height: 38px;">
+                <input type="text" id="txtAppName" placeholder="Type anything here" class="appNameValue signin-input"
                        style="background-color: black;color: white;font-size: 20px;outline-color: white;">
             </div>
         </div>
