@@ -325,10 +325,12 @@ define([
             domStyle.set('navLogoTextHome', 'display', '');
             domStyle.set('tdBarMyStuff', 'display', '');
             domStyle.set('tdBarAddImage', 'display', '');
-            domStyle.set('tdbarSearchAnno', 'display', '');
+            domStyle.set('tdBarSearchAnno', 'display', '');
+            domStyle.set('tdBarSettings', 'display', '');
+            domStyle.set('tdBarMoreMenuHome', 'display', 'none');
             domStyle.set('txtSearchAnno', 'display', 'none');
             dom.byId("txtSearchAnno").value = "";
-            domStyle.set('tdHeadingLeft', 'width', '212px');
+            domStyle.set('tdHeadingLeft', 'width', '180px');
             domStyle.set('annoLogoHome', 'paddingLeft', '10px');
             domStyle.set('searchSortsBarHome', 'display', 'none');
 
@@ -558,7 +560,7 @@ define([
                         });
                     });
 
-                    _connectResults.push(connect.connect(dom.byId("barMyStuff"), 'click', function(e)
+                    _connectResults.push(connect.connect(dom.byId("tdBarMyStuff"), 'click', function(e)
                     {
                         dojo.stopEvent(e);
                         hideMenuDialog();
@@ -566,7 +568,7 @@ define([
                         app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
                     }));
 
-                    _connectResults.push(connect.connect(dom.byId("barAddImage"), 'click', function(e) {
+                    _connectResults.push(connect.connect(dom.byId("tdBarAddImage"), 'click', function(e) {
                         var options = {
                             destinationType : Camera.DestinationType.FILE_URI,
                             sourceType : Camera.PictureSourceType.PHOTOLIBRARY,
@@ -628,7 +630,7 @@ define([
                         function OnFail() {}
                     }));
 
-                    _connectResults.push(connect.connect(dom.byId("tdbarSearchAnno"), 'click', function(e)
+                    _connectResults.push(connect.connect(dom.byId("tdBarSearchAnno"), 'click', function(e)
                     {
                         hideMenuDialog();
 
@@ -638,7 +640,9 @@ define([
                         domStyle.set('navLogoTextHome', 'display', 'none');
                         domStyle.set('tdBarMyStuff', 'display', 'none');
                         domStyle.set('tdBarAddImage', 'display', 'none');
-                        domStyle.set('tdbarSearchAnno', 'display', 'none');
+                        domStyle.set('tdBarSearchAnno', 'display', 'none');
+                        domStyle.set('tdBarSettings', 'display', 'none');
+                        domStyle.set('tdBarMoreMenuHome', 'display', '');
                         domStyle.set('txtSearchAnno', 'display', '');
                         domStyle.set('tdHeadingLeft', 'width', '95px');
                         domStyle.set('annoLogoHome', 'paddingLeft', '0px');
@@ -648,6 +652,10 @@ define([
                         inSearchMode = true;
                         dojo.stopEvent(e);
 
+                    }));
+
+                    _connectResults.push(connect.connect(dom.byId("tdBarSettings"), 'click', function(e) {
+                        app.transitionToView(document.getElementById('modelApp_home'), {target: 'settings', url: '#settings'});
                     }));
 
                     _connectResults.push(connect.connect(dom.byId("barMoreMenuHome"), 'click', function(e)
@@ -675,26 +683,6 @@ define([
                     _connectResults.push(connect.connect(dom.byId("tdLogo"), 'click', function(e)
                     {
                         cancelSearch();
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId("menuItemSettings"), 'click', function(e)
-                    {
-                        hideMenuDialog();
-                        app.transitionToView(document.getElementById('modelApp_home'), {target: 'settings', url: '#settings'});
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId("menuItemIntro"), 'click', function(e)
-                    {
-                        hideMenuDialog();
-
-                        annoUtil.startActivity("Intro", false);
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId("menuItemFeedback"), 'click', function(e)
-                    {
-                        hideMenuDialog();
-
-                        annoUtil.startActivity("Feedback", false);
                     }));
 
                     _connectResults.push(connect.connect(dom.byId('btnLoadListData'), "click", function ()
