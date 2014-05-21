@@ -15,6 +15,7 @@ define([
     {
         var _connectResults = []; // events connect results
         var app = null;
+        var headerTitleSettingsClickCnt = 0;
 
         var adjustSize = function()
         {
@@ -41,8 +42,7 @@ define([
                     {
                         AnnoDataHandler.removeUser(function(){
                             OAuthUtil.clearRefreshToken();
-                            registry.byId('serverURLDialog').hide();
-                            dom.byId('settingValueServerURL').innerHTML = labelText;
+                            closeServerURLDialog();
 
                             annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
                                 window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
@@ -109,8 +109,7 @@ define([
                                 }
 
                                 annoUtil.hideLoadingIndicator();
-                                registry.byId('serverURLDialog').hide();
-                                dom.byId('settingValueServerURL').innerHTML = labelText;
+                                closeServerURLDialog();
 
                                 annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
                                     window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
@@ -156,8 +155,7 @@ define([
                             var token = annoUtil.getBasicAuthToken(currentUserInfo);
                             annoUtil.setAuthToken(token);
 
-                            var changePwdDialog = registry.byId('changePwdDialog');
-                            changePwdDialog.hide();
+                            closeChangePasswordDialog();
 
                             annoUtil.showToastMessage("Password has been changed.");
                         });
@@ -181,6 +179,47 @@ define([
             }
         };
 
+        var exitApp = function()
+        {
+            closeServerURLDialog();
+            closeChangePasswordDialog();
+        };
+
+        var openServerURLDialog = function()
+        {
+            var serverURLDialog = registry.byId('serverURLDialog');
+
+            serverURLDialog.show();
+            domStyle.set(serverURLDialog._cover[0], {"height": "100%", top:"0px"});
+
+            document.addEventListener("backbutton", exitApp, false);
+        };
+
+        var closeServerURLDialog = function()
+        {
+            var serverURLDialog = registry.byId('serverURLDialog');
+            serverURLDialog.hide();
+
+            document.removeEventListener("backbutton", exitApp, false);
+        };
+
+        var openChangePasswordDialog = function()
+        {
+            var changePwdDialog = registry.byId('changePwdDialog');
+            changePwdDialog.show();
+            domStyle.set(changePwdDialog._cover[0], {"height": "100%", top:"0px"});
+
+            document.addEventListener("backbutton", exitApp, false);
+        };
+
+        var closeChangePasswordDialog = function()
+        {
+            var changePwdDialog = registry.byId('changePwdDialog');
+            changePwdDialog.hide();
+
+            document.removeEventListener("backbutton", exitApp, false);
+        };
+
         return {
             // simple view init
             init:function ()
@@ -198,9 +237,7 @@ define([
                         if (radioButtons[i].value == settings.ServerURL)
                         {
                             radioButtons[i].set('checked', true, false);
-                            dom.byId('settingValueServerURL').innerHTML = radioButtons[i].labelText;
                         }
-
                     }
 
                     for (var i= 0,c=radioButtons.length;i<c;i++)
@@ -209,31 +246,41 @@ define([
                     }
                 });
 
-                _connectResults.push(connect.connect(registry.byId("settingItemServerUrl"), 'onClick', function(e)
-                {
-                    var serverURLDialog = registry.byId('serverURLDialog');
-
-                    serverURLDialog.show();
-                    domStyle.set(serverURLDialog._cover[0], {"height": "100%", top:"0px"});
-                }));
-
                 _connectResults.push(connect.connect(registry.byId("settingItemChangePassword"), 'onClick', function(e)
                 {
-                    var changePwdDialog = registry.byId('changePwdDialog');
-                    changePwdDialog.show();
-                    domStyle.set(changePwdDialog._cover[0], {"height": "100%", top:"0px"});
+                    openChangePasswordDialog();
+                }));
+
+                _connectResults.push(connect.connect(registry.byId("settingItemIntro"), 'onClick', function(e)
+                {
+                    annoUtil.startActivity("Intro", false);
+                }));
+
+                _connectResults.push(connect.connect(registry.byId("settingItemFeedback"), 'onClick', function(e)
+                {
+                    annoUtil.startActivity("Feedback", false);
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("headerTitleSettings"), 'click', function(e)
+                {
+                    if (headerTitleSettingsClickCnt <2)
+                    {
+                        headerTitleSettingsClickCnt ++;
+                        return;
+                    }
+
+                    openServerURLDialog();
+                    headerTitleSettingsClickCnt = 0;
                 }));
 
                 _connectResults.push(connect.connect(dom.byId("btnCancelServerURL"), 'click', function(e)
                 {
-                    var serverURLDialog = registry.byId('serverURLDialog');
-                    serverURLDialog.hide();
+                    closeServerURLDialog();
                 }));
 
                 _connectResults.push(connect.connect(dom.byId("btnCancelChangePwd"), 'click', function(e)
                 {
-                    var changePwdDialog = registry.byId('changePwdDialog');
-                    changePwdDialog.hide();
+                    closeChangePasswordDialog();
                 }));
 
                 _connectResults.push(connect.connect(dom.byId("btnDoneChangePwd"), 'click', function(e)
@@ -260,7 +307,7 @@ define([
             },
             beforeDeactivate: function()
             {
-                registry.byId('serverURLDialog').hide();
+
             },
             destroy:function ()
             {

@@ -1,21 +1,30 @@
 <div class="view mblView" style="background-color: white">
     <div id="headingSettings" data-dojo-type="dojox/mobile/Heading" class="topHeading">
-        <img src="css/images/anno.png" alt="" width="40" class="headingIcon">
-        <span class="barIcon icon-cog barIconHighlight" style="float: left;font-size: 28px;margin-top: 6px;padding-left: 10px;"></span>
+        <span id="navBtnBackSettings" class="icon-forward" data-dojo-props="back:true" data-dojo-type="dojox.mobile.ToolBarButton"></span>
+        <span class="barIcon icon-cog barIconHighlight" onclick="history.back()" style="float: left;font-size: 28px;margin-top: 6px;padding-left: 2px;"></span>
+        <span id="headerTitleSettings" class="headingTitle" style="padding-left: 20px;padding-top: 6px">Settings</span>
     </div>
     <div id="listContainerSettings" style="width: 100%;overflow: auto;">
         <ul data-dojo-type="dojox/mobile/EdgeToEdgeList">
-            <li id="settingItemServerUrl" class="row" style="margin-left: 8px;margin-right: 8px"
+            <li id="settingItemIntro" class="row" style="margin-left: 8px;margin-right: 8px;height: 36px;line-height: 36px"
                 data-dojo-type="dojox/mobile/ListItem"
                 data-dojo-props="variableHeight:true,clickable:true,noArrow:true">
-                <div>Server URL</div>
-                <div id="settingValueServerURL" style="font-size: 14px;font-weight: normal">Production</div>
+                <div>How to share your ideas</div>
             </li>
-            <li id="settingItemChangePassword" class="row" style="margin-left: 8px;margin-right: 8px"
+            <li id="settingItemFeedback" class="row" style="margin-left: 8px;margin-right: 8px;height: 36px;line-height: 36px"
+                data-dojo-type="dojox/mobile/ListItem"
+                data-dojo-props="variableHeight:true,clickable:true,noArrow:true">
+                <div>Feedback on UserSource</div>
+            </li>
+            <li id="settingItemProfile" class="row" style="margin-left: 8px;margin-right: 8px;height: 36px;line-height: 36px"
+                data-dojo-type="dojox/mobile/ListItem"
+                data-dojo-props="variableHeight:true,clickable:true,noArrow:true">
+                <div>Profile</div>
+            </li>
+            <li id="settingItemChangePassword" class="row" style="margin-left: 8px;margin-right: 8px;height: 36px;line-height: 36px"
                 data-dojo-type="dojox/mobile/ListItem"
                 data-dojo-props="variableHeight:true,clickable:true,noArrow:true">
                 <div>Change Password</div>
-                <div style="font-size: 14px;font-weight: normal">&nbsp;</div>
             </li>
         </ul>
     </div>
