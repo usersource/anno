@@ -21,6 +21,7 @@ define([
         var _callbackURL = "";
         var _currentAuthResult = null;
         var inAnnoSignInView = false;
+        var logoClickCnt = 0;
 
         var adjustSize = function()
         {
@@ -311,7 +312,12 @@ define([
 
         var exitApp = function()
         {
-            if (inAnnoSignInView)
+            var serverURLDialog = registry.byId('serverURLDialog');
+            if (serverURLDialog.domNode.style.display == ""||serverURLDialog.domNode.style.display == "block")
+            {
+                closeServerURLDialog();
+            }
+            else if (inAnnoSignInView)
             {
                 goBackToSignin();
                 inAnnoSignInView = false;
@@ -322,13 +328,70 @@ define([
             }
         };
 
+        var initServerUrlRadioButtons = function()
+        {
+            var serverURLConfig = annoUtil.API.config, configItem, configItemNode;
+
+            for (var p in serverURLConfig)
+            {
+                configItem = serverURLConfig[p];
+                configItemNode = dom.byId("divServerUrl"+configItem["serverId"]);
+                domStyle.set(configItemNode, "display", "");
+                configItemNode.children[0].innerHTML = configItem.serverName;
+                registry.byId("rdSU"+configItem["serverId"]).set({"labelText": configItem.serverName, value:p});
+            }
+        };
+
+        var onServerURLRadioButtonChange = function(value)
+        {
+            if (!this.checked) return;
+
+            annoUtil.saveSettings({item:"ServerURL", value:this.value}, function(success){
+                closeServerURLDialog();
+            });
+        };
+
+        var openServerURLDialog = function()
+        {
+            var serverURLDialog = registry.byId('serverURLDialog');
+
+            serverURLDialog.show();
+            domStyle.set(serverURLDialog._cover[0], {"height": "100%", top:"0px"});
+        };
+
+        var closeServerURLDialog = function()
+        {
+            var serverURLDialog = registry.byId('serverURLDialog');
+            serverURLDialog.hide();
+        };
+
         return {
             // simple view init
             init:function ()
             {
                 var params = annoUtil.parseUrlParams(document.location.search);
                 _callbackURL = params['callback'];
-                console.error("_callbackURL:"+_callbackURL);
+                console.log("_callbackURL:"+_callbackURL);
+
+                initServerUrlRadioButtons();
+
+                annoUtil.readSettings(function(settings){
+                    var serverURLDialog = registry.byId('serverURLDialog');
+
+                    var radioButtons = serverURLDialog.getChildren();
+                    for (var i= 0,c=radioButtons.length;i<c;i++)
+                    {
+                        if (radioButtons[i].value == settings.ServerURL)
+                        {
+                            radioButtons[i].set('checked', true, false);
+                        }
+                    }
+
+                    for (var i= 0,c=radioButtons.length;i<c;i++)
+                    {
+                        radioButtons[i].onChange = onServerURLRadioButtonChange;
+                    }
+                });
 
                 app = this.app;
 
@@ -421,6 +484,23 @@ define([
                         dom.byId('hiddenBtn').focus();
                         submitSignIn();
                     }
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("imgUserSource"), 'click', function(e)
+                {
+                    if (logoClickCnt <2)
+                    {
+                        logoClickCnt ++;
+                        return;
+                    }
+
+                    openServerURLDialog();
+                    logoClickCnt = 0;
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("btnCancelServerURL"), 'click', function(e)
+                {
+                    closeServerURLDialog();
                 }));
 
                 adjustSize();
