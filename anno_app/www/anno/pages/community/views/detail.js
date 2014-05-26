@@ -753,6 +753,10 @@ define([
                         console.error(JSON.stringify(data.result));
 
                         var currentAnno = eventsModel.cursor||eventsModel.model[0];
+                        // sync commented activity
+                        currentAnno.lastActivityChangedClass = "icon-comment";
+                        currentAnno.lastActivityText = "commented";
+                        currentAnno.when = new Date().getTime();
 
                         annoUtil.hideLoadingIndicator();
                         currentAnno.comments.splice(0,0,new getStateful({user_id:author, comment:comment}));
@@ -821,6 +825,10 @@ define([
                         else
                         {
                             domClass.add('imgThumbsUp', 'icoImgActive');
+                            // sync voted-up activity, TODO: should sync un-vote activity
+                            eventsModel.cursor.lastActivityChangedClass = "icon-thumbs-up";
+                            eventsModel.cursor.lastActivityText = "voted-up";
+                            eventsModel.cursor.when = new Date().getTime();
                         }
 
                         savingVote = false;
@@ -889,6 +897,10 @@ define([
                         else
                         {
                             domClass.add('imgFlag', 'icoImgActive');
+                            // sync flagged activity, TODO: should sync un-flag activity
+                            eventsModel.cursor.lastActivityChangedClass = "icon-flag";
+                            eventsModel.cursor.lastActivityText = "flagged";
+                            eventsModel.cursor.when = new Date().getTime();
                         }
                         annoUtil.hideLoadingIndicator();
                         savingFlag = false;
@@ -1074,6 +1086,11 @@ define([
                     }
 
                     redrawShapes();
+
+                    // sync edited activity
+                    currentAnno.lastActivityChangedClass = "icon-pencil";
+                    currentAnno.lastActivityText = "edited";
+                    currentAnno.when = new Date().getTime();
                 }
             }
             else
