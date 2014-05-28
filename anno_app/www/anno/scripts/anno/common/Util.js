@@ -748,14 +748,14 @@ define([
         {
             return this.getSettings().appKey != null;
         },
-        getTimeAgoString: function(s)
+        getTimeAgoString: function(s, baseDate)
         {
             // translate timestamp string to "N minutes/hours/days/months ago" format
             var date1 = new Date(s);
 
             function distance(date)
             {
-                return (new Date().getTime() - date.getTime());
+                return ((baseDate||new Date()).getTime() - date.getTime());
             }
 
             var distanceMillis = distance(date1);

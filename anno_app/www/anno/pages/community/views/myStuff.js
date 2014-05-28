@@ -18,7 +18,8 @@ define([
     function (lang, dom, domClass, domConstruct, domGeom, domStyle, dojoString, connect, win, registry, getStateful, AnnoDataHandler, Util, OAuthUtil, annoItemTemplate)
     {
         var _connectResults = []; // events connect results
-        var app = null, eventsModel = null, needRefresh = true;
+        var app = null, eventsModel = null, needRefresh = true
+            lastOpenAnnoId = "";
         var emptyAnno = {
             "id": 0,
             "annoText": "0",
@@ -79,7 +80,7 @@ define([
                                 eventData.app = localAnnos[i].app_name;
                                 eventData.screenshot_key = localAnnos[i].screenshot_key;
                                 eventData.author = userName;
-                                eventData.id = null;
+                                eventData.id = localAnnos[i]._id;
                                 eventData.circleX = parseInt(localAnnos[i].x, 10);
                                 eventData.circleY = parseInt(localAnnos[i].y, 10);
                                 eventData.simple_circle_on_top = localAnnos[i].direction==0||localAnnos[i].direction=='false';
@@ -90,7 +91,10 @@ define([
                                 eventData.level = localAnnos[i].level;
                                 eventData.draw_elements = localAnnos[i].draw_elements||"";
                                 eventData.comments = [];
-                                eventData.created = Util.getTimeAgoString(parseInt(localAnnos[i].created));
+                                eventData.created = eventData.when = Util.getTimeAgoString(parseInt(localAnnos[i].created));
+
+                                eventData.lastActivityClass = "";
+                                eventData.lastActivityText = "created";
 
                                 spliceArgs.push(new getStateful(eventData));
                             }
@@ -110,12 +114,12 @@ define([
                                 eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
                                 eventData.created = Util.getTimeAgoString(annoList[i].created);
 
+                                handleAnnoActivityInfo(eventData, annoList[i]);
+
                                 spliceArgs.push(new getStateful(eventData));
                             }
 
                             eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
-
-                            console.error(JSON.stringify(data.result));
                             Util.hideLoadingIndicator();
 
                             drawAnnos(spliceArgs);
@@ -123,6 +127,39 @@ define([
                     });
                 });
             });
+        };
+
+        var handleAnnoActivityInfo = function(anno, annoData)
+        {
+            var lastActivity = annoData.last_activity;
+            if (lastActivity == "UserSource" || lastActivity == "create")
+            {
+                anno.lastActivityClass = "icon-plus";
+                anno.lastActivityText = "created";
+            }
+            else if (lastActivity == "vote")
+            {
+                anno.lastActivityClass = "icon-thumbs-up";
+                anno.lastActivityText = "voted-up";
+            }
+            else if (lastActivity == "flag")
+            {
+                anno.lastActivityClass = "icon-flag";
+                anno.lastActivityText = "flagged";
+            }
+            else if (lastActivity == "follwup")
+            {
+                anno.lastActivityClass = "icon-comment";
+                anno.lastActivityText = "commented";
+            }
+            else if (lastActivity == "anno")
+            {
+                anno.lastActivityClass = "icon-pencil";
+                anno.lastActivityText = "edited";
+            }
+
+
+            anno.when = Util.getTimeAgoString(annoData.last_update_time);
         };
 
         var drawAnnos = function(annos)
@@ -148,7 +185,7 @@ define([
 
             for (var i= 0,c=items.length;i<c;i++)
             {
-                items[i].annoItem = annos[i];
+                items[i].annoItem = annos[i+2];
                 items[i].on("click", function(){
                     gotoLocalAnnoViewer(this,this.annoItem);
                 });
@@ -174,10 +211,11 @@ define([
             domStyle.set("listContainerMyStuff", "height", (viewPoint.h-parentBox.h)+"px");
         };
 
-        var gotoLocalAnnoViewer = function(annoItem)
+        var gotoLocalAnnoViewer = function(listItem, annoItem)
         {
-            app.transitionToView(annoItem.domNode, {target:'detail',url:'#detail', params:{cursor:annoItem._index, source:"mystuff"}});
+            app.transitionToView(listItem.domNode, {target:'detail',url:'#detail', params:{cursor:listItem._index, source:"mystuff"}});
             needRefresh = false;
+            lastOpenAnnoId = annoItem.id;
         };
 
         var goBack = function()
@@ -215,6 +253,24 @@ define([
                 if (needRefresh)
                 {
                     loadMyAnnos();
+                }
+                else
+                {
+                    // update opened anno activity info
+                    var activityIndicator = dom.byId("annoActIndicator_"+lastOpenAnnoId);
+
+                    var currentAnno = eventsModel.cursor;
+                    if (activityIndicator&&currentAnno.lastActivityChangedClass)
+                    {
+                        domClass.remove(activityIndicator);
+                        domClass.add(activityIndicator, "annoOrangeColor");
+                        domClass.add(activityIndicator, currentAnno.lastActivityChangedClass);
+
+                        dom.byId("annoActText_"+lastOpenAnnoId).innerHTML = currentAnno.lastActivityText;
+                        dom.byId("annoActWhen_"+lastOpenAnnoId).innerHTML = Util.getTimeAgoString(new Date().getTime(), new Date(currentAnno.when));
+
+                        currentAnno.lastActivityChangedClass = "";
+                    }
                 }
 
                 document.removeEventListener("backbutton", goBack, false);
