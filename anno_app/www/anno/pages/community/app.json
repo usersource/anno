@@ -127,6 +127,11 @@
             "controller" : "./views/searchAnno",
             "dependencies":[],
             "template": "./templates/searchAnno.html"
+        },
+        "profile": {
+            "controller" : "./views/profile",
+            "dependencies":[],
+            "template": "./templates/profile.html"
         }
     }
 }
