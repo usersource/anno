@@ -2,21 +2,23 @@
     <div id="headingProfile" data-dojo-type="dojox/mobile/Heading" class="topHeading">
         <span id="navBtnBackProfile" class="icon-forward" data-dojo-props="back:true" data-dojo-type="dojox.mobile.ToolBarButton"></span>
         <span class="barIcon icon-board barIconHighlight" onclick="history.back()" style="float: left;font-size: 28px;margin-top: 6px;padding-left: 2px;"></span>
-        <span id="headerTitleProfile" class="headingTitle" style="padding-left: 20px;padding-top: 6px">Profile</span>
+        <span id="headerTitleProfile" class="headingTitle" style="padding-left: 20px;padding-top: 6px">My Profile</span>
     </div>
     <div id="listContainerProfile" style="width: 100%;overflow: auto;">
         <ul data-dojo-type="dojox/mobile/EdgeToEdgeList">
-            <li class="row" style="margin-left: 8px;margin-right: 8px;height: 36px;line-height: 36px"
+            <li class="row" style="margin-left: 8px;margin-right: 8px;"
                 data-dojo-type="dojox/mobile/ListItem"
                 data-dojo-props="variableHeight:true,clickable:true,noArrow:true">
-                <span class="listAppName" style="padding-right: 63px;">Email</span><span id="profileEmail" style="padding-left: 10px;"></span>
+                <div>Email</div>
+                <div id="profileEmail" class="listAppName" style="padding-left: 12px;"></div>
             </li>
-            <li class="row" style="margin-left: 8px;margin-right: 8px;height: 36px;line-height: 36px"
+            <li class="row" style="margin-left: 8px;margin-right: 8px;"
                 data-dojo-type="dojox/mobile/ListItem"
                 data-dojo-props="variableHeight:true,clickable:true,noArrow:true">
-                <span class="listAppName">Display Name</span><span id="profileDisplayName" style="padding-left: 10px;"></span>
+                <div>Display Name</div>
+                <div id="profileDisplayName" style="padding-left: 12px;"></div>
             </li>
-            <li id="profileItemChangePassword" class="row" style="margin-left: 8px;margin-right: 8px;height: 36px;line-height: 36px"
+            <li id="profileItemChangePassword" class="row" style="margin-left: 8px;margin-right: 8px;height: 44px;line-height: 44px"
                 data-dojo-type="dojox/mobile/ListItem"
                 data-dojo-props="variableHeight:true,clickable:true,noArrow:true">
                 <div>Change Password</div>
