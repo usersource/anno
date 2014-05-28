@@ -80,8 +80,7 @@ define([
                     if (resp.error)
                     {
                         annoUtil.hideLoadingIndicator();
-
-                        annoUtil.showMessageDialog("An error occurred when calling account.authenticate api: "+resp.error.message);
+                        annoUtil.showMessageDialog(resp.error.message);
                         return;
                     }
 

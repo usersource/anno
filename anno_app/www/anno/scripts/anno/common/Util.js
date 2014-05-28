@@ -339,7 +339,6 @@ define([
             dlg._callback = callback;
             dlg.show();
             domStyle.set(dlg._cover[0], {"height": "100%", top:"0px"});
-            domStyle.set(dlg.domNode, {"text-align" : "center"});
             domStyle.set(dlg.containerNode.firstChild, {"margin" : "0 0 3px 0"});
         },
         showToastDialog: function (message, timeOut) {
@@ -361,7 +360,7 @@ define([
 
             dlg.show();
             domStyle.set(dlg._cover[0], { "height" : "100%", "top" : "0" });
-            domStyle.set(dlg.domNode, { "text-align" : "center", "top" : "initial", "bottom" : "50px" });
+            domStyle.set(dlg.domNode, { "top" : "initial", "bottom" : "50px" });
             domStyle.set(dlg.containerNode.firstChild, { "margin" : "0" });
 
             setTimeout(function() {
