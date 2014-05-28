@@ -748,10 +748,24 @@ define([
         {
             return this.getSettings().appKey != null;
         },
+        unisodate: function(str)
+        {
+            var tstr, dstr, yyyy, dd, MM, mm, hh, ss;
+            var l = str.match(/([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})\.*([0-9]{0,3})/);
+
+            if (l && l.length === 8) {
+                return new Date(l[1], l[2] - 1, l[3], l[4], l[5], l[6], l[7]);
+            } else
+                return null;
+        },
         getTimeAgoString: function(s, baseDate)
         {
             // translate timestamp string to "N minutes/hours/days/months ago" format
-            var date1 = new Date(s);
+            if (util.isIOS() && (parseInt(device.version) == 5)) {
+                var date1 = util.unisodate(s);
+            } else {
+                var date1 = new Date(s);
+            }
 
             function distance(date)
             {
