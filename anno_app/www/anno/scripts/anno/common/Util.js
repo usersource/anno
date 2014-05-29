@@ -761,8 +761,8 @@ define([
         getTimeAgoString: function(s, baseDate)
         {
             // translate timestamp string to "N minutes/hours/days/months ago" format
-            if (util.isIOS() && (parseInt(device.version) == 5)) {
-                var date1 = util.unisodate(s);
+            if (this.isIOS() && (parseInt(device.version) == 5)) {
+                var date1 = this.unisodate(s);
             } else {
                 var date1 = new Date(s);
             }
