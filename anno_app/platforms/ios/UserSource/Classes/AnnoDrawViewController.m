@@ -12,7 +12,7 @@
 
 bool isPractice, editMode;
 int level;
-NSString *screenshotPath;
+NSString *screenshotPath = @"";
 
 - (id)initWithNibName:(NSString*)nibNameOrNil bundle:(NSBundle*)nibBundleOrNil
 {
