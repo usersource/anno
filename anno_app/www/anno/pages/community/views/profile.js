@@ -68,7 +68,21 @@ define([
 
         var exitApp = function()
         {
-            closeChangePasswordDialog();
+            var dlg = registry.byId('dlg_common_confirm_message');
+            var changePwdDialog = registry.byId('changePwdDialog');
+
+            if (dlg&&(dlg.domNode.style.display == ''||dlg.domNode.style.display == 'block'))
+            {
+                dlg.hide();
+            }
+            else if (changePwdDialog&&(changePwdDialog.domNode.style.display == ''||changePwdDialog.domNode.style.display == 'block'))
+            {
+                closeChangePasswordDialog();
+            }
+            else
+            {
+                history.back();
+            }
         };
 
         var openChangePasswordDialog = function()
@@ -76,16 +90,22 @@ define([
             var changePwdDialog = registry.byId('changePwdDialog');
             changePwdDialog.show();
             domStyle.set(changePwdDialog._cover[0], {"height": "100%", top:"0px"});
-
-            document.addEventListener("backbutton", exitApp, false);
         };
 
         var closeChangePasswordDialog = function()
         {
             var changePwdDialog = registry.byId('changePwdDialog');
             changePwdDialog.hide();
+        };
 
-            document.removeEventListener("backbutton", exitApp, false);
+        var signOut = function()
+        {
+            var phoneGapPath = OAuthUtil.getPhoneGapPath();
+            AnnoDataHandler.removeUser(function ()
+            {
+                OAuthUtil.clearRefreshToken();
+                window.open(phoneGapPath + "anno/pages/community/main.html", '_self', 'location=no');
+            });
         };
 
         return {
@@ -98,6 +118,16 @@ define([
                 _connectResults.push(connect.connect(registry.byId("profileItemChangePassword"), 'onClick', function(e)
                 {
                     openChangePasswordDialog();
+                }));
+
+                _connectResults.push(connect.connect(registry.byId("profileItemSignOut"), 'onClick', function(e)
+                {
+                    annoUtil.showConfirmMessageDialog("Are you sure?", function(ret){
+                        if (ret)
+                        {
+                            signOut();
+                        }
+                    });
                 }));
 
                 _connectResults.push(connect.connect(dom.byId("btnCancelChangePwd"), 'click', function(e)
@@ -129,10 +159,11 @@ define([
             },
             afterActivate: function()
             {
+                document.addEventListener("backbutton", exitApp, false);
             },
             beforeDeactivate: function()
             {
-
+                document.removeEventListener("backbutton", exitApp, false);
             },
             destroy:function ()
             {

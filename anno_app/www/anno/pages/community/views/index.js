@@ -980,6 +980,8 @@ define([
 
                 document.removeEventListener("backbutton", exitApp, false);
                 document.addEventListener("backbutton", exitApp, false);
+
+                app.setBackwardFired(false);
             },
             beforeDeactivate: function()
             {

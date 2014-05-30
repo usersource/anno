@@ -139,7 +139,6 @@ define([
         var exitApp = function()
         {
             closeServerURLDialog();
-            closeChangePasswordDialog();
         };
 
         var openServerURLDialog = function()

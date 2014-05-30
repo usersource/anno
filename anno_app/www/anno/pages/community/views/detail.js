@@ -37,6 +37,7 @@ define([
             screenshotMargin = 0;
         var annoTooltipY,
             goingNextRecord = null,
+            goingTagSearch = false,
             loadingDetailData = false,
             loadingImage = false,
             deletingData = false,
@@ -50,11 +51,12 @@ define([
         var surface;
         var imageWidth, imageHeight;
         var tiniestImageData = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=";
+        var hashTagTemplate = '$1<span class="hashTag" onclick="searchAnnoByHashTag(this.innerHTML)">$2</span>';
 
         var adjustSize = function()
         {
             var viewPoint = win.getBox();
-            domStyle.set("imgDetailScreenshot", "width", (viewPoint.w-screenshotMargin)+"px");
+            //domStyle.set("imgDetailScreenshot", "width", (viewPoint.w-screenshotMargin)+"px");
 
             var h = (viewPoint.h-6);
             domStyle.set("annoTextDetail", "width", (viewPoint.w-6-6-10-6-28)+"px");
@@ -428,14 +430,13 @@ define([
         {
             var dlg = registry.byId('dlg_common_confirm_message');
 
-            if (dlg)
+            if (dlg&&(dlg.domNode.style.display == ''||dlg.domNode.style.display == 'block'))
             {
-                document.removeEventListener("backbutton", handleBackButton, false);
                 dlg.hide();
             }
             else
             {
-                document.removeEventListener("backbutton", handleBackButton, false);
+                app.setBackwardFired(true);
                 history.back();
             }
         };
@@ -618,10 +619,12 @@ define([
 
             if (previousAnno) {
                 // showing tiniest gif image instead of empty image data
-            	previousAnno.set('screenshot', tiniestImageData);
+            	dom.byId('imgDetailScreenshot').src = tiniestImageData
             }
 
             eventsModel.set("cursorIndex", cursor);
+            processAnnoTextHashTags();
+
             var id;
             if (!eventsModel.cursor)
             {
@@ -687,6 +690,7 @@ define([
                             for (var j=0;j<returnAnno.followup_list.length;j++)
                             {
                                 returnAnno.followup_list[j].user_id = returnAnno.followup_list[j].creator.display_name||returnAnno.followup_list[j].creator.user_email||returnAnno.followup_list[j].creator.id;
+                                processFollowupHashTags(returnAnno.followup_list[j]);
                             }
                         }
 
@@ -758,8 +762,10 @@ define([
                         currentAnno.lastActivityText = "commented";
                         currentAnno.when = new Date().getTime();
 
+                        var commentObject = {user_id:author, comment:comment};
+                        processFollowupHashTags(commentObject);
                         annoUtil.hideLoadingIndicator();
-                        currentAnno.comments.splice(0,0,new getStateful({user_id:author, comment:comment}));
+                        currentAnno.comments.splice(0,0,new getStateful(commentObject));
                         adjustAnnoCommentSize();
                     });
                 });
@@ -1180,11 +1186,44 @@ define([
             });
         };
 
+        // hash tags
+        var processAnnoTextHashTags = function()
+        {
+            // hash tags are replaced already
+            if (eventsModel.cursor.hashTaggedAnnoText)
+            {
+                return;
+            }
+
+            var annoText = eventsModel.cursor.annoText;
+            eventsModel.cursor.set('hashTaggedAnnoText', annoUtil.replaceHashTagWithLink(annoText, hashTagTemplate));
+        };
+
+        var processFollowupHashTags = function(followup)
+        {
+            // hash tags are replaced already
+            if (followup.hashTaggedComment)
+            {
+                return;
+            }
+
+            followup.hashTaggedComment = annoUtil.replaceHashTagWithLink(followup.comment, hashTagTemplate);
+        };
+
+        // search anno items by hash tag
+        var searchAnnoByHashTag = window.searchAnnoByHashTag = function(tag)
+        {
+            console.log(tag);
+            goingTagSearch = true;
+            app.transitionToView(document.getElementById('modelApp_detail'), {target:'searchAnno',url:'#searchAnno', params:{tag:tag}});
+        };
+
         var startX, startY, commentTextBoxFocused = false;
         return {
             // simple view init
             init:function ()
             {
+                app = this.app;
                 eventsModel = this.loadedModels.events;
                 localScreenshotPath = annoUtil.getAnnoScreenshotPath();
 
@@ -1386,9 +1425,7 @@ define([
                 {
                     if (domClass.contains('td_shtCtrl_remove', 'barIconDisabled')) return;
 
-                    document.addEventListener("backbutton", handleBackButton, false);
                     annoUtil.showConfirmMessageDialog("This will delete the item and all followup discussion. Are you sure?", function(ret){
-                        document.removeEventListener("backbutton", handleBackButton, false);
                         if (ret)
                         {
                             deleteAnnoItem();
@@ -1419,12 +1456,21 @@ define([
                 if (cursor != null)
                 {
                     var source = this.params["source"];
+                    var currentAnnoId = eventsModel.cursor?eventsModel.cursor.id:'';
+
                     if (source == "mystuff")
                     {
                         eventsModel = this.loadedModels.mystuff;
                         registry.byId("mvcGroupDetail").set('target',at(this.loadedModels.mystuff, 'cursor'));
 
                         dom.byId('detailPageName').innerHTML = "Activity";
+                    }
+                    else if (source == "tagSearch")
+                    {
+                        eventsModel = this.loadedModels.searchAnno;
+                        registry.byId("mvcGroupDetail").set('target',at(this.loadedModels.searchAnno, 'cursor'));
+
+                        dom.byId('detailPageName').innerHTML = "Search";
                     }
                     else
                     {
@@ -1441,9 +1487,28 @@ define([
                         }
                     }
 
-                    window.setTimeout(function(){
-                        loadDetailData(cursor);
-                    }, 50);
+                    /**
+                     * if user goes to this page by clicking backbutton(from searchAnno page), then check if current anno id
+                     * is same to the cursor id, if true, then don't need to reload data, but need to reload the screenshot
+                     */
+                    if (app.isBackwardFired()&&currentAnnoId==eventsModel.model[parseInt(cursor, 10)].id)
+                    {
+                        // set data model cursor
+                        eventsModel.set("cursorIndex", cursor);
+                        if (dom.byId('imgDetailScreenshot').src == tiniestImageData)
+                        {
+                            // reload the screenshot
+                            annoUtil.showLoadingIndicator();
+                            dom.byId('imgDetailScreenshot').src = imageBaseUrl+"?anno_id="+eventsModel.cursor.id;
+                        }
+                    }
+                    else
+                    {
+                        window.setTimeout(function(){
+                            loadDetailData(cursor);
+                        }, 50);
+                    }
+
                 }
                 adjustSize();
 
@@ -1453,6 +1518,7 @@ define([
                 domClass.add("navBtnTray", "barIconDisabled");
 
                 dom.byId('detailContentContainer').parentNode.scrollTop = 0;
+                document.addEventListener("backbutton", handleBackButton, false);
             },
             beforeDeactivate: function()
             {
@@ -1461,7 +1527,18 @@ define([
 
                 // calling setDetailScreenshotNull after 300ms so that imgDetailScreenshot will
                 // not clear out before going back to community page
-                setTimeout(setDetailScreenshotNull, 310);
+                // David Lee: if deactivate caused by clicking hash tag to go to search page, then skip this step.
+
+                if (goingTagSearch)
+                {
+                    goingTagSearch = false;
+                }
+                else
+                {
+                    setTimeout(setDetailScreenshotNull, 310);
+                }
+
+                document.removeEventListener("backbutton", handleBackButton, false);
             },
             destroy:function ()
             {

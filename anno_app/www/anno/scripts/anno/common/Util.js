@@ -807,6 +807,10 @@ define([
         getResourceString: function(key)
         {
             return stringsRes[key];
+        },
+        replaceHashTagWithLink: function(s, linkScript)
+        {
+            return s.replace(/(^|\W)(#[a-z\d][\w-]*)/ig, linkScript);
         }
     };
 
