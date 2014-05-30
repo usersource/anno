@@ -18,7 +18,7 @@ define([
     function (lang, dom, domClass, domConstruct, domGeom, domStyle, dojoString, connect, win, registry, getStateful, AnnoDataHandler, Util, OAuthUtil, annoItemTemplate)
     {
         var _connectResults = []; // events connect results
-        var app = null, eventsModel = null, needRefresh = true
+        var app = null, eventsModel = null, needRefresh = true,
             lastOpenAnnoId = "";
         var emptyAnno = {
             "id": 0,

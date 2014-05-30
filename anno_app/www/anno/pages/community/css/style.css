@@ -738,3 +738,13 @@
     font-family: Helvetica;
     font-size: 13pt;
 }
+
+.hashTag
+{
+    color: blue;
+}
+
+.row
+{
+    outline: none;
+}

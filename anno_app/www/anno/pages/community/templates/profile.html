@@ -5,23 +5,30 @@
         <span id="headerTitleProfile" class="headingTitle" style="padding-left: 20px;padding-top: 6px">My Profile</span>
     </div>
     <div id="listContainerProfile" style="width: 100%;overflow: auto;">
-        <ul data-dojo-type="dojox/mobile/EdgeToEdgeList">
-            <li class="row" style="margin-left: 8px;margin-right: 8px;"
+        <ul data-dojo-type="dojox/mobile/RoundRectList">
+            <li class="row" style="padding-left: 16px"
                 data-dojo-type="dojox/mobile/ListItem"
-                data-dojo-props="variableHeight:true,clickable:true,noArrow:true">
+                data-dojo-props="variableHeight:true,clickable:true,noArrow:true,_duration:0">
                 <div>Email</div>
-                <div id="profileEmail" class="listAppName" style="padding-left: 12px;"></div>
+                <div id="profileEmail" class="listAppName" style="padding-left: 12px;padding-top: 2px"></div>
             </li>
-            <li class="row" style="margin-left: 8px;margin-right: 8px;"
+            <li class="row" style="padding-left: 16px"
                 data-dojo-type="dojox/mobile/ListItem"
-                data-dojo-props="variableHeight:true,clickable:true,noArrow:true">
+                data-dojo-props="variableHeight:true,clickable:true,noArrow:true,_duration:0">
                 <div>Display Name</div>
-                <div id="profileDisplayName" style="padding-left: 12px;"></div>
+                <div id="profileDisplayName" style="padding-left: 12px;padding-top: 2px"></div>
             </li>
-            <li id="profileItemChangePassword" class="row" style="margin-left: 8px;margin-right: 8px;height: 44px;line-height: 44px"
+        </ul>
+        <ul data-dojo-type="dojox/mobile/RoundRectList">
+            <li id="profileItemChangePassword" class="row annoOrangeColor" style="text-align:center;padding-left: 16px;"
                 data-dojo-type="dojox/mobile/ListItem"
                 data-dojo-props="variableHeight:true,clickable:true,noArrow:true">
                 <div>Change Password</div>
+            </li>
+            <li id="profileItemSignOut" class="row annoOrangeColor" style="text-align:center;padding-left: 16px;"
+                data-dojo-type="dojox/mobile/ListItem"
+                data-dojo-props="variableHeight:true,clickable:true,noArrow:true">
+                <div>Sign-out</div>
             </li>
         </ul>
     </div>
