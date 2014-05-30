@@ -472,7 +472,8 @@ class Anno(BaseModel):
             offset += number_retrieved
             for result in results:
                 anno = Anno.get_by_id(long(result.doc_id))
-                anno_list.append(anno.to_response_message())
+                if anno:
+                    anno_list.append(anno.to_response_message())
         return AnnoListMessage(anno_list=anno_list, offset=offset, has_more=has_more)
 
     def generate_search_document(self):
