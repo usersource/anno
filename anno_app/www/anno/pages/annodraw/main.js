@@ -455,8 +455,6 @@ require([
             }
 
             checkBarShareState();
-
-            dom.byId('menuItemFeed').innerHTML = "Cancel";
         }
         else
         {
