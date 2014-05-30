@@ -1148,7 +1148,7 @@ define([
 
                             console.error("An error occurred when calling anno.delete api: "+data.error.message);
                             // alert("An error occurred when calling anno.delete api: "+data.error.message);
-                            annoUtil.showMessageDialog("An error occurred when calling anno.delete api: "+data.error.message);
+                            annoUtil.showMessageDialog("Something went wrong while deleting. Please try later.");
                             setControlsState();
                             return;
                         }
