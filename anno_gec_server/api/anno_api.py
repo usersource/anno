@@ -167,12 +167,12 @@ class AnnoApi(remote.Service):
         Exposes an API endpoint to delete an existing anno.
         """
         user = auth_user(self.request_state.headers)
-        if request.anno_id is None:
+        if request.id is None:
             raise endpoints.BadRequestException('id field is required.')
-        anno = Anno.get_by_id(request.anno_id)
+        anno = Anno.get_by_id(request.id)
         if anno is None:
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
-        anno.key.delete()
+        Anno.delete(anno)
         return message_types.VoidMessage()
 
     @endpoints.method(message_types.VoidMessage, AnnoListMessage, path='anno_my_stuff', http_method='GET',
