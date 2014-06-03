@@ -1061,6 +1061,7 @@ define([
             var annoData = {
                 id: annoItem.id,
                 app: annoItem.app,
+                appVersion: annoItem.appVersion,
                 level: annoItem.level,
                 draw_elements: annoItem.draw_elements
             };
@@ -1084,6 +1085,7 @@ define([
                     var currentAnno = eventsModel.cursor;
 
                     currentAnno.set('app', updatedAnnoData.appName);
+                    currentAnno.set('appVersion', updatedAnnoData.appVersion);
                     currentAnno.set('annoText', updatedAnnoData.comment);
                     currentAnno.set('draw_elements', updatedAnnoData.draw_elements);
 

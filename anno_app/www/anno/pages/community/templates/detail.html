@@ -53,11 +53,12 @@
             </div>
             <div id="textDataAreaContainer" style="-webkit-transition: all 500ms ease;" class="textDataAreaContainer">
                 <div id="appNameContainer" class="appNameDetail" style="padding-left: 6px;">
-                    <table cellpadding="0" cellspacing="0">
+                    <table cellpadding="0" cellspacing="0" width="100%">
                         <tr>
-                            <td valign="middle"><span class="appNameTitleDetail">About:</span></td>
+                            <td valign="middle" width="60"><span class="appNameTitleDetail">About:</span></td>
                             <td valign="middle">
                                 <span id="appNameSpanDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'app')"></span>
+                                <span data-dojo-type="dojox/mvc/Output" style="padding-left: 2px" data-dojo-props="value: at('rel:', 'appVersion')"></span>
                             </td>
                             <td valign="middle"><img id="editAppNameImg" style="display: none" src="css/images/content_edit.png" width="24"></td>
                         </tr>

@@ -12,10 +12,10 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
     var save_userInfo_sql = "insert into app_users(userid,email,signinmethod,nickname,password,signedup) values (?,?,?,?,?,?)";
     var select_userInfo_sql = "select * from app_users";
     var delete_userInfo_sql = "delete from app_users";
-    var insert_anno_unsynched_sql = "insert into feedback_comment(object_key,draw_elements,draw_is_anonymized,last_update,comment,screenshot_key,x,y,direction,is_moved,level,app_name,anno_type,synched)"+
+    var insert_anno_unsynched_sql = "insert into feedback_comment(object_key,draw_elements,draw_is_anonymized,last_update,comment,screenshot_key,x,y,direction,is_moved,level,app_name,app_version,anno_type,synched)"+
         " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-    var update_anno_unsynched_sql = "update feedback_comment set draw_elements=?,comment=?,app_name=?,draw_is_anonymized=?,synched=? where _id=?";
-    var update_anno_unsynched_including_image_sql = "update feedback_comment set screenshot_key=?,draw_elements=?,comment=?,app_name=?,draw_is_anonymized=?,synched=? where _id=?";
+    var update_anno_unsynched_sql = "update feedback_comment set draw_elements=?,comment=?,app_name=?,app_version=?,draw_is_anonymized=?,synched=? where _id=?";
+    var update_anno_unsynched_including_image_sql = "update feedback_comment set screenshot_key=?,draw_elements=?,comment=?,app_name=?,app_version=?,draw_is_anonymized=?,synched=? where _id=?";
 
     var annoDataHandler = {
         duplicateMsgPrefix:"Duplicate anno",
@@ -152,7 +152,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
             anno.simple_circle_on_top = anno.simple_circle_on_top==1;
             anno.simple_is_moved = anno.simple_is_moved==1;
 
-            annoUtil.getBase64FileContent(screenshotDirPath+"/"+anno.image, function(base64Str){
+            annoUtil.getBase64FileContent(screenshotDirPath+"/"+anno.image, function(base64Str){console.error(JSON.stringify(anno));
                 anno.image = base64Str;
 
                 OAuthUtil.getAccessToken(function(){
@@ -300,6 +300,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                             0,
                             anno.level,
                             anno.app_name,
+                            anno.app_version,
                             anno.anno_type,
                             anno.image?-2:-1
                         ];
@@ -319,6 +320,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                             anno.draw_elements||'',
                             anno.anno_text,
                             anno.app_name,
+                            anno.app_version,
                             anno.screenshot_is_anonymized?1:0,
                             anno.image?-2:-1,
                             res.rows.item(0).id
@@ -663,6 +665,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                             "id": item.object_key,
                             "anno_text":item.comment,
                             "app_name":item.app_name,
+                            "app_version":item.app_version,
                             "draw_elements":item.draw_elements,
                             "screenshot_is_anonymized":item.draw_is_anonymized==1
                         };
@@ -680,6 +683,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                             "image":item.screenshot_key,
                             "anno_text":item.comment,
                             "app_name":item.app_name,
+                            "app_version":item.app_version,
                             "draw_elements":item.draw_elements,
                             "screenshot_is_anonymized":item.draw_is_anonymized==1
                         };

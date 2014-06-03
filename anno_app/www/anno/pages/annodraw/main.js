@@ -33,12 +33,12 @@ require([
     var surface, drawMode = false;
     var defaultCommentBox;
 
-    var selectedAppName, screenShotPath;
+    var selectedAppName, screenShotPath, selectedAppVersionName;
     var level1Color = annoUtil.level1Color,
         level2Color = annoUtil.level2Color;
     var level = 1;
     var isAnno = false, appNameListFetched = false;
-    var editMode = false, editAppName = "",
+    var editMode = false, editAppName = "", editAppVersionName = "",
         editAnnoId = "",
         originalGrayBoxes,
         originalGrayBoxCnt = 0,
@@ -159,10 +159,12 @@ require([
         {
             domStyle.set(itemNode.children[0], "color", "white");
             selectedAppName = itemNode.children[0].innerHTML;
+            selectedAppVersionName = "";
         }
         else
         {
             selectedAppName = itemNode.children[0].innerHTML;
+            selectedAppVersionName = itemNode.children[0].getAttribute('data-app-version');
         }
     });
 
@@ -349,16 +351,9 @@ require([
     var fillAppNameList = function(appList, recentApp)
     {
         var content = "";
-        for (var i= 0,c=appList.length;i<c;i++)
+        for (var i = 0, c = appList.length; i < c; i++)
         {
-            if (recentApp)
-            {
-                content = content + '<div class="appNameItem"><div class="appNameValue">'+appList[i]+'</div></div>'
-            }
-            else
-            {
-                content = content + '<div class="appNameItem"><div class="appNameValue">'+appList[i].name+'</div></div>'
-            }
+            content = content + '<div class="appNameItem"><div class="appNameValue" data-app-version="'+appList[i].versionName+'">' + appList[i].name + '</div></div>'
         }
 
         if (recentApp)
@@ -556,6 +551,7 @@ require([
                             level = currentAnnoData.level;
                             editAnnoId = currentAnnoData.id;
                             editAppName = currentAnnoData.app;
+                            editAppVersionName = currentAnnoData.appVersion;
                             editDrawElementsJson = currentAnnoData.draw_elements;
 
                             window.localStorage.removeItem(annoUtil.localStorageKeys.currentAnnoData);
@@ -664,7 +660,23 @@ require([
             return;
         }
 
-        selectedAppName = selectedAppName||dom.byId("txtAppName").value;
+        var appName = selectedAppName, appVersion;
+        if (appName)
+        {
+            appVersion = selectedAppVersionName;
+        }
+        else
+        {
+            appName = dom.byId("txtAppName").value.trim();
+            if (appName)
+            {
+                appVersion = "";
+            }
+            else
+            {
+                appName = "";
+            }
+        }
 
         annoUtil.showLoadingIndicator();
 
@@ -691,10 +703,10 @@ require([
                     "simple_x":earPoint.x,
                     "simple_y":earPoint.y,
                     "simple_circle_on_top":!defaultCommentBox.earLow,
-                    "app_version":appInfo.appVersion,
+                    "app_version":appVersion||appInfo.appVersion,
                     "simple_is_moved":defaultCommentBox.isMoved,
                     "level":appInfo.level,
-                    "app_name":selectedAppName||appInfo.appName,
+                    "app_name":appName||appInfo.appName,
                     "device_model":deviceInfo.model,
                     "os_name":deviceInfo.osName,
                     "os_version":deviceInfo.osVersion,
@@ -723,7 +735,23 @@ require([
             return;
         }
 
-        selectedAppName = selectedAppName||dom.byId("txtAppName").value.trim();
+        var appName = selectedAppName, appVersion;
+        if (appName)
+        {
+            appVersion = selectedAppVersionName;
+        }
+        else
+        {
+            appName = dom.byId("txtAppName").value.trim();
+            if (appName)
+            {
+                appVersion = "none";
+            }
+            else
+            {
+                appName = "";
+            }
+        }
 
         annoUtil.showLoadingIndicator();
 
@@ -750,10 +778,10 @@ require([
                     "simple_x":0,
                     "simple_y":0,
                     "simple_circle_on_top":false,
-                    "app_version":appInfo.appVersion,
+                    "app_version":appVersion=="none"?"":appVersion||appInfo.appVersion,
                     "simple_is_moved":false,
                     "level":appInfo.level,
-                    "app_name":selectedAppName||appInfo.appName,
+                    "app_name":appName||appInfo.appName,
                     "device_model":deviceInfo.model,
                     "os_name":deviceInfo.osName,
                     "os_version":deviceInfo.osVersion,
@@ -788,6 +816,26 @@ require([
         var pluginParam = [], isScreenshotAnonymized = surface.isScreenshotAnonymized(),
             shapesJson = surface.toJSON();
         var appName = selectedAppName||dom.byId("txtAppName").value.trim()||editAppName;
+
+        var appName = selectedAppName, appVersion;
+        if (appName)
+        {
+            appVersion = selectedAppVersionName;
+        }
+        else
+        {
+            appName = dom.byId("txtAppName").value.trim();
+            if (appName)
+            {
+                appVersion = "";
+            }
+            else
+            {
+                appName = editAppName;
+                appVersion = editAppVersionName;
+            }
+        }
+
         var annoItem, callbackAnnoItem;
 
         for (var p in originalGrayBoxes)
@@ -811,6 +859,7 @@ require([
                     annoItem = {
                         "anno_text":surface.getConcatenatedComment(),
                         "app_name":appName,
+                        "app_version":appVersion,
                         "image":imageKey,
                         "draw_elements":dojoJson.stringify(shapesJson),
                         "screenshot_is_anonymized":isScreenshotAnonymized,
@@ -821,6 +870,7 @@ require([
                     callbackAnnoItem = {
                         "comment":annoItem["anno_text"],
                         "appName":annoItem["app_name"],
+                        "appVersion":annoItem["app_version"],
                         "draw_elements":annoItem["draw_elements"],
                         "image":screenshotDirPath+"/"+annoItem["image"]
                     };
@@ -845,6 +895,7 @@ require([
             annoItem = {
                 "anno_text":surface.getConcatenatedComment(),
                 "app_name":appName,
+                "app_version":appVersion,
                 "draw_elements":dojoJson.stringify(shapesJson),
                 "screenshot_is_anonymized":isScreenshotAnonymized,
                 "anno_type":"draw comment",
@@ -854,6 +905,7 @@ require([
             callbackAnnoItem = {
                 "comment":annoItem["anno_text"],
                 "appName":annoItem["app_name"],
+                "appVersion":annoItem["app_version"],
                 "draw_elements":annoItem["draw_elements"]
             };
 
@@ -1068,6 +1120,7 @@ require([
             // set the pick list dialog title
             dom.byId('sdTitle').children[0].innerHTML = annoUtil.getResourceString("title_app_pick_list");
             dom.byId('appOsName').innerHTML = annoUtil.isIOS()?"iOS":"Android";
+            dom.byId('appOsName').setAttribute("data-app-version", device.version);
         }
         else
         {

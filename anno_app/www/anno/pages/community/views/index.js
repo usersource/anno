@@ -48,6 +48,7 @@ define([
             "id": 0,
             "annoText": "0",
             "app": "0",
+            "appVersion":"",
             "author": "0",
             "screenshot":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=",
             circleX: 0,
@@ -160,6 +161,7 @@ define([
                     eventData.annoType = annoList[i].anno_type;
                     eventData.annoIcon = annoList[i].anno_type == annoUtil.annoType.SimpleComment?"icon-simplecomment":"icon-shapes";
                     eventData.app = annoList[i].app_name;
+                    eventData.appVersion = annoList[i].app_version;
                     eventData.author = annoList[i].creator?annoList[i].creator.display_name||annoList[i].creator.user_email||annoList[i].creator.user_id:"";
                     eventData.id = annoList[i].id;
                     eventData.circleX = parseInt(annoList[i].simple_x, 10);

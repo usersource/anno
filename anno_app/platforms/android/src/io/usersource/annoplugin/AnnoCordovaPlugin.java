@@ -491,6 +491,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
     ActivityManager mActivityManager = (ActivityManager)annoDrawActivity.getSystemService(Context.ACTIVITY_SERVICE);
     // Print Recent Running Tasks
     JSONArray jsonArray = new JSONArray();
+    JSONObject jso = null;
     List<ActivityManager.RecentTaskInfo> recentTasks = mActivityManager.getRecentTasks(
             taskNum, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
     for (ActivityManager.RecentTaskInfo rti : recentTasks) {
@@ -500,7 +501,11 @@ public class AnnoCordovaPlugin extends CordovaPlugin
       {
         ResolveInfo resolveInfo = annoDrawActivity.getPackageManager().resolveActivity(
                 intent, 0);
-        jsonArray.put(resolveInfo.loadLabel(annoDrawActivity.getPackageManager()).toString());
+        jso = new JSONObject();
+        jso.put("name", resolveInfo.loadLabel(annoDrawActivity.getPackageManager()).toString());
+        jso.put("versionName", annoDrawActivity.getPackageManager().getPackageInfo(resolveInfo.activityInfo.packageName, 0).versionName);
+
+        jsonArray.put(jso);
       }
       catch (Exception dummy)
       {
@@ -535,7 +540,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
         jso = new JSONObject();
         jso.put("name", app.applicationInfo.loadLabel(packageManager).toString());
         jso.put("packageName", app.packageName);
-        jso.put("versionCode", app.versionCode);
+        jso.put("versionName", app.versionName);
 
         jsonArray.put(jso);
       }
