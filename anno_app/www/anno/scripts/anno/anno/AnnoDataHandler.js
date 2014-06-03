@@ -152,7 +152,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
             anno.simple_circle_on_top = anno.simple_circle_on_top==1;
             anno.simple_is_moved = anno.simple_is_moved==1;
 
-            annoUtil.getBase64FileContent(screenshotDirPath+"/"+anno.image, function(base64Str){console.error(JSON.stringify(anno));
+            annoUtil.getBase64FileContent(screenshotDirPath+"/"+anno.image, function(base64Str){
                 anno.image = base64Str;
 
                 OAuthUtil.getAccessToken(function(){
