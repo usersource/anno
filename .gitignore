@@ -11,3 +11,4 @@ anno_android/version.properties
 *.pyc
 .idea
 .DS_Store
+.pydevproject
