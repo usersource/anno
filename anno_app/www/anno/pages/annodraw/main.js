@@ -195,16 +195,29 @@ require([
     // home/feeds/cancel button
     connect.connect(dom.byId("menuItemFeed"), 'click', function(e)
     {
-        var action;
-        if (level == 1)
-        {
-            action = "goto_anno_home";
-        }
-        else
-        {
-            action = "exit_current_activity";
-        }
+        var action = "goto_anno_home";
 
+        window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "cancel");
+
+        cordova.exec(
+            function (result)
+            {
+
+            },
+            function (err)
+            {
+                // alert(err.message);
+                annoUtil.showMessageDialog(err.message);
+            },
+            "AnnoCordovaPlugin",
+            action,
+            []
+        );
+    });
+
+    connect.connect(dom.byId("menuItemCancel"), 'click', function(e)
+    {
+        var action = "exit_current_activity";
         window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "cancel");
 
         cordova.exec(
@@ -398,6 +411,16 @@ require([
         {
             lastBlackRectanglePos.y1 = 100+defaultShapeHeight;
             lastBlackRectanglePos.y2 = 100;
+        }
+
+        if ((lastBlackRectanglePos.x1+defaultShapeWidth) >= (viewPoint.w))
+        {
+            lastBlackRectanglePos.x1 = 100+defaultShapeWidth;
+        }
+
+        if ((lastBlackRectanglePos.x1) <0 )
+        {
+            lastBlackRectanglePos.x1 = 20;
         }
 
         toLeft = !toLeft;
@@ -1015,6 +1038,13 @@ require([
                     menusDialog.top = (viewPoint.h-barHeight-44)+'px';
                     menusDialog.left = (viewPoint.w-204)+'px';
                     domStyle.set(menusDialog.domNode, "backgroundColor", "white");
+
+                    if (annoUtil.isRunningAsPlugin())
+                    {
+                        domStyle.set('menuItemFeed', 'display', '');
+                        domStyle.set(menusDialog.domNode, 'height', '80px');
+                        menusDialog.top = (viewPoint.h-barHeight-84)+'px';
+                    }
 
                     connect.connect(dom.byId("barMoreMenu"), 'click', function(e)
                     {

@@ -690,6 +690,7 @@ define([
                             for (var j=0;j<returnAnno.followup_list.length;j++)
                             {
                                 returnAnno.followup_list[j].user_id = returnAnno.followup_list[j].creator.display_name||returnAnno.followup_list[j].creator.user_email||returnAnno.followup_list[j].creator.id;
+                                returnAnno.followup_list[j].timestamp = annoUtil.getTimeAgoString(returnAnno.followup_list[j].created);
                                 processFollowupHashTags(returnAnno.followup_list[j]);
                             }
                         }
