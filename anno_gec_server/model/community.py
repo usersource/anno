@@ -8,7 +8,7 @@ class Community(ndb.Model):
     welcome_msg = ndb.StringProperty()
     type = ndb.StringProperty(choices=['private', 'public'], required=True, default='private')
     created = ndb.DateTimeProperty(auto_now_add=True)
-    
+
     @classmethod
     def insert(cls, message):
         entity = cls(name=message.name, description=message.description,

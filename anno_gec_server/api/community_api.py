@@ -12,7 +12,8 @@ from protorpc import messages
 from protorpc import remote
 from google.appengine.ext.db import BadValueError
 
-from message.community_api_message import CommunityMessage
+from message.community_message import CommunityMessage
+from message.common_message import StringMessage
 from model.community import Community
 from api.utils import anno_js_client_id
 
@@ -22,15 +23,16 @@ class CommunityApi(remote.Service):
     def __init__(self):
         self.publicCommunityType = 'public'
 
-    @endpoints.method(CommunityMessage, message_types.VoidMessage, path='community', http_method='POST', name='community.insert')
+    @endpoints.method(CommunityMessage, StringMessage, path='community', http_method='POST', name='community.insert')
     def community_insert(self, request):
         try:
             # only one public community is allowed
             if (request.type == self.publicCommunityType):
                 queryResultCount = Community.query(Community.type == self.publicCommunityType).count()
                 if queryResultCount:
-                    return message_types.VoidMessage()
+                    return StringMessage(msg="Community not created. Can't create more than one public community.")
             Community.insert(request)
         except BadValueError as e:
             logging.exception("Exception while inserting community: %s" % e)
-        return message_types.VoidMessage()
+            return StringMessage(msg="%s" % e)
+        return StringMessage(msg="Community created.")
