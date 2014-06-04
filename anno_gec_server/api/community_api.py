@@ -40,7 +40,9 @@ class CommunityApi(remote.Service):
                 request.type = self.communityType["private"]
 
             community = Community.insert(request)
-            UserRole.insert(request.user, community, self.managerRole)
+            userrole = UserRole.insert(request.user, community, self.managerRole)
+            if userrole is None:
+                Community.delete()
             respData = StringMessage(msg="Community created.")
         except Exception as e:
             logging.exception("Exception while inserting community: %s" % e)

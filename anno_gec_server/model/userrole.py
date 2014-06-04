@@ -23,4 +23,8 @@ class UserRole(ndb.Model):
             user = User.find_user_by_email(user.user_email)
 
         if user:
-            cls(user=user.key, community=community.key, role=role).put()
+            entity = cls(user=user.key, community=community.key, role=role)
+            entity.put()
+            return entity
+        else:
+            return None

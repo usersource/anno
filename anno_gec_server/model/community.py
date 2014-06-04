@@ -15,3 +15,7 @@ class Community(ndb.Model):
                      welcome_msg=message.welcome_msg, type=message.type)
         entity.put()
         return entity
+
+    @classmethod
+    def delete(cls, community):
+        community.key.delete()
