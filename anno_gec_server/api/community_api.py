@@ -10,7 +10,6 @@ import endpoints
 from protorpc import message_types
 from protorpc import messages
 from protorpc import remote
-from google.appengine.ext.db import BadValueError
 
 from message.community_message import CommunityMessage
 from message.common_message import StringMessage
