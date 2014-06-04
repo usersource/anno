@@ -13,8 +13,14 @@ class UserRole(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     user = ndb.KeyProperty(kind=User, required=True)
     community = ndb.KeyProperty(kind=Community, required=True)
-    role = ndb.StringProperty(choices=["member", "manager"], required=True, default="member")
+    role = ndb.StringProperty(choices=["member", "manager"], required=True)
     
     @classmethod
     def insert(cls, user, community, role):
-        cls(user=user, community=community, role=role).put()
+        if user.id:
+            user = User.get_by_id(user.id)
+        elif user.user_email:
+            user = User.find_user_by_email(user.user_email)
+
+        if user:
+            cls(user=user.key, community=community.key, role=role).put()

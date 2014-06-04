@@ -14,9 +14,6 @@ class CommunityMessage(messages.Message):
     name = messages.StringField(2, required=True)
     description = messages.StringField(3)
     welcome_msg = messages.StringField(4)
-    type = messages.StringField(5, required=True)
+    type = messages.StringField(5)
     created = message_types.DateTimeField(6)
     user = messages.MessageField(UserMessage, 7, required=True)
-    
-class UserRoleCommunityMessage(messages.Message):
-    id = messages.IntegerField(1, required=True)
