@@ -792,14 +792,14 @@ define([
 
                         for (var i=0;i<allItems.length;i++)
                         {
-                            domClass.add(allItems[i], 'appNameItem-gray');
+                            domClass.remove(allItems[i], 'appNameItem-active');
                         }
 
-                        domClass.remove(itemNode, 'appNameItem-gray');
+                        domClass.add(itemNode, 'appNameItem-active');
 
                         selectedAppName = itemNode.children[0].innerHTML;
                         dom.byId('btnAppNameDialogDone').disabled = false;
-                        domClass.remove('btnAppNameDialogDone', "disabledBtn")
+                        domClass.remove('btnAppNameDialogDone', "disabledBtn");
                     }));
 
                     _connectResults.push(connect.connect(dom.byId('btnAppNameDialogDone'), "click", function ()

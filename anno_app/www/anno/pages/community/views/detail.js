@@ -44,7 +44,7 @@ define([
             trayBarHeight = 30,
             navBarHeight = 50,
             trayScreenHeight = 0,
-            screenshotControlsHeight = 30,
+            screenshotControlsHeight = 86,
             borderWidth;
 
         var imageBaseUrl = annoUtil.getCEAPIConfig().imageServiceURL;
@@ -101,12 +101,13 @@ define([
                 }
                 else if (orignialDeviceRatio > deviceRatio) // wider than current device
                 {console.error('wider ratio');
-                    imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio - navBarHeight - screenshotControlsHeight;
+                    //imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio - navBarHeight - screenshotControlsHeight;
+                    mageHeight = viewPoint.h - navBarHeight - screenshotControlsHeight;
                     imageWidth = Math.round(imageHeight/orignialRatio);
                 }
 
                 borderWidth = Math.floor(imageWidth*0.02);
-                domStyle.set('tbl_screenshotControls', 'width', imageWidth+'px');
+                domStyle.set(dom.byId('tbl_screenshotControls').parentNode, 'width', imageWidth+'px');
 
                 applyAnnoLevelColor(eventsModel.cursor.level);
 
@@ -175,7 +176,7 @@ define([
                     surface.hide();
                 }
 
-                domStyle.set(surface.container, {'border': borderWidth+'px solid transparent'});
+                domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', top:(-borderWidth)+'px', left:(-borderWidth)+'px'});
                 surface.borderWidth = borderWidth;
                 surface.setDimensions(imageWidth-borderWidth*2, imageHeight-borderWidth*2);
 
