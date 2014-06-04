@@ -8,19 +8,19 @@
                     <span id="detailPageName" style="line-height: 40px;float: left;">Explore</span>
                 </td>
                 <td align="right" width="85%">
-                    <table>
+                    <table style="table-layout: fixed;">
                         <tr>
-                            <td id="tdNavBtnPrevious" width="80" align="center">
-                                <span id="navBtnPrevious" class="icon-arrow-left navBtnDisabled" style="width: 60px;height: 32px;float: left;padding-left: 20px;font-size: 25px;"></span>
+                            <td id="tdNavBtnPrevious" width="60" align="center">
+                                <span id="navBtnPrevious" class="icon-arrow-left navBtnDisabled" style="width: 60px;height: 32px;float: left;font-size: 25px;"></span>
                             </td>
-                            <td id="tdNavBtnScreenshot" width="80" align="center">
+                            <td id="tdNavBtnScreenshot" width="60" align="center">
                                 <img id="navBtnScreenshot" src="css/images/anno.png" width="36px">
                             </td>
-                            <td id="tdNavBtnTray" width="80" align="center">
+                            <td id="tdNavBtnTray" width="60" align="center">
                                 <span id="navBtnTray" class="icon-bubbles barIconDisabled" style="width: 50px;height: 32px;padding-top: 10px;font-size: 28px;"></span>
                             </td>
-                            <td id="tdNavBtnNext" width="80" align="center">
-                                <span id="navBtnNext" class="icon-arrow-right" style="width: 60px;height: 30px;float: right;padding-right: 20px;font-size: 25px;"></span>
+                            <td id="tdNavBtnNext" width="60" align="center">
+                                <span id="navBtnNext" class="icon-arrow-right" style="width: 60px;height: 30px;float: right;font-size: 25px;"></span>
                             </td>
                         </tr>
                     </table>
@@ -32,12 +32,13 @@
     <div id="detailContentContainer" style="margin-top: 50px;-webkit-transition: all 500ms ease;">
         <div id="mvcGroupDetail" data-dojo-type="dojox/mvc/Group"
              data-dojo-props="target: at(this.loadedModels.events, 'cursor')">
-            <div id="screenshotContainerDetail" >
+            <div style="height: 6px"></div>
+            <div id="screenshotContainerDetail" style="margin-left: auto;margin-right: auto;position: relative">
                 <img id="imgDetailScreenshot" class="imgDetailScreenshot" style="background-color: #c5ccd3;width: 100%;height: 100%" width="100%" height="100%" />
                 <div id="gfxCanvasContainer" class="gfxCanvasContainer" style="width: 500px; height: 500px;display: none;top: 50px"></div>
             </div>
-            <div style="padding-top: 10px;">
-                <table id="tbl_screenshotControls" width="90%">
+            <div style="padding-top: 10px;margin-left: auto;margin-right: auto;">
+                <table id="tbl_screenshotControls" width="100%">
                     <tr>
                         <td id="td_shtCtrl_hideAnnotations" style="padding-left: 20px">
                             <div style="color: blue;text-decoration: underline">hide annotations</div>

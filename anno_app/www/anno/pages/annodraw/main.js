@@ -145,19 +145,19 @@ require([
 
         for (var i=0;i<allItems.length;i++)
         {
-            domClass.add(allItems[i], 'appNameItem-gray');
+            domClass.remove(allItems[i], 'appNameItem-active');
 
             if (allItems[i].children[0].tagName == "INPUT")
             {
-                domStyle.set(allItems[i].children[0], "color", "gray");
+                domStyle.set(allItems[i].children[0], "color", "white");
             }
         }
 
-        domClass.remove(itemNode, 'appNameItem-gray');
+        domClass.add(itemNode, 'appNameItem-active');
 
         if (itemNode.children[0].tagName == "INPUT")
         {
-            domStyle.set(itemNode.children[0], "color", "white");
+            domStyle.set(itemNode.children[0], "color", "#ff9900");
             selectedAppName = itemNode.children[0].innerHTML;
             selectedAppVersionName = "";
         }
