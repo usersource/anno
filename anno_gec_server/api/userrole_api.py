@@ -12,25 +12,15 @@ from protorpc import messages
 from protorpc import remote
 
 from api.utils import anno_js_client_id
-from model.userrole import UserRole
-from model.community import Community
+from handler.userrole_handler import UserRoleHandler
 from message.userrole_message import UserRoleMessage
+from message.common_message import ResponseMessage
 
 @endpoints.api(name="userrole", version="1.0", description="User role API",
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
 class UserRoleApi(remote.Service):
-    @endpoints.method(UserRoleMessage, message_types.VoidMessage, path="userrole", http_method="POST", name="userrole.insert")
-    def userrole_insert(self, request):
-        try:
-            if not request.role:
-                request.role = "member"
 
-            community = Community.get_by_id(request.community.id)
-            
-            if community is None:
-                raise endpoints.NotFoundException("No community entity with the id '%s' exists." % request.community.id)
-            
-            UserRole.insert(request.user, community, request.role)
-        except Exception as e:
-            logging.exception("Exception while inserting user role: %s" % e)
-        return message_types.VoidMessage()
+    @endpoints.method(UserRoleMessage, ResponseMessage, path="userrole", http_method="POST", name="userrole.insert")
+    def userrole_insert(self, request):
+        resp = UserRoleHandler.insert(request.user, request.community, request.role)
+        return ResponseMessage(success=True if resp else False)

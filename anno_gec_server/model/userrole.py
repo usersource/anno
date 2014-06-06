@@ -17,14 +17,6 @@ class UserRole(ndb.Model):
     
     @classmethod
     def insert(cls, user, community, role):
-        if user.id:
-            user = User.get_by_id(user.id)
-        elif user.user_email:
-            user = User.find_user_by_email(user.user_email)
-
-        if user:
-            entity = cls(user=user.key, community=community.key, role=role)
-            entity.put()
-            return entity
-        else:
-            return None
+        entity = cls(user=user.key, community=community.key, role=role)
+        entity.put()
+        return entity

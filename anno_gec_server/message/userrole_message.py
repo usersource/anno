@@ -8,10 +8,10 @@ from protorpc import messages
 from protorpc import message_types
 
 from message.user_message import UserMessage
-from message.common_message import FieldIDMessage
+from message.community_message import CommunityMessage
 
 class UserRoleMessage(messages.Message):
     id = messages.IntegerField(1)
-    user = messages.MessageField(UserMessage, 2, required=True)
-    community = messages.MessageField(FieldIDMessage, 3, required=True)
+    user = messages.MessageField(UserMessage, 2)
+    community = messages.MessageField(CommunityMessage, 3)
     role = messages.StringField(4)

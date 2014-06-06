@@ -7,11 +7,13 @@ class AppInfoMessage(messages.Message):
     """
     ProtoRPC message definition to represent 3rd party app information.
     """
-    app_key = messages.StringField(1)
-    app_name = messages.StringField(2)
-    company_name = messages.StringField(3)
-    private_data = messages.BooleanField(4, default=False)
-    created = message_types.DateTimeField(5)
-    contact_email = messages.StringField(6)
-    is_registered = messages.BooleanField(7)
-    app_urls = messages.StringField(8)
+    id = messages.IntegerField(1)
+    name = messages.StringField(2)
+    icon = messages.BytesField(3)
+    icon_url = messages.StringField(4)
+    description = messages.StringField(5)
+    version = messages.StringField(6)
+    contact_email = messages.StringField(7)
+    company_name = messages.StringField(8)
+    app_url = messages.StringField(9)
+    created = message_types.DateTimeField(10)
