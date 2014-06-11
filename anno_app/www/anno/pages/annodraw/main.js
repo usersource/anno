@@ -410,12 +410,12 @@ require([
 
         if ((lastBlackRectanglePos.x1+defaultShapeWidth) >= (viewPoint.w))
         {
-            lastBlackRectanglePos.x1 = 100+defaultShapeWidth;
+            lastBlackRectanglePos.x1 = lastBlackRectanglePos.x1 - 30 - ((lastBlackRectanglePos.x1+defaultShapeWidth) - viewPoint.w);
         }
 
         if ((lastBlackRectanglePos.x1) <0 )
         {
-            lastBlackRectanglePos.x1 = 20;
+            lastBlackRectanglePos.x1 = 30;
         }
 
         toLeft = !toLeft;
