@@ -16,7 +16,22 @@ class UserRole(ndb.Model):
     role = ndb.StringProperty(choices=["member", "manager"], required=True)
     
     @classmethod
-    def insert(cls, user, community, role):
-        entity = cls(user=user.key, community=community.key, role=role)
-        entity.put()
+    def insert(cls, user, community, role=None):
+        entity = None
+
+        if role is None:
+            role = cls.memberRole
+
+        if type(community) is not Community:
+            community = Community.get_by_id(community.id) if community.id else None
+
+        if user.id:
+            user = User.get_by_id(user.id)
+        elif user.user_email:
+            user = User.find_user_by_email(user.user_email)
+
+        if user and community:
+            entity = cls(user=user.key, community=community.key, role=role)
+            entity.put()
+
         return entity

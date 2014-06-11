@@ -12,7 +12,6 @@ from protorpc import messages
 from protorpc import remote
 
 from api.utils import anno_js_client_id
-from handler.userrole_handler import UserRoleHandler
 from message.userrole_message import UserRoleMessage
 from message.common_message import ResponseMessage
 
@@ -22,5 +21,5 @@ class UserRoleApi(remote.Service):
 
     @endpoints.method(UserRoleMessage, ResponseMessage, path="userrole", http_method="POST", name="userrole.insert")
     def userrole_insert(self, request):
-        resp = UserRoleHandler.insert(request.user, request.community, request.role)
+        resp = UserRole.insert(request.user, request.community, request.role)
         return ResponseMessage(success=True if resp else False)
