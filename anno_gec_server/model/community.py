@@ -55,11 +55,11 @@ class Community(ndb.Model):
     @classmethod
     def delete(cls, community):
         community.key.delete()
-    
+
     @classmethod
     def addApp(cls, request):
         if request.community.id:
-            community = Community.get_by_id(request.community.id)
+            community = cls.get_by_id(request.community.id)
 
         if request.app.id:
             app = AppInfo.get_by_id(request.app.id)
@@ -67,3 +67,7 @@ class Community(ndb.Model):
         if community and app:
             community.apps.append(app.key)
             community.put()
+
+    @classmethod
+    def getPublicCommunity(cls):
+        return cls.query(cls.type == "public").get()

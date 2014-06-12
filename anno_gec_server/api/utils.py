@@ -10,7 +10,9 @@ import endpoints
 from google.appengine.api import search
 
 from model.user import User
-
+from model.appinfo import AppInfo
+from model.community import Community
+from model.userrole import UserRole
 
 def get_endpoints_current_user(raise_unauthorized=True):
     """Returns a current user and (optionally) causes an HTTP 401 if no user.
@@ -186,6 +188,27 @@ def is_empty_string(string_value):
         return True
     return False
 
+def getCommunityForApp(id=None, app_name=None):
+    if id:
+        app = AppInfo.get_by_id(id)
+    elif app_name:
+        app = AppInfo.getAppByName(app_name)
+
+    communities = Community.query().fetch()
+
+    for community in communities:
+        if app.key in community.apps:
+            return community
+
+def isMember(community, user, include_manager=True):
+    if include_manager:
+        query = UserRole.query(UserRole.community == community.key and UserRole.user == user.key)
+    else:
+        query = UserRole.query(UserRole.community == community.key and UserRole.user == user.key 
+                               and UserRole.role == "member")
+
+    data = query.get()
+    return True if data else False
 
 """
 annoserver:

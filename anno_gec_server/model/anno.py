@@ -12,11 +12,11 @@ from google.appengine.ext import ndb
 
 from message.anno_api_messages import AnnoResponseMessage
 from message.anno_api_messages import AnnoListMessage
+from message.appinfo_message import AppInfoMessage
 from model.base_model import BaseModel
-from api.utils import get_country_by_coordinate
-from api.utils import tokenize_string
-from api.utils import is_empty_string
-
+from model.community import Community
+from model.appinfo import AppInfo
+from api.utils import *
 
 class Anno(BaseModel):
     """
@@ -32,9 +32,10 @@ class Anno(BaseModel):
     level = ndb.IntegerProperty(required=True)
     device_model = ndb.StringProperty(required=True)
     app_name = ndb.StringProperty()
-    app_version = ndb.StringProperty()
     os_name = ndb.StringProperty()
     os_version = ndb.StringProperty()
+    app = ndb.KeyProperty(kind=AppInfo, required=True)
+    community = ndb.KeyProperty(kind=Community, required=True)
     # use TextProperty instead of StringProperty.
     # StringProperty if indexed, up to 500 characters.
     # TextProperty not indexed, no limitation.
@@ -64,6 +65,9 @@ class Anno(BaseModel):
         user_message = None
         if self.creator is not None:
             user_message = self.creator.get().to_message()
+
+        app_name = self.app_name if self.app is None else self.app.get().name
+
         return AnnoResponseMessage(id=self.key.id(),
                                    anno_text=self.anno_text,
                                    simple_x=self.simple_x,
@@ -73,8 +77,7 @@ class Anno(BaseModel):
                                    simple_is_moved=self.simple_is_moved,
                                    level=self.level,
                                    device_model=self.device_model,
-                                   app_name=self.app_name,
-                                   app_version=self.app_version,
+                                   app_name=app_name,
                                    os_name=self.os_name,
                                    os_version=self.os_version,
                                    created=self.created,
@@ -109,28 +112,47 @@ class Anno(BaseModel):
         """
         create a new anno model from request message.
         """
-        entity = cls(anno_text=message.anno_text, simple_x=message.simple_x, simple_y=message.simple_y,
-                     anno_type=message.anno_type,
-                     simple_circle_on_top=message.simple_circle_on_top, simple_is_moved=message.simple_is_moved,
-                     level=message.level,
-                     device_model=message.device_model, app_name=message.app_name, app_version=message.app_version,
-                     os_name=message.os_name, os_version=message.os_version, creator=user.key,
-                     draw_elements=message.draw_elements, screenshot_is_anonymized=message.screenshot_is_anonymized,
-                     geo_position=message.geo_position, flag_count=0, vote_count=0, followup_count=0,
-                     last_activity='UserSource', latitude=message.latitude, longitude=message.longitude)
-        # set image.
-        entity.image = message.image
+        appinfo = AppInfo.getAppInfo(name=message.app_name)
+        community = Community.getPublicCommunity()
+
+        if appinfo is None:
+            appInfoMessage = AppInfoMessage(name=message.app_name, version=message.app_version)
+            appinfo = AppInfo.insert(AppInfoMessage)
+        else:
+            app_community = getCommunityForApp(id=appinfo.key.id())
+            is_member = isMember(app_community, user)
+            if app_community and is_member:
+                community = app_community
+
+        entity = cls(anno_text=message.anno_text, simple_x=message.simple_x,
+                     simple_y=message.simple_y, anno_type=message.anno_type,
+                     simple_circle_on_top=message.simple_circle_on_top,
+                     simple_is_moved=message.simple_is_moved, level=message.level,
+                     device_model=message.device_model, os_name=message.os_name,
+                     os_version=message.os_version, creator=user.key,
+                     draw_elements=message.draw_elements, image=message.image,
+                     screenshot_is_anonymized=message.screenshot_is_anonymized,
+                     geo_position=message.geo_position, flag_count=0, vote_count=0,
+                     followup_count=0, latitude=message.latitude, longitude=message.longitude)
+
+        # set appinfo and community
+        entity.app = appinfo.key
+        entity.community = community.key
+
         # set created time if provided in the message.
         if message.created is not None:
             entity.created = message.created
-            # use google map api to retrieve country information and save into datastore.
+
+        # use google map api to retrieve country information and save into datastore.
         if message.latitude is not None and message.longitude is not None:
             entity.country = get_country_by_coordinate(message.latitude, message.longitude)
-            # set last update time & activity
+
+        # set last update time & activity
         entity.last_update_time = datetime.datetime.now()
         entity.last_activity = 'UserSource'
         entity.last_update_type = 'create'
         entity.put()
+
         return entity
 
     def merge_from_message(self, message):
@@ -276,11 +298,12 @@ class Anno(BaseModel):
 
     @classmethod
     def is_anno_exists(cls, user, message):
+        appinfo = AppInfo.getAppInfo(name=message.app_name)
+
         query = cls.query() \
-            .filter(cls.app_name == message.app_name) \
+            .filter(cls.app == appinfo.key) \
             .filter(cls.anno_text == message.anno_text) \
             .filter(cls.anno_type == message.anno_type) \
-            .filter(cls.app_version == message.app_version) \
             .filter(cls.level == message.level) \
             .filter(cls.os_name == message.os_name) \
             .filter(cls.os_version == message.os_version) \
@@ -481,7 +504,7 @@ class Anno(BaseModel):
         This method generates a search document filled with current anno information.
         """
         anno_id_string = "%d" % self.key.id()
-        app_name = "%s" % self.app_name
+        app_name = "%s" % self.app.get().name
         anno_text = "%s" % self.anno_text
         anno_document = search.Document(
             doc_id=anno_id_string,

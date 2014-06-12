@@ -31,3 +31,7 @@ class AppInfo(ndb.Model):
         entity = cls(name=message.name, version=message.version)
         entity.put()
         return entity
+
+    @classmethod
+    def getAppByName(cls, app_name):
+        return cls.query(cls.name == app_name).get()
