@@ -9,7 +9,7 @@ from protorpc import message_types
 
 from message.user_message import UserMessage
 from message.followup_message import FollowupMessage
-
+from message.community_message import CommunityMessage
 
 class AnnoMessage(messages.Message):
     """
@@ -98,7 +98,7 @@ class AnnoResponseMessage(messages.Message):
     longitude = messages.FloatField(30)
     country = messages.StringField(31)
     last_update_type = messages.StringField(32)
-
+    community = messages.MessageField(CommunityMessage, 33)
 
 class AnnoListMessage(messages.Message):
     """

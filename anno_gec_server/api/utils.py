@@ -8,6 +8,7 @@ import base64
 
 import endpoints
 from google.appengine.api import search
+from google.appengine.ext import ndb
 
 from model.user import User
 from model.appinfo import AppInfo
@@ -200,15 +201,42 @@ def getCommunityForApp(id=None, app_name=None):
         if app.key in community.apps:
             return community
 
+def user_community(user):
+    userroles = UserRole.query().filter(UserRole.user == user.key)\
+                                .fetch(projection=[UserRole.community, UserRole.role])
+
+    results = []
+    for userrole in userroles:
+        results.append(dict(community=userrole.community, role=userrole.role))
+
+    return results
+
 def isMember(community, user, include_manager=True):
     if include_manager:
-        query = UserRole.query(UserRole.community == community.key and UserRole.user == user.key)
+        query = UserRole.query(ndb.AND(UserRole.community == community.key,
+                                       UserRole.user == user.key)
+                               )
     else:
-        query = UserRole.query(UserRole.community == community.key and UserRole.user == user.key 
-                               and UserRole.role == "member")
+        query = UserRole.query(ndb.AND(UserRole.community == community.key, 
+                                       UserRole.user == user.key, 
+                                       UserRole.role == "member")
+                               )
 
-    data = query.get()
-    return True if data else False
+    results = query.get()
+    return True if results else False
+
+def filter_anno_by_user(query, user):
+    from model.anno import Anno
+    user_community_list = [ userrole.get("community") for userrole in user_community(user) ]
+
+    if (len(user_community_list)):
+        query = query.filter(ndb.OR(Anno.community == None, 
+                                    Anno.community.IN(user_community_list))
+                             )
+    else:
+        query = query.filter(Anno.community == None)
+
+    return query.order(Anno._key)
 
 """
 annoserver:

@@ -99,19 +99,19 @@ class AnnoApi(remote.Service):
             select_projection = request.select.split(',')
 
         if request.query_type == 'by_created':
-            return Anno.query_by_app_by_created(request.app, limit, select_projection, curs)
+            return Anno.query_by_app_by_created(request.app, limit, select_projection, curs, user)
         elif request.query_type == 'by_vote_count':
-            return Anno.query_by_vote_count(request.app)
+            return Anno.query_by_vote_count(request.app, user)
         elif request.query_type == 'by_flag_count':
-            return Anno.query_by_flag_count(request.app)
+            return Anno.query_by_flag_count(request.app, user)
         elif request.query_type == 'by_activity_count':
-            return Anno.query_by_activity_count(request.app)
+            return Anno.query_by_activity_count(request.app, user)
         elif request.query_type == 'by_last_activity':
-            return Anno.query_by_last_activity(request.app)
+            return Anno.query_by_last_activity(request.app, user)
         elif request.query_type == 'by_country':
-            return Anno.query_by_country(request.app)
+            return Anno.query_by_country(request.app, user)
         else:
-            return Anno.query_by_page(limit, select_projection, curs)
+            return Anno.query_by_page(limit, select_projection, curs, user)
 
 
     @endpoints.method(AnnoMessage, AnnoResponseMessage, path='anno', http_method='POST', name="anno.insert")

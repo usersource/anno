@@ -5,6 +5,7 @@ import logging
 from google.appengine.ext import ndb
 
 from model.appinfo import AppInfo
+from message.community_message import CommunityMessage
 
 class Community(ndb.Model):
     name = ndb.StringProperty(required=True)
@@ -16,6 +17,15 @@ class Community(ndb.Model):
     
     communityType = dict(public="public", private="private")
     managerRole = "manager"
+
+    def to_message(self):
+        return CommunityMessage(id=self.key.id(),
+                                name=self.name,
+                                description=self.description,
+                                welcome_msg=self.welcome_msg,
+                                type=self.type,
+                                created=self.created
+                            )
 
     @classmethod
     def insert(cls, message):
@@ -67,7 +77,3 @@ class Community(ndb.Model):
         if community and app:
             community.apps.append(app.key)
             community.put()
-
-    @classmethod
-    def getPublicCommunity(cls):
-        return cls.query(cls.type == "public").get()

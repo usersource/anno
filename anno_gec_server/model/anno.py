@@ -34,8 +34,8 @@ class Anno(BaseModel):
     app_name = ndb.StringProperty()
     os_name = ndb.StringProperty()
     os_version = ndb.StringProperty()
-    app = ndb.KeyProperty(kind=AppInfo, required=True)
-    community = ndb.KeyProperty(kind=Community, required=True)
+    app = ndb.KeyProperty(kind=AppInfo)
+    community = ndb.KeyProperty(kind=Community, default=None)
     # use TextProperty instead of StringProperty.
     # StringProperty if indexed, up to 500 characters.
     # TextProperty not indexed, no limitation.
@@ -67,6 +67,7 @@ class Anno(BaseModel):
             user_message = self.creator.get().to_message()
 
         app_name = self.app_name if self.app is None else self.app.get().name
+        community = self.community.get().to_message() if self.community else None
 
         return AnnoResponseMessage(id=self.key.id(),
                                    anno_text=self.anno_text,
@@ -92,7 +93,8 @@ class Anno(BaseModel):
                                    followup_count=self.followup_count,
                                    last_update_time=self.last_update_time,
                                    last_activity=self.last_activity,
-                                   last_update_type=self.last_update_type
+                                   last_update_type=self.last_update_type,
+                                   community=community
         )
 
     def to_response_message_by_projection(self, projection):
@@ -113,7 +115,7 @@ class Anno(BaseModel):
         create a new anno model from request message.
         """
         appinfo = AppInfo.getAppInfo(name=message.app_name)
-        community = Community.getPublicCommunity()
+        community = None
 
         if appinfo is None:
             appInfoMessage = AppInfoMessage(name=message.app_name, version=message.app_version)
@@ -123,6 +125,9 @@ class Anno(BaseModel):
             is_member = isMember(app_community, user)
             if app_community and is_member:
                 community = app_community
+
+        if type(community) is Community:
+            community = community.key
 
         entity = cls(anno_text=message.anno_text, simple_x=message.simple_x,
                      simple_y=message.simple_y, anno_type=message.anno_type,
@@ -137,7 +142,7 @@ class Anno(BaseModel):
 
         # set appinfo and community
         entity.app = appinfo.key
-        entity.community = community.key
+        entity.community = community
 
         # set created time if provided in the message.
         if message.created is not None:
@@ -196,10 +201,12 @@ class Anno(BaseModel):
             # TODO: can't merge latitude & longitude now, if to enable it, also needs to look up country again.
 
     @classmethod
-    def query_by_app_by_created(cls, app_name, limit, projection, curs):
+    def query_by_app_by_created(cls, app_name, limit, projection, curs, user):
         query = cls.query()
+        query = filter_anno_by_user(query, user)
         query = query.filter(cls.app_name == app_name)
         query = query.order(-cls.created)
+
         if (curs is not None) and (projection is not None):
             annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)
         elif (curs is not None) and (projection is None):
@@ -219,8 +226,11 @@ class Anno(BaseModel):
             return AnnoListMessage(anno_list=items, has_more=more)
 
     @classmethod
-    def query_by_vote_count(cls, app_name):
-        query = cls.query().filter(cls.app_name == app_name).order(-cls.vote_count)
+    def query_by_vote_count(cls, app_name, user):
+        query = cls.query()
+        query = filter_anno_by_user(query, user)
+        query = query.filter(cls.app_name == app_name).order(-cls.vote_count)
+
         anno_list = []
         for anno in query:
             anno_message = anno.to_response_message()
@@ -229,8 +239,11 @@ class Anno(BaseModel):
         return AnnoListMessage(anno_list=anno_list)
 
     @classmethod
-    def query_by_flag_count(cls, app_name):
-        query = cls.query().filter(cls.app_name == app_name).filter(cls.flag_count > 0).order(-cls.flag_count)
+    def query_by_flag_count(cls, app_name, user):
+        query = cls.query()
+        query = filter_anno_by_user(query, user)
+        query = query.filter(cls.app_name == app_name).filter(cls.flag_count > 0).order(-cls.flag_count)
+
         anno_list = []
         for anno in query:
             anno_message = anno.to_response_message()
@@ -239,9 +252,13 @@ class Anno(BaseModel):
         return AnnoListMessage(anno_list=anno_list)
 
     @classmethod
-    def query_by_activity_count(cls, app_name):
+    def query_by_activity_count(cls, app_name, user):
+        query = cls.query()
+        query = filter_anno_by_user(query, user)
+        query = query.filter(cls.app_name == app_name)
+
         anno_list = []
-        for anno in cls.query().filter(cls.app_name == app_name):
+        for anno in query:
             anno_list.append(anno)
         anno_list = sorted(anno_list, key=lambda x: (x.vote_count + x.flag_count + x.followup_count), reverse=True)
         anno_resp_list = []
@@ -252,8 +269,11 @@ class Anno(BaseModel):
         return AnnoListMessage(anno_list=anno_resp_list)
 
     @classmethod
-    def query_by_last_activity(cls, app_name):
-        query = cls.query().filter(cls.app_name == app_name).order(-cls.last_update_time)
+    def query_by_last_activity(cls, app_name, user):
+        query = cls.query()
+        query = filter_anno_by_user(query, user)
+        query = query.filter(cls.app_name == app_name).order(-cls.last_update_time)
+
         anno_list = []
         for anno in query:
             anno_message = anno.to_response_message()
@@ -263,12 +283,15 @@ class Anno(BaseModel):
         return AnnoListMessage(anno_list=anno_list)
 
     @classmethod
-    def query_by_country(cls, app_name):
+    def query_by_country(cls, app_name, user):
         """
         Query annos for a given app by country alphabetical order.
         No pagination is supported here.
         """
-        query = cls.query().filter(cls.app_name == app_name).order(cls.country)
+        query = cls.query()
+        query = filter_anno_by_user(query, user)
+        query = query.filter(cls.app_name == app_name).order(cls.country)
+
         anno_list = []
         for anno in query:
             anno_message = anno.to_response_message()
@@ -276,8 +299,11 @@ class Anno(BaseModel):
         return AnnoListMessage(anno_list=anno_list)
 
     @classmethod
-    def query_by_page(cls, limit, projection, curs):
-        query = cls.query().order(-cls.created)
+    def query_by_page(cls, limit, projection, curs, user):
+        query = cls.query()
+        query = filter_anno_by_user(query, user)
+        query = query.order(-cls.created)
+        
         if (curs is not None) and (projection is not None):
             annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)
         elif (curs is not None) and (projection is None):
