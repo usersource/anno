@@ -15,6 +15,8 @@ class UserRole(ndb.Model):
     community = ndb.KeyProperty(kind=Community, required=True)
     role = ndb.StringProperty(choices=["member", "manager"], required=True)
     
+    memberRole = "member"
+
     @classmethod
     def insert(cls, user, community, role=None):
         entity = None
