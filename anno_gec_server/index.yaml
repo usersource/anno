@@ -121,3 +121,9 @@ indexes:
   - name: creator
   - name: created
     direction: desc
+
+- kind: UserRole
+  properties:
+  - name: user
+  - name: community
+  - name: role
