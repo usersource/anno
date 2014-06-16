@@ -250,8 +250,8 @@ class AnnoApi(remote.Service):
 
         if request.order_type == 'popular':
             return Anno.query_by_popular(request.limit, request.offset,
-                                         request.search_string, request.app_name, app_set)
+                                         request.search_string, request.app_name, app_set, user)
         elif request.order_type == 'active':
-            return Anno.query_by_active(request.limit, request.offset, request.search_string, request.app_name, app_set)
+            return Anno.query_by_active(request.limit, request.offset, request.search_string, request.app_name, app_set, user)
         else:
-            return Anno.query_by_recent(request.limit, request.offset, request.search_string, request.app_name, app_set)
+            return Anno.query_by_recent(request.limit, request.offset, request.search_string, request.app_name, app_set, user)

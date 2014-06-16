@@ -353,7 +353,7 @@ class Anno(BaseModel):
 
 
     @classmethod
-    def query_by_recent(cls, limit, offset, search_string, app_name, app_set):
+    def query_by_recent(cls, limit, offset, search_string, app_name, app_set, user):
         """
         This method queries anno records by 'recent' order.
         'recent' = created
@@ -380,13 +380,13 @@ class Anno(BaseModel):
             limit=limit,
             offset=offset,
             sort_options=sort_opts,
-            returned_fields=['anno_text', 'app_name', 'created']
+            returned_fields=['anno_text', 'app_name', 'created', 'community']
         )
         # execute query
-        return Anno.convert_document_to_message(index, query_string, query_options, offset, limit)
+        return Anno.convert_document_to_message(index, query_string, query_options, offset, limit, user)
 
     @classmethod
-    def query_by_popular(cls, limit, offset, search_string, app_name, app_set):
+    def query_by_popular(cls, limit, offset, search_string, app_name, app_set, user):
         """
         This method queries anno records by 'popular' order.
         'popular' = vote_count - flag_count
@@ -412,13 +412,13 @@ class Anno(BaseModel):
             limit=limit,
             offset=offset,
             sort_options=sort_opts,
-            returned_fields=['anno_text', 'app_name', 'vote_count', 'flag_count']
+            returned_fields=['anno_text', 'app_name', 'vote_count', 'flag_count', 'community']
         )
         # execute query
-        return Anno.convert_document_to_message(index, query_string, query_options, offset, limit)
+        return Anno.convert_document_to_message(index, query_string, query_options, offset, limit, user)
 
     @classmethod
-    def query_by_active(cls, limit, offset, search_string, app_name, app_set):
+    def query_by_active(cls, limit, offset, search_string, app_name, app_set, user):
         """
         This method queries anno records by 'active' order.
         'active' = last_update_time
@@ -443,9 +443,9 @@ class Anno(BaseModel):
             limit=limit,
             offset=offset,
             sort_options=sort_opts,
-            returned_fields=['anno_text', 'app_name', 'last_update_time']
+            returned_fields=['anno_text', 'app_name', 'last_update_time', 'community']
         )
-        return Anno.convert_document_to_message(index, query_string, query_options, offset, limit)
+        return Anno.convert_document_to_message(index, query_string, query_options, offset, limit, user)
 
     @classmethod
     def get_query_string(cls, search_string, app_name, app_set):
@@ -456,6 +456,7 @@ class Anno(BaseModel):
         :param app_set: app name set.
         """
         query_string_parts = []
+
         if app_set is not None:  # 'limit to my app' is on
             if len(app_set) == 0:
                 logging.info("final query string= 1 = 0")
@@ -465,11 +466,14 @@ class Anno(BaseModel):
                 for app in app_set:
                     app_name_query_list.append("app_name = \"%s\"" % app)
                 query_string_parts.append("(" + ' OR '.join(app_name_query_list) + ")")
+
         if not is_empty_string(search_string):
             words = tokenize_string(search_string)
             query_string_parts.append(Anno.get_query_string_for_all_fields(["anno_text", "app_name"], words))
+
         if not is_empty_string(app_name):
             query_string_parts.append("( app_name = \"%s\" )" % app_name)
+
         query_string = ' AND '.join(query_string_parts)
         logging.info("final query string=%s" % query_string)
         return query_string
@@ -507,7 +511,15 @@ class Anno(BaseModel):
         return None
 
     @classmethod
-    def convert_document_to_message(cls, index, query_string, query_options, offset, limit):
+    def convert_document_to_message(cls, index, query_string, query_options, offset, limit, user):
+        user_community_list = [ str(userrole.get("community").id()) for userrole in user_community(user) ]
+        user_community_list.append("__open__")
+
+        if len(query_string):
+            query_string += "AND "
+
+        query_string += '( community = (%s) )' % (" OR ".join(user_community_list))
+
         query = search.Query(query_string=query_string, options=query_options)
         results = index.search(query)
         number_retrieved = len(results.results)
@@ -529,17 +541,21 @@ class Anno(BaseModel):
         anno_id_string = "%d" % self.key.id()
         app_name = "%s" % self.app.get().name
         anno_text = "%s" % self.anno_text
+        community = "%s" % self.community.id() if self.community else "__open__"
+
         anno_document = search.Document(
             doc_id=anno_id_string,
             fields=[
-                search.TextField(name='app_name', value=app_name),
-                search.TextField(name='anno_text', value=anno_text),
-                search.NumberField(name='vote_count', value=self.vote_count),
-                search.NumberField(name='flag_count', value=self.flag_count),
-                search.DateField(name='created', value=self.created),
-                search.DateField(name='last_update_time', value=self.last_update_time)
-            ]
+                    search.TextField(name='app_name', value=app_name),
+                    search.TextField(name='anno_text', value=anno_text),
+                    search.NumberField(name='vote_count', value=self.vote_count),
+                    search.NumberField(name='flag_count', value=self.flag_count),
+                    search.DateField(name='created', value=self.created),
+                    search.DateField(name='last_update_time', value=self.last_update_time),
+                    search.TextField(name="community", value=community)
+                ]
         )
+
         return anno_document
 
     @classmethod
