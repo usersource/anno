@@ -119,11 +119,10 @@ class Anno(BaseModel):
 
         if appinfo is None:
             appInfoMessage = AppInfoMessage(name=message.app_name, version=message.app_version)
-            appinfo = AppInfo.insert(AppInfoMessage)
+            appinfo = AppInfo.insert(appInfoMessage)
         else:
             app_community = getCommunityForApp(id=appinfo.key.id())
-            is_member = isMember(app_community, user)
-            if app_community and is_member:
+            if app_community and isMember(app_community, user):
                 community = app_community
 
         if type(community) is Community:
@@ -324,10 +323,8 @@ class Anno(BaseModel):
 
     @classmethod
     def is_anno_exists(cls, user, message):
-        appinfo = AppInfo.getAppInfo(name=message.app_name)
-
         query = cls.query() \
-            .filter(cls.app == appinfo.key) \
+            .filter(cls.app_name == message.app_name) \
             .filter(cls.anno_text == message.anno_text) \
             .filter(cls.anno_type == message.anno_type) \
             .filter(cls.level == message.level) \
