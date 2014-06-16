@@ -14,6 +14,7 @@ from protorpc import remote
 from api.utils import anno_js_client_id
 from message.userrole_message import UserRoleMessage
 from message.common_message import ResponseMessage
+from model.userrole import UserRole
 
 @endpoints.api(name="userrole", version="1.0", description="User role API",
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])

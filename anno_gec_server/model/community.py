@@ -76,4 +76,6 @@ class Community(ndb.Model):
 
         if community and app:
             community.apps.append(app.key)
-            community.put()
+            entity = community.put()
+            return entity
+        return None
