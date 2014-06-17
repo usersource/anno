@@ -103,18 +103,11 @@ indexes:
   - name: last_update_time
     direction: desc
 
-- kind: Vote
-  properties:
-  - name: creator
-  - name: created
-    direction: desc
-
 - kind: Flag
   properties:
   - name: creator
   - name: created
     direction: desc
-
 
 - kind: FollowUp
   properties:
@@ -127,3 +120,9 @@ indexes:
   - name: user
   - name: community
   - name: role
+
+- kind: Vote
+  properties:
+  - name: creator
+  - name: created
+    direction: desc

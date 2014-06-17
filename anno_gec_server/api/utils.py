@@ -51,10 +51,10 @@ def handle_user(creator_id):
             user = User.insert_user(current_user.email())
     return user
 
-
 def auth_user(headers):
     current_user = get_endpoints_current_user(raise_unauthorized=False)
     user = None
+
     if current_user is None:
         credential_pair = get_credential(headers)
         email = credential_pair[0]
@@ -63,24 +63,11 @@ def auth_user(headers):
         user = User.find_user_by_email(email)
     else:
         user = User.find_user_by_email(current_user.email())
+
     if user is None:
         raise endpoints.UnauthorizedException("No permission.")
+
     return user
-
-
-def get_user(headers):
-    current_user = get_endpoints_current_user(raise_unauthorized=False)
-    user = None
-    if current_user is None:
-        credential_pair = get_credential(headers)
-        email = credential_pair[0]
-        validate_email(email)
-        User.authenticate(credential_pair[0], md5(credential_pair[1]))
-        user = User.find_user_by_email(email)
-    else:
-        user = User.find_user_by_email(current_user.email())
-    return user
-
 
 def get_country_by_coordinate(latitude, longitude):
     """
@@ -228,14 +215,8 @@ def isMember(community, user, include_manager=True):
 def filter_anno_by_user(query, user):
     from model.anno import Anno
     user_community_list = [ userrole.get("community") for userrole in user_community(user) ]
-
-    if (len(user_community_list)):
-        query = query.filter(ndb.OR(Anno.community == None, 
-                                    Anno.community.IN(user_community_list))
-                             )
-    else:
-        query = query.filter(Anno.community == None)
-
+    user_community_list.append(None)
+    query = query.filter(Anno.community.IN(user_community_list))
     return query.order(Anno._key)
 
 """
