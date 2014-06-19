@@ -234,6 +234,13 @@ module.exports = [
         "clobbers": [
             "CameraPopoverHandle"
         ]
+    },
+    {
+        "file": "plugins/com.kolwit.pickcontact/www/PickContact.js",
+        "id": "com.kolwit.pickcontact.PickContact",
+        "clobbers": [
+            "PickContact"
+        ]
     }
 ];
 module.exports.metadata = 
