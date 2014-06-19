@@ -18,7 +18,7 @@ class Community(ndb.Model):
     communityType = dict(public="public", private="private")
     managerRole = "manager"
 
-    def to_message(self):
+    def to_response_message(self):
         return CommunityMessage(id=self.key.id(),
                                 name=self.name,
                                 description=self.description,
@@ -26,6 +26,10 @@ class Community(ndb.Model):
                                 type=self.type,
                                 created=self.created
                             )
+
+    @classmethod
+    def getCommunity(cls, community_id):
+        return cls.get_by_id(community_id).to_response_message()
 
     @classmethod
     def insert(cls, message):

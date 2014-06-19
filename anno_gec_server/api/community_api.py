@@ -20,23 +20,26 @@ from model.userrole import UserRole
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
 class CommunityApi(remote.Service):
 
-    @endpoints.method(CommunityMessage, ResponseMessage, path="community", http_method="POST", name="community.insert")
-    def community_insert(self, request):
-        resp = Community.insert(request)
-        return ResponseMessage(success=True, msg=resp)
-    
-    @endpoints.method(CommunityAppInfoMessage, ResponseMessage, path="app", http_method="POST", name="app.insert")
-    def app_insert(self, request):
-        resp = Community.addApp(request)
-        return ResponseMessage(success=True if resp else False)
-
     community_with_id_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
         id=messages.IntegerField(2, required=True)
     )
 
-    @endpoints.method(community_with_id_resource_container, CommunityUserListMessage, path="user/{id}",
-                      http_method="GET", name="user.get")
+    @endpoints.method(community_with_id_resource_container, CommunityMessage, path="community", http_method="GET", name="community.get")
+    def community_get(self, request):
+        return Community.getCommunity(request.id)
+
+    @endpoints.method(CommunityMessage, ResponseMessage, path="community", http_method="POST", name="community.insert")
+    def community_insert(self, request):
+        resp = Community.insert(request)
+        return ResponseMessage(success=True, msg=resp)
+
+    @endpoints.method(CommunityAppInfoMessage, ResponseMessage, path="app", http_method="POST", name="app.insert")
+    def app_insert(self, request):
+        resp = Community.addApp(request)
+        return ResponseMessage(success=True if resp else False)
+
+    @endpoints.method(community_with_id_resource_container, CommunityUserListMessage, path="userlist/{id}", http_method="GET", name="user.get")
     def user_list(self, request):
         community_user_message_list = []
 

@@ -67,7 +67,7 @@ class Anno(BaseModel):
             user_message = self.creator.get().to_message()
 
         app_name = self.app_name if self.app is None else self.app.get().name
-        community = self.community.get().to_message() if self.community else None
+        community = self.community.get().to_response_message() if self.community else None
 
         return AnnoResponseMessage(id=self.key.id(),
                                    anno_text=self.anno_text,
