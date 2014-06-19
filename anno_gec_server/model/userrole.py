@@ -37,3 +37,10 @@ class UserRole(ndb.Model):
             entity.put()
 
         return entity
+
+    @classmethod
+    def community_user_list(cls, community_id):
+        users = cls.query().filter(cls.community == Community.get_by_id(community_id).key)\
+                                .fetch(projection=[cls.user, cls.role])
+
+        return users

@@ -198,12 +198,6 @@ def user_community(user):
 
     return results
 
-def community_user_list(community_id):
-    users = UserRole.query().filter(UserRole.community == Community.get_by_id(community_id).key)\
-                            .fetch(projection=[UserRole.user, UserRole.role])
-
-    return users
-
 def isMember(community, user, include_manager=True):
     if include_manager:
         query = UserRole.query(ndb.AND(UserRole.community == community.key,
