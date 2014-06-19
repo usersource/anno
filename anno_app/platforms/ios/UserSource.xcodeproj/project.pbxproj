@@ -5,10 +5,13 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		088DA9F4758A432F8D989E97 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B82173E04CF6475A970FD85E /* ImageIO.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		0E1E5C163305482D9FE92DFB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 994E9862B7E0481DAE979731 /* SystemConfiguration.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		1D02161718EED12600E97738 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D02161618EED12600E97738 /* Social.framework */; };
+		1D02CDFD19531D11003A8C2F /* SocialSharing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D02CDFC19531D11003A8C2F /* SocialSharing.m */; };
+		1D02CE0019531D41003A8C2F /* PickContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D02CDFF19531D41003A8C2F /* PickContact.m */; };
 		1D0F183D18EFD9AA004719E0 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D02161818EED18600E97738 /* MessageUI.framework */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
 		1D44E81D18F7FEF5007A1635 /* AnnoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D44E81C18F7FEF5007A1635 /* AnnoUtils.m */; };
@@ -49,9 +52,11 @@
 		308D05391370CCF300D202BF /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 308D05301370CCF300D202BF /* icon@2x.png */; };
 		30A0434814DC770100060A13 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 30A0434314DC770100060A13 /* Localizable.strings */; };
 		30FC414916E50CA1004E6F35 /* icon-72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 30FC414816E50CA1004E6F35 /* icon-72@2x.png */; };
+		35BDFEEAB4F94B689A3E2257 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD5266640B0344749F49768A /* AddressBookUI.framework */; };
 		3986CBE47CC84B0D858E000D /* CDVLocalFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = EFFA8AAFDA6B4CA9986F89CF /* CDVLocalFilesystem.m */; };
 		5AEE5B35173C68D80009041E /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5AEE5B34173C68D80009041E /* CoreLocation.framework */; };
 		5FF50017EAFF4F6B863C4781 /* CDVInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = B357E14529B745B4AEF4D613 /* CDVInAppBrowser.m */; };
+		66109EEB8D5C4DD29B41B849 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F583DEA5C56F422C875065F3 /* AddressBook.framework */; };
 		712E61EEC77B4147B99F6D2F /* CDVConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = E03D77EFDD1C48B18DC221F4 /* CDVConnection.m */; };
 		7E7966DE1810823500FA85AD /* icon-40.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E7966D41810823500FA85AD /* icon-40.png */; };
 		7E7966DF1810823500FA85AD /* icon-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E7966D51810823500FA85AD /* icon-40@2x.png */; };
@@ -72,10 +77,6 @@
 		D4C36414B2114E45BEC100FE /* SQLitePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C8F926C672B44F2A7402EA1 /* SQLitePlugin.m */; };
 		E4189164AE894A618FA5722E /* CDVAssetLibraryFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 68CE6AE042F64A29ABB97844 /* CDVAssetLibraryFilesystem.m */; };
 		F840E1F1165FE0F500CFE078 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = F840E1F0165FE0F500CFE078 /* config.xml */; };
-		6ECBEA42605A40C8B170D627 /* SocialSharing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1797E257D3494358A68CB3A4 /* SocialSharing.m */; };
-		EB804BFC1BBD4E07B5E1EF71 /* PickContact.m in Sources */ = {isa = PBXBuildFile; fileRef = AE68D95692224AAF9BB92CEA /* PickContact.m */; };
-		66109EEB8D5C4DD29B41B849 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F583DEA5C56F422C875065F3 /* AddressBook.framework */; };
-		35BDFEEAB4F94B689A3E2257 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD5266640B0344749F49768A /* AddressBookUI.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -106,6 +107,9 @@
 		02D37BE39E244D0CBE31F43E /* CDVExif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVExif.h; path = org.apache.cordova.camera/CDVExif.h; sourceTree = "<group>"; };
 		1D02161618EED12600E97738 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		1D02161818EED18600E97738 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		1D02CDFC19531D11003A8C2F /* SocialSharing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SocialSharing.m; path = "UserSource/Plugins/nl.x-services.plugins.socialsharing/SocialSharing.m"; sourceTree = "<group>"; };
+		1D02CDFE19531D41003A8C2F /* PickContact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PickContact.h; path = com.kolwit.pickcontact/PickContact.h; sourceTree = "<group>"; };
+		1D02CDFF19531D41003A8C2F /* PickContact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PickContact.m; path = com.kolwit.pickcontact/PickContact.m; sourceTree = "<group>"; };
 		1D3623240D0F684500981E51 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		1D44E81B18F7FEF5007A1635 /* AnnoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnnoUtils.h; sourceTree = "<group>"; };
@@ -188,15 +192,11 @@
 		ED55C2CCBA71472FA9EB2B04 /* CDVLocalFilesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVLocalFilesystem.h; path = org.apache.cordova.file/CDVLocalFilesystem.h; sourceTree = "<group>"; };
 		EFFA8AAFDA6B4CA9986F89CF /* CDVLocalFilesystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVLocalFilesystem.m; path = org.apache.cordova.file/CDVLocalFilesystem.m; sourceTree = "<group>"; };
 		F3F713FA28964CB18D9D3278 /* libsqlite3.dylib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		F583DEA5C56F422C875065F3 /* AddressBook.framework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		F652A44012E54281A0ABB1B6 /* CDVReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVReachability.m; path = "org.apache.cordova.network-information/CDVReachability.m"; sourceTree = "<group>"; };
 		F840E1F0165FE0F500CFE078 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = UserSource/config.xml; sourceTree = "<group>"; };
+		FD5266640B0344749F49768A /* AddressBookUI.framework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		FFA2D6AB6D364653839AC60B /* CDVFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVFile.m; path = org.apache.cordova.file/CDVFile.m; sourceTree = "<group>"; };
-		1797E257D3494358A68CB3A4 /* SocialSharing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "SocialSharing.m"; path = "Plugins\nl.x-services.plugins.socialsharing\SocialSharing.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		C23F9C8112E344189596F6C5 /* SocialSharing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "SocialSharing.h"; path = "Plugins\nl.x-services.plugins.socialsharing\SocialSharing.h"; sourceTree = "<group>"; fileEncoding = 4; };
-		AE68D95692224AAF9BB92CEA /* PickContact.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "PickContact.m"; path = "Plugins\com.kolwit.pickcontact\PickContact.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		4B0DF522D4474529AA209862 /* PickContact.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "PickContact.h"; path = "Plugins\com.kolwit.pickcontact\PickContact.h"; sourceTree = "<group>"; fileEncoding = 4; };
-		F583DEA5C56F422C875065F3 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "AddressBook.framework"; path = "System/Library/Frameworks/AddressBook.framework"; sourceTree = SDKROOT; fileEncoding = 4; };
-		FD5266640B0344749F49768A /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "AddressBookUI.framework"; path = "System/Library/Frameworks/AddressBookUI.framework"; sourceTree = SDKROOT; fileEncoding = 4; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -303,6 +303,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				1D02CDFC19531D11003A8C2F /* SocialSharing.m */,
 				F840E1F0165FE0F500CFE078 /* config.xml */,
 				301BF56E109A69640062928A /* www */,
 				301BF52D109A57CC0062928A /* CordovaLib.xcodeproj */,
@@ -371,6 +372,8 @@
 		307C750510C5A3420062BCA9 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				1D02CDFE19531D41003A8C2F /* PickContact.h */,
+				1D02CDFF19531D41003A8C2F /* PickContact.m */,
 				9920240F974842C08E3C61EA /* CDVDevice.m */,
 				7124E1BBEF22405AA3FC57AD /* CDVDevice.h */,
 				E03D77EFDD1C48B18DC221F4 /* CDVConnection.m */,
@@ -396,10 +399,6 @@
 				5E365714C57442BFA98F7272 /* CDVCamera.h */,
 				288E96B97A0B40C593E5315A /* CDVJpegHeaderWriter.h */,
 				02D37BE39E244D0CBE31F43E /* CDVExif.h */,
-				1797E257D3494358A68CB3A4 /* SocialSharing.m */,
-				C23F9C8112E344189596F6C5 /* SocialSharing.h */,
-				AE68D95692224AAF9BB92CEA /* PickContact.m */,
-				4B0DF522D4474529AA209862 /* PickContact.h */,
 			);
 			name = Plugins;
 			path = UserSource/Plugins;
@@ -617,6 +616,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1D02CDFD19531D11003A8C2F /* SocialSharing.m in Sources */,
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
 				1D6F35CA1908CDE7002051ED /* ScreenshotGestureListener.m in Sources */,
@@ -629,6 +629,7 @@
 				1DDCA4EB18F41A2B006E63FE /* AnnoDrawViewController.m in Sources */,
 				5FF50017EAFF4F6B863C4781 /* CDVInAppBrowser.m in Sources */,
 				2BFC59DA07CA4C9DA29A16FD /* CDVFile.m in Sources */,
+				1D02CE0019531D41003A8C2F /* PickContact.m in Sources */,
 				3986CBE47CC84B0D858E000D /* CDVLocalFilesystem.m in Sources */,
 				E4189164AE894A618FA5722E /* CDVAssetLibraryFilesystem.m in Sources */,
 				1DDCA4ED18F41A2B006E63FE /* IntroViewController.m in Sources */,
@@ -637,8 +638,6 @@
 				D4C36414B2114E45BEC100FE /* SQLitePlugin.m in Sources */,
 				C8E7E7453C794651A3E8C458 /* CDVCamera.m in Sources */,
 				AB2C5928BC924916A9C6E629 /* CDVJpegHeaderWriter.m in Sources */,
-				6ECBEA42605A40C8B170D627 /* SocialSharing.m in Sources */,
-				EB804BFC1BBD4E07B5E1EF71 /* PickContact.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
