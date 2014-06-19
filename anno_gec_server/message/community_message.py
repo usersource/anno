@@ -23,3 +23,10 @@ class CommunityMessage(messages.Message):
 class CommunityAppInfoMessage(messages.Message):
     community = messages.MessageField(CommunityMessage, 1)
     app = messages.MessageField(AppInfoMessage, 2)
+
+class CommunityUserMessage(messages.Message):
+    user = messages.MessageField(UserMessage, 1)
+    role = messages.StringField(2)
+
+class CommunityUserListMessage(messages.Message):
+    user_list = messages.MessageField(CommunityUserMessage, 1, repeated=True)

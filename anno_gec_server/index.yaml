@@ -123,6 +123,12 @@ indexes:
 
 - kind: UserRole
   properties:
+  - name: community
+  - name: role
+  - name: user
+
+- kind: UserRole
+  properties:
   - name: user
   - name: community
   - name: role
