@@ -539,9 +539,9 @@ class Anno(BaseModel):
         This method generates a search document filled with current anno information.
         """
         anno_id_string = "%d" % self.key.id()
-        app_name = "%s" % self.app.get().name
+        app_name = "%s" % (self.app.get().name if self.app else self.app_name)
         anno_text = "%s" % self.anno_text
-        community = "%s" % self.community.id() if self.community else "__open__"
+        community = ("%s" % self.community.id()) if self.community else "__open__"
 
         anno_document = search.Document(
             doc_id=anno_id_string,
