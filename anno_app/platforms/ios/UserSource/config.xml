@@ -53,4 +53,7 @@
     <feature name="Camera">
         <param name="ios-package" value="CDVCamera" />
     </feature>
+    <feature name="PickContact">
+        <param name="ios-package" value="PickContact" />
+    </feature>
 </widget>
