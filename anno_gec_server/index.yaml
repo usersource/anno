@@ -99,6 +99,12 @@ indexes:
 
 - kind: Anno
   properties:
+  - name: community
+  - name: created
+    direction: desc
+
+- kind: Anno
+  properties:
   - name: creator
   - name: last_update_time
     direction: desc

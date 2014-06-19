@@ -202,9 +202,9 @@ class Anno(BaseModel):
     @classmethod
     def query_by_app_by_created(cls, app_name, limit, projection, curs, user):
         query = cls.query()
-        query = filter_anno_by_user(query, user)
         query = query.filter(cls.app_name == app_name)
         query = query.order(-cls.created)
+        query = filter_anno_by_user(query, user)
 
         if (curs is not None) and (projection is not None):
             annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)
@@ -227,8 +227,8 @@ class Anno(BaseModel):
     @classmethod
     def query_by_vote_count(cls, app_name, user):
         query = cls.query()
-        query = filter_anno_by_user(query, user)
         query = query.filter(cls.app_name == app_name).order(-cls.vote_count)
+        query = filter_anno_by_user(query, user)
 
         anno_list = []
         for anno in query:
@@ -240,8 +240,8 @@ class Anno(BaseModel):
     @classmethod
     def query_by_flag_count(cls, app_name, user):
         query = cls.query()
-        query = filter_anno_by_user(query, user)
         query = query.filter(cls.app_name == app_name).filter(cls.flag_count > 0).order(-cls.flag_count)
+        query = filter_anno_by_user(query, user)
 
         anno_list = []
         for anno in query:
@@ -253,8 +253,8 @@ class Anno(BaseModel):
     @classmethod
     def query_by_activity_count(cls, app_name, user):
         query = cls.query()
-        query = filter_anno_by_user(query, user)
         query = query.filter(cls.app_name == app_name)
+        query = filter_anno_by_user(query, user)
 
         anno_list = []
         for anno in query:
@@ -270,8 +270,8 @@ class Anno(BaseModel):
     @classmethod
     def query_by_last_activity(cls, app_name, user):
         query = cls.query()
-        query = filter_anno_by_user(query, user)
         query = query.filter(cls.app_name == app_name).order(-cls.last_update_time)
+        query = filter_anno_by_user(query, user)
 
         anno_list = []
         for anno in query:
@@ -288,8 +288,8 @@ class Anno(BaseModel):
         No pagination is supported here.
         """
         query = cls.query()
-        query = filter_anno_by_user(query, user)
         query = query.filter(cls.app_name == app_name).order(cls.country)
+        query = filter_anno_by_user(query, user)
 
         anno_list = []
         for anno in query:
@@ -300,8 +300,8 @@ class Anno(BaseModel):
     @classmethod
     def query_by_page(cls, limit, projection, curs, user):
         query = cls.query()
-        query = filter_anno_by_user(query, user)
         query = query.order(-cls.created)
+        query = filter_anno_by_user(query, user)
         
         if (curs is not None) and (projection is not None):
             annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)
