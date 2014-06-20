@@ -165,7 +165,7 @@ define([
             {
                 app = this.app;
                 adjustSize();
-                initServerUrlRadioButtons();
+//                initServerUrlRadioButtons();
 
                 annoUtil.readSettings(function(settings){
                     var serverURLDialog = registry.byId('serverURLDialog');
