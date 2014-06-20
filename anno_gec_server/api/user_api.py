@@ -66,13 +66,21 @@ class UserApi(remote.Service):
         user.put()
         return message_types.VoidMessage()
 
-    @endpoints.method(user_email_resource_container, UserCommunityListMessage, path="user/list_community", http_method="GET",
+    user_email_with_id_resource_container = endpoints.ResourceContainer(
+        message_types.VoidMessage,
+        id=messages.StringField(1),
+        email=messages.StringField(2)
+    )
+
+    @endpoints.method(user_email_with_id_resource_container, UserCommunityListMessage, path="user/communitylist", http_method="GET",
                       name="community.list")
     def list_user_communities(self, request):
-        if request.email is None:
-            user = auth_user(self.request_state.headers)
-        else:
+        if request.id:
+            user = User.get_by_id(int(request.id))
+        elif request.email:
             user = User.find_user_by_email(request.email)
+        else:
+            user = auth_user(self.request_state.headers)
 
         user_community_list = user_community(user) if user else []
         user_community_message_list = []
@@ -80,9 +88,9 @@ class UserApi(remote.Service):
         for userrole in user_community_list:
             community = userrole.get("community").get()
             if community:
-                community_message = CommunityMessage(name=community.name, description = community.description, 
-                                                     welcome_msg = community.welcome_msg)
+                community_message = CommunityMessage(name=community.name, description=community.description,
+                                                     welcome_msg=community.welcome_msg)
                 user_community_message = UserCommunityMessage(community=community_message, role=userrole.get("role"))
                 user_community_message_list.append(user_community_message)
-        
+
         return UserCommunityListMessage(community_list=user_community_message_list)
