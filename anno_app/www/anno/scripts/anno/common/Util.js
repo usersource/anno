@@ -67,6 +67,7 @@ define([
             currentAnnoData: "currentAnnoData",
             currentImageData: "currentImageData"
         },
+        userCommunities: null, // all communities for current user
         hasConnection: function()
         {
             var networkState = navigator.connection.type;
@@ -811,6 +812,34 @@ define([
         replaceHashTagWithLink: function(s, linkScript)
         {
             return s.replace(/(^|\W)(#[a-z\d][\w-]*)/ig, linkScript);
+        },
+        loadUserCommunities: function(callback)
+        {
+            // use dummy data for now
+            if (this.userCommunities)
+            {
+                callback(this.userCommunities);
+                return;
+            }
+
+            var self = this;
+
+            xhr.get('../../scripts/dummyData/user.community.list.json',
+                {
+                    handleAs: "json"
+                }).then(function (data)
+                {
+                    self.userCommunities = data.result;
+                    callback(self.userCommunities);
+                },
+                function (res)
+                {
+
+                });
+        },
+        getUserCommunities: function()
+        {
+            return this.userCommunities;
         }
     };
 

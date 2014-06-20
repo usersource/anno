@@ -6,19 +6,21 @@
     </div>
     <div id="listContainerProfile" style="width: 100%;overflow: auto;">
         <ul data-dojo-type="dojox/mobile/RoundRectList">
-            <li class="row" style="padding-left: 16px"
+            <li class="row"
                 data-dojo-type="dojox/mobile/ListItem"
                 data-dojo-props="variableHeight:true,clickable:true,noArrow:true,_duration:0">
                 <div>Email</div>
                 <div id="profileEmail" class="listAppName" style="padding-left: 12px;padding-top: 2px"></div>
             </li>
-            <li class="row" style="padding-left: 16px"
+            <li class="row"
                 data-dojo-type="dojox/mobile/ListItem"
                 data-dojo-props="variableHeight:true,clickable:true,noArrow:true,_duration:0">
                 <div>Display Name</div>
                 <div id="profileDisplayName" style="padding-left: 12px;padding-top: 2px"></div>
             </li>
         </ul>
+        <h2 class="mblRoundRectCategory" style="font-size: 13pt;color: #000000">Communities</h2>
+        <ul id="communityList" data-dojo-type="dojox/mobile/RoundRectList"></ul>
         <ul data-dojo-type="dojox/mobile/RoundRectList">
             <li id="profileItemChangePassword" class="row annoOrangeColor" style="text-align:center;padding-left: 16px;"
                 data-dojo-type="dojox/mobile/ListItem"
