@@ -65,8 +65,8 @@ class CommunityApi(remote.Service):
     @endpoints.method(CommunityUserDeleteMessage, ResponseMessage, path="user",
                       http_method="DELETE", name="user.delete")
     def user_delete(self, request):
-        if request.id:
-            user = User.get_by_id(request.id)
+        if request.user_id:
+            user = User.get_by_id(request.user_id)
         elif request.user_email:
             user = User.find_user_by_email(request.email)
 
@@ -81,8 +81,8 @@ class CommunityApi(remote.Service):
     @endpoints.method(CommunityEditUserRoleMessage, ResponseMessage, path="edit_user_role",
                       http_method="POST", name="user.edit_user_role")
     def edit_user_role(self, request):
-        if request.id:
-            user = User.get_by_id(request.id)
+        if request.user_id:
+            user = User.get_by_id(request.user_id)
         elif request.user_email:
             user = User.find_user_by_email(request.email)
 
@@ -106,6 +106,7 @@ class CommunityApi(remote.Service):
 
         if community:
             community.welcome_msg = request.welcome_msg
+            community.put()
             return ResponseMessage(success=True)
         else:
             return ResponseMessage(success=False)
