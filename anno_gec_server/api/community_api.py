@@ -15,7 +15,7 @@ from message.community_message import CommunityAppInfoMessage
 from message.community_message import CommunityUserMessage
 from message.community_message import CommunityUserListMessage
 from message.community_message import CommunityUserDeleteMessage
-from message.community_message import CommunityUserChangeRoleMessage
+from message.community_message import CommunityEditUserRoleMessage
 from message.user_message import UserMessage
 from message.common_message import ResponseMessage
 from model.community import Community
@@ -78,9 +78,9 @@ class CommunityApi(remote.Service):
         else:
             return ResponseMessage(success=False)
 
-    @endpoints.method(CommunityUserChangeRoleMessage, ResponseMessage, path="change_user_role",
-                      http_method="POST", name="user.change_role")
-    def user_delete(self, request):
+    @endpoints.method(CommunityEditUserRoleMessage, ResponseMessage, path="edit_user_role",
+                      http_method="POST", name="user.edit_user_role")
+    def edit_user_role(self, request):
         if request.id:
             user = User.get_by_id(request.id)
         elif request.user_email:
@@ -89,6 +89,23 @@ class CommunityApi(remote.Service):
         community = Community.get_by_id(request.community_id)
 
         if user and community:
-            resp = UserRole.change_role(user, community, request.role)
+            resp = UserRole.edit_user_role(user, community, request.role)
 
         return ResponseMessage(success=True if resp else False)
+
+    community_welcome_msg_resource_container = endpoints.ResourceContainer(
+        message_types.VoidMessage,
+        id=messages.IntegerField(2, required=True),
+        welcome_msg=messages.StringField(3, required=True)
+    )
+
+    @endpoints.method(community_welcome_msg_resource_container, ResponseMessage, path="edit_welcome_msg/{id}",
+                      http_method="POST", name="community.edit_welcome_msg")
+    def edit_welcome_msg(self, request):
+        community = Community.get_by_id(request.id)
+
+        if community:
+            community.welcome_msg = request.welcome_msg
+            return ResponseMessage(success=True)
+        else:
+            return ResponseMessage(success=False)

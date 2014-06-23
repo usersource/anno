@@ -47,7 +47,7 @@ class UserRole(ndb.Model):
                 entity.key.delete()
 
     @classmethod
-    def change_role(cls, user, community, role):
+    def edit_user_role(cls, user, community, role):
         entity = None
         if user and community:
             entity = cls.query(ndb.AND(cls.user == user.key, cls.community == community.key).get())

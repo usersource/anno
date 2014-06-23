@@ -36,7 +36,7 @@ class CommunityUserDeleteMessage(messages.Message):
     user_email = messages.StringField(2)
     community_id = messages.IntegerField(3, required=True)
 
-class CommunityUserChangeRoleMessage(messages.Message):
+class CommunityEditUserRoleMessage(messages.Message):
     user_id = messages.IntegerField(1)
     user_email = messages.StringField(2)
     community_id = messages.IntegerField(3, required=True)
