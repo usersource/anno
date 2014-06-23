@@ -10,7 +10,6 @@ from api.user_api import UserApi
 from api.account_api import AccountApi
 from api.util_api import UtilApi
 from api.community_api import CommunityApi
-from api.userrole_api import UserRoleApi
 from api.appinfo_api import AppInfoApi
 
 api_list = [VoteApi, AnnoApi, FlagApi, FollowupApi, UserApi, AccountApi, UtilApi,
