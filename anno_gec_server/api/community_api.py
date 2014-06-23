@@ -39,14 +39,14 @@ class CommunityApi(remote.Service):
         resp = Community.addApp(request)
         return ResponseMessage(success=True if resp else False)
 
-    @endpoints.method(community_with_id_resource_container, CommunityUserListMessage, path="userlist/{id}", http_method="GET", name="user.get")
+    @endpoints.method(community_with_id_resource_container, CommunityUserListMessage, path="userlist/{id}", http_method="GET", name="user.list")
     def user_list(self, request):
         community_user_message_list = []
 
         for userrole in UserRole.community_user_list(request.id):
             user = userrole.user.get()
             if user:
-                user_message = UserMessage(display_name=user.display_name, user_email=user.user_email)
+                user_message = UserMessage(id=user.key.id(), display_name=user.display_name, user_email=user.user_email)
                 community_user_message = CommunityUserMessage(user=user_message, role=userrole.role)
                 community_user_message_list.append(community_user_message)
 

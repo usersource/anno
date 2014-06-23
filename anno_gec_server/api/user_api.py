@@ -88,8 +88,8 @@ class UserApi(remote.Service):
         for userrole in user_community_list:
             community = userrole.get("community").get()
             if community:
-                community_message = CommunityMessage(name=community.name, description=community.description,
-                                                     welcome_msg=community.welcome_msg)
+                community_message = CommunityMessage(id=community.key.id(), name=community.name,
+                                                     description=community.description, welcome_msg=community.welcome_msg)
                 user_community_message = UserCommunityMessage(community=community_message, role=userrole.get("role"))
                 user_community_message_list.append(user_community_message)
 
