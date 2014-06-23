@@ -24,14 +24,6 @@ class UserRole(ndb.Model):
         if role is None:
             role = cls.memberRole
 
-        if type(community) is not Community:
-            community = Community.get_by_id(community.id) if community.id else None
-
-        if user.id:
-            user = User.get_by_id(user.id)
-        elif user.user_email:
-            user = User.find_user_by_email(user.user_email)
-
         if user and community:
             entity = cls(user=user.key, community=community.key, role=role)
             entity.put()
@@ -40,17 +32,16 @@ class UserRole(ndb.Model):
 
     @classmethod
     def delete(cls, user, community):
-        entity = None
         if user and community:
-            entity = cls.query(ndb.AND(cls.user == user.key, cls.community == community.key).get())
+            entity = cls.query(ndb.AND(cls.user == user.key, cls.community == community.key)).get()
             if entity:
                 entity.key.delete()
 
     @classmethod
-    def edit_user_role(cls, user, community, role):
+    def edit(cls, user, community, role):
         entity = None
         if user and community:
-            entity = cls.query(ndb.AND(cls.user == user.key, cls.community == community.key).get())
+            entity = cls.query(ndb.AND(cls.user == user.key, cls.community == community.key)).get()
             if entity:
                 entity.role = role
                 entity.put()
@@ -59,6 +50,6 @@ class UserRole(ndb.Model):
     @classmethod
     def community_user_list(cls, community_id):
         users = cls.query().filter(cls.community == Community.get_by_id(community_id).key)\
-                                .fetch(projection=[cls.user, cls.role])
+                           .fetch(projection=[cls.user, cls.role])
 
         return users

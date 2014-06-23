@@ -219,6 +219,13 @@ def filter_anno_by_user(query, user):
     query = query.filter(Anno.community.IN(user_community_list))
     return query.order(Anno._key)
 
+def get_user_from_request(user_id=None, user_email=None):
+    if user_id:
+        user = User.get_by_id(user_id)
+    elif user_email:
+        user = User.find_user_by_email(user_email)
+    return user
+
 """
 annoserver:
 anno_js_client_id = "22913132792.apps.googleusercontent.com"

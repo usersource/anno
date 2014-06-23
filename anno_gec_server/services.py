@@ -14,5 +14,5 @@ from api.userrole_api import UserRoleApi
 from api.appinfo_api import AppInfoApi
 
 api_list = [VoteApi, AnnoApi, FlagApi, FollowupApi, UserApi, AccountApi, UtilApi,
-            CommunityApi, UserRoleApi, AppInfoApi]
+            CommunityApi, AppInfoApi]
 APPLICATION = endpoints.api_server(api_list, restricted=False)

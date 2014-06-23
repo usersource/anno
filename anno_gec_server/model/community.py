@@ -53,11 +53,15 @@ class Community(ndb.Model):
                             welcome_msg=message.welcome_msg, type=message.type)
             community.put()
             respData = "Community created."
-            from model.userrole import UserRole
-            userrole = UserRole.insert(message.user, community, cls.managerRole)
+
+            user = get_user_from_request(user_id=request.user.id, user_email=request.user.user_email)
+            userrole = None
+            if user:
+                from model.userrole import UserRole
+                userrole = UserRole.insert(message.user, community, cls.managerRole)
 
             if userrole is None:
-                community.delete()
+                community.key.delete()
                 respData = "Community is not created as user doesn't exist"
 
         except Exception as e:
