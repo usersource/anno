@@ -39,6 +39,14 @@ class UserRole(ndb.Model):
         return entity
 
     @classmethod
+    def delete(cls, user, community):
+        entity = None
+        if user and community:
+            entity = cls.query(ndb.AND(cls.user == user.key, cls.community == community.key).get())
+        if entity:
+            entity.key.delete()
+
+    @classmethod
     def community_user_list(cls, community_id):
         users = cls.query().filter(cls.community == Community.get_by_id(community_id).key)\
                                 .fetch(projection=[cls.user, cls.role])

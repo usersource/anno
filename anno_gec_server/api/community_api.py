@@ -15,6 +15,7 @@ from message.user_message import UserMessage
 from message.common_message import ResponseMessage
 from model.community import Community
 from model.userrole import UserRole
+from model.user import User
 
 @endpoints.api(name="community", version="1.0", description="Community API",
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
@@ -25,21 +26,25 @@ class CommunityApi(remote.Service):
         id=messages.IntegerField(2, required=True)
     )
 
-    @endpoints.method(community_with_id_resource_container, CommunityMessage, path="community", http_method="GET", name="community.get")
+    @endpoints.method(community_with_id_resource_container, CommunityMessage,
+                      path="community/{id}", http_method="GET", name="community.get")
     def community_get(self, request):
         return Community.getCommunity(request.id)
 
-    @endpoints.method(CommunityMessage, ResponseMessage, path="community", http_method="POST", name="community.insert")
+    @endpoints.method(CommunityMessage, ResponseMessage, path="community",
+                      http_method="POST", name="community.insert")
     def community_insert(self, request):
         resp = Community.insert(request)
         return ResponseMessage(success=True, msg=resp)
 
-    @endpoints.method(CommunityAppInfoMessage, ResponseMessage, path="app", http_method="POST", name="app.insert")
+    @endpoints.method(CommunityAppInfoMessage, ResponseMessage, path="app",
+                      http_method="POST", name="app.insert")
     def app_insert(self, request):
         resp = Community.addApp(request)
         return ResponseMessage(success=True if resp else False)
 
-    @endpoints.method(community_with_id_resource_container, CommunityUserListMessage, path="userlist/{id}", http_method="GET", name="user.list")
+    @endpoints.method(community_with_id_resource_container, CommunityUserListMessage,
+                      path="userlist/{id}", http_method="GET", name="user.list")
     def user_list(self, request):
         community_user_message_list = []
 
@@ -51,3 +56,26 @@ class CommunityApi(remote.Service):
                 community_user_message_list.append(community_user_message)
 
         return CommunityUserListMessage(user_list=community_user_message_list)
+
+    user_delete_resource_container = endpoints.ResourceContainer(
+        message_types.VoidMessage,
+        user_id=messages.IntegerField(2),
+        user_email=messages.StringField(3),
+        community_id=messages.IntegerField(4, required=True)
+    )
+
+    @endpoints.method(user_delete_resource_container, ResponseMessage, path="user",
+                      http_method="DELETE", name="user.delete")
+    def user_delete(self, request):
+        if request.id:
+            user = User.get_by_id(request.id)
+        elif request.user_email:
+            user = User.find_user_by_email(request.email)
+
+        community = Community.get_by_id(request.community_id)
+
+        if user and community:
+            UserRole.delete(user, community)
+            return ResponseMessage(success=True)
+        else:
+            return ResponseMessage(success=False)
