@@ -10,7 +10,12 @@ from protorpc import messages
 from protorpc import remote
 
 from api.utils import anno_js_client_id
-from message.community_message import CommunityMessage, CommunityAppInfoMessage, CommunityUserMessage, CommunityUserListMessage
+from message.community_message import CommunityMessage
+from message.community_message import CommunityAppInfoMessage
+from message.community_message import CommunityUserMessage
+from message.community_message import CommunityUserListMessage
+from message.community_message import CommunityUserDeleteMessage
+from message.community_message import CommunityUserChangeRoleMessage
 from message.user_message import UserMessage
 from message.common_message import ResponseMessage
 from model.community import Community
@@ -57,14 +62,7 @@ class CommunityApi(remote.Service):
 
         return CommunityUserListMessage(user_list=community_user_message_list)
 
-    user_delete_resource_container = endpoints.ResourceContainer(
-        message_types.VoidMessage,
-        user_id=messages.IntegerField(2),
-        user_email=messages.StringField(3),
-        community_id=messages.IntegerField(4, required=True)
-    )
-
-    @endpoints.method(user_delete_resource_container, ResponseMessage, path="user",
+    @endpoints.method(CommunityUserDeleteMessage, ResponseMessage, path="user",
                       http_method="DELETE", name="user.delete")
     def user_delete(self, request):
         if request.id:
@@ -79,3 +77,18 @@ class CommunityApi(remote.Service):
             return ResponseMessage(success=True)
         else:
             return ResponseMessage(success=False)
+
+    @endpoints.method(CommunityUserChangeRoleMessage, ResponseMessage, path="change_user_role",
+                      http_method="POST", name="user.change_role")
+    def user_delete(self, request):
+        if request.id:
+            user = User.get_by_id(request.id)
+        elif request.user_email:
+            user = User.find_user_by_email(request.email)
+
+        community = Community.get_by_id(request.community_id)
+
+        if user and community:
+            resp = UserRole.change_role(user, community, request.role)
+
+        return ResponseMessage(success=True if resp else False)

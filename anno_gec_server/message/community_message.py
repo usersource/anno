@@ -30,3 +30,14 @@ class CommunityUserMessage(messages.Message):
 
 class CommunityUserListMessage(messages.Message):
     user_list = messages.MessageField(CommunityUserMessage, 1, repeated=True)
+
+class CommunityUserDeleteMessage(messages.Message):
+    user_id = messages.IntegerField(1)
+    user_email = messages.StringField(2)
+    community_id = messages.IntegerField(3, required=True)
+
+class CommunityUserChangeRoleMessage(messages.Message):
+    user_id = messages.IntegerField(1)
+    user_email = messages.StringField(2)
+    community_id = messages.IntegerField(3, required=True)
+    role = messages.StringField(4, required=True)
