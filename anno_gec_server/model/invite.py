@@ -19,7 +19,9 @@ class Invite(BaseModel):
 
     @classmethod
     def create(cls, message):
-        invite_mail_text = ""
+        recipients = []
+        subject = ""
+        email_message = ""
         community = Community.get_by_id(message.community)
 
         if community:
@@ -34,11 +36,11 @@ class Invite(BaseModel):
             entity.put()
 
             if entity:
-                invite_mail_text = get_invite_mail_content(user_name=message.name,
-                                                           user_email=message.email,
-                                                           role=message.role,
-                                                           invite_msg=message.invite_msg,
-                                                           community_name=community.name,
-                                                           invite_hash=entity.key)
+                recipients, subject, email_message = get_invite_mail_content(user_name=message.name,
+                                                                             user_email=message.email,
+                                                                             role=message.role,
+                                                                             invite_msg=message.invite_msg,
+                                                                             community_name=community.name,
+                                                                             invite_hash=entity.key)
 
-        return invite_mail_text
+        return (recipients, subject, email_message)

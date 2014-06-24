@@ -235,7 +235,7 @@ def get_invite_mail_content(user_name, user_email, role, invite_msg, community_n
         user_name = "User"
 
     message = message.format(user_name=user_name, community_name=community_name)
-    return json.dumps(dict(message=message, subject=subject, recipients=recipients))
+    return (recipients, subject, message)
 
 """
 annoserver:
