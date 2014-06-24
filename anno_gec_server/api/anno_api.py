@@ -21,6 +21,7 @@ from message.anno_api_messages import AnnoResponseMessage
 from model.anno import Anno
 from model.vote import Vote
 from model.flag import Flag
+from model.community import Community
 from model.follow_up import FollowUp
 from api.utils import anno_js_client_id
 from api.utils import auth_user
@@ -74,7 +75,8 @@ class AnnoApi(remote.Service):
         limit=messages.IntegerField(3),
         select=messages.StringField(4),
         app=messages.StringField(5),
-        query_type=messages.StringField(6)
+        query_type=messages.StringField(6),
+        community=messages.IntegerField(7)
     )
 
     @endpoints.method(anno_list_resource_container, AnnoListMessage, path='anno', http_method='GET', name='anno.list')
@@ -110,6 +112,9 @@ class AnnoApi(remote.Service):
             return Anno.query_by_last_activity(request.app, user)
         elif request.query_type == 'by_country':
             return Anno.query_by_country(request.app, user)
+        elif request.query_type == "by_community":
+            community = Community.get_by_id(request.community)
+            return Anno.query_by_community(community, limit, select_projection, curs)
         else:
             return Anno.query_by_page(limit, select_projection, curs, user)
 

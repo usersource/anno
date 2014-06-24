@@ -323,26 +323,29 @@ class Anno(BaseModel):
 
     @classmethod
     def query_by_community(cls, community, limit, projection, curs):
-        query = cls.query(cls.community == community.key)
-        query = query.order(-cls.created)
-
-        if (curs is not None) and (projection is not None):
-            annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)
-        elif (curs is not None) and (projection is None):
-            annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
-        elif (curs is None) and (projection is not None):
-            annos, next_curs, more = query.fetch_page(limit, projection=projection)
+        if community:
+            query = cls.query(cls.community == community.key)
+            query = query.order(-cls.created)
+    
+            if (curs is not None) and (projection is not None):
+                annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)
+            elif (curs is not None) and (projection is None):
+                annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
+            elif (curs is None) and (projection is not None):
+                annos, next_curs, more = query.fetch_page(limit, projection=projection)
+            else:
+                annos, next_curs, more = query.fetch_page(limit)
+            if projection is not None:
+                items = [entity.to_response_message_by_projection(projection) for entity in annos]
+            else:
+                items = [entity.to_response_message() for entity in annos]
+    
+            if more:
+                return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
+            else:
+                return AnnoListMessage(anno_list=items, has_more=more)
         else:
-            annos, next_curs, more = query.fetch_page(limit)
-        if projection is not None:
-            items = [entity.to_response_message_by_projection(projection) for entity in annos]
-        else:
-            items = [entity.to_response_message() for entity in annos]
-
-        if more:
-            return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
-        else:
-            return AnnoListMessage(anno_list=items, has_more=more)
+            return AnnoListMessage(anno_list=[])
 
     @classmethod
     def is_anno_exists(cls, user, message):
