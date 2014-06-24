@@ -4,6 +4,8 @@ __author__ = "rekenerd"
 Invite data store model definition.
 """
 
+import uuid
+
 from google.appengine.ext import ndb
 
 from model.base_model import BaseModel
@@ -15,6 +17,7 @@ class Invite(BaseModel):
     email = ndb.StringProperty(required=True)
     role = ndb.StringProperty(choices=["member", "manager"], required=True, default="member")
     invite_msg = ndb.StringProperty()
+    invite_hash = ndb.StringProperty(required=True)
     community = ndb.KeyProperty(kind=Community, required=True)
 
     @classmethod
@@ -31,8 +34,10 @@ class Invite(BaseModel):
             if message.invite_msg is None:
                 message.invite_msg = community.welcome_msg
 
+            invite_hash = str(uuid.uuid4())
             entity = cls(name=message.name, email=message.email, role=message.role,
-                         invite_msg=message.invite_msg, community=community.key)
+                         invite_msg=message.invite_msg, invite_hash=invite_hash, 
+                         community=community.key)
             entity.put()
 
             if entity:
@@ -40,7 +45,11 @@ class Invite(BaseModel):
                                                                              user_email=message.email,
                                                                              role=message.role,
                                                                              invite_msg=message.invite_msg,
-                                                                             community_name=community.name,
-                                                                             invite_hash=entity.key)
+                                                                             invite_hash=invite_hash,
+                                                                             community_name=community.name)
 
         return (recipients, subject, email_message)
+
+    @classmethod
+    def get_pending_invites(cls, user_email):
+        return cls.query(cls.email == user_email).fetch()

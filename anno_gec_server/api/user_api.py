@@ -13,15 +13,32 @@ from api.utils import get_endpoints_current_user
 from api.utils import auth_user
 from api.utils import user_community
 from model.user import User
+from model.invite import Invite
+from message.user_message import UserMessage
+from message.user_message import UserCommunityMessage
+from message.user_message import UserCommunityListMessage
+from message.user_message import UserInviteMessage
+from message.user_message import UserInviteListMessage
 from message.community_message import CommunityMessage
-from message.user_message import UserMessage, UserCommunityMessage, UserCommunityListMessage
 
 @endpoints.api(name='user', version='1.0', description='User API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
 class UserApi(remote.Service):
+
     user_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
         creator_id=messages.StringField(1, required=True)
+    )
+
+    user_email_resource_container = endpoints.ResourceContainer(
+        message_types.VoidMessage,
+        email=messages.StringField(1)
+    )
+
+    user_email_with_id_resource_container = endpoints.ResourceContainer(
+        message_types.VoidMessage,
+        id=messages.StringField(1),
+        email=messages.StringField(2)
     )
 
     @endpoints.method(user_resource_container, message_types.VoidMessage, path='user', http_method='POST',
@@ -35,11 +52,6 @@ class UserApi(remote.Service):
         else:
             print "user" + request.creator_id + " already exists."
         return message_types.VoidMessage()
-
-    user_email_resource_container = endpoints.ResourceContainer(
-        message_types.VoidMessage,
-        email=messages.StringField(1)
-    )
 
     @endpoints.method(user_email_resource_container, UserMessage, path='user/display_name', http_method='GET',
                       name='user.displayname.get')
@@ -66,12 +78,6 @@ class UserApi(remote.Service):
         user.put()
         return message_types.VoidMessage()
 
-    user_email_with_id_resource_container = endpoints.ResourceContainer(
-        message_types.VoidMessage,
-        id=messages.StringField(1),
-        email=messages.StringField(2)
-    )
-
     @endpoints.method(user_email_with_id_resource_container, UserCommunityListMessage, path="user/communitylist", http_method="GET",
                       name="community.list")
     def list_user_communities(self, request):
@@ -89,8 +95,29 @@ class UserApi(remote.Service):
             community = userrole.get("community").get()
             if community:
                 community_message = CommunityMessage(id=community.key.id(), name=community.name,
-                                                     description=community.description, welcome_msg=community.welcome_msg)
+                                                     description=community.description,
+                                                     welcome_msg=community.welcome_msg)
                 user_community_message = UserCommunityMessage(community=community_message, role=userrole.get("role"))
                 user_community_message_list.append(user_community_message)
 
         return UserCommunityListMessage(community_list=user_community_message_list)
+
+    @endpoints.method(user_email_resource_container, UserInviteListMessage, path="invite_list",
+                      http_method="GET", name="invite.list")
+    def user_invite_list(self, request):
+        if request.email is None:
+            user = auth_user(self.request_state.headers)
+            user_email = user.email
+        else:
+            user_email = request.email
+
+        pending_invites = Invite.get_pending_invites(user_email)
+        pending_invites_list = []
+
+        for pending_invite in pending_invites:
+            community = pending_invite.community.get().to_response_message()
+            pending_invites_list.append(UserInviteMessage(community=community,
+                                                          invite_hash=pending_invite.invite_hash,
+                                                          invite_msg=pending_invite.invite_msg))
+
+        return UserInviteListMessage(invite_list=pending_invites_list)
