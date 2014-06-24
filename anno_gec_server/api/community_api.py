@@ -16,11 +16,13 @@ from message.community_message import CommunityAppInfoMessage
 from message.community_message import CommunityUserMessage
 from message.community_message import CommunityUserListMessage
 from message.community_message import CommunityUserRoleMessage
+from message.community_message import CommunityInviteMessage
 from message.user_message import UserMessage
 from message.common_message import ResponseMessage
 from model.community import Community
 from model.userrole import UserRole
 from model.user import User
+from model.invite import Invite
 
 @endpoints.api(name="community", version="1.0", description="Community API",
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
@@ -115,3 +117,9 @@ class CommunityApi(remote.Service):
             return ResponseMessage(success=True)
         else:
             return ResponseMessage(success=False)
+
+    @endpoints.method(CommunityInviteMessage, ResponseMessage, path="invite", 
+                      http_method="POST", name="invite.create")
+    def invite_user(self, request):
+        resp = Invite.create(request)
+        return ResponseMessage(success=True if resp else False, msg=resp)

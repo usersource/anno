@@ -36,3 +36,10 @@ class CommunityUserRoleMessage(messages.Message):
     user_email = messages.StringField(2)
     community_id = messages.IntegerField(3, required=True)
     role = messages.StringField(4)
+
+class CommunityInviteMessage(messages.Message):
+    name = messages.StringField(1)
+    email = messages.StringField(2, required=True)
+    role = messages.StringField(3)
+    invite_msg = messages.StringField(4)
+    community = messages.IntegerField(5, required=True)
