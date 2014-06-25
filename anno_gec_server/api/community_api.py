@@ -118,9 +118,13 @@ class CommunityApi(remote.Service):
     def edit_user_role(self, request):
         user = get_user_from_request(user_id=request.user_id, user_email=request.user_email)
         community = Community.get_by_id(request.community_id)
+        resp = None
 
-        if user and community:
-            resp = UserRole.edit(user, community, request.role)
+        if community:
+            if user:
+                resp = UserRole.edit(user, community, request.role)
+            elif request.include_invite:
+                resp = Invite.change_user_role(request.user_email, community, request.role)
 
         return ResponseMessage(success=True if resp else False)
 
