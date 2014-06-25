@@ -56,7 +56,7 @@ class PushHandler(webapp2.RequestHandler):
     '''
 
     def __init__(self, *args, **kargs):
-        self.pusher = PushService(gcm_apikey=self.API_KEY, apns_push_key=APNS_PUSH_KEY, apns_push_cert=APNS_PUSH_CERT)
+        self.pusher = PushService(gcm_apikey=API_KEY, apns_push_key=APNS_PUSH_KEY, apns_push_cert=APNS_PUSH_CERT)
         super(PushHandler, self).__init__(*args, **kargs)
 
     def post(self):
