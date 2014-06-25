@@ -16,3 +16,17 @@ class UserCommunityMessage(messages.Message):
 
 class UserCommunityListMessage(messages.Message):
     community_list = messages.MessageField(UserCommunityMessage, 1, repeated=True)
+
+class UserInviteMessage(messages.Message):
+    from message.community_message import CommunityMessage
+    community = messages.MessageField(CommunityMessage, 1)
+    invite_hash = messages.StringField(2, required=True)
+    invite_msg = messages.StringField(3)
+
+class UserInviteListMessage(messages.Message):
+    invite_list = messages.MessageField(UserInviteMessage, 1, repeated=True)
+
+class UserInviteAcceptMessage(messages.Message):
+    invite_hash = messages.StringField(1, required=True)
+    user_email = messages.StringField(2, required=True)
+    force = messages.BooleanField(3)

@@ -9,14 +9,14 @@ define([
     "dojo/window",
     "dijit/registry",
     "dojox/mobile/ListItem",
-    "anno/common/Util",
-    "dojo/request/xhr"
+    "anno/common/Util"
 ],
-    function (dom, domClass, domConstruct, domStyle, array, connect, query, win, registry, ListItem, annoUtil, xhr)
+    function (dom, domClass, domConstruct, domStyle, array, connect, query, win, registry, ListItem, annoUtil)
     {
         var _connectResults = []; // events connect results
         var app = null;
         var currentMemberItem, members, currentCommunity;
+        var oldWelcomeMsg;
 
         var adjustSize = function()
         {
@@ -28,23 +28,33 @@ define([
         var loadCommunityDetails = function(idx)
         {
             var communities = annoUtil.getUserCommunities(), community = currentCommunity = communities[idx];
-            dom.byId("headerTitleCommunity").innerHTML = community.name;
-            dom.byId("communityWelMsg").innerHTML = community.welcome_msg;
-            dom.byId("communityActivity").innerHTML = community.name+" activity";
+            dom.byId("headerTitleCommunity").innerHTML = community.community.name;
+            dom.byId("communityWelMsg").innerHTML = community.community.welcome_msg || "";
+            dom.byId("communityActivity").innerHTML = community.community.name+" activity";
 
-            var self = this;
+            annoUtil.showLoadingIndicator();
+            annoUtil.loadAPI(annoUtil.API.community, function(){
+                var getCommunityList = gapi.client.community.user.list({id:community.community.id});
+                getCommunityList.execute(function (data)
+                {
+                    if (!data)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        annoUtil.showToastDialog("Items returned from server are empty.");
+                        return;
+                    }
 
-            xhr.get('../../scripts/dummyData/community.user.list.json',
-                {
-                    handleAs: "json"
-                }).then(function (data)
-                {
-                    drawUserList(data.result);
-                },
-                function (res)
-                {
+                    if (data.error)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        annoUtil.showMessageDialog("An error occurred when calling community.user.list api: "+data.error.message);
+                        return;
+                    }
 
+                    drawUserList(data.result.user_list);
+                    annoUtil.hideLoadingIndicator();
                 });
+            });
         };
 
         var drawUserList = function(data)
@@ -56,20 +66,24 @@ define([
             for (var i= 0,c=data.length;i<c;i++)
             {
                 itemData = data[i];
-                if (itemData.status == "Accepted")
-                {
-                    template = '<span class="icon-checkmark annoOrangeColor" style="font-weight: bold"></span>';
-                }
-                else
+                if (itemData.status == "pending")
                 {
                     template = '<span class="icon-busy annoOrangeColor" style="font-weight: bold"></span>';
                 }
+                else
+                {
+                    template = '<span class="icon-checkmark annoOrangeColor" style="font-weight: bold"></span>';
+                }
 
-                template = template + '&nbsp;<span>'+itemData.display_name+'</span>';
+                template = template + '&nbsp;<span>'+itemData.user.display_name+'</span>';
 
-                if (itemData.role == "Manager")
+                if (itemData.role == "manager")
                 {
                     template = template + '&nbsp;<span class="icon-bolt annoOrangeColor" style="font-weight: bold"></span>';
+                }
+                else
+                {
+                    template = template + '&nbsp;<span class="icon-bolt annoOrangeColor" style="font-weight: bold;display: none"></span>';
                 }
 
                 template = '<div>'+template+'</div>';
@@ -119,12 +133,12 @@ define([
             listItem.domNode.appendChild(dom.byId("memberDetailContainer"));
             domStyle.set("memberDetailContainer", "display", "");
 
-            dom.byId("memberDetailEmail").innerHTML = data.user_email;
-            dom.byId("memberDetailFullName").innerHTML = data.user_full_name;
-            dom.byId("memberDetailStatus").innerHTML = data.status;
+            dom.byId("memberDetailEmail").innerHTML = data.user.user_email;
+            dom.byId("memberDetailFullName").innerHTML = data.user.display_name;
+            dom.byId("memberDetailStatus").innerHTML = data.status||"accepted";
             dom.byId("memberDetailRole").innerHTML = data.role;
 
-            if (data.role == "Manager")
+            if (data.role == "manager")
             {
                 dom.byId("btnMakeManager").innerHTML = "Make Member";
             }
@@ -147,11 +161,11 @@ define([
         {
             if (currentMemberItem.userItem.newMember)
             {
-                var emailTemplate = '<div>Hi '+currentMemberItem.userItem.display_name+',</div><h5>'+currentCommunity.welcome_msg+'</h5><div>Thanks,<br>UserSource Support</div>';
+                var emailTemplate = '<div>Hi '+currentMemberItem.userItem.user.display_name+',</div><h5>'+currentCommunity.community.welcome_msg+'</h5><div>Thanks,<br>UserSource Support</div>';
                 window.plugins.socialsharing.shareViaEmail(
                     emailTemplate,
-                    'Invitation from '+currentCommunity.name,
-                    [currentMemberItem.userItem.user_email],
+                    'Invitation from '+currentCommunity.community.name,
+                    [currentMemberItem.userItem.user.user_email],
                     null, // CC: must be null or an array
                     null, // BCC: must be null or an array
                     null, // FILES: can be null, a string, or an array
@@ -161,43 +175,134 @@ define([
             }
             else
             {
-                domStyle.set("memberDetailContainer", "display", "none");
-                domConstruct.place("memberDetailContainer", "listContainerCommunity", "after");
-                currentMemberItem.destroy();
-                members.splice(array.indexOf(members, currentMemberItem.userItem), 1);
+                if (dom.byId("btnRemoveInvite").disabled) return;
+
+                annoUtil.showConfirmMessageDialog("Are you sure?", function(ret){
+                    if (ret)
+                    {
+                        dom.byId("btnRemoveInvite").disabled = true;
+                        doRemoveMember(currentCommunity.community.id, currentMemberItem.userItem.user.id);
+                    }
+                });
+
             }
+        };
+
+        var doRemoveMember = function(communityId, userId)
+        {
+            annoUtil.showLoadingIndicator();
+            annoUtil.loadAPI(annoUtil.API.community, function(){
+                var deleteUser = gapi.client.community.user.delete({community_id:communityId, user_id:userId});
+                deleteUser.execute(function (data)
+                {
+                    if (!data)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        annoUtil.showToastDialog("Response returned from server are empty.");
+                        dom.byId("btnRemoveInvite").disabled = false;
+                        return;
+                    }
+
+                    if (data.error)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        annoUtil.showMessageDialog("An error occurred when calling community.user.delete api: "+data.error.message);
+                        dom.byId("btnRemoveInvite").disabled = false;
+                        return;
+                    }
+
+                    domStyle.set("memberDetailContainer", "display", "none");
+                    domConstruct.place("memberDetailContainer", "listContainerCommunity", "after");
+                    currentMemberItem.destroy();
+                    members.splice(array.indexOf(members, currentMemberItem.userItem), 1);
+                    dom.byId("btnRemoveInvite").disabled = false;
+
+                    annoUtil.hideLoadingIndicator();
+                });
+            });
         };
 
         var toggleMemberRole = function()
         {
-            if (currentMemberItem.userItem.role == "Member")
+            var role = "member";
+            if (currentMemberItem.userItem.role == "member")
             {
-                currentMemberItem.userItem.role = "Manager";
-                dom.byId("btnMakeManager").innerHTML = "Make Member";
-            }
-            else
-            {
-                currentMemberItem.userItem.role = "Member";
-                dom.byId("btnMakeManager").innerHTML = "Make Manager";
+                role = "manager";
             }
 
-            dom.byId("memberDetailRole").innerHTML = currentMemberItem.userItem.role;
+            function _toggleMemberRoleUI()
+            {
+                if (currentMemberItem.userItem.role == "member")
+                {
+                    currentMemberItem.userItem.role = "manager";
+                    dom.byId("btnMakeManager").innerHTML = "Make Member";
+                    domStyle.set(query(".icon-bolt", currentMemberItem.domNode)[0], "display", "");
+                }
+                else
+                {
+                    currentMemberItem.userItem.role = "member";
+                    dom.byId("btnMakeManager").innerHTML = "Make Manager";
+                    domStyle.set(query(".icon-bolt", currentMemberItem.domNode)[0], "display", "none");
+                }
+
+                dom.byId("memberDetailRole").innerHTML = currentMemberItem.userItem.role;
+            }
+
+            if (currentMemberItem.userItem.newMember)
+            {
+                _toggleMemberRoleUI();
+                return;
+            }
+
+            dom.byId("btnMakeManager").disabled = true;
+
+            annoUtil.showLoadingIndicator();
+            annoUtil.loadAPI(annoUtil.API.community, function(){
+                var editUserRole = gapi.client.community.user.edit_role({
+                    community_id : currentCommunity.community.id,
+                    user_id : currentMemberItem.userItem.user.id,
+                    role : role
+                });
+                editUserRole.execute(function (data)
+                {
+                    if (!data)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        annoUtil.showToastDialog("Response returned from server are empty.");
+                        dom.byId("btnMakeManager").disabled = false;
+                        return;
+                    }
+
+                    if (data.error)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        annoUtil.showMessageDialog("An error occurred when calling community.user.edit_role api: " + data.error.message);
+                        dom.byId("btnMakeManager").disabled = false;
+                        return;
+                    }
+
+                    _toggleMemberRoleUI();
+                    dom.byId("btnMakeManager").disabled = false;
+                    annoUtil.hideLoadingIndicator();
+                });
+            });
         };
 
         var searchAnnoByCommunity = function()
         {
-            app.transitionToView(document.getElementById('modelApp_community'), {target:'searchAnno',url:'#searchAnno', params:{tag:dom.byId("headerTitleCommunity").innerHTML}});
+            app.transitionToView(document.getElementById('modelApp_community'), {target:'searchAnno',url:'#searchAnno', params:{tag:dom.byId("headerTitleCommunity").innerHTML, communityId:currentCommunity.community.id}});
         };
 
         var inviteNewMember = function()
         {
             window.plugins.PickContact.chooseContact(function(contact){
                 var newMember = {
-                    "display_name": contact.displayName,
-                    "user_full_name":contact.nameFormated,
-                    "user_email": contact.emailAddress,
-                    "status": "Pending",
-                    "role": "Member",
+                    "user":{
+                        "display_name": contact.displayName,
+                        "user_email": contact.emailAddress
+                    },
+                    "status": "pending",
+                    "role": "member",
                     "newMember": true
                 };
 
@@ -212,7 +317,7 @@ define([
                     "class": "row listAppName"
                 });
                 registry.byId('communityUserList').addChild(newMemberItem, registry.byId('communityUserList').getChildren().length-1);
-                newMemberItem.domNode.innerHTML = '<div><span class="icon-busy annoOrangeColor" style="font-weight: bold"></span>&nbsp;<span>'+newMember.display_name+'</span></div>'
+                newMemberItem.domNode.innerHTML = '<div><span class="icon-busy annoOrangeColor" style="font-weight: bold"></span>&nbsp;<span>'+newMember.user.display_name+'</span>&nbsp;<span class="icon-bolt annoOrangeColor" style="font-weight: bold;display: none"></span></div>'
                 showMemberDetail(newMemberItem);
                 connect.connect(newMemberItem.domNode, 'click', newMemberItem,function(e)
                 {
@@ -222,6 +327,47 @@ define([
 
             },function(err){
                 console.log('Error: ' + err);
+            });
+        };
+
+        var saveWelcomeMsg = function(msg)
+        {
+            dom.byId("btnSaveWelcomeMsg").disabled = true;
+            dom.byId("btnCancelWelcomeMsg").disabled = true;
+
+            annoUtil.showLoadingIndicator();
+            annoUtil.loadAPI(annoUtil.API.community, function(){
+                var editWelcomeMsg = gapi.client.community.community.edit_welcome_msg({id:currentCommunity.community.id, welcome_msg: msg});
+                editWelcomeMsg.execute(function (data)
+                {
+                    if (!data)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        annoUtil.showToastDialog("Response returned from server are empty.");
+                        dom.byId("btnSaveWelcomeMsg").disabled = false;
+                        dom.byId("btnCancelWelcomeMsg").disabled = false;
+                        return;
+                    }
+
+                    if (data.error)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        annoUtil.showMessageDialog("An error occurred when calling community.edit_welcome_message api: "+data.error.message);
+                        dom.byId("btnSaveWelcomeMsg").disabled = false;
+                        dom.byId("btnCancelWelcomeMsg").disabled = false;
+                        return;
+                    }
+
+                    dom.byId("btnSaveWelcomeMsg").disabled = false;
+                    dom.byId("btnCancelWelcomeMsg").disabled = false;
+
+                    dom.byId("communityWelMsg").innerHTML = msg;
+                    domStyle.set("btnSaveWelcomeMsgContainer", "display", "none");
+                    oldWelcomeMsg = "";
+                    currentCommunity.community.welcome_msg = msg;
+
+                    annoUtil.hideLoadingIndicator();
+                });
             });
         };
 
@@ -248,6 +394,39 @@ define([
                 {
                     searchAnnoByCommunity();
                 }));
+
+                _connectResults.push(connect.connect(dom.byId("communityWelMsg"), 'focus', function(e)
+                {
+                    if (!oldWelcomeMsg)
+                    {
+                        oldWelcomeMsg = dom.byId("communityWelMsg").innerHTML;
+                    }
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("communityWelMsg"), 'blur', function(e)
+                {
+                    if (oldWelcomeMsg != dom.byId("communityWelMsg").innerHTML)
+                    {
+                        domStyle.set("btnSaveWelcomeMsgContainer", "display", "");
+                    }
+                    else
+                    {
+                        domStyle.set("btnSaveWelcomeMsgContainer", "display", "none");
+                    }
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("btnSaveWelcomeMsg"), 'click', function(e)
+                {
+                    saveWelcomeMsg(dom.byId("communityWelMsg").innerHTML);
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("btnCancelWelcomeMsg"), 'click', function(e)
+                {
+                    dojo.stopEvent(e);
+                    dom.byId("communityWelMsg").innerHTML = oldWelcomeMsg;
+                    domStyle.set("btnSaveWelcomeMsgContainer", "display", "none");
+                    oldWelcomeMsg = "";
+                }));
             },
             afterActivate: function()
             {
@@ -259,6 +438,8 @@ define([
             {
                 domStyle.set("memberDetailContainer", "display", "none");
                 domConstruct.place("memberDetailContainer", "listContainerCommunity", "after");
+                var itemList = registry.byId('communityUserList');
+                itemList.destroyDescendants();
             },
             destroy:function ()
             {

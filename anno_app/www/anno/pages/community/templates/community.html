@@ -8,8 +8,15 @@
         <h2 class="mblRoundRectCategory" style="font-size: 13pt;color: #000000">Members</h2>
         <ul id="communityUserList" data-dojo-type="dojox/mobile/RoundRectList"></ul>
         <h2 class="mblRoundRectCategory" style="font-size: 13pt;color: #000000">Welcome message</h2>
-        <div id="communityWelMsg" contenteditable="true" style="margin: 7px 9px 16px;padding: 6px 6px 6px 6px;border: 2px solid #adaaad;border-radius: 8px;"></div>
-        <h2 id="communityActivity" class="mblRoundRectCategory" style="font-size: 13pt;color: blue;text-decoration: underline;font-weight: normal;"></h2>
+        <div id="communityWelMsg" contenteditable="true" style="margin: 7px 9px 4px;padding: 6px 6px 6px 6px;border: 2px solid #adaaad;border-radius: 8px;"></div>
+        <div id="btnSaveWelcomeMsgContainer" style="text-align: center;display: none">
+            <button class="btn" id="btnSaveWelcomeMsg">Save</button>
+            <button class="btn" id="btnCancelWelcomeMsg">Cancel</button>
+        </div>
+        <div class="mblRoundRectCategory">
+            <span id="communityActivity" style="font-size: 13pt;color: blue;text-decoration: underline;font-weight: normal;"></span>
+        </div>
+
         <div style="height: 30px"></div>
     </div>
     <div id="memberDetailContainer" style="display: none;padding-left: 32px;">

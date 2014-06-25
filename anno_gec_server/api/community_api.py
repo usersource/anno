@@ -16,13 +16,14 @@ from message.community_message import CommunityAppInfoMessage
 from message.community_message import CommunityUserMessage
 from message.community_message import CommunityUserListMessage
 from message.community_message import CommunityUserRoleMessage
+from message.community_message import CommunityInviteMessage
 from message.user_message import UserMessage
 from message.common_message import ResponseMessage
-from message.anno_api_messages import AnnoListMessage
+from message.common_message import InviteResponseMessage
 from model.community import Community
 from model.userrole import UserRole
 from model.user import User
-from model.anno import Anno
+from model.invite import Invite
 
 @endpoints.api(name="community", version="1.0", description="Community API",
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
@@ -31,14 +32,6 @@ class CommunityApi(remote.Service):
     community_with_id_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
         id=messages.IntegerField(2, required=True)
-    )
-
-    community_anno_list_resource_container = endpoints.ResourceContainer(
-        message_types.VoidMessage,
-        id=messages.IntegerField(2, required=True),
-        cursor=messages.StringField(3),
-        limit=messages.IntegerField(4),
-        select=messages.StringField(5)
     )
 
     community_welcome_msg_resource_container = endpoints.ResourceContainer(
@@ -57,31 +50,6 @@ class CommunityApi(remote.Service):
     def community_insert(self, request):
         resp = Community.insert(request)
         return ResponseMessage(success=True, msg=resp)
-
-    @endpoints.method(community_anno_list_resource_container, AnnoListMessage,
-                      path="anno/{id}", http_method="GET", name="anno.list")
-    def community_anno_list(self, request):
-        limit = 10
-        if request.limit is not None:
-            limit = request.limit
-
-        curs = None
-        if request.cursor is not None:
-            try:
-                curs = Cursor(urlsafe=request.cursor)
-            except BadValueError:
-                raise endpoints.BadRequestException('Invalid cursor %s.' % request.cursor)
-
-        select_projection = None
-        if request.select is not None:
-            select_projection = request.select.split(',')
-
-        community = Community.get_by_id(request.id)
-
-        if community:
-            return Anno.query_by_community(community, limit, select_projection, curs)
-        else:
-            return AnnoListMessage(anno_list=[])
 
     @endpoints.method(CommunityAppInfoMessage, ResponseMessage, path="app",
                       http_method="POST", name="app.insert")
@@ -128,8 +96,8 @@ class CommunityApi(remote.Service):
 
         return ResponseMessage(success=success)
 
-    @endpoints.method(CommunityUserRoleMessage, ResponseMessage, path="edit_user_role",
-                      http_method="POST", name="user.edit_user_role")
+    @endpoints.method(CommunityUserRoleMessage, ResponseMessage, path="user/edit_role",
+                      http_method="POST", name="user.edit_role")
     def edit_user_role(self, request):
         user = get_user_from_request(user_id=request.user_id, user_email=request.user_email)
         community = Community.get_by_id(request.community_id)
@@ -150,3 +118,9 @@ class CommunityApi(remote.Service):
             return ResponseMessage(success=True)
         else:
             return ResponseMessage(success=False)
+
+    @endpoints.method(CommunityInviteMessage, InviteResponseMessage, path="invite",
+                      http_method="POST", name="invite.create")
+    def invite_user(self, request):
+        recipients, subject, message = Invite.create(request)
+        return InviteResponseMessage(recipients=recipients, subject=subject, message=message)

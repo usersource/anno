@@ -226,6 +226,17 @@ def get_user_from_request(user_id=None, user_email=None):
         user = User.find_user_by_email(user_email)
     return user
 
+def get_invite_mail_content(user_name, user_email, role, invite_msg, community_name, invite_hash):
+    recipients = [user_email]
+    subject = "UserSource Invitation"
+    message = "Dear {user_name}, you are invited to join '{community_name}' community."
+
+    if user_name is None:
+        user_name = "User"
+
+    message = message.format(user_name=user_name, community_name=community_name)
+    return (recipients, subject, message)
+
 """
 annoserver:
 anno_js_client_id = "22913132792.apps.googleusercontent.com"
