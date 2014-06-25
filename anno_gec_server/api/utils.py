@@ -15,6 +15,8 @@ from model.appinfo import AppInfo
 from model.community import Community
 from model.userrole import UserRole
 
+userStatusType = dict(accepted="accepted", pending="pending")
+
 def get_endpoints_current_user(raise_unauthorized=True):
     """Returns a current user and (optionally) causes an HTTP 401 if no user.
 

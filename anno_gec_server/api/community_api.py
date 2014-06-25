@@ -11,6 +11,7 @@ from protorpc import remote
 
 from api.utils import anno_js_client_id
 from api.utils import get_user_from_request
+from api.utils import userStatusType
 from message.community_message import CommunityMessage
 from message.community_message import CommunityAppInfoMessage
 from message.community_message import CommunityUserMessage
@@ -31,7 +32,8 @@ class CommunityApi(remote.Service):
 
     community_with_id_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
-        id=messages.IntegerField(2, required=True)
+        id=messages.IntegerField(2, required=True),
+        include_invite=messages.BooleanField(3, default=False)
     )
 
     community_welcome_msg_resource_container = endpoints.ResourceContainer(
@@ -62,11 +64,22 @@ class CommunityApi(remote.Service):
     def user_list(self, request):
         community_user_message_list = []
 
-        for userrole in UserRole.community_user_list(request.id):
+        status = userStatusType.get("accepted")
+        userroles = UserRole.community_user_list(request.id)
+        for userrole in userroles:
             user = userrole.user.get()
             if user:
                 user_message = UserMessage(id=user.key.id(), display_name=user.display_name, user_email=user.user_email)
-                community_user_message = CommunityUserMessage(user=user_message, role=userrole.role)
+                community_user_message = CommunityUserMessage(user=user_message, role=userrole.role, status=status)
+                community_user_message_list.append(community_user_message)
+
+        if request.include_invite:
+            status = userStatusType.get("pending")
+            from model.invite import Invite
+            invited_users = Invite.list_by_community(request.id)
+            for invited_user in invited_users:
+                user_message = UserMessage(display_name=invited_user.name, user_email=invited_user.email)
+                community_user_message = CommunityUserMessage(user=user_message, role=invited_user.role, status=status)
                 community_user_message_list.append(community_user_message)
 
         return CommunityUserListMessage(user_list=community_user_message_list)

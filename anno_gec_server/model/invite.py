@@ -57,6 +57,10 @@ class Invite(BaseModel):
         return cls.query(cls.email == user_email).fetch()
 
     @classmethod
+    def list_by_community(cls, community_id):
+        return cls.query(cls.community == Community.get_by_id(community_id).key).fetch()
+
+    @classmethod
     def accept(cls, message):
         resp = None
         msg = ""

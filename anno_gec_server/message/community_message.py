@@ -27,6 +27,7 @@ class CommunityAppInfoMessage(messages.Message):
 class CommunityUserMessage(messages.Message):
     user = messages.MessageField(UserMessage, 1)
     role = messages.StringField(2)
+    status = messages.StringField(3)
 
 class CommunityUserListMessage(messages.Message):
     user_list = messages.MessageField(CommunityUserMessage, 1, repeated=True)
