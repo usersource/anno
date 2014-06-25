@@ -29,7 +29,7 @@ define([
         {
             var communities = annoUtil.getUserCommunities(), community = currentCommunity = communities[idx];
             dom.byId("headerTitleCommunity").innerHTML = community.community.name;
-            dom.byId("communityWelMsg").innerHTML = community.community.welcome_msg;
+            dom.byId("communityWelMsg").innerHTML = community.community.welcome_msg || "";
             dom.byId("communityActivity").innerHTML = community.community.name+" activity";
 
             annoUtil.showLoadingIndicator();
