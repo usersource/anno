@@ -1,8 +1,34 @@
-__author__ = 'topcircler'
-
 """
 Anno API implemented using Google Cloud Endpoints.
+
+.. http:get:: /anno/1.0/anno/{id}
+
+    get the anno details for a specific anno `id`
+
+    :param int id: the id of the anno
+    :returns: the details of the anno :class:`.AnnoResponseMessage`
+
+.. http:get:: /anno/1.0/anno
+
+    get list of annos
+
+    :param str cursor: <put description here>
+    :param int limit: <put description here>
+    :param str select: <put description here>
+    :param str app: <desc>
+    :param str query_type: <desc>
+    :returns: a list of annos :class:`.AnnoListMessage`
+
+.. http:post:: /anno/1.0/anno
+
+    insert an anno
+
+    :param: :class:`.AnnoMessage`
+    :returns: details of the anno :class:`.AnnoResponseMessage`
+
 """
+
+__author__ = 'topcircler'
 
 import datetime
 import logging
