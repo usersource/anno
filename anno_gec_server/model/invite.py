@@ -53,6 +53,12 @@ class Invite(BaseModel):
         return (recipients, subject, email_message)
 
     @classmethod
+    def delete(cls, user_email, community):
+        query = cls.query(ndb.AND(cls.email == user_email, cls.community == community.key))
+        invited_user = query.get()
+        invited_user.key.delete()
+
+    @classmethod
     def list_by_user(cls, user_email):
         return cls.query(cls.email == user_email).fetch()
 

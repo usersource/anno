@@ -222,6 +222,7 @@ def filter_anno_by_user(query, user):
     return query.order(Anno._key)
 
 def get_user_from_request(user_id=None, user_email=None):
+    user = None
     if user_id:
         user = User.get_by_id(user_id)
     elif user_email:

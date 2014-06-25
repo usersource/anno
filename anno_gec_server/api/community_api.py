@@ -103,9 +103,13 @@ class CommunityApi(remote.Service):
         community = Community.get_by_id(request.community_id)
         success = False
 
-        if user and community:
-            UserRole.delete(user, community)
-            success = True
+        if community:
+            if user:
+                UserRole.delete(user, community)
+                success = True
+            elif request.include_invite:
+                Invite.delete(request.user_email, community)
+                success = True
 
         return ResponseMessage(success=success)
 
