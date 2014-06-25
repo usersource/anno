@@ -121,7 +121,7 @@ define([
                     "class": "row",
                     "data-dojo-type":"dojox/mobile/ListItem",
                     "data-dojo-props":"variableHeight:true,clickable:true,noArrow:true,_duration:50,_index:"+i,
-                    innerHTML: '<div>'+data[i].name+'</div>'
+                    innerHTML: '<div>'+data[i].community.name+'</div>'
                 }, itemList.domNode, "last");
             }
 
@@ -131,7 +131,7 @@ define([
 
             for (var i= 0,c=items.length;i<c;i++)
             {
-                if (data[i].is_manager)
+                if (data[i].role == "manager")
                 {
                     items[i].on("click", function(){
                         gotoCommunityViewer(this);

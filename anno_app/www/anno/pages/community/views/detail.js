@@ -1088,6 +1088,8 @@ define([
                     currentAnno.set('app', updatedAnnoData.appName);
                     currentAnno.set('appVersion', updatedAnnoData.appVersion);
                     currentAnno.set('annoText', updatedAnnoData.comment);
+                    currentAnno.set('hashTaggedAnnoText', "");
+                    processAnnoTextHashTags();
                     currentAnno.set('draw_elements', updatedAnnoData.draw_elements);
 
                     if (updatedAnnoData.image)

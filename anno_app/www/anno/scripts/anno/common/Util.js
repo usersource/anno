@@ -42,7 +42,8 @@ define([
             account:"account",
             followUp:"followup",
             vote:"vote",
-            flag:"flag"
+            flag:"flag",
+            community: "community"
         },
         timeString:{
             prefixAgo: "",
@@ -822,20 +823,31 @@ define([
                 return;
             }
 
+            //this.showLoadingIndicator();
             var self = this;
+            this.loadAPI(this.API.user, function(){
+                var getCommunityList = gapi.client.user.community.list({email:self.getCurrentUserInfo().email});
+                getCommunityList.execute(function (data)
+                {
+                    if (!data)
+                    {
+                        //self.hideLoadingIndicator();
+                        self.showToastDialog("Items returned from server are empty.");
+                        return;
+                    }
 
-            xhr.get('../../scripts/dummyData/user.community.list.json',
-                {
-                    handleAs: "json"
-                }).then(function (data)
-                {
-                    self.userCommunities = data.result;
+                    if (data.error)
+                    {
+                        //self.hideLoadingIndicator();
+                        self.showMessageDialog("An error occurred when calling user.community.list api: "+data.error.message);
+                        return;
+                    }
+
+                    self.userCommunities = data.result.community_list;
                     callback(self.userCommunities);
-                },
-                function (res)
-                {
-
+                    //self.hideLoadingIndicator();
                 });
+            });
         },
         getUserCommunities: function()
         {

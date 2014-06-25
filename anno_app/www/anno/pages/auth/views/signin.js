@@ -159,7 +159,7 @@ define([
                 {
                     annoUtil.showLoadingIndicator();
                     annoUtil.loadAPI(annoUtil.API.user, function(){
-                        var getDisplayNameAPI = gapi.client.user.user.displayname.get({});
+                        var getDisplayNameAPI = gapi.client.user.user.displayname.get({email: result.userInfo.email});
 
                         getDisplayNameAPI.execute(function(resp){
                             if (!resp)

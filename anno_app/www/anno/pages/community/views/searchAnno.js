@@ -7,9 +7,10 @@ define([
     "dojo/window",
     "dijit/registry",
     "dojox/mvc/getStateful",
-    "anno/common/Util"
+    "anno/common/Util",
+    "anno/common/OAuthUtil"
 ],
-    function (dom, domClass, domStyle, connect, lang, win, registry, getStateful, annoUtil)
+    function (dom, domClass, domStyle, connect, lang, win, registry, getStateful, annoUtil, OAuthUtil)
     {
         var _connectResults = []; // events connect results
         var app = null;
@@ -21,6 +22,7 @@ define([
             limit = 30,
             searchTag = "";
         var dataStackLength = 0, dataStack = [];
+        var searchByCommunity = false, communityId;
 
         var emptyAnno = {
             "id": 0,
@@ -53,92 +55,118 @@ define([
 
             var arg = {outcome: 'cursor,has_more,anno_list', limit: limit};
 
-            arg.order_type = "recent";
-            arg.search_string = searchTag + " " + searchTag.substr(1);
-            arg["only_my_apps"] = false;
+            if (searchByCommunity)
+            {
+                arg.community = communityId;
+                arg.query_type = "by_community";
+            }
+            else
+            {
+                arg.order_type = "recent";
+                arg.search_string = searchTag + " " + searchTag.substr(1);
+                arg["only_my_apps"] = false;
+            }
 
             if (poffset)
             {
-                arg.offset = poffset;
+                if (searchByCommunity)
+                {
+                    arg.cursor = poffset;
+                }
+                else
+                {
+                    arg.offset = poffset;
+                }
             }
 
             console.log("anno searching, args:" + JSON.stringify(arg));
-            var getAnnoList = gapi.client.anno.anno.search(arg)
-            getAnnoList.execute(function (data)
-            {
-                if (!data)
+            OAuthUtil.getAccessToken(function(){
+                var getAnnoList = searchByCommunity?gapi.client.anno.anno.list(arg):gapi.client.anno.anno.search(arg)
+                getAnnoList.execute(function (data)
                 {
-                    annoUtil.hideLoadingIndicator();
-                    loadingData = false;
-                    domStyle.set('noResultContainer_search', 'display', 'none');
-                    annoUtil.showToastDialog("Items returned from server are empty.");
-                    return;
-                }
-
-                if (data.error)
-                {
-                    annoUtil.hideLoadingIndicator();
-                    loadingData = false;
-                    domStyle.set('noResultContainer_search', 'display', 'none');
-                    annoUtil.showMessageDialog("An error occurred when calling anno.search api: " + data.error.message);
-                    return;
-                }
-
-                var annoList = data.result.anno_list || [];
-
-                var spliceArgs = clearData ? [0, eventsModel.model.length] : [eventsModel.model.length, 0];
-                for (var i = 0, l = annoList.length; i < l; i++)
-                {
-                    var eventData = lang.clone(emptyAnno);
-
-                    eventData.annoText = annoList[i].anno_text;
-                    eventData.annoType = annoList[i].anno_type;
-                    eventData.annoIcon = annoList[i].anno_type == annoUtil.annoType.SimpleComment ? "icon-simplecomment" : "icon-shapes";
-                    eventData.app = annoList[i].app_name;
-                    eventData.author = annoList[i].creator ? annoList[i].creator.display_name || annoList[i].creator.user_email || annoList[i].creator.user_id : "";
-                    eventData.id = annoList[i].id;
-                    eventData.circleX = parseInt(annoList[i].simple_x, 10);
-                    eventData.circleY = parseInt(annoList[i].simple_y, 10);
-                    eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
-                    eventData.created = annoUtil.getTimeAgoString(annoList[i].created);
-
-                    spliceArgs.push(new getStateful(eventData));
-                }
-
-                if (clearData)
-                {
-                    dataStackLength++;
-                    if (dataStackLength>1)
+                    if (!data)
                     {
-                        dataStack.push(eventsModel.model.splice.apply(eventsModel.model, spliceArgs));
+                        annoUtil.hideLoadingIndicator();
+                        loadingData = false;
+                        domStyle.set('noResultContainer_search', 'display', 'none');
+                        annoUtil.showToastDialog("Items returned from server are empty.");
+                        return;
+                    }
+
+                    if (data.error)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        loadingData = false;
+                        domStyle.set('noResultContainer_search', 'display', 'none');
+                        annoUtil.showMessageDialog("An error occurred when calling "+(searchByCommunity?"anno.list":"anno.search")+" api: " + data.error.message);
+                        return;
+                    }
+
+                    var annoList = data.result.anno_list || [];
+
+                    var spliceArgs = clearData ? [0, eventsModel.model.length] : [eventsModel.model.length, 0];
+                    for (var i = 0, l = annoList.length; i < l; i++)
+                    {
+                        var eventData = lang.clone(emptyAnno);
+
+                        eventData.annoText = annoList[i].anno_text;
+                        eventData.annoType = annoList[i].anno_type;
+                        eventData.annoIcon = annoList[i].anno_type == annoUtil.annoType.SimpleComment ? "icon-simplecomment" : "icon-shapes";
+                        eventData.app = annoList[i].app_name;
+                        eventData.author = annoList[i].creator ? annoList[i].creator.display_name || annoList[i].creator.user_email || annoList[i].creator.user_id : "";
+                        eventData.id = annoList[i].id;
+                        eventData.circleX = parseInt(annoList[i].simple_x, 10);
+                        eventData.circleY = parseInt(annoList[i].simple_y, 10);
+                        eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
+                        eventData.created = annoUtil.getTimeAgoString(annoList[i].created);
+
+                        spliceArgs.push(new getStateful(eventData));
+                    }
+
+                    if (clearData)
+                    {
+                        dataStackLength++;
+                        if (dataStackLength>1)
+                        {
+                            dataStack.push(eventsModel.model.splice.apply(eventsModel.model, spliceArgs));
+                        }
+                        else
+                        {
+                            eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
+                        }
                     }
                     else
                     {
                         eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
                     }
-                }
-                else
-                {
-                    eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
-                }
 
-                annoUtil.hideLoadingIndicator();
-                loadingData = false;
+                    annoUtil.hideLoadingIndicator();
+                    loadingData = false;
 
-                searchOffset = data.result.offset;
-                hasMoreSearchData = data.result.has_more;
+                    if (searchByCommunity)
+                    {
+                        searchOffset = data.result.cursor;
+                    }
+                    else
+                    {
+                        searchOffset = data.result.offset;
+                    }
 
-                domStyle.set('listContainerSearch', 'display', '');
+                    hasMoreSearchData = data.result.has_more;
 
-                if (clearData && annoList.length <= 0)
-                {
-                    domStyle.set('noResultContainer_search', 'display', '');
-                }
-                else
-                {
-                    domStyle.set('noResultContainer_search', 'display', 'none');
-                }
+                    domStyle.set('listContainerSearch', 'display', '');
+
+                    if (clearData && annoList.length <= 0)
+                    {
+                        domStyle.set('noResultContainer_search', 'display', '');
+                    }
+                    else
+                    {
+                        domStyle.set('noResultContainer_search', 'display', 'none');
+                    }
+                });
             });
+
         };
 
         var loadMoreData = function ()
@@ -179,7 +207,19 @@ define([
                 console.log(document.referrer);
                 domStyle.set('noResultContainer_search', 'display', 'none');
                 searchTag = this.params["tag"];
+                communityId = this.params["communityId"];
+
+                if (communityId)
+                {
+                    searchByCommunity = true;
+                }
+                else
+                {
+                    searchByCommunity = false;
+                }
+
                 dom.byId('headerTitleSearchAnno').innerHTML = searchTag;
+
 
                 // if user goes to this page by clicking backbutton, then just restore the previous data back
                 // if not, then do the searching action
