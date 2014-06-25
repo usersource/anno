@@ -25,3 +25,8 @@ class UserInviteMessage(messages.Message):
 
 class UserInviteListMessage(messages.Message):
     invite_list = messages.MessageField(UserInviteMessage, 1, repeated=True)
+
+class UserInviteAcceptMessage(messages.Message):
+    invite_hash = messages.StringField(1, required=True)
+    user_email = messages.StringField(2, required=True)
+    force = messages.BooleanField(3)

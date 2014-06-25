@@ -10,6 +10,8 @@ from google.appengine.ext import ndb
 
 from model.base_model import BaseModel
 from model.community import Community
+from model.user import User
+from model.userrole import UserRole
 from api.utils import get_invite_mail_content
 
 class Invite(BaseModel):
@@ -51,5 +53,31 @@ class Invite(BaseModel):
         return (recipients, subject, email_message)
 
     @classmethod
-    def get_pending_invites(cls, user_email):
+    def list_by_user(cls, user_email):
         return cls.query(cls.email == user_email).fetch()
+
+    @classmethod
+    def accept(cls, message):
+        resp = None
+        msg = ""
+        invitation = cls.query(cls.invite_hash == message.invite_hash).get()
+
+        if invitation:
+            community = invitation.community.get()
+            if community:
+                if (invitation.email == message.user_email) or message.force:
+                    user = User.find_user_by_email(message.user_email)
+                    resp = UserRole.insert(user, community, invitation.role)
+                    if resp:
+                        invitation.key.delete()
+                        msg = "Invitation accepted"
+                    else:
+                        msg = "Error while adding user to community"
+                else:
+                    msg = "User Mismatch"
+            else:
+                msg = "Community no longer exist"
+        else:
+            msg = "Invitation no longer exist"
+
+        return (resp, msg)

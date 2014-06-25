@@ -96,8 +96,8 @@ class CommunityApi(remote.Service):
 
         return ResponseMessage(success=success)
 
-    @endpoints.method(CommunityUserRoleMessage, ResponseMessage, path="edit_user_role",
-                      http_method="POST", name="user.edit_user_role")
+    @endpoints.method(CommunityUserRoleMessage, ResponseMessage, path="user/edit_role",
+                      http_method="POST", name="user.edit_role")
     def edit_user_role(self, request):
         user = get_user_from_request(user_id=request.user_id, user_email=request.user_email)
         community = Community.get_by_id(request.community_id)

@@ -19,7 +19,9 @@ from message.user_message import UserCommunityMessage
 from message.user_message import UserCommunityListMessage
 from message.user_message import UserInviteMessage
 from message.user_message import UserInviteListMessage
+from message.user_message import UserInviteAcceptMessage
 from message.community_message import CommunityMessage
+from message.common_message import ResponseMessage
 
 @endpoints.api(name='user', version='1.0', description='User API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
@@ -78,8 +80,8 @@ class UserApi(remote.Service):
         user.put()
         return message_types.VoidMessage()
 
-    @endpoints.method(user_email_with_id_resource_container, UserCommunityListMessage, path="user/communitylist", http_method="GET",
-                      name="community.list")
+    @endpoints.method(user_email_with_id_resource_container, UserCommunityListMessage,
+                      path="community/list", http_method="GET", name="community.list")
     def list_user_communities(self, request):
         if request.id:
             user = User.get_by_id(int(request.id))
@@ -102,7 +104,7 @@ class UserApi(remote.Service):
 
         return UserCommunityListMessage(community_list=user_community_message_list)
 
-    @endpoints.method(user_email_resource_container, UserInviteListMessage, path="invite_list",
+    @endpoints.method(user_email_resource_container, UserInviteListMessage, path="invite/list",
                       http_method="GET", name="invite.list")
     def user_invite_list(self, request):
         if request.email is None:
@@ -111,7 +113,7 @@ class UserApi(remote.Service):
         else:
             user_email = request.email
 
-        pending_invites = Invite.get_pending_invites(user_email)
+        pending_invites = Invite.list_by_user(user_email)
         pending_invites_list = []
 
         for pending_invite in pending_invites:
@@ -121,3 +123,13 @@ class UserApi(remote.Service):
                                                           invite_msg=pending_invite.invite_msg))
 
         return UserInviteListMessage(invite_list=pending_invites_list)
+
+    @endpoints.method(UserInviteAcceptMessage, ResponseMessage, path="invite/accept",
+                      http_method="POST", name="invite.accept")
+    def user_invite_accept(self, request):
+        if request.user_email is None:
+            user = auth_user(self.request_state.headers)
+            request.user_email = user.user_email
+
+        resp, msg = Invite.accept(request)
+        return ResponseMessage(success=True if resp else False, msg=msg)

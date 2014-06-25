@@ -258,7 +258,11 @@ define([
 
             annoUtil.showLoadingIndicator();
             annoUtil.loadAPI(annoUtil.API.community, function(){
-                var editUserRole = gapi.client.community.user.edit_user_role ({community_id:currentCommunity.community.id, user_id:currentMemberItem.userItem.user.id, role: role});
+                var editUserRole = gapi.client.community.user.edit_role({
+                    community_id : currentCommunity.community.id,
+                    user_id : currentMemberItem.userItem.user.id,
+                    role : role
+                });
                 editUserRole.execute(function (data)
                 {
                     if (!data)
@@ -272,7 +276,7 @@ define([
                     if (data.error)
                     {
                         annoUtil.hideLoadingIndicator();
-                        annoUtil.showMessageDialog("An error occurred when calling community.user.edit_user_role api: "+data.error.message);
+                        annoUtil.showMessageDialog("An error occurred when calling community.user.edit_role api: " + data.error.message);
                         dom.byId("btnMakeManager").disabled = false;
                         return;
                     }
