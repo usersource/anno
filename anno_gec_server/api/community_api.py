@@ -18,9 +18,9 @@ from message.community_message import CommunityUserMessage
 from message.community_message import CommunityUserListMessage
 from message.community_message import CommunityUserRoleMessage
 from message.community_message import CommunityInviteMessage
+from message.community_message import CreateInviteResponseMessage
 from message.user_message import UserMessage
 from message.common_message import ResponseMessage
-from message.common_message import InviteResponseMessage
 from model.community import Community
 from model.userrole import UserRole
 from model.user import User
@@ -140,8 +140,9 @@ class CommunityApi(remote.Service):
         else:
             return ResponseMessage(success=False)
 
-    @endpoints.method(CommunityInviteMessage, InviteResponseMessage, path="invite",
+    @endpoints.method(CommunityInviteMessage, CreateInviteResponseMessage, path="invite",
                       http_method="POST", name="invite.create")
     def invite_user(self, request):
-        recipients, subject, message = Invite.create(request)
-        return InviteResponseMessage(recipients=recipients, subject=subject, message=message)
+        community_name = Invite.create(request)
+        return CreateInviteResponseMessage(user_name=request.name, user_email=request.email,
+                                           invite_msg=request.invite_msg, community=community_name)

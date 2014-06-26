@@ -45,3 +45,9 @@ class CommunityInviteMessage(messages.Message):
     role = messages.StringField(3)
     invite_msg = messages.StringField(4)
     community = messages.IntegerField(5, required=True)
+
+class CreateInviteResponseMessage(messages.Message):
+    user_name = messages.StringField(1)
+    user_email = messages.StringField(2)
+    invite_msg = messages.StringField(3)
+    community = messages.StringField(4)

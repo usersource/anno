@@ -12,7 +12,6 @@ from model.base_model import BaseModel
 from model.community import Community
 from model.user import User
 from model.userrole import UserRole
-from api.utils import get_invite_mail_content
 
 class Invite(BaseModel):
     name = ndb.StringProperty()
@@ -24,9 +23,7 @@ class Invite(BaseModel):
 
     @classmethod
     def create(cls, message):
-        recipients = []
-        subject = ""
-        email_message = ""
+        community_name = ""
         community = Community.get_by_id(message.community)
 
         if community:
@@ -38,19 +35,14 @@ class Invite(BaseModel):
 
             invite_hash = str(uuid.uuid4())
             entity = cls(name=message.name, email=message.email, role=message.role,
-                         invite_msg=message.invite_msg, invite_hash=invite_hash, 
+                         invite_msg=message.invite_msg, invite_hash=invite_hash,
                          community=community.key)
             entity.put()
 
             if entity:
-                recipients, subject, email_message = get_invite_mail_content(user_name=message.name,
-                                                                             user_email=message.email,
-                                                                             role=message.role,
-                                                                             invite_msg=message.invite_msg,
-                                                                             invite_hash=invite_hash,
-                                                                             community_name=community.name)
+                community_name = community.name
 
-        return (recipients, subject, email_message)
+        return community_name
 
     @classmethod
     def delete(cls, user_email, community):
