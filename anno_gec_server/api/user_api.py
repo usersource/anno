@@ -40,7 +40,8 @@ class UserApi(remote.Service):
     user_email_with_id_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
         id=messages.StringField(1),
-        email=messages.StringField(2)
+        email=messages.StringField(2),
+        include_invite=messages.BooleanField(3, default=False)
     )
 
     @endpoints.method(user_resource_container, message_types.VoidMessage, path='user', http_method='POST',
@@ -102,14 +103,24 @@ class UserApi(remote.Service):
                 user_community_message = UserCommunityMessage(community=community_message, role=userrole.get("role"))
                 user_community_message_list.append(user_community_message)
 
-        return UserCommunityListMessage(community_list=user_community_message_list)
+        pending_invites_list = []
+
+        if request.include_invite:
+            pending_invites = Invite.list_by_user(request.email or (auth_user(self.request_state.headers)).user_email)
+            for pending_invite in pending_invites:
+                community = pending_invite.community.get().to_response_message()
+                pending_invites_list.append(UserInviteMessage(community=community,
+                                                              invite_hash=pending_invite.invite_hash,
+                                                              invite_msg=pending_invite.invite_msg))
+
+        return UserCommunityListMessage(community_list=user_community_message_list, invite_list=pending_invites_list)
 
     @endpoints.method(user_email_resource_container, UserInviteListMessage, path="invite/list",
                       http_method="GET", name="invite.list")
     def user_invite_list(self, request):
         if request.email is None:
             user = auth_user(self.request_state.headers)
-            user_email = user.email
+            user_email = user.user_email
         else:
             user_email = request.email
 

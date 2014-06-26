@@ -14,9 +14,6 @@ class UserCommunityMessage(messages.Message):
     community = messages.MessageField(CommunityMessage, 1)
     role = messages.StringField(2)
 
-class UserCommunityListMessage(messages.Message):
-    community_list = messages.MessageField(UserCommunityMessage, 1, repeated=True)
-
 class UserInviteMessage(messages.Message):
     from message.community_message import CommunityMessage
     community = messages.MessageField(CommunityMessage, 1)
@@ -30,3 +27,7 @@ class UserInviteAcceptMessage(messages.Message):
     invite_hash = messages.StringField(1, required=True)
     user_email = messages.StringField(2, required=True)
     force = messages.BooleanField(3)
+
+class UserCommunityListMessage(messages.Message):
+    community_list = messages.MessageField(UserCommunityMessage, 1, repeated=True)
+    invite_list = messages.MessageField(UserInviteMessage, 2, repeated=True)
