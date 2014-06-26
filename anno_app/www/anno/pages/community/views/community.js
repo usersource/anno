@@ -2,6 +2,7 @@ define([
     "dojo/dom",
     "dojo/dom-class",
     "dojo/dom-construct",
+    "dojo/string",
     "dojo/dom-style",
     "dojo/_base/array",
     "dojo/_base/connect",
@@ -9,9 +10,10 @@ define([
     "dojo/window",
     "dijit/registry",
     "dojox/mobile/ListItem",
-    "anno/common/Util"
+    "anno/common/Util",
+    "dojo/text!../templates/invitationEmailTemplate.html"
 ],
-    function (dom, domClass, domConstruct, domStyle, array, connect, query, win, registry, ListItem, annoUtil)
+    function (dom, domClass, domConstruct, dojoString, domStyle, array, connect, query, win, registry, ListItem, annoUtil, invitationEmailTemplate)
     {
         var _connectResults = []; // events connect results
         var app = null;
@@ -159,24 +161,15 @@ define([
 
         var removeMember = function()
         {
+            if (dom.byId("btnRemoveInvite").disabled) return;
+
             if (currentMemberItem.userItem.newMember)
             {
-                var emailTemplate = '<div>Hi '+currentMemberItem.userItem.user.display_name+',</div><h5>'+currentCommunity.community.welcome_msg+'</h5><div>Thanks,<br>UserSource Support</div>';
-                window.plugins.socialsharing.shareViaEmail(
-                    emailTemplate,
-                    'Invitation from '+currentCommunity.community.name,
-                    [currentMemberItem.userItem.user.user_email],
-                    null, // CC: must be null or an array
-                    null, // BCC: must be null or an array
-                    null, // FILES: can be null, a string, or an array
-                    function(a){},
-                    function(a){}
-                );
+                dom.byId("btnRemoveInvite").disabled = true;
+                createInvitation();
             }
             else
             {
-                if (dom.byId("btnRemoveInvite").disabled) return;
-
                 annoUtil.showConfirmMessageDialog("Are you sure?", function(ret){
                     if (ret)
                     {
@@ -186,6 +179,59 @@ define([
                 });
 
             }
+        };
+
+        var createInvitation = function()
+        {
+            annoUtil.showLoadingIndicator();
+            annoUtil.loadAPI(annoUtil.API.community, function(){
+                var createInvite = gapi.client.community.invite.create({
+                    community:currentCommunity.community.id,
+                    email:currentMemberItem.userItem.user.user_email,
+                    invite_msg:currentCommunity.community.welcome_msg,
+                    name:currentMemberItem.userItem.user.display_name,
+                    role:currentMemberItem.userItem.role
+                });
+                createInvite.execute(function (data)
+                {
+                    if (!data)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        annoUtil.showToastDialog("Response returned from server are empty.");
+                        dom.byId("btnRemoveInvite").disabled = false;
+                        return;
+                    }
+
+                    if (data.error)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        annoUtil.showMessageDialog("An error occurred when calling community.invite.create api: "+data.error.message);
+                        dom.byId("btnRemoveInvite").disabled = false;
+                        return;
+                    }
+
+                    dom.byId("btnRemoveInvite").disabled = false;
+                    currentMemberItem.userItem.newMember = false;
+                    showMemberDetail(currentMemberItem);
+
+                    window.plugins.socialsharing.shareViaEmail(
+                        dojoString.substitute(invitationEmailTemplate.replace(/[\r\n]/g, ""), data.result),
+                        "UserSource Invitation",
+                        [data.result.user_email],
+                        null, // CC: must be null or an array
+                        null, // BCC: must be null or an array
+                        null, // FILES: can be null, a string, or an array
+                        function (a)
+                        {
+                        },
+                        function (a)
+                        {
+                        }
+                    );
+
+                    annoUtil.hideLoadingIndicator();
+                });
+            });
         };
 
         var doRemoveMember = function(communityId, userId)
