@@ -5,7 +5,7 @@ from protorpc import message_types
 from protorpc import remote
 from protorpc import messages
 
-from api.utils import anno_js_client_id
+from settings import anno_js_client_id
 from api.utils import md5
 from api.utils import get_endpoints_current_user
 from api.utils import auth_user
