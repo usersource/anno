@@ -9,7 +9,7 @@ from protorpc import message_types
 from google.appengine.datastore.datastore_query import Cursor
 from google.appengine.ext.db import BadValueError
 
-from api.utils import anno_js_client_id
+from settings import anno_js_client_id
 from api.utils import auth_user
 from model.anno import Anno
 from model.follow_up import FollowUp
