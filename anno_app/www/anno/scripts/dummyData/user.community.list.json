@@ -1,0 +1,25 @@
+{
+    "result":[
+        {
+            "id": 1,
+            "name": "ABC Corp",
+            "description": "ABC Corp description",
+            "welcome_msg": "The ABC Corp community welcomes you to our product improvement forum in UserSource.",
+            "is_manager": true
+        },
+        {
+            "id": 2,
+            "name": "EFG Corp",
+            "description": "EFG Corp description",
+            "welcome_msg": "The EFG Corp community welcomes you to our product improvement forum in UserSource.",
+            "is_manager": true
+        },
+        {
+            "id": 3,
+            "name": "XYZ Corp",
+            "description": "XYZ Corp description",
+            "welcome_msg": "The XYZ Corp community welcomes you to our product improvement forum in UserSource.",
+            "is_manager": false
+        }
+    ]
+}

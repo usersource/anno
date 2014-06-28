@@ -42,7 +42,8 @@ define([
             account:"account",
             followUp:"followup",
             vote:"vote",
-            flag:"flag"
+            flag:"flag",
+            community: "community"
         },
         timeString:{
             prefixAgo: "",
@@ -67,6 +68,7 @@ define([
             currentAnnoData: "currentAnnoData",
             currentImageData: "currentImageData"
         },
+        userCommunities: null, // all communities for current user
         hasConnection: function()
         {
             var networkState = navigator.connection.type;
@@ -811,6 +813,45 @@ define([
         replaceHashTagWithLink: function(s, linkScript)
         {
             return s.replace(/(^|\W)(#[a-z\d][\w-]*)/ig, linkScript);
+        },
+        loadUserCommunities: function(callback)
+        {
+            // use dummy data for now
+            if (this.userCommunities)
+            {
+                callback(this.userCommunities);
+                return;
+            }
+
+            //this.showLoadingIndicator();
+            var self = this;
+            this.loadAPI(this.API.user, function(){
+                var getCommunityList = gapi.client.user.community.list({email:self.getCurrentUserInfo().email});
+                getCommunityList.execute(function (data)
+                {
+                    if (!data)
+                    {
+                        //self.hideLoadingIndicator();
+                        self.showToastDialog("Items returned from server are empty.");
+                        return;
+                    }
+
+                    if (data.error)
+                    {
+                        //self.hideLoadingIndicator();
+                        self.showMessageDialog("An error occurred when calling user.community.list api: "+data.error.message);
+                        return;
+                    }
+
+                    self.userCommunities = data.result.community_list;
+                    callback(self.userCommunities);
+                    //self.hideLoadingIndicator();
+                });
+            });
+        },
+        getUserCommunities: function()
+        {
+            return this.userCommunities;
         }
     };
 

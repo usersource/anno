@@ -1,6 +1,7 @@
 define([
     "dojo/dom",
     "dojo/dom-class",
+    "dojo/dom-construct",
     "dojo/dom-style",
     "dojo/_base/connect",
     "dojo/query",
@@ -11,7 +12,7 @@ define([
     "anno/common/OAuthUtil",
     "anno/anno/AnnoDataHandler"
 ],
-    function (dom, domClass, domStyle, connect, query, win, registry, DBUtil, annoUtil, OAuthUtil, AnnoDataHandler)
+    function (dom, domClass, domConstruct, domStyle, connect, query, win, registry, DBUtil, annoUtil, OAuthUtil, AnnoDataHandler)
     {
         var _connectResults = []; // events connect results
         var app = null;
@@ -108,6 +109,42 @@ define([
             });
         };
 
+        var drawCommunityList = function(data)
+        {
+            var itemList = registry.byId('communityList');
+            itemList.destroyDescendants();
+
+            for (var i= 0,c=data.length;i<c;i++)
+            {
+                domConstruct.create("li", {
+                    "transition":'slide',
+                    "class": "row",
+                    "data-dojo-type":"dojox/mobile/ListItem",
+                    "data-dojo-props":"variableHeight:true,clickable:true,noArrow:true,_duration:50,_index:"+i,
+                    innerHTML: '<div>'+data[i].community.name+'</div>'
+                }, itemList.domNode, "last");
+            }
+
+            annoUtil.getParser().parse(itemList.domNode);
+
+            var items = itemList.getChildren();
+
+            for (var i= 0,c=items.length;i<c;i++)
+            {
+                if (data[i].role == "manager")
+                {
+                    items[i].on("click", function(){
+                        gotoCommunityViewer(this);
+                    });
+                }
+            }
+        };
+
+        var gotoCommunityViewer = function(listItem)
+        {
+            app.transitionToView(listItem.domNode, {target:'community',url:'#community', params:{index:listItem._index}});
+        };
+
         return {
             // simple view init
             init:function ()
@@ -156,6 +193,11 @@ define([
 
                 dom.byId('profileEmail').innerHTML = currentUserInfo.email;
                 dom.byId('profileDisplayName').innerHTML = currentUserInfo.nickname;
+
+                // get and show community list
+                annoUtil.loadUserCommunities(function(data){
+                    drawCommunityList(data);
+                });
             },
             afterActivate: function()
             {

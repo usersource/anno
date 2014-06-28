@@ -1,8 +1,34 @@
-__author__ = 'topcircler'
-
 """
 Anno API implemented using Google Cloud Endpoints.
+
+.. http:get:: /anno/1.0/anno/{id}
+
+    get the anno details for a specific anno `id`
+
+    :param int id: the id of the anno
+    :returns: the details of the anno :class:`.AnnoResponseMessage`
+
+.. http:get:: /anno/1.0/anno
+
+    get list of annos
+
+    :param str cursor: <put description here>
+    :param int limit: <put description here>
+    :param str select: <put description here>
+    :param str app: <desc>
+    :param str query_type: <desc>
+    :returns: a list of annos :class:`.AnnoListMessage`
+
+.. http:post:: /anno/1.0/anno
+
+    insert an anno
+
+    :param: :class:`.AnnoMessage`
+    :returns: details of the anno :class:`.AnnoResponseMessage`
+
 """
+
+__author__ = 'topcircler'
 
 import datetime
 import logging
@@ -21,6 +47,7 @@ from message.anno_api_messages import AnnoResponseMessage
 from model.anno import Anno
 from model.vote import Vote
 from model.flag import Flag
+from model.community import Community
 from model.follow_up import FollowUp
 from settings import anno_js_client_id
 from api.utils import auth_user
@@ -74,7 +101,8 @@ class AnnoApi(remote.Service):
         limit=messages.IntegerField(3),
         select=messages.StringField(4),
         app=messages.StringField(5),
-        query_type=messages.StringField(6)
+        query_type=messages.StringField(6),
+        community=messages.IntegerField(7)
     )
 
     @endpoints.method(anno_list_resource_container, AnnoListMessage, path='anno', http_method='GET', name='anno.list')
@@ -99,19 +127,22 @@ class AnnoApi(remote.Service):
             select_projection = request.select.split(',')
 
         if request.query_type == 'by_created':
-            return Anno.query_by_app_by_created(request.app, limit, select_projection, curs)
+            return Anno.query_by_app_by_created(request.app, limit, select_projection, curs, user)
         elif request.query_type == 'by_vote_count':
-            return Anno.query_by_vote_count(request.app)
+            return Anno.query_by_vote_count(request.app, user)
         elif request.query_type == 'by_flag_count':
-            return Anno.query_by_flag_count(request.app)
+            return Anno.query_by_flag_count(request.app, user)
         elif request.query_type == 'by_activity_count':
-            return Anno.query_by_activity_count(request.app)
+            return Anno.query_by_activity_count(request.app, user)
         elif request.query_type == 'by_last_activity':
-            return Anno.query_by_last_activity(request.app)
+            return Anno.query_by_last_activity(request.app, user)
         elif request.query_type == 'by_country':
-            return Anno.query_by_country(request.app)
+            return Anno.query_by_country(request.app, user)
+        elif request.query_type == "by_community":
+            community = Community.get_by_id(request.community)
+            return Anno.query_by_community(community, limit, select_projection, curs)
         else:
-            return Anno.query_by_page(limit, select_projection, curs)
+            return Anno.query_by_page(limit, select_projection, curs, user)
 
 
     @endpoints.method(AnnoMessage, AnnoResponseMessage, path='anno', http_method='POST', name="anno.insert")
@@ -250,8 +281,8 @@ class AnnoApi(remote.Service):
 
         if request.order_type == 'popular':
             return Anno.query_by_popular(request.limit, request.offset,
-                                         request.search_string, request.app_name, app_set)
+                                         request.search_string, request.app_name, app_set, user)
         elif request.order_type == 'active':
-            return Anno.query_by_active(request.limit, request.offset, request.search_string, request.app_name, app_set)
+            return Anno.query_by_active(request.limit, request.offset, request.search_string, request.app_name, app_set, user)
         else:
-            return Anno.query_by_recent(request.limit, request.offset, request.search_string, request.app_name, app_set)
+            return Anno.query_by_recent(request.limit, request.offset, request.search_string, request.app_name, app_set, user)

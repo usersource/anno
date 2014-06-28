@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'icomoon';
-    src:url('fonts/icomoon.eot?mp0kkw');
-    src:url('fonts/icomoon.eot?#iefixmp0kkw') format('embedded-opentype'),
-    url('fonts/icomoon.woff?mp0kkw') format('woff'),
-    url('fonts/icomoon.ttf?mp0kkw') format('truetype'),
-    url('fonts/icomoon.svg?mp0kkw#icomoon') format('svg');
+    src:url('fonts/icomoon.eot?-eac3u4');
+    src:url('fonts/icomoon.eot?#iefix-eac3u4') format('embedded-opentype'),
+    url('fonts/icomoon.woff?-eac3u4') format('woff'),
+    url('fonts/icomoon.ttf?-eac3u4') format('truetype'),
+    url('fonts/icomoon.svg?-eac3u4#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -68,8 +68,14 @@
 .icon-bubbles:before {
     content: "\e604";
 }
+.icon-users:before {
+    content: "\e623";
+}
 .icon-user:before {
     content: "\e60e";
+}
+.icon-busy:before {
+    content: "\e624";
 }
 .icon-remove:before {
     content: "\e620";
@@ -110,6 +116,9 @@
 .icon-search:before {
     content: "\e60b";
 }
+.icon-checkmark:before {
+    content: "\e625";
+}
 .icon-landscape:before {
     content: "\e606";
 }
@@ -128,10 +137,12 @@
 .icon-pencil2:before {
     content: "\e621";
 }
+.icon-bolt:before {
+    content: "\e626";
+}
 
 
-
-#navBtnBackMyStuff, #navBtnBackSearchAnno, #navBtnBackScreenshot, #navBtnBackHome, #navBtnBackSettings, #navBtnBackProfile
+#navBtnBackMyStuff, #navBtnBackSearchAnno, #navBtnBackScreenshot, #navBtnBackHome, #navBtnBackSettings, #navBtnBackProfile, #navBtnBackCommunity
 {
     background-color: transparent;
     background: none;

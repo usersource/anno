@@ -12,11 +12,11 @@ from google.appengine.ext import ndb
 
 from message.anno_api_messages import AnnoResponseMessage
 from message.anno_api_messages import AnnoListMessage
+from message.appinfo_message import AppInfoMessage
 from model.base_model import BaseModel
-from api.utils import get_country_by_coordinate
-from api.utils import tokenize_string
-from api.utils import is_empty_string
-
+from model.community import Community
+from model.appinfo import AppInfo
+from api.utils import *
 
 class Anno(BaseModel):
     """
@@ -32,9 +32,10 @@ class Anno(BaseModel):
     level = ndb.IntegerProperty(required=True)
     device_model = ndb.StringProperty(required=True)
     app_name = ndb.StringProperty()
-    app_version = ndb.StringProperty()
     os_name = ndb.StringProperty()
     os_version = ndb.StringProperty()
+    app = ndb.KeyProperty(kind=AppInfo)
+    community = ndb.KeyProperty(kind=Community, default=None)
     # use TextProperty instead of StringProperty.
     # StringProperty if indexed, up to 500 characters.
     # TextProperty not indexed, no limitation.
@@ -64,6 +65,10 @@ class Anno(BaseModel):
         user_message = None
         if self.creator is not None:
             user_message = self.creator.get().to_message()
+
+        app_name = self.app_name if self.app is None else self.app.get().name
+        community = self.community.get().to_response_message() if self.community else None
+
         return AnnoResponseMessage(id=self.key.id(),
                                    anno_text=self.anno_text,
                                    simple_x=self.simple_x,
@@ -73,8 +78,7 @@ class Anno(BaseModel):
                                    simple_is_moved=self.simple_is_moved,
                                    level=self.level,
                                    device_model=self.device_model,
-                                   app_name=self.app_name,
-                                   app_version=self.app_version,
+                                   app_name=app_name,
                                    os_name=self.os_name,
                                    os_version=self.os_version,
                                    created=self.created,
@@ -89,7 +93,8 @@ class Anno(BaseModel):
                                    followup_count=self.followup_count,
                                    last_update_time=self.last_update_time,
                                    last_activity=self.last_activity,
-                                   last_update_type=self.last_update_type
+                                   last_update_type=self.last_update_type,
+                                   community=community
         )
 
     def to_response_message_by_projection(self, projection):
@@ -109,28 +114,49 @@ class Anno(BaseModel):
         """
         create a new anno model from request message.
         """
-        entity = cls(anno_text=message.anno_text, simple_x=message.simple_x, simple_y=message.simple_y,
-                     anno_type=message.anno_type,
-                     simple_circle_on_top=message.simple_circle_on_top, simple_is_moved=message.simple_is_moved,
-                     level=message.level,
-                     device_model=message.device_model, app_name=message.app_name, app_version=message.app_version,
-                     os_name=message.os_name, os_version=message.os_version, creator=user.key,
-                     draw_elements=message.draw_elements, screenshot_is_anonymized=message.screenshot_is_anonymized,
-                     geo_position=message.geo_position, flag_count=0, vote_count=0, followup_count=0,
-                     last_activity='UserSource', latitude=message.latitude, longitude=message.longitude)
-        # set image.
-        entity.image = message.image
+        appinfo = AppInfo.getAppInfo(name=message.app_name)
+        community = None
+
+        if appinfo is None:
+            appInfoMessage = AppInfoMessage(name=message.app_name, version=message.app_version)
+            appinfo = AppInfo.insert(appInfoMessage)
+        else:
+            app_community = getCommunityForApp(id=appinfo.key.id())
+            if app_community and isMember(app_community, user):
+                community = app_community
+
+        if type(community) is Community:
+            community = community.key
+
+        entity = cls(anno_text=message.anno_text, simple_x=message.simple_x,
+                     simple_y=message.simple_y, anno_type=message.anno_type,
+                     simple_circle_on_top=message.simple_circle_on_top,
+                     simple_is_moved=message.simple_is_moved, level=message.level,
+                     device_model=message.device_model, os_name=message.os_name,
+                     os_version=message.os_version, creator=user.key,
+                     draw_elements=message.draw_elements, image=message.image,
+                     screenshot_is_anonymized=message.screenshot_is_anonymized,
+                     geo_position=message.geo_position, flag_count=0, vote_count=0,
+                     followup_count=0, latitude=message.latitude, longitude=message.longitude)
+
+        # set appinfo and community
+        entity.app = appinfo.key
+        entity.community = community
+
         # set created time if provided in the message.
         if message.created is not None:
             entity.created = message.created
-            # use google map api to retrieve country information and save into datastore.
+
+        # use google map api to retrieve country information and save into datastore.
         if message.latitude is not None and message.longitude is not None:
             entity.country = get_country_by_coordinate(message.latitude, message.longitude)
-            # set last update time & activity
+
+        # set last update time & activity
         entity.last_update_time = datetime.datetime.now()
         entity.last_activity = 'UserSource'
         entity.last_update_type = 'create'
         entity.put()
+
         return entity
 
     def merge_from_message(self, message):
@@ -174,10 +200,12 @@ class Anno(BaseModel):
             # TODO: can't merge latitude & longitude now, if to enable it, also needs to look up country again.
 
     @classmethod
-    def query_by_app_by_created(cls, app_name, limit, projection, curs):
+    def query_by_app_by_created(cls, app_name, limit, projection, curs, user):
         query = cls.query()
         query = query.filter(cls.app_name == app_name)
         query = query.order(-cls.created)
+        query = filter_anno_by_user(query, user)
+
         if (curs is not None) and (projection is not None):
             annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)
         elif (curs is not None) and (projection is None):
@@ -197,8 +225,11 @@ class Anno(BaseModel):
             return AnnoListMessage(anno_list=items, has_more=more)
 
     @classmethod
-    def query_by_vote_count(cls, app_name):
-        query = cls.query().filter(cls.app_name == app_name).order(-cls.vote_count)
+    def query_by_vote_count(cls, app_name, user):
+        query = cls.query()
+        query = query.filter(cls.app_name == app_name).order(-cls.vote_count)
+        query = filter_anno_by_user(query, user)
+
         anno_list = []
         for anno in query:
             anno_message = anno.to_response_message()
@@ -207,8 +238,11 @@ class Anno(BaseModel):
         return AnnoListMessage(anno_list=anno_list)
 
     @classmethod
-    def query_by_flag_count(cls, app_name):
-        query = cls.query().filter(cls.app_name == app_name).filter(cls.flag_count > 0).order(-cls.flag_count)
+    def query_by_flag_count(cls, app_name, user):
+        query = cls.query()
+        query = query.filter(cls.app_name == app_name).filter(cls.flag_count > 0).order(-cls.flag_count)
+        query = filter_anno_by_user(query, user)
+
         anno_list = []
         for anno in query:
             anno_message = anno.to_response_message()
@@ -217,9 +251,13 @@ class Anno(BaseModel):
         return AnnoListMessage(anno_list=anno_list)
 
     @classmethod
-    def query_by_activity_count(cls, app_name):
+    def query_by_activity_count(cls, app_name, user):
+        query = cls.query()
+        query = query.filter(cls.app_name == app_name)
+        query = filter_anno_by_user(query, user)
+
         anno_list = []
-        for anno in cls.query().filter(cls.app_name == app_name):
+        for anno in query:
             anno_list.append(anno)
         anno_list = sorted(anno_list, key=lambda x: (x.vote_count + x.flag_count + x.followup_count), reverse=True)
         anno_resp_list = []
@@ -230,8 +268,11 @@ class Anno(BaseModel):
         return AnnoListMessage(anno_list=anno_resp_list)
 
     @classmethod
-    def query_by_last_activity(cls, app_name):
-        query = cls.query().filter(cls.app_name == app_name).order(-cls.last_update_time)
+    def query_by_last_activity(cls, app_name, user):
+        query = cls.query()
+        query = query.filter(cls.app_name == app_name).order(-cls.last_update_time)
+        query = filter_anno_by_user(query, user)
+
         anno_list = []
         for anno in query:
             anno_message = anno.to_response_message()
@@ -241,12 +282,15 @@ class Anno(BaseModel):
         return AnnoListMessage(anno_list=anno_list)
 
     @classmethod
-    def query_by_country(cls, app_name):
+    def query_by_country(cls, app_name, user):
         """
         Query annos for a given app by country alphabetical order.
         No pagination is supported here.
         """
-        query = cls.query().filter(cls.app_name == app_name).order(cls.country)
+        query = cls.query()
+        query = query.filter(cls.app_name == app_name).order(cls.country)
+        query = filter_anno_by_user(query, user)
+
         anno_list = []
         for anno in query:
             anno_message = anno.to_response_message()
@@ -254,8 +298,11 @@ class Anno(BaseModel):
         return AnnoListMessage(anno_list=anno_list)
 
     @classmethod
-    def query_by_page(cls, limit, projection, curs):
-        query = cls.query().order(-cls.created)
+    def query_by_page(cls, limit, projection, curs, user):
+        query = cls.query()
+        query = query.order(-cls.created)
+        query = filter_anno_by_user(query, user)
+
         if (curs is not None) and (projection is not None):
             annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)
         elif (curs is not None) and (projection is None):
@@ -275,12 +322,37 @@ class Anno(BaseModel):
             return AnnoListMessage(anno_list=items, has_more=more)
 
     @classmethod
+    def query_by_community(cls, community, limit, projection, curs):
+        if community:
+            query = cls.query(cls.community == community.key)
+            query = query.order(-cls.created)
+    
+            if (curs is not None) and (projection is not None):
+                annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)
+            elif (curs is not None) and (projection is None):
+                annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
+            elif (curs is None) and (projection is not None):
+                annos, next_curs, more = query.fetch_page(limit, projection=projection)
+            else:
+                annos, next_curs, more = query.fetch_page(limit)
+            if projection is not None:
+                items = [entity.to_response_message_by_projection(projection) for entity in annos]
+            else:
+                items = [entity.to_response_message() for entity in annos]
+    
+            if more:
+                return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
+            else:
+                return AnnoListMessage(anno_list=items, has_more=more)
+        else:
+            return AnnoListMessage(anno_list=[])
+
+    @classmethod
     def is_anno_exists(cls, user, message):
         query = cls.query() \
             .filter(cls.app_name == message.app_name) \
             .filter(cls.anno_text == message.anno_text) \
             .filter(cls.anno_type == message.anno_type) \
-            .filter(cls.app_version == message.app_version) \
             .filter(cls.level == message.level) \
             .filter(cls.os_name == message.os_name) \
             .filter(cls.os_version == message.os_version) \
@@ -307,7 +379,7 @@ class Anno(BaseModel):
 
 
     @classmethod
-    def query_by_recent(cls, limit, offset, search_string, app_name, app_set):
+    def query_by_recent(cls, limit, offset, search_string, app_name, app_set, user):
         """
         This method queries anno records by 'recent' order.
         'recent' = created
@@ -334,13 +406,13 @@ class Anno(BaseModel):
             limit=limit,
             offset=offset,
             sort_options=sort_opts,
-            returned_fields=['anno_text', 'app_name', 'created']
+            returned_fields=['anno_text', 'app_name', 'created', 'community']
         )
         # execute query
-        return Anno.convert_document_to_message(index, query_string, query_options, offset, limit)
+        return Anno.convert_document_to_message(index, query_string, query_options, offset, limit, user)
 
     @classmethod
-    def query_by_popular(cls, limit, offset, search_string, app_name, app_set):
+    def query_by_popular(cls, limit, offset, search_string, app_name, app_set, user):
         """
         This method queries anno records by 'popular' order.
         'popular' = vote_count - flag_count
@@ -366,13 +438,13 @@ class Anno(BaseModel):
             limit=limit,
             offset=offset,
             sort_options=sort_opts,
-            returned_fields=['anno_text', 'app_name', 'vote_count', 'flag_count']
+            returned_fields=['anno_text', 'app_name', 'vote_count', 'flag_count', 'community']
         )
         # execute query
-        return Anno.convert_document_to_message(index, query_string, query_options, offset, limit)
+        return Anno.convert_document_to_message(index, query_string, query_options, offset, limit, user)
 
     @classmethod
-    def query_by_active(cls, limit, offset, search_string, app_name, app_set):
+    def query_by_active(cls, limit, offset, search_string, app_name, app_set, user):
         """
         This method queries anno records by 'active' order.
         'active' = last_update_time
@@ -397,9 +469,9 @@ class Anno(BaseModel):
             limit=limit,
             offset=offset,
             sort_options=sort_opts,
-            returned_fields=['anno_text', 'app_name', 'last_update_time']
+            returned_fields=['anno_text', 'app_name', 'last_update_time', 'community']
         )
-        return Anno.convert_document_to_message(index, query_string, query_options, offset, limit)
+        return Anno.convert_document_to_message(index, query_string, query_options, offset, limit, user)
 
     @classmethod
     def get_query_string(cls, search_string, app_name, app_set):
@@ -410,6 +482,7 @@ class Anno(BaseModel):
         :param app_set: app name set.
         """
         query_string_parts = []
+
         if app_set is not None:  # 'limit to my app' is on
             if len(app_set) == 0:
                 logging.info("final query string= 1 = 0")
@@ -419,11 +492,14 @@ class Anno(BaseModel):
                 for app in app_set:
                     app_name_query_list.append("app_name = \"%s\"" % app)
                 query_string_parts.append("(" + ' OR '.join(app_name_query_list) + ")")
+
         if not is_empty_string(search_string):
             words = tokenize_string(search_string)
             query_string_parts.append(Anno.get_query_string_for_all_fields(["anno_text", "app_name"], words))
+
         if not is_empty_string(app_name):
             query_string_parts.append("( app_name = \"%s\" )" % app_name)
+
         query_string = ' AND '.join(query_string_parts)
         logging.info("final query string=%s" % query_string)
         return query_string
@@ -461,7 +537,15 @@ class Anno(BaseModel):
         return None
 
     @classmethod
-    def convert_document_to_message(cls, index, query_string, query_options, offset, limit):
+    def convert_document_to_message(cls, index, query_string, query_options, offset, limit, user):
+        user_community_list = [ str(userrole.get("community").id()) for userrole in user_community(user) ]
+        user_community_list.append("__open__")
+
+        if len(query_string):
+            query_string += "AND "
+
+        query_string += '( community = (%s) )' % (" OR ".join(user_community_list))
+
         query = search.Query(query_string=query_string, options=query_options)
         results = index.search(query)
         number_retrieved = len(results.results)
@@ -481,19 +565,23 @@ class Anno(BaseModel):
         This method generates a search document filled with current anno information.
         """
         anno_id_string = "%d" % self.key.id()
-        app_name = "%s" % self.app_name
+        app_name = "%s" % (self.app.get().name if self.app else self.app_name)
         anno_text = "%s" % self.anno_text
+        community = ("%s" % self.community.id()) if self.community else "__open__"
+
         anno_document = search.Document(
             doc_id=anno_id_string,
             fields=[
-                search.TextField(name='app_name', value=app_name),
-                search.TextField(name='anno_text', value=anno_text),
-                search.NumberField(name='vote_count', value=self.vote_count),
-                search.NumberField(name='flag_count', value=self.flag_count),
-                search.DateField(name='created', value=self.created),
-                search.DateField(name='last_update_time', value=self.last_update_time)
-            ]
+                    search.TextField(name='app_name', value=app_name),
+                    search.TextField(name='anno_text', value=anno_text),
+                    search.NumberField(name='vote_count', value=self.vote_count),
+                    search.NumberField(name='flag_count', value=self.flag_count),
+                    search.DateField(name='created', value=self.created),
+                    search.DateField(name='last_update_time', value=self.last_update_time),
+                    search.TextField(name="community", value=community)
+                ]
         )
+
         return anno_document
 
     @classmethod

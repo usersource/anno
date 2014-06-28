@@ -555,7 +555,9 @@ define([
                         annoUtil.showLoadingIndicator();
                         OAuthUtil.getAccessToken(function(){
                             annoUtil.loadAPI(annoUtil.API.anno, loadListData);
-
+                            annoUtil.loadUserCommunities(function(data){
+                                console.log("community list: "+ JSON.stringify(data));
+                            });
                             window.setTimeout(function(){
                                 AnnoDataHandler.startBackgroundSync();
                             }, 5*1000);

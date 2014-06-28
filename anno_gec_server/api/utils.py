@@ -8,9 +8,14 @@ import base64
 
 import endpoints
 from google.appengine.api import search
+from google.appengine.ext import ndb
 
 from model.user import User
+from model.appinfo import AppInfo
+from model.community import Community
+from model.userrole import UserRole
 
+userStatusType = dict(accepted="accepted", pending="pending")
 
 def get_endpoints_current_user(raise_unauthorized=True):
     """Returns a current user and (optionally) causes an HTTP 401 if no user.
@@ -48,10 +53,10 @@ def handle_user(creator_id):
             user = User.insert_user(current_user.email())
     return user
 
-
 def auth_user(headers):
     current_user = get_endpoints_current_user(raise_unauthorized=False)
     user = None
+
     if current_user is None:
         credential_pair = get_credential(headers)
         email = credential_pair[0]
@@ -60,24 +65,11 @@ def auth_user(headers):
         user = User.find_user_by_email(email)
     else:
         user = User.find_user_by_email(current_user.email())
+
     if user is None:
         raise endpoints.UnauthorizedException("No permission.")
+
     return user
-
-
-def get_user(headers):
-    current_user = get_endpoints_current_user(raise_unauthorized=False)
-    user = None
-    if current_user is None:
-        credential_pair = get_credential(headers)
-        email = credential_pair[0]
-        validate_email(email)
-        User.authenticate(credential_pair[0], md5(credential_pair[1]))
-        user = User.find_user_by_email(email)
-    else:
-        user = User.find_user_by_email(current_user.email())
-    return user
-
 
 def get_country_by_coordinate(latitude, longitude):
     """
@@ -185,3 +177,54 @@ def is_empty_string(string_value):
     if re.match(r'^\s*$', string_value) is not None:
         return True
     return False
+
+def getCommunityForApp(id=None, app_name=None):
+    if id:
+        app = AppInfo.get_by_id(id)
+    elif app_name:
+        app = AppInfo.getAppByName(app_name)
+
+    communities = Community.query().fetch()
+
+    for community in communities:
+        if app.key in community.apps:
+            return community
+
+def user_community(user):
+    userroles = UserRole.query().filter(UserRole.user == user.key)\
+                                .fetch(projection=[UserRole.community, UserRole.role])
+
+    results = []
+    for userrole in userroles:
+        results.append(dict(community=userrole.community, role=userrole.role))
+
+    return results
+
+def isMember(community, user, include_manager=True):
+    if include_manager:
+        query = UserRole.query(ndb.AND(UserRole.community == community.key,
+                                       UserRole.user == user.key)
+                               )
+    else:
+        query = UserRole.query(ndb.AND(UserRole.community == community.key, 
+                                       UserRole.user == user.key, 
+                                       UserRole.role == "member")
+                               )
+
+    results = query.get()
+    return True if results else False
+
+def filter_anno_by_user(query, user):
+    from model.anno import Anno
+    user_community_list = [ userrole.get("community") for userrole in user_community(user) ]
+    user_community_list.append(None)
+    query = query.filter(Anno.community.IN(user_community_list))
+    return query.order(Anno._key)
+
+def get_user_from_request(user_id=None, user_email=None):
+    user = None
+    if user_id:
+        user = User.get_by_id(user_id)
+    elif user_email:
+        user = User.find_user_by_email(user_email)
+    return user

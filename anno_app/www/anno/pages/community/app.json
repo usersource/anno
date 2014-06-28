@@ -145,6 +145,11 @@
             "controller" : "./views/profile",
             "dependencies":[],
             "template": "./templates/profile.html"
+        },
+        "community": {
+            "controller" : "./views/community",
+            "dependencies":[],
+            "template": "./templates/community.html"
         }
     }
 }

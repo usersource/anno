@@ -7,14 +7,11 @@
     <author email="dev@cordova.apache.org" href="http://cordova.io">
         Apache Cordova Team
     </author>
-
-    <access origin="http://127.0.0.1*"/>
+    <access origin="http://127.0.0.1*" />
     <access origin="*" />
     <preference name="fullscreen" value="false" />
     <preference name="webviewbounce" value="true" />
-    <preference name="LoadUrlTimeoutValue" value="100000"/>
-    <!--<preference name="loglevel" value="DEBUG" />-->
-
+    <preference name="LoadUrlTimeoutValue" value="100000" />
     <feature name="App">
         <param name="android-package" value="org.apache.cordova.App" />
     </feature>
@@ -44,5 +41,8 @@
     </feature>
     <feature name="Camera">
         <param name="android-package" value="org.apache.cordova.camera.CameraLauncher" />
+    </feature>
+    <feature name="PickContact">
+        <param name="android-package" value="com.kolwit.cordova.PickContactPlugin" />
     </feature>
 </widget>
