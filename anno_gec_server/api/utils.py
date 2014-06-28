@@ -228,13 +228,3 @@ def get_user_from_request(user_id=None, user_email=None):
     elif user_email:
         user = User.find_user_by_email(user_email)
     return user
-
-"""
-annoserver:
-anno_js_client_id = "22913132792.apps.googleusercontent.com"
-annoserver-test:
-anno_js_client_id = "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com"
-usersource-anno:
-anno_js_client_id = "955803277195.apps.googleusercontent.com"
-"""
-anno_js_client_id = "955803277195.apps.googleusercontent.com"

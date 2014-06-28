@@ -49,7 +49,7 @@ from model.vote import Vote
 from model.flag import Flag
 from model.community import Community
 from model.follow_up import FollowUp
-from api.utils import anno_js_client_id
+from settings import anno_js_client_id
 from api.utils import auth_user
 from api.utils import put_search_document
 
