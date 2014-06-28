@@ -11,7 +11,7 @@ from protorpc import message_types
 from protorpc import messages
 from protorpc import remote
 
-from api.utils import anno_js_client_id
+from settings import anno_js_client_id
 from message.appinfo_message import AppInfoMessage
 from message.common_message import ResponseMessage
 from model.appinfo import AppInfo
