@@ -1,34 +1,6 @@
 import json, logging, math, time
+from settings import APNS_PUSH_CERT, APNS_PUSH_KEY, APNS_USE_SANDBOX, APNS_ENHANCED, GCM_API_KEY
 
-# These should go into a settings file
-API_KEY = ''
-APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
-APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
-
-# Must be upfront before importing APNS
-# http://stackoverflow.com/questions/16192916/importerror-no-module-named-ssl-with-dev-appserver-py-from-google-app-engine/16937668#16937668
-import os
-# Are we Development
-if os.environ.get('SERVER_SOFTWARE','').startswith('Development'):
-    # The above if statement should be centrally controlled and the resulting flag should be imported
-    import sys
-
-    # Add to the Whitelist
-    from google.appengine.tools.devappserver2.python import sandbox
-    sandbox._WHITE_LIST_C_MODULES += ['_ssl', '_socket']
-
-    # Use the stdlib Python socket rather than Googles wrapped stub
-    from lib import socket as patched_socket
-    sys.modules['socket'] = patched_socket
-    socket = patched_socket
-
-    # Dev Keys and certificates
-    API_KEY = 'AIzaSyCNWf_rZCovDez9Dmzx7CA-m6IHHUmh-SU' # Already existing Public Key for Google Services
-    APNS_PUSH_CERT = 'APNS_Certificates/aps_development.pem'
-    APNS_PUSH_KEY = 'APNS_Certificates/PushNotificationsDev.pem'
-
-    # Use the APNS sandbox environment
-    APNS_USE_SANDBOX = True
 
 from gcm import GCM
 from PyAPNs.apns import APNs, Payload, PayloadTooLargeError
@@ -56,10 +28,14 @@ class PushHandler(webapp2.RequestHandler):
     '''
 
     def __init__(self, *args, **kargs):
-        self.pusher = PushService(gcm_apikey=self.API_KEY, apns_push_key=APNS_PUSH_KEY, apns_push_cert=APNS_PUSH_CERT)
+        self.pusher = PushService(gcm_apikey=GCM_API_KEY, apns_push_key=APNS_PUSH_KEY, apns_push_cert=APNS_PUSH_CERT, 
+            apns_use_sandbox=APNS_USE_SANDBOX, apns_enhanced=APNS_ENHANCED)
         super(PushHandler, self).__init__(*args, **kargs)
 
     def post(self):
+        '''
+        TaskQueue Additions are pushed in through this post request
+        '''
         message = self.request.get('message')
         typ = self.request.get('type')
         try:
@@ -90,11 +66,8 @@ class PushService(object):
 
     GCM_MAX_BULK = 1000
 
-    # This does not quite work on GAE Dev
-    # https://groups.google.com/forum/#!topic/google-appengine/P-1Gpwpry7w
-    APNS_ENHANCED = False
-
-    def __init__(self, gcm_apikey=None, apns_push_cert=None, apns_push_key=None):
+    def __init__(self, gcm_apikey=None, apns_push_cert=None, apns_push_key=None, 
+        apns_use_sandbox=False, apns_enhanced=False):
         '''
         Constructor
         :param str gcm_apikey: The GCM APIKey
@@ -104,6 +77,8 @@ class PushService(object):
         self.gcm_key = gcm_apikey
         self.apns_push_cert = apns_push_cert
         self.apns_push_key = apns_push_key
+        self.apns_enhanced = apns_enhanced
+        self.apns_use_sandbox = apns_use_sandbox
         self._gcm = None
         self._apns = None
 
@@ -126,8 +101,8 @@ class PushService(object):
         :return: The Python APNS Object
         '''
         if not self._apns: 
-            self._apns = APNs(use_sandbox=APNS_USE_SANDBOX, cert_file=self.apns_push_cert, key_file=self.apns_push_key, enhanced=self.APNS_ENHANCED)
-            if self.APNS_ENHANCED:
+            self._apns = APNs(use_sandbox=self.apns_use_sandbox, cert_file=self.apns_push_cert, key_file=self.apns_push_key, enhanced=self.apns_enhanced)
+            if self.apns_use_sandbox:
                 self._apns.gateway_server.register_response_listener(self._apns_response_listener)
         return self._apns
 
@@ -158,7 +133,7 @@ class PushService(object):
         responses = []
 
         # blocks of self.GCM_MAX_BULK
-        blocks = math.ceil(len(ids)/self.GCM_MAX_BULK)
+        blocks = int(math.ceil(float(len(ids))/self.GCM_MAX_BULK))
         for b in range(blocks):
             block = b * self.GCM_MAX_BULK
             next_block = block + self.GCM_MAX_BULK
