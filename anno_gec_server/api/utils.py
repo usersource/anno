@@ -185,14 +185,3 @@ def is_empty_string(string_value):
     if re.match(r'^\s*$', string_value) is not None:
         return True
     return False
-
-
-"""
-annoserver:
-anno_js_client_id = "22913132792.apps.googleusercontent.com"
-annoserver-test:
-anno_js_client_id = "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com"
-usersource-anno:
-anno_js_client_id = "955803277195.apps.googleusercontent.com"
-"""
-anno_js_client_id = "955803277195.apps.googleusercontent.com"
