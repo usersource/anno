@@ -87,8 +87,8 @@ class UserApi(remote.Service):
         user.put()
         return message_types.VoidMessage()
 
-    @endpoints.method(UserMessage, message_types.VoidMessage, path='user/deviceid/update', http_method='POST',
-                      name='user.deviceid.update')
+    @endpoints.method(UserMessage, message_types.VoidMessage, path="user/deviceid/update",
+                      http_method="POST", name="user.deviceid.update")
     def update_deviceid(self, request):
         user = auth_user(self.request_state.headers)
         user.deviceid = request.deviceid
