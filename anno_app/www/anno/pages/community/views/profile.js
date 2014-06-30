@@ -195,8 +195,8 @@ define([
                 dom.byId('profileDisplayName').innerHTML = currentUserInfo.nickname;
 
                 // get and show community list
-                annoUtil.loadUserCommunities(function(data){
-                    drawCommunityList(data);
+                annoUtil.loadUserCommunities(false, function(data){
+                    drawCommunityList(data.communityList);
                 });
             },
             afterActivate: function()

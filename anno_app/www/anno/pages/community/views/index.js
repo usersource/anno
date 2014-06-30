@@ -528,6 +528,29 @@ define([
             window.setTimeout(hideStartRefreshMessage, 1000);
         };
 
+        var acceptInvitation = function(inviteData)
+        {
+            annoUtil.loadAPI(annoUtil.API.user, function(){
+                var deleteUser = gapi.client.user.invite.accept({invite_hash:inviteData.invite_hash, user_email:annoUtil.getCurrentUserInfo().email});
+                deleteUser.execute(function (data)
+                {
+                    if (!data)
+                    {
+                        annoUtil.showToastDialog("Response returned from server are empty.");
+                        return;
+                    }
+
+                    if (data.error)
+                    {
+                        annoUtil.showMessageDialog("An error occurred when calling user.invite.accept api: "+data.error.message);
+                        return;
+                    }
+
+                    console.log(data);
+                });
+            });
+        };
+
         var _init = function()
         {
             if (DBUtil.userChecked)
@@ -555,8 +578,13 @@ define([
                         annoUtil.showLoadingIndicator();
                         OAuthUtil.getAccessToken(function(){
                             annoUtil.loadAPI(annoUtil.API.anno, loadListData);
-                            annoUtil.loadUserCommunities(function(data){
-                                console.log("community list: "+ JSON.stringify(data));
+                            annoUtil.loadUserCommunities(true, function(data){
+                                var inviteList = data.inviteList;
+
+                                for (var i=0;i<inviteList.length;i++)
+                                {
+                                    acceptInvitation(inviteList[i]);
+                                }
                             });
                             window.setTimeout(function(){
                                 AnnoDataHandler.startBackgroundSync();

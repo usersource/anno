@@ -814,19 +814,19 @@ define([
         {
             return s.replace(/(^|\W)(#[a-z\d][\w-]*)/ig, linkScript);
         },
-        loadUserCommunities: function(callback)
+        loadUserCommunities: function(includeInvite, callback)
         {
-            // use dummy data for now
-            if (this.userCommunities)
+            // don't cache for now
+            /*if (this.userCommunities)
             {
                 callback(this.userCommunities);
                 return;
-            }
+            }*/
 
             //this.showLoadingIndicator();
             var self = this;
             this.loadAPI(this.API.user, function(){
-                var getCommunityList = gapi.client.user.community.list({email:self.getCurrentUserInfo().email});
+                var getCommunityList = gapi.client.user.community.list({include_invite:includeInvite, email:self.getCurrentUserInfo().email});
                 getCommunityList.execute(function (data)
                 {
                     if (!data)
@@ -844,7 +844,7 @@ define([
                     }
 
                     self.userCommunities = data.result.community_list;
-                    callback(self.userCommunities);
+                    callback({communityList: self.userCommunities||[], inviteList:data.result.invite_list||[]});
                     //self.hideLoadingIndicator();
                 });
             });
