@@ -7,12 +7,11 @@ threadsafe: yes
 handlers:
 - url: /_ah/spi/.*
   script: services.APPLICATION
+- url: /update_schema
+  script: main.application
+  login: admin
 - url: /.*
   script: main.application
-- url: /update_schema
-  script: update_schema_handler.app  # path to webapp2 application definition.
-  login: admin
-  secure: always
 
 libraries:
 - name: webapp2
