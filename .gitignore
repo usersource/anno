@@ -12,4 +12,3 @@ version.properties
 .idea
 .DS_Store
 .pydevproject
-build/
