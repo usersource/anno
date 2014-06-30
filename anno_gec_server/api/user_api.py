@@ -39,7 +39,8 @@ class UserApi(remote.Service):
 
     user_deviceid_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
-        deviceid=messages.StringField(1)
+        deviceid=messages.StringField(1),
+        device_type=messages.StringField(2)
     )
 
     user_email_with_id_resource_container = endpoints.ResourceContainer(
@@ -91,6 +92,7 @@ class UserApi(remote.Service):
     def update_deviceid(self, request):
         user = auth_user(self.request_state.headers)
         user.deviceid = request.deviceid
+        user.device_type = request.device_type
         user.put()
         return message_types.VoidMessage()
 

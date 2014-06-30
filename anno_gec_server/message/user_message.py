@@ -9,6 +9,7 @@ class UserMessage(messages.Message):
     password = messages.StringField(4)
     auth_source = messages.StringField(5)
     device_id = messages.StringField(6)
+    device_type = messages.StringField(7)
 
 class UserCommunityMessage(messages.Message):
     from message.community_message import CommunityMessage
