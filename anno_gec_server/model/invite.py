@@ -25,8 +25,11 @@ class Invite(BaseModel):
     def create(cls, message):
         community_name = ""
         community = Community.get_by_id(message.community)
+        invitation_created = cls.query(ndb.AND(cls.email == message.email,
+                                               cls.community == community.key)
+                                       ).count()
 
-        if community:
+        if community and not invitation_created:
             if message.role is None:
                 message.role = "member"
 
