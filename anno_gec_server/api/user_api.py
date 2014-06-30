@@ -37,6 +37,11 @@ class UserApi(remote.Service):
         email=messages.StringField(1)
     )
 
+    user_deviceid_resource_container = endpoints.ResourceContainer(
+        message_types.VoidMessage,
+        deviceid=messages.StringField(1)
+    )
+
     user_email_with_id_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
         id=messages.StringField(1),
@@ -78,6 +83,14 @@ class UserApi(remote.Service):
             raise endpoints.BadRequestException("Google OAuth User can't update password.")
         user = auth_user(self.request_state.headers)
         user.password = md5(request.password)
+        user.put()
+        return message_types.VoidMessage()
+
+    @endpoints.method(UserMessage, message_types.VoidMessage, path='user/deviceid/update', http_method='POST',
+                      name='user.deviceid.update')
+    def update_deviceid(self, request):
+        user = auth_user(self.request_state.headers)
+        user.deviceid = request.deviceid
         user.put()
         return message_types.VoidMessage()
 

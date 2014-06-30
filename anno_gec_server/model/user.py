@@ -13,6 +13,7 @@ class User(ndb.Model):
     display_name = ndb.StringProperty()  # this field should be unique.
     password = ndb.StringProperty()
     auth_source = ndb.StringProperty()  # "Anno" or "Google". If not "Anno", then no password is stored.
+    device_id = ndb.StringProperty()
 
     @classmethod
     def find_user_by_email(cls, email):
@@ -47,4 +48,4 @@ class User(ndb.Model):
 
     def to_message(self):
         return UserMessage(id=self.key.id(), user_email=self.user_email, display_name=self.display_name,
-                           auth_source=self.auth_source)
+                           auth_source=self.auth_source, device_id=self.device_id)
