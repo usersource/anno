@@ -6,9 +6,8 @@ from model.user import User
 from model.anno import Anno
 
 class UserAnnoState(ndb.Model):
-    user = ndb.KeyProperty(kind=User)
-    anno = ndb.KeyProperty(kind=Anno)
-    last_action_type = ndb.StringProperty(choices=["create", "vote", "followup", "flag"])
+    user = ndb.KeyProperty(kind=User, required=True)
+    anno = ndb.KeyProperty(kind=Anno, required=True)
     last_read = ndb.DateTimeProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
     notify = ndb.BooleanProperty(default=True)
@@ -18,12 +17,23 @@ class UserAnnoState(ndb.Model):
         return cls.query(ndb.AND(cls.user == user.key, cls.anno == anno.key)).get()
 
     @classmethod
-    def insert(cls, user, anno, action_type):
+    def insert(cls, user, anno):
+        entity = cls.get(user=user, anno=anno)
+
+        if not entity:
+            entity = cls(user=user.key, anno=anno.key)
+            entity.put()
+
+    @classmethod
+    def list_by_anno(cls, anno_id):
+        anno = Anno.get_by_id(anno_id)
+        query = cls.query(ndb.AND(cls.anno == anno, cls.notify == True))
+        return query.fetch(projection=[cls.user, cls.last_read])
+
+    @classmethod
+    def update_last_read(cls, user, anno, last_read):
         entity = cls.get(user=user, anno=anno)
 
         if entity:
-            entity.last_action_type = action_type
-        else:
-            entity = cls(user=user.key, anno=anno.key, last_action_type=action_type)
-
-        entity.put()
+            entity.last_read = last_read
+            entity.put()

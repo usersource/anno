@@ -159,7 +159,7 @@ class Anno(BaseModel):
 
         # update user anno state
         from model.userannostate import UserAnnoState
-        UserAnnoState.insert(user=user, anno=entity, action_type="create")
+        UserAnnoState.insert(user=user, anno=entity)
 
         return entity
 

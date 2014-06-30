@@ -50,7 +50,7 @@ class FlagApi(remote.Service):
         anno.put()
 
         # update user anno state
-        UserAnnoState.insert(user=user, anno=anno, action_type="flag")
+        UserAnnoState.insert(user=user, anno=anno)
 
         # update flag in search document
         put_search_document(anno.generate_search_document())

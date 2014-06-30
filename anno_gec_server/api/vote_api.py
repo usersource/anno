@@ -50,7 +50,7 @@ class VoteApi(remote.Service):
         anno.put()
 
         # update user anno state
-        UserAnnoState.insert(user=user, anno=anno, action_type="vote")
+        UserAnnoState.insert(user=user, anno=anno)
 
         # update vote in search document
         put_search_document(anno.generate_search_document())

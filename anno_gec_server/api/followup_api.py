@@ -51,7 +51,7 @@ class FollowupApi(remote.Service):
         anno.put()
 
         # update user anno state
-        UserAnnoState.insert(user=user, anno=anno, action_type="followup")
+        UserAnnoState.insert(user=user, anno=anno)
 
         # update search document
         put_search_document(anno.generate_search_document())
