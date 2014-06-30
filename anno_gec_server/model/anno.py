@@ -157,6 +157,10 @@ class Anno(BaseModel):
         entity.last_update_type = 'create'
         entity.put()
 
+        # update user anno state
+        from model.userannostate import UserAnnoState
+        UserAnnoState.insert(user=user, anno=entity, action_type="create")
+
         return entity
 
     def merge_from_message(self, message):
