@@ -34,8 +34,8 @@ class UserAnnoState(ndb.Model):
     def delete_by_anno(cls, anno_id):
         anno = Anno.get_by_id(anno_id)
         userannostates = cls.query(cls.anno == anno.key).fetch()
-        userannostate_id_list = [ userannostate.key.id() for userannostate in userannostates ]
-        ndb.delete_multi(userannostate_id_list)
+        userannostate_key_list = [ userannostate.key for userannostate in userannostates ]
+        ndb.delete_multi(userannostate_key_list)
 
     @classmethod
     def update_last_read(cls, user, anno, last_read):
