@@ -91,7 +91,7 @@ class UserApi(remote.Service):
                       http_method="POST", name="user.deviceid.update")
     def update_deviceid(self, request):
         user = auth_user(self.request_state.headers)
-        user.deviceid = request.deviceid
+        user.device_id = request.device_id
         user.device_type = request.device_type
         user.put()
         return message_types.VoidMessage()

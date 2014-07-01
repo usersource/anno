@@ -16,11 +16,12 @@ class PushTaskQueue(object):
     QUEUE_URL = '/push'
 
     @classmethod
-    def add(cls, message, ids):
+    def add(cls, message, ids, typ):
         '''
         Add a job to the Task Queue
         '''
-        taskqueue.add(url=cls.QUEUE_URL, params={'message': message, 'ids': ids})
+        ids = json.dumps(ids) if type(ids) is list else ids
+        taskqueue.add(url=cls.QUEUE_URL, params={'message': message, 'ids': ids, 'type': typ})
 
 class PushHandler(webapp2.RequestHandler):
     '''
@@ -40,7 +41,7 @@ class PushHandler(webapp2.RequestHandler):
         typ = self.request.get('type')
         try:
             ids = json.loads(self.request.get('ids'))
-        except TypeError:
+        except (TypeError, ValueError):
             logging.getLogger().exception("Error while JSON parsing Registration ID's")
             self.response.out.write(json.loads(dict(success=False)))
 

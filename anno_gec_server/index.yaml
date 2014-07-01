@@ -121,6 +121,13 @@ indexes:
   - name: created
     direction: desc
 
+- kind: UserAnnoState
+  properties:
+  - name: anno
+  - name: notify
+  - name: last_read
+  - name: user
+
 - kind: UserRole
   properties:
   - name: community
