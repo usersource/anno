@@ -207,7 +207,7 @@ class AnnoApi(remote.Service):
         anno = Anno.get_by_id(request.id)
         if anno is None:
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
-        anno.key.delete()
+        Anno.delete(anno)
         return message_types.VoidMessage()
 
     @endpoints.method(message_types.VoidMessage, AnnoListMessage, path='anno_my_stuff', http_method='GET',

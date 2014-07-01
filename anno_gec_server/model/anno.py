@@ -163,6 +163,13 @@ class Anno(BaseModel):
 
         return entity
 
+    @classmethod
+    def delete(cls, anno):
+        anno_id = "%d" % anno.key.id()
+        anno.key.delete()
+        index = search.Index(name="anno_index")
+        index.delete(anno_id)
+
     def merge_from_message(self, message):
         """
         populate current anno with non-null fields in request message.(used in merge)
