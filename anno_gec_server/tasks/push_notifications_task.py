@@ -21,6 +21,7 @@ class PushTaskQueue(object):
         Add a job to the Task Queue
         '''
         ids = json.dumps(ids) if type(ids) is list else ids
+        message = json.dumps(message) if type(message) is dict else message
         taskqueue.add(url=cls.QUEUE_URL, params={'message': message, 'ids': ids, 'type': typ})
 
 class PushHandler(webapp2.RequestHandler):
