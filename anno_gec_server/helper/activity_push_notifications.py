@@ -6,18 +6,22 @@ from model.userannostate import UserAnnoState
 from model.userrole import UserRole
 from tasks.push_notifications_task import PushTaskQueue
 from helper.utils_enum import AnnoActionType
+from helper.utils_enum import AnnoPushNotificationMessage
 
 class ActivityPushNotifications():
+    IOS = "iOS"
+    ANDROID = "Android"
     IOS_LOC_KEY_FORMAT = "ANNO_{action_type}"
     MESSAGE_KEY = "message"
     ANNO_ID_KEY = "anno_id"
+    IOS_MESSAGE_LIMIT = 20
 
     @classmethod
-    def list_deviceid(cls, user_list):
-        user_deviceids = dict(iOS=[], Android=[])
+    def list_deviceid(cls, data_list):
+        user_deviceids = { cls.IOS: [], cls.ANDROID: [] }
 
         try:
-            user_list = [ user.user.get() for user in user_list ]
+            user_list = [ data.user.get() for data in data_list ]
             for user in user_list:
                 if user.device_id:
                     user_deviceids[user.device_type].append(user.device_id)
@@ -36,31 +40,25 @@ class ActivityPushNotifications():
 
         ios_msg = cls.create_ios_notf_msg(user_name, anno_text, anno_app_name, anno_id, action_type)
         android_msg = cls.create_android_notf_msg(user_name, anno_text, anno_app_name, anno_id, action_type)
-        return dict(iOS=ios_msg, Android=android_msg)
+        return { cls.IOS: ios_msg, cls.ANDROID: android_msg }
 
     @classmethod
     def create_android_notf_msg(cls, user_name, anno_text, anno_app_name, anno_id, action_type):
-        msg = ""
-
-        if action_type in [AnnoActionType.CREATED, AnnoActionType.EDITED, AnnoActionType.DELETED]:
-            msg = "{user_name} {action_type} an anno for {app_name}: '{anno_text}'"
-        elif action_type == AnnoActionType.COMMENTED:
-            msg = "{user_name} commented on an anno for {app_name}: '{anno_text}'"
-
+        msg = getattr(AnnoPushNotificationMessage, action_type.upper(), "")
         msg = msg.format(user_name=user_name, anno_text=anno_text, action_type=action_type, app_name=anno_app_name)
         return ({ cls.MESSAGE_KEY: msg, cls.ANNO_ID_KEY: anno_id }, None)
 
     @classmethod
     def create_ios_notf_msg(cls, user_name, anno_text, anno_app_name, anno_id, action_type):
-        anno_text = (anno_text[:20] + "...") if (len(anno_text) > 20) else anno_text
+        anno_text = (anno_text[:cls.IOS_MESSAGE_LIMIT] + "...") if (len(anno_text) > cls.IOS_MESSAGE_LIMIT) else anno_text
         msg = dict(loc_key=cls.IOS_LOC_KEY_FORMAT.format(action_type=action_type.upper()),
                    loc_args=[user_name, anno_app_name, anno_text])
         return (msg , { cls.ANNO_ID_KEY: anno_id })
 
     @classmethod
     def get_noft_devices(cls, first_user, anno, action_type):
-        interested_user_deviceids = dict(iOS=[], Android=[])
-        community_managers_deviceids = dict(iOS=[], Android=[])
+        interested_user_deviceids = { cls.IOS: [], cls.ANDROID: [] }
+        community_managers_deviceids = { cls.IOS: [], cls.ANDROID: [] }
 
         # get all interested users for anno if action_type is other than "created"
         if action_type != AnnoActionType.CREATED:

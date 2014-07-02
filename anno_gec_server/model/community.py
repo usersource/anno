@@ -6,16 +6,16 @@ from google.appengine.ext import ndb
 
 from model.appinfo import AppInfo
 from message.community_message import CommunityMessage
+from helper.utils_enum import CommunityType
 
 class Community(ndb.Model):
     name = ndb.StringProperty(required=True)
     description = ndb.StringProperty()
     welcome_msg = ndb.StringProperty()
-    type = ndb.StringProperty(choices=["private", "public"], required=True)
+    type = ndb.StringProperty(choices=[CommunityType.PRIVATE, CommunityType.PUBLIC], required=True)
     apps = ndb.KeyProperty(kind=AppInfo, repeated=True)
     created = ndb.DateTimeProperty(auto_now_add=True)
-    
-    communityType = dict(public="public", private="private")
+
     managerRole = "manager"
 
     def to_response_message(self):
@@ -39,15 +39,15 @@ class Community(ndb.Model):
 
             if message.type:
                 # community should be of type 'private' or 'public'
-                if not message.type in cls.communityType.values():
+                if not message.type in [CommunityType.PRIVATE, CommunityType.PUBLIC]:
                     return "Community should be of type 'private' or 'public'"
                 # only one public community is allowed
-                elif (message.type == cls.communityType["public"]):
-                    queryResultCount = Community.query(Community.type == cls.communityType["public"]).count()
+                elif message.type == CommunityType.PUBLIC:
+                    queryResultCount = Community.query(Community.type == message.type).count()
                     if queryResultCount:
                         return "Community not created. Can't create more than one public community."
             else:
-                message.type = cls.communityType["private"]
+                message.type = CommunityType.PRIVATE
 
             community = cls(name=message.name, description=message.description,
                             welcome_msg=message.welcome_msg, type=message.type)
@@ -70,7 +70,7 @@ class Community(ndb.Model):
             respData = e
 
         return respData
-    
+
     @classmethod
     def delete(cls, community):
         community.key.delete()
