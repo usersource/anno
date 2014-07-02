@@ -1,5 +1,5 @@
 import json, logging, math, time
-from settings import APNS_PUSH_CERT, APNS_PUSH_KEY, APNS_USE_SANDBOX, APNS_ENHANCED, GCM_API_KEY
+from helper.settings import APNS_PUSH_CERT, APNS_PUSH_KEY, APNS_USE_SANDBOX, APNS_ENHANCED, GCM_API_KEY
 
 
 from gcm import GCM
@@ -31,7 +31,7 @@ class PushHandler(webapp2.RequestHandler):
     '''
 
     def __init__(self, *args, **kargs):
-        self.pusher = PushService(gcm_apikey=GCM_API_KEY, apns_push_key=APNS_PUSH_KEY, apns_push_cert=APNS_PUSH_CERT, 
+        self.pusher = PushService(gcm_apikey=GCM_API_KEY, apns_push_key=APNS_PUSH_KEY, apns_push_cert=APNS_PUSH_CERT,
             apns_use_sandbox=APNS_USE_SANDBOX, apns_enhanced=APNS_ENHANCED)
         super(PushHandler, self).__init__(*args, **kargs)
 
@@ -81,7 +81,7 @@ class PushService(object):
 
     GCM_MAX_BULK = 1000
 
-    def __init__(self, gcm_apikey=None, apns_push_cert=None, apns_push_key=None, 
+    def __init__(self, gcm_apikey=None, apns_push_cert=None, apns_push_key=None,
         apns_use_sandbox=False, apns_enhanced=False):
         '''
         Constructor
@@ -137,7 +137,7 @@ class PushService(object):
             return self._push_to_android(message, ids)
         elif typ == self.TYPE_IOS:
             return self._push_to_ios(message, ids, data)
-        return dict(success=False, reason=("Unknown Type %s"%(typ)))
+        return dict(success=False, reason=("Unknown Type %s" % (typ)))
 
     def _push_to_android(self, message, ids):
         '''
@@ -149,7 +149,7 @@ class PushService(object):
         responses = []
 
         # blocks of self.GCM_MAX_BULK
-        blocks = int(math.ceil(float(len(ids))/self.GCM_MAX_BULK))
+        blocks = int(math.ceil(float(len(ids)) / self.GCM_MAX_BULK))
         for b in range(blocks):
             block = b * self.GCM_MAX_BULK
             next_block = block + self.GCM_MAX_BULK
@@ -204,7 +204,7 @@ class PushService(object):
             except Exception as e:
                 # do something about these tokens
                 logging.getLogger().error('Error in the Push Notification: %s - %s: %s', iden, type(e), getattr(e, 'message'))
-                self._apns = None # Automatically reset the connection if bad Tokens
+                self._apns = None  # Automatically reset the connection if bad Tokens
 
         # Possibly upto 0.8s to get feedback
         time.sleep(1)

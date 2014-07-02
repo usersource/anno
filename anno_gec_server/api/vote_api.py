@@ -11,7 +11,7 @@ from google.appengine.ext.db import BadValueError
 
 from message.vote_message import VoteMessage
 from message.vote_message import VoteListMessage
-from settings import anno_js_client_id
+from helper.settings import anno_js_client_id
 from api.utils import auth_user
 from api.utils import put_search_document
 from model.anno import Anno

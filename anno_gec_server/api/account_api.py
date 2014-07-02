@@ -4,7 +4,7 @@ import endpoints
 from protorpc import message_types
 from protorpc import remote
 
-from settings import anno_js_client_id
+from helper.settings import anno_js_client_id
 from api.utils import validate_email
 from api.utils import validate_password
 from api.utils import md5

@@ -14,7 +14,7 @@ from message.flag_message import FlagListMessage
 from model.flag import Flag
 from model.anno import Anno
 from model.userannostate import UserAnnoState
-from settings import anno_js_client_id
+from helper.settings import anno_js_client_id
 from api.utils import auth_user
 from api.utils import put_search_document
 

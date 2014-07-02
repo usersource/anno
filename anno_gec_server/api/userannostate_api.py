@@ -5,7 +5,7 @@ from protorpc import message_types
 from protorpc import messages
 from protorpc import remote
 
-from settings import anno_js_client_id
+from helper.settings import anno_js_client_id
 from model.anno import Anno
 from model.userannostate import UserAnnoState
 

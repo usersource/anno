@@ -49,10 +49,10 @@ from model.vote import Vote
 from model.flag import Flag
 from model.community import Community
 from model.follow_up import FollowUp
-from settings import anno_js_client_id
+from helper.settings import anno_js_client_id
 from api.utils import auth_user
 from api.utils import put_search_document
-from activity_push_notifications import ActivityPushNotifications
+from helper.activity_push_notifications import ActivityPushNotifications
 
 @endpoints.api(name='anno', version='1.0', description='Anno API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])

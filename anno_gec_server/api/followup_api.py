@@ -9,7 +9,7 @@ from protorpc import message_types
 from google.appengine.datastore.datastore_query import Cursor
 from google.appengine.ext.db import BadValueError
 
-from settings import anno_js_client_id
+from helper.settings import anno_js_client_id
 from api.utils import auth_user
 from model.anno import Anno
 from model.follow_up import FollowUp
@@ -17,7 +17,7 @@ from model.userannostate import UserAnnoState
 from message.followup_message import FollowupMessage
 from message.followup_message import FollowupListMessage
 from api.utils import put_search_document
-from activity_push_notifications import ActivityPushNotifications
+from helper.activity_push_notifications import ActivityPushNotifications
 
 @endpoints.api(name='followup', version='1.0', description='Followup API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])

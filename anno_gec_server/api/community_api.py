@@ -9,7 +9,7 @@ from protorpc import message_types
 from protorpc import messages
 from protorpc import remote
 
-from settings import anno_js_client_id
+from helper.settings import anno_js_client_id
 from api.utils import get_user_from_request
 from api.utils import userStatusType
 from message.community_message import CommunityMessage
