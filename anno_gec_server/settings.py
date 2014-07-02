@@ -3,15 +3,19 @@
 from google.appengine.api import app_identity
 _default_hostname = app_identity.get_default_version_hostname()
 
-DEFAULT_HOST_ANNOSERVER = "22913132792.apps.googleusercontent.com"
-DEFAULT_HOST_ANNOSERVERTEST = "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com"
-DEFAULT_HOST_USERSOURCEANNO = "955803277195.apps.googleusercontent.com"
+JS_CLIENT_ID_ANNOSERVER = "22913132792.apps.googleusercontent.com"
+JS_CLIENT_ID_ANNOSERVERTEST = "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com"
+JS_CLIENT_ID_USERSOURCEANNO = "955803277195.apps.googleusercontent.com"
 
-anno_js_client_id = "955803277195.apps.googleusercontent.com"
+anno_js_client_id = JS_CLIENT_ID_USERSOURCEANNO
+
+DEFAULT_HOST_ANNOSERVER = "annoserver.appspot.com"
+DEFAULT_HOST_ANNOSERVERTEST = "annoserver-test.appspot.com"
+DEFAULT_HOST_USERSOURCEANNO = "usersource-anno.appspot.com"
 
 # Prod server
 if _default_hostname == DEFAULT_HOST_ANNOSERVER: 
-    anno_js_client_id = DEFAULT_HOST_ANNOSERVER
+    anno_js_client_id = JS_CLIENT_ID_ANNOSERVER
     GCM_API_KEY = ''
     APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
@@ -19,7 +23,7 @@ if _default_hostname == DEFAULT_HOST_ANNOSERVER:
 
 # Test server
 elif _default_hostname == DEFAULT_HOST_ANNOSERVERTEST: 
-    anno_js_client_id = DEFAULT_HOST_ANNOSERVERTEST
+    anno_js_client_id = JS_CLIENT_ID_ANNOSERVERTEST
     GCM_API_KEY = ''
     APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
@@ -27,7 +31,7 @@ elif _default_hostname == DEFAULT_HOST_ANNOSERVERTEST:
 
 # Dev server
 elif _default_hostname == DEFAULT_HOST_USERSOURCEANNO: 
-    anno_js_client_id = DEFAULT_HOST_USERSOURCEANNO
+    anno_js_client_id = JS_CLIENT_ID_USERSOURCEANNO
     GCM_API_KEY = 'AIzaSyCNWf_rZCovDez9Dmzx7CA-m6IHHUmh-SU'
     APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'

@@ -7,6 +7,8 @@ from model.userrole import UserRole
 from tasks.push_notifications_task import PushTaskQueue
 
 class ActivityNotifications():
+    IOS_LOC_KEY_FORMAT = "ANNO_{action_type}"
+
     @classmethod
     def list_deviceid(cls, user_list):
         user_deviceids = dict(iOS=[], Android=[])
@@ -20,20 +22,35 @@ class ActivityNotifications():
             logging.exception("Exception while getting list of user device ids: %s", e)
 
         return user_deviceids
-    
+
     @classmethod
-    def create_notf_msg(cls, user, anno_text, action_type, comment):
-        msg = ""
+    def create_notf_msg(cls, user, anno, action_type, comment):
         user_name = user.display_name
+        # "app_name" is removed in new Anno model
+        anno_app_name = getattr(anno, "app_name", None) or anno.app.get().name
+        anno_text = comment if action_type == "commented" else anno.anno_text
 
-        if action_type in ["create", "edited", "deleted"]:
-            msg = "{user_name} has {action_type} a Anno: {anno_text}"
-            msg = msg.format(user_name=user_name, action_type=action_type, anno_text=anno_text)
+        ios_msg = cls.create_ios_notf_msg(user_name, anno_text, anno_app_name, action_type)
+        android_msg = cls.create_android_notf_msg(user_name, anno_text, anno_app_name, action_type)
+        return dict(iOS=ios_msg, Android=android_msg)
+
+    @classmethod
+    def create_android_notf_msg(cls, user_name, anno_text, anno_app_name, action_type):
+        msg = ""
+
+        if action_type in ["created", "edited", "deleted"]:
+            msg = "{user_name} {action_type} an anno for {app_name}: '{anno_text}'"
         elif action_type == "commented":
-            msg = "{user_name} has commented on a Anno: {comment}"
-            msg = msg.format(user_name=user_name, comment=comment)
+            msg = "{user_name} commented on an anno for {app_name}: '{anno_text}'"
 
+        msg = msg.format(user_name=user_name, anno_text=anno_text, action_type=action_type, app_name=anno_app_name)
         return msg
+
+    @classmethod
+    def create_ios_notf_msg(cls, user_name, anno_text, anno_app_name, action_type):
+        anno_text = (anno_text[:20] + "...") if (len(anno_text) > 20) else anno_text
+        return dict(loc_key=cls.IOS_LOC_KEY_FORMAT.format(action_type=action_type.upper()),
+                    loc_args=[user_name, anno_app_name, anno_text])
 
     @classmethod
     def get_noft_devices(cls, first_user, anno, action_type):
@@ -67,7 +84,7 @@ class ActivityNotifications():
     @classmethod
     def send_notifications(cls, first_user, anno, action_type, comment=""):
         notf_device = cls.get_noft_devices(first_user, anno, action_type)
-        notf_msg = cls.create_notf_msg(first_user, anno.anno_text, action_type, comment)
+        notf_msg = cls.create_notf_msg(first_user, anno, action_type, comment)
 
         # if action is "deleted" then delete all UserAnnoState related to that anno
         if action_type == "deleted":
@@ -75,4 +92,4 @@ class ActivityNotifications():
 
         for platform, devices in notf_device.iteritems():
             if len(devices):
-                PushTaskQueue.add(message=notf_msg, ids=devices, typ=platform.lower())
+                PushTaskQueue.add(message=notf_msg[platform], ids=devices, typ=platform.lower())
