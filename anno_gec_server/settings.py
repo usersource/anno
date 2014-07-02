@@ -12,14 +12,26 @@ anno_js_client_id = "955803277195.apps.googleusercontent.com"
 # Prod server
 if _default_hostname == DEFAULT_HOST_ANNOSERVER: 
     anno_js_client_id = DEFAULT_HOST_ANNOSERVER
+    GCM_API_KEY = ''
+    APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
+    APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
+    APNS_USE_SANDBOX = False
 
 # Test server
 elif _default_hostname == DEFAULT_HOST_ANNOSERVERTEST: 
     anno_js_client_id = DEFAULT_HOST_ANNOSERVERTEST
+    GCM_API_KEY = ''
+    APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
+    APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
+    APNS_USE_SANDBOX = False
 
 # Dev server
 elif _default_hostname == DEFAULT_HOST_USERSOURCEANNO: 
     anno_js_client_id = DEFAULT_HOST_USERSOURCEANNO
+    GCM_API_KEY = 'AIzaSyCNWf_rZCovDez9Dmzx7CA-m6IHHUmh-SU'
+    APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
+    APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
+    APNS_USE_SANDBOX = False
 
 # Are we in the local development environment
 from os import environ
@@ -29,12 +41,6 @@ if "Development" in environ['SERVER_SOFTWARE']:
 
 import logging
 logging.getLogger().info("Running on %s, under development: %s", _default_hostname, DEVELOPMENT)
-
-# Push Notifications setup
-GCM_API_KEY = ''
-APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
-APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
-APNS_USE_SANDBOX = False
 
 # Enhanced Mode does not quite work on GAE Dev
 # https://groups.google.com/forum/#!topic/google-appengine/P-1Gpwpry7w
@@ -56,7 +62,7 @@ if DEVELOPMENT:
     socket = patched_socket
 
     # Dev Keys and certificates
-    GCM_API_KEY = 'AIzaSyCNWf_rZCovDez9Dmzx7CA-m6IHHUmh-SU' # Already existing Public Key for Google Services
+    GCM_API_KEY = 'AIzaSyCNWf_rZCovDez9Dmzx7CA-m6IHHUmh-SU'  # Already existing Public Key for Google Services
     APNS_PUSH_CERT = 'APNS_Certificates/aps_development.pem'
     APNS_PUSH_KEY = 'APNS_Certificates/PushNotificationsDev.pem'
 
