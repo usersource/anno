@@ -48,8 +48,11 @@ class UserRole(ndb.Model):
         return entity
 
     @classmethod
-    def community_user_list(cls, community_id):
-        users = cls.query().filter(cls.community == Community.get_by_id(community_id).key)\
-                           .fetch(projection=[cls.user, cls.role])
+    def community_user_list(cls, community_id, only_managers=False):
+        query = cls.query().filter(cls.community == Community.get_by_id(community_id).key)
 
+        if only_managers:
+            query = query.filter(cls.role == "manager")
+
+        users = query.fetch()
         return users

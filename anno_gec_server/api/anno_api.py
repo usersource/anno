@@ -52,7 +52,7 @@ from model.follow_up import FollowUp
 from settings import anno_js_client_id
 from api.utils import auth_user
 from api.utils import put_search_document
-
+from activity_notifications import ActivityNotifications
 
 @endpoints.api(name='anno', version='1.0', description='Anno API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
@@ -165,6 +165,9 @@ class AnnoApi(remote.Service):
         # index this document. strange exception here.
         put_search_document(entity.generate_search_document())
 
+        # send notifications
+        ActivityNotifications.send_notifications(first_user=user, anno=entity, action_type="created")
+
         return entity.to_response_message()
 
 
@@ -180,9 +183,12 @@ class AnnoApi(remote.Service):
         Exposes an API endpoint to merge(update only the specified properties) an anno.
         """
         user = auth_user(self.request_state.headers)
+
         if request.id is None:
             raise endpoints.BadRequestException('id field is required.')
+
         anno = Anno.get_by_id(request.id)
+
         if anno is None:
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
 
@@ -191,8 +197,13 @@ class AnnoApi(remote.Service):
         anno.last_update_time = datetime.datetime.now()
         anno.last_activity = 'anno'
         anno.put()
+
         # update search document.
         put_search_document(anno.generate_search_document())
+
+        # send notifications
+        ActivityNotifications.send_notifications(first_user=user, anno=anno, action_type="edited")
+
         return anno.to_response_message()
 
     @endpoints.method(anno_with_id_resource_container, message_types.VoidMessage, path='anno/{id}',
@@ -202,12 +213,19 @@ class AnnoApi(remote.Service):
         Exposes an API endpoint to delete an existing anno.
         """
         user = auth_user(self.request_state.headers)
+
         if request.id is None:
             raise endpoints.BadRequestException('id field is required.')
+
         anno = Anno.get_by_id(request.id)
+
         if anno is None:
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
-        anno.key.delete()
+
+        # send notifications
+        ActivityNotifications.send_notifications(first_user=user, anno=anno, action_type="deleted")
+
+        Anno.delete(anno)
         return message_types.VoidMessage()
 
     @endpoints.method(message_types.VoidMessage, AnnoListMessage, path='anno_my_stuff', http_method='GET',

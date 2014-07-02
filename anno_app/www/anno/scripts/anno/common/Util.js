@@ -8,14 +8,12 @@ define([
     "dojox/mobile/SimpleDialog",
     "dojox/mobile/_ContentPaneMixin",
     "dijit/registry",
-    "dojo/text!../../ChinaIpTable.json",
     "dojo/text!../../server-url.json",
     "dojo/text!../../strings.json",
     "anno/common/DBUtil",
     "anno/common/GestureHandler"
-], function(declare, connect, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, ChinaIpTable, serverURLConfig, stringsRes, DBUtil, GestureHandler){
+], function(declare, connect, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, stringsRes, DBUtil, GestureHandler){
 
-    ChinaIpTable = dojoJson.parse(ChinaIpTable);
     serverURLConfig = dojoJson.parse(serverURLConfig);
     stringsRes = dojoJson.parse(stringsRes);
     console.error("using server Url config:" + JSON.stringify(serverURLConfig));
@@ -30,7 +28,6 @@ define([
         level1ColorRGB:"255, 153, 0",
         level2Color:"#ff0000",
         level2ColorRGB:"255, 0, 0",
-        ChinaIpTable:ChinaIpTable.ChinaIpTable,
         myIPIsServiceUrl:"http://178.18.16.111/myipis",
         annoScreenshotPath:null,
         annoPermaLinkBaseUrl:"http://anno-webapp.appspot.com/usersource/pages/permalink/index.html#/anno/",
@@ -579,90 +576,6 @@ define([
         getCurrentPosition:function(callback, errorCallback)
         {
             navigator.geolocation.getCurrentPosition(callback, errorCallback, {maximumAge: 1000*60*60, timeout: 10000, enableHighAccuracy: false});
-        },
-        inChina: function(callback)
-        {
-            console.error("invoke inChina");
-
-            var self = this;
-            this.getIPAddress(function(ip){
-                callback(self.isIpInChina(ip));
-            });
-        },
-        getIPAddress: function(callback)
-        {
-            this._getIpAddressFromServer(callback);
-        },
-        _getIpAddressFromServer: function(callback)
-        {
-            this.showLoadingIndicator();
-            var self = this;
-            xhr.get(this.myIPIsServiceUrl,
-                {
-                    handleAs: "text",
-                    headers:{"X-Requested-With":""}
-                }).then(function (res)
-                {
-                    console.error("got ip from myipis service: "+res);
-                    callback(res);
-                    self.hideLoadingIndicator();
-                },
-                function (res)
-                {
-                    self.hideLoadingIndicator();
-                    // alert("getting IP Address from myipis service failed: "+res);
-                    self.showMessageDialog("getting IP Address from myipis service failed: "+res);
-                    navigator.app.exitApp();
-                });
-        },
-        isIpInChina: function(ip)
-        {
-            var iPTable = this.ChinaIpTable, ipItem, ipInt = this.ip2Int(ip);
-            console.error("user ip is: "+ip+", ipInt is: "+ ipInt);
-
-            for (var i= 0,c=iPTable.length;i<c;i++)
-            {
-                ipItem = iPTable[i];
-
-                if (ipInt >= ipItem.iSt && ipInt <= ipItem.iEd)
-                {
-                    console.error("user ip is in China.");
-                    return true;
-                }
-            }
-
-            console.error("user ip is not in China.");
-            return false;
-        },
-        ip2Int: function (s)
-        {
-            var parts = s.split(".");
-            var sum = parseInt(parts[0], 10)*16777216 + parseInt(parts[1], 10)*65536 +parseInt(parts[2], 10)*256 +parseInt(parts[3], 10);
-
-            return sum;
-        },
-        int2Ip: function (s)
-        {
-            var ip = '', r;
-            s = parseInt(s).toString(16);
-            for (var i = 0; i < s.length; i++)
-            {
-                r = '';
-                r += s[i];
-                i++;
-                r += s[i];
-                ip += parseInt('0x' + r).toString(10) + '.';
-            }
-            return ip.substr(0, ip.length - 1);
-        },
-        chooseProxyServer:function()
-        {
-            var normalServerConfig = this.API.config["1"];
-            var proxyServerConfig = normalServerConfig.proxyKey;
-
-            this.saveSettings({item:"ServerURL", value:proxyServerConfig}, function(success){
-            }, true);
-            this.settings.ServerURL = proxyServerConfig;
         },
         setDefaultServer: function()
         {

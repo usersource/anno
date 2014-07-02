@@ -11,7 +11,8 @@ from api.account_api import AccountApi
 from api.util_api import UtilApi
 from api.community_api import CommunityApi
 from api.appinfo_api import AppInfoApi
+from api.userannostate_api import UserAnnoStateApi
 
 api_list = [VoteApi, AnnoApi, FlagApi, FollowupApi, UserApi, AccountApi, UtilApi,
-            CommunityApi, AppInfoApi]
+            CommunityApi, AppInfoApi, UserAnnoStateApi]
 APPLICATION = endpoints.api_server(api_list, restricted=False)
