@@ -6,11 +6,11 @@ import endpoints
 from protorpc import remote
 from protorpc import message_types
 
-from api.utils import put_search_document
+from helper.utils import put_search_document
 from model.anno import Anno
 from model.appinfo import AppInfo
 from helper.settings import anno_js_client_id
-from api.utils import is_empty_string
+from helper.utils import is_empty_string
 from message.appinfo_message import AppInfoMessage
 
 

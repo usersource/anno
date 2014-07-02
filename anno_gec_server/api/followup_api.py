@@ -10,13 +10,13 @@ from google.appengine.datastore.datastore_query import Cursor
 from google.appengine.ext.db import BadValueError
 
 from helper.settings import anno_js_client_id
-from api.utils import auth_user
+from helper.utils import auth_user
 from model.anno import Anno
 from model.follow_up import FollowUp
 from model.userannostate import UserAnnoState
 from message.followup_message import FollowupMessage
 from message.followup_message import FollowupListMessage
-from api.utils import put_search_document
+from helper.utils import put_search_document
 from helper.activity_push_notifications import ActivityPushNotifications
 
 @endpoints.api(name='followup', version='1.0', description='Followup API',

@@ -16,7 +16,7 @@ from message.appinfo_message import AppInfoMessage
 from model.base_model import BaseModel
 from model.community import Community
 from model.appinfo import AppInfo
-from api.utils import *
+from helper.utils import *
 
 class Anno(BaseModel):
     """

@@ -8,10 +8,10 @@ from protorpc import remote
 from protorpc import messages
 
 from helper.settings import anno_js_client_id
-from api.utils import md5
-from api.utils import get_endpoints_current_user
-from api.utils import auth_user
-from api.utils import user_community
+from helper.utils import md5
+from helper.utils import get_endpoints_current_user
+from helper.utils import auth_user
+from helper.utils import user_community
 from model.user import User
 from model.invite import Invite
 from message.user_message import UserMessage

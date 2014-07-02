@@ -50,8 +50,8 @@ from model.flag import Flag
 from model.community import Community
 from model.follow_up import FollowUp
 from helper.settings import anno_js_client_id
-from api.utils import auth_user
-from api.utils import put_search_document
+from helper.utils import auth_user
+from helper.utils import put_search_document
 from helper.activity_push_notifications import ActivityPushNotifications
 
 @endpoints.api(name='anno', version='1.0', description='Anno API',

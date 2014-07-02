@@ -15,8 +15,8 @@ from model.flag import Flag
 from model.anno import Anno
 from model.userannostate import UserAnnoState
 from helper.settings import anno_js_client_id
-from api.utils import auth_user
-from api.utils import put_search_document
+from helper.utils import auth_user
+from helper.utils import put_search_document
 
 @endpoints.api(name='flag', version='1.0', description='Flag API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])

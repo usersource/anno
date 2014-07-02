@@ -54,7 +54,7 @@ class Community(ndb.Model):
             community.put()
             respData = "Community created."
 
-            from api.utils import get_user_from_request
+            from helper.utils import get_user_from_request
             user = get_user_from_request(user_id=message.user.id, user_email=message.user.user_email)
             userrole = None
             if user:
