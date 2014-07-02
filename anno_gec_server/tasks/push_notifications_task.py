@@ -3,7 +3,7 @@ from settings import APNS_PUSH_CERT, APNS_PUSH_KEY, APNS_USE_SANDBOX, APNS_ENHAN
 
 
 from gcm import GCM
-from PyAPNs.apns import APNs, Payload, PayloadTooLargeError
+from PyAPNs.apns import APNs, Payload, PayloadAlert, PayloadTooLargeError
 
 import webapp2
 from google.appengine.api import taskqueue
@@ -163,8 +163,17 @@ class PushService(object):
         '''
         response = dict()
         response['success'] = True
+        alert = ''
         try:
-            payload = Payload(alert=message, sound="default")
+            message = json.loads(message)
+            alert = message.pop('alert', '')
+            message = PayloadAlert(alert, **message)
+        except ValueError:
+            # Not a hash of data
+            pass
+
+        try:
+            payload = Payload(message, sound="default")
         except PayloadTooLargeError as e:
             response['success'] = False
             # How should we indicate this error
