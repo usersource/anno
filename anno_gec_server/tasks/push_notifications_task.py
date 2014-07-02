@@ -16,13 +16,14 @@ class PushTaskQueue(object):
     QUEUE_URL = '/push'
 
     @classmethod
-    def add(cls, message, ids, typ):
+    def add(cls, message, ids, typ, data=None):
         '''
         Add a job to the Task Queue
         '''
         ids = json.dumps(ids) if type(ids) is list else ids
         message = json.dumps(message) if type(message) is dict else message
-        taskqueue.add(url=cls.QUEUE_URL, params={'message': message, 'ids': ids, 'type': typ})
+        data = json.dumps(data) if type(data) is dict else data
+        taskqueue.add(url=cls.QUEUE_URL, params={'message': message, 'ids': ids, 'type': typ, 'data': data})
 
 class PushHandler(webapp2.RequestHandler):
     '''
@@ -40,13 +41,26 @@ class PushHandler(webapp2.RequestHandler):
         '''
         message = self.request.get('message')
         typ = self.request.get('type')
+        data = self.request.get('data')
+
+        try:
+            message = json.loads(message)
+        except ValueError:
+            # should stay a string
+            pass
+
+        try:
+            data = json.loads(data)
+        except ValueError:
+            data = {}
+
         try:
             ids = json.loads(self.request.get('ids'))
         except (TypeError, ValueError):
             logging.getLogger().exception("Error while JSON parsing Registration ID's")
             self.response.out.write(json.loads(dict(success=False)))
 
-        res = self.pusher.push(typ, message, ids)
+        res = self.pusher.push(typ, message, ids, data)
         res = json.dumps(res)
 
         # logging.getLogger().info("Response: %s", res)
@@ -111,24 +125,25 @@ class PushService(object):
     def _apns_response_listener(self, error):
         logging.getLogger().error("Error Response for APNS: %s", error)
 
-    def push(self, typ, message, ids):
+    def push(self, typ, message, ids, data):
         '''
         Use this method to initiate push notifications to either
         Apple or Android devices
         :param str typ: Represents the type of Registration ID's used (either ios or android)
         :param str message: The text message to be displayed on the Client Devices
         :param list ids: A list of target Registered Device ID's
+        :param dict data: Dictionary of custom data items
         '''
         if typ == self.TYPE_ANDROID:
             return self._push_to_android(message, ids)
         elif typ == self.TYPE_IOS:
-            return self._push_to_ios(message, ids)
+            return self._push_to_ios(message, ids, data)
         return dict(success=False, reason=("Unknown Type %s"%(typ)))
 
     def _push_to_android(self, message, ids):
         '''
         Google Cloud Messaging Push Notifications using python-gcm
-        :param str message: Message to be sent
+        :param dict message: Message to be sent in JSON
         :param list ids: List of target Registered Device ID's
         :return: A list of response messages (due to chunking constraints)
         '''
@@ -140,7 +155,7 @@ class PushService(object):
             block = b * self.GCM_MAX_BULK
             next_block = block + self.GCM_MAX_BULK
 
-            response = self.gcm.json_request(ids[block:next_block], {"message": message})
+            response = self.gcm.json_request(ids[block:next_block], message)
             response.setdefault('success', True)
 
             if self.GCM_RESPONSE_ERRORS in response:
@@ -156,11 +171,12 @@ class PushService(object):
         # return a list of all responses
         return responses
 
-    def _push_to_ios(self, message, ids):
+    def _push_to_ios(self, message, ids, data):
         '''
         Apple Push Notifications Service using PyAPNs
-        :param str message: Message to be sent
+        :param str/dict message: Message to be sent
         :param list ids: List of target Registered Device ID's
+        :param dict data: Dictionary of custom data items
         :return: A list of response messages (having one response)
         '''
         response = dict()
@@ -175,7 +191,7 @@ class PushService(object):
             pass
 
         try:
-            payload = Payload(message, sound="default")
+            payload = Payload(message, sound="default", custom=data)
         except PayloadTooLargeError as e:
             response['success'] = False
             # How should we indicate this error
