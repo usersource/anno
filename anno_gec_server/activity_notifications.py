@@ -74,4 +74,5 @@ class ActivityNotifications():
             UserAnnoState.delete_by_anno(anno.key.id())
 
         for platform, devices in notf_device.iteritems():
-            PushTaskQueue.add(message=notf_msg, ids=devices, typ=platform.lower())
+            if len(devices):
+                PushTaskQueue.add(message=notf_msg, ids=devices, typ=platform.lower())
