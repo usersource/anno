@@ -10,6 +10,9 @@ handlers:
 - url: /update_schema
   script: main.application
   login: admin
+- url: /push
+  script: main.application
+  login: admin
 - url: /docs
   static_dir: docs/build/html
   login: admin
