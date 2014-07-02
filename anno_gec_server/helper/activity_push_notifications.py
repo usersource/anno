@@ -5,6 +5,7 @@ import logging
 from model.userannostate import UserAnnoState
 from model.userrole import UserRole
 from tasks.push_notifications_task import PushTaskQueue
+from helper.utils_enum import AnnoActionType
 
 class ActivityPushNotifications():
     IOS_LOC_KEY_FORMAT = "ANNO_{action_type}"
@@ -30,7 +31,7 @@ class ActivityPushNotifications():
         user_name = user.display_name
         # "app_name" is removed in new Anno model
         anno_app_name = getattr(anno, "app_name", None) or anno.app.get().name
-        anno_text = comment if action_type == "commented" else anno.anno_text
+        anno_text = comment if action_type == AnnoActionType.COMMENTED else anno.anno_text
         anno_id = anno.key.id()
 
         ios_msg = cls.create_ios_notf_msg(user_name, anno_text, anno_app_name, anno_id, action_type)
@@ -41,9 +42,9 @@ class ActivityPushNotifications():
     def create_android_notf_msg(cls, user_name, anno_text, anno_app_name, anno_id, action_type):
         msg = ""
 
-        if action_type in ["created", "edited", "deleted"]:
+        if action_type in [AnnoActionType.CREATED, AnnoActionType.EDITED, AnnoActionType.DELETED]:
             msg = "{user_name} {action_type} an anno for {app_name}: '{anno_text}'"
-        elif action_type == "commented":
+        elif action_type == AnnoActionType.COMMENTED:
             msg = "{user_name} commented on an anno for {app_name}: '{anno_text}'"
 
         msg = msg.format(user_name=user_name, anno_text=anno_text, action_type=action_type, app_name=anno_app_name)
@@ -61,11 +62,8 @@ class ActivityPushNotifications():
         interested_user_deviceids = dict(iOS=[], Android=[])
         community_managers_deviceids = dict(iOS=[], Android=[])
 
-        # action_type for which notification will sent:
-        # "created", "edited", "deleted", "commented"
-
         # get all interested users for anno if action_type is other than "created"
-        if action_type != "created":
+        if action_type != AnnoActionType.CREATED:
             interested_user_list = UserAnnoState.list_by_anno(anno.key.id())
             interested_user_deviceids = cls.list_deviceid(interested_user_list)
 
@@ -84,14 +82,14 @@ class ActivityPushNotifications():
             notf_devices[first_user.device_type].remove(first_user.device_id)
 
         return notf_devices
-        
+
     @classmethod
     def send_notifications(cls, first_user, anno, action_type, comment=""):
         notf_device = cls.get_noft_devices(first_user, anno, action_type)
         notf_msg = cls.create_notf_msg(first_user, anno, action_type, comment)
 
         # if action is "deleted" then delete all UserAnnoState related to that anno
-        if action_type == "deleted":
+        if action_type == AnnoActionType.DELETED:
             UserAnnoState.delete_by_anno(anno.key.id())
 
         for platform, devices in notf_device.iteritems():

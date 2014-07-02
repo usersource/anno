@@ -18,6 +18,7 @@ from message.followup_message import FollowupMessage
 from message.followup_message import FollowupListMessage
 from helper.utils import put_search_document
 from helper.activity_push_notifications import ActivityPushNotifications
+from helper.utils_enum import AnnoActionType
 
 @endpoints.api(name='followup', version='1.0', description='Followup API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
@@ -58,8 +59,8 @@ class FollowupApi(remote.Service):
         put_search_document(anno.generate_search_document())
 
         # send notifications
-        ActivityPushNotifications.send_notifications(first_user=user, anno=anno,
-                                                 action_type="commented", comment=request.comment)
+        ActivityPushNotifications.send_notifications(first_user=user, anno=anno, action_type=AnnoActionType.COMMENTED,
+                                                     comment=request.comment)
 
         return followup.to_message()
 
