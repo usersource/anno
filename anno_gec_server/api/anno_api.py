@@ -52,7 +52,7 @@ from model.follow_up import FollowUp
 from settings import anno_js_client_id
 from api.utils import auth_user
 from api.utils import put_search_document
-from activity_notifications import ActivityNotifications
+from activity_push_notifications import ActivityPushNotifications
 
 @endpoints.api(name='anno', version='1.0', description='Anno API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
@@ -166,7 +166,7 @@ class AnnoApi(remote.Service):
         put_search_document(entity.generate_search_document())
 
         # send notifications
-        ActivityNotifications.send_notifications(first_user=user, anno=entity, action_type="created")
+        ActivityPushNotifications.send_notifications(first_user=user, anno=entity, action_type="created")
 
         return entity.to_response_message()
 
@@ -202,7 +202,7 @@ class AnnoApi(remote.Service):
         put_search_document(anno.generate_search_document())
 
         # send notifications
-        ActivityNotifications.send_notifications(first_user=user, anno=anno, action_type="edited")
+        ActivityPushNotifications.send_notifications(first_user=user, anno=anno, action_type="edited")
 
         return anno.to_response_message()
 
@@ -223,7 +223,7 @@ class AnnoApi(remote.Service):
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
 
         # send notifications
-        ActivityNotifications.send_notifications(first_user=user, anno=anno, action_type="deleted")
+        ActivityPushNotifications.send_notifications(first_user=user, anno=anno, action_type="deleted")
 
         Anno.delete(anno)
         return message_types.VoidMessage()

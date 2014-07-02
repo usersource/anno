@@ -17,7 +17,7 @@ from model.userannostate import UserAnnoState
 from message.followup_message import FollowupMessage
 from message.followup_message import FollowupListMessage
 from api.utils import put_search_document
-from activity_notifications import ActivityNotifications
+from activity_push_notifications import ActivityPushNotifications
 
 @endpoints.api(name='followup', version='1.0', description='Followup API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
@@ -58,7 +58,7 @@ class FollowupApi(remote.Service):
         put_search_document(anno.generate_search_document())
 
         # send notifications
-        ActivityNotifications.send_notifications(first_user=user, anno=anno,
+        ActivityPushNotifications.send_notifications(first_user=user, anno=anno,
                                                  action_type="commented", comment=request.comment)
 
         return followup.to_message()

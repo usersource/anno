@@ -45,9 +45,8 @@ class PushHandler(webapp2.RequestHandler):
 
         try:
             message = json.loads(message)
-        except ValueError:
-            # should stay a string
-            pass
+        except (ValueError, TypeError) as e:
+            logging.getLogger().debug("Message not decoded %s", message)
 
         try:
             data = json.loads(data)
@@ -183,7 +182,6 @@ class PushService(object):
         response['success'] = True
         alert = ''
         try:
-            message = json.loads(message)
             alert = message.pop('alert', '')
             message = PayloadAlert(alert, **message)
         except ValueError:

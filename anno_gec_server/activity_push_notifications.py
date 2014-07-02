@@ -6,8 +6,10 @@ from model.userannostate import UserAnnoState
 from model.userrole import UserRole
 from tasks.push_notifications_task import PushTaskQueue
 
-class ActivityNotifications():
+class ActivityPushNotifications():
     IOS_LOC_KEY_FORMAT = "ANNO_{action_type}"
+    MESSAGE_KEY = "message"
+    ANNO_ID_KEY = "anno_id"
 
     @classmethod
     def list_deviceid(cls, user_list):
@@ -29,13 +31,14 @@ class ActivityNotifications():
         # "app_name" is removed in new Anno model
         anno_app_name = getattr(anno, "app_name", None) or anno.app.get().name
         anno_text = comment if action_type == "commented" else anno.anno_text
+        anno_id = anno.key.id()
 
-        ios_msg = cls.create_ios_notf_msg(user_name, anno_text, anno_app_name, action_type)
-        android_msg = cls.create_android_notf_msg(user_name, anno_text, anno_app_name, action_type)
+        ios_msg = cls.create_ios_notf_msg(user_name, anno_text, anno_app_name, anno_id, action_type)
+        android_msg = cls.create_android_notf_msg(user_name, anno_text, anno_app_name, anno_id, action_type)
         return dict(iOS=ios_msg, Android=android_msg)
 
     @classmethod
-    def create_android_notf_msg(cls, user_name, anno_text, anno_app_name, action_type):
+    def create_android_notf_msg(cls, user_name, anno_text, anno_app_name, anno_id, action_type):
         msg = ""
 
         if action_type in ["created", "edited", "deleted"]:
@@ -44,13 +47,14 @@ class ActivityNotifications():
             msg = "{user_name} commented on an anno for {app_name}: '{anno_text}'"
 
         msg = msg.format(user_name=user_name, anno_text=anno_text, action_type=action_type, app_name=anno_app_name)
-        return msg
+        return ({ cls.MESSAGE_KEY: msg, cls.ANNO_ID_KEY: anno_id }, None)
 
     @classmethod
-    def create_ios_notf_msg(cls, user_name, anno_text, anno_app_name, action_type):
+    def create_ios_notf_msg(cls, user_name, anno_text, anno_app_name, anno_id, action_type):
         anno_text = (anno_text[:20] + "...") if (len(anno_text) > 20) else anno_text
-        return dict(loc_key=cls.IOS_LOC_KEY_FORMAT.format(action_type=action_type.upper()),
-                    loc_args=[user_name, anno_app_name, anno_text])
+        msg = dict(loc_key=cls.IOS_LOC_KEY_FORMAT.format(action_type=action_type.upper()),
+                   loc_args=[user_name, anno_app_name, anno_text])
+        return (msg , { cls.ANNO_ID_KEY: anno_id })
 
     @classmethod
     def get_noft_devices(cls, first_user, anno, action_type):
@@ -72,7 +76,7 @@ class ActivityNotifications():
             community_manager_deviceids = cls.list_deviceid(community_manager_list)
 
         # merging device ids of interested users and community managers
-        notf_devices = { platform : (interested_user_deviceids[platform] + community_manager_deviceids[platform])\
+        notf_devices = { platform : list(set(interested_user_deviceids[platform] + community_manager_deviceids[platform]))\
                          for platform in interested_user_deviceids }
 
         # removing first user from push notification task
@@ -91,5 +95,6 @@ class ActivityNotifications():
             UserAnnoState.delete_by_anno(anno.key.id())
 
         for platform, devices in notf_device.iteritems():
+            message, data = notf_msg[platform]
             if len(devices):
-                PushTaskQueue.add(message=notf_msg[platform], ids=devices, typ=platform.lower())
+                PushTaskQueue.add(message=message, ids=devices, typ=platform.lower(), data=data)
