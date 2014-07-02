@@ -17,6 +17,12 @@
  under the License.
  */
 
+// Push Notifications Localizable strings
+"ANNO_COMMENTED" = "%1$@ commented on an anno for %2$@: '%3$@'";
+"ANNO_CREATED" = "%1$@ created an anno for %2%@: '%3$@'";
+"ANNO_EDITED" = "%1$@ edited the anno for %2$@: '%3$@'";
+"ANNO_DELETED" = "%1$@ deleted the anno for %2$@: '%3$@'";
+
 // controller title for Videos
 "Videos title" = "Videos";
 // accessibility label for recording button
