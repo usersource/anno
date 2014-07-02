@@ -351,25 +351,10 @@ define([
             annoUtil.readSettings(function(settings){
                 if (settings.ServerURL == null)
                 {
-                    annoUtil.inChina(function(inChina){
-                        if (inChina)
-                        {
-                            console.error("in China, chooseProxyServer");
-                            annoUtil.chooseProxyServer();
-                        }
-                        else
-                        {
-                            console.error("not in China, choose default Server");
-                            annoUtil.setDefaultServer();
-                        }
+                    annoUtil.setDefaultServer();
+                }
 
-                        callback();
-                    });
-                }
-                else
-                {
-                    callback();
-                }
+                callback();
             });
         },
         enableNativeGesture:function()
