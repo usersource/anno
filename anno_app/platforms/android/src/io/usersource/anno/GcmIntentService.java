@@ -19,6 +19,7 @@ package io.usersource.anno;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -73,7 +74,8 @@ public class GcmIntentService extends IntentService {
 				.setContentTitle(getString(R.string.app_name))
 				.setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
 				.setContentText(msg)
-				.setAutoCancel(true);
+				.setAutoCancel(true)
+				.setDefaults(Notification.DEFAULT_ALL);
 
 		mBuilder.setContentIntent(contentIntent);
 		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
