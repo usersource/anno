@@ -28,12 +28,11 @@ class FollowUp(BaseModel):
             message.creator = self.creator.get().to_message()
         return message
 
+
     @classmethod
     def find_by_anno(cls, anno):
-        followups = []
-        for followup in FollowUp.query(FollowUp.anno_key == anno.key):
-            followups.append(followup)
-        return followups
+        return cls.query(cls.anno_key == anno.key).order(-cls.last_modified).fetch()
+
 
     @classmethod
     def query_followup_by_author(cls, user):

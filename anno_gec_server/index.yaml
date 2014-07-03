@@ -117,6 +117,17 @@ indexes:
 
 - kind: FollowUp
   properties:
+  - name: anno_key
+  - name: last_modified
+
+- kind: FollowUp
+  properties:
+  - name: anno_key
+  - name: last_modified
+    direction: desc
+
+- kind: FollowUp
+  properties:
   - name: creator
   - name: created
     direction: desc
