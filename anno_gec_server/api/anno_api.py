@@ -1,22 +1,24 @@
 """
 Anno API implemented using Google Cloud Endpoints.
 
-.. http:get:: /anno/1.0/anno/{id}
+.. http:get:: /anno/1.0/anno/(id)
 
-    get the anno details for a specific anno `id`
+    ``anno.anno.get`` - Get the details for a specific anno
 
-    :param int id: the id of the anno
-    :returns: the details of the anno :class:`.AnnoResponseMessage`
+    :param int id: id of the anno
+    :returns: details of the anno :class:`.AnnoResponseMessage`
 
 .. http:get:: /anno/1.0/anno
 
-    get list of annos
+    Get list of annos
 
-    :param str cursor: <put description here>
-    :param int limit: <put description here>
-    :param str select: <put description here>
-    :param str app: <desc>
-    :param str query_type: <desc>
+    :param str cursor: resumption point in a query
+    :param int limit: number of annos to be returned
+    :param str select: fields that you want to retrieve
+    :param str app: name of app for which we need annos
+    :param str query_type: one of the :class:`.AnnoQueryType`
+    :param int community: id of the community for which annos to be returned,
+                          required only when query by **COMMUNITY** of :class:`.AnnoQueryType`
     :returns: a list of annos :class:`.AnnoListMessage`
 
 .. http:post:: /anno/1.0/anno
@@ -53,7 +55,7 @@ from helper.settings import anno_js_client_id
 from helper.utils import auth_user
 from helper.utils import put_search_document
 from helper.activity_push_notifications import ActivityPushNotifications
-from helper.utils_enum import AnnoActionType
+from helper.utils_enum import AnnoQueryType, AnnoActionType
 
 @endpoints.api(name='anno', version='1.0', description='Anno API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
@@ -131,19 +133,19 @@ class AnnoApi(remote.Service):
         if request.select is not None:
             select_projection = request.select.split(',')
 
-        if request.query_type == 'by_created':
+        if request.query_type == AnnoQueryType.CREATED:
             return Anno.query_by_app_by_created(request.app, limit, select_projection, curs, user)
-        elif request.query_type == 'by_vote_count':
+        elif request.query_type == AnnoQueryType.VOTE_COUNT:
             return Anno.query_by_vote_count(request.app, user)
-        elif request.query_type == 'by_flag_count':
+        elif request.query_type == AnnoQueryType.FLAG_COUNT:
             return Anno.query_by_flag_count(request.app, user)
-        elif request.query_type == 'by_activity_count':
+        elif request.query_type == AnnoQueryType.ACTIVITY_COUNT:
             return Anno.query_by_activity_count(request.app, user)
-        elif request.query_type == 'by_last_activity':
+        elif request.query_type == AnnoQueryType.LAST_ACTIVITY:
             return Anno.query_by_last_activity(request.app, user)
-        elif request.query_type == 'by_country':
+        elif request.query_type == AnnoQueryType.COUNTRY:
             return Anno.query_by_country(request.app, user)
-        elif request.query_type == "by_community":
+        elif request.query_type == AnnoQueryType.COMMUNITY:
             community = Community.get_by_id(request.community)
             return Anno.query_by_community(community, limit, select_projection, curs)
         else:

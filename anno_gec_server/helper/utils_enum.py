@@ -1,5 +1,17 @@
 __author__ = "rekenerd"
 
+class AnnoQueryType(object):
+    '''
+    Enum class for querying Anno
+    '''
+    CREATED = "by_created" #:
+    VOTE_COUNT = "by_vote_count" #:
+    FLAG_COUNT = "by_flag_count" #:
+    ACTIVITY_COUNT = "by_activity_count" #:
+    LAST_ACTIVITY = "by_last_activity" #:
+    COUNTRY = "by_country" #:
+    COMMUNITY = "by_community" #:
+
 class AnnoActionType(object):
     CREATED = "created"
     EDITED = "edited"
