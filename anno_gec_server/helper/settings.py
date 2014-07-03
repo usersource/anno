@@ -13,6 +13,16 @@ DEFAULT_HOST_ANNOSERVER = "annoserver.appspot.com"
 DEFAULT_HOST_ANNOSERVERTEST = "annoserver-test.appspot.com"
 DEFAULT_HOST_USERSOURCEANNO = "usersource-anno.appspot.com"
 
+# Default values
+GCM_API_KEY = 'AIzaSyCNWf_rZCovDez9Dmzx7CA-m6IHHUmh-SU'
+APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
+APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
+APNS_USE_SANDBOX = False
+
+# Enhanced Mode does not quite work on GAE Dev
+# https://groups.google.com/forum/#!topic/google-appengine/P-1Gpwpry7w
+APNS_ENHANCED = False
+
 # Prod server
 if _default_hostname == DEFAULT_HOST_ANNOSERVER: 
     anno_js_client_id = JS_CLIENT_ID_ANNOSERVER
@@ -40,15 +50,11 @@ elif _default_hostname == DEFAULT_HOST_USERSOURCEANNO:
 # Are we in the local development environment
 from os import environ
 DEVELOPMENT = False
-if "Development" in environ['SERVER_SOFTWARE']:
+if "Development" in environ.get('SERVER_SOFTWARE', ''):
     DEVELOPMENT = True
 
 import logging
 logging.getLogger().info("Running on %s, under development: %s", _default_hostname, DEVELOPMENT)
-
-# Enhanced Mode does not quite work on GAE Dev
-# https://groups.google.com/forum/#!topic/google-appengine/P-1Gpwpry7w
-APNS_ENHANCED = False
 
 # Must be upfront before importing APNS
 # http://stackoverflow.com/questions/16192916/importerror-no-module-named-ssl-with-dev-appserver-py-from-google-app-engine/16937668#16937668
