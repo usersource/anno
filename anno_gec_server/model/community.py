@@ -6,7 +6,7 @@ from google.appengine.ext import ndb
 
 from model.appinfo import AppInfo
 from message.community_message import CommunityMessage
-from helper.utils_enum import CommunityType
+from helper.utils_enum import CommunityType, UserRoleType
 
 class Community(ndb.Model):
     name = ndb.StringProperty(required=True)
@@ -15,8 +15,6 @@ class Community(ndb.Model):
     type = ndb.StringProperty(choices=[CommunityType.PRIVATE, CommunityType.PUBLIC], required=True)
     apps = ndb.KeyProperty(kind=AppInfo, repeated=True)
     created = ndb.DateTimeProperty(auto_now_add=True)
-
-    managerRole = "manager"
 
     def to_response_message(self):
         return CommunityMessage(id=self.key.id(),
@@ -59,7 +57,7 @@ class Community(ndb.Model):
             userrole = None
             if user:
                 from model.userrole import UserRole
-                userrole = UserRole.insert(user, community, cls.managerRole)
+                userrole = UserRole.insert(user, community, UserRoleType.MANAGER)
 
             if userrole is None:
                 community.key.delete()

@@ -15,3 +15,11 @@ class AnnoPushNotificationMessage(object):
 class CommunityType(object):
     PRIVATE = "private"
     PUBLIC = "public"
+
+class UserRoleType(object):
+    MEMBER = "member"
+    MANAGER = "manager"
+
+class InvitationStatusType(object):
+    ACCEPTED = "accepted"
+    PENDING = "pending"

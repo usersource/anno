@@ -12,11 +12,13 @@ from model.base_model import BaseModel
 from model.community import Community
 from model.user import User
 from model.userrole import UserRole
+from helper.utils_enum import UserRoleType
 
 class Invite(BaseModel):
     name = ndb.StringProperty()
     email = ndb.StringProperty(required=True)
-    role = ndb.StringProperty(choices=["member", "manager"], required=True, default="member")
+    role = ndb.StringProperty(choices=[UserRoleType.MEMBER, UserRoleType.MANAGER], 
+                              required=True, default=UserRoleType.MEMBER)
     invite_msg = ndb.StringProperty()
     invite_hash = ndb.StringProperty(required=True)
     community = ndb.KeyProperty(kind=Community, required=True)
@@ -31,7 +33,7 @@ class Invite(BaseModel):
 
         if community and not invitation_created:
             if message.role is None:
-                message.role = "member"
+                message.role = UserRoleType.MEMBER
 
             if message.invite_msg is None:
                 message.invite_msg = community.welcome_msg

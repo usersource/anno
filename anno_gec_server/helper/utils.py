@@ -14,8 +14,7 @@ from model.user import User
 from model.appinfo import AppInfo
 from model.community import Community
 from model.userrole import UserRole
-
-userStatusType = dict(accepted="accepted", pending="pending")
+from helper.utils_enum import UserRoleType
 
 def get_endpoints_current_user(raise_unauthorized=True):
     """Returns a current user and (optionally) causes an HTTP 401 if no user.
@@ -206,9 +205,9 @@ def isMember(community, user, include_manager=True):
                                        UserRole.user == user.key)
                                )
     else:
-        query = UserRole.query(ndb.AND(UserRole.community == community.key, 
-                                       UserRole.user == user.key, 
-                                       UserRole.role == "member")
+        query = UserRole.query(ndb.AND(UserRole.community == community.key,
+                                       UserRole.user == user.key,
+                                       UserRole.role == UserRoleType.MEMBER)
                                )
 
     results = query.get()

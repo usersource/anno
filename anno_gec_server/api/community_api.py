@@ -11,7 +11,7 @@ from protorpc import remote
 
 from helper.settings import anno_js_client_id
 from helper.utils import get_user_from_request
-from helper.utils import userStatusType
+from helper.utils_enum import InvitationStatusType
 from message.community_message import CommunityMessage
 from message.community_message import CommunityAppInfoMessage
 from message.community_message import CommunityUserMessage
@@ -64,7 +64,7 @@ class CommunityApi(remote.Service):
     def user_list(self, request):
         community_user_message_list = []
 
-        status = userStatusType.get("accepted")
+        status = InvitationStatusType.ACCEPTED
         userroles = UserRole.community_user_list(request.id)
         for userrole in userroles:
             user = userrole.user.get()
@@ -74,7 +74,7 @@ class CommunityApi(remote.Service):
                 community_user_message_list.append(community_user_message)
 
         if request.include_invite:
-            status = userStatusType.get("pending")
+            status = InvitationStatusType.PENDING
             from model.invite import Invite
             invited_users = Invite.list_by_community(request.id)
             for invited_user in invited_users:
