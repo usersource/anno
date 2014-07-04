@@ -12,3 +12,5 @@ version.properties
 .idea
 .DS_Store
 .pydevproject
+search_indexes
+usersource.datastore
