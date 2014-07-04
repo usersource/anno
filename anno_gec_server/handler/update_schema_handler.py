@@ -63,11 +63,17 @@ class UpdateAnnoHandler(webapp2.RequestHandler):
     '''
     def UpdateUserAnnoStateSchema(self):
         for anno in Anno.query().fetch():
-            UserAnnoState.insert(user=anno.creator.get(), anno=anno.key.get())
+            user = anno.creator.get()
+            anno = anno.key.get()
+            if user and anno:
+                UserAnnoState.insert(user=user, anno=anno)
 
         activities = Vote.query().fetch() + FollowUp.query().fetch() + Flag.query().fetch()
 
         for activity in activities:
-            UserAnnoState.insert(user=activity.creator.get(), anno=activity.anno_key.get())
+            user = activity.creator.get()
+            anno = activity.anno_key.get()
+            if user and anno:
+                UserAnnoState.insert(user=user, anno=anno)
 
         logging.info("UpdateUserAnnoStateSchema completed")
