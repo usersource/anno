@@ -5,10 +5,13 @@ API Reference
 .. automodule:: api
     :members:
 
-:mod:`anno`
+:mod:`Anno API`
 ---------------
 
 .. automodule:: api.anno_api
+
+:mod:`User API`
+---------------
 
 .. automodule:: api.user_api
     :members:

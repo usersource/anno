@@ -1,5 +1,6 @@
 """
-Anno API implemented using Google Cloud Endpoints.
+API implemented using Google Cloud Endpoints on :class:`.Anno` model
+
 
 .. http:get:: /anno/1.0/anno/(id)
 
@@ -8,9 +9,10 @@ Anno API implemented using Google Cloud Endpoints.
     :param int id: id of the anno
     :returns: details of the anno :class:`.AnnoResponseMessage`
 
+
 .. http:get:: /anno/1.0/anno
 
-    Get list of annos
+    ``anno.anno.list`` - Get list of annos
 
     :param str cursor: resumption point in a query
     :param int limit: number of annos to be returned
@@ -21,11 +23,21 @@ Anno API implemented using Google Cloud Endpoints.
                           required only when query by **COMMUNITY** of :class:`.AnnoQueryType`
     :returns: a list of annos :class:`.AnnoListMessage`
 
+
 .. http:post:: /anno/1.0/anno
 
-    insert an anno
+    ``anno.anno.insert`` - Insert an anno
 
     :param: :class:`.AnnoMessage`
+    :returns: details of the anno :class:`.AnnoResponseMessage`
+
+
+.. http:post:: /anno/1.0/anno/(id)
+
+    ``anno.anno.merge`` - Edit an specific anno
+
+    :param int id: id of the anno
+    :param: :class:`.AnnoMergeMessage`
     :returns: details of the anno :class:`.AnnoResponseMessage`
 
 """
@@ -57,6 +69,7 @@ from helper.utils import put_search_document
 from helper.activity_push_notifications import ActivityPushNotifications
 from helper.utils_enum import AnnoQueryType, AnnoActionType
 
+
 @endpoints.api(name='anno', version='1.0', description='Anno API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
 class AnnoApi(remote.Service):
@@ -69,8 +82,33 @@ class AnnoApi(remote.Service):
         id=messages.IntegerField(2, required=True)
     )
 
-    @endpoints.method(anno_with_id_resource_container, AnnoResponseMessage, path='anno/{id}', http_method='GET',
-                      name='anno.get')
+    anno_list_resource_container = endpoints.ResourceContainer(
+        message_types.VoidMessage,
+        cursor=messages.StringField(2),
+        limit=messages.IntegerField(3),
+        select=messages.StringField(4),
+        app=messages.StringField(5),
+        query_type=messages.StringField(6),
+        community=messages.IntegerField(7)
+    )
+
+    anno_update_resource_container = endpoints.ResourceContainer(
+        AnnoMergeMessage,
+        id=messages.IntegerField(2, required=True)
+    )
+
+    anno_search_resource_container = endpoints.ResourceContainer(
+        search_string=messages.StringField(1, required=False),
+        app_name=messages.StringField(2, required=False),
+        order_type=messages.StringField(3, required=True),
+        cursor=messages.StringField(4),  # can't make it work, not sure why. may check it in the future.
+        limit=messages.IntegerField(5),
+        offset=messages.IntegerField(6),
+        only_my_apps=messages.BooleanField(7)
+    )
+
+    @endpoints.method(anno_with_id_resource_container, AnnoResponseMessage, path='anno/{id}',
+                      http_method='GET', name='anno.get')
     def anno_get(self, request):
         """
         Exposes an API endpoint to get an anno detail by the specified id.
@@ -79,17 +117,23 @@ class AnnoApi(remote.Service):
             user = auth_user(self.request_state.headers)
         except Exception:
             user = None
+
         if request.id is None:
             raise endpoints.BadRequestException('id field is required.')
+
         anno = Anno.get_by_id(request.id)
+
         if anno is None:
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
-            # set anno basic properties
+
+        # set anno basic properties
         anno_resp_message = anno.to_response_message()
+
         # set anno association with followups
         followups = FollowUp.find_by_anno(anno)
-        followup_messages = [entity.to_message() for entity in followups]
+        followup_messages = [ entity.to_message() for entity in followups ]
         anno_resp_message.followup_list = followup_messages
+
         # set anno association with votes/flags
         # if current user exists, then fetch vote/flag.
         if user is not None:
@@ -102,22 +146,15 @@ class AnnoApi(remote.Service):
 
         return anno_resp_message
 
-    anno_list_resource_container = endpoints.ResourceContainer(
-        message_types.VoidMessage,
-        cursor=messages.StringField(2),
-        limit=messages.IntegerField(3),
-        select=messages.StringField(4),
-        app=messages.StringField(5),
-        query_type=messages.StringField(6),
-        community=messages.IntegerField(7)
-    )
 
-    @endpoints.method(anno_list_resource_container, AnnoListMessage, path='anno', http_method='GET', name='anno.list')
+    @endpoints.method(anno_list_resource_container, AnnoListMessage, path='anno', 
+                      http_method='GET', name='anno.list')
     def anno_list(self, request):
         """
         Exposes an API endpoint to retrieve a list of anno.
         """
         user = auth_user(self.request_state.headers)
+
         limit = 10
         if request.limit is not None:
             limit = request.limit
@@ -152,7 +189,8 @@ class AnnoApi(remote.Service):
             return Anno.query_by_page(limit, select_projection, curs, user)
 
 
-    @endpoints.method(AnnoMessage, AnnoResponseMessage, path='anno', http_method='POST', name="anno.insert")
+    @endpoints.method(AnnoMessage, AnnoResponseMessage, path='anno', 
+                      http_method='POST', name="anno.insert")
     def anno_insert(self, request):
         """
         Exposes an API endpoint to insert an anno for the current user.
@@ -160,24 +198,22 @@ class AnnoApi(remote.Service):
         if current user doesn't exist, the user will be created first.
         """
         user = auth_user(self.request_state.headers)
+
+        # checking if same anno exists
         exist_anno = Anno.is_anno_exists(user, request)
         if exist_anno is not None:
             raise endpoints.BadRequestException("Duplicate anno(%s) already exists." % exist_anno.key.id())
+
         entity = Anno.insert_anno(request, user)
 
         # index this document. strange exception here.
         put_search_document(entity.generate_search_document())
 
-        # send notifications
-        ActivityPushNotifications.send_notifications(first_user=user, anno=entity, action_type=AnnoActionType.CREATED)
+        # send push notifications
+        ActivityPushNotifications.send_push_notification(first_user=user, anno=entity, action_type=AnnoActionType.CREATED)
 
         return entity.to_response_message()
 
-
-    anno_update_resource_container = endpoints.ResourceContainer(
-        AnnoMergeMessage,
-        id=messages.IntegerField(2, required=True)
-    )
 
     @endpoints.method(anno_update_resource_container, AnnoResponseMessage, path='anno/{id}',
                       http_method='POST', name="anno.merge")
@@ -205,9 +241,10 @@ class AnnoApi(remote.Service):
         put_search_document(anno.generate_search_document())
 
         # send notifications
-        ActivityPushNotifications.send_notifications(first_user=user, anno=anno, action_type=AnnoActionType.EDITED)
+        ActivityPushNotifications.send_push_notification(first_user=user, anno=anno, action_type=AnnoActionType.EDITED)
 
         return anno.to_response_message()
+
 
     @endpoints.method(anno_with_id_resource_container, message_types.VoidMessage, path='anno/{id}',
                       http_method='DELETE', name="anno.delete")
@@ -226,10 +263,11 @@ class AnnoApi(remote.Service):
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
 
         # send notifications
-        ActivityPushNotifications.send_notifications(first_user=user, anno=anno, action_type=AnnoActionType.DELETED)
+        ActivityPushNotifications.send_push_notification(first_user=user, anno=anno, action_type=AnnoActionType.DELETED)
 
         Anno.delete(anno)
         return message_types.VoidMessage()
+
 
     @endpoints.method(message_types.VoidMessage, AnnoListMessage, path='anno_my_stuff', http_method='GET',
                       name='anno.mystuff')
@@ -261,15 +299,6 @@ class AnnoApi(remote.Service):
             anno_message_list.append(anno.to_response_message())
         return AnnoListMessage(anno_list=anno_message_list)
 
-    anno_search_resource_container = endpoints.ResourceContainer(
-        search_string=messages.StringField(1, required=False),
-        app_name=messages.StringField(2, required=False),
-        order_type=messages.StringField(3, required=True),
-        cursor=messages.StringField(4),  # can't make it work, not sure why. may check it in the future.
-        limit=messages.IntegerField(5),
-        offset=messages.IntegerField(6),
-        only_my_apps=messages.BooleanField(7)
-    )
 
     @endpoints.method(anno_search_resource_container, AnnoListMessage, path='anno_search', http_method='GET',
                       name='anno.search')

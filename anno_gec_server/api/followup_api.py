@@ -59,8 +59,8 @@ class FollowupApi(remote.Service):
         put_search_document(anno.generate_search_document())
 
         # send notifications
-        ActivityPushNotifications.send_notifications(first_user=user, anno=anno, action_type=AnnoActionType.COMMENTED,
-                                                     comment=request.comment)
+        ActivityPushNotifications.send_push_notification(first_user=user, anno=anno, action_type=AnnoActionType.COMMENTED,
+                                                         comment=request.comment)
 
         return followup.to_message()
 
