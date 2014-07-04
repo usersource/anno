@@ -112,7 +112,7 @@ class ActivityPushNotifications():
         :rtype: dict
         '''
         interested_user_deviceids = { cls.IOS: [], cls.ANDROID: [] }
-        community_managers_deviceids = { cls.IOS: [], cls.ANDROID: [] }
+        community_manager_deviceids = { cls.IOS: [], cls.ANDROID: [] }
 
         # get all interested users for anno if action_type is other than "created"
         if action_type != AnnoActionType.CREATED:
@@ -130,8 +130,9 @@ class ActivityPushNotifications():
                          for platform in interested_user_deviceids }
 
         # removing first user from push notification task
-        if first_user.device_id in notf_devices[first_user.device_type]:
-            notf_devices[first_user.device_type].remove(first_user.device_id)
+        if first_user.device_id and first_user.device_type:
+            if first_user.device_id in notf_devices[first_user.device_type]:
+                notf_devices[first_user.device_type].remove(first_user.device_id)
 
         return notf_devices
 
