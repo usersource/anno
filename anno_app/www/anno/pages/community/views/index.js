@@ -588,7 +588,7 @@ define([
                         annoUtil.showMessageDialog("An error occurred when calling pushNotification.register: "+error);
                     },
                     {
-                        "senderID": "955803277195",
+                        "senderID": annoUtil.getResourceString("gcm_sender_id"),
                         "ecb": "onNotification"
                     });
             }
@@ -667,6 +667,8 @@ define([
                 pushNotification.setApplicationIconBadgeNumber(successHandler, errorHandler, e.badge);
             }*/
 
+            // @Rishi and @Imran, i'm not sure what the notification details are on iOS, for example:
+            // if "e.foreground" and "e.coldstart" are present in it. so, please refer the "onNotification" function implementation
 
         };
 
