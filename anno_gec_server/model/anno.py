@@ -66,7 +66,9 @@ class Anno(BaseModel):
         if self.creator is not None:
             user_message = self.creator.get().to_message()
 
-        app_name = self.app_name if self.app is None else self.app.get().name
+        app = self.app.get() if self.app else None
+        app_name = app.name if app else self.app_name
+        app_icon_url = app.icon_url if app else None
 
         return AnnoResponseMessage(id=self.key.id(),
                                    anno_text=self.anno_text,
@@ -78,6 +80,7 @@ class Anno(BaseModel):
                                    level=self.level,
                                    device_model=self.device_model,
                                    app_name=app_name,
+                                   app_icon_url=app_icon_url,
                                    os_name=self.os_name,
                                    os_version=self.os_version,
                                    created=self.created,

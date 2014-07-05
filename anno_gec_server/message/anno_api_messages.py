@@ -103,6 +103,7 @@ class AnnoResponseMessage(messages.Message):
     country = messages.StringField(31)  #:
     last_update_type = messages.StringField(32)  #:
     community = messages.MessageField(CommunityMessage, 33)  #:
+    app_icon_url = messages.StringField(34)
 
 class AnnoListMessage(messages.Message):
     """
