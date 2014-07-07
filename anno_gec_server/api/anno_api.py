@@ -281,7 +281,12 @@ class AnnoApi(remote.Service):
         anno_message_list = []
 
         for userannostate in userannostate_list:
-            anno = userannostate.anno.get()
+            try:
+                anno = userannostate.anno.get()
+            except Exception as e:
+                logging.exception("Exception while getting anno in anno_my_stuff. Anno ID: %s", userannostate.anno.id())
+                anno = None
+
             if anno:
                 anno_message_list.append(anno.to_response_message())
         return AnnoListMessage(anno_list=anno_message_list)
