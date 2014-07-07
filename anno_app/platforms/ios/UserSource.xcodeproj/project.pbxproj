@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		088DA9F4758A432F8D989E97 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B82173E04CF6475A970FD85E /* ImageIO.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		0E1E5C163305482D9FE92DFB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 994E9862B7E0481DAE979731 /* SystemConfiguration.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -13,6 +14,8 @@
 		1D02CE0019531D41003A8C2F /* PickContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D02CDFF19531D41003A8C2F /* PickContact.m */; };
 		1D0F183D18EFD9AA004719E0 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D02161818EED18600E97738 /* MessageUI.framework */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
+		1D3E586E196A827A00FF9FC0 /* AppDelegate+notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E586B196A827A00FF9FC0 /* AppDelegate+notification.m */; };
+		1D3E586F196A827A00FF9FC0 /* PushPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E586D196A827A00FF9FC0 /* PushPlugin.m */; };
 		1D44E81D18F7FEF5007A1635 /* AnnoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D44E81C18F7FEF5007A1635 /* AnnoUtils.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D613FB1190B93E90068C1B7 /* ScreenshotGestureListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D6F35C91908CDE7002051ED /* ScreenshotGestureListener.m */; };
@@ -76,8 +79,6 @@
 		D4C36414B2114E45BEC100FE /* SQLitePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C8F926C672B44F2A7402EA1 /* SQLitePlugin.m */; };
 		E4189164AE894A618FA5722E /* CDVAssetLibraryFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 68CE6AE042F64A29ABB97844 /* CDVAssetLibraryFilesystem.m */; };
 		F840E1F1165FE0F500CFE078 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = F840E1F0165FE0F500CFE078 /* config.xml */; };
-		5A384870DB32484685920849 /* AppDelegate+notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 24A527CD52434F599FC6A8A6 /* AppDelegate+notification.m */; };
-		C8BFCB54DD4C45E2A3FEB593 /* PushPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D2410BDF03314D1C9EDE219E /* PushPlugin.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -113,6 +114,10 @@
 		1D02CDFF19531D41003A8C2F /* PickContact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PickContact.m; path = com.kolwit.pickcontact/PickContact.m; sourceTree = "<group>"; };
 		1D3623240D0F684500981E51 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		1D3E586A196A827A00FF9FC0 /* AppDelegate+notification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AppDelegate+notification.h"; path = "com.phonegap.plugins.PushPlugin/AppDelegate+notification.h"; sourceTree = "<group>"; };
+		1D3E586B196A827A00FF9FC0 /* AppDelegate+notification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "AppDelegate+notification.m"; path = "com.phonegap.plugins.PushPlugin/AppDelegate+notification.m"; sourceTree = "<group>"; };
+		1D3E586C196A827A00FF9FC0 /* PushPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PushPlugin.h; path = com.phonegap.plugins.PushPlugin/PushPlugin.h; sourceTree = "<group>"; };
+		1D3E586D196A827A00FF9FC0 /* PushPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PushPlugin.m; path = com.phonegap.plugins.PushPlugin/PushPlugin.m; sourceTree = "<group>"; };
 		1D44E81B18F7FEF5007A1635 /* AnnoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnnoUtils.h; sourceTree = "<group>"; };
 		1D44E81C18F7FEF5007A1635 /* AnnoUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnnoUtils.m; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* UserSource.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UserSource.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -198,10 +203,6 @@
 		F840E1F0165FE0F500CFE078 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = UserSource/config.xml; sourceTree = "<group>"; };
 		FD5266640B0344749F49768A /* AddressBookUI.framework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		FFA2D6AB6D364653839AC60B /* CDVFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVFile.m; path = org.apache.cordova.file/CDVFile.m; sourceTree = "<group>"; };
-		24A527CD52434F599FC6A8A6 /* AppDelegate+notification.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "AppDelegate+notification.m"; path = "Plugins\com.phonegap.plugins.PushPlugin\AppDelegate+notification.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		D2410BDF03314D1C9EDE219E /* PushPlugin.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "PushPlugin.m"; path = "Plugins\com.phonegap.plugins.PushPlugin\PushPlugin.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		26973B102F1B4C26AAF0F8D8 /* AppDelegate+notification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "AppDelegate+notification.h"; path = "Plugins\com.phonegap.plugins.PushPlugin\AppDelegate+notification.h"; sourceTree = "<group>"; fileEncoding = 4; };
-		F80F242DBF07412D9D746EDB /* PushPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "PushPlugin.h"; path = "Plugins\com.phonegap.plugins.PushPlugin\PushPlugin.h"; sourceTree = "<group>"; fileEncoding = 4; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -377,6 +378,10 @@
 		307C750510C5A3420062BCA9 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				1D3E586A196A827A00FF9FC0 /* AppDelegate+notification.h */,
+				1D3E586B196A827A00FF9FC0 /* AppDelegate+notification.m */,
+				1D3E586C196A827A00FF9FC0 /* PushPlugin.h */,
+				1D3E586D196A827A00FF9FC0 /* PushPlugin.m */,
 				1D02CDFE19531D41003A8C2F /* PickContact.h */,
 				1D02CDFF19531D41003A8C2F /* PickContact.m */,
 				9920240F974842C08E3C61EA /* CDVDevice.m */,
@@ -404,10 +409,6 @@
 				5E365714C57442BFA98F7272 /* CDVCamera.h */,
 				288E96B97A0B40C593E5315A /* CDVJpegHeaderWriter.h */,
 				02D37BE39E244D0CBE31F43E /* CDVExif.h */,
-				24A527CD52434F599FC6A8A6 /* AppDelegate+notification.m */,
-				D2410BDF03314D1C9EDE219E /* PushPlugin.m */,
-				26973B102F1B4C26AAF0F8D8 /* AppDelegate+notification.h */,
-				F80F242DBF07412D9D746EDB /* PushPlugin.h */,
 			);
 			name = Plugins;
 			path = UserSource/Plugins;
@@ -634,10 +635,12 @@
 				B609B7F19FF84D10BF61D241 /* CDVDevice.m in Sources */,
 				712E61EEC77B4147B99F6D2F /* CDVConnection.m in Sources */,
 				3001660A2B27465D8E0F1E74 /* CDVReachability.m in Sources */,
+				1D3E586E196A827A00FF9FC0 /* AppDelegate+notification.m in Sources */,
 				1DDCA4EE18F41A2B006E63FE /* OptionFeedbackViewController.m in Sources */,
 				1DDCA4EB18F41A2B006E63FE /* AnnoDrawViewController.m in Sources */,
 				5FF50017EAFF4F6B863C4781 /* CDVInAppBrowser.m in Sources */,
 				2BFC59DA07CA4C9DA29A16FD /* CDVFile.m in Sources */,
+				1D3E586F196A827A00FF9FC0 /* PushPlugin.m in Sources */,
 				1D02CE0019531D41003A8C2F /* PickContact.m in Sources */,
 				3986CBE47CC84B0D858E000D /* CDVLocalFilesystem.m in Sources */,
 				E4189164AE894A618FA5722E /* CDVAssetLibraryFilesystem.m in Sources */,
@@ -647,8 +650,6 @@
 				D4C36414B2114E45BEC100FE /* SQLitePlugin.m in Sources */,
 				C8E7E7453C794651A3E8C458 /* CDVCamera.m in Sources */,
 				AB2C5928BC924916A9C6E629 /* CDVJpegHeaderWriter.m in Sources */,
-				5A384870DB32484685920849 /* AppDelegate+notification.m in Sources */,
-				C8BFCB54DD4C45E2A3FEB593 /* PushPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
