@@ -16,6 +16,7 @@ class ActivityPushNotifications():
     TITLE_KEY = "title"
     MESSAGE_KEY = "message"
     ANNO_ID_KEY = "anno_id"
+    BIG_VIEW_ENABLE = "bigview"
     IOS_MESSAGE_LIMIT = 20
 
 
@@ -81,7 +82,7 @@ class ActivityPushNotifications():
         '''
         msg = getattr(AnnoPushNotificationMessage, action_type.upper(), "")
         msg = msg.format(user_name=user_name, anno_text=anno_text, action_type=action_type, app_name=anno_app_name)
-        return ({ cls.TITLE_KEY: APP_NAME, cls.MESSAGE_KEY: msg, cls.ANNO_ID_KEY: anno_id }, None)
+        return ({ cls.TITLE_KEY: APP_NAME, cls.MESSAGE_KEY: msg, cls.ANNO_ID_KEY: anno_id, cls.BIG_VIEW_ENABLE: "true" }, None)
 
 
     @classmethod
