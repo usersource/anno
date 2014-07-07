@@ -31,7 +31,7 @@ class ActivityPushNotifications():
         try:
             user_list = [ data.user.get() for data in data_list ]
             for user in user_list:
-                if user.device_id:
+                if user.device_id and user.device_type:
                     user_deviceids[user.device_type].append(user.device_id)
         except Exception as e:
             logging.exception("Exception while getting list of user device ids: %s", e)
