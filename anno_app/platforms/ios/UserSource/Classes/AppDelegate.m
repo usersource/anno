@@ -95,14 +95,6 @@
     return YES;
 }
 
-- (void) application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
-	NSLog(@"My token is: %@", deviceToken);
-}
-
-- (void) application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
-	NSLog(@"Failed to get token, error: %@", error);
-}
-
 // this happens while we are running ( in the background, or from within our own app )
 // only valid if UserSource-Info.plist specifies a protocol to handle
 - (BOOL)application:(UIApplication*)application handleOpenURL:(NSURL*)url
