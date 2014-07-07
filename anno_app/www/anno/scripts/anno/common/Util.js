@@ -63,7 +63,8 @@ define([
             editAnnoDone: "editAnnoDone",
             updatedAnnoData: "updatedAnnoData",
             currentAnnoData: "currentAnnoData",
-            currentImageData: "currentImageData"
+            currentImageData: "currentImageData",
+            deviceId: "annoDeviceId"
         },
         userCommunities: null, // all communities for current user
         hasConnection: function()

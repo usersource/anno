@@ -230,6 +230,7 @@ define([
             {
                 app = this.app;
                 eventsModel = this.loadedModels.mystuff;
+                app.refreshMyActivites = loadMyAnnos;
 
                 _connectResults.push(connect.connect(dom.byId("btnLearnHow"), 'click', function(e)
                 {
