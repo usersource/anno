@@ -14,8 +14,8 @@ from model.flag import Flag
 
 class UpdateAnnoHandler(webapp2.RequestHandler):
     def get(self):
-        self.UpdateAnnoSchema()
-        self.UpdateAnnoSearchIndexes()
+#         self.UpdateAnnoSchema()
+#         self.UpdateAnnoSearchIndexes()
         self.UpdateUserAnnoStateSchema()
         self.response.out.write("Schema migration successfully initiated.")
 
@@ -63,17 +63,21 @@ class UpdateAnnoHandler(webapp2.RequestHandler):
     '''
     def UpdateUserAnnoStateSchema(self):
         for anno in Anno.query().fetch():
-            user = anno.creator.get()
-            anno = anno.key.get()
-            if user and anno:
-                UserAnnoState.insert(user=user, anno=anno)
+            if anno:
+                user = anno.creator.get()
+                modified = anno.last_update_time
+                if user:
+                    UserAnnoState.insert(user=user, anno=anno, modified=modified)
 
-        activities = Vote.query().fetch() + FollowUp.query().fetch() + Flag.query().fetch()
+        activities = Vote.query().order(Vote.created).fetch()
+        activities += FollowUp.query().order(FollowUp.created).fetch()
+        activities += Flag.query().order(Flag.created).fetch()
 
         for activity in activities:
             user = activity.creator.get()
             anno = activity.anno_key.get()
+            modified = activity.created
             if user and anno:
-                UserAnnoState.insert(user=user, anno=anno)
+                UserAnnoState.insert(user=user, anno=anno, modified=modified)
 
         logging.info("UpdateUserAnnoStateSchema completed")
