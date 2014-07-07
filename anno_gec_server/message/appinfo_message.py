@@ -17,3 +17,10 @@ class AppInfoMessage(messages.Message):
     company_name = messages.StringField(8)
     app_url = messages.StringField(9)
     created = message_types.DateTimeField(10)
+
+class UserFavoriteApp(messages.Message):
+    name = messages.StringField(1)
+    icon_url = messages.StringField(2)
+
+class UserFavoriteAppList(messages.Message):
+    app_list = messages.MessageField(UserFavoriteApp, 1, repeated=True)

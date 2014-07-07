@@ -12,6 +12,7 @@ from helper.utils import md5
 from helper.utils import get_endpoints_current_user
 from helper.utils import auth_user
 from helper.utils import user_community
+from helper.utils import get_user_from_request
 from model.user import User
 from model.invite import Invite
 from message.user_message import UserMessage
@@ -22,6 +23,7 @@ from message.user_message import UserInviteListMessage
 from message.user_message import UserInviteAcceptMessage
 from message.community_message import CommunityMessage
 from message.common_message import ResponseMessage
+from message.appinfo_message import UserFavoriteAppList
 
 @endpoints.api(name='user', version='1.0', description='User API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
@@ -99,11 +101,9 @@ class UserApi(remote.Service):
     @endpoints.method(user_email_with_id_resource_container, UserCommunityListMessage,
                       path="community/list", http_method="GET", name="community.list")
     def list_user_communities(self, request):
-        if request.id:
-            user = User.get_by_id(int(request.id))
-        elif request.email:
-            user = User.find_user_by_email(request.email)
-        else:
+        user = get_user_from_request(user_id=request.id, user_email=request.email)
+
+        if not user:
             user = auth_user(self.request_state.headers)
 
         user_community_list = user_community(user) if user else []
@@ -159,3 +159,13 @@ class UserApi(remote.Service):
 
         resp, msg = Invite.accept(request)
         return ResponseMessage(success=True if resp else False, msg=msg)
+
+    @endpoints.method(user_email_with_id_resource_container, UserFavoriteAppList,
+                      path="user/favorite_apps", http_method="GET", name="favorite_apps.list")
+    def list_favorite_apps(self, request):
+        user = get_user_from_request(user_id=request.id, user_email=request.email)
+
+        if not user:
+            user = auth_user(self.request_state.headers)
+
+        return UserFavoriteAppList(app_list=User.list_favorite_apps(user.key))
