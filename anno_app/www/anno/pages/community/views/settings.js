@@ -130,9 +130,13 @@ define([
             {
                 configItem = serverURLConfig[p];
                 configItemNode = dom.byId("divServerUrl"+configItem["serverId"]);
-                domStyle.set(configItemNode, "display", "");
-                configItemNode.children[0].innerHTML = configItem.serverName;
-                registry.byId("rdSU"+configItem["serverId"]).set({"labelText": configItem.serverName, value:p});
+
+                if (configItemNode)
+                {
+                    domStyle.set(configItemNode, "display", "");
+                    configItemNode.children[0].innerHTML = configItem.serverName;
+                    registry.byId("rdSU"+configItem["serverId"]).set({"labelText": configItem.serverName, value:p});
+                }
             }
         };
 
