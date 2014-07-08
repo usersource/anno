@@ -25,6 +25,7 @@ from message.community_message import CommunityMessage
 from message.common_message import ResponseMessage
 from message.appinfo_message import UserFavoriteAppList
 
+
 @endpoints.api(name='user', version='1.0', description='User API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
 class UserApi(remote.Service):
@@ -52,6 +53,14 @@ class UserApi(remote.Service):
         include_invite=messages.BooleanField(3, default=False)
     )
 
+    user_device_id_resource_container = endpoints.ResourceContainer(
+        message_types.VoidMessage,
+        device_id=messages.StringField(1),
+        device_type=messages.StringField(2),
+        clear_device=messages.BooleanField(3, default=False)
+    )
+
+
     @endpoints.method(user_resource_container, message_types.VoidMessage, path='user', http_method='POST',
                       name='user.insert')
     def user_insert(self, request):
@@ -63,6 +72,7 @@ class UserApi(remote.Service):
         else:
             print "user" + request.creator_id + " already exists."
         return message_types.VoidMessage()
+
 
     @endpoints.method(user_email_resource_container, UserMessage, path='user/display_name', http_method='GET',
                       name='user.displayname.get')
@@ -78,6 +88,7 @@ class UserApi(remote.Service):
         else:
             return UserMessage(display_name=user.display_name)
 
+
     @endpoints.method(UserMessage, message_types.VoidMessage, path='user/update_password', http_method='POST',
                       name='user.password.update')
     def update_password(self, request):
@@ -89,14 +100,20 @@ class UserApi(remote.Service):
         user.put()
         return message_types.VoidMessage()
 
-    @endpoints.method(UserMessage, message_types.VoidMessage, path="user/deviceid/update",
-                      http_method="POST", name="user.deviceid.update")
+
+    @endpoints.method(user_device_id_resource_container, message_types.VoidMessage,
+                      path="user/deviceid/update", http_method="POST", name="user.deviceid.update")
     def update_deviceid(self, request):
         user = auth_user(self.request_state.headers)
-        user.device_id = request.device_id
-        user.device_type = request.device_type
+
+        device_id = None if request.clear_device else request.device_id
+        device_type = None if request.clear_device else request.device_type
+
+        user.device_id = device_id
+        user.device_type = device_type
         user.put()
         return message_types.VoidMessage()
+
 
     @endpoints.method(user_email_with_id_resource_container, UserCommunityListMessage,
                       path="community/list", http_method="GET", name="community.list")
@@ -130,6 +147,7 @@ class UserApi(remote.Service):
 
         return UserCommunityListMessage(community_list=user_community_message_list, invite_list=pending_invites_list)
 
+
     @endpoints.method(user_email_resource_container, UserInviteListMessage, path="invite/list",
                       http_method="GET", name="invite.list")
     def user_invite_list(self, request):
@@ -150,6 +168,7 @@ class UserApi(remote.Service):
 
         return UserInviteListMessage(invite_list=pending_invites_list)
 
+
     @endpoints.method(UserInviteAcceptMessage, ResponseMessage, path="invite/accept",
                       http_method="POST", name="invite.accept")
     def user_invite_accept(self, request):
@@ -159,6 +178,7 @@ class UserApi(remote.Service):
 
         resp, msg = Invite.accept(request)
         return ResponseMessage(success=True if resp else False, msg=msg)
+
 
     @endpoints.method(user_email_with_id_resource_container, UserFavoriteAppList,
                       path="user/favorite_apps", http_method="GET", name="favorite_apps.list")
