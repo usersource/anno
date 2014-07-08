@@ -691,8 +691,7 @@ define([
             annoUtil.loadAPI(annoUtil.API.user, function(){
                 var method = gapi.client.user.user.deviceid.update({
                     device_id:deviceId,
-                    device_type:annoUtil.isIOS()?"iOS":"Android",
-                    user_email: annoUtil.getCurrentUserInfo().email
+                    device_type:annoUtil.isIOS()?"iOS":"Android"
                 });
                 method.execute(function (data)
                 {

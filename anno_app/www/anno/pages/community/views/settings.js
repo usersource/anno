@@ -43,10 +43,13 @@ define([
                         AnnoDataHandler.removeUser(function(){
                             OAuthUtil.clearRefreshToken();
                             closeServerURLDialog();
-
-                            annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
-                                window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
+                            // clear device id
+                            annoUtil.clearDeviceId(function(){
+                                annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
+                                    window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
+                                });
                             });
+
                         });
                     }
                     else
@@ -110,9 +113,11 @@ define([
 
                                 annoUtil.hideLoadingIndicator();
                                 closeServerURLDialog();
-
-                                annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
-                                    window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
+                                // clear device id
+                                annoUtil.clearDeviceId(function(){
+                                    annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
+                                        window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
+                                    });
                                 });
                             });
                         });

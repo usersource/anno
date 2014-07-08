@@ -105,7 +105,9 @@ define([
             AnnoDataHandler.removeUser(function ()
             {
                 OAuthUtil.clearRefreshToken();
-                window.open(phoneGapPath + "anno/pages/community/main.html", '_self', 'location=no');
+                annoUtil.clearDeviceId(function(){
+                    window.open(phoneGapPath + "anno/pages/community/main.html", '_self', 'location=no');
+                });
             });
         };
 

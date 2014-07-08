@@ -766,6 +766,47 @@ define([
         getUserCommunities: function()
         {
             return this.userCommunities;
+        },
+        clearDeviceId: function(callback)
+        {
+            var deviceId = window.localStorage.getItem(this.localStorageKeys.deviceId);
+            // clear local saved device id
+            window.localStorage.removeItem(this.localStorageKeys.deviceId);
+            // clear server side device id
+            var self = this;
+
+            this.showLoadingIndicator();
+            this.loadAPI(this.API.user, function(){
+                var method = gapi.client.user.user.deviceid.update({
+                    device_id: deviceId,
+                    device_type:self.isIOS()?"iOS":"Android",
+                    clear_device: true
+                });
+                method.execute(function (data)
+                {
+                    if (!data)
+                    {
+                        self.hideLoadingIndicator();
+                        self.showToastDialog("Response returned from server are empty.");
+                        if (callback) callback(false);
+
+                        return;
+                    }
+
+                    if (data.error)
+                    {
+                        self.hideLoadingIndicator();
+                        self.showMessageDialog("An error occurred when calling user.deviceid.update api: "+data.error.message);
+                        if (callback) callback(false);
+
+                        return;
+                    }
+
+                    console.log("device id cleared.");
+                    self.hideLoadingIndicator();
+                    if (callback) callback(true);
+                });
+            });
         }
     };
 
