@@ -548,6 +548,7 @@ class Anno(BaseModel):
             return query_string
         return None
 
+
     @classmethod
     def convert_document_to_message(cls, index, query_string, query_options, offset, limit, user):
         user_community_list = [ str(userrole.get("community").id()) for userrole in user_community(user) ]
@@ -568,11 +569,19 @@ class Anno(BaseModel):
             has_more = (number_retrieved == limit)
             offset += number_retrieved
             for result in results:
-                anno = Anno.get_by_id(long(result.doc_id))
+                anno_id = long(result.doc_id)
+
+                try:
+                    anno = Anno.get_by_id(anno_id)
+                except Exception as e:
+                    logging.exception("Exception in convert_document_to_message. Anno ID: %s", anno_id)
+                    anno = None
+
                 if anno:
                     anno_list.append(anno.to_response_message())
 
         return AnnoListMessage(anno_list=anno_list, offset=offset, has_more=has_more)
+
 
     def generate_search_document(self):
         """
