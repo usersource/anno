@@ -11,6 +11,7 @@ from model.userannostate import UserAnnoState
 from model.vote import Vote
 from model.follow_up import FollowUp
 from model.flag import Flag
+from helper.utils import OPEN_COMMUNITY
 
 
 class UpdateAnnoHandler(webapp2.RequestHandler):
@@ -54,7 +55,7 @@ class UpdateAnnoHandler(webapp2.RequestHandler):
             if not resp.results:
                 break
             for doc in resp:
-                fields = [ f for f in doc.fields if f.name != 'community' ] + ([ f for f in doc.fields if f.name == "community" and f.value != None] or [ search.TextField(name="community", value="__open__")])
+                fields = [ f for f in doc.fields if f.name != 'community' ] + ([ f for f in doc.fields if f.name == "community" and f.value != None] or [ search.TextField(name="community", value=OPEN_COMMUNITY)])
                 anno_document = search.Document(doc_id=doc.doc_id, fields=fields)
                 index.put(anno_document)
                 start_id = doc.doc_id

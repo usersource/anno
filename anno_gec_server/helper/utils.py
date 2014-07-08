@@ -16,6 +16,11 @@ from model.community import Community
 from model.userrole import UserRole
 from helper.utils_enum import UserRoleType
 
+
+APP_NAME = "UserSource"
+OPEN_COMMUNITY = "__open__"
+
+
 def get_endpoints_current_user(raise_unauthorized=True):
     """Returns a current user and (optionally) causes an HTTP 401 if no user.
 

@@ -7,7 +7,7 @@ from model.userrole import UserRole
 from tasks.push_notifications_task import PushTaskQueue
 from helper.utils_enum import AnnoActionType
 from helper.utils_enum import AnnoPushNotificationMessage
-from helper.settings import APP_NAME
+from helper.utils import APP_NAME
 
 class ActivityPushNotifications():
     IOS = "iOS"
