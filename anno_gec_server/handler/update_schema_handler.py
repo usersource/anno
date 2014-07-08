@@ -12,36 +12,40 @@ from model.vote import Vote
 from model.follow_up import FollowUp
 from model.flag import Flag
 
+
 class UpdateAnnoHandler(webapp2.RequestHandler):
+
     def get(self):
-#         self.UpdateAnnoSchema()
-#         self.UpdateAnnoSearchIndexes()
+        self.UpdateAnnoSchema()
+        self.UpdateAnnoSearchIndexes()
         self.UpdateUserAnnoStateSchema()
         self.response.out.write("Schema migration successfully initiated.")
 
-    '''
-    .. py:function:: UpdateAnnoSchema()
-        Updated Anno datastore with new Anno model.
-        It update "community" field with None if not present.
-    '''
+
     def UpdateAnnoSchema(self):
-        anno_key_list = []
+        '''
+        .. py:function:: UpdateAnnoSchema()
+            Updated Anno datastore with new Anno model.
+            It update "community" field with None if not present.
+        '''
+        anno_update_list = []
         anno_list = Anno.query().fetch()
 
         for anno in anno_list:
             if anno.community is None:
                 anno.community = None
-                anno_key_list.append(anno.key)
+                anno_update_list.append(anno)
 
-        ndb.put_multi(anno_key_list)
+        ndb.put_multi(anno_update_list)
         logging.info("UpdateAnnoSchema completed")
 
-    '''
-    .. py:function:: UpdateAnnoSearchIndexes()
-        Update anno index with new Anno model
-        It adds "community" field in index.
-    '''
+
     def UpdateAnnoSearchIndexes(self):
+        '''
+        .. py:function:: UpdateAnnoSearchIndexes()
+            Update anno index with new Anno model
+            It adds "community" field in index.
+        '''
         index = search.Index(name="anno_index")
         start_id = None
 
@@ -57,11 +61,12 @@ class UpdateAnnoHandler(webapp2.RequestHandler):
 
         logging.info("UpdateAnnoSearchIndexes completed")
 
-    '''
-    .. py:function:: UpdateUserAnnoStateSchema()
-        Create user anno state for old anno and its interaction
-    '''
+
     def UpdateUserAnnoStateSchema(self):
+        '''
+        .. py:function:: UpdateUserAnnoStateSchema()
+            Create user anno state for old anno and its interaction
+        '''
         for anno in Anno.query().fetch():
             if anno:
                 user = anno.creator.get()
