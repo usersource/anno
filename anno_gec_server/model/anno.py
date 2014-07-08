@@ -115,7 +115,7 @@ class Anno(BaseModel):
         """
         create a new anno model from request message.
         """
-        appinfo = AppInfo.getAppInfo(name=message.app_name)
+        appinfo = AppInfo.get(name=message.app_name)
         community = None
 
         if appinfo is None:
