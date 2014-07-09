@@ -85,14 +85,23 @@
     // NOTE: To customize the view's frame size (which defaults to full screen), override
     // [self.viewController viewWillAppear:] in your view controller.
 
-    // Let the device know we want to receive push notifications
-    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+    // clearing push notifications
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
 
     self.viewController = self.communityViewController;
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
 
     return YES;
+}
+
+- (void)applicationWillEnterForeground:(UIApplication *)application {
+    // clearing push notifications
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
 }
 
 // this happens while we are running ( in the background, or from within our own app )
