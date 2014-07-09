@@ -14,8 +14,9 @@ class AppInfoMessage(messages.Message):
     description = messages.StringField(5)
     version = messages.StringField(6)
     developer = messages.StringField(7)
-    app_url = messages.StringField(8)
-    created = message_types.DateTimeField(9)
+    company_name = messages.StringField(8)
+    app_url = messages.StringField(9)
+    created = message_types.DateTimeField(10)
 
 class UserFavoriteApp(messages.Message):
     name = messages.StringField(1)

@@ -16,6 +16,7 @@ class AppInfo(ndb.Model):
     description = ndb.TextProperty()
     version = ndb.StringProperty()
     developer = ndb.StringProperty()
+    company_name = ndb.StringProperty()
     app_url = ndb.StringProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
 
@@ -29,7 +30,8 @@ class AppInfo(ndb.Model):
     def insert(cls, message):
         entity = cls(name=message.name, icon=message.icon, icon_url=message.icon_url,
                      description=message.description, version=message.version,
-                     developer=message.developer, app_url=message.app_url)
+                     developer=message.developer, company_name=message.company_name,
+                     app_url=message.app_url)
         entity.put()
         return entity
 
@@ -46,6 +48,7 @@ class AppInfo(ndb.Model):
             entity.description = message.description or entity.description
             entity.version = message.version or entity.version
             entity.developer = message.developer or entity.developer
+            entity.company_name = message.company_name or entity.company_name
             entity.app_url = message.app_url or entity.app_url
             entity.put()
 
