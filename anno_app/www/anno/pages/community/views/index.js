@@ -168,6 +168,17 @@ define([
                     eventData.circleY = parseInt(annoList[i].simple_y, 10);
                     eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
                     eventData.created = annoUtil.getTimeAgoString(annoList[i].created);
+                    eventData.app_icon_url = annoList[i].app_icon_url||"";
+
+                    if (eventData.app_icon_url)
+                    {
+                        eventData.annoIcon = "hidden";
+                        eventData.appIconClass = "";
+                    }
+                    else
+                    {
+                        eventData.appIconClass = "hidden";
+                    }
 
                     spliceArgs.push(new getStateful(eventData));
                 }
@@ -643,33 +654,39 @@ define([
                     break;
             }
         };
+
         // push notification callback for iOS
-        var onNotificationAPN = window.onNotificationAPN = function(e)
-        {
+        var onNotificationAPN = window.onNotificationAPN = function(e) {
             console.log(e);
-            console.log("onNotification: "+JSON.stringify(e));
+            console.log("onNotification: " + JSON.stringify(e));
 
-            // original example code from PushPlugin official page
-            /*
-            if (e.alert)
-            {
-                navigator.notification.alert(e.alert);
+            if (Number(e.foreground)) {
+                var message  = generateIOSMessage(e);
+                annoUtil.showConfirmMessageDialog("Notification: <br/>"+ message +"<br/><br/>would you like to check it now?",
+                                                  function(ret) {
+                                                    if (ret) {
+                                                        goActivitiesScreen();
+                                                    }
+                                                  });
+            } else {
+                goActivitiesScreen();
             }
+        };
 
-            if (e.sound)
-            {
-                var snd = new Media(e.sound);
-                snd.play();
-            }
+        var generateIOSMessage = function(msg) {
+            var messageTemplate = {
+                "ANNO_COMMENTED" : "{1} commented on an anno for {2}: '{3}'",
+                "ANNO_CREATED" : "{1} created an anno for {2}: '{3}'",
+                "ANNO_EDITED" : "{1} edited the anno for {2}: '{3}'",
+                "ANNO_DELETED" : "{1} deleted the anno for {2}: '{3}'"
+            };
 
-            if (e.badge)
-            {
-                pushNotification.setApplicationIconBadgeNumber(successHandler, errorHandler, e.badge);
-            }*/
+            var message = messageTemplate[msg.aps.alert["loc-key"]];
+            message = message.replace("{1}", msg.aps.alert["loc-args"][0]);
+            message = message.replace("{2}", msg.aps.alert["loc-args"][1]);
+            message = message.replace("{3}", msg.aps.alert["loc-args"][2]);
 
-            // @Rishi and @Imran, i'm not sure what the notification details are on iOS, for example:
-            // if "e.foreground" and "e.coldstart" are present in it. so, please refer the "onNotification" function implementation
-
+            return message;
         };
 
         /**
