@@ -43,10 +43,13 @@ define([
                         AnnoDataHandler.removeUser(function(){
                             OAuthUtil.clearRefreshToken();
                             closeServerURLDialog();
-
-                            annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
-                                window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
+                            // clear device id
+                            annoUtil.clearDeviceId(function(){
+                                annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
+                                    window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
+                                });
                             });
+
                         });
                     }
                     else
@@ -110,9 +113,11 @@ define([
 
                                 annoUtil.hideLoadingIndicator();
                                 closeServerURLDialog();
-
-                                annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
-                                    window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
+                                // clear device id
+                                annoUtil.clearDeviceId(function(){
+                                    annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
+                                        window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
+                                    });
                                 });
                             });
                         });
@@ -130,9 +135,13 @@ define([
             {
                 configItem = serverURLConfig[p];
                 configItemNode = dom.byId("divServerUrl"+configItem["serverId"]);
-                domStyle.set(configItemNode, "display", "");
-                configItemNode.children[0].innerHTML = configItem.serverName;
-                registry.byId("rdSU"+configItem["serverId"]).set({"labelText": configItem.serverName, value:p});
+
+                if (configItemNode)
+                {
+                    domStyle.set(configItemNode, "display", "");
+                    configItemNode.children[0].innerHTML = configItem.serverName;
+                    registry.byId("rdSU"+configItem["serverId"]).set({"labelText": configItem.serverName, value:p});
+                }
             }
         };
 

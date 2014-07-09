@@ -7,13 +7,16 @@ from model.userrole import UserRole
 from tasks.push_notifications_task import PushTaskQueue
 from helper.utils_enum import AnnoActionType
 from helper.utils_enum import AnnoPushNotificationMessage
+from helper.utils import APP_NAME
 
 class ActivityPushNotifications():
     IOS = "iOS"
     ANDROID = "Android"
     IOS_LOC_KEY_FORMAT = "ANNO_{action_type}"
+    TITLE_KEY = "title"
     MESSAGE_KEY = "message"
     ANNO_ID_KEY = "anno_id"
+    BIG_VIEW_ENABLE = "bigview"
     IOS_MESSAGE_LIMIT = 20
 
 
@@ -78,8 +81,8 @@ class ActivityPushNotifications():
         :rtype: tuple
         '''
         msg = getattr(AnnoPushNotificationMessage, action_type.upper(), "")
-        msg = msg.format(user_name=user_name, anno_text=anno_text, action_type=action_type, app_name=anno_app_name)
-        return ({ cls.MESSAGE_KEY: msg, cls.ANNO_ID_KEY: anno_id }, None)
+        msg = unicode(msg).format(user_name=user_name, anno_text=anno_text, action_type=action_type, app_name=anno_app_name)
+        return ({ cls.TITLE_KEY: APP_NAME, cls.MESSAGE_KEY: msg, cls.ANNO_ID_KEY: anno_id, cls.BIG_VIEW_ENABLE: "true" }, None)
 
 
     @classmethod

@@ -96,6 +96,17 @@ define([
                                 eventData.lastActivityClass = "";
                                 eventData.lastActivityText = "created";
 
+                                eventData.app_icon_url = localAnnos[i].app_icon_url||"";
+                                if (eventData.app_icon_url)
+                                {
+                                    eventData.annoIcon = "hidden";
+                                    eventData.appIconClass = "";
+                                }
+                                else
+                                {
+                                    eventData.appIconClass = "hidden";
+                                }
+
                                 spliceArgs.push(new getStateful(eventData));
                             }
 
@@ -113,6 +124,17 @@ define([
                                 eventData.circleY = parseInt(annoList[i].simple_y, 10);
                                 eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
                                 eventData.created = Util.getTimeAgoString(annoList[i].created);
+
+                                eventData.app_icon_url = annoList[i].app_icon_url||"";
+                                if (eventData.app_icon_url)
+                                {
+                                    eventData.annoIcon = "hidden";
+                                    eventData.appIconClass = "";
+                                }
+                                else
+                                {
+                                    eventData.appIconClass = "hidden";
+                                }
 
                                 handleAnnoActivityInfo(eventData, annoList[i]);
 
@@ -230,6 +252,7 @@ define([
             {
                 app = this.app;
                 eventsModel = this.loadedModels.mystuff;
+                app.refreshMyActivites = loadMyAnnos;
 
                 _connectResults.push(connect.connect(dom.byId("btnLearnHow"), 'click', function(e)
                 {

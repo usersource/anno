@@ -45,4 +45,7 @@
     <feature name="PickContact">
         <param name="android-package" value="com.kolwit.cordova.PickContactPlugin" />
     </feature>
+    <feature name="PushPlugin">
+        <param name="android-package" value="com.plugin.gcm.PushPlugin" />
+    </feature>
 </widget>

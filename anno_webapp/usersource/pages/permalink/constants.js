@@ -58,7 +58,7 @@ AnnoConstantsModule.value("AnnoConstants", {
                 "clientSecret": "l5UwDYJuv2BdUUBF2tu9fsol"
             }
         },
-        serverURLKey: "3",
+        serverURLKey: "1",
         apiVersion: "1.0",
         anno: "anno",
         user: "user",
