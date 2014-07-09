@@ -153,29 +153,34 @@
 	[self failWithMessage:@"" withError:error];
 }
 
+// modified by Ignite Team
 - (void)notificationReceived {
     NSLog(@"Notification received");
 
-    if (notificationMessage && self.callback)
-    {
-        NSMutableString *jsonStr = [NSMutableString stringWithString:@"{"];
-
-        [self parseDictionary:notificationMessage intoJSON:jsonStr];
-
-        if (isInline)
-        {
-            [jsonStr appendFormat:@"foreground:\"%d\"", 1];
-            isInline = NO;
-        }
-		else
-            [jsonStr appendFormat:@"foreground:\"%d\"", 0];
+    if (notificationMessage && self.callback) {
+        NSError *error;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:notificationMessage
+                                                           options:NSJSONWritingPrettyPrinted
+                                                             error:&error];
         
-        [jsonStr appendString:@"}"];
+        if (!jsonData) {
+            NSLog(@"PushPlugin_ERROR: %@", error);
+        } else {
+            NSMutableString *jsonStr = [[NSMutableString alloc] initWithData:jsonData
+                                                                    encoding:NSUTF8StringEncoding];
 
-        NSLog(@"Msg: %@", jsonStr);
+            if (isInline) {
+                [jsonStr insertString:@", \"foreground\" : \"1\"" atIndex:([jsonStr length] - 2)];
+                isInline = NO;
+            } else {
+                [jsonStr insertString:@", \"foreground\" : \"0\"" atIndex:([jsonStr length] - 2)];
+            }
 
-        NSString * jsCallBack = [NSString stringWithFormat:@"%@(%@);", self.callback, jsonStr];
-        [self.webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+            NSLog(@"Msg: %@", jsonStr);
+
+            NSString * jsCallBack = [NSString stringWithFormat:@"%@(%@);", self.callback, jsonStr];
+            [self.webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+        }
         
         self.notificationMessage = nil;
     }
