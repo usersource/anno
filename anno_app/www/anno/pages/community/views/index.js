@@ -168,6 +168,17 @@ define([
                     eventData.circleY = parseInt(annoList[i].simple_y, 10);
                     eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
                     eventData.created = annoUtil.getTimeAgoString(annoList[i].created);
+                    eventData.app_icon_url = annoList[i].app_icon_url||"";
+
+                    if (eventData.app_icon_url)
+                    {
+                        eventData.annoIcon = "hidden";
+                        eventData.appIconClass = "";
+                    }
+                    else
+                    {
+                        eventData.appIconClass = "hidden";
+                    }
 
                     spliceArgs.push(new getStateful(eventData));
                 }
