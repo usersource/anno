@@ -63,6 +63,7 @@ from model.vote import Vote
 from model.flag import Flag
 from model.community import Community
 from model.follow_up import FollowUp
+from model.userannostate import UserAnnoState
 from helper.settings import anno_js_client_id
 from helper.utils import auth_user
 from helper.utils import put_search_document
@@ -269,34 +270,25 @@ class AnnoApi(remote.Service):
         return message_types.VoidMessage()
 
 
-    @endpoints.method(message_types.VoidMessage, AnnoListMessage, path='anno_my_stuff', http_method='GET',
-                      name='anno.mystuff')
+    @endpoints.method(message_types.VoidMessage, AnnoListMessage, path='anno_my_stuff',
+                      http_method='GET', name='anno.mystuff')
     def anno_my_stuff(self, request):
         """
         Exposes an API endpoint to return all my anno list.
         """
         user = auth_user(self.request_state.headers)
-        anno_list = Anno.query_anno_by_author(user)
-        vote_list = Vote.query_vote_by_author(user)
-        for vote in vote_list:
-            anno = Anno.get_by_id(vote.anno_key.id())
-            if anno is not None:
-                anno_list.append(anno)
-        flag_list = Flag.query_flag_by_author(user)
-        for flag in flag_list:
-            anno = Anno.get_by_id(flag.anno_key.id())
-            if anno is not None:
-                anno_list.append(anno)
-        followup_list = FollowUp.query_followup_by_author(user)
-        for followup in followup_list:
-            anno = Anno.get_by_id(followup.anno_key.id())
-            if anno is not None:
-                anno_list.append(anno)
-        anno_set = list(set(anno_list))
-
+        userannostate_list = UserAnnoState.list_by_user(user.key)
         anno_message_list = []
-        for anno in anno_set:
-            anno_message_list.append(anno.to_response_message())
+
+        for userannostate in userannostate_list:
+            try:
+                anno = userannostate.anno.get()
+            except Exception as e:
+                logging.exception("Exception while getting anno in anno_my_stuff. Anno ID: %s", userannostate.anno.id())
+                anno = None
+
+            if anno:
+                anno_message_list.append(anno.to_response_message())
         return AnnoListMessage(anno_list=anno_message_list)
 
 

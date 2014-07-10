@@ -56,4 +56,7 @@
     <feature name="PickContact">
         <param name="ios-package" value="PickContact" />
     </feature>
+    <feature name="PushPlugin">
+        <param name="ios-package" value="PushPlugin" />
+    </feature>
 </widget>

@@ -168,6 +168,17 @@ define([
                     eventData.circleY = parseInt(annoList[i].simple_y, 10);
                     eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
                     eventData.created = annoUtil.getTimeAgoString(annoList[i].created);
+                    eventData.app_icon_url = annoList[i].app_icon_url||"";
+
+                    if (eventData.app_icon_url)
+                    {
+                        eventData.annoIcon = "hidden";
+                        eventData.appIconClass = "";
+                    }
+                    else
+                    {
+                        eventData.appIconClass = "hidden";
+                    }
 
                     spliceArgs.push(new getStateful(eventData));
                 }
@@ -551,6 +562,188 @@ define([
             });
         };
 
+        // push notifications related
+        var initPushService = function()
+        {
+            var pushNotification = window.pushNotification = window.plugins.pushNotification;
+
+            if (annoUtil.isIOS())
+            {
+                pushNotification.register(
+                    function(result)
+                    {
+                        // token handler
+                        console.log("Got iOS device token: " + result);
+                        setDeviceId(result);
+                    },
+                    function (error)
+                    {
+                        annoUtil.showMessageDialog("An error occurred when calling pushNotification.register: "+error);
+                    },
+                    {
+                        "badge":"true",
+                        "sound":"true",
+                        "alert":"true",
+                        "ecb":"onNotificationAPN"
+                    });
+            }
+            else
+            {
+                pushNotification.register(
+                    function (result)
+                    {
+                        console.log('pushNotification.register Callback Success! Result = ' + result);
+                    },
+                    function (error)
+                    {
+                        annoUtil.showMessageDialog("An error occurred when calling pushNotification.register: "+error);
+                    },
+                    {
+                        "senderID": annoUtil.getResourceString("gcm_sender_id"),
+                        "ecb": "onNotification"
+                    });
+            }
+        };
+
+        // push notification callback for android
+        var onNotification = window.onNotification = function(e) {
+            console.log(e);
+            console.log("onNotification: "+JSON.stringify(e));
+            switch( e.event )
+            {
+                case 'registered':
+                    if ( e.regid.length > 0 )
+                    {
+                        // Your GCM push server needs to know the regID before it can push to this device
+                        // here is where you might want to send it the regID for later use.
+                        console.log("GCM regID = " + e.regid);
+                        setDeviceId(e.regid);
+                    }
+                    break;
+
+                case 'message':
+                    // if this flag is set, this notification happened while we were in the foreground.
+                    // you might want to play a sound to get the user's attention, throw up a dialog, etc.
+                    if ( e.foreground )
+                    {
+                        // on Android soundname is outside the payload.
+                        // On Amazon FireOS all custom attributes are contained within payload
+                        // if app is in foreground, show a message box with the notification message and OK Cancel buttons
+                        // message format: Notification: notificaton message, would you like to check it now?
+                        // if user tapped OK button then goes to activity page.
+                        annoUtil.showConfirmMessageDialog("Notification: <br/>"+ e.payload.message +"<br/><br/>would you like to check it now?", function(ret){
+                            if (ret)
+                            {
+                                goActivitiesScreen();
+                            }
+                        });
+                    }
+                    else
+                    {
+                        // otherwise we were launched because the user touched a notification in the notification tray.
+                        goActivitiesScreen();
+                    }
+
+                    break;
+
+                case 'error':
+                    console.log("Notification error: " + e.msg);
+                    break;
+
+                default:
+                    break;
+            }
+        };
+
+        // push notification callback for iOS
+        var onNotificationAPN = window.onNotificationAPN = function(e) {
+            console.log(e);
+            console.log("onNotification: " + JSON.stringify(e));
+
+            if (Number(e.foreground)) {
+                var message  = generateIOSMessage(e);
+                annoUtil.showConfirmMessageDialog("Notification: <br/>"+ message +"<br/><br/>would you like to check it now?",
+                                                  function(ret) {
+                                                    if (ret) {
+                                                        goActivitiesScreen();
+                                                    }
+                                                  });
+            } else {
+                goActivitiesScreen();
+            }
+        };
+
+        var generateIOSMessage = function(msg) {
+            var messageTemplate = {
+                "ANNO_COMMENTED" : "{1} commented on an anno for {2}: '{3}'",
+                "ANNO_CREATED" : "{1} created an anno for {2}: '{3}'",
+                "ANNO_EDITED" : "{1} edited the anno for {2}: '{3}'",
+                "ANNO_DELETED" : "{1} deleted the anno for {2}: '{3}'"
+            };
+
+            var message = messageTemplate[msg.aps.alert["loc-key"]];
+            message = message.replace("{1}", msg.aps.alert["loc-args"][0]);
+            message = message.replace("{2}", msg.aps.alert["loc-args"][1]);
+            message = message.replace("{3}", msg.aps.alert["loc-args"][2]);
+
+            return message;
+        };
+
+        /**
+         * check if local saved device id is same to given device id,
+         * if not, call user.user.deviceid.update API to update it.
+         * @param deviceId
+         */
+        var setDeviceId = function(deviceId)
+        {
+            var savedDeviceId = window.localStorage.getItem(annoUtil.localStorageKeys.deviceId);
+
+            if (deviceId === savedDeviceId) return;
+
+            updateDeviceId(deviceId);
+        };
+
+        var updateDeviceId = function(deviceId)
+        {
+            annoUtil.loadAPI(annoUtil.API.user, function(){
+                var method = gapi.client.user.user.deviceid.update({
+                    device_id:deviceId,
+                    device_type:annoUtil.isIOS()?"iOS":"Android"
+                });
+                method.execute(function (data)
+                {
+                    if (!data)
+                    {
+                        annoUtil.showToastDialog("Response returned from server are empty.");
+                        return;
+                    }
+
+                    if (data.error)
+                    {
+                        annoUtil.showMessageDialog("An error occurred when calling user.deviceid.update api: "+data.error.message);
+                        return;
+                    }
+
+                    window.localStorage.setItem(annoUtil.localStorageKeys.deviceId, deviceId);
+                    console.log("device id updated.");
+                });
+            });
+        };
+
+        var goActivitiesScreen = function()
+        {
+            // check if we are in Activities screen already, if yes, just do refresh
+            var activitiesViewNode = dom.byId('modelApp_myStuff');
+            if (activitiesViewNode&&activitiesViewNode.style.display != 'none')
+            {
+                app.refreshMyActivites();
+            }
+            else
+            {
+                app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
+            }
+        };
+
         var _init = function()
         {
             if (DBUtil.userChecked)
@@ -586,6 +779,7 @@ define([
                                     acceptInvitation(inviteList[i]);
                                 }
                             });
+                            initPushService();
                             window.setTimeout(function(){
                                 AnnoDataHandler.startBackgroundSync();
                             }, 5*1000);

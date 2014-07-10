@@ -234,6 +234,13 @@ module.exports = [
         "clobbers": [
             "PickContact"
         ]
+    },
+    {
+        "file": "plugins/com.phonegap.plugins.PushPlugin/www/PushNotification.js",
+        "id": "com.phonegap.plugins.PushPlugin.PushNotification",
+        "clobbers": [
+            "PushNotification"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -247,7 +254,8 @@ module.exports.metadata =
     "org.apache.cordova.camera": "0.2.8",
     "com.phonegap.plugins.sqlite": "1.0.0",
     "nl.x-services.plugins.socialsharing": "4.3.0",
-    "com.kolwit.pickcontact": "1.0.2"
+    "com.kolwit.pickcontact": "1.0.2",
+    "com.phonegap.plugins.PushPlugin": "2.2.1"
 }
 // BOTTOM OF METADATA
 });

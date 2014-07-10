@@ -139,6 +139,13 @@ indexes:
   - name: last_read
   - name: user
 
+- kind: UserAnnoState
+  properties:
+  - name: user
+  - name: modified
+    direction: desc
+  - name: anno
+
 - kind: UserRole
   properties:
   - name: community

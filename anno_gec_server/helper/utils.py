@@ -16,6 +16,11 @@ from model.community import Community
 from model.userrole import UserRole
 from helper.utils_enum import UserRoleType
 
+
+APP_NAME = "UserSource"
+OPEN_COMMUNITY = "__open__"
+
+
 def get_endpoints_current_user(raise_unauthorized=True):
     """Returns a current user and (optionally) causes an HTTP 401 if no user.
 
@@ -181,13 +186,17 @@ def getCommunityForApp(id=None, app_name=None):
     if id:
         app = AppInfo.get_by_id(id)
     elif app_name:
-        app = AppInfo.getAppByName(app_name)
+        app = AppInfo.get(name=app_name)
 
-    communities = Community.query().fetch()
+    app_community = None
+    if app:
+        communities = Community.query().fetch()
+        for community in communities:
+            if app.key in community.apps:
+                app_community = community
+                break
 
-    for community in communities:
-        if app.key in community.apps:
-            return community
+    return app_community
 
 def user_community(user):
     userroles = UserRole.query().filter(UserRole.user == user.key)\

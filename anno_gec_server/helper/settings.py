@@ -3,6 +3,7 @@
 from google.appengine.api import app_identity
 _default_hostname = app_identity.get_default_version_hostname()
 
+
 JS_CLIENT_ID_ANNOSERVER = "22913132792.apps.googleusercontent.com"
 JS_CLIENT_ID_ANNOSERVERTEST = "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com"
 JS_CLIENT_ID_USERSOURCEANNO = "955803277195.apps.googleusercontent.com"

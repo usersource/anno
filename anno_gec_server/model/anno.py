@@ -115,7 +115,7 @@ class Anno(BaseModel):
         """
         create a new anno model from request message.
         """
-        appinfo = AppInfo.getAppInfo(name=message.app_name)
+        appinfo = AppInfo.get(name=message.app_name)
         community = None
 
         if appinfo is None:
@@ -548,10 +548,11 @@ class Anno(BaseModel):
             return query_string
         return None
 
+
     @classmethod
     def convert_document_to_message(cls, index, query_string, query_options, offset, limit, user):
         user_community_list = [ str(userrole.get("community").id()) for userrole in user_community(user) ]
-        user_community_list.append("__open__")
+        user_community_list.append(OPEN_COMMUNITY)
 
         if len(query_string):
             query_string += "AND "
@@ -563,14 +564,24 @@ class Anno(BaseModel):
         number_retrieved = len(results.results)
         anno_list = []
         has_more = False
+
         if number_retrieved > 0:
             has_more = (number_retrieved == limit)
             offset += number_retrieved
             for result in results:
-                anno = Anno.get_by_id(long(result.doc_id))
+                anno_id = long(result.doc_id)
+
+                try:
+                    anno = Anno.get_by_id(anno_id)
+                except Exception as e:
+                    logging.exception("Exception in convert_document_to_message. Anno ID: %s", anno_id)
+                    anno = None
+
                 if anno:
                     anno_list.append(anno.to_response_message())
+
         return AnnoListMessage(anno_list=anno_list, offset=offset, has_more=has_more)
+
 
     def generate_search_document(self):
         """
@@ -579,7 +590,7 @@ class Anno(BaseModel):
         anno_id_string = "%d" % self.key.id()
         app_name = "%s" % (self.app.get().name if self.app else self.app_name)
         anno_text = "%s" % self.anno_text
-        community = ("%s" % self.community.id()) if self.community else "__open__"
+        community = ("%s" % self.community.id()) if self.community else OPEN_COMMUNITY
 
         anno_document = search.Document(
             doc_id=anno_id_string,

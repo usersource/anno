@@ -236,6 +236,11 @@
     color: gray;
 }
 
+.hidden
+{
+    display: none;
+}
+
 .listAppName
 {
     color: #AFB1B5;
