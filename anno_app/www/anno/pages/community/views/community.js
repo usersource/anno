@@ -36,7 +36,10 @@ define([
 
             annoUtil.showLoadingIndicator();
             annoUtil.loadAPI(annoUtil.API.community, function(){
-                var getCommunityList = gapi.client.community.user.list({id:community.community.id});
+                var getCommunityList = gapi.client.community.user.list({
+                    id : community.community.id,
+                    include_invite : true
+                });
                 getCommunityList.execute(function (data)
                 {
                     if (!data)
@@ -174,7 +177,8 @@ define([
                     if (ret)
                     {
                         dom.byId("btnRemoveInvite").disabled = true;
-                        doRemoveMember(currentCommunity.community.id, currentMemberItem.userItem.user.id);
+                        var currentUser = currentMemberItem.userItem.user;
+                        doRemoveMember(currentCommunity.community.id, currentUser.id, currentUser.user_email);
                     }
                 });
 
@@ -234,11 +238,16 @@ define([
             });
         };
 
-        var doRemoveMember = function(communityId, userId)
+        var doRemoveMember = function(communityId, userId, userEmail)
         {
             annoUtil.showLoadingIndicator();
             annoUtil.loadAPI(annoUtil.API.community, function(){
-                var deleteUser = gapi.client.community.user.delete({community_id:communityId, user_id:userId});
+                var deleteUser = gapi.client.community.user.delete({
+                    community_id : communityId,
+                    user_id : userId,
+                    user_email: userEmail,
+                    include_invite : true
+                });
                 deleteUser.execute(function (data)
                 {
                     if (!data)
@@ -307,7 +316,9 @@ define([
                 var editUserRole = gapi.client.community.user.edit_role({
                     community_id : currentCommunity.community.id,
                     user_id : currentMemberItem.userItem.user.id,
-                    role : role
+                    user_email: currentMemberItem.userItem.user.user_email,
+                    role : role,
+                    include_invite : true
                 });
                 editUserRole.execute(function (data)
                 {

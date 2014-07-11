@@ -12,6 +12,7 @@ from protorpc import remote
 from helper.settings import anno_js_client_id
 from helper.utils import get_user_from_request
 from helper.utils_enum import InvitationStatusType
+from helper.utils import auth_user
 from message.community_message import CommunityMessage
 from message.community_message import CommunityAppInfoMessage
 from message.community_message import CommunityUserMessage
@@ -143,6 +144,7 @@ class CommunityApi(remote.Service):
     @endpoints.method(CommunityInviteMessage, CreateInviteResponseMessage, path="invite",
                       http_method="POST", name="invite.create")
     def invite_user(self, request):
-        community_name = Invite.create(request)
+        creator = auth_user(self.request_state.headers)
+        community_name = Invite.create(request, creator)
         return CreateInviteResponseMessage(user_name=request.name, user_email=request.email,
                                            invite_msg=request.invite_msg, community=community_name)
