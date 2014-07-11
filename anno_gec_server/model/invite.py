@@ -19,7 +19,7 @@ class Invite(BaseModel):
     email = ndb.StringProperty(required=True)
     role = ndb.StringProperty(choices=[UserRoleType.MEMBER, UserRoleType.MANAGER], 
                               required=True, default=UserRoleType.MEMBER)
-    invite_msg = ndb.StringProperty()
+    invite_msg = ndb.TextProperty()
     invite_hash = ndb.StringProperty(required=True)
     community = ndb.KeyProperty(kind=Community, required=True)
 

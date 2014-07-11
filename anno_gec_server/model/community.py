@@ -11,7 +11,7 @@ from helper.utils_enum import CommunityType, UserRoleType
 class Community(ndb.Model):
     name = ndb.StringProperty(required=True)
     description = ndb.StringProperty()
-    welcome_msg = ndb.StringProperty()
+    welcome_msg = ndb.TextProperty()
     type = ndb.StringProperty(choices=[CommunityType.PRIVATE, CommunityType.PUBLIC], required=True)
     apps = ndb.KeyProperty(kind=AppInfo, repeated=True)
     created = ndb.DateTimeProperty(auto_now_add=True)
