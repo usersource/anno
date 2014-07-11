@@ -49,19 +49,27 @@ class Invite(BaseModel):
 
         return community_name
 
+
     @classmethod
     def delete(cls, user_email, community):
         query = cls.query(ndb.AND(cls.email == user_email, cls.community == community.key))
         invited_user = query.get()
-        invited_user.key.delete()
+
+        if invited_user:
+            invited_user.key.delete()
+
 
     @classmethod
     def change_user_role(cls, user_email, community, role):
         query = cls.query(ndb.AND(cls.email == user_email, cls.community == community.key))
         invited_user = query.get()
-        invited_user.role = role
-        invited_user.put()
+
+        if invited_user:
+            invited_user.role = role
+            invited_user.put()
+
         return invited_user
+
 
     @classmethod
     def list_by_user(cls, user_email):
