@@ -24,7 +24,7 @@ class Invite(BaseModel):
     community = ndb.KeyProperty(kind=Community, required=True)
 
     @classmethod
-    def create(cls, message):
+    def create(cls, message, creator):
         community_name = ""
         community = Community.get_by_id(message.community)
         invitation_created = cls.query(ndb.AND(cls.email == message.email,
@@ -41,7 +41,7 @@ class Invite(BaseModel):
             invite_hash = str(uuid.uuid4())
             entity = cls(name=message.name, email=message.email, role=message.role,
                          invite_msg=message.invite_msg, invite_hash=invite_hash,
-                         community=community.key)
+                         community=community.key, creator=creator.key)
             entity.put()
 
             if entity:

@@ -75,14 +75,14 @@ class Community(ndb.Model):
 
     @classmethod
     def addApp(cls, request):
-        if request.community.id:
-            community = cls.get_by_id(request.community.id)
-
-        if request.app.id:
-            app = AppInfo.get_by_id(request.app.id)
+        entity = None
+        community_id = request.community.id
+        appinfo_id = request.app.id
+        community = cls.get_by_id(community_id) if community_id else None
+        app = AppInfo.get_by_id(appinfo_id) if appinfo_id else None
 
         if community and app:
-            community.apps.append(app.key)
-            entity = community.put()
-            return entity
-        return None
+            if not app.key in community.apps:
+                community.apps.append(app.key)
+                entity = community.put()
+        return entity
