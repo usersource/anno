@@ -4,17 +4,16 @@ from google.appengine.api import app_identity
 _default_hostname = app_identity.get_default_version_hostname()
 
 
-JS_CLIENT_ID_ANNOSERVER = "22913132792.apps.googleusercontent.com"
-JS_CLIENT_ID_ANNOSERVERTEST = "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com"
-JS_CLIENT_ID_USERSOURCEANNO = "955803277195.apps.googleusercontent.com"
+JS_CLIENT_ID_PROD_USERSOURCE = "22913132792.apps.googleusercontent.com"
+JS_CLIENT_ID_TEST_USERSOURCE = "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com"
+JS_CLIENT_ID_SANDBOX_USERSOURCE = "955803277195.apps.googleusercontent.com"
 
-anno_js_client_id = JS_CLIENT_ID_USERSOURCEANNO
-
-DEFAULT_HOST_ANNOSERVER = "annoserver.appspot.com"
-DEFAULT_HOST_ANNOSERVERTEST = "annoserver-test.appspot.com"
-DEFAULT_HOST_USERSOURCEANNO = "usersource-anno.appspot.com"
+DEFAULT_HOST_PROD_USERSOURCE = "annoserver.appspot.com"
+DEFAULT_HOST_TEST_USERSOURCE = "annoserver-test.appspot.com"
+DEFAULT_HOST_SANDBOX_USERSOURCE = "usersource-anno.appspot.com"
 
 # Default values
+anno_js_client_id = JS_CLIENT_ID_SANDBOX_USERSOURCE
 GCM_API_KEY = 'AIzaSyCNWf_rZCovDez9Dmzx7CA-m6IHHUmh-SU'
 APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
 APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
@@ -25,24 +24,24 @@ APNS_USE_SANDBOX = False
 APNS_ENHANCED = False
 
 # Prod server
-if _default_hostname == DEFAULT_HOST_ANNOSERVER: 
-    anno_js_client_id = JS_CLIENT_ID_ANNOSERVER
-    GCM_API_KEY = ''
+if _default_hostname == DEFAULT_HOST_PROD_USERSOURCE:
+    anno_js_client_id = JS_CLIENT_ID_PROD_USERSOURCE
+    GCM_API_KEY = 'AIzaSyD11tLsJXp9HNHWd33ZGvzCwbxjeMlkryk'
     APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_USE_SANDBOX = False
 
 # Test server
-elif _default_hostname == DEFAULT_HOST_ANNOSERVERTEST: 
-    anno_js_client_id = JS_CLIENT_ID_ANNOSERVERTEST
-    GCM_API_KEY = ''
+elif _default_hostname == DEFAULT_HOST_TEST_USERSOURCE:
+    anno_js_client_id = JS_CLIENT_ID_TEST_USERSOURCE
+    GCM_API_KEY = 'AIzaSyC2RVUd08c08OKJEvNNx22vQNLqGWazKtU'
     APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_USE_SANDBOX = False
 
 # Dev server
-elif _default_hostname == DEFAULT_HOST_USERSOURCEANNO: 
-    anno_js_client_id = JS_CLIENT_ID_USERSOURCEANNO
+elif _default_hostname == DEFAULT_HOST_SANDBOX_USERSOURCE:
+    anno_js_client_id = JS_CLIENT_ID_SANDBOX_USERSOURCE
     GCM_API_KEY = 'AIzaSyCNWf_rZCovDez9Dmzx7CA-m6IHHUmh-SU'
     APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
