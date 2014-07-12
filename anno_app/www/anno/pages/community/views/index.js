@@ -281,7 +281,7 @@ define([
             domStyle.set('sdBottom', 'height', sdBottom+'px');
 
             registry.byId('progressBar').set('width', viewPoint.w);
-            domStyle.set('pullToRefreshMsg', 'left', (viewPoint.w-180)/2+'px');
+//            domStyle.set('pullToRefreshMsg', 'left', (viewPoint.w-180)/2+'px');
         };
 
         var goBackActivity = function()
