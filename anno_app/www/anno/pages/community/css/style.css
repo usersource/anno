@@ -370,8 +370,8 @@
 .signinWithGoogleBtn
 {
     outline: none;
-    padding-top: 3px;
-    width: 206px;
+    padding: 0 8px;
+    width: auto;
     height: 48px;
     color: #3d83f0;
     background-color: white;
