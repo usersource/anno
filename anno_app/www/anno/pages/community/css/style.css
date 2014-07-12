@@ -391,14 +391,14 @@
 
 #headingStart, .topHeading
 {
-    background-image: none;
+    background-image: none !important;
     background-color: #000000;
     text-shadow:none;
     color: white;
     /*border-bottom: 1px solid #aeaeae;*/
     height: 44px;
     padding-top: 4px;
-    border: none;
+    border: none !important;
     line-height: normal;
 }
 
