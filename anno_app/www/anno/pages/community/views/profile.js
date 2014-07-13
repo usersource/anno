@@ -116,6 +116,12 @@ define([
             var itemList = registry.byId('communityList');
             itemList.destroyDescendants();
 
+            if (data.length)
+            {
+                domStyle.set("communityListTitle", "display", "");
+                domStyle.set("communityList", "display", "");
+            }
+
             for (var i= 0,c=data.length;i<c;i++)
             {
                 domConstruct.create("li", {
