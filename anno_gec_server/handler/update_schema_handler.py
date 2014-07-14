@@ -5,85 +5,86 @@ import webapp2
 
 from google.appengine.api import search
 from google.appengine.ext import ndb
+from google.appengine.ext import deferred
 
 from model.anno import Anno
 from model.userannostate import UserAnnoState
 from model.vote import Vote
 from model.follow_up import FollowUp
 from model.flag import Flag
+from helper.utils import put_search_document
 from helper.utils import OPEN_COMMUNITY
 
 
-class UpdateAnnoHandler(webapp2.RequestHandler):
+BATCH_SIZE = 100  # ideal batch size may vary based on entity size
 
+
+class UpdateAnnoHandler(webapp2.RequestHandler):
     def get(self):
-        self.UpdateAnnoSchema()
-        self.UpdateAnnoSearchIndexes()
-        self.UpdateUserAnnoStateSchema()
+        deferred.defer(deleteAllInIndex)
+        deferred.defer(UpdateAnnoSchema)
+        deferred.defer(UpdateUserAnnoStateSchemaFromAnnoAction, Vote)
+        deferred.defer(UpdateUserAnnoStateSchemaFromAnnoAction, FollowUp)
+        deferred.defer(UpdateUserAnnoStateSchemaFromAnnoAction, Flag)
         self.response.out.write("Schema migration successfully initiated.")
 
 
-    def UpdateAnnoSchema(self):
-        '''
-        .. py:function:: UpdateAnnoSchema()
-            Updated Anno datastore with new Anno model.
-            It update "community" field with None if not present.
-        '''
-        anno_update_list = []
-        anno_list = Anno.query().fetch()
+def deleteAllInIndex():
+    doc_index = search.Index(name="anno_index")
 
-        for anno in anno_list:
-            if anno.community is None:
-                anno.community = None
-                anno_update_list.append(anno)
-
-        ndb.put_multi(anno_update_list)
-        logging.info("UpdateAnnoSchema completed")
-
-
-    def UpdateAnnoSearchIndexes(self):
-        '''
-        .. py:function:: UpdateAnnoSearchIndexes()
-            Update anno index with new Anno model
-            It adds "community" field in index.
-        '''
-        index = search.Index(name="anno_index")
-        start_id = None
-
+    try:
         while True:
-            resp = index.get_range(start_id=start_id, include_start_object=False)
-            if not resp.results:
+            document_ids = [ document.doc_id for document in doc_index.get_range(ids_only=True) ]
+            if not document_ids:
                 break
-            for doc in resp:
-                fields = [ f for f in doc.fields if f.name != 'community' ] + ([ f for f in doc.fields if f.name == "community" and f.value != None] or [ search.TextField(name="community", value=OPEN_COMMUNITY)])
-                anno_document = search.Document(doc_id=doc.doc_id, fields=fields)
-                index.put(anno_document)
-                start_id = doc.doc_id
-
-        logging.info("UpdateAnnoSearchIndexes completed")
+            doc_index.delete(document_ids)
+    except search.Error:
+        logging.exception("Error removing documents")
 
 
-    def UpdateUserAnnoStateSchema(self):
-        '''
-        .. py:function:: UpdateUserAnnoStateSchema()
-            Create user anno state for old anno and its interaction
-        '''
-        for anno in Anno.query().fetch():
-            if anno:
-                user = anno.creator.get()
-                modified = anno.last_update_time
-                if user:
-                    UserAnnoState.insert(user=user, anno=anno, modified=modified)
+def UpdateAnnoSchema(cursor=None):
+    anno_list, cursor, more = Anno.query().fetch_page(BATCH_SIZE, start_cursor=cursor)
 
-        activities = Vote.query().order(Vote.created).fetch()
-        activities += FollowUp.query().order(FollowUp.created).fetch()
-        activities += Flag.query().order(Flag.created).fetch()
+    anno_update_list = []
+    for anno in anno_list:
+        # updating anno schema
+        if not hasattr(anno, "community"):
+            anno.community = None
+            anno_update_list.append(anno)
 
-        for activity in activities:
-            user = activity.creator.get()
-            anno = activity.anno_key.get()
-            modified = activity.created
-            if user and anno:
-                UserAnnoState.insert(user=user, anno=anno, modified=modified)
+        # updating userannostate from anno
+        UpdateUserAnnoStateSchemaFromAnno(anno)
 
-        logging.info("UpdateUserAnnoStateSchema completed")
+        # updating anno index
+        regenerate_anno_index(anno)
+
+    if len(anno_update_list):
+        ndb.put_multi(anno_update_list)
+
+    if more:
+        deferred.defer(UpdateAnnoSchema, cursor=cursor)
+
+
+def UpdateUserAnnoStateSchemaFromAnno(anno):
+    user = anno.creator.get()
+    modified = anno.last_update_time
+    if user:
+        UserAnnoState.insert(user=user, anno=anno, modified=modified)
+
+
+def regenerate_anno_index(anno):
+    put_search_document(anno.generate_search_document())
+
+
+def UpdateUserAnnoStateSchemaFromAnnoAction(cls, cursor=None):
+    activity_list, cursor, more = cls.query().order(Vote.created).fetch_page(BATCH_SIZE, start_cursor=cursor)
+
+    for activity in activity_list:
+        user = activity.creator.get()
+        anno = activity.anno_key.get()
+        modified = activity.created
+        if user and anno:
+            UserAnnoState.insert(user=user, anno=anno, modified=modified)
+
+    if more:
+        deferred.defer(UpdateUserAnnoStateSchemaFromAnnoAction, cls=cls, cursor=cursor)
