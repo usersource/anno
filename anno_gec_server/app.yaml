@@ -6,6 +6,7 @@ threadsafe: yes
 
 builtins:
 - remote_api: on
+- deferred: on
 
 handlers:
 - url: /_ah/spi/.*
