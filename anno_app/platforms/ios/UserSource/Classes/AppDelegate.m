@@ -94,6 +94,9 @@
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
 
+    // setting status bar style
+    [application setStatusBarStyle:UIStatusBarStyleLightContent];
+
     return YES;
 }
 
