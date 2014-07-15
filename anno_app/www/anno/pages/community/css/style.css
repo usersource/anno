@@ -771,6 +771,8 @@
 .mobile body {
     font-family: Helvetica;
     font-size: 13pt;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-user-select: none;
 }
 
 .hashTag
