@@ -6,7 +6,8 @@
         "apiRoot":"https://annoserver.appspot.com/_ah/api",
         "clientId" : "22913132792.apps.googleusercontent.com",
         "clientSecret": "LBlzLWXDgGXyvjlT-5gUjZGA",
-        "proxyKey":"4"
+        "proxyKey":"4",
+        "gcm_sender_id":"22913132792"
     },
     "1": {
         "serverId":"Test",
@@ -15,7 +16,8 @@
         "apiRoot":"https://annoserver-test.appspot.com/_ah/api",
         "clientId" : "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com",
         "clientSecret": "n0fJeoZ-4UFWZaIG41mNg41_",
-        "proxyKey":"3"
+        "proxyKey":"3",
+        "gcm_sender_id":"394023691674"
     },
     "3": {
         "serverId":"Dev",
@@ -24,7 +26,8 @@
         "apiRoot":"https://usersource-anno.appspot.com/_ah/api",
         "clientId" : "955803277195.apps.googleusercontent.com",
         "clientSecret": "l5UwDYJuv2BdUUBF2tu9fsol",
-        "proxyKey":"6"
+        "proxyKey":"6",
+        "gcm_sender_id":"955803277195"
     },
     "4": {
         "serverId":"Localhost",
@@ -33,6 +36,7 @@
         "apiRoot":"http://192.168.11.5:8081/_ah/api",
         "clientId" : "955803277195.apps.googleusercontent.com",
         "clientSecret": "l5UwDYJuv2BdUUBF2tu9fsol",
-        "proxyKey":"6"
+        "proxyKey":"6",
+        "gcm_sender_id":"955803277195"
     }
 }
