@@ -1,3 +1,4 @@
+import logging
 
 # Figure out where we are running
 from google.appengine.api import app_identity
@@ -12,9 +13,13 @@ DEFAULT_HOST_PROD_USERSOURCE = "annoserver.appspot.com"
 DEFAULT_HOST_TEST_USERSOURCE = "annoserver-test.appspot.com"
 DEFAULT_HOST_SANDBOX_USERSOURCE = "usersource-anno.appspot.com"
 
+GCM_API_KEY_PROD_USERSOURCE = "AIzaSyD11tLsJXp9HNHWd33ZGvzCwbxjeMlkryk"
+GCM_API_KEY_TEST_USERSOURCE = "AIzaSyC2RVUd08c08OKJEvNNx22vQNLqGWazKtU"
+GCM_API_KEY_SANDBOX_USERSOURCE = "AIzaSyCNWf_rZCovDez9Dmzx7CA-m6IHHUmh-SU"
+
 # Default values
 anno_js_client_id = JS_CLIENT_ID_SANDBOX_USERSOURCE
-GCM_API_KEY = 'AIzaSyCNWf_rZCovDez9Dmzx7CA-m6IHHUmh-SU'
+GCM_API_KEY = GCM_API_KEY_SANDBOX_USERSOURCE
 APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
 APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
 APNS_USE_SANDBOX = False
@@ -26,7 +31,7 @@ APNS_ENHANCED = False
 # Prod server
 if _default_hostname == DEFAULT_HOST_PROD_USERSOURCE:
     anno_js_client_id = JS_CLIENT_ID_PROD_USERSOURCE
-    GCM_API_KEY = 'AIzaSyD11tLsJXp9HNHWd33ZGvzCwbxjeMlkryk'
+    GCM_API_KEY = GCM_API_KEY_PROD_USERSOURCE
     APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_USE_SANDBOX = False
@@ -34,7 +39,7 @@ if _default_hostname == DEFAULT_HOST_PROD_USERSOURCE:
 # Test server
 elif _default_hostname == DEFAULT_HOST_TEST_USERSOURCE:
     anno_js_client_id = JS_CLIENT_ID_TEST_USERSOURCE
-    GCM_API_KEY = 'AIzaSyC2RVUd08c08OKJEvNNx22vQNLqGWazKtU'
+    GCM_API_KEY = GCM_API_KEY_TEST_USERSOURCE
     APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_USE_SANDBOX = False
@@ -42,7 +47,7 @@ elif _default_hostname == DEFAULT_HOST_TEST_USERSOURCE:
 # Dev server
 elif _default_hostname == DEFAULT_HOST_SANDBOX_USERSOURCE:
     anno_js_client_id = JS_CLIENT_ID_SANDBOX_USERSOURCE
-    GCM_API_KEY = 'AIzaSyCNWf_rZCovDez9Dmzx7CA-m6IHHUmh-SU'
+    GCM_API_KEY = GCM_API_KEY_SANDBOX_USERSOURCE
     APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_USE_SANDBOX = False
@@ -53,7 +58,6 @@ DEVELOPMENT = False
 if "Development" in environ.get('SERVER_SOFTWARE', ''):
     DEVELOPMENT = True
 
-import logging
 logging.getLogger().info("Running on %s, under development: %s", _default_hostname, DEVELOPMENT)
 
 # Must be upfront before importing APNS
