@@ -5,7 +5,6 @@ import webapp2
 
 from google.appengine.api import search
 from google.appengine.ext import ndb
-from google.appengine.ext import deferred
 
 from model.anno import Anno
 from model.userannostate import UserAnnoState
@@ -16,44 +15,52 @@ from helper.utils import put_search_document
 from helper.utils import OPEN_COMMUNITY
 
 
-BATCH_SIZE = 100  # ideal batch size may vary based on entity size
+BATCH_SIZE = 50  # ideal batch size may vary based on entity size
 
 
 class UpdateAnnoHandler(webapp2.RequestHandler):
     def get(self):
-        deferred.defer(deleteAllInIndex)
-        deferred.defer(UpdateAnnoSchema)
-        deferred.defer(UpdateUserAnnoStateSchemaFromAnnoAction, Vote)
-        deferred.defer(UpdateUserAnnoStateSchemaFromAnnoAction, FollowUp)
-        deferred.defer(UpdateUserAnnoStateSchemaFromAnnoAction, Flag)
+        delete_all_anno_indices()
+        update_anno_schema()
+        update_userannostate_schema_from_anno_action(cls=Vote)
+        update_userannostate_schema_from_anno_action(cls=FollowUp)
+        update_userannostate_schema_from_anno_action(cls=Flag)
         self.response.out.write("Schema migration successfully initiated.")
 
 
-def deleteAllInIndex():
+def delete_all_anno_indices():
     doc_index = search.Index(name="anno_index")
+    start_id = None
 
-    try:
-        while True:
-            document_ids = [ document.doc_id for document in doc_index.get_range(ids_only=True) ]
-            if not document_ids:
-                break
-            doc_index.delete(document_ids)
-    except search.Error:
-        logging.exception("Error removing documents")
+    while True:
+        document_ids = []
+        documents = doc_index.get_range(start_id=start_id, include_start_object=True,
+                                        limit=BATCH_SIZE, ids_only=True)
+
+        for document in documents:
+            document_ids.append(document.doc_id)
+            start_id = document.doc_id
+
+        if not document_ids:
+            break
+
+        doc_index.delete(document_ids)
+
+    logging.info("Deleted all Anno indices")
 
 
-def UpdateAnnoSchema(cursor=None):
+def update_anno_schema(cursor=None):
     anno_list, cursor, more = Anno.query().fetch_page(BATCH_SIZE, start_cursor=cursor)
 
     anno_update_list = []
     for anno in anno_list:
         # updating anno schema
-        if not hasattr(anno, "community"):
+        if not anno.community:
             anno.community = None
             anno_update_list.append(anno)
 
         # updating userannostate from anno
-        UpdateUserAnnoStateSchemaFromAnno(anno)
+        update_userannostate_schema_from_anno(anno)
 
         # updating anno index
         regenerate_anno_index(anno)
@@ -62,10 +69,10 @@ def UpdateAnnoSchema(cursor=None):
         ndb.put_multi(anno_update_list)
 
     if more:
-        deferred.defer(UpdateAnnoSchema, cursor=cursor)
+        update_anno_schema(cursor=cursor)
 
 
-def UpdateUserAnnoStateSchemaFromAnno(anno):
+def update_userannostate_schema_from_anno(anno):
     user = anno.creator.get()
     modified = anno.last_update_time
     if user:
@@ -76,8 +83,10 @@ def regenerate_anno_index(anno):
     put_search_document(anno.generate_search_document())
 
 
-def UpdateUserAnnoStateSchemaFromAnnoAction(cls, cursor=None):
-    activity_list, cursor, more = cls.query().order(Vote.created).fetch_page(BATCH_SIZE, start_cursor=cursor)
+def update_userannostate_schema_from_anno_action(cls, cursor=None):
+    activity_list, cursor, more = cls.query()\
+                                     .order(cls.created)\
+                                     .fetch_page(BATCH_SIZE, start_cursor=cursor)
 
     for activity in activity_list:
         user = activity.creator.get()
@@ -87,4 +96,4 @@ def UpdateUserAnnoStateSchemaFromAnnoAction(cls, cursor=None):
             UserAnnoState.insert(user=user, anno=anno, modified=modified)
 
     if more:
-        deferred.defer(UpdateUserAnnoStateSchemaFromAnnoAction, cls=cls, cursor=cursor)
+        update_userannostate_schema_from_anno_action(cls=cls, cursor=cursor)
