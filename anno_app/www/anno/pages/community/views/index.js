@@ -599,7 +599,7 @@ define([
                         annoUtil.showMessageDialog("An error occurred when calling pushNotification.register: "+error);
                     },
                     {
-                        "senderID": annoUtil.getResourceString("gcm_sender_id"),
+                        "senderID": annoUtil.API.config[annoUtil.getSettings().ServerURL].gcm_sender_id,
                         "ecb": "onNotification"
                     });
             }
