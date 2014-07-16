@@ -26,6 +26,7 @@ extern AppDelegate *appDelegate;
 - (void) start_activity:(CDVInvokedUrlCommand*)command;
 - (void) process_image_and_appinfo:(CDVInvokedUrlCommand*)command;
 - (void) start_anno_draw:(CDVInvokedUrlCommand*)command;
+- (void) start_edit_anno_draw:(CDVInvokedUrlCommand*)command;
 - (void) get_screenshot_path:(CDVInvokedUrlCommand*)command;
 - (void) get_anno_screenshot_path:(CDVInvokedUrlCommand*)command;
 - (void) show_softkeyboard:(CDVInvokedUrlCommand*)command;
@@ -39,6 +40,6 @@ extern AppDelegate *appDelegate;
 - (void) showCommunityPage;
 - (void) ShowIntroPage;
 - (void) showOptionFeedback;
-+ (void) showAnnoDraw:(NSString*)imageURI levelValue:(int)levelValue;
++ (void) showAnnoDraw:(NSString*)imageURI levelValue:(int)levelValue editModeValue:(BOOL)editModeValue;
 
 @end

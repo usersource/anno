@@ -4,9 +4,21 @@ runtime: python27
 api_version: 1
 threadsafe: yes
 
+builtins:
+- remote_api: on
+
 handlers:
 - url: /_ah/spi/.*
   script: services.APPLICATION
+- url: /update_schema
+  script: main.application
+  login: admin
+- url: /push
+  script: main.application
+  login: admin
+- url: /docs
+  static_dir: docs/build/html
+  login: admin
 - url: /.*
   script: main.application
 
@@ -16,4 +28,6 @@ libraries:
 - name: endpoints
   version: 1.0
 - name: jinja2
+  version: latest
+- name: ssl
   version: latest

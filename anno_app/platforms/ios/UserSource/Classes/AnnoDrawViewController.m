@@ -10,9 +10,9 @@
 
 @implementation AnnoDrawViewController
 
-bool isPractice;
+bool isPractice, editMode;
 int level;
-NSString *screenshotPath;
+NSString *screenshotPath = @"";
 
 - (id)initWithNibName:(NSString*)nibNameOrNil bundle:(NSBundle*)nibBundleOrNil
 {
@@ -50,11 +50,23 @@ NSString *screenshotPath;
         level value for viewcontroller
  @param isPracticeValue
         YES if it is for practice else NO
+ @param editModeValue
+        YES if it for editing anno item else NO
  */
-+ (void) handleFromShareImage:(NSString *)imageURI levelValue:(int)levelValue isPracticeValue:(BOOL)isPracticeValue {
++ (void) handleFromShareImage:(NSString *)imageURI
+                   levelValue:(int)levelValue
+              isPracticeValue:(BOOL)isPracticeValue
+                editModeValue:(BOOL)editModeValue {
+
+    if (editModeValue) {
+        editMode = editModeValue;
+        return;
+    }
+
     screenshotPath = @"";
     level = levelValue + 1;
     isPractice = isPracticeValue;
+    editMode = editModeValue;
     
     if (imageURI != nil) {
         // getting UIImage of specified image
@@ -99,12 +111,24 @@ NSString *screenshotPath;
 }
 
 /**
+ Get editMode value associated with that viewcontroller
+ @return value of editMode
+ */
++ (BOOL) isEditMode {
+    return editMode;
+}
+
+/**
  Set level value associated with viewcontroller
  @param levelValue
         value for level
  */
 + (void) setLevel:(int)levelValue {
     level = levelValue;
+}
+
++ (void) setEditMode:(BOOL)editModeValue {
+    editMode = editModeValue;
 }
 
 - (void)didReceiveMemoryWarning

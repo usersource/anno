@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'icomoon';
-    src:url('fonts/icomoon.eot?svh9ms');
-    src:url('fonts/icomoon.eot?#iefixsvh9ms') format('embedded-opentype'),
-    url('fonts/icomoon.woff?svh9ms') format('woff'),
-    url('fonts/icomoon.ttf?svh9ms') format('truetype'),
-    url('fonts/icomoon.svg?svh9ms#icomoon') format('svg');
+    src:url('fonts/icomoon.eot?-eac3u4');
+    src:url('fonts/icomoon.eot?#iefix-eac3u4') format('embedded-opentype'),
+    url('fonts/icomoon.woff?-eac3u4') format('woff'),
+    url('fonts/icomoon.ttf?-eac3u4') format('truetype'),
+    url('fonts/icomoon.svg?-eac3u4#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -28,6 +28,15 @@
 }
 .icon-stack2:before {
     content: "\e61c";
+}
+.icon-board:before {
+    content: "\e622";
+}
+.icon-pencil:before {
+    content: "\e61e";
+}
+.icon-trashcan:before {
+    content: "\e61f";
 }
 .icon-simplecomment:before {
     content: "\e607";
@@ -59,8 +68,17 @@
 .icon-bubbles:before {
     content: "\e604";
 }
+.icon-users:before {
+    content: "\e623";
+}
 .icon-user:before {
     content: "\e60e";
+}
+.icon-busy:before {
+    content: "\e624";
+}
+.icon-remove:before {
+    content: "\e620";
 }
 .icon-flag:before {
     content: "\e60d";
@@ -98,6 +116,9 @@
 .icon-search:before {
     content: "\e60b";
 }
+.icon-checkmark:before {
+    content: "\e625";
+}
 .icon-landscape:before {
     content: "\e606";
 }
@@ -113,12 +134,15 @@
 .icon-picture:before {
     content: "\e618";
 }
+.icon-pencil2:before {
+    content: "\e621";
+}
+.icon-bolt:before {
+    content: "\e626";
+}
 
 
-
-
-
-#navBtnBackMyStuff, #navBtnBackSearchAnno, #navBtnBackScreenshot, #navBtnBackHome
+#navBtnBackMyStuff, #navBtnBackSearchAnno, #navBtnBackScreenshot, #navBtnBackHome, #navBtnBackSettings, #navBtnBackProfile, #navBtnBackCommunity
 {
     background-color: transparent;
     background: none;
@@ -182,9 +206,9 @@
     margin-right: 10px;
 }
 
-.appNameItem-gray
+.appNameItem-active
 {
-    color: gray;
+    color: #ff9900;
 }
 
 .firstAppNameItem
@@ -210,6 +234,11 @@
     height: 100%;
     font-size: 24px;
     color: gray;
+}
+
+.hidden
+{
+    display: none;
 }
 
 .listAppName
@@ -251,8 +280,6 @@
     background-repeat: no-repeat;
     padding-left: 1px;
     padding-right: 1px;
-    float: right;
-    padding-right: 20px;
     outline: none;
 }
 
@@ -343,8 +370,8 @@
 .signinWithGoogleBtn
 {
     outline: none;
-    padding-top: 3px;
-    width: 206px;
+    padding: 0 8px;
+    width: auto;
     height: 48px;
     color: #3d83f0;
     background-color: white;
@@ -364,14 +391,14 @@
 
 #headingStart, .topHeading
 {
-    background-image: none;
+    background-image: none !important;
     background-color: #000000;
     text-shadow:none;
     color: white;
     /*border-bottom: 1px solid #aeaeae;*/
     height: 44px;
     padding-top: 4px;
-    border: none;
+    border: none !important;
     line-height: normal;
 }
 
@@ -383,6 +410,11 @@
 .barIconHighlight
 {
     color: #ff9900;
+}
+
+.barIconDisabled
+{
+    opacity: 0.5;
 }
 
 #headingDetail
@@ -462,15 +494,12 @@
 }
 
 .textDataAreaContainer{
-    position: absolute;
-    border: 2px solid #808080;
+    border: 2px solid transparent;
     background-color: white;
     left: 1px;
     margin-top: 2px;
     z-index: 2001;
     padding-top: 10px;
-    /*padding-left: 6px;
-    padding-right: 6px;*/
 }
 
 .mblTooltipBelow .mblTooltipArrow {
@@ -642,9 +671,29 @@
     -webkit-user-select: none;
 }
 
+.newbtn
+{
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    line-height: 1.428571429;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 2px solid gray;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    background-color: white;
+    color: black;
+    font-weight: bold;
+}
+
 .disabledBtn
 {
-    opacity: 0.5;
+    background-color: black;
+    color: gray;
 }
 
 .screenshotContainer
@@ -676,7 +725,7 @@
 {
     color: #000000;
     background-color: white;
-    background-image: none;
+    background-image: none !important;
     border-radius: 4px;
     text-align:left;
     border: none;
@@ -722,4 +771,16 @@
 .mobile body {
     font-family: Helvetica;
     font-size: 13pt;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-user-select: none;
+}
+
+.hashTag
+{
+    color: blue;
+}
+
+.row
+{
+    outline: none;
 }

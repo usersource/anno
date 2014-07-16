@@ -1,0 +1,287 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Model Reference &mdash; UserSource 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="UserSource 1.0 documentation" href="index.html" />
+    <link rel="prev" title="Message Reference" href="message.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="http-routingtable.html" title="HTTP Routing Table"
+             >routing table</a> |</li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="message.html" title="Message Reference"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">UserSource 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-model">
+<span id="model-reference"></span><h1>Model Reference<a class="headerlink" href="#module-model" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-model.base_model">
+<span id="model"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">Model</span></tt><a class="headerlink" href="#module-model.base_model" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="model.base_model.BaseModel">
+<em class="property">class </em><tt class="descclassname">model.base_model.</tt><tt class="descname">BaseModel</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="headerlink" href="#model.base_model.BaseModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base model for all anno models.</p>
+</dd></dl>
+
+<span class="target" id="module-model.anno"></span><dl class="class">
+<dt id="model.anno.Anno">
+<em class="property">class </em><tt class="descclassname">model.anno.</tt><tt class="descname">Anno</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="headerlink" href="#model.anno.Anno" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class represents Annotation Model(in datastore).</p>
+<dl class="method">
+<dt id="model.anno.Anno.to_response_message">
+<tt class="descname">to_response_message</tt><big>(</big><big>)</big><a class="headerlink" href="#model.anno.Anno.to_response_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert anno model to AnnoResponseMessage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.anno.Anno.to_response_message_by_projection">
+<tt class="descname">to_response_message_by_projection</tt><big>(</big><em>projection</em><big>)</big><a class="headerlink" href="#model.anno.Anno.to_response_message_by_projection" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert anno model to AnnoResponseMessage by projection.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="model.anno.Anno.insert_anno">
+<em class="property">classmethod </em><tt class="descname">insert_anno</tt><big>(</big><em>message</em>, <em>user</em><big>)</big><a class="headerlink" href="#model.anno.Anno.insert_anno" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a new anno model from request message.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.anno.Anno.merge_from_message">
+<tt class="descname">merge_from_message</tt><big>(</big><em>message</em><big>)</big><a class="headerlink" href="#model.anno.Anno.merge_from_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>populate current anno with non-null fields in request message.(used in merge)</p>
+<p>creator isn&#8217;t update-able.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="model.anno.Anno.query_by_country">
+<em class="property">classmethod </em><tt class="descname">query_by_country</tt><big>(</big><em>app_name</em>, <em>user</em><big>)</big><a class="headerlink" href="#model.anno.Anno.query_by_country" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query annos for a given app by country alphabetical order.
+No pagination is supported here.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="model.anno.Anno.query_by_recent">
+<em class="property">classmethod </em><tt class="descname">query_by_recent</tt><big>(</big><em>limit</em>, <em>offset</em>, <em>search_string</em>, <em>app_name</em>, <em>app_set</em>, <em>user</em><big>)</big><a class="headerlink" href="#model.anno.Anno.query_by_recent" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method queries anno records by &#8216;recent&#8217; order.
+&#8216;recent&#8217; = created
+:param limit how many anno records to query.
+:param offset query offset which represents starting from which anno record.
+:param search_string search string which partial-matches to anno_text.
+:param app_name app name which full-matches to app_name, this parameter is a single app name, not an app list.
+:param app_set app name set.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="model.anno.Anno.query_by_popular">
+<em class="property">classmethod </em><tt class="descname">query_by_popular</tt><big>(</big><em>limit</em>, <em>offset</em>, <em>search_string</em>, <em>app_name</em>, <em>app_set</em>, <em>user</em><big>)</big><a class="headerlink" href="#model.anno.Anno.query_by_popular" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method queries anno records by &#8216;popular&#8217; order.
+&#8216;popular&#8217; = vote_count - flag_count
+:param limit how many anno records to query.
+:param offset query offset which represents starting from which anno record.
+:param search_string search string which partial-matches to anno_text.
+:param app_name app name which full-matches to app_name, this parameter is a single app name, not an app list.
+:param app_set app name set.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="model.anno.Anno.query_by_active">
+<em class="property">classmethod </em><tt class="descname">query_by_active</tt><big>(</big><em>limit</em>, <em>offset</em>, <em>search_string</em>, <em>app_name</em>, <em>app_set</em>, <em>user</em><big>)</big><a class="headerlink" href="#model.anno.Anno.query_by_active" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method queries anno records by &#8216;active&#8217; order.
+&#8216;active&#8217; = last_update_time
+:param limit how many anno records to retrieve
+:param offset query offset which represents starting from which anno record.
+:param search_string search string which partial-matches to anno_text.
+:param app_name app name which full-matches to app_name, this parameter is a single app name, not an app list.
+:param app_set app name set.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="model.anno.Anno.get_query_string">
+<em class="property">classmethod </em><tt class="descname">get_query_string</tt><big>(</big><em>search_string</em>, <em>app_name</em>, <em>app_set</em><big>)</big><a class="headerlink" href="#model.anno.Anno.get_query_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method returns search query string based on the given search_string and app_name.
+:param search_string: search string which partial-matches to anno_text.
+:param app_name: app name which full-matches to app_name, this parameter is a single app name, not an app list.
+:param app_set: app name set.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="model.anno.Anno.get_query_string_for_field">
+<em class="property">classmethod </em><tt class="descname">get_query_string_for_field</tt><big>(</big><em>field</em>, <em>words</em><big>)</big><a class="headerlink" href="#model.anno.Anno.get_query_string_for_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method generates query string for a certain field against the given words.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="model.anno.Anno.get_query_string_for_all_fields">
+<em class="property">classmethod </em><tt class="descname">get_query_string_for_all_fields</tt><big>(</big><em>fields</em>, <em>words</em><big>)</big><a class="headerlink" href="#model.anno.Anno.get_query_string_for_all_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method generates query string for different fields against the given words.
+:param fields: different field names. As for now, we only support anno_text and app_name.
+:param words: tokens to match</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.anno.Anno.generate_search_document">
+<tt class="descname">generate_search_document</tt><big>(</big><big>)</big><a class="headerlink" href="#model.anno.Anno.generate_search_document" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method generates a search document filled with current anno information.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="model.anno.Anno.query_anno_by_author">
+<em class="property">classmethod </em><tt class="descname">query_anno_by_author</tt><big>(</big><em>user</em><big>)</big><a class="headerlink" href="#model.anno.Anno.query_anno_by_author" title="Permalink to this definition">¶</a></dt>
+<dd><p>This methods return all annos created by the given user.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-model.user"></span><dl class="class">
+<dt id="model.user.User">
+<em class="property">class </em><tt class="descclassname">model.user.</tt><tt class="descname">User</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="headerlink" href="#model.user.User" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents user entity.</p>
+</dd></dl>
+
+<span class="target" id="module-model.community"></span><span class="target" id="module-model.follow_up"></span><dl class="class">
+<dt id="model.follow_up.FollowUp">
+<em class="property">class </em><tt class="descclassname">model.follow_up.</tt><tt class="descname">FollowUp</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="headerlink" href="#model.follow_up.FollowUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Follow up data model.</p>
+<dl class="method">
+<dt id="model.follow_up.FollowUp.to_message">
+<tt class="descname">to_message</tt><big>(</big><big>)</big><a class="headerlink" href="#model.follow_up.FollowUp.to_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert FollowUp data model to follow up message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-model.flag"></span><dl class="class">
+<dt id="model.flag.Flag">
+<em class="property">class </em><tt class="descclassname">model.flag.</tt><tt class="descname">Flag</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="headerlink" href="#model.flag.Flag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flag data model.</p>
+<dl class="method">
+<dt id="model.flag.Flag.to_message">
+<tt class="descname">to_message</tt><big>(</big><big>)</big><a class="headerlink" href="#model.flag.Flag.to_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert Flag data model to flag message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-model.vote"></span><dl class="class">
+<dt id="model.vote.Vote">
+<em class="property">class </em><tt class="descclassname">model.vote.</tt><tt class="descname">Vote</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="headerlink" href="#model.vote.Vote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vote data model.</p>
+<dl class="method">
+<dt id="model.vote.Vote.to_message">
+<tt class="descname">to_message</tt><big>(</big><big>)</big><a class="headerlink" href="#model.vote.Vote.to_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert Vote data model to vote message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-model.userrole"></span><span class="target" id="module-model.appinfo"></span><dl class="class">
+<dt id="model.appinfo.AppInfo">
+<em class="property">class </em><tt class="descclassname">model.appinfo.</tt><tt class="descname">AppInfo</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="headerlink" href="#model.appinfo.AppInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class represents a 3rd party app information.</p>
+</dd></dl>
+
+<span class="target" id="module-model.invite"></span></div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Model Reference</a><ul>
+<li><a class="reference internal" href="#module-model.base_model"><tt class="docutils literal"><span class="pre">Model</span></tt></a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="message.html"
+                        title="previous chapter">Message Reference</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/model.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="http-routingtable.html" title="HTTP Routing Table"
+             >routing table</a> |</li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="message.html" title="Message Reference"
+             >previous</a> |</li>
+        <li><a href="index.html">UserSource 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, UserSource.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

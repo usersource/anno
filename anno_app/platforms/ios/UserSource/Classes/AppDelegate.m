@@ -85,11 +85,37 @@
     // NOTE: To customize the view's frame size (which defaults to full screen), override
     // [self.viewController viewWillAppear:] in your view controller.
 
+    // clearing push notifications
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+
     self.viewController = self.communityViewController;
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
 
+    // setting status bar style
+    [application setStatusBarStyle:UIStatusBarStyleLightContent];
+
+    // setting height of iOS 7 - (NOT WORKING PROPERLY IN EVERY CASE)
+    NSArray *versionCompatibility = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
+    NSInteger iOSVersion = [[versionCompatibility objectAtIndex:0] intValue];
+
+    if (iOSVersion == 7) {
+        CGFloat windowWidth, windowHeight;
+        windowWidth = self.window.frame.size.width;
+        windowHeight = self.window.frame.size.height;
+        window.frame = CGRectMake(0, 20, windowWidth, windowHeight - 20);
+    }
+
     return YES;
+}
+
+- (void)applicationWillEnterForeground:(UIApplication *)application {
+    // clearing push notifications
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
 }
 
 // this happens while we are running ( in the background, or from within our own app )

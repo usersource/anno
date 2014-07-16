@@ -325,8 +325,9 @@ define([
 
                 return anonymized;
             },
-            parse: function(shapesJson, cbxStrokeStyle)
+            parse: function(shapesJson, cbxStrokeStyle, selectable)
             {
+                selectable = selectable == null?false:selectable;
                 this.clear();
 
                 var item;
@@ -336,19 +337,19 @@ define([
 
                     if (item.type == this.shapeTypes.ArrowLine)
                     {
-                        this.createArrowLine({shapeJson:item, selectable:false});
+                        this.createArrowLine({shapeJson:item, selectable:selectable});
                     }
                     else if (item.type == this.shapeTypes.Rectangle)
                     {
-                        this.createRectangle({shapeJson:item, selectable:false});
+                        this.createRectangle({shapeJson:item, selectable:selectable});
                     }
-                    /*else if (item.type == this.shapeTypes.AnonymizedRectangle)
+                    else if (item.type == this.shapeTypes.AnonymizedRectangle)
                     {
-                        this.createAnonymizedRectangle({shapeJson:item, selectable:false});
-                    }*/
+                        this._generateShapeId(item.type);
+                    }
                     else if (item.type == this.shapeTypes.CommentBox)
                     {
-                        this.createCommentBox({shapeJson:item, selectable:false, lineStrokeStyle:cbxStrokeStyle});
+                        this.createCommentBox({shapeJson:item, selectable:selectable, lineStrokeStyle:cbxStrokeStyle});
                     }
 
                 }

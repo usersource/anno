@@ -6,48 +6,37 @@
         "apiRoot":"https://usersource-anno.appspot.com/_ah/api",
         "clientId" : "955803277195.apps.googleusercontent.com",
         "clientSecret": "l5UwDYJuv2BdUUBF2tu9fsol",
-        "proxyKey":"3"
+        "proxyKey":"3",
+        "gcm_sender_id":"955803277195"
     },
-    "3": {
-        "serverId":"DevViaEC2",
-        "serverName":"Dev via EC2 proxy",
-        "imageServiceURL":"http://178.18.16.111:82/screenshot",
-        "apiRoot":"http://178.18.16.111:82/_ah/api",
-        "clientId" : "955803277195.apps.googleusercontent.com",
-        "clientSecret": "l5UwDYJuv2BdUUBF2tu9fsol"
-    },
-    "5": {
+    "2": {
         "serverId":"Production",
         "serverName":"Production",
         "imageServiceURL":"http://annoserver.appspot.com/screenshot",
         "apiRoot":"https://annoserver.appspot.com/_ah/api",
         "clientId" : "22913132792.apps.googleusercontent.com",
         "clientSecret": "LBlzLWXDgGXyvjlT-5gUjZGA",
-        "proxyKey":"6"
+        "proxyKey":"6",
+        "gcm_sender_id":"22913132792"
     },
-    "2": {
+    "3": {
         "serverId":"Test",
         "serverName":"Test",
         "imageServiceURL":"http://annoserver-test.appspot.com/screenshot",
         "apiRoot":"https://annoserver-test.appspot.com/_ah/api",
         "clientId" : "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com",
         "clientSecret": "n0fJeoZ-4UFWZaIG41mNg41_",
-        "proxyKey":"4"
-    },
-    "6": {
-        "serverId":"ProductionViaEC2",
-        "serverName":"Production via EC2 proxy",
-        "imageServiceURL":"http://178.18.16.111:80/screenshot",
-        "apiRoot":"http://178.18.16.111:80/_ah/api",
-        "clientId" : "22913132792.apps.googleusercontent.com",
-        "clientSecret": "LBlzLWXDgGXyvjlT-5gUjZGA"
+        "proxyKey":"4",
+        "gcm_sender_id":"394023691674"
     },
     "4": {
-        "serverId":"TestViaEC2",
-        "serverName":"Test via EC2 proxy",
-        "imageServiceURL":"http://178.18.16.111:81/screenshot",
-        "apiRoot":"http://178.18.16.111:81/_ah/api",
-        "clientId" : "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com",
-        "clientSecret": "n0fJeoZ-4UFWZaIG41mNg41_"
+        "serverId":"Localhost",
+        "serverName":"Localhost",
+        "imageServiceURL":"http://192.168.11.5:8081/screenshot",
+        "apiRoot":"http://192.168.11.5:8081/_ah/api",
+        "clientId" : "955803277195.apps.googleusercontent.com",
+        "clientSecret": "l5UwDYJuv2BdUUBF2tu9fsol",
+        "proxyKey":"6",
+        "gcm_sender_id":"955803277195"
     }
 }

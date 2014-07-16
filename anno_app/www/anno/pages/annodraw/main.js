@@ -3,6 +3,7 @@ require([
     "dojo/_base/connect",
     "dojo/dom",
     "dojo/dom-class",
+    "dojo/dom-geometry",
     "dojo/dom-style",
     "dojo/json",
     "dojo/query",
@@ -15,7 +16,7 @@ require([
     "anno/common/OAuthUtil",
     "anno/anno/AnnoDataHandler",
     "dojo/domReady!"
-], function (Surface, connect, dom, domClass, domStyle, dojoJson, query, ready, touch, win, registry, DBUtil, annoUtil, OAuthUtil, AnnoDataHandler)
+], function (Surface, connect, dom, domClass, domGeom, domStyle, dojoJson, query, ready, touch, win, registry, DBUtil, annoUtil, OAuthUtil, AnnoDataHandler)
 {
     var viewPoint,
         defaultShapeWidth = 160,
@@ -23,7 +24,7 @@ require([
         shareDialogGap = 80,
         borderWidth;
 
-    var sdTitleHeight = 60,
+    var sdTitleHeight = 60, sdTabBarHeight = 30,
         sdBottom = 50, barHeight = 50, totalSpace = 0;
 
     var lastShapePos;
@@ -32,11 +33,16 @@ require([
     var surface, drawMode = false;
     var defaultCommentBox;
 
-    var selectedAppName, screenShotPath;
+    var selectedAppName, screenShotPath, selectedAppVersionName;
     var level1Color = annoUtil.level1Color,
         level2Color = annoUtil.level2Color;
     var level = 1;
     var isAnno = false, appNameListFetched = false;
+    var editMode = false, editAppName = "", editAppVersionName = "",
+        editAnnoId = "",
+        originalGrayBoxes,
+        originalGrayBoxCnt = 0,
+        editDrawElementsJson = "";
 
     connect.connect(dom.byId("barArrow"), touch.release, function()
     {
@@ -73,20 +79,34 @@ require([
     {
         if (domClass.contains(dom.byId("barShare"), 'barIconInactive')) return;
 
-        if (level == 2 || !isAnno)
+        if (editMode)
         {
-            if (drawMode)
+            if (level == 2 || !isAnno)
             {
-                saveDrawCommentAnno();
+                updateDrawCommentAnno();
             }
             else
             {
-                saveSimpleCommentAnno();
+                openShareDialog();
             }
         }
         else
         {
-            openShareDialog();
+            if (level == 2 || !isAnno)
+            {
+                if (drawMode)
+                {
+                    insertDrawCommentAnno();
+                }
+                else
+                {
+                    insertSimpleCommentAnno();
+                }
+            }
+            else
+            {
+                openShareDialog();
+            }
         }
     });
 
@@ -97,6 +117,174 @@ require([
             dom.byId("hiddenBtn").focus();
             dom.byId("hiddenBtn").click();
         }
+    });
+
+    connect.connect(dom.byId("barBlackRectangle"), touch.release, function()
+    {
+        if (domClass.contains(dom.byId("barBlackRectangle"), 'barIconInactive')) return;
+
+        createBlackRectangle();
+    });
+
+    // handle app name list click event
+    connect.connect(dom.byId("sdAppList"), 'click', function(e)
+    {
+        var itemNode = e.target;
+
+        if (domClass.contains(itemNode, 'appNameValue'))
+        {
+            itemNode = itemNode.parentNode;
+        }
+
+        if (!domClass.contains(itemNode, 'appNameItem'))
+        {
+            return;
+        }
+
+        var allItems = query('.appNameItem', dom.byId("sdAppList"));
+
+        for (var i=0;i<allItems.length;i++)
+        {
+            domClass.remove(allItems[i], 'appNameItem-active');
+
+            if (allItems[i].children[0].tagName == "INPUT")
+            {
+                domStyle.set(allItems[i].children[0], "color", "white");
+            }
+        }
+
+        domClass.add(itemNode, 'appNameItem-active');
+
+        if (itemNode.children[0].tagName == "INPUT")
+        {
+            domStyle.set(itemNode.children[0], "color", "#ff9900");
+            selectedAppName = itemNode.children[0].innerHTML;
+            selectedAppVersionName = "";
+        }
+        else
+        {
+            selectedAppName = itemNode.children[0].innerHTML;
+            selectedAppVersionName = itemNode.children[0].getAttribute('data-app-version');
+        }
+    });
+
+    // share button
+    connect.connect(dom.byId("btnShare"), 'click', function(e)
+    {
+        registry.byId('shareDialog').hide();
+        // enable JS gesture listener, disable native gesture
+        annoUtil.enableJSGesture();
+        annoUtil.disableNativeGesture();
+
+        if (editMode)
+        {
+            updateDrawCommentAnno();
+        }
+        else
+        {
+            if (drawMode)
+            {
+                insertDrawCommentAnno();
+            }
+            else
+            {
+                insertSimpleCommentAnno();
+            }
+        }
+
+    });
+
+    // home/feeds/cancel button
+    connect.connect(dom.byId("menuItemFeed"), 'click', function(e)
+    {
+        var action = "goto_anno_home";
+
+        window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "cancel");
+
+        cordova.exec(
+            function (result)
+            {
+
+            },
+            function (err)
+            {
+                // alert(err.message);
+                annoUtil.showMessageDialog(err.message);
+            },
+            "AnnoCordovaPlugin",
+            action,
+            []
+        );
+    });
+
+    connect.connect(dom.byId("menuItemCancel"), 'click', function(e)
+    {
+        var action = "exit_current_activity";
+        window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "cancel");
+
+        cordova.exec(
+            function (result)
+            {
+
+            },
+            function (err)
+            {
+                // alert(err.message);
+                annoUtil.showMessageDialog(err.message);
+            },
+            "AnnoCordovaPlugin",
+            action,
+            []
+        );
+    });
+
+    // app tabs
+    connect.connect(dom.byId("barRecentApps"), 'click', function(e)
+    {
+        if (domClass.contains(dom.byId('barRecentApps').parentNode, 'active'))
+        {
+            return;
+        }
+
+        domClass.add(dom.byId('barRecentApps').parentNode, 'active');
+        domClass.remove(dom.byId('barAllApps').parentNode);
+        domClass.remove(dom.byId('barElseApps').parentNode);
+
+        domStyle.set('sdAllAppsListContent', 'display', 'none');
+        domStyle.set('sdElseAppListContent', 'display', 'none');
+        domStyle.set('sdRecentAppsListContent', 'display', '');
+    });
+
+    connect.connect(dom.byId("barAllApps"), 'click', function(e)
+    {
+        if (domClass.contains(dom.byId('barAllApps').parentNode, 'active'))
+        {
+            return;
+        }
+
+        domClass.add(dom.byId('barAllApps').parentNode, 'active');
+        domClass.remove(dom.byId('barRecentApps').parentNode);
+        domClass.remove(dom.byId('barElseApps').parentNode);
+
+        domStyle.set('sdRecentAppsListContent', 'display', 'none');
+        domStyle.set('sdElseAppListContent', 'display', 'none');
+        domStyle.set('sdAllAppsListContent', 'display', '');
+    });
+
+    connect.connect(dom.byId("barElseApps"), 'click', function(e)
+    {
+        if (domClass.contains(dom.byId('barElseApps').parentNode, 'active'))
+        {
+            return;
+        }
+
+        domClass.add(dom.byId('barElseApps').parentNode, 'active');
+        domClass.remove(dom.byId('barRecentApps').parentNode);
+        domClass.remove(dom.byId('barAllApps').parentNode);
+
+        domStyle.set('sdRecentAppsListContent', 'display', 'none');
+        domStyle.set('sdAllAppsListContent', 'display', 'none');
+        domStyle.set('sdElseAppListContent', 'display', '');
     });
 
     var openShareDialog = function()
@@ -114,45 +302,68 @@ require([
                 {
                     if (result&&result.length>0)
                     {
-                        fillAppNameList(result);
+                        fillAppNameList(result, true);
                     }
 
                     appNameListFetched = true;
                 },
                 function (err)
                 {
-                    alert(err.message);
+                    // alert(err.message);
+                    annoUtil.showMessageDialog(err.message);
                 },
                 "AnnoCordovaPlugin",
                 'get_recent_applist',
                 [10]
             );
+
+            cordova.exec(
+                function (result)
+                {
+                    if (result&&result.length>0)
+                    {
+                        appNameList = result;
+                        fillAppNameList(result, false);
+                        appNameListFetched = true;
+                    }
+                },
+                function (err)
+                {
+                    // alert(err.message);
+                    annoUtil.showMessageDialog(err.message);
+                },
+                "AnnoCordovaPlugin",
+                'get_installed_app_list',
+                []
+            );
+        }
+
+        var tabBox = domGeom.getMarginBox('tabContainer');
+        domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-tabBox.h-sdBottom-shareDialogGap)+'px');
+
+        if (annoUtil.isIOS())
+        {
+            // highlight 'something else' tab on iOS
+            dom.byId('barElseApps').click();
         }
     };
 
-    connect.connect(dom.byId("barBlackRectangle"), touch.release, function()
-    {
-        if (domClass.contains(dom.byId("barBlackRectangle"), 'barIconInactive')) return;
-
-        createBlackRectangle();
-    });
-
-    var fillAppNameList = function(appList)
+    var fillAppNameList = function(appList, recentApp)
     {
         var content = "";
-        for (var i= 0,c=appList.length;i<c;i++)
+        for (var i = 0, c = appList.length; i < c; i++)
         {
-            if (i == 0)
-            {
-                content = content + '<div class="appNameItem firstAppNameItem"><div class="appNameValue">'+appList[i]+'</div></div>'
-            }
-            else
-            {
-                content = content + '<div class="appNameItem"><div class="appNameValue">'+appList[i]+'</div></div>'
-            }
+            content = content + '<div class="appNameItem"><div class="appNameValue" data-app-version="'+appList[i].versionName+'">' + appList[i].name + '</div></div>'
         }
 
-        dom.byId('sdAppListContent').innerHTML = content;
+        if (recentApp)
+        {
+            dom.byId('sdRecentAppsListContent').innerHTML = content;
+        }
+        else
+        {
+            dom.byId('sdAllAppsListContent').innerHTML = content;
+        }
     };
 
     var updateLastShapePos = function(shapeType)
@@ -197,94 +408,18 @@ require([
             lastBlackRectanglePos.y2 = 100;
         }
 
+        if ((lastBlackRectanglePos.x1+defaultShapeWidth) >= (viewPoint.w))
+        {
+            lastBlackRectanglePos.x1 = lastBlackRectanglePos.x1 - 30 - ((lastBlackRectanglePos.x1+defaultShapeWidth) - viewPoint.w);
+        }
+
+        if ((lastBlackRectanglePos.x1) <0 )
+        {
+            lastBlackRectanglePos.x1 = 30;
+        }
+
         toLeft = !toLeft;
     };
-
-    // handle app name list click event
-    connect.connect(dom.byId("sdAppList"), 'click', function(e)
-    {
-        var itemNode = e.target;
-
-        if (domClass.contains(itemNode, 'appNameValue'))
-        {
-            itemNode = itemNode.parentNode;
-        }
-
-        if (!domClass.contains(itemNode, 'appNameItem'))
-        {
-            return;
-        }
-
-        var allItems = query('.appNameItem', dom.byId("sdAppList"));
-
-        for (var i=0;i<allItems.length;i++)
-        {
-            domClass.add(allItems[i], 'appNameItem-gray');
-
-            if (allItems[i].children[0].tagName == "INPUT")
-            {
-                domStyle.set(allItems[i].children[0], "color", "gray");
-            }
-        }
-
-        domClass.remove(itemNode, 'appNameItem-gray');
-
-        if (itemNode.children[0].tagName == "INPUT")
-        {
-            domStyle.set(itemNode.children[0], "color", "white");
-            selectedAppName = itemNode.children[0].innerHTML;
-        }
-        else
-        {
-            selectedAppName = itemNode.children[0].innerHTML;
-        }
-    });
-
-    // share button
-    connect.connect(dom.byId("btnShare"), 'click', function(e)
-    {
-        registry.byId('shareDialog').hide();
-        // enable JS gesture listener, disable native gesture
-        annoUtil.enableJSGesture();
-        annoUtil.disableNativeGesture();
-
-        if (drawMode)
-        {
-            saveDrawCommentAnno();
-        }
-        else
-        {
-            saveSimpleCommentAnno();
-        }
-    });
-
-    // home/feeds/cancel button
-    connect.connect(dom.byId("menuItemFeed"), 'click', function(e)
-    {
-        var action;
-        if (level == 1)
-        {
-            action = "goto_anno_home";
-        }
-        else
-        {
-            action = "exit_current_activity";
-        }
-
-        cordova.exec(
-            function (result)
-            {
-
-            },
-            function (err)
-            {
-                alert(err.message);
-            },
-            "AnnoCordovaPlugin",
-            action,
-            []
-        );
-    });
 
     var createBlackRectangle = function()
     {
@@ -301,21 +436,60 @@ require([
     var switchMode = function(mode)
     {
         drawMode = true;
+        var lineStrokeStyle = {color: level==1?level1Color:level2Color, width: 3},
+            drawElements, drawItem;
+        var commentBox;
 
-        // create default comment box
-        var lineStrokeStyle = {color: level==1?level1Color:level2Color, width: 3};
-        var commentBox = surface.createCommentBox({deletable:false, startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight,lineStrokeStyle:lineStrokeStyle});
-        updateLastShapePos('Rectangle');
+        if (editMode)
+        {
+            originalGrayBoxes = {};
+            originalGrayBoxCnt = 0;
+            drawElements = dojoJson.parse(editDrawElementsJson);
 
-        surface.switchMode(true);
+            surface.switchMode(true);
+            surface.parse(drawElements, lineStrokeStyle, true);
 
-        window.setTimeout(function(){
-            commentBox.animateEarControl();
-        }, 500);
+            for (var p in drawElements)
+            {
+                drawItem = drawElements[p];
 
-        commentBox.onCommentBoxInput = checkBarShareState;
-        commentBox.onCommentBoxFocus = hideBottomNavBar;
-        commentBox.onCommentBoxBlur = showBottomNavBar;
+                if (drawItem.type == surface.shapeTypes.AnonymizedRectangle)
+                {
+                    originalGrayBoxes[p] = drawItem;
+                    originalGrayBoxCnt++;
+                }
+            }
+
+            for (var p in surface.registry)
+            {
+                commentBox = surface.registry[p];
+
+                if (commentBox.shapeType == surface.shapeTypes.CommentBox)
+                {
+                    commentBox.onCommentBoxInput = checkBarShareState;
+                    commentBox.onCommentBoxFocus = hideBottomNavBar;
+                    commentBox.onCommentBoxBlur = showBottomNavBar;
+                }
+            }
+
+            checkBarShareState();
+        }
+        else
+        {
+            // create default comment box
+            commentBox = surface.createCommentBox({deletable:false, startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight,lineStrokeStyle:lineStrokeStyle});
+            updateLastShapePos('Rectangle');
+
+            surface.switchMode(true);
+
+            window.setTimeout(function(){
+                commentBox.animateEarControl();
+            }, 500);
+
+            commentBox.onCommentBoxInput = checkBarShareState;
+            commentBox.onCommentBoxFocus = hideBottomNavBar;
+            commentBox.onCommentBoxBlur = showBottomNavBar;
+        }
     };
 
     var showBottomNavBar = function()
@@ -341,7 +515,18 @@ require([
         {
             ctx.drawImage(hiddenImage, 0, 0, viewPoint.w-totalSpace*2, viewPoint.h-borderWidth*2-barHeight);
         };
-        hiddenImage.src = screenShotPath;
+
+        if (editMode)
+        {
+            hiddenImage.src = window.localStorage.getItem(annoUtil.localStorageKeys.currentImageData);
+            window.setTimeout(function(){
+                window.localStorage.removeItem(annoUtil.localStorageKeys.currentImageData);
+            }, 5000);
+        }
+        else
+        {
+            hiddenImage.src = screenShotPath;
+        }
     };
 
     var initBackgroundImage = function()
@@ -353,12 +538,28 @@ require([
                 {
                     if (result)
                     {
-                        var datas = result.split("|");
-                        console.error("sc Path: "+result);
-                        screenShotPath = datas[0];
-                        level = datas[1];
-                        isAnno = datas[2] == "true";
-                        dom.byId('imageScreenshot').src = screenShotPath;
+                        screenShotPath = result.screenshotPath;
+                        level = result.level;
+                        isAnno = result.isAnno;
+                        editMode = result.editMode;
+
+                        if (editMode)
+                        {
+                            dom.byId('imageScreenshot').src = window.localStorage.getItem(annoUtil.localStorageKeys.currentImageData);
+                            var currentAnnoData = dojoJson.parse(window.localStorage.getItem(annoUtil.localStorageKeys.currentAnnoData));
+
+                            level = currentAnnoData.level;
+                            editAnnoId = currentAnnoData.id;
+                            editAppName = currentAnnoData.app;
+                            editAppVersionName = currentAnnoData.appVersion;
+                            editDrawElementsJson = currentAnnoData.draw_elements;
+
+                            window.localStorage.removeItem(annoUtil.localStorageKeys.currentAnnoData);
+                        }
+                        else
+                        {
+                            dom.byId('imageScreenshot').src = screenShotPath;
+                        }
 
                         if (level == 1)
                         {
@@ -369,8 +570,9 @@ require([
                             domStyle.set('screenshotContainer', 'borderColor', level2Color);
                         }
 
-
-                        window.setTimeout(function(){
+                        window.setTimeout(function()
+                        {
+                            switchMode(true);
                             adjustShareDialogSize();
                             drawImageHiddenCanvas();
                         }, 1000);
@@ -382,7 +584,8 @@ require([
                 },
                 function (err)
                 {
-                    alert(err.message);
+                    // alert(err.message);
+                    annoUtil.showMessageDialog(err.message);
                 },
                 "AnnoCordovaPlugin",
                 'get_screenshot_path',
@@ -446,17 +649,34 @@ require([
         }
     };
 
-    var saveSimpleCommentAnno = function()
+    var insertSimpleCommentAnno = function()
     {
         var commentText = defaultCommentBox.inputElement.value;
 
         if (commentText.length <=0)
         {
-            alert("Please enter suggestion.");
+            // alert("Please enter suggestion.");
+            annoUtil.showMessageDialog("Please enter suggestion.");
             return;
         }
 
-        selectedAppName = selectedAppName||dom.byId("txtAppName").value;
+        var appName = selectedAppName, appVersion;
+        if (appName)
+        {
+            appVersion = selectedAppVersionName;
+        }
+        else
+        {
+            appName = dom.byId("txtAppName").value.trim();
+            if (appName)
+            {
+                appVersion = "";
+            }
+            else
+            {
+                appName = "";
+            }
+        }
 
         annoUtil.showLoadingIndicator();
 
@@ -483,10 +703,10 @@ require([
                     "simple_x":earPoint.x,
                     "simple_y":earPoint.y,
                     "simple_circle_on_top":!defaultCommentBox.earLow,
-                    "app_version":appInfo.appVersion,
+                    "app_version":appVersion||appInfo.appVersion,
                     "simple_is_moved":defaultCommentBox.isMoved,
                     "level":appInfo.level,
-                    "app_name":selectedAppName||appInfo.appName,
+                    "app_name":appName||appInfo.appName,
                     "device_model":deviceInfo.model,
                     "os_name":deviceInfo.osName,
                     "os_version":deviceInfo.osVersion,
@@ -494,11 +714,12 @@ require([
                     "screenshot_is_anonymized":isScreenshotAnonymized
                 };
 
-                AnnoDataHandler.saveAnno(annoItem, appInfo.source, screenshotDirPath);
+                AnnoDataHandler.insertAnno(annoItem, appInfo.source, screenshotDirPath);
             },
             function (err)
             {
-                alert(err.message);
+                // alert(err.message);
+                annoUtil.showMessageDialog(err.message);
             },
             "AnnoCordovaPlugin",
             'process_image_and_appinfo',
@@ -506,7 +727,7 @@ require([
         );
     };
 
-    var saveDrawCommentAnno = function()
+    var insertDrawCommentAnno = function()
     {
         if (!surface.allCommentFilled())
         {
@@ -514,7 +735,23 @@ require([
             return;
         }
 
-        selectedAppName = selectedAppName||dom.byId("txtAppName").value;
+        var appName = selectedAppName, appVersion;
+        if (appName)
+        {
+            appVersion = selectedAppVersionName;
+        }
+        else
+        {
+            appName = dom.byId("txtAppName").value.trim();
+            if (appName)
+            {
+                appVersion = "none";
+            }
+            else
+            {
+                appName = "";
+            }
+        }
 
         annoUtil.showLoadingIndicator();
 
@@ -541,10 +778,10 @@ require([
                     "simple_x":0,
                     "simple_y":0,
                     "simple_circle_on_top":false,
-                    "app_version":appInfo.appVersion,
+                    "app_version":appVersion=="none"?"":appVersion||appInfo.appVersion,
                     "simple_is_moved":false,
                     "level":appInfo.level,
-                    "app_name":selectedAppName||appInfo.appName,
+                    "app_name":appName||appInfo.appName,
                     "device_model":deviceInfo.model,
                     "os_name":deviceInfo.osName,
                     "os_version":deviceInfo.osVersion,
@@ -553,16 +790,130 @@ require([
                     "anno_type":"draw comment"
                 };
 
-                AnnoDataHandler.saveAnno(annoItem, appInfo.source, screenshotDirPath);
+                AnnoDataHandler.insertAnno(annoItem, appInfo.source, screenshotDirPath);
             },
             function (err)
             {
-                alert(err.message);
+                // alert(err.message);
+                annoUtil.showMessageDialog(err.message);
             },
             "AnnoCordovaPlugin",
             'process_image_and_appinfo',
             pluginParam
         );
+    };
+
+    var updateDrawCommentAnno = function()
+    {
+        if (!surface.allCommentFilled())
+        {
+            annoUtil.showMessageDialog("Please enter suggestion.");
+            return;
+        }
+
+        annoUtil.showLoadingIndicator();
+
+        var pluginParam = [], isScreenshotAnonymized = surface.isScreenshotAnonymized(),
+            shapesJson = surface.toJSON();
+        var appName = selectedAppName||dom.byId("txtAppName").value.trim()||editAppName;
+
+        var appName = selectedAppName, appVersion;
+        if (appName)
+        {
+            appVersion = selectedAppVersionName;
+        }
+        else
+        {
+            appName = dom.byId("txtAppName").value.trim();
+            if (appName)
+            {
+                appVersion = "";
+            }
+            else
+            {
+                appName = editAppName;
+                appVersion = editAppVersionName;
+            }
+        }
+
+        var annoItem, callbackAnnoItem;
+
+        for (var p in originalGrayBoxes)
+        {
+            shapesJson[p] = originalGrayBoxes[p];
+        }
+
+        if (isScreenshotAnonymized)
+        {
+            pluginParam[0] = outputImage();
+        }
+
+        if (isScreenshotAnonymized)
+        {
+            cordova.exec(
+                function (result)
+                {
+                    var imageKey = result.imageAttrs.imageKey;
+                    var screenshotDirPath = result.imageAttrs.screenshotPath;
+
+                    annoItem = {
+                        "anno_text":surface.getConcatenatedComment(),
+                        "app_name":appName,
+                        "app_version":appVersion,
+                        "image":imageKey,
+                        "draw_elements":dojoJson.stringify(shapesJson),
+                        "screenshot_is_anonymized":isScreenshotAnonymized,
+                        "anno_type":"draw comment",
+                        "level":level
+                    };
+
+                    callbackAnnoItem = {
+                        "comment":annoItem["anno_text"],
+                        "appName":annoItem["app_name"],
+                        "appVersion":annoItem["app_version"],
+                        "draw_elements":annoItem["draw_elements"],
+                        "image":screenshotDirPath+"/"+annoItem["image"]
+                    };
+                    AnnoDataHandler.updateAnno(editAnnoId, annoItem, screenshotDirPath, function(){
+                        window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "done");
+                        window.localStorage.setItem(annoUtil.localStorageKeys.updatedAnnoData, dojoJson.stringify(callbackAnnoItem));
+                    });
+                },
+                function (err)
+                {
+                    // alert(err.message);
+                    annoUtil.showMessageDialog(err.message);
+                },
+                "AnnoCordovaPlugin",
+                'process_image_and_appinfo',
+                pluginParam
+            );
+        }
+        else
+        {
+            isScreenshotAnonymized =isScreenshotAnonymized||originalGrayBoxCnt>0;
+            annoItem = {
+                "anno_text":surface.getConcatenatedComment(),
+                "app_name":appName,
+                "app_version":appVersion,
+                "draw_elements":dojoJson.stringify(shapesJson),
+                "screenshot_is_anonymized":isScreenshotAnonymized,
+                "anno_type":"draw comment",
+                "level":level
+            };
+
+            callbackAnnoItem = {
+                "comment":annoItem["anno_text"],
+                "appName":annoItem["app_name"],
+                "appVersion":annoItem["app_version"],
+                "draw_elements":annoItem["draw_elements"]
+            };
+
+            AnnoDataHandler.updateAnno(editAnnoId, annoItem, "", function(){
+                window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "done");
+                window.localStorage.setItem(annoUtil.localStorageKeys.updatedAnnoData, dojoJson.stringify(callbackAnnoItem));
+            });
+        }
     };
 
     var outputImage = function()
@@ -648,7 +999,7 @@ require([
         if (DBUtil.userChecked)
         {
             var authResult = OAuthUtil.isAuthorized();
-            if (annoUtil.hasConnection()&&!authResult.authorized)
+            if (annoUtil.hasConnection()&&!annoUtil.isRunningAsPlugin()&&!authResult.authorized)
             {
                 OAuthUtil.openAuthPage("annodraw");
                 return;
@@ -713,9 +1064,13 @@ require([
                                 x2:Math.round((viewPoint.w-defaultShapeWidth)/2)+defaultShapeWidth,
                                 y2:100
                             };
-                        }
 
-                        checkBarShareState();
+                            domClass.add("barShare", 'barIconInactive');
+                        }
+                        else
+                        {
+                            checkBarShareState();
+                        }
                     });
 
                     // set screenshot container size
@@ -727,7 +1082,7 @@ require([
                     });
 
                     domStyle.set('sdTitle', 'height', sdTitleHeight+'px');
-                    domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-sdBottom-shareDialogGap)+'px');
+                    domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-sdTabBarHeight-sdBottom-shareDialogGap)+'px');
                     domStyle.set('sdBottom', 'height', sdBottom+'px');
 
                     // reposition the menus dialog
@@ -735,6 +1090,13 @@ require([
                     menusDialog.top = (viewPoint.h-barHeight-44)+'px';
                     menusDialog.left = (viewPoint.w-204)+'px';
                     domStyle.set(menusDialog.domNode, "backgroundColor", "white");
+
+                    if (annoUtil.isRunningAsPlugin())
+                    {
+                        domStyle.set('menuItemFeed', 'display', '');
+                        domStyle.set(menusDialog.domNode, 'height', '80px');
+                        menusDialog.top = (viewPoint.h-barHeight-84)+'px';
+                    }
 
                     connect.connect(dom.byId("barMoreMenu"), 'click', function(e)
                     {
@@ -748,14 +1110,17 @@ require([
                             showMenuDialog();
                         }
                     });
-
-                    switchMode(true);
                 }, 500);
             }
 
             // enable JS gesture listener, disable native gesture
             annoUtil.enableJSGesture();
             annoUtil.disableNativeGesture();
+
+            // set the pick list dialog title
+            dom.byId('sdTitle').children[0].innerHTML = annoUtil.getResourceString("title_app_pick_list");
+            dom.byId('appOsName').innerHTML = annoUtil.isIOS()?"iOS":"Android";
+            dom.byId('appOsName').setAttribute("data-app-version", device.version);
         }
         else
         {
@@ -780,6 +1145,8 @@ require([
         }
         else
         {
+            window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "cancel");
+
             navigator.app.exitApp();
         }
     }, false);
@@ -788,10 +1155,8 @@ require([
         DBUtil.initDB(function(){
             console.error("DB is readay!");
             annoUtil.readSettings(function(){
-
+                init();
             });
         });
     }, false);
-
-    ready(init);
 });

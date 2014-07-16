@@ -220,6 +220,20 @@ module.exports = [
         "clobbers": [
             "CameraPopoverHandle"
         ]
+    },
+    {
+        "file": "plugins/com.kolwit.pickcontact/www/PickContact.js",
+        "id": "com.kolwit.pickcontact.PickContact",
+        "clobbers": [
+            "PickContact"
+        ]
+    },
+    {
+        "file": "plugins/com.phonegap.plugins.PushPlugin/www/PushNotification.js",
+        "id": "com.phonegap.plugins.PushPlugin.PushNotification",
+        "clobbers": [
+            "PushNotification"
+        ]
     }
 ]
 });

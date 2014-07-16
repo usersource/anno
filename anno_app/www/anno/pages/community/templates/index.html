@@ -3,7 +3,7 @@
     <div id="headingStart" data-dojo-type="dojox/mobile/Heading" style="padding-top: 0px;height: 48px">
         <table id="headingStartTable" width="100%" height="100%" style="border-spacing: 0px;padding-top: 2px">
             <tr>
-                <td id="tdHeadingLeft" width="212">
+                <td id="tdHeadingLeft" width="180">
                     <table style="border-spacing: 0px">
                         <tr>
                             <td id="tdLogo">
@@ -22,16 +22,19 @@
                             <td>
                                 <input id="txtSearchAnno" type="search" placeholder="search usersource" class="searchInput" style="display: none">
                             </td>
-                            <td id="tdBarAddImage" width="80" align="center">
+                            <td id="tdBarAddImage" width="60" align="center" style="padding-right: 6px;">
                                 <span id="barAddImage" class="barIcon icon-plus" style="font-size: 26px"></span>
                             </td>
-                            <td id="tdBarMyStuff" width="80" align="center">
+                            <td id="tdBarMyStuff" width="60" align="center">
                                 <span id="barMyStuff" class="barIcon icon-stack3"></span>
                             </td>
-                            <td id="tdbarSearchAnno" width="80" align="center">
-                                <span id="barSearchAnno" class="barIcon icon-search" style="font-size: 36px;"></span>
+                            <td id="tdBarSearchAnno" width="60" align="center">
+                                <span id="barSearchAnno" class="barIcon icon-search" style="font-size: 33px;"></span>
                             </td>
-                            <td width="48" align="center" style="padding-top: 0px;">
+                            <td id="tdBarSettings" width="60" align="center">
+                                <span id="barSettings" class="barIcon icon-cog" style="font-size: 28px;"></span>
+                            </td>
+                            <td id="tdBarMoreMenuHome" width="48" align="center" style="display:none;padding-top: 0px;">
                                 <div id="barMoreMenuHome" class="barMoreMenu"></div>
                             </td>
                         </tr>
@@ -40,7 +43,7 @@
             </tr>
         </table>
         <div id="progressBar" style="position: absolute;top: 45px;" data-dojo-type="anno/common/SmoothProgressBar" data-dojo-props="width:600"></div>
-        <div id="pullToRefreshMsg" style="position: absolute;top: 12px;display: none">Pull down to refresh</div>
+        <div id="pullToRefreshMsg" style="line-height: 48px;display: none;">Pull down to refresh</div>
     </div>
     <div id="searchAppNameContainer" style="display:none;height: 26px;padding-top: 0px;box-sizing: border-box;padding-left: 102px;padding-right:10px;background-color: black;font-size: 13pt;color: #A9A9A9;font-weight: bold;">
         <span style="float: left">App:</span>
@@ -76,8 +79,9 @@
                     <div class="infoContainer">
                         <table style="width: 100%;table-layout: fixed;">
                             <tr>
-                                <td width="36">
+                                <td width="40" align="center">
                                     <span data-dojo-props="class: at('rel:#{this.index}', 'annoIcon')" data-dojo-type="dojox/mvc/Output" class="annoListItemIcon"></span>
+                                    <img data-dojo-type="dojox/mvc/Output" style="width: 40px;height: 40px" data-dojo-props="src: at('rel:#{this.index}', 'app_icon_url'), class: at('rel:#{this.index}', 'appIconClass')" />
                                 </td>
                                 <td width="95%">
                                     <table style="width: 100%;table-layout: fixed;">
@@ -104,13 +108,6 @@
                                             </td>
                                         </tr>
                                     </table>
-                                </td>
-                                <td width="25" valign="top">
-                                    <div class="mblListItemRightIcon">
-                                        <div class="mblDomButtonArrow mblDomButton">
-                                            <div></div>
-                                        </div>
-                                    </div>
                                 </td>
                             </tr>
                         </table>
@@ -152,8 +149,8 @@
                 <label for="chkLimitToMyApps">Limit to my apps</label>
             </div>
             <div style="text-align: center;padding-top: 10px">
-                <button class="btn" id="btnAppNameDialogCancel" type="button">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <button class="btn disabledBtn" id="btnAppNameDialogDone" disabled="disabled" type="button">Done</button>
+                <button class="newbtn" id="btnAppNameDialogCancel" type="button">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="newbtn disabledBtn" id="btnAppNameDialogDone" disabled="disabled" type="button">Done</button>
             </div>
         </div>
     </div>

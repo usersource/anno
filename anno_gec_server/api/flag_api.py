@@ -13,10 +13,10 @@ from message.flag_message import FlagMessage
 from message.flag_message import FlagListMessage
 from model.flag import Flag
 from model.anno import Anno
-from api.utils import anno_js_client_id
-from api.utils import auth_user
-from api.utils import put_search_document
-
+from model.userannostate import UserAnnoState
+from helper.settings import anno_js_client_id
+from helper.utils import auth_user
+from helper.utils import put_search_document
 
 @endpoints.api(name='flag', version='1.0', description='Flag API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
@@ -48,6 +48,9 @@ class FlagApi(remote.Service):
         anno.last_activity = 'flag'
         anno.last_update_type = 'create'
         anno.put()
+
+        # update user anno state
+        UserAnnoState.insert(user=user, anno=anno)
 
         # update flag in search document
         put_search_document(anno.generate_search_document())

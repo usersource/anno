@@ -6,8 +6,11 @@
 bin
 .metadata
 gen
-anno_android/local.properties
-anno_android/version.properties
+local.properties
+version.properties
 *.pyc
 .idea
 .DS_Store
+.pydevproject
+search_indexes
+usersource.datastore

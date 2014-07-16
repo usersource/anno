@@ -48,8 +48,9 @@ define([
             "id": 0,
             "annoText": "0",
             "app": "0",
+            "appVersion":"",
             "author": "0",
-            "screenshot":"0",
+            "screenshot":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=",
             circleX: 0,
             circleY:0,
             level:1,
@@ -126,7 +127,8 @@ define([
                     hideStartRefreshMessage();
 
                     domStyle.set('noSearchResultContainer', 'display', 'none');
-                    alert("Items returned from server are empty.");
+                    // alert("Items returned from server are empty.");
+                    annoUtil.showToastDialog("Items returned from server are empty.");
                     return;
                 }
 
@@ -140,7 +142,8 @@ define([
                     hideStartRefreshMessage();
 
                     domStyle.set('noSearchResultContainer', 'display', 'none');
-                    alert("An error occurred when calling anno."+(search?"search":"list")+" api: "+data.error.message);
+                    // alert("An error occurred when calling anno."+(search?"search":"list")+" api: "+data.error.message);
+                    annoUtil.showMessageDialog("An error occurred when calling anno."+(search?"search":"list")+" api: "+data.error.message);
                     return;
                 }
 
@@ -158,12 +161,24 @@ define([
                     eventData.annoType = annoList[i].anno_type;
                     eventData.annoIcon = annoList[i].anno_type == annoUtil.annoType.SimpleComment?"icon-simplecomment":"icon-shapes";
                     eventData.app = annoList[i].app_name;
+                    eventData.appVersion = annoList[i].app_version;
                     eventData.author = annoList[i].creator?annoList[i].creator.display_name||annoList[i].creator.user_email||annoList[i].creator.user_id:"";
                     eventData.id = annoList[i].id;
                     eventData.circleX = parseInt(annoList[i].simple_x, 10);
                     eventData.circleY = parseInt(annoList[i].simple_y, 10);
                     eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
                     eventData.created = annoUtil.getTimeAgoString(annoList[i].created);
+                    eventData.app_icon_url = annoList[i].app_icon_url||"";
+
+                    if (eventData.app_icon_url)
+                    {
+                        eventData.annoIcon = "hidden";
+                        eventData.appIconClass = "";
+                    }
+                    else
+                    {
+                        eventData.appIconClass = "hidden";
+                    }
 
                     spliceArgs.push(new getStateful(eventData));
                 }
@@ -266,7 +281,7 @@ define([
             domStyle.set('sdBottom', 'height', sdBottom+'px');
 
             registry.byId('progressBar').set('width', viewPoint.w);
-            domStyle.set('pullToRefreshMsg', 'left', (viewPoint.w-180)/2+'px');
+//            domStyle.set('pullToRefreshMsg', 'left', (viewPoint.w-180)/2+'px');
         };
 
         var goBackActivity = function()
@@ -278,7 +293,8 @@ define([
                 },
                 function (err)
                 {
-                    alert(err);
+                    // alert(err);
+                    annoUtil.showMessageDialog(err);
                 },
                 "AnnoCordovaPlugin",
                 'exit_current_activity',
@@ -322,10 +338,12 @@ define([
             domStyle.set('navLogoTextHome', 'display', '');
             domStyle.set('tdBarMyStuff', 'display', '');
             domStyle.set('tdBarAddImage', 'display', '');
-            domStyle.set('tdbarSearchAnno', 'display', '');
+            domStyle.set('tdBarSearchAnno', 'display', '');
+            domStyle.set('tdBarSettings', 'display', '');
+            domStyle.set('tdBarMoreMenuHome', 'display', 'none');
             domStyle.set('txtSearchAnno', 'display', 'none');
             dom.byId("txtSearchAnno").value = "";
-            domStyle.set('tdHeadingLeft', 'width', '212px');
+            domStyle.set('tdHeadingLeft', 'width', '180px');
             domStyle.set('annoLogoHome', 'paddingLeft', '10px');
             domStyle.set('searchSortsBarHome', 'display', 'none');
 
@@ -398,7 +416,8 @@ define([
                     },
                     function (err)
                     {
-                        alert(err.message);
+                        // alert(err.message);
+                        annoUtil.showMessageDialog(err.message);
                     },
                     "AnnoCordovaPlugin",
                     'get_installed_app_list',
@@ -520,6 +539,211 @@ define([
             window.setTimeout(hideStartRefreshMessage, 1000);
         };
 
+        var acceptInvitation = function(inviteData)
+        {
+            annoUtil.loadAPI(annoUtil.API.user, function(){
+                var deleteUser = gapi.client.user.invite.accept({invite_hash:inviteData.invite_hash, user_email:annoUtil.getCurrentUserInfo().email});
+                deleteUser.execute(function (data)
+                {
+                    if (!data)
+                    {
+                        annoUtil.showToastDialog("Response returned from server are empty.");
+                        return;
+                    }
+
+                    if (data.error)
+                    {
+                        annoUtil.showMessageDialog("An error occurred when calling user.invite.accept api: "+data.error.message);
+                        return;
+                    }
+
+                    console.log(data);
+                });
+            });
+        };
+
+        // push notifications related
+        var initPushService = function()
+        {
+            var pushNotification = window.pushNotification = window.plugins.pushNotification;
+
+            if (annoUtil.isIOS())
+            {
+                pushNotification.register(
+                    function(result)
+                    {
+                        // token handler
+                        console.log("Got iOS device token: " + result);
+                        setDeviceId(result);
+                    },
+                    function (error)
+                    {
+                        annoUtil.showMessageDialog("An error occurred when calling pushNotification.register: "+error);
+                    },
+                    {
+                        "badge":"true",
+                        "sound":"true",
+                        "alert":"true",
+                        "ecb":"onNotificationAPN"
+                    });
+            }
+            else
+            {
+                pushNotification.register(
+                    function (result)
+                    {
+                        console.log('pushNotification.register Callback Success! Result = ' + result);
+                    },
+                    function (error)
+                    {
+                        annoUtil.showMessageDialog("An error occurred when calling pushNotification.register: "+error);
+                    },
+                    {
+                        "senderID": annoUtil.API.config[annoUtil.getSettings().ServerURL].gcm_sender_id,
+                        "ecb": "onNotification"
+                    });
+            }
+        };
+
+        // push notification callback for android
+        var onNotification = window.onNotification = function(e) {
+            console.log(e);
+            console.log("onNotification: "+JSON.stringify(e));
+            switch( e.event )
+            {
+                case 'registered':
+                    if ( e.regid.length > 0 )
+                    {
+                        // Your GCM push server needs to know the regID before it can push to this device
+                        // here is where you might want to send it the regID for later use.
+                        console.log("GCM regID = " + e.regid);
+                        setDeviceId(e.regid);
+                    }
+                    break;
+
+                case 'message':
+                    // if this flag is set, this notification happened while we were in the foreground.
+                    // you might want to play a sound to get the user's attention, throw up a dialog, etc.
+                    if ( e.foreground )
+                    {
+                        // on Android soundname is outside the payload.
+                        // On Amazon FireOS all custom attributes are contained within payload
+                        // if app is in foreground, show a message box with the notification message and OK Cancel buttons
+                        // message format: Notification: notificaton message, would you like to check it now?
+                        // if user tapped OK button then goes to activity page.
+                        annoUtil.showConfirmMessageDialog("Notification: <br/>"+ e.payload.message +"<br/><br/>would you like to check it now?", function(ret){
+                            if (ret)
+                            {
+                                goActivitiesScreen();
+                            }
+                        });
+                    }
+                    else
+                    {
+                        // otherwise we were launched because the user touched a notification in the notification tray.
+                        goActivitiesScreen();
+                    }
+
+                    break;
+
+                case 'error':
+                    console.log("Notification error: " + e.msg);
+                    break;
+
+                default:
+                    break;
+            }
+        };
+
+        // push notification callback for iOS
+        var onNotificationAPN = window.onNotificationAPN = function(e) {
+            console.log(e);
+            console.log("onNotification: " + JSON.stringify(e));
+
+            if (Number(e.foreground)) {
+                var message  = generateIOSMessage(e);
+                annoUtil.showConfirmMessageDialog("Notification: <br/>"+ message +"<br/><br/>would you like to check it now?",
+                                                  function(ret) {
+                                                    if (ret) {
+                                                        goActivitiesScreen();
+                                                    }
+                                                  });
+            } else {
+                goActivitiesScreen();
+            }
+        };
+
+        var generateIOSMessage = function(msg) {
+            var messageTemplate = {
+                "ANNO_COMMENTED" : "{1} commented on an anno for {2}: '{3}'",
+                "ANNO_CREATED" : "{1} created an anno for {2}: '{3}'",
+                "ANNO_EDITED" : "{1} edited the anno for {2}: '{3}'",
+                "ANNO_DELETED" : "{1} deleted the anno for {2}: '{3}'"
+            };
+
+            var message = messageTemplate[msg.aps.alert["loc-key"]];
+            message = message.replace("{1}", msg.aps.alert["loc-args"][0]);
+            message = message.replace("{2}", msg.aps.alert["loc-args"][1]);
+            message = message.replace("{3}", msg.aps.alert["loc-args"][2]);
+
+            return message;
+        };
+
+        /**
+         * check if local saved device id is same to given device id,
+         * if not, call user.user.deviceid.update API to update it.
+         * @param deviceId
+         */
+        var setDeviceId = function(deviceId)
+        {
+            var savedDeviceId = window.localStorage.getItem(annoUtil.localStorageKeys.deviceId);
+
+            if (deviceId === savedDeviceId) return;
+
+            updateDeviceId(deviceId);
+        };
+
+        var updateDeviceId = function(deviceId)
+        {
+            annoUtil.loadAPI(annoUtil.API.user, function(){
+                var method = gapi.client.user.user.deviceid.update({
+                    device_id:deviceId,
+                    device_type:annoUtil.isIOS()?"iOS":"Android"
+                });
+                method.execute(function (data)
+                {
+                    if (!data)
+                    {
+                        annoUtil.showToastDialog("Response returned from server are empty.");
+                        return;
+                    }
+
+                    if (data.error)
+                    {
+                        annoUtil.showMessageDialog("An error occurred when calling user.deviceid.update api: "+data.error.message);
+                        return;
+                    }
+
+                    window.localStorage.setItem(annoUtil.localStorageKeys.deviceId, deviceId);
+                    console.log("device id updated.");
+                });
+            });
+        };
+
+        var goActivitiesScreen = function()
+        {
+            // check if we are in Activities screen already, if yes, just do refresh
+            var activitiesViewNode = dom.byId('modelApp_myStuff');
+            if (activitiesViewNode&&activitiesViewNode.style.display != 'none')
+            {
+                app.refreshMyActivites();
+            }
+            else
+            {
+                app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
+            }
+        };
+
         var _init = function()
         {
             if (DBUtil.userChecked)
@@ -547,14 +771,22 @@ define([
                         annoUtil.showLoadingIndicator();
                         OAuthUtil.getAccessToken(function(){
                             annoUtil.loadAPI(annoUtil.API.anno, loadListData);
+                            annoUtil.loadUserCommunities(true, function(data){
+                                var inviteList = data.inviteList;
 
+                                for (var i=0;i<inviteList.length;i++)
+                                {
+                                    acceptInvitation(inviteList[i]);
+                                }
+                            });
+                            initPushService();
                             window.setTimeout(function(){
                                 AnnoDataHandler.startBackgroundSync();
                             }, 5*1000);
                         });
                     });
 
-                    _connectResults.push(connect.connect(dom.byId("barMyStuff"), 'click', function(e)
+                    _connectResults.push(connect.connect(dom.byId("tdBarMyStuff"), 'click', function(e)
                     {
                         dojo.stopEvent(e);
                         hideMenuDialog();
@@ -562,7 +794,7 @@ define([
                         app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
                     }));
 
-                    _connectResults.push(connect.connect(dom.byId("barAddImage"), 'click', function(e) {
+                    _connectResults.push(connect.connect(dom.byId("tdBarAddImage"), 'click', function(e) {
                         var options = {
                             destinationType : Camera.DestinationType.FILE_URI,
                             sourceType : Camera.PictureSourceType.PHOTOLIBRARY,
@@ -624,7 +856,7 @@ define([
                         function OnFail() {}
                     }));
 
-                    _connectResults.push(connect.connect(dom.byId("tdbarSearchAnno"), 'click', function(e)
+                    _connectResults.push(connect.connect(dom.byId("tdBarSearchAnno"), 'click', function(e)
                     {
                         hideMenuDialog();
 
@@ -634,7 +866,9 @@ define([
                         domStyle.set('navLogoTextHome', 'display', 'none');
                         domStyle.set('tdBarMyStuff', 'display', 'none');
                         domStyle.set('tdBarAddImage', 'display', 'none');
-                        domStyle.set('tdbarSearchAnno', 'display', 'none');
+                        domStyle.set('tdBarSearchAnno', 'display', 'none');
+                        domStyle.set('tdBarSettings', 'display', 'none');
+                        domStyle.set('tdBarMoreMenuHome', 'display', '');
                         domStyle.set('txtSearchAnno', 'display', '');
                         domStyle.set('tdHeadingLeft', 'width', '95px');
                         domStyle.set('annoLogoHome', 'paddingLeft', '0px');
@@ -644,6 +878,10 @@ define([
                         inSearchMode = true;
                         dojo.stopEvent(e);
 
+                    }));
+
+                    _connectResults.push(connect.connect(dom.byId("tdBarSettings"), 'click', function(e) {
+                        app.transitionToView(document.getElementById('modelApp_home'), {target: 'settings', url: '#settings'});
                     }));
 
                     _connectResults.push(connect.connect(dom.byId("barMoreMenuHome"), 'click', function(e)
@@ -671,26 +909,6 @@ define([
                     _connectResults.push(connect.connect(dom.byId("tdLogo"), 'click', function(e)
                     {
                         cancelSearch();
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId("menuItemSettings"), 'click', function(e)
-                    {
-                        hideMenuDialog();
-                        app.transitionToView(document.getElementById('modelApp_home'), {target: 'settings', url: '#settings'});
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId("menuItemIntro"), 'click', function(e)
-                    {
-                        hideMenuDialog();
-
-                        annoUtil.startActivity("Intro", false);
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId("menuItemFeedback"), 'click', function(e)
-                    {
-                        hideMenuDialog();
-
-                        annoUtil.startActivity("Feedback", false);
                     }));
 
                     _connectResults.push(connect.connect(dom.byId('btnLoadListData'), "click", function ()
@@ -798,14 +1016,14 @@ define([
 
                         for (var i=0;i<allItems.length;i++)
                         {
-                            domClass.add(allItems[i], 'appNameItem-gray');
+                            domClass.remove(allItems[i], 'appNameItem-active');
                         }
 
-                        domClass.remove(itemNode, 'appNameItem-gray');
+                        domClass.add(itemNode, 'appNameItem-active');
 
                         selectedAppName = itemNode.children[0].innerHTML;
                         dom.byId('btnAppNameDialogDone').disabled = false;
-                        domClass.remove('btnAppNameDialogDone', "disabledBtn")
+                        domClass.remove('btnAppNameDialogDone', "disabledBtn");
                     }));
 
                     _connectResults.push(connect.connect(dom.byId('btnAppNameDialogDone'), "click", function ()
@@ -973,6 +1191,10 @@ define([
             {
                 eventsModel = this.loadedModels.events;
                 app = this.app;
+                app.inSearchMode = function()
+                {
+                    return inSearchMode;
+                };
 
                 _init();
             },
@@ -984,6 +1206,8 @@ define([
 
                 document.removeEventListener("backbutton", exitApp, false);
                 document.addEventListener("backbutton", exitApp, false);
+
+                app.setBackwardFired(false);
             },
             beforeDeactivate: function()
             {

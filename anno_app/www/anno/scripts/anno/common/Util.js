@@ -8,14 +8,14 @@ define([
     "dojox/mobile/SimpleDialog",
     "dojox/mobile/_ContentPaneMixin",
     "dijit/registry",
-    "dojo/text!../../ChinaIpTable.json",
     "dojo/text!../../server-url.json",
+    "dojo/text!../../strings.json",
     "anno/common/DBUtil",
     "anno/common/GestureHandler"
-], function(declare, connect, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, ChinaIpTable, serverURLConfig, DBUtil, GestureHandler){
+], function(declare, connect, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, stringsRes, DBUtil, GestureHandler){
 
-    ChinaIpTable = dojoJson.parse(ChinaIpTable);
     serverURLConfig = dojoJson.parse(serverURLConfig);
+    stringsRes = dojoJson.parse(stringsRes);
     console.error("using server Url config:" + JSON.stringify(serverURLConfig));
     var util = {
         loadingIndicator:null,
@@ -28,7 +28,6 @@ define([
         level1ColorRGB:"255, 153, 0",
         level2Color:"#ff0000",
         level2ColorRGB:"255, 0, 0",
-        ChinaIpTable:ChinaIpTable.ChinaIpTable,
         myIPIsServiceUrl:"http://178.18.16.111/myipis",
         annoScreenshotPath:null,
         annoPermaLinkBaseUrl:"http://anno-webapp.appspot.com/usersource/pages/permalink/index.html#/anno/",
@@ -40,7 +39,8 @@ define([
             account:"account",
             followUp:"followup",
             vote:"vote",
-            flag:"flag"
+            flag:"flag",
+            community: "community"
         },
         timeString:{
             prefixAgo: "",
@@ -59,6 +59,14 @@ define([
             wordSeparator: " ",
             numbers: []
         },
+        localStorageKeys:{
+            editAnnoDone: "editAnnoDone",
+            updatedAnnoData: "updatedAnnoData",
+            currentAnnoData: "currentAnnoData",
+            currentImageData: "currentImageData",
+            deviceId: "annoDeviceId"
+        },
+        userCommunities: null, // all communities for current user
         hasConnection: function()
         {
             var networkState = navigator.connection.type;
@@ -133,7 +141,8 @@ define([
                     });
                 }, function(e) {
                     console.error(JSON.stringify(e));
-                    alert(JSON.stringify(e));
+                    // alert(JSON.stringify(e));
+                    self.showMessageDialog(JSON.stringify(e));
                 });}
         },
         showLoadingIndicator: function ()
@@ -202,7 +211,8 @@ define([
                 },
                 function (err)
                 {
-                    alert(err);
+                    // alert(err);
+                    self.showMessageDialog(err);
                 },
                 "AnnoCordovaPlugin",
                 'start_activity',
@@ -233,7 +243,8 @@ define([
                 },
                 function (err)
                 {
-                    alert(err);
+                    // alert(err);
+                    self.showMessageDialog(err);
                 },
                 "AnnoCordovaPlugin",
                 'get_anno_screenshot_path',
@@ -328,6 +339,76 @@ define([
             dlg._callback = callback;
             dlg.show();
             domStyle.set(dlg._cover[0], {"height": "100%", top:"0px"});
+            domStyle.set(dlg.containerNode.firstChild, {"margin" : "0 0 3px 0"});
+        },
+        showToastDialog: function (message, timeOut) {
+            var dlg = registry.byId('dlg_common_toast');
+
+            if (timeOut === undefined) {
+                timeOut = 5000;
+            }
+
+            if (!dlg) {
+                dlg = new (declare([SimpleDialog, _ContentPaneMixin]))({
+                    id : "dlg_common_toast",
+                    content : '<div id="div_cancel_common_toast_message" class="mblSimpleDialogText">' + message + '</div>'
+                });
+                dlg.startup();
+            } else {
+                document.getElementById("div_cancel_common_toast_message").innerHTML = message;
+            }
+
+            dlg.show();
+            domStyle.set(dlg._cover[0], { "height" : "100%", "top" : "0" });
+            domStyle.set(dlg.domNode, { "top" : "initial", "bottom" : "50px" });
+            domStyle.set(dlg.containerNode.firstChild, { "margin" : "0" });
+
+            setTimeout(function() {
+                registry.byId('dlg_common_toast').hide();
+            }, timeOut);
+        },
+        showConfirmMessageDialog: function (message, callback)
+        {
+            var dlg = registry.byId('dlg_common_confirm_message');
+
+            if (!dlg)
+            {
+                dlg = new (declare([SimpleDialog, _ContentPaneMixin]))({
+                    id: "dlg_common_confirm_message",
+                    content: '' +
+                        '<div id="div_cancel_confirm_message_message" class="mblSimpleDialogText">' + message + '</div>' +
+                        '<div style="text-align: center"><button id="btn_ok_confirm_message" class="btn">OK</button><button id="btn_cancel_confirm_message" class="btn">Cancel</button></div>'
+                });
+                dlg.startup();
+
+                connect.connect(document.getElementById('btn_cancel_confirm_message'), 'click', function ()
+                {
+                    registry.byId('dlg_common_confirm_message').hide();
+
+                    if (dlg._callback)
+                    {
+                        dlg._callback(false);
+                    }
+                });
+
+                connect.connect(document.getElementById('btn_ok_confirm_message'), 'click', function ()
+                {
+                    registry.byId('dlg_common_confirm_message').hide();
+
+                    if (dlg._callback)
+                    {
+                        dlg._callback(true);
+                    }
+                });
+            }
+            else
+            {
+                document.getElementById("div_cancel_confirm_message_message").innerHTML = message;
+            }
+
+            dlg._callback = callback;
+            dlg.show();
+            domStyle.set(dlg._cover[0], {"height": "100%", top:"0px"});
         },
         showSoftKeyboard: function(activityName)
         {
@@ -346,7 +427,8 @@ define([
                     },
                     function (err)
                     {
-                        alert(err);
+                        // alert(err);
+                        self.showMessageDialog(err);
                     },
                     "AnnoCordovaPlugin",
                     'show_softkeyboard',
@@ -457,7 +539,8 @@ define([
                         }
                         else
                         {
-                            alert('Load '+apiId+" API failed, "+res.error.message);
+                            // alert('Load '+apiId+" API failed, "+res.error.message);
+                            self.showMessageDialog('Load '+apiId+" API failed, "+res.error.message);
                             self.hideLoadingIndicator();
                         }
                     }
@@ -495,89 +578,6 @@ define([
         {
             navigator.geolocation.getCurrentPosition(callback, errorCallback, {maximumAge: 1000*60*60, timeout: 10000, enableHighAccuracy: false});
         },
-        inChina: function(callback)
-        {
-            console.error("invoke inChina");
-
-            var self = this;
-            this.getIPAddress(function(ip){
-                callback(self.isIpInChina(ip));
-            });
-        },
-        getIPAddress: function(callback)
-        {
-            this._getIpAddressFromServer(callback);
-        },
-        _getIpAddressFromServer: function(callback)
-        {
-            this.showLoadingIndicator();
-            var self = this;
-            xhr.get(this.myIPIsServiceUrl,
-                {
-                    handleAs: "text",
-                    headers:{"X-Requested-With":""}
-                }).then(function (res)
-                {
-                    console.error("got ip from myipis service: "+res);
-                    callback(res);
-                    self.hideLoadingIndicator();
-                },
-                function (res)
-                {
-                    self.hideLoadingIndicator();
-                    alert("getting IP Address from myipis service failed: "+res);
-                    navigator.app.exitApp();
-                });
-        },
-        isIpInChina: function(ip)
-        {
-            var iPTable = this.ChinaIpTable, ipItem, ipInt = this.ip2Int(ip);
-            console.error("user ip is: "+ip+", ipInt is: "+ ipInt);
-
-            for (var i= 0,c=iPTable.length;i<c;i++)
-            {
-                ipItem = iPTable[i];
-
-                if (ipInt >= ipItem.iSt && ipInt <= ipItem.iEd)
-                {
-                    console.error("user ip is in China.");
-                    return true;
-                }
-            }
-
-            console.error("user ip is not in China.");
-            return false;
-        },
-        ip2Int: function (s)
-        {
-            var parts = s.split(".");
-            var sum = parseInt(parts[0], 10)*16777216 + parseInt(parts[1], 10)*65536 +parseInt(parts[2], 10)*256 +parseInt(parts[3], 10);
-
-            return sum;
-        },
-        int2Ip: function (s)
-        {
-            var ip = '', r;
-            s = parseInt(s).toString(16);
-            for (var i = 0; i < s.length; i++)
-            {
-                r = '';
-                r += s[i];
-                i++;
-                r += s[i];
-                ip += parseInt('0x' + r).toString(10) + '.';
-            }
-            return ip.substr(0, ip.length - 1);
-        },
-        chooseProxyServer:function()
-        {
-            var normalServerConfig = this.API.config["1"];
-            var proxyServerConfig = normalServerConfig.proxyKey;
-
-            this.saveSettings({item:"ServerURL", value:proxyServerConfig}, function(success){
-            }, true);
-            this.settings.ServerURL = proxyServerConfig;
-        },
         setDefaultServer: function()
         {
             this.saveSettings({item:"ServerURL", value:"1"}, function(success){
@@ -595,7 +595,8 @@ define([
                     },
                     function (err)
                     {
-                        alert(err);
+                        // alert(err);
+                        self.showMessageDialog(err);
                     },
                     "AnnoCordovaPlugin",
                     'trigger_create_anno',
@@ -622,7 +623,8 @@ define([
                     },
                     function (err)
                     {
-                        alert(err);
+                        // alert(err);
+                        self.showMessageDialog(err);
                     },
                     "AnnoCordovaPlugin",
                     'enable_native_gesture_listener',
@@ -641,7 +643,8 @@ define([
                     },
                     function (err)
                     {
-                        alert(err);
+                        // alert(err);
+                        self.showMessageDialog(err);
                     },
                     "AnnoCordovaPlugin",
                     'enable_native_gesture_listener',
@@ -657,14 +660,32 @@ define([
         {
             return device.platform == "Android";
         },
-        getTimeAgoString: function(s)
+        isRunningAsPlugin: function()
+        {
+            return this.getSettings().appKey != null;
+        },
+        unisodate: function(str)
+        {
+            var tstr, dstr, yyyy, dd, MM, mm, hh, ss;
+            var l = str.match(/([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})\.*([0-9]{0,3})/);
+
+            if (l && l.length === 8) {
+                return new Date(l[1], l[2] - 1, l[3], l[4], l[5], l[6], l[7]);
+            } else
+                return null;
+        },
+        getTimeAgoString: function(s, baseDate)
         {
             // translate timestamp string to "N minutes/hours/days/months ago" format
-            var date1 = new Date(s);
+            if (this.isIOS() && (parseInt(device.version) == 5)) {
+                var date1 = this.unisodate(s);
+            } else {
+                var date1 = new Date(s);
+            }
 
             function distance(date)
             {
-                return (new Date().getTime() - date.getTime());
+                return ((baseDate||new Date()).getTime() - date.getTime());
             }
 
             var distanceMillis = distance(date1);
@@ -698,6 +719,94 @@ define([
             var separator = ts.wordSeparator || "";
 
             return [words, suffix].join(separator);
+        },
+        getResourceString: function(key)
+        {
+            return stringsRes[key];
+        },
+        replaceHashTagWithLink: function(s, linkScript)
+        {
+            return s.replace(/(^|\W)(#[a-z\d][\w-]*)/ig, linkScript);
+        },
+        loadUserCommunities: function(includeInvite, callback)
+        {
+            // don't cache for now
+            /*if (this.userCommunities)
+            {
+                callback(this.userCommunities);
+                return;
+            }*/
+
+            //this.showLoadingIndicator();
+            var self = this;
+            this.loadAPI(this.API.user, function(){
+                var getCommunityList = gapi.client.user.community.list({include_invite:includeInvite, email:self.getCurrentUserInfo().email});
+                getCommunityList.execute(function (data)
+                {
+                    if (!data)
+                    {
+                        //self.hideLoadingIndicator();
+                        self.showToastDialog("Items returned from server are empty.");
+                        return;
+                    }
+
+                    if (data.error)
+                    {
+                        //self.hideLoadingIndicator();
+                        self.showMessageDialog("An error occurred when calling user.community.list api: "+data.error.message);
+                        return;
+                    }
+
+                    self.userCommunities = data.result.community_list;
+                    callback({communityList: self.userCommunities||[], inviteList:data.result.invite_list||[]});
+                    //self.hideLoadingIndicator();
+                });
+            });
+        },
+        getUserCommunities: function()
+        {
+            return this.userCommunities;
+        },
+        clearDeviceId: function(callback)
+        {
+            var deviceId = window.localStorage.getItem(this.localStorageKeys.deviceId);
+            // clear local saved device id
+            window.localStorage.removeItem(this.localStorageKeys.deviceId);
+            // clear server side device id
+            var self = this;
+
+            this.showLoadingIndicator();
+            this.loadAPI(this.API.user, function(){
+                var method = gapi.client.user.user.deviceid.update({
+                    device_id: deviceId,
+                    device_type:self.isIOS()?"iOS":"Android",
+                    clear_device: true
+                });
+                method.execute(function (data)
+                {
+                    if (!data)
+                    {
+                        self.hideLoadingIndicator();
+                        self.showToastDialog("Response returned from server are empty.");
+                        if (callback) callback(false);
+
+                        return;
+                    }
+
+                    if (data.error)
+                    {
+                        self.hideLoadingIndicator();
+                        self.showMessageDialog("An error occurred when calling user.deviceid.update api: "+data.error.message);
+                        if (callback) callback(false);
+
+                        return;
+                    }
+
+                    console.log("device id cleared.");
+                    self.hideLoadingIndicator();
+                    if (callback) callback(true);
+                });
+            });
         }
     };
 

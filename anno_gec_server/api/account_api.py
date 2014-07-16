@@ -4,11 +4,11 @@ import endpoints
 from protorpc import message_types
 from protorpc import remote
 
-from api.utils import anno_js_client_id
-from api.utils import validate_email
-from api.utils import validate_password
-from api.utils import md5
-from api.utils import get_endpoints_current_user
+from helper.settings import anno_js_client_id
+from helper.utils import validate_email
+from helper.utils import validate_password
+from helper.utils import md5
+from helper.utils import get_endpoints_current_user
 from model.user import User
 from message.account_message import AccountMessage
 from message.user_message import UserMessage

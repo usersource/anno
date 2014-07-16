@@ -99,14 +99,14 @@ indexes:
 
 - kind: Anno
   properties:
-  - name: creator
-  - name: last_update_time
+  - name: community
+  - name: created
     direction: desc
 
-- kind: Vote
+- kind: Anno
   properties:
   - name: creator
-  - name: created
+  - name: last_update_time
     direction: desc
 
 - kind: Flag
@@ -115,8 +115,50 @@ indexes:
   - name: created
     direction: desc
 
+- kind: FollowUp
+  properties:
+  - name: anno_key
+  - name: last_modified
 
 - kind: FollowUp
+  properties:
+  - name: anno_key
+  - name: last_modified
+    direction: desc
+
+- kind: FollowUp
+  properties:
+  - name: creator
+  - name: created
+    direction: desc
+
+- kind: UserAnnoState
+  properties:
+  - name: anno
+  - name: notify
+  - name: last_read
+  - name: user
+
+- kind: UserAnnoState
+  properties:
+  - name: user
+  - name: modified
+    direction: desc
+  - name: anno
+
+- kind: UserRole
+  properties:
+  - name: community
+  - name: role
+  - name: user
+
+- kind: UserRole
+  properties:
+  - name: user
+  - name: community
+  - name: role
+
+- kind: Vote
   properties:
   - name: creator
   - name: created

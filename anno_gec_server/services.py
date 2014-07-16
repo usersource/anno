@@ -9,6 +9,10 @@ from api.followup_api import FollowupApi
 from api.user_api import UserApi
 from api.account_api import AccountApi
 from api.util_api import UtilApi
+from api.community_api import CommunityApi
+from api.appinfo_api import AppInfoApi
+from api.userannostate_api import UserAnnoStateApi
 
-APPLICATION = endpoints.api_server([VoteApi, AnnoApi, FlagApi, FollowupApi, UserApi, AccountApi, UtilApi],
-                                   restricted=False)
+api_list = [VoteApi, AnnoApi, FlagApi, FollowupApi, UserApi, AccountApi, UtilApi,
+            CommunityApi, AppInfoApi, UserAnnoStateApi]
+APPLICATION = endpoints.api_server(api_list, restricted=False)

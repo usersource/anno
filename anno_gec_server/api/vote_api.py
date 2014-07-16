@@ -11,12 +11,12 @@ from google.appengine.ext.db import BadValueError
 
 from message.vote_message import VoteMessage
 from message.vote_message import VoteListMessage
-from api.utils import anno_js_client_id
-from api.utils import auth_user
-from api.utils import put_search_document
+from helper.settings import anno_js_client_id
+from helper.utils import auth_user
+from helper.utils import put_search_document
 from model.anno import Anno
 from model.vote import Vote
-
+from model.userannostate import UserAnnoState
 
 @endpoints.api(name='vote', version='1.0', description='Vote API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
@@ -48,6 +48,9 @@ class VoteApi(remote.Service):
         anno.last_activity = 'vote'
         anno.last_update_type = 'create'
         anno.put()
+
+        # update user anno state
+        UserAnnoState.insert(user=user, anno=anno)
 
         # update vote in search document
         put_search_document(anno.generate_search_document())

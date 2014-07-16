@@ -15,6 +15,25 @@ require([
         var config = jsonRef.fromJson(config);
         console.error("Worked!");
 
+        // if user clicked back button
+        config._backwardFired = false;
+        config.isBackwardFired = function()
+        {
+            if (this._backwardFired)
+            {
+                this._backwardFired = false;
+                return true;
+            }
+
+            return false;
+        };
+
+        config.setBackwardFired = function(fired)
+        {
+            this._backwardFired = fired;
+            console.log("setBackwardFired: "+ this._backwardFired);
+        };
+
         document.addEventListener("deviceready", function(){
             DBUtil.initDB(function(){
                 console.error("DB is readay!");
