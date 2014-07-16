@@ -98,6 +98,8 @@ body{
     background-size: 100% 100%;
     font-family: helvetica, arial;
     font-size: 13pt;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-user-select: none;
 }
 
 #gfxCanvasContainer
