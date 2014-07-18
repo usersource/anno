@@ -129,7 +129,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
 
     [[[UIAlertView alloc] initWithTitle:title
                                 message:message
-                               delegate:self
+                               delegate:nil
                       cancelButtonTitle:@"Ok"
                       otherButtonTitles:nil] show];
 
