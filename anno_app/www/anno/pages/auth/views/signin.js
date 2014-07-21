@@ -232,11 +232,11 @@ define([
             {
                 if (_callbackURL.indexOf("?")>0||_callbackURL.indexOf("#")>0)
                 {
-                    cbURL = _callbackURL+"&token="+JSON.stringify(result.token);
+                    cbURL = _callbackURL+"&token="+encodeURIComponent(JSON.stringify(result.token));
                 }
                 else
                 {
-                    cbURL = _callbackURL+"?token="+JSON.stringify(result.token);
+                    cbURL = _callbackURL+"?token="+encodeURIComponent(JSON.stringify(result.token));
                 }
 
                 if (result.newUser)
