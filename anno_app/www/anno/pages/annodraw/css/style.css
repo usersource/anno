@@ -302,6 +302,31 @@ body{
     -webkit-user-select: none;
 }
 
+.newbtn
+{
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    line-height: 1.428571429;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 2px solid gray;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    background-color: white;
+    color: black;
+    font-weight: bold;
+}
+
+.disabledBtn
+{
+    background-color: black;
+    color: gray;
+}
+
 .tabContainer
 {
     margin-left: 10px;
