@@ -164,7 +164,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
 - (void) start_activity:(CDVInvokedUrlCommand*)command {
     NSString* payload = nil;
     NSString* activityName = [command.arguments objectAtIndex:0];
-    BOOL closeCurrentActivity = (BOOL)[command.arguments objectAtIndex:1];
+    BOOL closeCurrentActivity = [[command.arguments objectAtIndex:1] boolValue];
 
     if (closeCurrentActivity) {
         [self exitActivity];
