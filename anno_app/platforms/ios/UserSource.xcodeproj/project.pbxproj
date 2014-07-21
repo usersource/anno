@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		088DA9F4758A432F8D989E97 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B82173E04CF6475A970FD85E /* ImageIO.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		0E1E5C163305482D9FE92DFB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 994E9862B7E0481DAE979731 /* SystemConfiguration.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -34,6 +35,7 @@
 		1DDCA4ED18F41A2B006E63FE /* IntroViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDCA4E818F41A2B006E63FE /* IntroViewController.m */; };
 		1DDCA4EE18F41A2B006E63FE /* OptionFeedbackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDCA4EA18F41A2B006E63FE /* OptionFeedbackViewController.m */; };
 		1DF00632197D12EE00295ACB /* SocialSharing.m in Sources */ = {isa = PBXBuildFile; fileRef = C3EDC6FBC41B4141A99D82D5 /* SocialSharing.m */; };
+		1DF00639197D259100295ACB /* CDVInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = B357E14529B745B4AEF4D613 /* CDVInAppBrowser.m */; };
 		1DF46C0519023329005408CA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1DF46C0319023329005408CA /* InfoPlist.strings */; };
 		1DF9C52A18FBBD54004077BE /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */; };
 		1F766FE113BBADB100FB74C0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1F766FDC13BBADB100FB74C0 /* Localizable.strings */; };
@@ -622,6 +624,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1DF00639197D259100295ACB /* CDVInAppBrowser.m in Sources */,
 				1DF00632197D12EE00295ACB /* SocialSharing.m in Sources */,
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
