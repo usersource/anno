@@ -43,11 +43,15 @@ class UserAnnoState(ndb.Model):
         return cls.query(cls.user == user_key).order(-cls.modified).fetch(projection=[cls.anno])
 
     @classmethod
-    def delete_by_anno(cls, anno_id):
-        anno = Anno.get_by_id(anno_id)
-        userannostates = cls.query(cls.anno == anno.key).fetch()
-        userannostate_key_list = [ userannostate.key for userannostate in userannostates ]
-        ndb.delete_multi(userannostate_key_list)
+    def delete_by_anno(cls, anno_id=None, anno_key=None):
+        if anno_key is None:
+            anno = Anno.get_by_id(anno_id) if anno_id else None
+            anno_key = anno.key if anno else None
+
+        if anno_key:
+            userannostates = cls.query(cls.anno == anno_key).fetch()
+            userannostate_key_list = [ userannostate.key for userannostate in userannostates ]
+            ndb.delete_multi(userannostate_key_list)
 
     @classmethod
     def update_last_read(cls, user, anno, last_read):

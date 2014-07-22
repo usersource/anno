@@ -164,12 +164,19 @@ class Anno(BaseModel):
 
         return entity
 
+
     @classmethod
     def delete(cls, anno):
         anno_id = "%d" % anno.key.id()
+
+        # deleting UserAnnoState of anno
+        from model.userannostate import UserAnnoState
+        UserAnnoState.delete_by_anno(anno_key=anno.key)
+
         anno.key.delete()
         index = search.Index(name="anno_index")
         index.delete(anno_id)
+
 
     def merge_from_message(self, message):
         """

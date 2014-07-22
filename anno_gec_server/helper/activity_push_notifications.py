@@ -158,7 +158,7 @@ class ActivityPushNotifications():
 
         # if action is "deleted" then delete all UserAnnoState related to that anno
         if action_type == AnnoActionType.DELETED:
-            UserAnnoState.delete_by_anno(anno.key.id())
+            UserAnnoState.delete_by_anno(anno_key=anno.key)
 
         for platform, devices in notf_device.iteritems():
             message, data = notf_msg[platform]
