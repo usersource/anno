@@ -374,7 +374,7 @@ require([
                 var listCommunities = [];
 
                 for (var i= 0,c=communityList.length;i<c;i++)
-                {
+                {// todo: get version from community?
                     listCommunities.push({versionName:"", name:communityList[i].community.name});
                 }
 
@@ -388,7 +388,7 @@ require([
 
                     for (var i= 0,c=uniqueItems.length;i<c;i++)
                     {
-                        list.push({versionName:uniqueItems[i].version_name||"", name:uniqueItems[i].name});
+                        list.push({versionName:uniqueItems[i].version||"", name:uniqueItems[i].name});
                     }
 
                     fillAppNameList(list, "sdFavoriteAppsListContent");
