@@ -32,6 +32,7 @@ class Anno(BaseModel):
     level = ndb.IntegerProperty(required=True)
     device_model = ndb.StringProperty(required=True)
     app_name = ndb.StringProperty()
+    app_version = ndb.StringProperty()
     os_name = ndb.StringProperty()
     os_version = ndb.StringProperty()
     app = ndb.KeyProperty(kind=AppInfo)

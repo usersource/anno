@@ -65,18 +65,20 @@ class User(ndb.Model):
                 app = anno.app.get() if anno.app else None
                 app_name = app.name if app else anno.app_name
                 app_icon_url = app.icon_url if app else ""
+                app_version = app.version if app else anno.app_version
 
                 if app_name in favorite_apps_dict.keys():
                     favorite_apps_dict[app_name]["count"] += 1
                 else:
-                    favorite_apps_dict[app_name] = dict(name=app_name, icon_url=app_icon_url, count=1)
+                    favorite_apps_dict[app_name] = dict(name=app_name, icon_url=app_icon_url,
+                                                        version=app_version, count=1)
 
         # favorite_apps = [ value for key, value in favorite_apps_dict.iteritems() ]
         favorite_apps = sorted(favorite_apps_dict.values(), key=itemgetter("count"), reverse=True)
 
         favorite_apps_list = []
         for app in favorite_apps:
-            app_message = UserFavoriteApp(name=app.get("name"), icon_url=app.get("icon_url"))
+            app_message = UserFavoriteApp(name=app.get("name"), icon_url=app.get("icon_url"), version=app.get("version"))
             favorite_apps_list.append(app_message)
 
         return favorite_apps_list
