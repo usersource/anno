@@ -11,7 +11,7 @@ class AppInfo(ndb.Model):
     This class represents a 3rd party app information.
     """
     name = ndb.StringProperty(required=True)
-    lc_name = ndb.StringProperty(required=True)
+    lc_name = ndb.StringProperty()
     icon = ndb.BlobProperty()
     icon_url = ndb.StringProperty()
     description = ndb.TextProperty()
@@ -26,8 +26,8 @@ class AppInfo(ndb.Model):
     def get(cls, name):
         appinfo = None
         if name:
-            lowercase_name = name.lower()
-            appinfo = cls.query(cls.lc_name == lowercase_name).get()
+            lc_name = name.lower()
+            appinfo = cls.query(ndb.OR(cls.lc_name == lc_name, cls.name == name)).get()
         return appinfo
 
 
