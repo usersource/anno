@@ -728,7 +728,7 @@ define([
         {
             return s.replace(/(^|\W)(#[a-z\d][\w-]*)/ig, linkScript);
         },
-        loadUserCommunities: function(includeInvite, callback)
+        loadUserCommunities: function(includeInvite, callback, keepSpinnerShown)
         {
             if (this.userCommunities)
             {
@@ -744,21 +744,25 @@ define([
                 {
                     if (!data)
                     {
-                        self.hideLoadingIndicator();
+                        if (!keepSpinnerShown)
+                            self.hideLoadingIndicator();
                         self.showToastDialog("Items returned from server are empty.");
                         return;
                     }
 
                     if (data.error)
                     {
-                        self.hideLoadingIndicator();
+                        if (!keepSpinnerShown)
+                            self.hideLoadingIndicator();
                         self.showMessageDialog("An error occurred when calling user.community.list api: "+data.error.message);
                         return;
                     }
 
                     self.userCommunities = data.result.community_list;
                     callback({communityList: self.userCommunities||[], inviteList:data.result.invite_list||[]});
-                    self.hideLoadingIndicator();
+
+                    if (!keepSpinnerShown)
+                        self.hideLoadingIndicator();
                 });
             });
         },

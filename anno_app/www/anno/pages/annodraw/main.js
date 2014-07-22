@@ -243,6 +243,24 @@ require([
     });
 
     // app tabs
+    connect.connect(dom.byId("barFavoriteApps"), 'click', function(e)
+    {
+        if (domClass.contains(dom.byId('barFavoriteApps').parentNode, 'active'))
+        {
+            return;
+        }
+
+        domClass.add(dom.byId('barFavoriteApps').parentNode, 'active');
+        domClass.remove(dom.byId('barRecentApps').parentNode);
+        domClass.remove(dom.byId('barAllApps').parentNode);
+        domClass.remove(dom.byId('barElseApps').parentNode);
+
+        domStyle.set('sdRecentAppsListContent', 'display', 'none');
+        domStyle.set('sdAllAppsListContent', 'display', 'none');
+        domStyle.set('sdElseAppListContent', 'display', 'none');
+        domStyle.set('sdFavoriteAppsListContent', 'display', '');
+    });
+
     connect.connect(dom.byId("barRecentApps"), 'click', function(e)
     {
         if (domClass.contains(dom.byId('barRecentApps').parentNode, 'active'))
@@ -251,10 +269,32 @@ require([
         }
 
         domClass.add(dom.byId('barRecentApps').parentNode, 'active');
+        domClass.remove(dom.byId('barFavoriteApps').parentNode);
+        domClass.remove(dom.byId('barAllApps').parentNode);
         domClass.remove(dom.byId('barElseApps').parentNode);
 
+        domStyle.set('sdFavoriteAppsListContent', 'display', 'none');
+        domStyle.set('sdAllAppsListContent', 'display', 'none');
         domStyle.set('sdElseAppListContent', 'display', 'none');
         domStyle.set('sdRecentAppsListContent', 'display', '');
+    });
+
+    connect.connect(dom.byId("barAllApps"), 'click', function(e)
+    {
+        if (domClass.contains(dom.byId('barAllApps').parentNode, 'active'))
+        {
+            return;
+        }
+
+        domClass.add(dom.byId('barAllApps').parentNode, 'active');
+        domClass.remove(dom.byId('barRecentApps').parentNode);
+        domClass.remove(dom.byId('barFavoriteApps').parentNode);
+        domClass.remove(dom.byId('barElseApps').parentNode);
+
+        domStyle.set('sdRecentAppsListContent', 'display', 'none');
+        domStyle.set('sdFavoriteAppsListContent', 'display', 'none');
+        domStyle.set('sdElseAppListContent', 'display', 'none');
+        domStyle.set('sdAllAppsListContent', 'display', '');
     });
 
     connect.connect(dom.byId("barElseApps"), 'click', function(e)
@@ -265,9 +305,13 @@ require([
         }
 
         domClass.add(dom.byId('barElseApps').parentNode, 'active');
+        domClass.remove(dom.byId('barAllApps').parentNode);
+        domClass.remove(dom.byId('barFavoriteApps').parentNode);
         domClass.remove(dom.byId('barRecentApps').parentNode);
 
         domStyle.set('sdRecentAppsListContent', 'display', 'none');
+        domStyle.set('sdFavoriteAppsListContent', 'display', 'none');
+        domStyle.set('sdAllAppsListContent', 'display', 'none');
         domStyle.set('sdElseAppListContent', 'display', '');
     });
 
@@ -286,8 +330,30 @@ require([
                 {
                     if (result&&result.length>0)
                     {
+                        fillAppNameList(result, "sdRecentAppsListContent");
+                    }
+
+                    appNameListFetched = true;
+                },
+                function (err)
+                {
+                    // alert(err.message);
+                    annoUtil.showMessageDialog(err.message);
+                },
+                "AnnoCordovaPlugin",
+                'get_recent_applist',
+                [10]
+            );
+
+            cordova.exec(
+                function (result)
+                {
+                    if (result&&result.length>0)
+                    {
                         appNameList = result;
                         appNameListFetched = true;
+
+                        fillAppNameList(result, "sdAllAppsListContent");
                     }
                 },
                 function (err)
@@ -305,17 +371,19 @@ require([
         {
             loadCommunities(function(communityList){
                 favoriteAppsFetched = true;
-                var list = [];
+                var listCommunities = [];
 
                 for (var i= 0,c=communityList.length;i<c;i++)
                 {
-                    list.push({versionName:"", name:communityList[i].community.name});
+                    listCommunities.push({versionName:"", name:communityList[i].community.name});
                 }
 
-                fillAppNameList(list, true);
+                fillAppNameList(listCommunities, "sdFavoriteAppsListContent");
 
                 loadFavoriteApps(function(favoriteApps){
-                    var uniqueItems = removeDuplicatesAppsItems(favoriteApps);
+                    var allList = listCommunities.concat(favoriteApps);
+                    var uniqueItems = removeDuplicatesAppsItems(allList);
+
                     var list = [];
 
                     for (var i= 0,c=uniqueItems.length;i<c;i++)
@@ -323,15 +391,19 @@ require([
                         list.push({versionName:uniqueItems[i].version_name||"", name:uniqueItems[i].name});
                     }
 
-                    fillAppNameList(list, true);
+                    fillAppNameList(list, "sdFavoriteAppsListContent");
 
                     // no teams and no favorites, then list all installed apps on Android
                     if (uniqueItems.length <=0 && communityList.length <=0)
                     {
                         if (annoUtil.isAndroid())
                         {
-                            dom.byId("barRecentApps").innerHTML = "My apps";
-                            fillAppNameList(appNameList, true);
+                            domStyle.set(dom.byId("barFavoriteApps").parentNode, "display", "none");
+                            dom.byId("barRecentApps").parentNode.setAttribute("width", "33.3%");
+                            dom.byId("barAllApps").parentNode.setAttribute("width", "33.3%");
+                            dom.byId("barElseApps").parentNode.setAttribute("width", "33.3%");
+
+                            dom.byId('barRecentApps').click();
                         }
                         else
                         {
@@ -349,15 +421,15 @@ require([
         domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-tabBox.h-sdBottom-shareDialogGap)+'px');
     };
 
-    var fillAppNameList = function(appList, recentApp)
+    var fillAppNameList = function(appList, appContentId, append)
     {
-        var content = dom.byId('sdRecentAppsListContent').innerHTML;
+        var content = append?dom.byId(appContentId).innerHTML:"";
         for (var i = 0, c = appList.length; i < c; i++)
         {
             content = content + '<div class="appNameItem"><div class="appNameValue" data-app-version="'+appList[i].versionName+'">' + appList[i].name + '</div></div>'
         }
 
-        dom.byId('sdRecentAppsListContent').innerHTML = content;
+        dom.byId(appContentId).innerHTML = content;
     };
 
     var removeDuplicatesAppsItems = function (appsList) {
@@ -1051,6 +1123,19 @@ require([
         });
     };
 
+    var setShareDialogUI = function()
+    {
+        if (annoUtil.isIOS())
+        {
+            // hide "recent" and "all" tabs, resize existing tabs
+            domStyle.set(dom.byId("barRecentApps").parentNode, "display", "none");
+            domStyle.set(dom.byId("barAllApps").parentNode, "display", "none");
+
+            dom.byId("barFavoriteApps").parentNode.setAttribute("width", "50%");
+            dom.byId("barElseApps").parentNode.setAttribute("width", "50%");
+        }
+    };
+
     var init = function()
     {
         if (DBUtil.userChecked)
@@ -1172,6 +1257,9 @@ require([
                 // load all needed resources at startup
                 loadCommunities();
                 loadFavoriteApps();
+
+                // show or hide tabs of picklist deponds on OS name
+                setShareDialogUI();
             }
 
             // enable JS gesture listener, disable native gesture
