@@ -778,7 +778,7 @@ define([
                                 {
                                     acceptInvitation(inviteList[i]);
                                 }
-                            });
+                            }, true);
                             initPushService();
                             window.setTimeout(function(){
                                 AnnoDataHandler.startBackgroundSync();
