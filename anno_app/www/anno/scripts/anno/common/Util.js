@@ -728,16 +728,15 @@ define([
         {
             return s.replace(/(^|\W)(#[a-z\d][\w-]*)/ig, linkScript);
         },
-        loadUserCommunities: function(includeInvite, callback)
+        loadUserCommunities: function(includeInvite, callback, keepSpinnerShown)
         {
-            // don't cache for now
-            /*if (this.userCommunities)
+            if (this.userCommunities)
             {
-                callback(this.userCommunities);
+                callback({communityList: this.userCommunities||[]});
                 return;
-            }*/
+            }
 
-            //this.showLoadingIndicator();
+            this.showLoadingIndicator();
             var self = this;
             this.loadAPI(this.API.user, function(){
                 var getCommunityList = gapi.client.user.community.list({include_invite:includeInvite, email:self.getCurrentUserInfo().email});
@@ -745,21 +744,25 @@ define([
                 {
                     if (!data)
                     {
-                        //self.hideLoadingIndicator();
+                        if (!keepSpinnerShown)
+                            self.hideLoadingIndicator();
                         self.showToastDialog("Items returned from server are empty.");
                         return;
                     }
 
                     if (data.error)
                     {
-                        //self.hideLoadingIndicator();
+                        if (!keepSpinnerShown)
+                            self.hideLoadingIndicator();
                         self.showMessageDialog("An error occurred when calling user.community.list api: "+data.error.message);
                         return;
                     }
 
                     self.userCommunities = data.result.community_list;
                     callback({communityList: self.userCommunities||[], inviteList:data.result.invite_list||[]});
-                    //self.hideLoadingIndicator();
+
+                    if (!keepSpinnerShown)
+                        self.hideLoadingIndicator();
                 });
             });
         },
