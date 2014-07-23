@@ -265,6 +265,17 @@ body{
     margin-right: 10px;
 }
 
+.appSeparatorItem
+{
+    height: 34px;
+    border-bottom: 1px outset gray;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-style: italic;
+    color: gray;
+}
+
 .appNameItem-active
 {
     color: #ff9900;

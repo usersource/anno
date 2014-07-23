@@ -252,11 +252,9 @@ require([
 
         domClass.add(dom.byId('barFavoriteApps').parentNode, 'active');
         domClass.remove(dom.byId('barRecentApps').parentNode);
-        domClass.remove(dom.byId('barAllApps').parentNode);
         domClass.remove(dom.byId('barElseApps').parentNode);
 
         domStyle.set('sdRecentAppsListContent', 'display', 'none');
-        domStyle.set('sdAllAppsListContent', 'display', 'none');
         domStyle.set('sdElseAppListContent', 'display', 'none');
         domStyle.set('sdFavoriteAppsListContent', 'display', '');
     });
@@ -270,31 +268,11 @@ require([
 
         domClass.add(dom.byId('barRecentApps').parentNode, 'active');
         domClass.remove(dom.byId('barFavoriteApps').parentNode);
-        domClass.remove(dom.byId('barAllApps').parentNode);
         domClass.remove(dom.byId('barElseApps').parentNode);
 
         domStyle.set('sdFavoriteAppsListContent', 'display', 'none');
-        domStyle.set('sdAllAppsListContent', 'display', 'none');
         domStyle.set('sdElseAppListContent', 'display', 'none');
         domStyle.set('sdRecentAppsListContent', 'display', '');
-    });
-
-    connect.connect(dom.byId("barAllApps"), 'click', function(e)
-    {
-        if (domClass.contains(dom.byId('barAllApps').parentNode, 'active'))
-        {
-            return;
-        }
-
-        domClass.add(dom.byId('barAllApps').parentNode, 'active');
-        domClass.remove(dom.byId('barRecentApps').parentNode);
-        domClass.remove(dom.byId('barFavoriteApps').parentNode);
-        domClass.remove(dom.byId('barElseApps').parentNode);
-
-        domStyle.set('sdRecentAppsListContent', 'display', 'none');
-        domStyle.set('sdFavoriteAppsListContent', 'display', 'none');
-        domStyle.set('sdElseAppListContent', 'display', 'none');
-        domStyle.set('sdAllAppsListContent', 'display', '');
     });
 
     connect.connect(dom.byId("barElseApps"), 'click', function(e)
@@ -305,13 +283,11 @@ require([
         }
 
         domClass.add(dom.byId('barElseApps').parentNode, 'active');
-        domClass.remove(dom.byId('barAllApps').parentNode);
         domClass.remove(dom.byId('barFavoriteApps').parentNode);
         domClass.remove(dom.byId('barRecentApps').parentNode);
 
         domStyle.set('sdRecentAppsListContent', 'display', 'none');
         domStyle.set('sdFavoriteAppsListContent', 'display', 'none');
-        domStyle.set('sdAllAppsListContent', 'display', 'none');
         domStyle.set('sdElseAppListContent', 'display', '');
     });
 
@@ -328,12 +304,52 @@ require([
             cordova.exec(
                 function (result)
                 {
-                    if (result&&result.length>0)
-                    {
-                        fillAppNameList(result, "sdRecentAppsListContent");
-                    }
+                    result = result || [];
 
-                    appNameListFetched = true;
+                    cordova.exec(
+                        function (installedApps)
+                        {
+                            appNameListFetched = true;
+                            if (installedApps&&installedApps.length>0)
+                            {
+                                appNameList = installedApps;
+                                // sort the app array by name
+                                result.sort(function (a, b){
+                                    return a.name > b.name;
+                                });
+
+                                // make a copy of recent apps
+                                var recentAppPlainList = [];
+                                for (var i= 0,c=result.length;i<c;i++)
+                                {
+                                    recentAppPlainList.push(result[i].name);
+                                }
+
+                                installedApps = installedApps.filter(function(item){
+                                    return recentAppPlainList.indexOf(item.name) < 0;
+                                });
+
+                                installedApps.sort(function (a, b){
+                                    return a.name > b.name;
+                                });
+
+                                // add "recent" separator
+                                addAppListSeparator("recent");
+                                fillAppNameList(result, "sdRecentAppsListContent", true);
+                                // add "installed" separator
+                                addAppListSeparator("installed");
+                                fillAppNameList(installedApps, "sdRecentAppsListContent", true);
+                            }
+                        },
+                        function (err)
+                        {
+                            // alert(err.message);
+                            annoUtil.showMessageDialog(err.message);
+                        },
+                        "AnnoCordovaPlugin",
+                        'get_installed_app_list',
+                        []
+                    );
                 },
                 function (err)
                 {
@@ -343,27 +359,6 @@ require([
                 "AnnoCordovaPlugin",
                 'get_recent_applist',
                 [10]
-            );
-
-            cordova.exec(
-                function (result)
-                {
-                    if (result&&result.length>0)
-                    {
-                        appNameList = result;
-                        appNameListFetched = true;
-
-                        fillAppNameList(result, "sdAllAppsListContent");
-                    }
-                },
-                function (err)
-                {
-                    // alert(err.message);
-                    annoUtil.showMessageDialog(err.message);
-                },
-                "AnnoCordovaPlugin",
-                'get_installed_app_list',
-                []
             );
         }
 
@@ -383,6 +378,9 @@ require([
                 loadFavoriteApps(function(favoriteApps){
                     var allList = listCommunities.concat(favoriteApps);
                     var uniqueItems = removeDuplicatesAppsItems(allList);
+                    uniqueItems.sort(function (a, b){
+                        return a.name > b.name;
+                    });
 
                     var list = [];
 
@@ -399,9 +397,8 @@ require([
                         if (annoUtil.isAndroid())
                         {
                             domStyle.set(dom.byId("barFavoriteApps").parentNode, "display", "none");
-                            dom.byId("barRecentApps").parentNode.setAttribute("width", "33.3%");
-                            dom.byId("barAllApps").parentNode.setAttribute("width", "33.3%");
-                            dom.byId("barElseApps").parentNode.setAttribute("width", "33.3%");
+                            dom.byId("barRecentApps").parentNode.setAttribute("width", "50%");
+                            dom.byId("barElseApps").parentNode.setAttribute("width", "50%");
 
                             dom.byId('barRecentApps').click();
                         }
@@ -430,6 +427,14 @@ require([
         }
 
         dom.byId(appContentId).innerHTML = content;
+    };
+
+    var addAppListSeparator = function(label)
+    {
+        var content = dom.byId("sdRecentAppsListContent").innerHTML;
+
+        content = content + '<div class="appSeparatorItem"><div class="appNameValue">-- '+label+' --</div></div>';
+        dom.byId("sdRecentAppsListContent").innerHTML = content;
     };
 
     var removeDuplicatesAppsItems = function (appsList) {
@@ -1127,9 +1132,8 @@ require([
     {
         if (annoUtil.isIOS())
         {
-            // hide "recent" and "all" tabs, resize existing tabs
+            // hide "My apps" tab, resize existing tabs
             domStyle.set(dom.byId("barRecentApps").parentNode, "display", "none");
-            domStyle.set(dom.byId("barAllApps").parentNode, "display", "none");
 
             dom.byId("barFavoriteApps").parentNode.setAttribute("width", "50%");
             dom.byId("barElseApps").parentNode.setAttribute("width", "50%");
