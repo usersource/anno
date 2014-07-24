@@ -17,6 +17,8 @@ from model.base_model import BaseModel
 from model.community import Community
 from model.appinfo import AppInfo
 from helper.utils import *
+from helper.utils_enum import SearchIndexName
+
 
 class Anno(BaseModel):
     """
@@ -177,7 +179,7 @@ class Anno(BaseModel):
         UserAnnoState.delete_by_anno(anno_key=anno.key)
 
         anno.key.delete()
-        index = search.Index(name="anno_index")
+        index = search.Index(name=SearchIndexName.ANNO)
         index.delete(anno_id)
 
 
@@ -411,7 +413,7 @@ class Anno(BaseModel):
         :param app_name app name which full-matches to app_name, this parameter is a single app name, not an app list.
         :param app_set app name set.
         """
-        index = search.Index(name="anno_index")
+        index = search.Index(name=SearchIndexName.ANNO)
         # prepare pagination
         if limit is None:
             limit = 20  # default page size is 20.
@@ -444,7 +446,7 @@ class Anno(BaseModel):
         :param app_name app name which full-matches to app_name, this parameter is a single app name, not an app list.
         :param app_set app name set.
         """
-        index = search.Index(name="anno_index")
+        index = search.Index(name=SearchIndexName.ANNO)
         # prepare pagination
         if limit is None:
             limit = 20  # default page size is 20.
@@ -476,7 +478,7 @@ class Anno(BaseModel):
         :param app_name app name which full-matches to app_name, this parameter is a single app name, not an app list.
         :param app_set app name set.
         """
-        index = search.Index(name="anno_index")
+        index = search.Index(name=SearchIndexName.ANNO)
         # prepare pagination
         if limit is None:
             limit = 20  # default page size is 20.

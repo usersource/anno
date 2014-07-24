@@ -39,3 +39,6 @@ class InvitationStatusType(object):
 class DeviceType(object):
     IOS = "iOS"
     ANDROID = "Android"
+
+class SearchIndexName(object):
+    ANNO = "anno_index"

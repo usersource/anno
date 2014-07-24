@@ -15,6 +15,7 @@ from model.appinfo import AppInfo
 from model.community import Community
 from model.userrole import UserRole
 from helper.utils_enum import UserRoleType
+from helper.utils_enum import SearchIndexName
 
 
 APP_NAME = "UserSource"
@@ -154,7 +155,7 @@ def get_credential(headers):
 def put_search_document(doc):
     # index this document.
     try:
-        index = search.Index(name="anno_index")
+        index = search.Index(name=SearchIndexName.ANNO)
         index.put(doc)
     except search.Error:
         logging.exception('Put document failed.')
