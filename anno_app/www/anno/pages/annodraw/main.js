@@ -1117,7 +1117,7 @@ require([
                 if (data.error)
                 {
                     annoUtil.hideLoadingIndicator();
-                    annoUtil.showMessageDialog("An error occurred when calling user.community.list api: "+data.error.message);
+                    annoUtil.showMessageDialog("An error occurred when calling user.favorite_apps.list api: " + data.error.message);
                     return;
                 }
 
