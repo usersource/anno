@@ -65,7 +65,7 @@
                         </tr>
                     </table>
                 </div>
-                <div id="annoCommentsContainer" style="padding-left: 6px;width: 100%;overflow-y: auto;overflow-x:hidden; ">
+                <div id="annoCommentsContainer" style="width: 100%;overflow-y: auto;overflow-x:hidden; ">
                     <div id="deviceInfoContainer" style="padding-bottom: 8px">
                         <table width="100%" cellpadding="0" cellspacing="0">
                             <tr>
@@ -117,14 +117,14 @@
                                     <td align="left">
                                         <span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:*{this.index}', 'user_id')"></span><span class="authorDetail">&nbsp;commented</span>
                                     </td>
-                                    <td align="right" style="padding-right: 34px">
+                                    <td align="right" style="padding-right: 20px">
                                         <span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:*{this.index}', 'timestamp')"></span>
                                     </td>
                                 </tr>
                             </table>
                         </div>
                         <div class="commentDetail">
-                            <div data-dojo-type="dojox/mvc/Output" style="width: 96%" data-dojo-props="value: at('rel:*{this.index}', 'hashTaggedComment')"></div>
+                            <div data-dojo-type="dojox/mvc/Output" style="width: 100%" data-dojo-props="value: at('rel:*{this.index}', 'hashTaggedComment')"></div>
                         </div>
                     </div>
 
@@ -141,7 +141,7 @@
                     </table>
                 </div>
             </div>
-            <div id="detailBottomPlaceholder" style="height: 100px"></div>
+            <div id="detailBottomPlaceholder" style="height: 100px; background-color: white;"></div>
             <div id="addCommentContainer" style="display:none;padding-left: 6px;border-top: 2px solid #aeebfc;width: 100%;background-color: #ffffff;position: fixed;bottom: 0px">
                 <table width="100%" cellpadding="0" cellspacing="0">
                     <tr>
