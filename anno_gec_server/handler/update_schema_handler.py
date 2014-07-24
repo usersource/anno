@@ -14,6 +14,7 @@ from model.flag import Flag
 from model.appinfo import AppInfo
 from helper.utils import put_search_document
 from helper.utils import OPEN_COMMUNITY
+from helper.utils_enum import SearchIndexName
 from message.appinfo_message import AppInfoMessage
 
 
@@ -32,7 +33,7 @@ class UpdateAnnoHandler(webapp2.RequestHandler):
 
 
 def delete_all_anno_indices():
-    doc_index = search.Index(name="anno_index")
+    doc_index = search.Index(name=SearchIndexName.ANNO)
     start_id = None
 
     while True:

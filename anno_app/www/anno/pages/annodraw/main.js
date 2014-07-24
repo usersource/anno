@@ -315,7 +315,7 @@ require([
                                 appNameList = installedApps;
                                 // sort the app array by name
                                 result.sort(function (a, b){
-                                    return a.name > b.name;
+                                    return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;
                                 });
 
                                 // make a copy of recent apps
@@ -330,7 +330,7 @@ require([
                                 });
 
                                 installedApps.sort(function (a, b){
-                                    return a.name > b.name;
+                                    return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;
                                 });
 
                                 // add "recent" separator
@@ -373,26 +373,38 @@ require([
                     listCommunities.push({versionName:"", name:communityList[i].community.name});
                 }
 
+                listCommunities.sort(function (a, b){
+                    return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;
+                });
+
                 fillAppNameList(listCommunities, "sdFavoriteAppsListContent");
 
                 loadFavoriteApps(function(favoriteApps){
-                    var allList = listCommunities.concat(favoriteApps);
-                    var uniqueItems = removeDuplicatesAppsItems(allList);
-                    uniqueItems.sort(function (a, b){
-                        return a.name > b.name;
+                    var listCommunitiesPlainList = [];
+                    for (var i= 0,c=listCommunities.length;i<c;i++)
+                    {
+                        listCommunitiesPlainList.push(listCommunities[i].name);
+                    }
+
+                    favoriteApps = favoriteApps.filter(function(item){
+                        return listCommunitiesPlainList.indexOf(item.name) < 0;
+                    });
+
+                    favoriteApps.sort(function (a, b){
+                        return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;
                     });
 
                     var list = [];
 
-                    for (var i= 0,c=uniqueItems.length;i<c;i++)
+                    for (var i= 0,c=favoriteApps.length;i<c;i++)
                     {
-                        list.push({versionName:uniqueItems[i].version||"", name:uniqueItems[i].name});
+                        list.push({versionName:favoriteApps[i].version||"", name:favoriteApps[i].name});
                     }
 
-                    fillAppNameList(list, "sdFavoriteAppsListContent");
+                    fillAppNameList(list, "sdFavoriteAppsListContent", true);
 
                     // no teams and no favorites, then list all installed apps on Android
-                    if (uniqueItems.length <=0 && communityList.length <=0)
+                    if (favoriteApps.length <=0 && communityList.length <=0)
                     {
                         if (annoUtil.isAndroid())
                         {
@@ -1117,7 +1129,7 @@ require([
                 if (data.error)
                 {
                     annoUtil.hideLoadingIndicator();
-                    annoUtil.showMessageDialog("An error occurred when calling user.community.list api: "+data.error.message);
+                    annoUtil.showMessageDialog("An error occurred when calling user.favorite_apps.list api: " + data.error.message);
                     return;
                 }
 
