@@ -35,3 +35,7 @@ class UserRoleType(object):
 class InvitationStatusType(object):
     ACCEPTED = "accepted"
     PENDING = "pending"
+
+class DeviceType(object):
+    IOS = "iOS"
+    ANDROID = "Android"

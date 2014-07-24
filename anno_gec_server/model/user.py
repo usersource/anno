@@ -6,6 +6,7 @@ from google.appengine.ext import ndb
 
 from message.user_message import UserMessage
 from message.appinfo_message import UserFavoriteApp
+from helper.utils_enum import DeviceType
 
 
 class User(ndb.Model):
@@ -17,7 +18,7 @@ class User(ndb.Model):
     password = ndb.StringProperty()
     auth_source = ndb.StringProperty()  # "Anno" or "Google". If not "Anno", then no password is stored.
     device_id = ndb.StringProperty()
-    device_type = ndb.StringProperty(choices=["iOS", "Android"])
+    device_type = ndb.StringProperty(choices=[DeviceType.IOS, DeviceType.ANDROID])
 
     @classmethod
     def find_user_by_email(cls, email):
