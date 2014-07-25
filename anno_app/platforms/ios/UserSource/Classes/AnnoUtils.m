@@ -200,7 +200,7 @@
 - (void) displayError:(NSString*)message {
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:annoUtils.ERROR_TITLE
                                                         message:message
-                                                       delegate:self
+                                                       delegate:nil
                                               cancelButtonTitle:@"Ok"
                                               otherButtonTitles:nil];
 

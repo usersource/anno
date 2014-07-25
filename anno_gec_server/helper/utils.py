@@ -15,6 +15,7 @@ from model.appinfo import AppInfo
 from model.community import Community
 from model.userrole import UserRole
 from helper.utils_enum import UserRoleType
+from helper.utils_enum import SearchIndexName
 
 
 APP_NAME = "UserSource"
@@ -130,23 +131,31 @@ def md5(content):
 
 
 def get_credential(headers):
-    authorization = headers["Authorization"]
+    authorization = headers.get("Authorization")
     if authorization is None:
         raise endpoints.UnauthorizedException("No permission.")
+
     basic_auth_string = authorization.split(' ')
     if len(basic_auth_string) != 2:
         raise endpoints.UnauthorizedException("No permission.")
-    credential = base64.b64decode(basic_auth_string[1])
-    credential_pair = credential.split(':')
+
+    try:
+        credential = base64.b64decode(basic_auth_string[1])
+        credential_pair = credential.split(':')
+    except Exception as e:
+        logging.exception("Exception on get_credential: %s", e)
+        credential_pair = []
+
     if len(credential_pair) != 2:
         raise endpoints.UnauthorizedException("No permission.")
+
     return credential_pair
 
 
 def put_search_document(doc):
     # index this document.
     try:
-        index = search.Index(name="anno_index")
+        index = search.Index(name=SearchIndexName.ANNO)
         index.put(doc)
     except search.Error:
         logging.exception('Put document failed.')

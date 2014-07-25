@@ -173,7 +173,17 @@ define([
             }
             else
             {
-                annoUtil.showConfirmMessageDialog("Are you sure?", function(ret){
+                var manager_list = members.filter(function(user) {
+                    return (user.role == "manager" && user.status == "accepted");
+                });
+
+                if (manager_list.length == 1) {
+                    var last_manager_name = manager_list[0]["user"]["display_name"];
+                    annoUtil.showMessageDialog(last_manager_name + " is only active manager for this community. This user can't be removed.");
+                    return;
+                }
+
+            	annoUtil.showConfirmMessageDialog("Are you sure?", function(ret){
                     if (ret)
                     {
                         dom.byId("btnRemoveInvite").disabled = true;
@@ -283,6 +293,18 @@ define([
             if (currentMemberItem.userItem.role == "member")
             {
                 role = "manager";
+            }
+
+            if (role == "member") {
+                var manager_list = members.filter(function(user) {
+                    return (user.role == "manager" && user.status == "accepted");
+                });
+
+                if (manager_list.length == 1) {
+                    var last_manager_name = manager_list[0]["user"]["display_name"];
+                    annoUtil.showMessageDialog(last_manager_name + " is only active manager for this community. This user's role can't be changed.");
+                    return;
+                }
             }
 
             function _toggleMemberRoleUI()

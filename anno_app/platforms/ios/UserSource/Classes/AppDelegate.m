@@ -94,20 +94,6 @@
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
 
-    // setting status bar style
-    [application setStatusBarStyle:UIStatusBarStyleLightContent];
-
-    // setting height of iOS 7 - (NOT WORKING PROPERLY IN EVERY CASE)
-    NSArray *versionCompatibility = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
-    NSInteger iOSVersion = [[versionCompatibility objectAtIndex:0] intValue];
-
-    if (iOSVersion == 7) {
-        CGFloat windowWidth, windowHeight;
-        windowWidth = self.window.frame.size.width;
-        windowHeight = self.window.frame.size.height;
-        window.frame = CGRectMake(0, 20, windowWidth, windowHeight - 20);
-    }
-
     return YES;
 }
 
