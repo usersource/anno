@@ -775,7 +775,7 @@
     -webkit-user-select: none;
 }
 
-.hashTag
+.hashTag, .commentURL
 {
     color: blue;
 }

@@ -728,6 +728,10 @@ define([
         {
             return s.replace(/(^|\W)(#[a-z\d][\w-]*)/ig, linkScript);
         },
+        replaceURLWithLink: function(s, linkScript)
+        {
+            return s.replace(/(^|\W)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, linkScript);
+        },
         loadUserCommunities: function(includeInvite, callback, keepSpinnerShown)
         {
             if (this.userCommunities)

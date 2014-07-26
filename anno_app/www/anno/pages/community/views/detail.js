@@ -52,6 +52,7 @@ define([
         var imageWidth, imageHeight;
         var tiniestImageData = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=";
         var hashTagTemplate = '$1<span class="hashTag" onclick="searchAnnoByHashTag(this.innerHTML)">$2</span>';
+        var commentURLTemplate = '$1<span class="commentURL" onclick="window.open(\'$2\', \'_blank\')">$2</span>';
 
         var adjustSize = function()
         {
@@ -692,7 +693,7 @@ define([
                             {
                                 returnAnno.followup_list[j].user_id = returnAnno.followup_list[j].creator.display_name||returnAnno.followup_list[j].creator.user_email||returnAnno.followup_list[j].creator.id;
                                 returnAnno.followup_list[j].timestamp = annoUtil.getTimeAgoString(returnAnno.followup_list[j].created);
-                                processFollowupHashTags(returnAnno.followup_list[j]);
+                                processFollowupHashTagsOrURLs(returnAnno.followup_list[j]);
                             }
                         }
 
@@ -765,7 +766,7 @@ define([
                         currentAnno.when = new Date().getTime();
 
                         var commentObject = {user_id:author, comment:comment};
-                        processFollowupHashTags(commentObject);
+                        processFollowupHashTagsOrURLs(commentObject);
                         annoUtil.hideLoadingIndicator();
                         currentAnno.comments.splice(0,0,new getStateful(commentObject));
                         adjustAnnoCommentSize();
@@ -1205,15 +1206,15 @@ define([
             eventsModel.cursor.set('hashTaggedAnnoText', annoUtil.replaceHashTagWithLink(annoText, hashTagTemplate));
         };
 
-        var processFollowupHashTags = function(followup)
+        var processFollowupHashTagsOrURLs = function(followup)
         {
-            // hash tags are replaced already
-            if (followup.hashTaggedComment)
-            {
-                return;
-            }
-
-            followup.hashTaggedComment = annoUtil.replaceHashTagWithLink(followup.comment, hashTagTemplate);
+        	// hash tags are replaced already then don't replace
+        	if (!followup.modifiedComment)
+        	{
+        		followup.modifiedComment = followup.comment;
+        		followup.modifiedComment = annoUtil.replaceHashTagWithLink(followup.modifiedComment, hashTagTemplate);
+        		followup.modifiedComment = annoUtil.replaceURLWithLink(followup.modifiedComment, commentURLTemplate);
+        	}
         };
 
         // search anno items by hash tag
