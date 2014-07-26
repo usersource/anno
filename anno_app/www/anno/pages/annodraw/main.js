@@ -1146,6 +1146,7 @@ require([
         {
             // hide "My apps" tab, resize existing tabs
             domStyle.set(dom.byId("barRecentApps").parentNode, "display", "none");
+            domStyle.set(dom.byId("btnCancel"), "display", "");
 
             dom.byId("barFavoriteApps").parentNode.setAttribute("width", "50%");
             dom.byId("barElseApps").parentNode.setAttribute("width", "50%");
@@ -1268,6 +1269,15 @@ require([
                             showMenuDialog();
                         }
                     });
+
+                    connect.connect(dom.byId("btnCancel"), "click", function(){
+                        var shareDialog = registry.byId('shareDialog');
+                        shareDialog.hide();
+                        // enable JS gesture listener, disable native gesture
+                        annoUtil.enableJSGesture();
+                        annoUtil.disableNativeGesture();
+                    });
+
                 }, 500);
 
                 // load all needed resources at startup
