@@ -525,7 +525,6 @@ class Anno(BaseModel):
             query_string_parts.append("( app_name = \"%s\" )" % app_name)
 
         query_string = ' AND '.join(query_string_parts)
-        logging.info("final query string=%s" % query_string)
         return query_string
 
     @classmethod
@@ -551,12 +550,12 @@ class Anno(BaseModel):
         :param words: tokens to match
         """
         if fields is not None and len(fields) > 0 and words is not None and len(words) > 0:
-            query_string = " ( "
+            query_string = "( "
             for index, field in enumerate(fields):
                 query_string += Anno.get_query_string_for_field(field, words)
                 if index != len(fields) - 1:
                     query_string += " OR "
-            query_string += " ) "
+            query_string += " )"
             return query_string
         return None
 
@@ -567,9 +566,10 @@ class Anno(BaseModel):
         user_community_list.append(OPEN_COMMUNITY)
 
         if len(query_string):
-            query_string += "AND "
+            query_string += " AND "
 
-        query_string += '( community = (%s) )' % (" OR ".join(user_community_list))
+        query_string += "( community = (%s) )" % (" OR ".join(user_community_list))
+        logging.info("final query string: %s", query_string)
 
         query = search.Query(query_string=query_string, options=query_options)
         results = index.search(query)
