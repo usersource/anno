@@ -40,114 +40,105 @@ define([
         var loadMyAnnos = function()
         {
             AnnoDataHandler.loadLocalAnnos(function (localAnnos){
-                Util.showLoadingIndicator();
-                OAuthUtil.getAccessToken(function(){
-                    Util.loadAPI(Util.API.anno, function(){
-                        var mystuff = gapi.client.anno.anno.mystuff();
-                        console.error("getting my annos from server.");
-                        mystuff.execute(function (data)
+                console.log("getting my stuff from server.");
+                var APIConfig = {
+                    name: Util.API.anno,
+                    method: "anno.anno.mystuff",
+                    parameter: {},
+                    needAuth: true,
+                    success: function(data)
+                    {
+                        var annoList = [];
+
+                        if (data&&data.result)
                         {
-                            if (!data)
+                            annoList = data.result.anno_list||[];
+                        }
+
+                        var spliceArgs = [0, eventsModel.model.length], eventData, userInfo = Util.getCurrentUserInfo(), userName = userInfo.nickname;
+
+                        for (var i= 0, l=localAnnos.length;i<l;i++)
+                        {
+                            eventData = lang.clone(emptyAnno);
+
+                            eventData.annoText = localAnnos[i].comment;
+                            eventData.annoType = localAnnos[i].anno_type;
+                            eventData.annoIcon = localAnnos[i].anno_type == Util.annoType.SimpleComment?"icon-simplecomment":"icon-shapes";
+                            eventData.app = localAnnos[i].app_name;
+                            eventData.screenshot_key = localAnnos[i].screenshot_key;
+                            eventData.author = userName;
+                            eventData.id = localAnnos[i]._id;
+                            eventData.circleX = parseInt(localAnnos[i].x, 10);
+                            eventData.circleY = parseInt(localAnnos[i].y, 10);
+                            eventData.simple_circle_on_top = localAnnos[i].direction==0||localAnnos[i].direction=='false';
+
+                            eventData.deviceInfo = (localAnnos[i].model||'&nbsp;')+'&nbsp;'+(localAnnos[i].os_name||'&nbsp;')+(localAnnos[i].os_version||'&nbsp;');
+                            eventData.vote = false;
+                            eventData.flag = false;
+                            eventData.level = localAnnos[i].level;
+                            eventData.draw_elements = localAnnos[i].draw_elements||"";
+                            eventData.comments = [];
+                            eventData.created = eventData.when = Util.getTimeAgoString(parseInt(localAnnos[i].created));
+
+                            eventData.lastActivityClass = "";
+                            eventData.lastActivityText = "created";
+
+                            eventData.app_icon_url = localAnnos[i].app_icon_url||"";
+                            if (eventData.app_icon_url)
                             {
-                                Util.hideLoadingIndicator();
-                                // alert("Items returned from server are empty.");
-                                Util.showToastDialog("Items returned from server are empty.");
+                                eventData.annoIcon = "hidden";
+                                eventData.appIconClass = "";
+                            }
+                            else
+                            {
+                                eventData.appIconClass = "hidden";
                             }
 
-                            if (data.error)
+                            spliceArgs.push(new getStateful(eventData));
+                        }
+
+                        for (var i = 0, l = annoList.length; i < l; i++)
+                        {
+                            eventData = lang.clone(emptyAnno);
+
+                            eventData.annoText = annoList[i].anno_text;
+                            eventData.annoType = annoList[i].anno_type;
+                            eventData.annoIcon = annoList[i].anno_type == Util.annoType.SimpleComment?"icon-simplecomment":"icon-shapes";
+                            eventData.app = annoList[i].app_name;
+                            eventData.author = annoList[i].creator?annoList[i].creator.display_name||annoList[i].creator.user_email||annoList[i].creator.user_id:"";
+                            eventData.id = annoList[i].id;
+                            eventData.circleX = parseInt(annoList[i].simple_x, 10);
+                            eventData.circleY = parseInt(annoList[i].simple_y, 10);
+                            eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
+                            eventData.created = Util.getTimeAgoString(annoList[i].created);
+
+                            eventData.app_icon_url = annoList[i].app_icon_url||"";
+                            if (eventData.app_icon_url)
                             {
-                                Util.hideLoadingIndicator();
-                                // alert("An error occurred when calling anno.mystuff api: "+data.error.message);
-                                Util.showMessageDialog("An error occurred when calling anno.mystuff api: " + data.error.message);
+                                eventData.annoIcon = "hidden";
+                                eventData.appIconClass = "";
+                            }
+                            else
+                            {
+                                eventData.appIconClass = "hidden";
                             }
 
-                            var annoList = [];
+                            handleAnnoActivityInfo(eventData, annoList[i]);
 
-                            if (data&&data.result)
-                            {
-                                annoList = data.result.anno_list||[];
-                            }
+                            spliceArgs.push(new getStateful(eventData));
+                        }
 
-                            var spliceArgs = [0, eventsModel.model.length], eventData, userInfo = Util.getCurrentUserInfo(), userName = userInfo.nickname;
+                        eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
+                        Util.hideLoadingIndicator();
 
-                            for (var i= 0, l=localAnnos.length;i<l;i++)
-                            {
-                                eventData = lang.clone(emptyAnno);
+                        drawAnnos(spliceArgs);
+                    },
+                    error: function()
+                    {
+                    }
+                };
 
-                                eventData.annoText = localAnnos[i].comment;
-                                eventData.annoType = localAnnos[i].anno_type;
-                                eventData.annoIcon = localAnnos[i].anno_type == Util.annoType.SimpleComment?"icon-simplecomment":"icon-shapes";
-                                eventData.app = localAnnos[i].app_name;
-                                eventData.screenshot_key = localAnnos[i].screenshot_key;
-                                eventData.author = userName;
-                                eventData.id = localAnnos[i]._id;
-                                eventData.circleX = parseInt(localAnnos[i].x, 10);
-                                eventData.circleY = parseInt(localAnnos[i].y, 10);
-                                eventData.simple_circle_on_top = localAnnos[i].direction==0||localAnnos[i].direction=='false';
-
-                                eventData.deviceInfo = (localAnnos[i].model||'&nbsp;')+'&nbsp;'+(localAnnos[i].os_name||'&nbsp;')+(localAnnos[i].os_version||'&nbsp;');
-                                eventData.vote = false;
-                                eventData.flag = false;
-                                eventData.level = localAnnos[i].level;
-                                eventData.draw_elements = localAnnos[i].draw_elements||"";
-                                eventData.comments = [];
-                                eventData.created = eventData.when = Util.getTimeAgoString(parseInt(localAnnos[i].created));
-
-                                eventData.lastActivityClass = "";
-                                eventData.lastActivityText = "created";
-
-                                eventData.app_icon_url = localAnnos[i].app_icon_url||"";
-                                if (eventData.app_icon_url)
-                                {
-                                    eventData.annoIcon = "hidden";
-                                    eventData.appIconClass = "";
-                                }
-                                else
-                                {
-                                    eventData.appIconClass = "hidden";
-                                }
-
-                                spliceArgs.push(new getStateful(eventData));
-                            }
-
-                            for (var i = 0, l = annoList.length; i < l; i++)
-                            {
-                                eventData = lang.clone(emptyAnno);
-
-                                eventData.annoText = annoList[i].anno_text;
-                                eventData.annoType = annoList[i].anno_type;
-                                eventData.annoIcon = annoList[i].anno_type == Util.annoType.SimpleComment?"icon-simplecomment":"icon-shapes";
-                                eventData.app = annoList[i].app_name;
-                                eventData.author = annoList[i].creator?annoList[i].creator.display_name||annoList[i].creator.user_email||annoList[i].creator.user_id:"";
-                                eventData.id = annoList[i].id;
-                                eventData.circleX = parseInt(annoList[i].simple_x, 10);
-                                eventData.circleY = parseInt(annoList[i].simple_y, 10);
-                                eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
-                                eventData.created = Util.getTimeAgoString(annoList[i].created);
-
-                                eventData.app_icon_url = annoList[i].app_icon_url||"";
-                                if (eventData.app_icon_url)
-                                {
-                                    eventData.annoIcon = "hidden";
-                                    eventData.appIconClass = "";
-                                }
-                                else
-                                {
-                                    eventData.appIconClass = "hidden";
-                                }
-
-                                handleAnnoActivityInfo(eventData, annoList[i]);
-
-                                spliceArgs.push(new getStateful(eventData));
-                            }
-
-                            eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
-                            Util.hideLoadingIndicator();
-
-                            drawAnnos(spliceArgs);
-                        });
-                    });
-                });
+                Util.callGAEAPI(APIConfig);
             });
         };
 

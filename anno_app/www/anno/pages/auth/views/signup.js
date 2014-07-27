@@ -85,46 +85,20 @@ define([
                 pwd = dom.byId('signupPwd').value,
                 nickname = dom.byId('nickNameSignup').value;
 
-            annoUtil.showLoadingIndicator();
-            annoUtil.loadAPI(annoUtil.API.account, function(){
-                var registerAPI = gapi.client.account.account.register({
+            var APIConfig = {
+                name: annoUtil.API.account,
+                method: "account.account.register",
+                parameter: {
                     'display_name':nickname,
                     'password':pwd,
                     'user_email':email
-                });
-
-                registerAPI.execute(function(resp){
-                    if (!resp)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        annoUtil.showMessageDialog("Response from server are empty when calling account.register api.");
-                        return;
-                    }
-
-                    if (resp.error)
-                    {
-                        annoUtil.hideLoadingIndicator();
-
-                        if (resp.error.message == ("Email("+email+") already exists."))
-                        {
-                            domStyle.set('pickNickNameContainer', 'display', 'none');
-                            domStyle.set('signinContainer', 'display', 'none');
-                            dom.byId("signinMessage").innerHTML = "Email("+email+") already exists, please sign-in.";
-                            domStyle.set('signinMessage', 'display', '');
-                            domStyle.set('annoSigninContainer', 'display', '');
-                            domStyle.set('modelApp_signin', 'backgroundColor', '#DDDDDD');
-                            dom.byId("signinEmail").value = email;
-
-                            app.transitionToView(document.getElementById('modelApp_signup'), {target:'signin',url:'#signin',params:{"gotosignin":"1"}});
-                        }
-                        else
-                        {
-                            annoUtil.showMessageDialog("An error occurred when calling account.register api: "+resp.error.message);
-                        }
-
-                        return;
-                    }
-
+                },
+                showErrorMessage:function(error)
+                {
+                    return error.message != ("Email("+email+") already exists.");
+                },
+                success: function(resp)
+                {
                     // save user info into local db
                     var userInfo = {};
                     userInfo.userId = resp.result.id;
@@ -136,9 +110,25 @@ define([
                     AnnoDataHandler.saveUserInfo(userInfo, function(){
                         doCallback();
                     });
-                    annoUtil.hideLoadingIndicator();
-                });
-            });
+                },
+                error: function(error)
+                {
+                    if (error.message == ("Email("+email+") already exists."))
+                    {
+                        domStyle.set('pickNickNameContainer', 'display', 'none');
+                        domStyle.set('signinContainer', 'display', 'none');
+                        dom.byId("signinMessage").innerHTML = "Email("+email+") already exists, please sign-in.";
+                        domStyle.set('signinMessage', 'display', '');
+                        domStyle.set('annoSigninContainer', 'display', '');
+                        domStyle.set('modelApp_signin', 'backgroundColor', '#DDDDDD');
+                        dom.byId("signinEmail").value = email;
+
+                        app.transitionToView(document.getElementById('modelApp_signup'), {target:'signin',url:'#signin',params:{"gotosignin":"1"}});
+                    }
+                }
+            };
+
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         var doCallback = function()

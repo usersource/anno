@@ -203,7 +203,7 @@ define([
                     annoUtil.showMessageDialog("refresh access token error: " + err);
                     if (errorCallback)
                     {
-                        errorCallback();
+                        errorCallback(err);
                     }
                     else
                     {

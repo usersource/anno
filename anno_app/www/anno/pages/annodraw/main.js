@@ -1114,30 +1114,20 @@ require([
             return;
         }
 
-        annoUtil.showLoadingIndicator();
-        annoUtil.loadAPI(annoUtil.API.user, function(){
-            var method = gapi.client.user.favorite_apps.list({email:annoUtil.getCurrentUserInfo().email});
-            method.execute(function (data)
+        var APIConfig = {
+            name: annoUtil.API.user,
+            method: "user.favorite_apps.list",
+            parameter: {email:annoUtil.getCurrentUserInfo().email},
+            success: function(data)
             {
-                if (!data)
-                {
-                    annoUtil.hideLoadingIndicator();
-                    annoUtil.showToastDialog("Items returned from server are empty.");
-                    return;
-                }
-
-                if (data.error)
-                {
-                    annoUtil.hideLoadingIndicator();
-                    annoUtil.showMessageDialog("An error occurred when calling user.favorite_apps.list api: " + data.error.message);
-                    return;
-                }
-
                 favoriteApps = data.result.app_list||[];
                 if (callback) callback(favoriteApps);
-                annoUtil.hideLoadingIndicator();
-            });
-        });
+            },
+            error: function(){
+            }
+        };
+
+        annoUtil.callGAEAPI(APIConfig);
     };
 
     var setShareDialogUI = function()

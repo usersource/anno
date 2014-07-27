@@ -62,28 +62,15 @@ define([
             var email = dom.byId('signinEmail').value,
                 pwd = dom.byId('signPwd').value;
 
-            annoUtil.showLoadingIndicator();
-            annoUtil.loadAPI(annoUtil.API.account, function(){
-                var signinAPI = gapi.client.account.account.authenticate({
+            var APIConfig = {
+                name: annoUtil.API.account,
+                method: "account.account.authenticate",
+                parameter: {
                     'password':pwd,
                     'user_email':email
-                });
-
-                signinAPI.execute(function(resp){
-                    if (!resp)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        annoUtil.showMessageDialog("Response from server are empty when calling account.authenticate api.");
-                        return;
-                    }
-
-                    if (resp.error)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        annoUtil.showMessageDialog(resp.error.message);
-                        return;
-                    }
-
+                },
+                success: function(resp)
+                {
                     // save user info into local db
                     var userInfo = {};
                     userInfo.userId = resp.result.id;
@@ -95,9 +82,12 @@ define([
                     AnnoDataHandler.saveUserInfo(userInfo, function(){
                         doCallback();
                     });
-                    annoUtil.hideLoadingIndicator();
-                });
-            });
+                },
+                error: function(){
+                }
+            };
+
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         var saveNickname = function()
@@ -109,38 +99,25 @@ define([
             userInfo.signinMethod = "google";
             userInfo.nickname = dom.byId("nickNameSignin").value;
 
-            annoUtil.showLoadingIndicator();
-            annoUtil.loadAPI(annoUtil.API.account, function(){
-                var bindAccountAPI = gapi.client.account.account.bind_account({
+            var APIConfig = {
+                name: annoUtil.API.account,
+                method: "account.account.bind_account",
+                parameter: {
                     'display_name':dom.byId("nickNameSignin").value,
                     'auth_source':'Google'
-                });
-
-                bindAccountAPI.execute(function(resp){
-                    if (!resp)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        annoUtil.showMessageDialog("Response from server are empty when calling account.bind_account api.");
-                        return;
-                    }
-
-                    console.error("bind_account:"+JSON.stringify(resp));
-                    if (resp.error)
-                    {
-                        annoUtil.hideLoadingIndicator();
-
-                        annoUtil.showMessageDialog("An error occurred when calling account.bind_account api: "+resp.error.message);
-                        return;
-                    }
-
+                },
+                success: function(data){
+                    console.error("bind_account:"+JSON.stringify(data));
                     AnnoDataHandler.saveUserInfo(userInfo, function(){
                         _currentAuthResult.newUser = true;
                         doCallback(_currentAuthResult);
                     });
+                },
+                error: function(){
+                }
+            };
 
-                    annoUtil.hideLoadingIndicator();
-                });
-            });
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         var doGoogleAuth = function()
@@ -157,31 +134,17 @@ define([
             {
                 if (!DBUtil.hasUserInLocalDB)
                 {
-                    annoUtil.showLoadingIndicator();
-                    annoUtil.loadAPI(annoUtil.API.user, function(){
-                        var getDisplayNameAPI = gapi.client.user.user.displayname.get({email: result.userInfo.email});
-
-                        getDisplayNameAPI.execute(function(resp){
-                            if (!resp)
-                            {
-                                annoUtil.hideLoadingIndicator();
-                                annoUtil.showMessageDialog("Response from server are empty when calling user.displayname.get api.");
-                                return;
-                            }
-
-                            if (resp.error)
-                            {
-                                annoUtil.hideLoadingIndicator();
-
-                                annoUtil.showMessageDialog("An error occurred when calling user.displayname.get api: "+resp.error.message);
-                                return;
-                            }
-
-                            console.error("user.displayname.get: "+ JSON.stringify(resp));
+                    var APIConfig = {
+                        name: annoUtil.API.user,
+                        method: "user.user.displayname.get",
+                        parameter: {email: result.userInfo.email},
+                        success: function(data)
+                        {
+                            console.log("user.displayname.get: "+ JSON.stringify(data));
 
                             currentSignInUserInfo = result.userInfo;
                             _currentAuthResult = result;
-                            if (!resp.display_name)
+                            if (!data.display_name)
                             {
                                 // goes to pick nick name screen
                                 domStyle.set('pickNickNameContainer', 'display', '');
@@ -201,17 +164,18 @@ define([
                                 userInfo.userId = currentSignInUserInfo.id;
                                 userInfo.email = currentSignInUserInfo.email;
                                 userInfo.signinMethod = "google";
-                                userInfo.nickname = resp.result.display_name;
+                                userInfo.nickname = data.result.display_name;
 
                                 AnnoDataHandler.saveUserInfo(userInfo, function(){
                                     doCallback(_currentAuthResult);
                                 });
                             }
+                        },
+                        error: function(){
+                        }
+                    };
 
-                            annoUtil.hideLoadingIndicator();
-                        });
-                    });
-
+                    annoUtil.callGAEAPI(APIConfig);
                 }
                 else
                 {
@@ -280,33 +244,25 @@ define([
 
             if (email.length <=0) return;
 
-            annoUtil.loadAPI(annoUtil.API.user, function(){
-                var getDisplayNameAPI = gapi.client.user.user.displayname.get({email:email});
-
-                getDisplayNameAPI.execute(function(resp){
-                    if (!resp)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        annoUtil.showMessageDialog("Response from server are empty when calling user.displayname.get api.");
-                        return;
-                    }
-
-                    if (resp.error)
-                    {
-                        annoUtil.hideLoadingIndicator();
-
-                        annoUtil.showMessageDialog("An error occurred when calling user.displayname.get api: "+resp.error.message);
-                        return;
-                    }
-
-                    console.error("user.displayname.get: "+ JSON.stringify(resp));
+            var APIConfig = {
+                name: annoUtil.API.user,
+                method: "user.user.displayname.get",
+                parameter: {email:email},
+                showLoadingSpinner: false,
+                success: function(resp)
+                {
+                    console.log("user.displayname.get: "+ JSON.stringify(resp));
 
                     if (resp.display_name)
                     {
                         dom.byId('nickNameSigninAnno').value = resp.display_name;
                     }
-                });
-            });
+                },
+                error: function(){
+                }
+            };
+
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         var exitApp = function()
