@@ -60,58 +60,17 @@ define([
                             nickname = DBUtil.localUserInfo.nickname,
                             pwd = DBUtil.localUserInfo.password;
 
-                        annoUtil.showLoadingIndicator();
-                        annoUtil.loadAPI(annoUtil.API.account, function(){
-                            var registerAPI = gapi.client.account.account.register({
+                        var APIConfig = {
+                            name: annoUtil.API.account,
+                            method: "account.account.register",
+                            parameter: {
                                 'display_name':nickname,
                                 'password':pwd,
                                 'user_email':email
-                            });
-
-                            registerAPI.execute(function(resp){
-                                if (!resp)
-                                {
-                                    annoUtil.hideLoadingIndicator();
-                                    return;
-                                }
-
-                                var emailExist = false;
-                                if (resp.error)
-                                {
-                                    if (resp.error.message == ("Email("+email+") already exists."))
-                                    {
-                                        emailExist = true;
-                                    }
-                                    else
-                                    {
-                                        if (self._callback)
-                                        {
-                                            self._callback({
-                                                success: 0,
-                                                message: "An error occurred when calling account.register api: "+resp.error.message
-                                            });
-                                        }
-
-                                        annoUtil.hideLoadingIndicator();
-                                        return;
-                                    }
-                                }
-
-                                if (!emailExist&&!resp.result)
-                                {
-                                    if (self._callback)
-                                    {
-                                        self._callback({
-                                            success: 0,
-                                            message: "Response from server are empty when calling account.register api."
-                                        });
-                                    }
-
-                                    annoUtil.hideLoadingIndicator();
-                                    return;
-                                }
-
-                                annoUtil.hideLoadingIndicator();
+                            },
+                            showErrorMessage:false,
+                            success: function(data)
+                            {
                                 closeServerURLDialog();
                                 // clear device id
                                 annoUtil.clearDeviceId(function(){
@@ -119,9 +78,20 @@ define([
                                         window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
                                     });
                                 });
-                            });
-                        });
+                            },
+                            error: function()
+                            {
+                                closeServerURLDialog();
+                                // clear device id
+                                annoUtil.clearDeviceId(function(){
+                                    annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
+                                        window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
+                                    });
+                                });
+                            }
+                        };
 
+                        annoUtil.callGAEAPI(APIConfig);
                     }
                 }
             });

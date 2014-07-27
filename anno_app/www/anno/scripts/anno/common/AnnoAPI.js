@@ -193,66 +193,17 @@ define([
                 pwd = this.defaultPwd;
 
             var self = this;
-            annoUtil.showLoadingIndicator();
-            annoUtil.loadAPI(annoUtil.API.account, function(){
-                var registerAPI = gapi.client.account.account.register({
+            var APIConfig = {
+                name: annoUtil.API.account,
+                method: "account.account.register",
+                parameter: {
                     'display_name':nickname,
                     'password':pwd,
                     'user_email':email
-                });
-
-                registerAPI.execute(function(resp){
-                    if (!resp)
-                    {
-                        if (annoAPI._callback)
-                        {
-                            annoAPI._callback({
-                                success: 0,
-                                message: "Response from server are empty when calling account.register api."
-                            });
-                        }
-
-                        annoUtil.hideLoadingIndicator();
-                        return;
-                    }
-
-                    var emailExist = false, emailExistMsg;
-                    if (resp.error)
-                    {
-                        if (resp.error.message == ("Email("+email+") already exists."))
-                        {
-                            emailExist = true;
-                            emailExistMsg = resp.error.message;
-                        }
-                        else
-                        {
-                            if (annoAPI._callback)
-                            {
-                                annoAPI._callback({
-                                    success: 0,
-                                    message: "An error occurred when calling account.register api: "+resp.error.message
-                                });
-                            }
-
-                            annoUtil.hideLoadingIndicator();
-                            return;
-                        }
-                    }
-
-                    if (!emailExist&&!resp.result)
-                    {
-                        if (annoAPI._callback)
-                        {
-                            annoAPI._callback({
-                                success: 0,
-                                message: "Response from server are empty when calling account.register api."
-                            });
-                        }
-
-                        annoUtil.hideLoadingIndicator();
-                        return;
-                    }
-
+                },
+                showErrorMessage:false,
+                success: function(resp)
+                {
                     // save user info into local db
                     var userInfo = {};
                     userInfo.userId = resp.result?resp.result.id:email;
@@ -261,6 +212,7 @@ define([
                     userInfo.signinMethod = "anno";
                     userInfo.nickname = nickname;
 
+                    var emailExist = false, emailExistMsg = "";
                     AnnoDataHandler.saveUserInfo(userInfo, function(){
                         if (annoAPI._callback)
                         {
@@ -291,8 +243,71 @@ define([
 
                         annoUtil.hideLoadingIndicator();
                     });
-                });
-            });
+                },
+                error: function(error, resp)
+                {
+                    var emailExist = false, emailExistMsg;
+                    if (error)
+                    {
+                        if (error.message == ("Email("+email+") already exists."))
+                        {
+                            emailExist = true;
+                            emailExistMsg = error.message;
+
+                            // save user info into local db
+                            var userInfo = {};
+                            userInfo.userId = resp.result?resp.result.id:email;
+                            userInfo.email = email;
+                            userInfo.password = pwd;
+                            userInfo.signinMethod = "anno";
+                            userInfo.nickname = nickname;
+
+                            AnnoDataHandler.saveUserInfo(userInfo, function(){
+                                if (annoAPI._callback)
+                                {
+                                    if (emailExist)
+                                    {
+                                        annoAPI._callback({
+                                            success: 2,
+                                            message: emailExistMsg
+                                        });
+                                    }
+                                    else
+                                    {
+                                        annoAPI._callback({
+                                            success: 1,
+                                            message: "user sign-up succeeded. "
+                                        });
+                                    }
+
+                                    DBUtil.loadLocalUserInfo();
+
+                                    OAuthUtil.processBasicAuthToken(userInfo);
+                                    // start background sync
+                                    document.getElementById('networkMsg').innerHTML = "background sync running...";
+                                    window.setTimeout(function(){
+                                        AnnoDataHandler.startBackgroundSync();
+                                    }, 5*1000);
+                                }
+
+                                annoUtil.hideLoadingIndicator();
+                            });
+                        }
+                        else
+                        {
+                            if (annoAPI._callback)
+                            {
+                                annoAPI._callback({
+                                    success: 0,
+                                    message: "An error occurred when calling account.register api: "+error.message
+                                });
+                            }
+                        }
+                    }
+                }
+            };
+
+            annoUtil.callGAEAPI(APIConfig);
         },
         _reloadGCEClientLib: function()
         {
