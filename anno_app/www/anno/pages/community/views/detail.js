@@ -168,13 +168,10 @@ define([
             {
                 var elementsObject = dojoJson.parse(drawElements);
 
-                if (showAnnotations)
+                surface.show();
+                if (!showAnnotations)
                 {
-                    surface.show();
-                }
-                else
-                {
-                    surface.hide();
+                    toggleAnnotations();
                 }
 
                 domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', top:(-borderWidth)+'px', left:(-borderWidth)+'px'});
