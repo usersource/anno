@@ -69,6 +69,7 @@ from helper.utils import auth_user
 from helper.utils import put_search_document
 from helper.activity_push_notifications import ActivityPushNotifications
 from helper.utils_enum import AnnoQueryType, AnnoActionType
+from helper.utils_enum import SearchIndexName
 
 
 @endpoints.api(name='anno', version='1.0', description='Anno API',
@@ -208,7 +209,7 @@ class AnnoApi(remote.Service):
         entity = Anno.insert_anno(request, user)
 
         # index this document. strange exception here.
-        put_search_document(entity.generate_search_document())
+        put_search_document(entity.generate_search_document(), SearchIndexName.ANNO)
 
         # send push notifications
         ActivityPushNotifications.send_push_notification(first_user=user, anno=entity, action_type=AnnoActionType.CREATED)
@@ -239,7 +240,7 @@ class AnnoApi(remote.Service):
         anno.put()
 
         # update search document.
-        put_search_document(anno.generate_search_document())
+        put_search_document(anno.generate_search_document(), SearchIndexName.ANNO)
 
         # send notifications
         ActivityPushNotifications.send_push_notification(first_user=user, anno=anno, action_type=AnnoActionType.EDITED)

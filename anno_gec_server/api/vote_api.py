@@ -14,6 +14,7 @@ from message.vote_message import VoteListMessage
 from helper.settings import anno_js_client_id
 from helper.utils import auth_user
 from helper.utils import put_search_document
+from helper.utils_enum import SearchIndexName
 from model.anno import Anno
 from model.vote import Vote
 from model.userannostate import UserAnnoState
@@ -53,7 +54,7 @@ class VoteApi(remote.Service):
         UserAnnoState.insert(user=user, anno=anno)
 
         # update vote in search document
-        put_search_document(anno.generate_search_document())
+        put_search_document(anno.generate_search_document(), SearchIndexName.ANNO)
 
         return vote.to_message()
 
@@ -87,7 +88,7 @@ class VoteApi(remote.Service):
                 key.delete()
                 anno.vote_count -= 1
                 anno.put()
-        put_search_document(anno.generate_search_document())
+        put_search_document(anno.generate_search_document(), SearchIndexName.ANNO)
         return message_types.VoidMessage()
 
     @endpoints.method(vote_with_id_resource_container, VoteMessage, http_method='GET', path='vote/{id}',

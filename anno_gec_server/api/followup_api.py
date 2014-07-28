@@ -19,6 +19,7 @@ from message.followup_message import FollowupListMessage
 from helper.utils import put_search_document
 from helper.activity_push_notifications import ActivityPushNotifications
 from helper.utils_enum import AnnoActionType
+from helper.utils_enum import SearchIndexName
 
 @endpoints.api(name='followup', version='1.0', description='Followup API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
@@ -56,7 +57,8 @@ class FollowupApi(remote.Service):
         UserAnnoState.insert(user=user, anno=anno)
 
         # update search document
-        put_search_document(anno.generate_search_document())
+        put_search_document(anno.generate_search_document(), SearchIndexName.ANNO)
+        put_search_document(followup.generate_search_document(), SearchIndexName.FOLLOWUP)
 
         # send notifications
         ActivityPushNotifications.send_push_notification(first_user=user, anno=anno, action_type=AnnoActionType.COMMENTED,

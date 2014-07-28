@@ -152,10 +152,10 @@ def get_credential(headers):
     return credential_pair
 
 
-def put_search_document(doc):
+def put_search_document(doc, search_index_name):
     # index this document.
     try:
-        index = search.Index(name=SearchIndexName.ANNO)
+        index = search.Index(name=search_index_name)
         index.put(doc)
     except search.Error:
         logging.exception('Put document failed.')

@@ -12,6 +12,7 @@ from model.appinfo import AppInfo
 from helper.settings import anno_js_client_id
 from helper.utils import is_empty_string
 from message.appinfo_message import AppInfoMessage
+from helper.utils_enum import SearchIndexName
 
 
 @endpoints.api(name='util', version='1.0', description='Util API',
@@ -29,7 +30,7 @@ class UtilApi(remote.Service):
         """
         for anno in Anno.query():
             logging.info("generating search document for anno(%s)." % anno.key.id())
-            put_search_document(anno.generate_search_document())
+            put_search_document(anno.generate_search_document(), SearchIndexName.ANNO)
         return message_types.VoidMessage()
 
 
