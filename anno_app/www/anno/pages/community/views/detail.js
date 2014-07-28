@@ -52,7 +52,7 @@ define([
         var imageWidth, imageHeight;
         var tiniestImageData = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=";
         var hashTagTemplate = '$1<span class="hashTag" onclick="searchAnnoByHashTag(this.innerHTML)">$2</span>';
-        var commentURLTemplate = '$1<span class="commentURL" onclick="window.open(\'$2\', \'_blank\')">$2</span>';
+        var commentURLTemplate = '$1<span class="commentURL" onclick="window.open(encodeURI(\'$2\'), \'_blank\', \'location=no\')">$2</span>';
 
         var adjustSize = function()
         {
