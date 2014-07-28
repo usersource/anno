@@ -21,6 +21,7 @@ class AppInfoMessage(messages.Message):
 class UserFavoriteApp(messages.Message):
     name = messages.StringField(1)
     icon_url = messages.StringField(2)
+    version = messages.StringField(3)
 
 class UserFavoriteAppList(messages.Message):
     app_list = messages.MessageField(UserFavoriteApp, 1, repeated=True)

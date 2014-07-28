@@ -11,79 +11,120 @@ from model.userannostate import UserAnnoState
 from model.vote import Vote
 from model.follow_up import FollowUp
 from model.flag import Flag
+from model.appinfo import AppInfo
+from helper.utils import put_search_document
 from helper.utils import OPEN_COMMUNITY
+from helper.utils_enum import SearchIndexName
+from message.appinfo_message import AppInfoMessage
+
+
+BATCH_SIZE = 50  # ideal batch size may vary based on entity size
 
 
 class UpdateAnnoHandler(webapp2.RequestHandler):
-
     def get(self):
-        self.UpdateAnnoSchema()
-        self.UpdateAnnoSearchIndexes()
-        self.UpdateUserAnnoStateSchema()
+        add_lowercase_appname()
+#         delete_all_anno_indices()
+        update_anno_schema()
+#         update_userannostate_schema_from_anno_action(cls=Vote)
+#         update_userannostate_schema_from_anno_action(cls=FollowUp)
+#         update_userannostate_schema_from_anno_action(cls=Flag)
         self.response.out.write("Schema migration successfully initiated.")
 
 
-    def UpdateAnnoSchema(self):
-        '''
-        .. py:function:: UpdateAnnoSchema()
-            Updated Anno datastore with new Anno model.
-            It update "community" field with None if not present.
-        '''
-        anno_update_list = []
-        anno_list = Anno.query().fetch()
+def delete_all_anno_indices():
+    doc_index = search.Index(name=SearchIndexName.ANNO)
+    start_id = None
 
-        for anno in anno_list:
-            if anno.community is None:
-                anno.community = None
-                anno_update_list.append(anno)
+    while True:
+        document_ids = []
+        documents = doc_index.get_range(start_id=start_id, include_start_object=True,
+                                        limit=BATCH_SIZE, ids_only=True)
 
+        for document in documents:
+            document_ids.append(document.doc_id)
+            start_id = document.doc_id
+
+        if not document_ids:
+            break
+
+        doc_index.delete(document_ids)
+
+    logging.info("Deleted all Anno indices")
+
+
+def update_anno_schema(cursor=None):
+    anno_list, cursor, more = Anno.query().fetch_page(BATCH_SIZE, start_cursor=cursor)
+
+    anno_update_list = []
+    for anno in anno_list:
+        # updating app for anno schema
+        if not anno.app:
+            appinfo = AppInfo.get(name=anno.app_name)
+
+            if appinfo is None:
+                appInfoMessage = AppInfoMessage(name=anno.app_name, version=anno.app_version)
+                appinfo = AppInfo.insert(appInfoMessage)
+
+            anno.app = appinfo.key
+            anno_update_list.append(anno)
+
+        # updating anno schema
+#         if not anno.community:
+#             anno.community = None
+#             anno_update_list.append(anno)
+
+        # updating userannostate from anno
+#         update_userannostate_schema_from_anno(anno)
+
+        # updating anno index
+#         regenerate_anno_index(anno)
+
+    if len(anno_update_list):
         ndb.put_multi(anno_update_list)
-        logging.info("UpdateAnnoSchema completed")
+
+    if more:
+        update_anno_schema(cursor=cursor)
 
 
-    def UpdateAnnoSearchIndexes(self):
-        '''
-        .. py:function:: UpdateAnnoSearchIndexes()
-            Update anno index with new Anno model
-            It adds "community" field in index.
-        '''
-        index = search.Index(name="anno_index")
-        start_id = None
-
-        while True:
-            resp = index.get_range(start_id=start_id, include_start_object=False)
-            if not resp.results:
-                break
-            for doc in resp:
-                fields = [ f for f in doc.fields if f.name != 'community' ] + ([ f for f in doc.fields if f.name == "community" and f.value != None] or [ search.TextField(name="community", value=OPEN_COMMUNITY)])
-                anno_document = search.Document(doc_id=doc.doc_id, fields=fields)
-                index.put(anno_document)
-                start_id = doc.doc_id
-
-        logging.info("UpdateAnnoSearchIndexes completed")
+def update_userannostate_schema_from_anno(anno):
+    user = anno.creator.get()
+    modified = anno.last_update_time
+    if user:
+        UserAnnoState.insert(user=user, anno=anno, modified=modified)
 
 
-    def UpdateUserAnnoStateSchema(self):
-        '''
-        .. py:function:: UpdateUserAnnoStateSchema()
-            Create user anno state for old anno and its interaction
-        '''
-        for anno in Anno.query().fetch():
-            if anno:
-                user = anno.creator.get()
-                modified = anno.last_update_time
-                if user:
-                    UserAnnoState.insert(user=user, anno=anno, modified=modified)
+def regenerate_anno_index(anno):
+    put_search_document(anno.generate_search_document())
 
-        activities = Vote.query().order(Vote.created).fetch()
-        activities += FollowUp.query().order(FollowUp.created).fetch()
-        activities += Flag.query().order(Flag.created).fetch()
 
-        for activity in activities:
-            user = activity.creator.get()
-            anno = activity.anno_key.get()
-            modified = activity.created
-            if user and anno:
-                UserAnnoState.insert(user=user, anno=anno, modified=modified)
+def update_userannostate_schema_from_anno_action(cls, cursor=None):
+    activity_list, cursor, more = cls.query()\
+                                     .order(cls.created)\
+                                     .fetch_page(BATCH_SIZE, start_cursor=cursor)
 
-        logging.info("UpdateUserAnnoStateSchema completed")
+    for activity in activity_list:
+        user = activity.creator.get()
+        anno = activity.anno_key.get()
+        modified = activity.created
+        if user and anno:
+            UserAnnoState.insert(user=user, anno=anno, modified=modified)
+
+    if more:
+        update_userannostate_schema_from_anno_action(cls=cls, cursor=cursor)
+
+
+def add_lowercase_appname(cursor=None):
+    appinfo_list, cursor, more = AppInfo.query().fetch_page(BATCH_SIZE, start_cursor=cursor)
+
+    appinfo_update_list = []
+    for appinfo in appinfo_list:
+        if not appinfo.lc_name:
+            appinfo.lc_name = appinfo.name.lower()
+            appinfo_update_list.append(appinfo)
+
+    if len(appinfo_update_list):
+        ndb.put_multi(appinfo_update_list)
+
+    if more:
+        add_lowercase_appname(cursor=cursor)

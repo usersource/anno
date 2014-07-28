@@ -141,9 +141,9 @@ class AnnoApi(remote.Service):
             anno_resp_message.is_my_vote = Vote.is_belongs_user(anno, user)
             anno_resp_message.is_my_flag = Flag.is_belongs_user(anno, user)
 
-        # update last_read of UserAnnoState
-        from model.userannostate import UserAnnoState
-        UserAnnoState.update_last_read(user=user, anno=anno, last_read=datetime.datetime.now())
+            # update last_read of UserAnnoState
+            from model.userannostate import UserAnnoState
+            UserAnnoState.update_last_read(user=user, anno=anno, last_read=datetime.datetime.now())
 
         return anno_resp_message
 

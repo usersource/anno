@@ -370,8 +370,8 @@
 .signinWithGoogleBtn
 {
     outline: none;
-    padding-top: 3px;
-    width: 206px;
+    padding: 0 8px;
+    width: auto;
     height: 48px;
     color: #3d83f0;
     background-color: white;
@@ -391,14 +391,14 @@
 
 #headingStart, .topHeading
 {
-    background-image: none;
+    background-image: none !important;
     background-color: #000000;
     text-shadow:none;
     color: white;
     /*border-bottom: 1px solid #aeaeae;*/
     height: 44px;
     padding-top: 4px;
-    border: none;
+    border: none !important;
     line-height: normal;
 }
 
@@ -771,9 +771,11 @@
 .mobile body {
     font-family: Helvetica;
     font-size: 13pt;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-user-select: none;
 }
 
-.hashTag
+.hashTag, .commentURL
 {
     color: blue;
 }

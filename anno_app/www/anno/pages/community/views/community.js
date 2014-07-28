@@ -34,29 +34,22 @@ define([
             dom.byId("communityWelMsg").innerHTML = community.community.welcome_msg || "";
             dom.byId("communityActivity").innerHTML = community.community.name+" activity";
 
-            annoUtil.showLoadingIndicator();
-            annoUtil.loadAPI(annoUtil.API.community, function(){
-                var getCommunityList = gapi.client.community.user.list({id:community.community.id});
-                getCommunityList.execute(function (data)
+            var APIConfig = {
+                name: annoUtil.API.community,
+                method: "community.user.list",
+                parameter: {
+                    id : community.community.id,
+                    include_invite : true
+                },
+                success: function(data)
                 {
-                    if (!data)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        annoUtil.showToastDialog("Items returned from server are empty.");
-                        return;
-                    }
-
-                    if (data.error)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        annoUtil.showMessageDialog("An error occurred when calling community.user.list api: "+data.error.message);
-                        return;
-                    }
-
                     drawUserList(data.result.user_list);
-                    annoUtil.hideLoadingIndicator();
-                });
-            });
+                },
+                error: function(){
+                }
+            };
+
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         var drawUserList = function(data)
@@ -170,11 +163,22 @@ define([
             }
             else
             {
-                annoUtil.showConfirmMessageDialog("Are you sure?", function(ret){
+                var manager_list = members.filter(function(user) {
+                    return (user.role == "manager" && user.status == "accepted");
+                });
+
+                if (manager_list.length == 1) {
+                    var last_manager_name = manager_list[0]["user"]["display_name"];
+                    annoUtil.showMessageDialog(last_manager_name + " is only active manager for this community. This user can't be removed.");
+                    return;
+                }
+
+            	annoUtil.showConfirmMessageDialog("Are you sure?", function(ret){
                     if (ret)
                     {
                         dom.byId("btnRemoveInvite").disabled = true;
-                        doRemoveMember(currentCommunity.community.id, currentMemberItem.userItem.user.id);
+                        var currentUser = currentMemberItem.userItem.user;
+                        doRemoveMember(currentCommunity.community.id, currentUser.id, currentUser.user_email);
                     }
                 });
 
@@ -183,33 +187,18 @@ define([
 
         var createInvitation = function()
         {
-            annoUtil.showLoadingIndicator();
-            annoUtil.loadAPI(annoUtil.API.community, function(){
-                var createInvite = gapi.client.community.invite.create({
+            var APIConfig = {
+                name: annoUtil.API.community,
+                method: "community.invite.create",
+                parameter: {
                     community:currentCommunity.community.id,
                     email:currentMemberItem.userItem.user.user_email,
                     invite_msg:currentCommunity.community.welcome_msg,
                     name:currentMemberItem.userItem.user.display_name,
                     role:currentMemberItem.userItem.role
-                });
-                createInvite.execute(function (data)
+                },
+                success: function(data)
                 {
-                    if (!data)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        annoUtil.showToastDialog("Response returned from server are empty.");
-                        dom.byId("btnRemoveInvite").disabled = false;
-                        return;
-                    }
-
-                    if (data.error)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        annoUtil.showMessageDialog("An error occurred when calling community.invite.create api: "+data.error.message);
-                        dom.byId("btnRemoveInvite").disabled = false;
-                        return;
-                    }
-
                     dom.byId("btnRemoveInvite").disabled = false;
                     currentMemberItem.userItem.newMember = false;
                     showMemberDetail(currentMemberItem);
@@ -228,44 +217,42 @@ define([
                         {
                         }
                     );
+                },
+                error: function()
+                {
+                    dom.byId("btnRemoveInvite").disabled = false;
+                }
+            };
 
-                    annoUtil.hideLoadingIndicator();
-                });
-            });
+            annoUtil.callGAEAPI(APIConfig);
         };
 
-        var doRemoveMember = function(communityId, userId)
+        var doRemoveMember = function(communityId, userId, userEmail)
         {
-            annoUtil.showLoadingIndicator();
-            annoUtil.loadAPI(annoUtil.API.community, function(){
-                var deleteUser = gapi.client.community.user.delete({community_id:communityId, user_id:userId});
-                deleteUser.execute(function (data)
+            var APIConfig = {
+                name: annoUtil.API.community,
+                method: "community.user.delete",
+                parameter: {
+                    community_id : communityId,
+                    user_id : userId,
+                    user_email: userEmail,
+                    include_invite : true
+                },
+                success: function(data)
                 {
-                    if (!data)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        annoUtil.showToastDialog("Response returned from server are empty.");
-                        dom.byId("btnRemoveInvite").disabled = false;
-                        return;
-                    }
-
-                    if (data.error)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        annoUtil.showMessageDialog("An error occurred when calling community.user.delete api: "+data.error.message);
-                        dom.byId("btnRemoveInvite").disabled = false;
-                        return;
-                    }
-
                     domStyle.set("memberDetailContainer", "display", "none");
                     domConstruct.place("memberDetailContainer", "listContainerCommunity", "after");
                     currentMemberItem.destroy();
                     members.splice(array.indexOf(members, currentMemberItem.userItem), 1);
                     dom.byId("btnRemoveInvite").disabled = false;
+                },
+                error: function()
+                {
+                    dom.byId("btnRemoveInvite").disabled = false;
+                }
+            };
 
-                    annoUtil.hideLoadingIndicator();
-                });
-            });
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         var toggleMemberRole = function()
@@ -274,6 +261,18 @@ define([
             if (currentMemberItem.userItem.role == "member")
             {
                 role = "manager";
+            }
+
+            if (role == "member") {
+                var manager_list = members.filter(function(user) {
+                    return (user.role == "manager" && user.status == "accepted");
+                });
+
+                if (manager_list.length == 1) {
+                    var last_manager_name = manager_list[0]["user"]["display_name"];
+                    annoUtil.showMessageDialog(last_manager_name + " is only active manager for this community. This user's role can't be changed.");
+                    return;
+                }
             }
 
             function _toggleMemberRoleUI()
@@ -302,36 +301,28 @@ define([
 
             dom.byId("btnMakeManager").disabled = true;
 
-            annoUtil.showLoadingIndicator();
-            annoUtil.loadAPI(annoUtil.API.community, function(){
-                var editUserRole = gapi.client.community.user.edit_role({
+            var APIConfig = {
+                name: annoUtil.API.community,
+                method: "community.user.edit_role",
+                parameter: {
                     community_id : currentCommunity.community.id,
                     user_id : currentMemberItem.userItem.user.id,
-                    role : role
-                });
-                editUserRole.execute(function (data)
+                    user_email: currentMemberItem.userItem.user.user_email,
+                    role : role,
+                    include_invite : true
+                },
+                success: function(data)
                 {
-                    if (!data)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        annoUtil.showToastDialog("Response returned from server are empty.");
-                        dom.byId("btnMakeManager").disabled = false;
-                        return;
-                    }
-
-                    if (data.error)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        annoUtil.showMessageDialog("An error occurred when calling community.user.edit_role api: " + data.error.message);
-                        dom.byId("btnMakeManager").disabled = false;
-                        return;
-                    }
-
                     _toggleMemberRoleUI();
                     dom.byId("btnMakeManager").disabled = false;
-                    annoUtil.hideLoadingIndicator();
-                });
-            });
+                },
+                error: function()
+                {
+                    dom.byId("btnMakeManager").disabled = false;
+                }
+            };
+
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         var searchAnnoByCommunity = function()
@@ -381,29 +372,12 @@ define([
             dom.byId("btnSaveWelcomeMsg").disabled = true;
             dom.byId("btnCancelWelcomeMsg").disabled = true;
 
-            annoUtil.showLoadingIndicator();
-            annoUtil.loadAPI(annoUtil.API.community, function(){
-                var editWelcomeMsg = gapi.client.community.community.edit_welcome_msg({id:currentCommunity.community.id, welcome_msg: msg});
-                editWelcomeMsg.execute(function (data)
+            var APIConfig = {
+                name: annoUtil.API.community,
+                method: "community.community.edit_welcome_msg",
+                parameter: {id:currentCommunity.community.id, welcome_msg: msg},
+                success: function(data)
                 {
-                    if (!data)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        annoUtil.showToastDialog("Response returned from server are empty.");
-                        dom.byId("btnSaveWelcomeMsg").disabled = false;
-                        dom.byId("btnCancelWelcomeMsg").disabled = false;
-                        return;
-                    }
-
-                    if (data.error)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        annoUtil.showMessageDialog("An error occurred when calling community.edit_welcome_message api: "+data.error.message);
-                        dom.byId("btnSaveWelcomeMsg").disabled = false;
-                        dom.byId("btnCancelWelcomeMsg").disabled = false;
-                        return;
-                    }
-
                     dom.byId("btnSaveWelcomeMsg").disabled = false;
                     dom.byId("btnCancelWelcomeMsg").disabled = false;
 
@@ -411,10 +385,15 @@ define([
                     domStyle.set("btnSaveWelcomeMsgContainer", "display", "none");
                     oldWelcomeMsg = "";
                     currentCommunity.community.welcome_msg = msg;
+                },
+                error: function()
+                {
+                    dom.byId("btnSaveWelcomeMsg").disabled = false;
+                    dom.byId("btnCancelWelcomeMsg").disabled = false;
+                }
+            };
 
-                    annoUtil.hideLoadingIndicator();
-                });
-            });
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         return {

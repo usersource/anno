@@ -26,45 +26,33 @@ define([
 
         var submitChangePwd = function()
         {
-            annoUtil.showLoadingIndicator();
-            OAuthUtil.getAccessToken(function(){
-                annoUtil.loadAPI(annoUtil.API.user, function(){
-                    var changePasswordAPI = gapi.client.user.user.password.update({
-                        'password':dom.byId('txt_changePwd').value
+            var APIConfig = {
+                name: annoUtil.API.user,
+                method: "user.user.password.update",
+                parameter: {
+                    'password':dom.byId('txt_changePwd').value
+                },
+                needAuth: true,
+                success: function(data)
+                {
+                    // save user info into local db
+                    var userInfo = currentUserInfo;
+                    userInfo.password = dom.byId('txt_changePwd').value;
+
+                    AnnoDataHandler.saveUserInfo(userInfo, function(){
+                        var token = annoUtil.getBasicAuthToken(currentUserInfo);
+                        annoUtil.setAuthToken(token);
+
+                        closeChangePasswordDialog();
+
+                        annoUtil.showToastMessage("Password has been changed.");
                     });
+                },
+                error: function(){
+                }
+            };
 
-                    changePasswordAPI.execute(function(resp){
-                        if (!resp)
-                        {
-                            annoUtil.hideLoadingIndicator();
-                            annoUtil.showMessageDialog("Response from server are empty when calling user.password.update api.");
-                            return;
-                        }
-
-                        if (resp.error)
-                        {
-                            annoUtil.hideLoadingIndicator();
-
-                            annoUtil.showMessageDialog("An error occurred when calling user.password.update api: "+resp.error.message);
-                            return;
-                        }
-
-                        // save user info into local db
-                        var userInfo = currentUserInfo;
-                        userInfo.password = dom.byId('txt_changePwd').value;
-
-                        AnnoDataHandler.saveUserInfo(userInfo, function(){
-                            var token = annoUtil.getBasicAuthToken(currentUserInfo);
-                            annoUtil.setAuthToken(token);
-
-                            closeChangePasswordDialog();
-
-                            annoUtil.showToastMessage("Password has been changed.");
-                        });
-                        annoUtil.hideLoadingIndicator();
-                    });
-                });
-            });
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         var exitApp = function()
@@ -115,6 +103,12 @@ define([
         {
             var itemList = registry.byId('communityList');
             itemList.destroyDescendants();
+
+            if (data.length)
+            {
+                domStyle.set("communityListTitle", "display", "");
+                domStyle.set("communityList", "display", "");
+            }
 
             for (var i= 0,c=data.length;i<c;i++)
             {

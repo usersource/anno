@@ -17,6 +17,8 @@ from model.base_model import BaseModel
 from model.community import Community
 from model.appinfo import AppInfo
 from helper.utils import *
+from helper.utils_enum import SearchIndexName
+
 
 class Anno(BaseModel):
     """
@@ -32,6 +34,7 @@ class Anno(BaseModel):
     level = ndb.IntegerProperty(required=True)
     device_model = ndb.StringProperty(required=True)
     app_name = ndb.StringProperty()
+    app_version = ndb.StringProperty()
     os_name = ndb.StringProperty()
     os_version = ndb.StringProperty()
     app = ndb.KeyProperty(kind=AppInfo)
@@ -69,6 +72,7 @@ class Anno(BaseModel):
         app = self.app.get() if self.app else None
         app_name = app.name if app else self.app_name
         app_icon_url = app.icon_url if app else None
+        app_version = app.version if app else self.app_version
 
         return AnnoResponseMessage(id=self.key.id(),
                                    anno_text=self.anno_text,
@@ -80,6 +84,7 @@ class Anno(BaseModel):
                                    level=self.level,
                                    device_model=self.device_model,
                                    app_name=app_name,
+                                   app_version=app_version,
                                    app_icon_url=app_icon_url,
                                    os_name=self.os_name,
                                    os_version=self.os_version,
@@ -164,12 +169,19 @@ class Anno(BaseModel):
 
         return entity
 
+
     @classmethod
     def delete(cls, anno):
         anno_id = "%d" % anno.key.id()
+
+        # deleting UserAnnoState of anno
+        from model.userannostate import UserAnnoState
+        UserAnnoState.delete_by_anno(anno_key=anno.key)
+
         anno.key.delete()
-        index = search.Index(name="anno_index")
+        index = search.Index(name=SearchIndexName.ANNO)
         index.delete(anno_id)
+
 
     def merge_from_message(self, message):
         """
@@ -401,7 +413,7 @@ class Anno(BaseModel):
         :param app_name app name which full-matches to app_name, this parameter is a single app name, not an app list.
         :param app_set app name set.
         """
-        index = search.Index(name="anno_index")
+        index = search.Index(name=SearchIndexName.ANNO)
         # prepare pagination
         if limit is None:
             limit = 20  # default page size is 20.
@@ -434,7 +446,7 @@ class Anno(BaseModel):
         :param app_name app name which full-matches to app_name, this parameter is a single app name, not an app list.
         :param app_set app name set.
         """
-        index = search.Index(name="anno_index")
+        index = search.Index(name=SearchIndexName.ANNO)
         # prepare pagination
         if limit is None:
             limit = 20  # default page size is 20.
@@ -466,7 +478,7 @@ class Anno(BaseModel):
         :param app_name app name which full-matches to app_name, this parameter is a single app name, not an app list.
         :param app_set app name set.
         """
-        index = search.Index(name="anno_index")
+        index = search.Index(name=SearchIndexName.ANNO)
         # prepare pagination
         if limit is None:
             limit = 20  # default page size is 20.
@@ -513,7 +525,6 @@ class Anno(BaseModel):
             query_string_parts.append("( app_name = \"%s\" )" % app_name)
 
         query_string = ' AND '.join(query_string_parts)
-        logging.info("final query string=%s" % query_string)
         return query_string
 
     @classmethod
@@ -539,12 +550,12 @@ class Anno(BaseModel):
         :param words: tokens to match
         """
         if fields is not None and len(fields) > 0 and words is not None and len(words) > 0:
-            query_string = " ( "
+            query_string = "( "
             for index, field in enumerate(fields):
                 query_string += Anno.get_query_string_for_field(field, words)
                 if index != len(fields) - 1:
                     query_string += " OR "
-            query_string += " ) "
+            query_string += " )"
             return query_string
         return None
 
@@ -555,9 +566,10 @@ class Anno(BaseModel):
         user_community_list.append(OPEN_COMMUNITY)
 
         if len(query_string):
-            query_string += "AND "
+            query_string += " AND "
 
-        query_string += '( community = (%s) )' % (" OR ".join(user_community_list))
+        query_string += "( community = (%s) )" % (" OR ".join(user_community_list))
+        logging.info("final query string: %s", query_string)
 
         query = search.Query(query_string=query_string, options=query_options)
         results = index.search(query)

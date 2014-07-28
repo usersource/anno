@@ -3,24 +3,24 @@
     <div id="headingDetail" style="position:fixed;top:0px;left:0px;background-color: #000000;z-index: 9000;color:white;height: 50px" data-dojo-type="dojox/mobile/Heading">
         <table width="100%" height="100%">
             <tr>
-                <td width="120" onclick="history.back();" align="left">
+                <td width="15%" onclick="history.back();" align="left">
                     <span id="navBtnBackScreenshot" class="icon-forward" data-dojo-props="back:true" data-dojo-type="dojox.mobile.ToolBarButton"></span>
                     <span id="detailPageName">Explore</span>
                 </td>
-                <td align="right" width="85%">
+                <td align="right" width="75%">
                     <table style="table-layout: fixed;">
                         <tr>
-                            <td id="tdNavBtnPrevious" width="60" align="center">
-                                <span id="navBtnPrevious" class="icon-arrow-left navBtnDisabled" style="width: 60px;height: 32px;float: left;font-size: 25px;"></span>
+                            <td id="tdNavBtnPrevious" width="25%" align="center">
+                                <span id="navBtnPrevious" class="icon-arrow-left navBtnDisabled" style="width: 100%;height: 32px;float: left;font-size: 25px;"></span>
                             </td>
-                            <td id="tdNavBtnScreenshot" width="60" align="center">
-                                <img id="navBtnScreenshot" src="css/images/anno.png" width="36px">
+                            <td id="tdNavBtnScreenshot" width="25%" align="center">
+                                <img id="navBtnScreenshot" src="css/images/anno.png" width="80%">
                             </td>
-                            <td id="tdNavBtnTray" width="60" align="center">
-                                <span id="navBtnTray" class="icon-bubbles barIconDisabled" style="width: 50px;height: 32px;padding-top: 10px;font-size: 28px;"></span>
+                            <td id="tdNavBtnTray" width="25%" align="center">
+                                <span id="navBtnTray" class="icon-bubbles barIconDisabled" style="width: 83.33%;height: 32px;padding-top: 10px;font-size: 28px;"></span>
                             </td>
-                            <td id="tdNavBtnNext" width="60" align="center">
-                                <span id="navBtnNext" class="icon-arrow-right" style="width: 60px;height: 30px;float: right;font-size: 25px;"></span>
+                            <td id="tdNavBtnNext" width="25%" align="center">
+                                <span id="navBtnNext" class="icon-arrow-right" style="width: 100%;height: 30px;float: right;font-size: 25px;"></span>
                             </td>
                         </tr>
                     </table>
@@ -65,7 +65,7 @@
                         </tr>
                     </table>
                 </div>
-                <div id="annoCommentsContainer" style="padding-left: 6px;width: 100%;overflow-y: auto;overflow-x:hidden; ">
+                <div id="annoCommentsContainer" style="width: 100%;overflow-y: auto;overflow-x:hidden; ">
                     <div id="deviceInfoContainer" style="padding-bottom: 8px">
                         <table width="100%" cellpadding="0" cellspacing="0">
                             <tr>
@@ -117,14 +117,14 @@
                                     <td align="left">
                                         <span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:*{this.index}', 'user_id')"></span><span class="authorDetail">&nbsp;commented</span>
                                     </td>
-                                    <td align="right" style="padding-right: 34px">
+                                    <td align="right" style="padding-right: 20px">
                                         <span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:*{this.index}', 'timestamp')"></span>
                                     </td>
                                 </tr>
                             </table>
                         </div>
                         <div class="commentDetail">
-                            <div data-dojo-type="dojox/mvc/Output" style="width: 96%" data-dojo-props="value: at('rel:*{this.index}', 'hashTaggedComment')"></div>
+                            <div data-dojo-type="dojox/mvc/Output" style="width: 100%" data-dojo-props="value: at('rel:*{this.index}', 'modifiedComment')"></div>
                         </div>
                     </div>
 
@@ -141,7 +141,7 @@
                     </table>
                 </div>
             </div>
-            <div id="detailBottomPlaceholder" style="height: 100px"></div>
+            <div id="detailBottomPlaceholder" style="height: 100px; background-color: white;"></div>
             <div id="addCommentContainer" style="display:none;padding-left: 6px;border-top: 2px solid #aeebfc;width: 100%;background-color: #ffffff;position: fixed;bottom: 0px">
                 <table width="100%" cellpadding="0" cellspacing="0">
                     <tr>

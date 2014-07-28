@@ -11,6 +11,7 @@ class AppInfo(ndb.Model):
     This class represents a 3rd party app information.
     """
     name = ndb.StringProperty(required=True)
+    lc_name = ndb.StringProperty()
     icon = ndb.BlobProperty()
     icon_url = ndb.StringProperty()
     description = ndb.TextProperty()
@@ -23,15 +24,20 @@ class AppInfo(ndb.Model):
 
     @classmethod
     def get(cls, name):
-        return cls.query(cls.name == name).get() if name else None
+        appinfo = None
+        if name:
+            lc_name = name.lower()
+            appinfo = cls.query(ndb.OR(cls.lc_name == lc_name, cls.name == name)).get()
+        return appinfo
 
 
     @classmethod
     def insert(cls, message):
-        entity = cls(name=message.name, icon=message.icon, icon_url=message.icon_url,
-                     description=message.description, version=message.version,
-                     developer=message.developer, company_name=message.company_name,
-                     app_url=message.app_url)
+        lowercase_name = message.name.lower()
+        entity = cls(name=message.name, lc_name=lowercase_name, icon=message.icon,
+                     icon_url=message.icon_url, description=message.description,
+                     version=message.version, developer=message.developer,
+                     company_name=message.company_name, app_url=message.app_url)
         entity.put()
         return entity
 
