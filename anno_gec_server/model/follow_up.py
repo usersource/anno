@@ -1,5 +1,6 @@
 __author__ = 'topcircler'
 
+from google.appengine.api import search
 from google.appengine.ext import ndb
 
 from model.anno import Anno
@@ -41,3 +42,16 @@ class FollowUp(BaseModel):
         for followup in query:
             followup_list.append(followup)
         return followup_list
+
+
+    def generate_search_document(self):
+        followup_document = search.Document(
+            doc_id=str(self.key.id()),
+            fields=[
+                    search.TextField(name="comment", value=self.comment),
+                    search.DateField(name="created", value=self.created),
+                    search.TextField(name="anno", value=str(self.anno_key.id()))
+                ]
+        )
+
+        return followup_document

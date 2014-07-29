@@ -78,7 +78,7 @@ def update_anno_schema(cursor=None):
 #         update_userannostate_schema_from_anno(anno)
 
         # updating anno index
-#         regenerate_anno_index(anno)
+        regenerate_anno_index(anno)
 
     if len(anno_update_list):
         ndb.put_multi(anno_update_list)
@@ -95,7 +95,7 @@ def update_userannostate_schema_from_anno(anno):
 
 
 def regenerate_anno_index(anno):
-    put_search_document(anno.generate_search_document())
+    put_search_document(anno.generate_search_document(), SearchIndexName.ANNO)
 
 
 def update_userannostate_schema_from_anno_action(cls, cursor=None):
