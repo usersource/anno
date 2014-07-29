@@ -212,8 +212,7 @@ require([
             },
             function (err)
             {
-                // alert(err.message);
-                annoUtil.showMessageDialog(err.message);
+                annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
             },
             "AnnoCordovaPlugin",
             action,
@@ -233,8 +232,7 @@ require([
             },
             function (err)
             {
-                // alert(err.message);
-                annoUtil.showMessageDialog(err.message);
+                annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
             },
             "AnnoCordovaPlugin",
             action,
@@ -343,8 +341,7 @@ require([
                         },
                         function (err)
                         {
-                            // alert(err.message);
-                            annoUtil.showMessageDialog(err.message);
+                            annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                         },
                         "AnnoCordovaPlugin",
                         'get_installed_app_list',
@@ -353,8 +350,7 @@ require([
                 },
                 function (err)
                 {
-                    // alert(err.message);
-                    annoUtil.showMessageDialog(err.message);
+                    annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                 },
                 "AnnoCordovaPlugin",
                 'get_recent_applist',
@@ -687,8 +683,7 @@ require([
                 },
                 function (err)
                 {
-                    // alert(err.message);
-                    annoUtil.showMessageDialog(err.message);
+                    annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                 },
                 "AnnoCordovaPlugin",
                 'get_screenshot_path',
@@ -821,8 +816,7 @@ require([
             },
             function (err)
             {
-                // alert(err.message);
-                annoUtil.showMessageDialog(err.message);
+                annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
             },
             "AnnoCordovaPlugin",
             'process_image_and_appinfo',
@@ -897,8 +891,7 @@ require([
             },
             function (err)
             {
-                // alert(err.message);
-                annoUtil.showMessageDialog(err.message);
+                annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
             },
             "AnnoCordovaPlugin",
             'process_image_and_appinfo',
@@ -984,8 +977,7 @@ require([
                 },
                 function (err)
                 {
-                    // alert(err.message);
-                    annoUtil.showMessageDialog(err.message);
+                    annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                 },
                 "AnnoCordovaPlugin",
                 'process_image_and_appinfo',
