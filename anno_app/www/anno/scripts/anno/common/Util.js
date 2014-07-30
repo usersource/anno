@@ -43,6 +43,13 @@
             "REFRESH_OAUTH_TOKEN": 8,
             "GET_OAUTH_TOKEN": 9
         },
+        ERROR_CODE:{
+            "BAD_REQUEST": 400,
+            "UNAUTHORIZED": 401,
+            "FORBIDDEN": 403,
+            "NOT_FOUND": 404,
+            "INTERNAL_SERVER_ERROR": 500
+        },
         API:{
             config:serverURLConfig,
             apiVersion:"1.0",
@@ -805,13 +812,14 @@
             var message = "Oops, something went wrong. Please try later.";
 
             // we can specify different user-friendly message for different error types
-            /*
-            if (error.type == this.ERROR_TYPES.LOAD_GAE_API)
-            {
+
+            if (error.type == this.ERROR_TYPES.API_RETRY_FAILED) {
                 // todo: the user-friendly message
-                message = "Oops, something went wrong, please try later.";
+                if (error.code == this.ERROR_CODE.UNAUTHORIZED) {
+                    message = error.message;
+                }
             }
-            else if (error.type == this.ERROR_TYPES.API_RESPONSE_EMPTY)
+            /*else if (error.type == this.ERROR_TYPES.API_RESPONSE_EMPTY)
             {
                 // todo: the user-friendly message
                 message = "Oops, something went wrong, please try later.";
