@@ -206,7 +206,7 @@ define([
         isAuthorized:function()
         {
             var params = annoUtil.parseUrlParams(document.location.search);
-            console.error("got params: "+ JSON.stringify(params));
+            console.log("got params: " + JSON.stringify(params));
             var token = params['token'];
             var newUser = params['newuser'];
             var signinMethod = params['signinmethod'];
@@ -242,13 +242,13 @@ define([
             {
                 this.setAccessToken(JSON.parse(token));
             }
-            console.error('isAuthorized :'+JSON.stringify(ret));
+            console.log('isAuthorized :' + JSON.stringify(ret));
             return ret;
         },
         getRefreshToken: function()
         {
             var rt = window.localStorage.getItem(this.refreshTokenKey);
-            console.error("refresh token:" + rt);
+            console.log("refresh token:" + rt);
             return rt;
         },
         clearRefreshToken: function()

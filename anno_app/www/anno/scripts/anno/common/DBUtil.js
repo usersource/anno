@@ -50,7 +50,7 @@ define([
                     self.initTables();
                 }
 
-                console.error("dbIsReady! ");
+                console.log("dbIsReady! ");
             });
         },
         initTables: function()
@@ -79,7 +79,7 @@ define([
             this.annoDB.executeSql("SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name='app_users'", [], function(res) {
                 if (!res) return;
 
-                console.error("app_users "+res.rows.item(0).cnt);
+                console.log("app_users " + res.rows.item(0).cnt);
 
                 if (res.rows.item(0).cnt == 0)
                 {
@@ -100,7 +100,7 @@ define([
                             tempObj[item.name] = item;
                         }
 
-                        console.error("doUpgrade "+JSON.stringify(tempObj));
+                        // console.error("doUpgrade "+JSON.stringify(tempObj));
 
                         if (!tempObj["signedup"])
                         {
@@ -130,12 +130,12 @@ define([
                             self.annoDB.executeSql("select * from app_users", [], function(ures){
                                 if (ures)
                                 {
-                                    console.error("app_users2: "+ures.rows.length);
+                                    console.log("app_users2: " + ures.rows.length);
                                     self.hasUserInLocalDB = ures.rows.length>0;
                                     if (ures.rows.length>0)
                                         self.localUserInfo = ures.rows.item(0);
                                     self.userChecked = true;
-                                    console.error("app_users: "+JSON.stringify(self.localUserInfo));
+                                    // console.error("app_users: "+JSON.stringify(self.localUserInfo));
                                 }
                             });
                         }
@@ -156,7 +156,7 @@ define([
                     tempObj[item.name] = item;
                 }
 
-                console.error("doUpgrade "+JSON.stringify(tempObj));
+                // console.error("doUpgrade "+JSON.stringify(tempObj));
 
                 if (!tempObj["os_name"])
                 {
@@ -206,7 +206,7 @@ define([
             this.annoDB.executeSql("SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name='app_settings'", [], function(res) {
                 if (!res) return;
 
-                console.error("app_settings "+res.rows.item(0).cnt);
+                console.log("app_settings " + res.rows.item(0).cnt);
                 if (res.rows.item(0).cnt == 0)
                 {
                     self.annoDB.executeSql(settingsSQL);

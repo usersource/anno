@@ -16,7 +16,7 @@
 
     serverURLConfig = dojoJson.parse(serverURLConfig);
     stringsRes = dojoJson.parse(stringsRes);
-    console.error("using server Url config:" + JSON.stringify(serverURLConfig));
+    // console.log("using server Url config:" + JSON.stringify(serverURLConfig));
     var util = {
         loadingIndicator:null,
         _parser:null,
@@ -274,7 +274,7 @@
                 if (!res) return;
 
                 var rows = res.rows;
-                console.error("app_settings rows: "+rows.length);
+                console.log("app_settings rows: " + rows.length);
 
                 var settings = {}, item;
                 for (var i= 0,c=rows.length;i<c;i++)
@@ -283,7 +283,7 @@
                     settings[item.item] = item.value;
                 }
 
-                console.error("app_settings : "+JSON.stringify(settings));
+                console.log("app_settings : " + JSON.stringify(settings));
 
                 self.settings = settings;
                 callback(settings);

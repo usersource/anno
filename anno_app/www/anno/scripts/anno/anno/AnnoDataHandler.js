@@ -666,7 +666,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                 if (!res) return;
 
                 var cnt = res.rows.length;
-                console.error('user cnt: '+cnt);
+                console.log('user cnt: ' + cnt);
                 var userInfo = {};
 
                 if (cnt >0)

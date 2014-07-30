@@ -42,7 +42,7 @@
         function gce_init()
         {
             var d2 = new Date();
-            console.error("Google CE Client lib(JavaScript) loaded in "+(d2-st)+" ms, gapi.client is "+gapi.client);
+            console.log("Google CE Client JavaScript library loaded in " + (d2 - st) + " ms, gapi.client is " + JSON.stringify(gapi.client));
             gceLoaded = true;
         }
 

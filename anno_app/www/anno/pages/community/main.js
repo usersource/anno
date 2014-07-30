@@ -13,7 +13,7 @@ require([
     function (declare, dom, registry, domClass, Application, jsonRef, _ContentPaneMixin, DBUtil, annoUtil, config, has)
     {
         var config = jsonRef.fromJson(config);
-        console.error("Worked!");
+        // console.error("Worked!");
 
         // if user clicked back button
         config._backwardFired = false;
@@ -36,7 +36,7 @@ require([
 
         document.addEventListener("deviceready", function(){
             DBUtil.initDB(function(){
-                console.error("DB is readay!");
+                console.log("DB is ready!");
                 annoUtil.readSettings(function(){
                     Application(config);
                 });
