@@ -284,8 +284,7 @@ define([
                 },
                 function (err)
                 {
-                    // alert(err);
-                    annoUtil.showMessageDialog(err);
+                    annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                 },
                 "AnnoCordovaPlugin",
                 'exit_current_activity',
@@ -407,8 +406,7 @@ define([
                     },
                     function (err)
                     {
-                        // alert(err.message);
-                        annoUtil.showMessageDialog(err.message);
+                        annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                     },
                     "AnnoCordovaPlugin",
                     'get_installed_app_list',
@@ -564,7 +562,7 @@ define([
                     },
                     function (error)
                     {
-                        annoUtil.showMessageDialog("An error occurred when calling pushNotification.register: "+error);
+                        annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: "An error occurred when calling pushNotification.register: "+error});
                     },
                     {
                         "badge":"true",
@@ -582,7 +580,7 @@ define([
                     },
                     function (error)
                     {
-                        annoUtil.showMessageDialog("An error occurred when calling pushNotification.register: "+error);
+                        annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: "An error occurred when calling pushNotification.register: "+error});
                     },
                     {
                         "senderID": annoUtil.API.config[annoUtil.getSettings().ServerURL].gcm_sender_id,

@@ -96,8 +96,8 @@ define([
                         }
                         else
                         {
-                            // alert("Get access token error, please login again.");
-                            annoUtil.showMessageDialog("Get access token error, please login again.");
+                            annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.GET_OAUTH_TOKEN, message: "Get access token error, please login again."});
+
                             if (self.authCallback)
                             {
                                 self.authCallback({success: false});
@@ -105,9 +105,7 @@ define([
                         }
                     }, function (err)
                     {
-                        console.error("post res error: " + err);
-                        // alert("Get access token error: " + err);
-                        annoUtil.showMessageDialog("Get access token error: " + err);
+                        annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.GET_OAUTH_TOKEN, message: "Get access token error: "+ err});
                         if (self.authCallback)
                         {
                             self.authCallback({success: false});
@@ -116,9 +114,7 @@ define([
             }
             else if (error)
             {
-                console.error("error: " + error[1]);
-                // alert("Auth error: " + error[1]);
-                annoUtil.showMessageDialog("Auth error: " + error[1]);
+                annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.GET_OAUTH_TOKEN, message: "Auth error: " + error[1]});
                 if (self.authCallback)
                 {
                     self.authCallback({success: false});
@@ -132,8 +128,7 @@ define([
 
                 if (res&&res.error)
                 {
-                    // alert("Load Google oauth2 API failed, "+res.error.message);
-                    annoUtil.showMessageDialog("Load Google oauth2 API failed, "+res.error.message);
+                    annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.LOAD_GAE_API, message: "Load Google oauth2 API failed, "+res.error.message});
                     if (self.authCallback)
                     {
                         self.authCallback({success:false});
@@ -147,8 +142,7 @@ define([
                         console.error("get userinfo res: "+ userinfo);
                         if (userinfo.error)
                         {
-                            // alert("Get userinfo failed: "+ userinfo.error.message);
-                            annoUtil.showMessageDialog("Get userinfo failed: "+ userinfo.error.message);
+                            annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.API_CALL_FAILED, message: "Get userinfo failed: "+ userinfo.error.message});
                             return;
                         }
 
@@ -198,9 +192,7 @@ define([
                     self.setAccessToken(data, callback);
                 }, function (err)
                 {
-                    console.error("refresh access token error: " + err);
-                    // alert("refresh access token error: " + err);
-                    annoUtil.showMessageDialog("refresh access token error: " + err);
+                    annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.REFRESH_OAUTH_TOKEN, message:"refresh access token error: " + err});
                     if (errorCallback)
                     {
                         errorCallback(err);

@@ -32,6 +32,17 @@
         annoScreenshotPath:null,
         API_RETRY_TIMES: 3,
         annoPermaLinkBaseUrl:"http://anno-webapp.appspot.com/usersource/pages/permalink/index.html#/anno/",
+        ERROR_TYPES:{
+            "LOAD_GAE_API": 1,
+            "API_RESPONSE_EMPTY": 2,
+            "API_RETRY_FAILED": 3,
+            "API_CALL_FAILED": 4,
+            "CORDOVA_API_FAILED": 5,
+            "OS_API_FAILED": 6,
+            "DB_API_FAILED": 7,
+            "REFRESH_OAUTH_TOKEN": 8,
+            "GET_OAUTH_TOKEN": 9
+        },
         API:{
             config:serverURLConfig,
             apiVersion:"1.0",
@@ -141,9 +152,7 @@
                         reader.readAsDataURL(e);
                     });
                 }, function(e) {
-                    console.error(JSON.stringify(e));
-                    // alert(JSON.stringify(e));
-                    self.showMessageDialog(JSON.stringify(e));
+                    self.showErrorMessage({type: self.ERROR_TYPES.CORDOVA_API_FAILED, message: JSON.stringify(e)});
                 });}
         },
         showLoadingIndicator: function ()
@@ -212,8 +221,7 @@
                 },
                 function (err)
                 {
-                    // alert(err);
-                    self.showMessageDialog(err);
+                    self.showErrorMessage({type: self.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                 },
                 "AnnoCordovaPlugin",
                 'start_activity',
@@ -244,8 +252,7 @@
                 },
                 function (err)
                 {
-                    // alert(err);
-                    self.showMessageDialog(err);
+                    self.showErrorMessage({type: self.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                 },
                 "AnnoCordovaPlugin",
                 'get_anno_screenshot_path',
@@ -428,8 +435,7 @@
                     },
                     function (err)
                     {
-                        // alert(err);
-                        self.showMessageDialog(err);
+                        self.showErrorMessage({type: self.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                     },
                     "AnnoCordovaPlugin",
                     'show_softkeyboard',
@@ -541,8 +547,7 @@
                         }
                         else
                         {
-                            // alert('Load '+apiId+" API failed, "+res.error.message);
-                            self.showMessageDialog('Load '+apiId+" API failed, "+res.error.message);
+                            self.showErrorMessage({type: self.ERROR_TYPES.LOAD_GAE_API, message: 'Load '+apiId+" API failed, "+res.error.message});
                             self.hideLoadingIndicator();
                         }
                     }
@@ -597,8 +602,7 @@
                     },
                     function (err)
                     {
-                        // alert(err);
-                        self.showMessageDialog(err);
+                        self.showErrorMessage({type: self.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                     },
                     "AnnoCordovaPlugin",
                     'trigger_create_anno',
@@ -625,8 +629,7 @@
                     },
                     function (err)
                     {
-                        // alert(err);
-                        self.showMessageDialog(err);
+                        self.showErrorMessage({type: self.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                     },
                     "AnnoCordovaPlugin",
                     'enable_native_gesture_listener',
@@ -645,8 +648,7 @@
                     },
                     function (err)
                     {
-                        // alert(err);
-                        self.showMessageDialog(err);
+                        self.showErrorMessage({type: self.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                     },
                     "AnnoCordovaPlugin",
                     'enable_native_gesture_listener',
@@ -794,6 +796,39 @@
 
             this.callGAEAPI(APIConfig);
         },
+        showErrorMessage: function(error, toast, callback)
+        {
+            // show error message, wrap the error messages by error type
+            // error: an error object {type, message}
+            // toast: shown as toast, default is false
+            // callback: callback function will be called when user tapped OK button in message popup
+            var message = "Oops, something went wrong, please try later.";
+
+            // we can specify different user-friendly message for different error types
+            /*
+            if (error.type == this.ERROR_TYPES.LOAD_GAE_API)
+            {
+                // todo: the user-friendly message
+                message = "Oops, something went wrong, please try later.";
+            }
+            else if (error.type == this.ERROR_TYPES.API_RESPONSE_EMPTY)
+            {
+                // todo: the user-friendly message
+                message = "Oops, something went wrong, please try later.";
+            }*/
+
+            if (toast)
+            {
+                this.showToastDialog(message);
+            }
+            else
+            {
+                this.showMessageDialog(message, callback);
+            }
+
+            // output the original error message to console
+            console.error(error.message);
+        },
         callGAEAPI: function(config, retryCnt)
         {
             // common method that responsible for calling GAE API
@@ -866,17 +901,14 @@
 
                         if (config.showErrorMessage)
                         {
-                            util.showToastDialog("API response is empty.");
-                        }
-                        else
-                        {
-                            console.error("API response is empty.");
+                            util.showErrorMessage({type: util.ERROR_TYPES.API_RESPONSE_EMPTY, message:"API response is empty."}, true);
                         }
 
+                        console.error("API response is empty.");
 
                         if (config.error)
                         {
-                            config.error({type:"API-Calling", message:"API response is empty."}, response);
+                            config.error({type: util.ERROR_TYPES.API_RESPONSE_EMPTY, message:"API response is empty."}, response);
                         }
 
                         return;
@@ -897,16 +929,15 @@
                             {
                                 if (config.showErrorMessage)
                                 {
-                                    util.showMessageDialog("Oops - something went wrong. Please try again.");
+                                    response.error.type = util.ERROR_TYPES.API_RETRY_FAILED;
+                                    util.showErrorMessage(response.error);
                                 }
-                                else
-                                {
-                                    console.error("Oops - something went wrong. Please try again.");
-                                }
+
+                                console.error("API retry for "+config.method+" failed");
 
                                 if (config.error)
                                 {
-                                    response.error.type = "API-Retry-Failed";
+                                    response.error.type = util.ERROR_TYPES.API_RETRY_FAILED;;
                                     config.error(response.error, response);
                                 }
                             }
@@ -919,26 +950,22 @@
                                 {
                                     if (config.showErrorMessage(response.error))
                                     {
-                                        util.showMessageDialog("An error occurred when calling "+config.method+" api: "+response.error.message);
-                                    }
-                                    else
-                                    {
-                                        console.log("An error occurred when calling "+config.method+" api: "+response.error.message);
+                                        response.error.type = util.ERROR_TYPES.API_CALL_FAILED;
+                                        util.showErrorMessage(response.error);
                                     }
                                 }
                                 else
                                 {
-                                    util.showMessageDialog("An error occurred when calling "+config.method+" api: "+response.error.message);
+                                    response.error.type = util.ERROR_TYPES.API_CALL_FAILED;
+                                    util.showErrorMessage(response.error);
                                 }
                             }
-                            else
-                            {
-                                console.error("An error occurred when calling "+config.method+" api: "+response.error.message);
-                            }
+
+                            console.error("An error occurred when calling "+config.method+" api: "+response.error.message);
 
                             if (config.error)
                             {
-                                response.error.type = "API-Calling";
+                                response.error.type = util.ERROR_TYPES.API_CALL_FAILED;
                                 config.error(response.error, response);
                             }
                         }
@@ -955,8 +982,8 @@
             }, function (error)
             {
                 // TODO: Loading API failed, do we need retry?
-                util.showMessageDialog('Load '+config.name+" API failed, "+error.message);
-
+                util.showErrorMessage({type: util.ERROR_TYPES.LOAD_GAE_API ,message:'Load '+config.name+" API failed, "+error.message});
+                console.error('Load '+config.name+" API failed, "+res.error.message);
                 if (!config.keepLoadingSpinnerShown)
                 {
                     util.hideLoadingIndicator();
@@ -964,8 +991,7 @@
 
                 if (config.error)
                 {
-                    error.type = "API-Loading";
-                    config.error(error);
+                    config.error({type: util.ERROR_TYPES.LOAD_GAE_API ,message:'Load '+config.name+" API failed, "+error.message});
                 }
             });
         }
