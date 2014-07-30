@@ -79,7 +79,7 @@ define([
             this.annoDB.executeSql("SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name='app_users'", [], function(res) {
                 if (!res) return;
 
-                console.log("app_users " + res.rows.item(0).cnt);
+                // console.log("app_users " + res.rows.item(0).cnt);
 
                 if (res.rows.item(0).cnt == 0)
                 {
@@ -130,7 +130,7 @@ define([
                             self.annoDB.executeSql("select * from app_users", [], function(ures){
                                 if (ures)
                                 {
-                                    console.log("app_users2: " + ures.rows.length);
+                                    // console.log("app_users2: " + ures.rows.length);
                                     self.hasUserInLocalDB = ures.rows.length>0;
                                     if (ures.rows.length>0)
                                         self.localUserInfo = ures.rows.item(0);
@@ -206,7 +206,7 @@ define([
             this.annoDB.executeSql("SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name='app_settings'", [], function(res) {
                 if (!res) return;
 
-                console.log("app_settings " + res.rows.item(0).cnt);
+                // console.log("app_settings " + res.rows.item(0).cnt);
                 if (res.rows.item(0).cnt == 0)
                 {
                     self.annoDB.executeSql(settingsSQL);

@@ -267,7 +267,7 @@ define([
             {
                 this.accessToken = tokenObject;
                 this.accessTokenTime = (new Date()).getTime();
-                console.error(gapi.auth);
+                // console.error(gapi.auth);
                 gapi.auth.setToken(tokenObject);
 
                 if (callback)

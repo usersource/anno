@@ -689,7 +689,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
         {
             DBUtil.executeUpdateSql(delete_userInfo_sql,[], function(res){
                 if (!res) return;
-                console.error("user removed.");
+                console.log("user removed.");
                 if (callback)
                 {
                     callback();

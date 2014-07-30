@@ -274,7 +274,7 @@
                 if (!res) return;
 
                 var rows = res.rows;
-                console.log("app_settings rows: " + rows.length);
+                // console.log("app_settings rows: " + rows.length);
 
                 var settings = {}, item;
                 for (var i= 0,c=rows.length;i<c;i++)
@@ -802,7 +802,7 @@
             // error: an error object {type, message}
             // toast: shown as toast, default is false
             // callback: callback function will be called when user tapped OK button in message popup
-            var message = "Oops, something went wrong, please try later.";
+            var message = "Oops, something went wrong. Please try later.";
 
             // we can specify different user-friendly message for different error types
             /*

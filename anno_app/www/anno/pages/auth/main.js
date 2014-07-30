@@ -30,7 +30,7 @@ require([
 
             DBUtil.initDB(function ()
             {
-                console.error("DB is readay!");
+                console.log("[auth:main.js] DB is ready.");
                 AnnoDataHandler.removeUser();
 
                 annoUtil.readSettings(function (settings)

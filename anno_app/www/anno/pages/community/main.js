@@ -31,12 +31,12 @@ require([
         config.setBackwardFired = function(fired)
         {
             this._backwardFired = fired;
-            console.log("setBackwardFired: "+ this._backwardFired);
+            // console.log("setBackwardFired: "+ this._backwardFired);
         };
 
         document.addEventListener("deviceready", function(){
             DBUtil.initDB(function(){
-                console.log("DB is ready!");
+                console.log("[community:main.js] DB is ready.");
                 annoUtil.readSettings(function(){
                     Application(config);
                 });
