@@ -53,18 +53,29 @@ class User(ndb.Model):
 
     @classmethod
     def list_favorite_apps(cls, user_key):
+        # We are using "query" on key for getting anno data instead of "get" or "get_multi"
+        # Getting anno using "query" is more memory efficient than using "get" or "get_multi",
+        # we don't know why.
+        # Getting anno using "query" also create index for this.
+
         from model.userannostate import UserAnnoState
-        userannostate_list = UserAnnoState.list_by_user(user_key)
+        from model.anno import Anno
 
+        userannostate_list = UserAnnoState.list_by_user(user_key, 50)
         anno_key_list = [ userannostate.anno for userannostate in userannostate_list if userannostate.anno is not None ]
-        anno_key_list = list(set(anno_key_list))
-        anno_list = ndb.get_multi(anno_key_list)
 
-        app_key_list = [ anno.app for anno in anno_list if anno.app is not None ]
-        app_key_dict = { app_key : app_key_list.count(app_key) for app_key in app_key_list }
-        app_key_list = list(set(app_key_list))
-        app_key_list = sorted(app_key_list, key=lambda x: app_key_dict.get(x), reverse=True)
-        app_list = ndb.get_multi(app_key_list)
+        if len(anno_key_list):
+            anno_list = Anno.query(ndb.AND(Anno.key.IN(anno_key_list),
+                                           Anno.app != None)
+                                   )\
+                            .fetch(projection=[Anno.app])
+            app_key_list = [ anno.app for anno in anno_list ]
+            app_key_list = sorted(app_key_list, key=app_key_list.count, reverse=True)
+            unique_app_key_list = []
+            [ unique_app_key_list.append(app_key) for app_key in app_key_list if app_key not in unique_app_key_list ]
+            app_list = ndb.get_multi(unique_app_key_list)
+        else:
+            app_list = []
 
         favorite_apps_list = []
         for app in app_list:
