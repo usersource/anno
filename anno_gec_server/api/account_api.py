@@ -9,6 +9,8 @@ from helper.utils import validate_email
 from helper.utils import validate_password
 from helper.utils import md5
 from helper.utils import get_endpoints_current_user
+from helper.utils import reset_password
+from helper.utils_enum import AuthSourceType
 from model.user import User
 from message.account_message import AccountMessage
 from message.user_message import UserMessage
@@ -59,7 +61,7 @@ class AccountApi(remote.Service):
         validate_email(email)
         if not User.find_user_by_email(email):
             raise endpoints.NotFoundException("Email(" + email + ") doesn't exist.")
-            # send reset password email
+        reset_password(email)
         return message_types.VoidMessage()
 
     @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/bind_account', http_method='POST',
@@ -68,7 +70,7 @@ class AccountApi(remote.Service):
         current_user = get_endpoints_current_user(raise_unauthorized=True)
         auth_source = request.auth_source
         if auth_source is None:
-            auth_source = 'Google'
+            auth_source = AuthSourceType.GOOGLE
         email = current_user.email()
         user = User.find_user_by_email(email)
         if user is not None:

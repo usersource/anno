@@ -9,6 +9,11 @@ JS_CLIENT_ID_PROD_USERSOURCE = "22913132792.apps.googleusercontent.com"
 JS_CLIENT_ID_TEST_USERSOURCE = "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com"
 JS_CLIENT_ID_SANDBOX_USERSOURCE = "955803277195.apps.googleusercontent.com"
 
+# support email id
+PROD_USERSOURCE_EMAIL_ID = "UserSource Support <support@annoserver.appspotmail.com>"
+TEST_USERSOURCE_EMAIL_ID = "UserSource Support <support@annoserver-test.appspotmail.com>"
+SANDBOX_USERSOURCE_EMAIL_ID = "UserSource Support <support@usersource-anno.appspotmail.com>"
+
 # Project ID
 DEFAULT_HOST_PROD_USERSOURCE = "annoserver.appspot.com"
 DEFAULT_HOST_TEST_USERSOURCE = "annoserver-test.appspot.com"
@@ -30,6 +35,8 @@ APNS_USE_SANDBOX = False
 # https://groups.google.com/forum/#!topic/google-appengine/P-1Gpwpry7w
 APNS_ENHANCED = False
 
+SUPPORT_EMAIL_ID = SANDBOX_USERSOURCE_EMAIL_ID
+
 # Prod server
 if _default_hostname == DEFAULT_HOST_PROD_USERSOURCE:
     anno_js_client_id = JS_CLIENT_ID_PROD_USERSOURCE
@@ -37,6 +44,7 @@ if _default_hostname == DEFAULT_HOST_PROD_USERSOURCE:
     APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_USE_SANDBOX = False
+    SUPPORT_EMAIL_ID = PROD_USERSOURCE_EMAIL_ID
 
 # Test server
 elif _default_hostname == DEFAULT_HOST_TEST_USERSOURCE:
@@ -45,6 +53,7 @@ elif _default_hostname == DEFAULT_HOST_TEST_USERSOURCE:
     APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_USE_SANDBOX = False
+    SUPPORT_EMAIL_ID = TEST_USERSOURCE_EMAIL_ID
 
 # Dev server
 elif _default_hostname == DEFAULT_HOST_SANDBOX_USERSOURCE:
@@ -53,6 +62,7 @@ elif _default_hostname == DEFAULT_HOST_SANDBOX_USERSOURCE:
     APNS_PUSH_CERT = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_PUSH_KEY = 'APNS_Certificates/<WE-NEED-A-FILE>.pem'
     APNS_USE_SANDBOX = False
+    SUPPORT_EMAIL_ID = SANDBOX_USERSOURCE_EMAIL_ID
 
 # Are we in the local development environment
 from os import environ
