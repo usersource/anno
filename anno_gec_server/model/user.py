@@ -7,6 +7,7 @@ from google.appengine.ext import ndb
 from message.user_message import UserMessage
 from message.appinfo_message import UserFavoriteApp
 from helper.utils_enum import DeviceType
+from helper.utils_enum import AuthSourceType
 
 
 class User(ndb.Model):
@@ -16,7 +17,7 @@ class User(ndb.Model):
     user_email = ndb.StringProperty()  # this field should be unique.
     display_name = ndb.StringProperty()  # this field should be unique.
     password = ndb.StringProperty()
-    auth_source = ndb.StringProperty()  # "Anno" or "Google". If not "Anno", then no password is stored.
+    auth_source = ndb.StringProperty(choices=[AuthSourceType.ANNO, AuthSourceType.GOOGLE])  # If not "Anno", then no password is stored
     device_id = ndb.StringProperty()
     device_type = ndb.StringProperty(choices=[DeviceType.IOS, DeviceType.ANDROID])
 
@@ -30,13 +31,13 @@ class User(ndb.Model):
 
     @classmethod
     def insert_user(cls, email):
-        user = User(display_name=email, user_email=email, auth_source='Google')
+        user = User(display_name=email, user_email=email, auth_source=AuthSourceType.GOOGLE)
         user.put()
         return user
 
     @classmethod
     def insert_normal_user(cls, email, username, password):
-        user = User(user_email=email, display_name=username, password=password, auth_source="Anno")
+        user = User(user_email=email, display_name=username, password=password, auth_source=AuthSourceType.ANNO)
         user.put()
         return user
 

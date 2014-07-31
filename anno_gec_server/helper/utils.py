@@ -5,9 +5,11 @@ import httplib
 import json
 import logging
 import base64
+import random
 
 import endpoints
 from google.appengine.api import search
+from google.appengine.api import mail
 from google.appengine.ext import ndb
 
 from model.user import User
@@ -16,6 +18,8 @@ from model.community import Community
 from model.userrole import UserRole
 from helper.utils_enum import UserRoleType
 from helper.utils_enum import SearchIndexName
+from helper.utils_enum import AuthSourceType
+from helper.settings import SUPPORT_EMAIL_ID
 
 
 APP_NAME = "UserSource"
@@ -245,3 +249,24 @@ def get_user_from_request(user_id=None, user_email=None):
     elif user_email:
         user = User.find_user_by_email(user_email)
     return user
+
+def reset_password(email):
+    user = User.find_user_by_email(email)
+    if user:
+        if user.auth_source == AuthSourceType.ANNO:
+            validate_email(email)
+            new_password_string = hex(random.randint(1000000, 9999999))[2:]
+            user.password = md5(new_password_string)
+            user.put()
+
+            subject = "Reset Password"
+            body = "Your new password for usersource account is %s" % new_password_string
+            send_email(SUPPORT_EMAIL_ID, email, subject, body)
+        else:
+            raise endpoints.ForbiddenException("Account for '%s' is Google OAuth account.", email)
+    else:
+        raise endpoints.NotFoundException("Email address is not found. Please enter correct email address.")
+
+def send_email(sender, to, subject="", body=""):
+    message = mail.EmailMessage(sender=sender, to=to, subject=subject, body=body)
+    message.send()

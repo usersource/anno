@@ -50,6 +50,7 @@ define([
                 success: function(data)
                 {
                     annoUtil.showMessageDialog("A temporary password has been sent to the email address you provided. Please follow the instructions in your email.", function(){
+                        dom.byId('fmtEmail').value = "";
                         history.back();
                     });
                 },
