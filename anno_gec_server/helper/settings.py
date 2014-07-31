@@ -23,21 +23,13 @@ GCM_API_KEY_PROD_USERSOURCE = "AIzaSyD11tLsJXp9HNHWd33ZGvzCwbxjeMlkryk"
 GCM_API_KEY_TEST_USERSOURCE = "AIzaSyApUUBZe5Gborkwd-UknUvHdm9oblPSn9k"
 GCM_API_KEY_SANDBOX_USERSOURCE = "AIzaSyCNWf_rZCovDez9Dmzx7CA-m6IHHUmh-SU"
 
-# APNS push certificates
-APNS_PUSH_CERT_PROD_USERSOURCE = "APNS_Certificates/<WE-NEED-A-FILE>.pem"
-APNS_PUSH_CERT_TEST_USERSOURCE = "APNS_Certificates/PushChatCert.pem"
-APNS_PUSH_CERT_SANDBOX_USERSOURCE = "APNS_Certificates/PushChatCert.pem"
-
-# APNS push key
-APNS_PUSH_KEY_PROD_USERSOURCE = "APNS_Certificates/<WE-NEED-A-FILE>.pem"
-APNS_PUSH_KEY_TEST_USERSOURCE = "APNS_Certificates/PushChatKey.pem"
-APNS_PUSH_KEY_SANDBOX_USERSOURCE = "APNS_Certificates/PushChatKey.pem"
+# APNS push certificate and key
+APNS_PUSH_CERT = "APNS_Certificates/UserSourceAnnoCert.pem"
+APNS_PUSH_KEY = "APNS_Certificates/UserSourceAnnoKey.pem"
 
 # Default values
 anno_js_client_id = JS_CLIENT_ID_SANDBOX_USERSOURCE
 GCM_API_KEY = GCM_API_KEY_SANDBOX_USERSOURCE
-APNS_PUSH_CERT = APNS_PUSH_CERT_SANDBOX_USERSOURCE
-APNS_PUSH_KEY = APNS_PUSH_KEY_SANDBOX_USERSOURCE
 APNS_USE_SANDBOX = False
 
 SUPPORT_EMAIL_ID = SANDBOX_USERSOURCE_EMAIL_ID
@@ -53,27 +45,18 @@ _default_hostname = app_identity.get_default_version_hostname()
 if _default_hostname == DEFAULT_HOST_PROD_USERSOURCE:
     anno_js_client_id = JS_CLIENT_ID_PROD_USERSOURCE
     GCM_API_KEY = GCM_API_KEY_PROD_USERSOURCE
-    APNS_PUSH_CERT = APNS_PUSH_CERT_PROD_USERSOURCE
-    APNS_PUSH_KEY = APNS_PUSH_KEY_PROD_USERSOURCE
-    APNS_USE_SANDBOX = False
     SUPPORT_EMAIL_ID = PROD_USERSOURCE_EMAIL_ID
 
 # Test server
 elif _default_hostname == DEFAULT_HOST_TEST_USERSOURCE:
     anno_js_client_id = JS_CLIENT_ID_TEST_USERSOURCE
     GCM_API_KEY = GCM_API_KEY_TEST_USERSOURCE
-    APNS_PUSH_CERT = APNS_PUSH_CERT_TEST_USERSOURCE
-    APNS_PUSH_KEY = APNS_PUSH_KEY_TEST_USERSOURCE
-    APNS_USE_SANDBOX = False
     SUPPORT_EMAIL_ID = TEST_USERSOURCE_EMAIL_ID
 
 # Dev server
 elif _default_hostname == DEFAULT_HOST_SANDBOX_USERSOURCE:
     anno_js_client_id = JS_CLIENT_ID_SANDBOX_USERSOURCE
     GCM_API_KEY = GCM_API_KEY_SANDBOX_USERSOURCE
-    APNS_PUSH_CERT = APNS_PUSH_CERT_SANDBOX_USERSOURCE
-    APNS_PUSH_KEY = APNS_PUSH_KEY_SANDBOX_USERSOURCE
-    APNS_USE_SANDBOX = False
     SUPPORT_EMAIL_ID = SANDBOX_USERSOURCE_EMAIL_ID
 
 # Are we in the local development environment
@@ -99,9 +82,9 @@ if DEVELOPMENT:
     socket = patched_socket
 
     # Dev Keys and certificates
-    GCM_API_KEY = GCM_API_KEY_SANDBOX_USERSOURCE  # Already existing Public Key for Google Services
-    APNS_PUSH_CERT = "APNS_Certificates/aps_development.pem"
-    APNS_PUSH_KEY = "APNS_Certificates/PushNotificationsDev.pem"
+#     GCM_API_KEY = GCM_API_KEY_SANDBOX_USERSOURCE  # Already existing Public Key for Google Services
+#     APNS_PUSH_CERT = APNS_PUSH_CERT
+#     APNS_PUSH_KEY = APNS_PUSH_KEY
 
     # Use the APNS sandbox environment
-    APNS_USE_SANDBOX = True
+#     APNS_USE_SANDBOX = True
