@@ -25,12 +25,12 @@ class Anno(BaseModel):
     This class represents Annotation Model(in datastore).
     """
     anno_text = ndb.StringProperty(required=True)
-    simple_x = ndb.FloatProperty(required=True)
-    simple_y = ndb.FloatProperty(required=True)
+#     simple_x = ndb.FloatProperty(required=True)
+#     simple_y = ndb.FloatProperty(required=True)
     image = ndb.BlobProperty()
     anno_type = ndb.StringProperty(required=True, default='simple_comment')
-    simple_circle_on_top = ndb.BooleanProperty(required=True)
-    simple_is_moved = ndb.BooleanProperty(required=True)
+#     simple_circle_on_top = ndb.BooleanProperty(required=True)
+#     simple_is_moved = ndb.BooleanProperty(required=True)
     level = ndb.IntegerProperty(required=True)
     device_model = ndb.StringProperty(required=True)
     app_name = ndb.StringProperty()
@@ -76,11 +76,11 @@ class Anno(BaseModel):
 
         return AnnoResponseMessage(id=self.key.id(),
                                    anno_text=self.anno_text,
-                                   simple_x=self.simple_x,
-                                   simple_y=self.simple_y,
+#                                    simple_x=self.simple_x,
+#                                    simple_y=self.simple_y,
                                    anno_type=self.anno_type,
-                                   simple_circle_on_top=self.simple_circle_on_top,
-                                   simple_is_moved=self.simple_is_moved,
+#                                    simple_circle_on_top=self.simple_circle_on_top,
+#                                    simple_is_moved=self.simple_is_moved,
                                    level=self.level,
                                    device_model=self.device_model,
                                    app_name=app_name,
@@ -134,14 +134,11 @@ class Anno(BaseModel):
         if type(community) is Community:
             community = community.key
 
-        entity = cls(anno_text=message.anno_text, simple_x=message.simple_x,
-                     simple_y=message.simple_y, anno_type=message.anno_type,
-                     simple_circle_on_top=message.simple_circle_on_top,
-                     simple_is_moved=message.simple_is_moved, level=message.level,
-                     device_model=message.device_model, os_name=message.os_name,
-                     os_version=message.os_version, creator=user.key,
-                     draw_elements=message.draw_elements, image=message.image,
-                     screenshot_is_anonymized=message.screenshot_is_anonymized,
+        entity = cls(anno_text=message.anno_text, anno_type=message.anno_type,
+                     level=message.level, device_model=message.device_model, 
+                     os_name=message.os_name, os_version=message.os_version, 
+                     creator=user.key, draw_elements=message.draw_elements, 
+                     image=message.image, screenshot_is_anonymized=message.screenshot_is_anonymized,
                      geo_position=message.geo_position, flag_count=0, vote_count=0,
                      followup_count=0, latitude=message.latitude, longitude=message.longitude)
 
@@ -191,18 +188,18 @@ class Anno(BaseModel):
         """
         if message.anno_text is not None:
             self.anno_text = message.anno_text
-        if message.simple_x is not None:
-            self.simple_x = message.simple_x
-        if message.simple_y is not None:
-            self.simple_y = message.simple_y
+#         if message.simple_x is not None:
+#             self.simple_x = message.simple_x
+#         if message.simple_y is not None:
+#             self.simple_y = message.simple_y
         if message.image is not None:
             self.image = message.image
         if message.anno_type is not None:
             self.anno_type = message.anno_type
-        if message.simple_circle_on_top is not None:
-            self.simple_circle_on_top = message.simple_circle_on_top
-        if message.simple_is_moved is not None:
-            self.simple_is_moved = message.simple_is_moved
+#         if message.simple_circle_on_top is not None:
+#             self.simple_circle_on_top = message.simple_circle_on_top
+#         if message.simple_is_moved is not None:
+#             self.simple_is_moved = message.simple_is_moved
         if message.level is not None:
             self.level = message.level
         if message.device_model is not None:
@@ -382,11 +379,11 @@ class Anno(BaseModel):
             .filter(cls.os_version == message.os_version) \
             .filter(cls.device_model == message.device_model) \
             .filter(cls.screenshot_is_anonymized == message.screenshot_is_anonymized) \
-            .filter(cls.created == message.created) \
-            .filter(cls.simple_circle_on_top == message.simple_circle_on_top) \
-            .filter(cls.simple_x == message.simple_x) \
-            .filter(cls.simple_y == message.simple_y) \
-            .filter(cls.simple_is_moved == message.simple_is_moved)
+            .filter(cls.created == message.created)
+#             .filter(cls.simple_circle_on_top == message.simple_circle_on_top) \
+#             .filter(cls.simple_x == message.simple_x) \
+#             .filter(cls.simple_y == message.simple_y) \
+#             .filter(cls.simple_is_moved == message.simple_is_moved)
         for anno in query:
             if anno.creator.id() == user.key.id():
                 return anno

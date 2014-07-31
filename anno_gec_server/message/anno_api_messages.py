@@ -19,12 +19,12 @@ class AnnoMessage(messages.Message):
     """
     id = messages.IntegerField(1) #:
     anno_text = messages.StringField(2, required=True) #:
-    simple_x = messages.FloatField(3, required=True) #:
-    simple_y = messages.FloatField(4, required=True) #:
+#     simple_x = messages.FloatField(3, required=True) #:
+#     simple_y = messages.FloatField(4, required=True) #:
     image = messages.BytesField(5)  #todo add required=True #:
     anno_type = messages.StringField(6, default='simple comment') #:
-    simple_circle_on_top = messages.BooleanField(7, required=True) #:
-    simple_is_moved = messages.BooleanField(8, required=True) #:
+#     simple_circle_on_top = messages.BooleanField(7, required=True) #:
+#     simple_is_moved = messages.BooleanField(8, required=True) #:
     level = messages.IntegerField(9, required=True) #:
     device_model = messages.StringField(10) #:
     app_name = messages.StringField(11) #:
@@ -47,12 +47,12 @@ class AnnoMergeMessage(messages.Message):
     No need to pass user key.
     """
     anno_text = messages.StringField(2) #:
-    simple_x = messages.FloatField(3) #:
-    simple_y = messages.FloatField(4) #:
+#     simple_x = messages.FloatField(3) #:
+#     simple_y = messages.FloatField(4) #:
     image = messages.BytesField(5) #:
     anno_type = messages.StringField(6) #:
-    simple_circle_on_top = messages.BooleanField(7) #:
-    simple_is_moved = messages.BooleanField(8) #:
+#     simple_circle_on_top = messages.BooleanField(7) #:
+#     simple_is_moved = messages.BooleanField(8) #:
     level = messages.IntegerField(9) #:
     device_model = messages.StringField(10) #:
     app_name = messages.StringField(11) #:
@@ -72,12 +72,12 @@ class AnnoResponseMessage(messages.Message):
 
     id = messages.IntegerField(1)    #:
     anno_text = messages.StringField(2)  #:
-    simple_x = messages.FloatField(3)   #:
-    simple_y = messages.FloatField(4)  #:
+#     simple_x = messages.FloatField(3)   #:
+#     simple_y = messages.FloatField(4)  #:
     image = messages.BytesField(5)  #:
     anno_type = messages.StringField(6)  #:
-    simple_circle_on_top = messages.BooleanField(7)  #:
-    simple_is_moved = messages.BooleanField(8)  #:
+#     simple_circle_on_top = messages.BooleanField(7)  #:
+#     simple_is_moved = messages.BooleanField(8)  #:
     level = messages.IntegerField(9)  #:
     device_model = messages.StringField(10)  #:
     app_name = messages.StringField(11)  #:
