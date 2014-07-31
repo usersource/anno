@@ -23,9 +23,10 @@ BATCH_SIZE = 50  # ideal batch size may vary based on entity size
 
 class UpdateAnnoHandler(webapp2.RequestHandler):
     def get(self):
-        add_lowercase_appname()
+#         add_lowercase_appname()
 #         delete_all_anno_indices()
-        update_anno_schema()
+#         update_anno_schema()
+        update_followup_indices()
 #         update_userannostate_schema_from_anno_action(cls=Vote)
 #         update_userannostate_schema_from_anno_action(cls=FollowUp)
 #         update_userannostate_schema_from_anno_action(cls=Flag)
@@ -78,13 +79,23 @@ def update_anno_schema(cursor=None):
 #         update_userannostate_schema_from_anno(anno)
 
         # updating anno index
-        regenerate_anno_index(anno)
+        regenerate_index(anno, SearchIndexName.ANNO)
 
     if len(anno_update_list):
         ndb.put_multi(anno_update_list)
 
     if more:
         update_anno_schema(cursor=cursor)
+
+
+def update_followup_indices(cursor=None):
+    followup_list, cursor, more = FollowUp.query().fetch_page(BATCH_SIZE, start_cursor=cursor)
+
+    for followup in followup_list:
+        regenerate_index(followup, SearchIndexName.FOLLOWUP)
+
+    if more:
+        update_followup_indices(cursor=cursor)
 
 
 def update_userannostate_schema_from_anno(anno):
@@ -94,8 +105,8 @@ def update_userannostate_schema_from_anno(anno):
         UserAnnoState.insert(user=user, anno=anno, modified=modified)
 
 
-def regenerate_anno_index(anno):
-    put_search_document(anno.generate_search_document(), SearchIndexName.ANNO)
+def regenerate_index(entity, search_index_name):
+    put_search_document(entity.generate_search_document(), search_index_name)
 
 
 def update_userannostate_schema_from_anno_action(cls, cursor=None):
