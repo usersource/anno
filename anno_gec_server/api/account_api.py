@@ -54,14 +54,20 @@ class AccountApi(remote.Service):
             raise endpoints.UnauthorizedException("Authentication failed. Email and password are not matched.")
         return UserMessage(id=user.key.id(), display_name=user.display_name)
 
-    @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/forgot_detail', http_method='POST',
-                      name='account.forgot_detail')
+    @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/forgot_detail',
+                      http_method='POST', name='account.forgot_detail')
     def forgot_details(self, request):
-        email = request.user_email
-        validate_email(email)
-        if not User.find_user_by_email(email):
-            raise endpoints.NotFoundException("Email(" + email + ") doesn't exist.")
-        reset_password(email)
+        user = User.find_user_by_email(request.user_email)
+
+        if user:
+            if user.auth_source == AuthSourceType.ANNO:
+                validate_email(request.user_email)
+                reset_password(user, request.user_email)
+            else:
+                raise endpoints.ForbiddenException("Account for '%s' is Google OAuth account.", request.user_email)
+        else:
+            raise endpoints.NotFoundException("Email address is not found. Please enter correct email address.")
+
         return message_types.VoidMessage()
 
     @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/bind_account', http_method='POST',
