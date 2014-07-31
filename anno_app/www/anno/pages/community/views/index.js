@@ -73,11 +73,6 @@ define([
             search = search == null?false:search;
             clearData = clearData == null?false:clearData;
 
-            if (!doRefreshing)
-            {
-                annoUtil.showLoadingIndicator();
-            }
-
             var arg = {outcome: 'cursor,has_more,anno_list', limit: limit};
 
             if (search)
@@ -113,132 +108,128 @@ define([
                 }
             }
 
-            console.error("anno "+(search?"search":"list")+"ing, args:"+JSON.stringify(arg));
-            var getAnnoList = search?gapi.client.anno.anno.search(arg):gapi.client.anno.anno.list(arg);
-            getAnnoList.execute(function (data)
+            console.log("anno "+(search?"search":"list")+"ing, args:"+JSON.stringify(arg));
+            var APIConfig = {
+                name: annoUtil.API.anno,
+                method: search?"anno.anno.search":"anno.anno.list",
+                parameter: arg,
+                success: function(data)
+                {
+                    drawAnnoList(data, search, order, clearData);
+                },
+                error: function()
+                {
+                    loadingData = false;
+                    doRefreshing = false;
+                    firstListLoaded = true;
+                    registry.byId('progressBar').stopIndeterminateProgress();
+                    hideStartRefreshMessage();
+
+                    domStyle.set('noSearchResultContainer', 'display', 'none');
+                }
+            };
+
+            if (doRefreshing)
             {
-                if (!data)
+                APIConfig.showLoadingSpinner = false;
+            }
+
+            annoUtil.callGAEAPI(APIConfig);
+        };
+
+        var drawAnnoList = function(data, search, order, clearData)
+        {
+            registry.byId('progressBar').stopIndeterminateProgress();
+            hideStartRefreshMessage();
+
+            var annoList = data.result.anno_list||[];
+
+            var spliceArgs = clearData?[0, eventsModel.model.length]:[eventsModel.model.length, 0];
+            for (var i = 0, l = annoList.length; i < l; i++)
+            {
+                var eventData = lang.clone(emptyAnno);
+
+                eventData.annoText = annoList[i].anno_text;
+                eventData.annoType = annoList[i].anno_type;
+                eventData.annoIcon = annoList[i].anno_type == annoUtil.annoType.SimpleComment?"icon-simplecomment":"icon-shapes";
+                eventData.app = annoList[i].app_name;
+                eventData.appVersion = annoList[i].app_version;
+                eventData.author = annoList[i].creator?annoList[i].creator.display_name||annoList[i].creator.user_email||annoList[i].creator.user_id:"";
+                eventData.id = annoList[i].id;
+                eventData.circleX = parseInt(annoList[i].simple_x, 10);
+                eventData.circleY = parseInt(annoList[i].simple_y, 10);
+                eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
+                eventData.created = annoUtil.getTimeAgoString(annoList[i].created);
+                eventData.app_icon_url = annoList[i].app_icon_url||"";
+
+                if (eventData.app_icon_url)
                 {
-                    annoUtil.hideLoadingIndicator();
-                    loadingData = false;
-                    doRefreshing = false;
-                    firstListLoaded = true;
-                    registry.byId('progressBar').stopIndeterminateProgress();
-                    hideStartRefreshMessage();
-
-                    domStyle.set('noSearchResultContainer', 'display', 'none');
-                    // alert("Items returned from server are empty.");
-                    annoUtil.showToastDialog("Items returned from server are empty.");
-                    return;
-                }
-
-                if (data.error)
-                {
-                    annoUtil.hideLoadingIndicator();
-                    loadingData = false;
-                    doRefreshing = false;
-                    firstListLoaded = true;
-                    registry.byId('progressBar').stopIndeterminateProgress();
-                    hideStartRefreshMessage();
-
-                    domStyle.set('noSearchResultContainer', 'display', 'none');
-                    // alert("An error occurred when calling anno."+(search?"search":"list")+" api: "+data.error.message);
-                    annoUtil.showMessageDialog("An error occurred when calling anno."+(search?"search":"list")+" api: "+data.error.message);
-                    return;
-                }
-
-                registry.byId('progressBar').stopIndeterminateProgress();
-                hideStartRefreshMessage();
-
-                var annoList = data.result.anno_list||[];
-
-                var spliceArgs = clearData?[0, eventsModel.model.length]:[eventsModel.model.length, 0];
-                for (var i = 0, l = annoList.length; i < l; i++)
-                {
-                    var eventData = lang.clone(emptyAnno);
-
-                    eventData.annoText = annoList[i].anno_text;
-                    eventData.annoType = annoList[i].anno_type;
-                    eventData.annoIcon = annoList[i].anno_type == annoUtil.annoType.SimpleComment?"icon-simplecomment":"icon-shapes";
-                    eventData.app = annoList[i].app_name;
-                    eventData.appVersion = annoList[i].app_version;
-                    eventData.author = annoList[i].creator?annoList[i].creator.display_name||annoList[i].creator.user_email||annoList[i].creator.user_id:"";
-                    eventData.id = annoList[i].id;
-                    eventData.circleX = parseInt(annoList[i].simple_x, 10);
-                    eventData.circleY = parseInt(annoList[i].simple_y, 10);
-                    eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
-                    eventData.created = annoUtil.getTimeAgoString(annoList[i].created);
-                    eventData.app_icon_url = annoList[i].app_icon_url||"";
-
-                    if (eventData.app_icon_url)
-                    {
-                        eventData.annoIcon = "hidden";
-                        eventData.appIconClass = "";
-                    }
-                    else
-                    {
-                        eventData.appIconClass = "hidden";
-                    }
-
-                    spliceArgs.push(new getStateful(eventData));
-                }
-
-                if (clearData&&originalData == null)
-                {
-                    originalData = eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
+                    eventData.annoIcon = "hidden";
+                    eventData.appIconClass = "";
                 }
                 else
                 {
-                    eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
+                    eventData.appIconClass = "hidden";
                 }
 
-                annoUtil.hideLoadingIndicator();
-                loadingData = false;
-                doRefreshing = false;
-                firstListLoaded = true;
+                spliceArgs.push(new getStateful(eventData));
+            }
 
-                if (search)
+            if (clearData&&originalData == null)
+            {
+                originalData = eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
+            }
+            else
+            {
+                eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
+            }
+
+            annoUtil.hideLoadingIndicator();
+            loadingData = false;
+            doRefreshing = false;
+            firstListLoaded = true;
+
+            if (search)
+            {
+                searchDone = true;
+                searchOffset = data.result.offset;
+                hasMoreSearchData = data.result.has_more;
+
+                if (order)
                 {
-                    searchDone = true;
-                    searchOffset = data.result.offset;
-                    hasMoreSearchData = data.result.has_more;
+                    domClass.remove(dom.byId("searchSortsBarRecent").parentNode);
+                    domClass.remove(dom.byId("searchSortsBarActive").parentNode);
+                    domClass.remove(dom.byId("searchSortsBarPopular").parentNode);
 
-                    if (order)
+                    if (order == SEARCH_ORDER.RECENT)
                     {
-                        domClass.remove(dom.byId("searchSortsBarRecent").parentNode);
-                        domClass.remove(dom.byId("searchSortsBarActive").parentNode);
-                        domClass.remove(dom.byId("searchSortsBarPopular").parentNode);
-
-                        if (order == SEARCH_ORDER.RECENT)
-                        {
-                            domClass.add(dom.byId("searchSortsBarRecent").parentNode, "searchSortItemActive");
-                        }
-                        else if (order == SEARCH_ORDER.ACTIVE)
-                        {
-                            domClass.add(dom.byId("searchSortsBarActive").parentNode, "searchSortItemActive");
-                        }
-                        else if (order == SEARCH_ORDER.POPULAR)
-                        {
-                            domClass.add(dom.byId("searchSortsBarPopular").parentNode, "searchSortItemActive");
-                        }
+                        domClass.add(dom.byId("searchSortsBarRecent").parentNode, "searchSortItemActive");
                     }
-
-                    if (clearData&&annoList.length <=0)
+                    else if (order == SEARCH_ORDER.ACTIVE)
                     {
-                        domStyle.set('noSearchResultContainer', 'display', '');
+                        domClass.add(dom.byId("searchSortsBarActive").parentNode, "searchSortItemActive");
                     }
-                    else
+                    else if (order == SEARCH_ORDER.POPULAR)
                     {
-                        domStyle.set('noSearchResultContainer', 'display', 'none');
+                        domClass.add(dom.byId("searchSortsBarPopular").parentNode, "searchSortItemActive");
                     }
+                }
 
+                if (clearData&&annoList.length <=0)
+                {
+                    domStyle.set('noSearchResultContainer', 'display', '');
                 }
                 else
                 {
-                    offset = data.result.cursor;
-                    hasMoreData = data.result.has_more;
+                    domStyle.set('noSearchResultContainer', 'display', 'none');
                 }
-            });
+
+            }
+            else
+            {
+                offset = data.result.cursor;
+                hasMoreData = data.result.has_more;
+            }
         };
 
         var loadMoreData = function()
@@ -293,8 +284,7 @@ define([
                 },
                 function (err)
                 {
-                    // alert(err);
-                    annoUtil.showMessageDialog(err);
+                    annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                 },
                 "AnnoCordovaPlugin",
                 'exit_current_activity',
@@ -416,8 +406,7 @@ define([
                     },
                     function (err)
                     {
-                        // alert(err.message);
-                        annoUtil.showMessageDialog(err.message);
+                        annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                     },
                     "AnnoCordovaPlugin",
                     'get_installed_app_list',
@@ -541,25 +530,20 @@ define([
 
         var acceptInvitation = function(inviteData)
         {
-            annoUtil.loadAPI(annoUtil.API.user, function(){
-                var deleteUser = gapi.client.user.invite.accept({invite_hash:inviteData.invite_hash, user_email:annoUtil.getCurrentUserInfo().email});
-                deleteUser.execute(function (data)
-                {
-                    if (!data)
-                    {
-                        annoUtil.showToastDialog("Response returned from server are empty.");
-                        return;
-                    }
+            var APIConfig = {
+                name: annoUtil.API.user,
+                method: "user.invite.accept",
+                parameter: {invite_hash:inviteData.invite_hash, user_email:annoUtil.getCurrentUserInfo().email},
+                showLoadingSpinner: false,
+                keepLoadingSpinnerShown: true,
+                success: function(data){
+                    console.log("invitation accepted.");
+                },
+                error: function(){
+                }
+            };
 
-                    if (data.error)
-                    {
-                        annoUtil.showMessageDialog("An error occurred when calling user.invite.accept api: "+data.error.message);
-                        return;
-                    }
-
-                    console.log(data);
-                });
-            });
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         // push notifications related
@@ -578,7 +562,7 @@ define([
                     },
                     function (error)
                     {
-                        annoUtil.showMessageDialog("An error occurred when calling pushNotification.register: "+error);
+                        annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: "An error occurred when calling pushNotification.register: "+error});
                     },
                     {
                         "badge":"true",
@@ -596,7 +580,7 @@ define([
                     },
                     function (error)
                     {
-                        annoUtil.showMessageDialog("An error occurred when calling pushNotification.register: "+error);
+                        annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: "An error occurred when calling pushNotification.register: "+error});
                     },
                     {
                         "senderID": annoUtil.API.config[annoUtil.getSettings().ServerURL].gcm_sender_id,
@@ -663,11 +647,11 @@ define([
             if (Number(e.foreground)) {
                 var message  = generateIOSMessage(e);
                 annoUtil.showConfirmMessageDialog("Notification: <br/>"+ message +"<br/><br/>would you like to check it now?",
-                                                  function(ret) {
-                                                    if (ret) {
-                                                        goActivitiesScreen();
-                                                    }
-                                                  });
+                    function(ret) {
+                        if (ret) {
+                            goActivitiesScreen();
+                        }
+                    });
             } else {
                 goActivitiesScreen();
             }
@@ -705,29 +689,24 @@ define([
 
         var updateDeviceId = function(deviceId)
         {
-            annoUtil.loadAPI(annoUtil.API.user, function(){
-                var method = gapi.client.user.user.deviceid.update({
+            var APIConfig = {
+                name: annoUtil.API.user,
+                method: "user.user.deviceid.update",
+                parameter: {
                     device_id:deviceId,
                     device_type:annoUtil.isIOS()?"iOS":"Android"
-                });
-                method.execute(function (data)
-                {
-                    if (!data)
-                    {
-                        annoUtil.showToastDialog("Response returned from server are empty.");
-                        return;
-                    }
-
-                    if (data.error)
-                    {
-                        annoUtil.showMessageDialog("An error occurred when calling user.deviceid.update api: "+data.error.message);
-                        return;
-                    }
-
+                },
+                showLoadingSpinner: false,
+                keepLoadingSpinnerShown: true,
+                success: function(data){
                     window.localStorage.setItem(annoUtil.localStorageKeys.deviceId, deviceId);
                     console.log("device id updated.");
-                });
-            });
+                },
+                error: function(){
+                }
+            };
+
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         var goActivitiesScreen = function()
@@ -770,7 +749,8 @@ define([
 
                         annoUtil.showLoadingIndicator();
                         OAuthUtil.getAccessToken(function(){
-                            annoUtil.loadAPI(annoUtil.API.anno, loadListData);
+                            loadListData();
+
                             annoUtil.loadUserCommunities(true, function(data){
                                 var inviteList = data.inviteList;
 

@@ -401,6 +401,20 @@ class Anno(BaseModel):
             anno_list.append(anno_message)
         return anno_list
 
+    @classmethod
+    def query_by_followup(cls, search_string, query_string):
+        followup_index = search.Index(name=SearchIndexName.FOLLOWUP)
+        followup_query_string = "( comment = (~%s) )" % search_string
+        query_options = search.QueryOptions(returned_fields=["anno"])
+        query = search.Query(query_string=followup_query_string, options=query_options)
+        results = followup_index.search(query)
+        followup_list = [ str(result.fields[0].value) for result in results ]
+
+        if len(followup_list):
+            followup_list_string = "( anno_id = (%s) )" % " OR ".join(followup_list)
+            query_string = query_string + " OR " + followup_list_string if len(query_string) else followup_list_string
+
+        return query_string
 
     @classmethod
     def query_by_recent(cls, limit, offset, search_string, app_name, app_set, user):
@@ -421,6 +435,8 @@ class Anno(BaseModel):
             offset = 0
         # build query string
         query_string = Anno.get_query_string(search_string, app_name, app_set)
+        if not is_empty_string(search_string):
+            query_string = Anno.query_by_followup(search_string, query_string)
         # build query options
         sort = search.SortExpression(expression="created",
                                      direction=search.SortExpression.DESCENDING,
@@ -454,6 +470,8 @@ class Anno(BaseModel):
             offset = 0
         # build query string
         query_string = Anno.get_query_string(search_string, app_name, app_set)
+        if not is_empty_string(search_string):
+            query_string = Anno.query_by_followup(search_string, query_string)
         # build query options
         sort = search.SortExpression(expression="vote_count-flag_count",
                                      direction=search.SortExpression.DESCENDING, default_value=0)
@@ -485,6 +503,8 @@ class Anno(BaseModel):
         if offset is None:
             offset = 0
         query_string = Anno.get_query_string(search_string, app_name, app_set)
+        if not is_empty_string(search_string):
+            query_string = Anno.query_by_followup(search_string, query_string)
         sort = search.SortExpression(expression="last_update_time",
                                      direction=search.SortExpression.DESCENDING,
                                      default_value=datetime.datetime.now())
@@ -525,7 +545,6 @@ class Anno(BaseModel):
             query_string_parts.append("( app_name = \"%s\" )" % app_name)
 
         query_string = ' AND '.join(query_string_parts)
-        logging.info("final query string=%s" % query_string)
         return query_string
 
     @classmethod
@@ -551,12 +570,12 @@ class Anno(BaseModel):
         :param words: tokens to match
         """
         if fields is not None and len(fields) > 0 and words is not None and len(words) > 0:
-            query_string = " ( "
+            query_string = "( "
             for index, field in enumerate(fields):
                 query_string += Anno.get_query_string_for_field(field, words)
                 if index != len(fields) - 1:
                     query_string += " OR "
-            query_string += " ) "
+            query_string += " )"
             return query_string
         return None
 
@@ -567,9 +586,10 @@ class Anno(BaseModel):
         user_community_list.append(OPEN_COMMUNITY)
 
         if len(query_string):
-            query_string += "AND "
+            query_string += " AND "
 
-        query_string += '( community = (%s) )' % (" OR ".join(user_community_list))
+        query_string += "( community = (%s) )" % (" OR ".join(user_community_list))
+        logging.info("final query string: %s", query_string)
 
         query = search.Query(query_string=query_string, options=query_options)
         results = index.search(query)
@@ -608,6 +628,7 @@ class Anno(BaseModel):
             doc_id=anno_id_string,
             fields=[
                     search.TextField(name='app_name', value=app_name),
+                    search.TextField(name='anno_id', value=anno_id_string),
                     search.TextField(name='anno_text', value=anno_text),
                     search.NumberField(name='vote_count', value=self.vote_count),
                     search.NumberField(name='flag_count', value=self.flag_count),

@@ -13,7 +13,7 @@ require([
     function (declare, dom, registry, domClass, Application, jsonRef, _ContentPaneMixin, DBUtil, annoUtil, config, has)
     {
         var config = jsonRef.fromJson(config);
-        console.error("Worked!");
+        // console.error("Worked!");
 
         // if user clicked back button
         config._backwardFired = false;
@@ -31,12 +31,12 @@ require([
         config.setBackwardFired = function(fired)
         {
             this._backwardFired = fired;
-            console.log("setBackwardFired: "+ this._backwardFired);
+            // console.log("setBackwardFired: "+ this._backwardFired);
         };
 
         document.addEventListener("deviceready", function(){
             DBUtil.initDB(function(){
-                console.error("DB is readay!");
+                console.log("[community:main.js] DB is ready.");
                 annoUtil.readSettings(function(){
                     Application(config);
                 });

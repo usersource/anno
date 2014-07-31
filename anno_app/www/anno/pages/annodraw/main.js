@@ -212,8 +212,7 @@ require([
             },
             function (err)
             {
-                // alert(err.message);
-                annoUtil.showMessageDialog(err.message);
+                annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
             },
             "AnnoCordovaPlugin",
             action,
@@ -233,8 +232,7 @@ require([
             },
             function (err)
             {
-                // alert(err.message);
-                annoUtil.showMessageDialog(err.message);
+                annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
             },
             "AnnoCordovaPlugin",
             action,
@@ -343,8 +341,7 @@ require([
                         },
                         function (err)
                         {
-                            // alert(err.message);
-                            annoUtil.showMessageDialog(err.message);
+                            annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                         },
                         "AnnoCordovaPlugin",
                         'get_installed_app_list',
@@ -353,8 +350,7 @@ require([
                 },
                 function (err)
                 {
-                    // alert(err.message);
-                    annoUtil.showMessageDialog(err.message);
+                    annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                 },
                 "AnnoCordovaPlugin",
                 'get_recent_applist',
@@ -687,8 +683,7 @@ require([
                 },
                 function (err)
                 {
-                    // alert(err.message);
-                    annoUtil.showMessageDialog(err.message);
+                    annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                 },
                 "AnnoCordovaPlugin",
                 'get_screenshot_path',
@@ -821,8 +816,7 @@ require([
             },
             function (err)
             {
-                // alert(err.message);
-                annoUtil.showMessageDialog(err.message);
+                annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
             },
             "AnnoCordovaPlugin",
             'process_image_and_appinfo',
@@ -897,8 +891,7 @@ require([
             },
             function (err)
             {
-                // alert(err.message);
-                annoUtil.showMessageDialog(err.message);
+                annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
             },
             "AnnoCordovaPlugin",
             'process_image_and_appinfo',
@@ -984,8 +977,7 @@ require([
                 },
                 function (err)
                 {
-                    // alert(err.message);
-                    annoUtil.showMessageDialog(err.message);
+                    annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                 },
                 "AnnoCordovaPlugin",
                 'process_image_and_appinfo',
@@ -1114,30 +1106,20 @@ require([
             return;
         }
 
-        annoUtil.showLoadingIndicator();
-        annoUtil.loadAPI(annoUtil.API.user, function(){
-            var method = gapi.client.user.favorite_apps.list({email:annoUtil.getCurrentUserInfo().email});
-            method.execute(function (data)
+        var APIConfig = {
+            name: annoUtil.API.user,
+            method: "user.favorite_apps.list",
+            parameter: {email:annoUtil.getCurrentUserInfo().email},
+            success: function(data)
             {
-                if (!data)
-                {
-                    annoUtil.hideLoadingIndicator();
-                    annoUtil.showToastDialog("Items returned from server are empty.");
-                    return;
-                }
-
-                if (data.error)
-                {
-                    annoUtil.hideLoadingIndicator();
-                    annoUtil.showMessageDialog("An error occurred when calling user.favorite_apps.list api: " + data.error.message);
-                    return;
-                }
-
                 favoriteApps = data.result.app_list||[];
                 if (callback) callback(favoriteApps);
-                annoUtil.hideLoadingIndicator();
-            });
-        });
+            },
+            error: function(){
+            }
+        };
+
+        annoUtil.callGAEAPI(APIConfig);
     };
 
     var setShareDialogUI = function()
@@ -1146,6 +1128,7 @@ require([
         {
             // hide "My apps" tab, resize existing tabs
             domStyle.set(dom.byId("barRecentApps").parentNode, "display", "none");
+            domStyle.set(dom.byId("btnCancel"), "display", "");
 
             dom.byId("barFavoriteApps").parentNode.setAttribute("width", "50%");
             dom.byId("barElseApps").parentNode.setAttribute("width", "50%");
@@ -1268,6 +1251,15 @@ require([
                             showMenuDialog();
                         }
                     });
+
+                    connect.connect(dom.byId("btnCancel"), "click", function(){
+                        var shareDialog = registry.byId('shareDialog');
+                        shareDialog.hide();
+                        // enable JS gesture listener, disable native gesture
+                        annoUtil.enableJSGesture();
+                        annoUtil.disableNativeGesture();
+                    });
+
                 }, 500);
 
                 // load all needed resources at startup

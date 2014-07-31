@@ -158,8 +158,7 @@ define([], function ()
                             },
                             function (err)
                             {
-                                // alert(err);
-                                // annoUtil.showMessageDialog(err);
+                                annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                             },
                             "AnnoCordovaPlugin",
                             'trigger_create_anno',

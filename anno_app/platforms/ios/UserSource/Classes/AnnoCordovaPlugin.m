@@ -11,6 +11,7 @@
 
 NSString *ACTIVITY_INTRO = @"Intro";
 NSString *ACTIVITY_FEEDBACK = @"Feedback";
+float COMPRESSION_QUALITY = 0.7;
 
 AnnoUtils *annoUtils;
 ScreenshotGestureListener *screenshotGestureListener;
@@ -280,7 +281,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
     NSString *fullPath = [screenshotDirPath stringByAppendingPathComponent:imageKey];
     
     [[NSFileManager defaultManager] createFileAtPath:fullPath
-                                            contents:UIImagePNGRepresentation(image)
+                                            contents:UIImageJPEGRepresentation(image, COMPRESSION_QUALITY)
                                           attributes:nil];
 
     return @{@"imageKey" : imageKey, @"screenshotPath" : screenshotDirPath};

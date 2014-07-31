@@ -39,8 +39,15 @@ class UserAnnoState(ndb.Model):
         return query.fetch(projection=[cls.user, cls.last_read])
 
     @classmethod
-    def list_by_user(cls, user_key):
-        return cls.query(cls.user == user_key).order(-cls.modified).fetch(projection=[cls.anno])
+    def list_by_user(cls, user_key, limit=None):
+        query = cls.query(cls.user == user_key).order(-cls.modified)
+
+        if limit:
+            result = query.fetch(limit, projection=[cls.anno])
+        else:
+            result = query.fetch(projection=[cls.anno])
+
+        return result
 
     @classmethod
     def delete_by_anno(cls, anno_id=None, anno_key=None):

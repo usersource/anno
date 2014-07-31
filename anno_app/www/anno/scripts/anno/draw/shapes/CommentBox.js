@@ -369,8 +369,7 @@ define([
                         },
                         function (err)
                         {
-                            // alert(err);
-                            annoUtil.showMessageDialog(err);
+                            annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                         },
                         "AnnoCordovaPlugin",
                         'close_softkeyboard',

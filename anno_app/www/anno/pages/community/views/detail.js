@@ -52,6 +52,7 @@ define([
         var imageWidth, imageHeight;
         var tiniestImageData = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=";
         var hashTagTemplate = '$1<span class="hashTag" onclick="searchAnnoByHashTag(this.innerHTML)">$2</span>';
+        var commentURLTemplate = '$1<span class="commentURL" onclick="window.open(encodeURI(\'$2\'), \'_blank\', \'location=no\')">$2</span>';
 
         var adjustSize = function()
         {
@@ -102,7 +103,7 @@ define([
                 else if (orignialDeviceRatio > deviceRatio) // wider than current device
                 {console.error('wider ratio');
                     //imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio - navBarHeight - screenshotControlsHeight;
-                    mageHeight = viewPoint.h - navBarHeight - screenshotControlsHeight;
+                    imageHeight = viewPoint.h - navBarHeight - screenshotControlsHeight;
                     imageWidth = Math.round(imageHeight/orignialRatio);
                 }
 
@@ -167,13 +168,10 @@ define([
             {
                 var elementsObject = dojoJson.parse(drawElements);
 
-                if (showAnnotations)
+                surface.show();
+                if (!showAnnotations)
                 {
-                    surface.show();
-                }
-                else
-                {
-                    surface.hide();
+                    toggleAnnotations();
                 }
 
                 domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', top:(-borderWidth)+'px', left:(-borderWidth)+'px'});
@@ -539,57 +537,35 @@ define([
                 domStyle.set('editAppNameImg', 'display', '');
             }
 
-            annoUtil.showLoadingIndicator();
-            OAuthUtil.getAccessToken(function(){
-                annoUtil.loadAPI(annoUtil.API.anno, function(){
-                    var annoApi = gapi.client.anno.anno.merge({id:id, app_name:newAppName});
-                    annoApi.execute(function (data)
-                    {
-                        if (!data)
-                        {
-                            annoUtil.hideLoadingIndicator();
+            var APIConfig = {
+                name: annoUtil.API.anno,
+                method: "anno.anno.merge",
+                parameter: {id:id, app_name:newAppName},
+                needAuth: true,
+                success: function(data)
+                {
+                    var currentAnno = eventsModel.cursor;
+                    currentAnno.set('app', newAppName);
 
-                            dom.byId('hiddenBtn').focus();
+                    dom.byId('hiddenBtn').focus();
 
-                            domStyle.set('appNameSpanDetail', 'display', '');
-                            domStyle.set('appNameTextBox', {display: 'none'});
-                            domStyle.set('lightCover', 'display', 'none');
-                            domStyle.set('editAppNameImg', 'display', '');
+                    domStyle.set('appNameSpanDetail', 'display', '');
+                    domStyle.set('appNameTextBox', {display: 'none'});
+                    domStyle.set('lightCover', 'display', 'none');
+                    domStyle.set('editAppNameImg', 'display', '');
+                },
+                error: function()
+                {
+                    dom.byId('hiddenBtn').focus();
 
-                            // alert("Update app name returned from server is empty.");
-                            annoUtil.showToastDialog("Update app name returned from server is empty.");
-                        }
+                    domStyle.set('appNameSpanDetail', 'display', '');
+                    domStyle.set('appNameTextBox', {display: 'none'});
+                    domStyle.set('lightCover', 'display', 'none');
+                    domStyle.set('editAppNameImg', 'display', '');
+                }
+            };
 
-                        if (data.error)
-                        {
-                            annoUtil.hideLoadingIndicator();
-
-                            dom.byId('hiddenBtn').focus();
-
-                            domStyle.set('appNameSpanDetail', 'display', '');
-                            domStyle.set('appNameTextBox', {display: 'none'});
-                            domStyle.set('lightCover', 'display', 'none');
-                            domStyle.set('editAppNameImg', 'display', '');
-
-                            // alert(data.message);
-                            annoUtil.showMessageDialog(data.message);
-                            return;
-                        }
-                        console.error(JSON.stringify(data.result));
-
-                        var currentAnno = eventsModel.cursor;
-                        currentAnno.set('app', newAppName);
-
-                        annoUtil.hideLoadingIndicator();
-                        dom.byId('hiddenBtn').focus();
-
-                        domStyle.set('appNameSpanDetail', 'display', '');
-                        domStyle.set('appNameTextBox', {display: 'none'});
-                        domStyle.set('lightCover', 'display', 'none');
-                        domStyle.set('editAppNameImg', 'display', '');
-                    });
-                });
-            });
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         var showLocalAnno = function()
@@ -655,70 +631,56 @@ define([
             dom.byId('imgDetailScreenshot').src = imageBaseUrl+"?anno_id="+id;
             console.error("image url: "+imageBaseUrl+"?anno_id="+id);
 
-            annoUtil.showLoadingIndicator();
+            var APIConfig = {
+                name: annoUtil.API.anno,
+                method: "anno.anno.get",
+                parameter: {id:id},
+                needAuth: true,
+                success: function(data)
+                {
+                    console.error(JSON.stringify(data.result));
+                    var currentAnno = eventsModel.cursor||eventsModel.model[0], returnAnno = data.result, deviceInfo = '';
 
-            OAuthUtil.getAccessToken(function(){
-                annoUtil.loadAPI(annoUtil.API.anno, function(){
-                    var getAnnoList = gapi.client.anno.anno.get({id:id});
-                    getAnnoList.execute(function (data)
+                    currentAnno.set('circleX', parseInt(returnAnno.simple_x, 10));
+                    currentAnno.set('circleY', parseInt(returnAnno.simple_y, 10));
+
+                    if (returnAnno.followup_list)
                     {
-                        if (!data)
+                        for (var j=0;j<returnAnno.followup_list.length;j++)
                         {
-                            annoUtil.hideLoadingIndicator();
-                            loadingDetailData = false;
-                            // alert("Items returned from server are empty.");
-                            annoUtil.showToastDialog("Items returned from server are empty.");
-                            return;
+                            returnAnno.followup_list[j].user_id = returnAnno.followup_list[j].creator.display_name||returnAnno.followup_list[j].creator.user_email||returnAnno.followup_list[j].creator.id;
+                            returnAnno.followup_list[j].timestamp = annoUtil.getTimeAgoString(returnAnno.followup_list[j].created);
+                            processFollowupHashTagsOrURLs(returnAnno.followup_list[j]);
                         }
+                    }
 
-                        if (data.error)
-                        {
-                            annoUtil.hideLoadingIndicator();
-                            loadingDetailData = false;
+                    currentAnno.set('comments',new getStateful(returnAnno.followup_list||[]));
 
-                            // alert("An error occurred when calling anno.get api: "+data.error.message);
-                            annoUtil.showMessageDialog("An error occurred when calling anno.get api: "+data.error.message);
-                            return;
-                        }
-                        console.error(JSON.stringify(data.result));
-                        var currentAnno = eventsModel.cursor||eventsModel.model[0], returnAnno = data.result, deviceInfo = '';
+                    deviceInfo = (returnAnno.device_model||'&nbsp;')+'&nbsp;'+(returnAnno.os_name||'&nbsp;')+(returnAnno.os_version||'&nbsp;');
+                    currentAnno.set('deviceInfo', deviceInfo);
 
-                        currentAnno.set('circleX', parseInt(returnAnno.simple_x, 10));
-                        currentAnno.set('circleY', parseInt(returnAnno.simple_y, 10));
+                    currentAnno.set('vote', returnAnno.is_my_vote);
+                    currentAnno.set('flag', returnAnno.is_my_flag);
+                    currentAnno.set('level', returnAnno.level);
+                    currentAnno.set('draw_elements', returnAnno.draw_elements||"");
 
-                        if (returnAnno.followup_list)
-                        {
-                            for (var j=0;j<returnAnno.followup_list.length;j++)
-                            {
-                                returnAnno.followup_list[j].user_id = returnAnno.followup_list[j].creator.display_name||returnAnno.followup_list[j].creator.user_email||returnAnno.followup_list[j].creator.id;
-                                returnAnno.followup_list[j].timestamp = annoUtil.getTimeAgoString(returnAnno.followup_list[j].created);
-                                processFollowupHashTags(returnAnno.followup_list[j]);
-                            }
-                        }
+                    loadingDetailData = false;
 
-                        currentAnno.set('comments',new getStateful(returnAnno.followup_list||[]));
+                    if (!loadingImage)
+                    {
+                        annoUtil.hideLoadingIndicator();
+                        redrawShapes();
+                    }
 
-                        deviceInfo = (returnAnno.device_model||'&nbsp;')+'&nbsp;'+(returnAnno.os_name||'&nbsp;')+(returnAnno.os_version||'&nbsp;');
-                        currentAnno.set('deviceInfo', deviceInfo);
+                    setDetailsContext(cursor);
+                },
+                error: function()
+                {
+                    loadingDetailData = false;
+                }
+            };
 
-                        currentAnno.set('vote', returnAnno.is_my_vote);
-                        currentAnno.set('flag', returnAnno.is_my_flag);
-                        currentAnno.set('level', returnAnno.level);
-                        currentAnno.set('draw_elements', returnAnno.draw_elements||"");
-
-                        loadingDetailData = false;
-
-                        if (!loadingImage)
-                        {
-                            annoUtil.hideLoadingIndicator();
-                            redrawShapes();
-                        }
-
-                        setDetailsContext(cursor);
-
-                    });
-                });
-            });
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         var saveComment = function(comment)
@@ -734,44 +696,31 @@ define([
                 id = eventsModel.cursor.id;
             }
 
-            annoUtil.showLoadingIndicator();
+            var APIConfig = {
+                name: annoUtil.API.followUp,
+                method: "followup.followup.insert",
+                parameter: {anno_id:id, comment:comment},
+                needAuth: true,
+                success: function(data)
+                {
+                    console.log(JSON.stringify(data.result));
 
-            OAuthUtil.getAccessToken(function(){
-                annoUtil.loadAPI(annoUtil.API.followUp, function(){
-                    var getAnnoList = gapi.client.followup.followup.insert({anno_id:id, comment:comment});
-                    getAnnoList.execute(function (data)
-                    {
-                        if (!data)
-                        {
-                            annoUtil.hideLoadingIndicator();
-                            // alert("Items returned from server are empty.");
-                            annoUtil.showToastDialog("Items returned from server are empty.");
-                            return;
-                        }
+                    var currentAnno = eventsModel.cursor||eventsModel.model[0];
+                    // sync commented activity
+                    currentAnno.lastActivityChangedClass = "icon-comment";
+                    currentAnno.lastActivityText = "commented";
+                    currentAnno.when = new Date().getTime();
 
-                        if (data.error)
-                        {
-                            annoUtil.hideLoadingIndicator();
-                            // alert("An error occurred when calling anno.get api: "+data.error.message);
-                            annoUtil.showMessageDialog("An error occurred when calling anno.get api: "+data.error.message);
-                            return;
-                        }
-                        console.error(JSON.stringify(data.result));
+                    var commentObject = {user_id:author, comment:comment};
+                    processFollowupHashTagsOrURLs(commentObject);
+                    currentAnno.comments.splice(0,0,new getStateful(commentObject));
+                    adjustAnnoCommentSize();
+                },
+                error: function(){
+                }
+            };
 
-                        var currentAnno = eventsModel.cursor||eventsModel.model[0];
-                        // sync commented activity
-                        currentAnno.lastActivityChangedClass = "icon-comment";
-                        currentAnno.lastActivityText = "commented";
-                        currentAnno.when = new Date().getTime();
-
-                        var commentObject = {user_id:author, comment:comment};
-                        processFollowupHashTags(commentObject);
-                        annoUtil.hideLoadingIndicator();
-                        currentAnno.comments.splice(0,0,new getStateful(commentObject));
-                        adjustAnnoCommentSize();
-                    });
-                });
-            });
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         var saveVote = function(action)
@@ -788,62 +737,37 @@ define([
                 id = eventsModel.cursor.id;
             }
 
-            annoUtil.showLoadingIndicator();
+            var APIConfig = {
+                name: annoUtil.API.vote,
+                method: action == "add_vote"?"vote.vote.insert":"vote.vote.delete",
+                parameter: {anno_id:id},
+                needAuth: true,
+                success: function(data)
+                {
+                    console.log(JSON.stringify(data.result));
 
-            OAuthUtil.getAccessToken(function(){
-                annoUtil.loadAPI(annoUtil.API.vote, function(){
-                    var voteApi, apiName;
-
-                    if (action == "add_vote")
+                    if (action == "remove_vote")
                     {
-                        voteApi = gapi.client.vote.vote.insert({anno_id:id});
-                        apiName = "vote.insert";
+                        domClass.remove('imgThumbsUp', 'icoImgActive');
                     }
                     else
                     {
-                        voteApi = gapi.client.vote.vote.delete({anno_id:id});
-                        apiName = "vote.delete";
+                        domClass.add('imgThumbsUp', 'icoImgActive');
+                        // sync voted-up activity, TODO: should sync un-vote activity
+                        eventsModel.cursor.lastActivityChangedClass = "icon-thumbs-up";
+                        eventsModel.cursor.lastActivityText = "voted-up";
+                        eventsModel.cursor.when = new Date().getTime();
                     }
 
-                    voteApi.execute(function (data)
-                    {
-                        if (!data)
-                        {
-                            annoUtil.hideLoadingIndicator();
-                            // alert("vote api result returned from server are empty.");
-                            annoUtil.showToastDialog("Vote api result returned from server are empty.");
-                            savingVote = false;
-                            return;
-                        }
+                    savingVote = false;
+                },
+                error: function()
+                {
+                    savingVote = false;
+                }
+            };
 
-                        if (data.error)
-                        {
-                            annoUtil.hideLoadingIndicator();
-                            // alert("An error occurred when calling "+apiName+" api: "+data.error.message);
-                            annoUtil.showMessageDialog("An error occurred when calling "+apiName+" api: "+data.error.message);
-                            savingVote = false;
-                            return;
-                        }
-                        console.error(JSON.stringify(data.result));
-
-                        if (action == "remove_vote")
-                        {
-                            domClass.remove('imgThumbsUp', 'icoImgActive');
-                        }
-                        else
-                        {
-                            domClass.add('imgThumbsUp', 'icoImgActive');
-                            // sync voted-up activity, TODO: should sync un-vote activity
-                            eventsModel.cursor.lastActivityChangedClass = "icon-thumbs-up";
-                            eventsModel.cursor.lastActivityText = "voted-up";
-                            eventsModel.cursor.when = new Date().getTime();
-                        }
-
-                        savingVote = false;
-                        annoUtil.hideLoadingIndicator();
-                    });
-                });
-            });
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         var saveFlag = function(action)
@@ -860,61 +784,36 @@ define([
                 id = eventsModel.cursor.id;
             }
 
-            annoUtil.showLoadingIndicator();
+            var APIConfig = {
+                name: annoUtil.API.flag,
+                method: action == "add_flag"?"flag.flag.insert":"flag.flag.delete",
+                parameter: {anno_id:id},
+                needAuth: true,
+                success: function(data)
+                {
+                    console.log(JSON.stringify(data.result));
 
-            OAuthUtil.getAccessToken(function(){
-                annoUtil.loadAPI(annoUtil.API.flag, function(){
-                    var flatApi, apiName;
-
-                    if (action == "add_flag")
+                    if (action == "remove_flag")
                     {
-                        flatApi = gapi.client.flag.flag.insert({anno_id:id});
-                        apiName = "flag.insert";
+                        domClass.remove('imgFlag', 'icoImgActive');
                     }
                     else
                     {
-                        flatApi = gapi.client.flag.flag.delete({anno_id:id});
-                        apiName = "flag.delete";
+                        domClass.add('imgFlag', 'icoImgActive');
+                        // sync flagged activity, TODO: should sync un-flag activity
+                        eventsModel.cursor.lastActivityChangedClass = "icon-flag";
+                        eventsModel.cursor.lastActivityText = "flagged";
+                        eventsModel.cursor.when = new Date().getTime();
                     }
+                    savingFlag = false;
+                },
+                error: function()
+                {
+                    savingFlag = false;
+                }
+            };
 
-                    flatApi.execute(function (data)
-                    {
-                        if (!data)
-                        {
-                            annoUtil.hideLoadingIndicator();
-                            // alert("vote api result returned from server are empty.");
-                            annoUtil.showToastDialog("vote api result returned from server are empty.");
-                            savingFlag = false;
-                            return;
-                        }
-
-                        if (data.error)
-                        {
-                            annoUtil.hideLoadingIndicator();
-                            // alert("An error occurred when calling "+apiName+" api: "+data.error.message);
-                            annoUtil.showMessageDialog("An error occurred when calling "+apiName+" api: "+data.error.message);
-                            savingFlag = false;
-                            return;
-                        }
-                        console.error(JSON.stringify(data.result));
-
-                        if (action == "remove_flag")
-                        {
-                            domClass.remove('imgFlag', 'icoImgActive');
-                        }
-                        else
-                        {
-                            domClass.add('imgFlag', 'icoImgActive');
-                            // sync flagged activity, TODO: should sync un-flag activity
-                            eventsModel.cursor.lastActivityChangedClass = "icon-flag";
-                            eventsModel.cursor.lastActivityText = "flagged";
-                            eventsModel.cursor.when = new Date().getTime();
-                        }
-                        annoUtil.hideLoadingIndicator();
-                        savingFlag = false;
-                    });
-                });
-            });
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         var doSocialShare = function()
@@ -1135,61 +1034,46 @@ define([
             var annoId = eventsModel.cursor.id;
             deletingData = true;
             setControlsState();
+            console.log("start delete anno.");
 
-            annoUtil.showLoadingIndicator();
-            OAuthUtil.getAccessToken(function(){
-                annoUtil.loadAPI(annoUtil.API.anno, function(){
-                    var deleteAnnoApi = gapi.client.anno.anno.delete({id:annoId});
-                    console.log("start delete anno.");
-                    deleteAnnoApi.execute(function (data)
+            var APIConfig = {
+                name: annoUtil.API.anno,
+                method: "anno.anno.delete",
+                parameter: {id:annoId},
+                needAuth: true,
+                success: function(data)
+                {
+                    console.log("anno deleted.");
+                    deletingData = false;
+                    annoUtil.hideLoadingIndicator();
+
+                    eventsModel.model.splice(currentIndex, 1);
+
+                    if (eventsModel.model.length <=0)
                     {
-                        if (!data)
+                        // no available records, go back.
+                        history.back();
+                    }
+                    else if (currentIndex < eventsModel.model.length)
+                    {
+                        loadDetailData(currentIndex);
+                    }
+                    else
+                    {
+                        if (!goNextRecord())
                         {
-                            deletingData = false;
-                            annoUtil.hideLoadingIndicator();
-                            // alert("response returned from server are empty.");
-                            annoUtil.showToastDialog("response returned from server are empty.");
-                            setControlsState();
-                            return;
+                            goPreviousRecord();
                         }
+                    }
+                },
+                error: function()
+                {
+                    deletingData = false;
+                    setControlsState();
+                }
+            };
 
-                        if (data.error)
-                        {
-                            deletingData = false;
-                            annoUtil.hideLoadingIndicator();
-
-                            console.error("An error occurred when calling anno.delete api: "+data.error.message);
-                            // alert("An error occurred when calling anno.delete api: "+data.error.message);
-                            annoUtil.showMessageDialog("Something went wrong while deleting. Please try later.");
-                            setControlsState();
-                            return;
-                        }
-
-                        console.log("delete anno succeeded.");
-                        deletingData = false;
-                        annoUtil.hideLoadingIndicator();
-
-                        eventsModel.model.splice(currentIndex, 1);
-
-                        if (eventsModel.model.length <=0)
-                        {
-                            // no available records, go back.
-                            history.back();
-                        }
-                        else if (currentIndex < eventsModel.model.length)
-                        {
-                            loadDetailData(currentIndex);
-                        }
-                        else
-                        {
-                            if (!goNextRecord())
-                            {
-                                goPreviousRecord();
-                            }
-                        }
-                    });
-                });
-            });
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         // hash tags
@@ -1205,15 +1089,15 @@ define([
             eventsModel.cursor.set('hashTaggedAnnoText', annoUtil.replaceHashTagWithLink(annoText, hashTagTemplate));
         };
 
-        var processFollowupHashTags = function(followup)
+        var processFollowupHashTagsOrURLs = function(followup)
         {
-            // hash tags are replaced already
-            if (followup.hashTaggedComment)
-            {
-                return;
-            }
-
-            followup.hashTaggedComment = annoUtil.replaceHashTagWithLink(followup.comment, hashTagTemplate);
+        	// hash tags are replaced already then don't replace
+        	if (!followup.modifiedComment)
+        	{
+        		followup.modifiedComment = followup.comment;
+        		followup.modifiedComment = annoUtil.replaceHashTagWithLink(followup.modifiedComment, hashTagTemplate);
+        		followup.modifiedComment = annoUtil.replaceURLWithLink(followup.modifiedComment, commentURLTemplate);
+        	}
         };
 
         // search anno items by hash tag

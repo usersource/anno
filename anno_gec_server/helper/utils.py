@@ -36,7 +36,7 @@ def get_endpoints_current_user(raise_unauthorized=True):
     """
     current_user = endpoints.get_current_user()
     if raise_unauthorized and current_user is None:
-        raise endpoints.UnauthorizedException('Invalid token.')
+        raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
     return current_user
 
 
@@ -72,7 +72,7 @@ def auth_user(headers):
         user = User.find_user_by_email(current_user.email())
 
     if user is None:
-        raise endpoints.UnauthorizedException("No permission.")
+        raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
 
     return user
 
@@ -133,11 +133,11 @@ def md5(content):
 def get_credential(headers):
     authorization = headers.get("Authorization")
     if authorization is None:
-        raise endpoints.UnauthorizedException("No permission.")
+        raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
 
     basic_auth_string = authorization.split(' ')
     if len(basic_auth_string) != 2:
-        raise endpoints.UnauthorizedException("No permission.")
+        raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
 
     try:
         credential = base64.b64decode(basic_auth_string[1])
@@ -147,15 +147,15 @@ def get_credential(headers):
         credential_pair = []
 
     if len(credential_pair) != 2:
-        raise endpoints.UnauthorizedException("No permission.")
+        raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
 
     return credential_pair
 
 
-def put_search_document(doc):
+def put_search_document(doc, search_index_name):
     # index this document.
     try:
-        index = search.Index(name=SearchIndexName.ANNO)
+        index = search.Index(name=search_index_name)
         index.put(doc)
     except search.Error:
         logging.exception('Put document failed.')
