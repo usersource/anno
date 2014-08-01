@@ -1110,6 +1110,7 @@ require([
             name: annoUtil.API.user,
             method: "user.favorite_apps.list",
             parameter: {email:annoUtil.getCurrentUserInfo().email},
+            showLoadingSpinner: false,
             success: function(data)
             {
                 favoriteApps = data.result.app_list||[];
