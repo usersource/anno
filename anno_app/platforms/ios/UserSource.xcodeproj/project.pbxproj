@@ -16,6 +16,7 @@
 		1D3E586E196A827A00FF9FC0 /* AppDelegate+notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E586B196A827A00FF9FC0 /* AppDelegate+notification.m */; };
 		1D3E586F196A827A00FF9FC0 /* PushPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E586D196A827A00FF9FC0 /* PushPlugin.m */; };
 		1D44E81D18F7FEF5007A1635 /* AnnoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D44E81C18F7FEF5007A1635 /* AnnoUtils.m */; };
+		1D49F333198BC30D0077DE51 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1D49F332198BC30D0077DE51 /* Images.xcassets */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D613FB1190B93E90068C1B7 /* ScreenshotGestureListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D6F35C91908CDE7002051ED /* ScreenshotGestureListener.m */; };
 		1D6F35CA1908CDE7002051ED /* ScreenshotGestureListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D6F35C91908CDE7002051ED /* ScreenshotGestureListener.m */; };
@@ -119,6 +120,7 @@
 		1D3E586D196A827A00FF9FC0 /* PushPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PushPlugin.m; path = com.phonegap.plugins.PushPlugin/PushPlugin.m; sourceTree = "<group>"; };
 		1D44E81B18F7FEF5007A1635 /* AnnoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnnoUtils.h; sourceTree = "<group>"; };
 		1D44E81C18F7FEF5007A1635 /* AnnoUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnnoUtils.m; sourceTree = "<group>"; };
+		1D49F332198BC30D0077DE51 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = UserSource/Images.xcassets; sourceTree = SOURCE_ROOT; };
 		1D6058910D05DD3D006BFB54 /* UserSource.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UserSource.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D6F35C81908CDE7002051ED /* ScreenshotGestureListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenshotGestureListener.h; sourceTree = "<group>"; };
 		1D6F35C91908CDE7002051ED /* ScreenshotGestureListener.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScreenshotGestureListener.m; sourceTree = "<group>"; };
@@ -335,6 +337,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1D49F332198BC30D0077DE51 /* Images.xcassets */,
 				30A0434214DC770100060A13 /* de.lproj */,
 				30A0434514DC770100060A13 /* se.lproj */,
 				1F766FDB13BBADB100FB74C0 /* en.lproj */,
@@ -567,6 +570,7 @@
 				F840E1F1165FE0F500CFE078 /* config.xml in Resources */,
 				7E7966E41810823500FA85AD /* icon-76.png in Resources */,
 				7E7966DF1810823500FA85AD /* icon-40@2x.png in Resources */,
+				1D49F333198BC30D0077DE51 /* Images.xcassets in Resources */,
 				308D05371370CCF300D202BF /* icon-72.png in Resources */,
 				308D05381370CCF300D202BF /* icon.png in Resources */,
 				308D05391370CCF300D202BF /* icon@2x.png in Resources */,
@@ -729,6 +733,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_LOADER = "";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -768,7 +774,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = UserSource;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "9B12FCC6-03B0-4C54-AFC3-45446441C54C";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
@@ -778,6 +784,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_LOADER = "";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -814,7 +822,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = UserSource;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "9B12FCC6-03B0-4C54-AFC3-45446441C54C";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
