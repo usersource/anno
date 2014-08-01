@@ -46,6 +46,7 @@ __author__ = 'topcircler'
 
 import datetime
 import logging
+import re
 
 import endpoints
 from google.appengine.datastore.datastore_query import Cursor
@@ -64,9 +65,11 @@ from model.flag import Flag
 from model.community import Community
 from model.follow_up import FollowUp
 from model.userannostate import UserAnnoState
+from model.tags import Tag
 from helper.settings import anno_js_client_id
 from helper.utils import auth_user
 from helper.utils import put_search_document
+from helper.utils import extract_tags_from_text
 from helper.activity_push_notifications import ActivityPushNotifications
 from helper.utils_enum import AnnoQueryType, AnnoActionType
 from helper.utils_enum import SearchIndexName
@@ -207,6 +210,12 @@ class AnnoApi(remote.Service):
             raise endpoints.BadRequestException("Duplicate anno(%s) already exists." % exist_anno.key.id())
 
         entity = Anno.insert_anno(request, user)
+        
+        # find all hashtags
+        tags = extract_tags_from_text(entity.anno_text.lower())
+        for tag, count in tags.iteritems():
+            # Write the cumulative amount per tag
+            Tag.add_tag_total(tag, total=count)
 
         # index this document. strange exception here.
         put_search_document(entity.generate_search_document(), SearchIndexName.ANNO)

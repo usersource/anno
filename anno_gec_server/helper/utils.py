@@ -270,3 +270,13 @@ def reset_password(email):
 def send_email(sender, to, subject="", body=""):
     message = mail.EmailMessage(sender=sender, to=to, subject=subject, body=body)
     message.send()
+
+def extract_tags_from_text(text):
+    tagcloud = {}
+    # find all hashtags
+    tags = re.findall("#([a-zA-Z0-9_]+)", text)
+    for i, tag in enumerate(tags):
+        # Only update for the first occurence
+        tagcloud.setdefault(tag, tags.count(tag))
+
+    return tagcloud
