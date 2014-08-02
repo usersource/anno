@@ -141,12 +141,19 @@ NSString *screenshotPath = @"";
 
 #pragma mark View lifecycle
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void) viewWillAppear:(BOOL)animated {
     // View defaults to full size.  If you want to customize the view's size, or its subviews (e.g. webView),
     // you can do so here.
-
     [super viewWillAppear:animated];
+
+    NSArray *versionCompatibility = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
+    NSInteger iOSVersion = [[versionCompatibility objectAtIndex:0] intValue];
+
+    if (iOSVersion == 7) {
+        CGFloat viewWidth = self.view.frame.size.width;
+        CGFloat viewHeight = self.view.frame.size.height;
+        [self.webView setFrame:CGRectMake(0, 20, viewWidth, viewHeight - 20)];
+    }
 }
 
 - (void)viewDidLoad
@@ -206,6 +213,10 @@ NSString *screenshotPath = @"";
     return [super webView:theWebView shouldStartLoadWithRequest:request navigationType:navigationType];
 }
 */
+
+- (UIStatusBarStyle) preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
 
 @end
 

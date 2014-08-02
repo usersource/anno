@@ -11,6 +11,7 @@
 
 NSString *ACTIVITY_INTRO = @"Intro";
 NSString *ACTIVITY_FEEDBACK = @"Feedback";
+float COMPRESSION_QUALITY = 0.7;
 
 AnnoUtils *annoUtils;
 ScreenshotGestureListener *screenshotGestureListener;
@@ -129,7 +130,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
 
     [[[UIAlertView alloc] initWithTitle:title
                                 message:message
-                               delegate:self
+                               delegate:nil
                       cancelButtonTitle:@"Ok"
                       otherButtonTitles:nil] show];
 
@@ -164,7 +165,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
 - (void) start_activity:(CDVInvokedUrlCommand*)command {
     NSString* payload = nil;
     NSString* activityName = [command.arguments objectAtIndex:0];
-    BOOL closeCurrentActivity = (BOOL)[command.arguments objectAtIndex:1];
+    BOOL closeCurrentActivity = [[command.arguments objectAtIndex:1] boolValue];
 
     if (closeCurrentActivity) {
         [self exitActivity];
@@ -280,7 +281,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
     NSString *fullPath = [screenshotDirPath stringByAppendingPathComponent:imageKey];
     
     [[NSFileManager defaultManager] createFileAtPath:fullPath
-                                            contents:UIImagePNGRepresentation(image)
+                                            contents:UIImageJPEGRepresentation(image, COMPRESSION_QUALITY)
                                           attributes:nil];
 
     return @{@"imageKey" : imageKey, @"screenshotPath" : screenshotDirPath};

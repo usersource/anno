@@ -43,34 +43,22 @@ define([
         {
             var email = dom.byId('fmtEmail').value;
 
-            annoUtil.showLoadingIndicator();
-            annoUtil.loadAPI(annoUtil.API.account, function(){
-                var registerAPI = gapi.client.account.account.forgot_detail({
-                    'user_email':email
-                });
-
-                registerAPI.execute(function(resp){
-                    if (!resp)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        annoUtil.showMessageDialog("Response from server are empty when calling account.forgot_detail api.");
-                        return;
-                    }
-
-                    if (resp.error)
-                    {
-                        annoUtil.hideLoadingIndicator();
-
-                        annoUtil.showMessageDialog("An error occurred when calling account.forgot_detail api: "+resp.error.message);
-                        return;
-                    }
-
+            var APIConfig = {
+                name: annoUtil.API.account,
+                method: "account.account.forgot_detail",
+                parameter: {'user_email':email},
+                success: function(data)
+                {
                     annoUtil.showMessageDialog("A temporary password has been sent to the email address you provided. Please follow the instructions in your email.", function(){
+                        dom.byId('fmtEmail').value = "";
                         history.back();
                     });
-                    annoUtil.hideLoadingIndicator();
-                });
-            });
+                },
+                error: function(){
+                }
+            };
+
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         return {

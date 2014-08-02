@@ -11,8 +11,11 @@ from model.userannostate import UserAnnoState
 from model.vote import Vote
 from model.follow_up import FollowUp
 from model.flag import Flag
+from model.appinfo import AppInfo
 from helper.utils import put_search_document
 from helper.utils import OPEN_COMMUNITY
+from helper.utils_enum import SearchIndexName
+from message.appinfo_message import AppInfoMessage
 
 
 BATCH_SIZE = 50  # ideal batch size may vary based on entity size
@@ -20,16 +23,18 @@ BATCH_SIZE = 50  # ideal batch size may vary based on entity size
 
 class UpdateAnnoHandler(webapp2.RequestHandler):
     def get(self):
-        delete_all_anno_indices()
-        update_anno_schema()
-        update_userannostate_schema_from_anno_action(cls=Vote)
-        update_userannostate_schema_from_anno_action(cls=FollowUp)
-        update_userannostate_schema_from_anno_action(cls=Flag)
+#         add_lowercase_appname()
+#         delete_all_anno_indices()
+#         update_anno_schema()
+        update_followup_indices()
+#         update_userannostate_schema_from_anno_action(cls=Vote)
+#         update_userannostate_schema_from_anno_action(cls=FollowUp)
+#         update_userannostate_schema_from_anno_action(cls=Flag)
         self.response.out.write("Schema migration successfully initiated.")
 
 
 def delete_all_anno_indices():
-    doc_index = search.Index(name="anno_index")
+    doc_index = search.Index(name=SearchIndexName.ANNO)
     start_id = None
 
     while True:
@@ -54,22 +59,43 @@ def update_anno_schema(cursor=None):
 
     anno_update_list = []
     for anno in anno_list:
-        # updating anno schema
-        if not anno.community:
-            anno.community = None
+        # updating app for anno schema
+        if not anno.app:
+            appinfo = AppInfo.get(name=anno.app_name)
+
+            if appinfo is None:
+                appInfoMessage = AppInfoMessage(name=anno.app_name, version=anno.app_version)
+                appinfo = AppInfo.insert(appInfoMessage)
+
+            anno.app = appinfo.key
             anno_update_list.append(anno)
 
+        # updating anno schema
+#         if not anno.community:
+#             anno.community = None
+#             anno_update_list.append(anno)
+
         # updating userannostate from anno
-        update_userannostate_schema_from_anno(anno)
+#         update_userannostate_schema_from_anno(anno)
 
         # updating anno index
-        regenerate_anno_index(anno)
+        regenerate_index(anno, SearchIndexName.ANNO)
 
     if len(anno_update_list):
         ndb.put_multi(anno_update_list)
 
     if more:
         update_anno_schema(cursor=cursor)
+
+
+def update_followup_indices(cursor=None):
+    followup_list, cursor, more = FollowUp.query().fetch_page(BATCH_SIZE, start_cursor=cursor)
+
+    for followup in followup_list:
+        regenerate_index(followup, SearchIndexName.FOLLOWUP)
+
+    if more:
+        update_followup_indices(cursor=cursor)
 
 
 def update_userannostate_schema_from_anno(anno):
@@ -79,8 +105,8 @@ def update_userannostate_schema_from_anno(anno):
         UserAnnoState.insert(user=user, anno=anno, modified=modified)
 
 
-def regenerate_anno_index(anno):
-    put_search_document(anno.generate_search_document())
+def regenerate_index(entity, search_index_name):
+    put_search_document(entity.generate_search_document(), search_index_name)
 
 
 def update_userannostate_schema_from_anno_action(cls, cursor=None):
@@ -97,3 +123,19 @@ def update_userannostate_schema_from_anno_action(cls, cursor=None):
 
     if more:
         update_userannostate_schema_from_anno_action(cls=cls, cursor=cursor)
+
+
+def add_lowercase_appname(cursor=None):
+    appinfo_list, cursor, more = AppInfo.query().fetch_page(BATCH_SIZE, start_cursor=cursor)
+
+    appinfo_update_list = []
+    for appinfo in appinfo_list:
+        if not appinfo.lc_name:
+            appinfo.lc_name = appinfo.name.lower()
+            appinfo_update_list.append(appinfo)
+
+    if len(appinfo_update_list):
+        ndb.put_multi(appinfo_update_list)
+
+    if more:
+        add_lowercase_appname(cursor=cursor)

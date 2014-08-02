@@ -5,9 +5,11 @@ import httplib
 import json
 import logging
 import base64
+import random
 
 import endpoints
 from google.appengine.api import search
+from google.appengine.api import mail
 from google.appengine.ext import ndb
 
 from model.user import User
@@ -15,6 +17,8 @@ from model.appinfo import AppInfo
 from model.community import Community
 from model.userrole import UserRole
 from helper.utils_enum import UserRoleType
+from helper.utils_enum import SearchIndexName
+from helper.settings import SUPPORT_EMAIL_ID
 
 
 APP_NAME = "UserSource"
@@ -35,7 +39,7 @@ def get_endpoints_current_user(raise_unauthorized=True):
     """
     current_user = endpoints.get_current_user()
     if raise_unauthorized and current_user is None:
-        raise endpoints.UnauthorizedException('Invalid token.')
+        raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
     return current_user
 
 
@@ -71,7 +75,7 @@ def auth_user(headers):
         user = User.find_user_by_email(current_user.email())
 
     if user is None:
-        raise endpoints.UnauthorizedException("No permission.")
+        raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
 
     return user
 
@@ -130,23 +134,31 @@ def md5(content):
 
 
 def get_credential(headers):
-    authorization = headers["Authorization"]
+    authorization = headers.get("Authorization")
     if authorization is None:
-        raise endpoints.UnauthorizedException("No permission.")
+        raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
+
     basic_auth_string = authorization.split(' ')
     if len(basic_auth_string) != 2:
-        raise endpoints.UnauthorizedException("No permission.")
-    credential = base64.b64decode(basic_auth_string[1])
-    credential_pair = credential.split(':')
+        raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
+
+    try:
+        credential = base64.b64decode(basic_auth_string[1])
+        credential_pair = credential.split(':')
+    except Exception as e:
+        logging.exception("Exception on get_credential: %s", e)
+        credential_pair = []
+
     if len(credential_pair) != 2:
-        raise endpoints.UnauthorizedException("No permission.")
+        raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
+
     return credential_pair
 
 
-def put_search_document(doc):
+def put_search_document(doc, search_index_name):
     # index this document.
     try:
-        index = search.Index(name="anno_index")
+        index = search.Index(name=search_index_name)
         index.put(doc)
     except search.Error:
         logging.exception('Put document failed.')
@@ -236,3 +248,17 @@ def get_user_from_request(user_id=None, user_email=None):
     elif user_email:
         user = User.find_user_by_email(user_email)
     return user
+
+def reset_password(user, email):
+    # creating new password
+    new_password_string = hex(random.randint(1000000, 9999999))[2:]
+    user.password = md5(new_password_string)
+    user.put()
+
+    subject = "Reset Password"
+    body = "Your new password for usersource account is %s" % new_password_string
+    send_email(SUPPORT_EMAIL_ID, email, subject, body)
+
+def send_email(sender, to, subject="", body=""):
+    message = mail.EmailMessage(sender=sender, to=to, subject=subject, body=body)
+    message.send()

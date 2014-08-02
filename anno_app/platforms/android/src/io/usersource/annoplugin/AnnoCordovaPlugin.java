@@ -67,7 +67,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
   public static final String ACTIVITY_ANNODRAW = "AnnoDraw";
   public static final String ACTIVITY_COMMUNITY = "Community";
 
-  private static final int COMPRESS_QUALITY = 40;
+  private static final int COMPRESS_QUALITY = 70;
 
   @Override
   public boolean execute(String action, JSONArray args,
@@ -434,8 +434,8 @@ public class AnnoCordovaPlugin extends CordovaPlugin
     {
       bmp = BitmapFactory.decodeFile(annoDrawActivity.getScreenshotPath());
     }
-
-    bmp.compress(Bitmap.CompressFormat.PNG, COMPRESS_QUALITY, out);
+    
+    bmp.compress(Bitmap.CompressFormat.JPEG, COMPRESS_QUALITY, out);
     out.close();
 
     jso.put("imageKey", imageKey);

@@ -17,21 +17,24 @@ from model.base_model import BaseModel
 from model.community import Community
 from model.appinfo import AppInfo
 from helper.utils import *
+from helper.utils_enum import SearchIndexName
+
 
 class Anno(BaseModel):
     """
     This class represents Annotation Model(in datastore).
     """
     anno_text = ndb.StringProperty(required=True)
-    simple_x = ndb.FloatProperty(required=True)
-    simple_y = ndb.FloatProperty(required=True)
+#     simple_x = ndb.FloatProperty(required=True)
+#     simple_y = ndb.FloatProperty(required=True)
     image = ndb.BlobProperty()
     anno_type = ndb.StringProperty(required=True, default='simple_comment')
-    simple_circle_on_top = ndb.BooleanProperty(required=True)
-    simple_is_moved = ndb.BooleanProperty(required=True)
+#     simple_circle_on_top = ndb.BooleanProperty(required=True)
+#     simple_is_moved = ndb.BooleanProperty(required=True)
     level = ndb.IntegerProperty(required=True)
     device_model = ndb.StringProperty(required=True)
     app_name = ndb.StringProperty()
+    app_version = ndb.StringProperty()
     os_name = ndb.StringProperty()
     os_version = ndb.StringProperty()
     app = ndb.KeyProperty(kind=AppInfo)
@@ -69,17 +72,19 @@ class Anno(BaseModel):
         app = self.app.get() if self.app else None
         app_name = app.name if app else self.app_name
         app_icon_url = app.icon_url if app else None
+        app_version = app.version if app else self.app_version
 
         return AnnoResponseMessage(id=self.key.id(),
                                    anno_text=self.anno_text,
-                                   simple_x=self.simple_x,
-                                   simple_y=self.simple_y,
+#                                    simple_x=self.simple_x,
+#                                    simple_y=self.simple_y,
                                    anno_type=self.anno_type,
-                                   simple_circle_on_top=self.simple_circle_on_top,
-                                   simple_is_moved=self.simple_is_moved,
+#                                    simple_circle_on_top=self.simple_circle_on_top,
+#                                    simple_is_moved=self.simple_is_moved,
                                    level=self.level,
                                    device_model=self.device_model,
                                    app_name=app_name,
+                                   app_version=app_version,
                                    app_icon_url=app_icon_url,
                                    os_name=self.os_name,
                                    os_version=self.os_version,
@@ -129,14 +134,11 @@ class Anno(BaseModel):
         if type(community) is Community:
             community = community.key
 
-        entity = cls(anno_text=message.anno_text, simple_x=message.simple_x,
-                     simple_y=message.simple_y, anno_type=message.anno_type,
-                     simple_circle_on_top=message.simple_circle_on_top,
-                     simple_is_moved=message.simple_is_moved, level=message.level,
-                     device_model=message.device_model, os_name=message.os_name,
-                     os_version=message.os_version, creator=user.key,
-                     draw_elements=message.draw_elements, image=message.image,
-                     screenshot_is_anonymized=message.screenshot_is_anonymized,
+        entity = cls(anno_text=message.anno_text, anno_type=message.anno_type,
+                     level=message.level, device_model=message.device_model, 
+                     os_name=message.os_name, os_version=message.os_version, 
+                     creator=user.key, draw_elements=message.draw_elements, 
+                     image=message.image, screenshot_is_anonymized=message.screenshot_is_anonymized,
                      geo_position=message.geo_position, flag_count=0, vote_count=0,
                      followup_count=0, latitude=message.latitude, longitude=message.longitude)
 
@@ -164,12 +166,19 @@ class Anno(BaseModel):
 
         return entity
 
+
     @classmethod
     def delete(cls, anno):
         anno_id = "%d" % anno.key.id()
+
+        # deleting UserAnnoState of anno
+        from model.userannostate import UserAnnoState
+        UserAnnoState.delete_by_anno(anno_key=anno.key)
+
         anno.key.delete()
-        index = search.Index(name="anno_index")
+        index = search.Index(name=SearchIndexName.ANNO)
         index.delete(anno_id)
+
 
     def merge_from_message(self, message):
         """
@@ -179,18 +188,18 @@ class Anno(BaseModel):
         """
         if message.anno_text is not None:
             self.anno_text = message.anno_text
-        if message.simple_x is not None:
-            self.simple_x = message.simple_x
-        if message.simple_y is not None:
-            self.simple_y = message.simple_y
+#         if message.simple_x is not None:
+#             self.simple_x = message.simple_x
+#         if message.simple_y is not None:
+#             self.simple_y = message.simple_y
         if message.image is not None:
             self.image = message.image
         if message.anno_type is not None:
             self.anno_type = message.anno_type
-        if message.simple_circle_on_top is not None:
-            self.simple_circle_on_top = message.simple_circle_on_top
-        if message.simple_is_moved is not None:
-            self.simple_is_moved = message.simple_is_moved
+#         if message.simple_circle_on_top is not None:
+#             self.simple_circle_on_top = message.simple_circle_on_top
+#         if message.simple_is_moved is not None:
+#             self.simple_is_moved = message.simple_is_moved
         if message.level is not None:
             self.level = message.level
         if message.device_model is not None:
@@ -370,11 +379,11 @@ class Anno(BaseModel):
             .filter(cls.os_version == message.os_version) \
             .filter(cls.device_model == message.device_model) \
             .filter(cls.screenshot_is_anonymized == message.screenshot_is_anonymized) \
-            .filter(cls.created == message.created) \
-            .filter(cls.simple_circle_on_top == message.simple_circle_on_top) \
-            .filter(cls.simple_x == message.simple_x) \
-            .filter(cls.simple_y == message.simple_y) \
-            .filter(cls.simple_is_moved == message.simple_is_moved)
+            .filter(cls.created == message.created)
+#             .filter(cls.simple_circle_on_top == message.simple_circle_on_top) \
+#             .filter(cls.simple_x == message.simple_x) \
+#             .filter(cls.simple_y == message.simple_y) \
+#             .filter(cls.simple_is_moved == message.simple_is_moved)
         for anno in query:
             if anno.creator.id() == user.key.id():
                 return anno
@@ -389,6 +398,20 @@ class Anno(BaseModel):
             anno_list.append(anno_message)
         return anno_list
 
+    @classmethod
+    def query_by_followup(cls, search_string, query_string):
+        followup_index = search.Index(name=SearchIndexName.FOLLOWUP)
+        followup_query_string = "( comment = (~%s) )" % search_string
+        query_options = search.QueryOptions(returned_fields=["anno"])
+        query = search.Query(query_string=followup_query_string, options=query_options)
+        results = followup_index.search(query)
+        followup_list = [ str(result.fields[0].value) for result in results ]
+
+        if len(followup_list):
+            followup_list_string = "( anno_id = (%s) )" % " OR ".join(followup_list)
+            query_string = query_string + " OR " + followup_list_string if len(query_string) else followup_list_string
+
+        return query_string
 
     @classmethod
     def query_by_recent(cls, limit, offset, search_string, app_name, app_set, user):
@@ -401,7 +424,7 @@ class Anno(BaseModel):
         :param app_name app name which full-matches to app_name, this parameter is a single app name, not an app list.
         :param app_set app name set.
         """
-        index = search.Index(name="anno_index")
+        index = search.Index(name=SearchIndexName.ANNO)
         # prepare pagination
         if limit is None:
             limit = 20  # default page size is 20.
@@ -409,6 +432,8 @@ class Anno(BaseModel):
             offset = 0
         # build query string
         query_string = Anno.get_query_string(search_string, app_name, app_set)
+        if not is_empty_string(search_string):
+            query_string = Anno.query_by_followup(search_string, query_string)
         # build query options
         sort = search.SortExpression(expression="created",
                                      direction=search.SortExpression.DESCENDING,
@@ -434,7 +459,7 @@ class Anno(BaseModel):
         :param app_name app name which full-matches to app_name, this parameter is a single app name, not an app list.
         :param app_set app name set.
         """
-        index = search.Index(name="anno_index")
+        index = search.Index(name=SearchIndexName.ANNO)
         # prepare pagination
         if limit is None:
             limit = 20  # default page size is 20.
@@ -442,6 +467,8 @@ class Anno(BaseModel):
             offset = 0
         # build query string
         query_string = Anno.get_query_string(search_string, app_name, app_set)
+        if not is_empty_string(search_string):
+            query_string = Anno.query_by_followup(search_string, query_string)
         # build query options
         sort = search.SortExpression(expression="vote_count-flag_count",
                                      direction=search.SortExpression.DESCENDING, default_value=0)
@@ -466,13 +493,15 @@ class Anno(BaseModel):
         :param app_name app name which full-matches to app_name, this parameter is a single app name, not an app list.
         :param app_set app name set.
         """
-        index = search.Index(name="anno_index")
+        index = search.Index(name=SearchIndexName.ANNO)
         # prepare pagination
         if limit is None:
             limit = 20  # default page size is 20.
         if offset is None:
             offset = 0
         query_string = Anno.get_query_string(search_string, app_name, app_set)
+        if not is_empty_string(search_string):
+            query_string = Anno.query_by_followup(search_string, query_string)
         sort = search.SortExpression(expression="last_update_time",
                                      direction=search.SortExpression.DESCENDING,
                                      default_value=datetime.datetime.now())
@@ -513,7 +542,6 @@ class Anno(BaseModel):
             query_string_parts.append("( app_name = \"%s\" )" % app_name)
 
         query_string = ' AND '.join(query_string_parts)
-        logging.info("final query string=%s" % query_string)
         return query_string
 
     @classmethod
@@ -539,12 +567,12 @@ class Anno(BaseModel):
         :param words: tokens to match
         """
         if fields is not None and len(fields) > 0 and words is not None and len(words) > 0:
-            query_string = " ( "
+            query_string = "( "
             for index, field in enumerate(fields):
                 query_string += Anno.get_query_string_for_field(field, words)
                 if index != len(fields) - 1:
                     query_string += " OR "
-            query_string += " ) "
+            query_string += " )"
             return query_string
         return None
 
@@ -555,9 +583,10 @@ class Anno(BaseModel):
         user_community_list.append(OPEN_COMMUNITY)
 
         if len(query_string):
-            query_string += "AND "
+            query_string += " AND "
 
-        query_string += '( community = (%s) )' % (" OR ".join(user_community_list))
+        query_string += "( community = (%s) )" % (" OR ".join(user_community_list))
+        logging.info("final query string: %s", query_string)
 
         query = search.Query(query_string=query_string, options=query_options)
         results = index.search(query)
@@ -596,6 +625,7 @@ class Anno(BaseModel):
             doc_id=anno_id_string,
             fields=[
                     search.TextField(name='app_name', value=app_name),
+                    search.TextField(name='anno_id', value=anno_id_string),
                     search.TextField(name='anno_text', value=anno_text),
                     search.NumberField(name='vote_count', value=self.vote_count),
                     search.NumberField(name='flag_count', value=self.flag_count),

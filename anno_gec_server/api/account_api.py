@@ -9,6 +9,8 @@ from helper.utils import validate_email
 from helper.utils import validate_password
 from helper.utils import md5
 from helper.utils import get_endpoints_current_user
+from helper.utils import reset_password
+from helper.utils_enum import AuthSourceType
 from model.user import User
 from message.account_message import AccountMessage
 from message.user_message import UserMessage
@@ -49,17 +51,23 @@ class AccountApi(remote.Service):
         if not user:
             raise endpoints.NotFoundException("Authentication failed. User account " + email + " doesn't exist.")
         if not User.authenticate(email, md5(password)):
-            raise endpoints.UnauthorizedException("Authentication failed. User name and password are not matched.")
+            raise endpoints.UnauthorizedException("Authentication failed. Email and password are not matched.")
         return UserMessage(id=user.key.id(), display_name=user.display_name)
 
-    @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/forgot_detail', http_method='POST',
-                      name='account.forgot_detail')
+    @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/forgot_detail',
+                      http_method='POST', name='account.forgot_detail')
     def forgot_details(self, request):
-        email = request.user_email
-        validate_email(email)
-        if not User.find_user_by_email(email):
-            raise endpoints.NotFoundException("Email(" + email + ") doesn't exist.")
-            # send reset password email
+        user = User.find_user_by_email(request.user_email)
+
+        if user:
+            if user.auth_source == AuthSourceType.ANNO:
+                validate_email(request.user_email)
+                reset_password(user, request.user_email)
+            else:
+                raise endpoints.ForbiddenException("Account for '%s' is Google OAuth account.", request.user_email)
+        else:
+            raise endpoints.NotFoundException("Email address is not found. Please enter correct email address.")
+
         return message_types.VoidMessage()
 
     @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/bind_account', http_method='POST',
@@ -68,7 +76,7 @@ class AccountApi(remote.Service):
         current_user = get_endpoints_current_user(raise_unauthorized=True)
         auth_source = request.auth_source
         if auth_source is None:
-            auth_source = 'Google'
+            auth_source = AuthSourceType.GOOGLE
         email = current_user.email()
         user = User.find_user_by_email(email)
         if user is not None:

@@ -23,13 +23,6 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/org.apache.cordova.inappbrowser/www/inappbrowser.js",
-        "id": "org.apache.cordova.inappbrowser.inappbrowser",
-        "clobbers": [
-            "window.open"
-        ]
-    },
-    {
         "file": "plugins/org.apache.cordova.file/www/DirectoryEntry.js",
         "id": "org.apache.cordova.file.DirectoryEntry",
         "clobbers": [
@@ -194,20 +187,6 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/com.phonegap.plugins.sqlite/www/SQLitePlugin.js",
-        "id": "com.phonegap.plugins.sqlite.SQLitePlugin",
-        "clobbers": [
-            "SQLitePlugin"
-        ]
-    },
-    {
-        "file": "plugins/nl.x-services.plugins.socialsharing/www/SocialSharing.js",
-        "id": "nl.x-services.plugins.socialsharing.SocialSharing",
-        "clobbers": [
-            "window.plugins.socialsharing"
-        ]
-    },
-    {
         "file": "plugins/org.apache.cordova.camera/www/CameraConstants.js",
         "id": "org.apache.cordova.camera.Camera",
         "clobbers": [
@@ -236,6 +215,20 @@ module.exports = [
         ]
     },
     {
+        "file": "plugins/com.phonegap.plugins.sqlite/www/SQLitePlugin.js",
+        "id": "com.phonegap.plugins.sqlite.SQLitePlugin",
+        "clobbers": [
+            "SQLitePlugin"
+        ]
+    },
+    {
+        "file": "plugins/nl.x-services.plugins.socialsharing/www/SocialSharing.js",
+        "id": "nl.x-services.plugins.socialsharing.SocialSharing",
+        "clobbers": [
+            "window.plugins.socialsharing"
+        ]
+    },
+    {
         "file": "plugins/com.kolwit.pickcontact/www/PickContact.js",
         "id": "com.kolwit.pickcontact.PickContact",
         "clobbers": [
@@ -248,6 +241,13 @@ module.exports = [
         "clobbers": [
             "PushNotification"
         ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.inappbrowser/www/inappbrowser.js",
+        "id": "org.apache.cordova.inappbrowser.inappbrowser",
+        "clobbers": [
+            "window.open"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -255,12 +255,14 @@ module.exports.metadata =
 {
     "org.apache.cordova.device": "0.2.8",
     "org.apache.cordova.network-information": "0.2.7",
-    "org.apache.cordova.inappbrowser": "0.3.3",
     "org.apache.cordova.file": "1.0.1",
     "org.apache.cordova.geolocation": "0.3.6",
+    "org.apache.cordova.camera": "0.2.8",
     "com.phonegap.plugins.sqlite": "1.0.0",
-    "nl.x-services.plugins.socialsharing": "4.0.8",
-    "org.apache.cordova.camera": "0.2.8"
+    "nl.x-services.plugins.socialsharing": "4.3.0",
+    "com.kolwit.pickcontact": "1.0.2",
+    "com.phonegap.plugins.PushPlugin": "2.2.1",
+    "org.apache.cordova.inappbrowser": "0.5.0"
 }
 // BOTTOM OF METADATA
 });

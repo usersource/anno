@@ -43,6 +43,7 @@ require([
         originalGrayBoxes,
         originalGrayBoxCnt = 0,
         editDrawElementsJson = "";
+    var favoriteApps, favoriteAppsFetched, appNameList = [];
 
     connect.connect(dom.byId("barArrow"), touch.release, function()
     {
@@ -166,6 +167,9 @@ require([
             selectedAppName = itemNode.children[0].innerHTML;
             selectedAppVersionName = itemNode.children[0].getAttribute('data-app-version');
         }
+
+        dom.byId("btnShare").disabled = false;
+        domClass.remove("btnShare", "disabledBtn");
     });
 
     // share button
@@ -208,8 +212,7 @@ require([
             },
             function (err)
             {
-                // alert(err.message);
-                annoUtil.showMessageDialog(err.message);
+                annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
             },
             "AnnoCordovaPlugin",
             action,
@@ -229,8 +232,7 @@ require([
             },
             function (err)
             {
-                // alert(err.message);
-                annoUtil.showMessageDialog(err.message);
+                annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
             },
             "AnnoCordovaPlugin",
             action,
@@ -239,6 +241,22 @@ require([
     });
 
     // app tabs
+    connect.connect(dom.byId("barFavoriteApps"), 'click', function(e)
+    {
+        if (domClass.contains(dom.byId('barFavoriteApps').parentNode, 'active'))
+        {
+            return;
+        }
+
+        domClass.add(dom.byId('barFavoriteApps').parentNode, 'active');
+        domClass.remove(dom.byId('barRecentApps').parentNode);
+        domClass.remove(dom.byId('barElseApps').parentNode);
+
+        domStyle.set('sdRecentAppsListContent', 'display', 'none');
+        domStyle.set('sdElseAppListContent', 'display', 'none');
+        domStyle.set('sdFavoriteAppsListContent', 'display', '');
+    });
+
     connect.connect(dom.byId("barRecentApps"), 'click', function(e)
     {
         if (domClass.contains(dom.byId('barRecentApps').parentNode, 'active'))
@@ -247,28 +265,12 @@ require([
         }
 
         domClass.add(dom.byId('barRecentApps').parentNode, 'active');
-        domClass.remove(dom.byId('barAllApps').parentNode);
+        domClass.remove(dom.byId('barFavoriteApps').parentNode);
         domClass.remove(dom.byId('barElseApps').parentNode);
 
-        domStyle.set('sdAllAppsListContent', 'display', 'none');
+        domStyle.set('sdFavoriteAppsListContent', 'display', 'none');
         domStyle.set('sdElseAppListContent', 'display', 'none');
         domStyle.set('sdRecentAppsListContent', 'display', '');
-    });
-
-    connect.connect(dom.byId("barAllApps"), 'click', function(e)
-    {
-        if (domClass.contains(dom.byId('barAllApps').parentNode, 'active'))
-        {
-            return;
-        }
-
-        domClass.add(dom.byId('barAllApps').parentNode, 'active');
-        domClass.remove(dom.byId('barRecentApps').parentNode);
-        domClass.remove(dom.byId('barElseApps').parentNode);
-
-        domStyle.set('sdRecentAppsListContent', 'display', 'none');
-        domStyle.set('sdElseAppListContent', 'display', 'none');
-        domStyle.set('sdAllAppsListContent', 'display', '');
     });
 
     connect.connect(dom.byId("barElseApps"), 'click', function(e)
@@ -279,11 +281,11 @@ require([
         }
 
         domClass.add(dom.byId('barElseApps').parentNode, 'active');
+        domClass.remove(dom.byId('barFavoriteApps').parentNode);
         domClass.remove(dom.byId('barRecentApps').parentNode);
-        domClass.remove(dom.byId('barAllApps').parentNode);
 
         domStyle.set('sdRecentAppsListContent', 'display', 'none');
-        domStyle.set('sdAllAppsListContent', 'display', 'none');
+        domStyle.set('sdFavoriteAppsListContent', 'display', 'none');
         domStyle.set('sdElseAppListContent', 'display', '');
     });
 
@@ -295,75 +297,169 @@ require([
         annoUtil.disableJSGesture();
         annoUtil.enableNativeGesture();
 
-        if (!appNameListFetched)
+        if (!appNameListFetched&&annoUtil.isAndroid())
         {
             cordova.exec(
                 function (result)
                 {
-                    if (result&&result.length>0)
-                    {
-                        fillAppNameList(result, true);
-                    }
+                    result = result || [];
 
-                    appNameListFetched = true;
+                    cordova.exec(
+                        function (installedApps)
+                        {
+                            appNameListFetched = true;
+                            if (installedApps&&installedApps.length>0)
+                            {
+                                appNameList = installedApps;
+                                // sort the app array by name
+                                result.sort(function (a, b){
+                                    return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;
+                                });
+
+                                // make a copy of recent apps
+                                var recentAppPlainList = [];
+                                for (var i= 0,c=result.length;i<c;i++)
+                                {
+                                    recentAppPlainList.push(result[i].name);
+                                }
+
+                                installedApps = installedApps.filter(function(item){
+                                    return recentAppPlainList.indexOf(item.name) < 0;
+                                });
+
+                                installedApps.sort(function (a, b){
+                                    return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;
+                                });
+
+                                // add "recent" separator
+                                addAppListSeparator("recent");
+                                fillAppNameList(result, "sdRecentAppsListContent", true);
+                                // add "installed" separator
+                                addAppListSeparator("installed");
+                                fillAppNameList(installedApps, "sdRecentAppsListContent", true);
+                            }
+                        },
+                        function (err)
+                        {
+                            annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
+                        },
+                        "AnnoCordovaPlugin",
+                        'get_installed_app_list',
+                        []
+                    );
                 },
                 function (err)
                 {
-                    // alert(err.message);
-                    annoUtil.showMessageDialog(err.message);
+                    annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                 },
                 "AnnoCordovaPlugin",
                 'get_recent_applist',
                 [10]
             );
+        }
 
-            cordova.exec(
-                function (result)
-                {
-                    if (result&&result.length>0)
+        if (!favoriteAppsFetched)
+        {
+            loadCommunities(function(communityList){
+                favoriteAppsFetched = true;
+                var listCommunities = [];
+
+                for (var i= 0,c=communityList.length;i<c;i++)
+                {// todo: get version from community?
+                    listCommunities.push({versionName:"", name:communityList[i].community.name});
+                }
+
+                listCommunities.sort(function (a, b){
+                    return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;
+                });
+
+                fillAppNameList(listCommunities, "sdFavoriteAppsListContent");
+
+                loadFavoriteApps(function(favoriteApps){
+                    var listCommunitiesPlainList = [];
+                    for (var i= 0,c=listCommunities.length;i<c;i++)
                     {
-                        appNameList = result;
-                        fillAppNameList(result, false);
-                        appNameListFetched = true;
+                        listCommunitiesPlainList.push(listCommunities[i].name);
                     }
-                },
-                function (err)
-                {
-                    // alert(err.message);
-                    annoUtil.showMessageDialog(err.message);
-                },
-                "AnnoCordovaPlugin",
-                'get_installed_app_list',
-                []
-            );
+
+                    favoriteApps = favoriteApps.filter(function(item){
+                        return listCommunitiesPlainList.indexOf(item.name) < 0;
+                    });
+
+                    favoriteApps.sort(function (a, b){
+                        return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;
+                    });
+
+                    var list = [];
+
+                    for (var i= 0,c=favoriteApps.length;i<c;i++)
+                    {
+                        list.push({versionName:favoriteApps[i].version||"", name:favoriteApps[i].name});
+                    }
+
+                    fillAppNameList(list, "sdFavoriteAppsListContent", true);
+
+                    // no teams and no favorites, then list all installed apps on Android
+                    if (favoriteApps.length <=0 && communityList.length <=0)
+                    {
+                        if (annoUtil.isAndroid())
+                        {
+                            domStyle.set(dom.byId("barFavoriteApps").parentNode, "display", "none");
+                            dom.byId("barRecentApps").parentNode.setAttribute("width", "50%");
+                            dom.byId("barElseApps").parentNode.setAttribute("width", "50%");
+
+                            dom.byId('barRecentApps').click();
+                        }
+                        else
+                        {
+                            // highlight 'something else' tab on iOS
+                            dom.byId('barElseApps').click();
+                            domStyle.set("tabContainer", "display", "none");
+                            domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-sdBottom-shareDialogGap)+'px');
+                        }
+                    }
+                });
+            });
         }
 
         var tabBox = domGeom.getMarginBox('tabContainer');
         domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-tabBox.h-sdBottom-shareDialogGap)+'px');
-
-        if (annoUtil.isIOS())
-        {
-            // highlight 'something else' tab on iOS
-            dom.byId('barElseApps').click();
-        }
     };
 
-    var fillAppNameList = function(appList, recentApp)
+    var fillAppNameList = function(appList, appContentId, append)
     {
-        var content = "";
+        var content = append?dom.byId(appContentId).innerHTML:"";
         for (var i = 0, c = appList.length; i < c; i++)
         {
             content = content + '<div class="appNameItem"><div class="appNameValue" data-app-version="'+appList[i].versionName+'">' + appList[i].name + '</div></div>'
         }
 
-        if (recentApp)
-        {
-            dom.byId('sdRecentAppsListContent').innerHTML = content;
+        dom.byId(appContentId).innerHTML = content;
+    };
+
+    var addAppListSeparator = function(label)
+    {
+        var content = dom.byId("sdRecentAppsListContent").innerHTML;
+
+        content = content + '<div class="appSeparatorItem"><div class="appNameValue">-- '+label+' --</div></div>';
+        dom.byId("sdRecentAppsListContent").innerHTML = content;
+    };
+
+    var removeDuplicatesAppsItems = function (appsList) {
+        var i, j, cur, found;
+        for (i = appsList.length - 1; i >= 0; i--) {
+            cur = appsList[i];
+            found = false;
+            for (j = i - 1; !found && j >= 0; j--) {
+                if (cur.name == appsList[j].name) {
+                    if (i !== j) {
+                        appsList.splice(i, 1);
+                    }
+                    found = true;
+                }
+            }
         }
-        else
-        {
-            dom.byId('sdAllAppsListContent').innerHTML = content;
-        }
+        return appsList;
     };
 
     var updateLastShapePos = function(shapeType)
@@ -555,6 +651,9 @@ require([
                             editDrawElementsJson = currentAnnoData.draw_elements;
 
                             window.localStorage.removeItem(annoUtil.localStorageKeys.currentAnnoData);
+
+                            dom.byId("btnShare").disabled = false;
+                            domClass.remove("btnShare", "disabledBtn");
                         }
                         else
                         {
@@ -584,8 +683,7 @@ require([
                 },
                 function (err)
                 {
-                    // alert(err.message);
-                    annoUtil.showMessageDialog(err.message);
+                    annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                 },
                 "AnnoCordovaPlugin",
                 'get_screenshot_path',
@@ -718,8 +816,7 @@ require([
             },
             function (err)
             {
-                // alert(err.message);
-                annoUtil.showMessageDialog(err.message);
+                annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
             },
             "AnnoCordovaPlugin",
             'process_image_and_appinfo',
@@ -794,8 +891,7 @@ require([
             },
             function (err)
             {
-                // alert(err.message);
-                annoUtil.showMessageDialog(err.message);
+                annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
             },
             "AnnoCordovaPlugin",
             'process_image_and_appinfo',
@@ -881,8 +977,7 @@ require([
                 },
                 function (err)
                 {
-                    // alert(err.message);
-                    annoUtil.showMessageDialog(err.message);
+                    annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
                 },
                 "AnnoCordovaPlugin",
                 'process_image_and_appinfo',
@@ -991,6 +1086,53 @@ require([
         else
         {
             domClass.add("barShare", 'barIconInactive');
+        }
+    };
+
+    var loadCommunities = function(callback)
+    {
+        OAuthUtil.getAccessToken(function(){
+            annoUtil.loadUserCommunities(true, function(data){
+                if (callback) callback(data.communityList);
+            });
+        });
+    };
+
+    var loadFavoriteApps = function(callback)
+    {
+        if (favoriteApps)
+        {
+            if (callback) callback(favoriteApps);
+            return;
+        }
+
+        var APIConfig = {
+            name: annoUtil.API.user,
+            method: "user.favorite_apps.list",
+            parameter: {email:annoUtil.getCurrentUserInfo().email},
+            showLoadingSpinner: false,
+            success: function(data)
+            {
+                favoriteApps = data.result.app_list||[];
+                if (callback) callback(favoriteApps);
+            },
+            error: function(){
+            }
+        };
+
+        annoUtil.callGAEAPI(APIConfig);
+    };
+
+    var setShareDialogUI = function()
+    {
+        if (annoUtil.isIOS())
+        {
+            // hide "My apps" tab, resize existing tabs
+            domStyle.set(dom.byId("barRecentApps").parentNode, "display", "none");
+            domStyle.set(dom.byId("btnCancel"), "display", "");
+
+            dom.byId("barFavoriteApps").parentNode.setAttribute("width", "50%");
+            dom.byId("barElseApps").parentNode.setAttribute("width", "50%");
         }
     };
 
@@ -1110,7 +1252,23 @@ require([
                             showMenuDialog();
                         }
                     });
+
+                    connect.connect(dom.byId("btnCancel"), "click", function(){
+                        var shareDialog = registry.byId('shareDialog');
+                        shareDialog.hide();
+                        // enable JS gesture listener, disable native gesture
+                        annoUtil.enableJSGesture();
+                        annoUtil.disableNativeGesture();
+                    });
+
                 }, 500);
+
+                // load all needed resources at startup
+                loadCommunities();
+                loadFavoriteApps();
+
+                // show or hide tabs of picklist deponds on OS name
+                setShareDialogUI();
             }
 
             // enable JS gesture listener, disable native gesture

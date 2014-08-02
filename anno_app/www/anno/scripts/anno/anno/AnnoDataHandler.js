@@ -154,124 +154,90 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
 
             annoUtil.getBase64FileContent(screenshotDirPath+"/"+anno.image, function(base64Str){
                 anno.image = base64Str;
+                console.log("start insert anno.");
 
-                OAuthUtil.getAccessToken(function(){
-                    annoUtil.loadAPI(annoUtil.API.anno, function(){
-                        var insertAnno = gapi.client.anno.anno.insert(anno);
-                        console.error("start insert anno."+insertAnno);
-                        insertAnno.execute(function (data)
+                var APIConfig = {
+                    name: annoUtil.API.anno,
+                    method: "anno.anno.insert",
+                    parameter: anno,
+                    showLoadingSpinner: false,
+                    needAuth: true,
+                    showErrorMessage: !background,
+                    success: function(data)
+                    {
+                        console.log("anno inserted.");
+                        console.log(JSON.stringify(data.result));
+
+                        if (background)
                         {
-                            if (!data)
-                            {
-                                annoUtil.hideLoadingIndicator();
+                            var serverAnnoId = data.result.id;
+                            console.log("got serverAnnoId:"+serverAnnoId);
 
-                                if (background)
-                                {
-                                    console.error("response returned from server are empty.");
-                                }
-                                else
-                                {
-                                    // alert("response returned from server are empty.");
-                                    annoUtil.showToastDialog("Response returned from server are empty.");
-                                }
+                            self.updateAnnoSynchedStateById(serverAnnoId, createdTime);
+                        }
+                        else
+                        {
+                            self.updateAnnoSynchedStateByCreated(data.result.id, createdTime);
+                        }
 
-                                if (callback)
-                                {
-                                    callback();
-                                }
-
-                                self.sendingAnnoToCloud = false;
-                                return;
-                            }
-
-                            if (data.error)
-                            {
-                                annoUtil.hideLoadingIndicator();
-
-                                if (background)
-                                {
-                                    console.error("An error occurred when calling anno.insert api: "+data.error.message);
-                                }
-                                else
-                                {
-                                    // alert("An error occurred when calling anno.insert api: "+data.error.message);
-                                    annoUtil.showMessageDialog("An error occurred when calling anno.insert api: " + data.error.message);
-                                }
-
-                                if (callback)
-                                {
-                                    callback();
-                                }
-
-                                if (data.error.message.indexOf(self.duplicateMsgPrefix) != 0)
-                                {
-                                    self.sendingAnnoToCloud = false;
-                                    return;
-                                }
-                            }
-
-                            console.error(JSON.stringify(data.result));
-
-                            if (background)
-                            {
-                                var serverAnnoId;
-
-                                if (data.result)
-                                {
-                                    serverAnnoId = data.result.id;
-                                }
-                                else
-                                {
-                                    serverAnnoId = /\d+/.exec(data.error.message);
-
-                                    serverAnnoId = serverAnnoId?serverAnnoId[0]:"";
-                                }
-
-                                console.error("got serverAnnoId:"+serverAnnoId);
-                                self.updateAnnoSynchedStateById(serverAnnoId, createdTime);
-                            }
-                            else
-                            {
-                                self.updateAnnoSynchedStateByCreated(data.result.id, createdTime);
-                            }
-
+                        if (!background)
+                        {
                             annoUtil.hideLoadingIndicator();
+                        }
 
-                            if (!background)
-                            {
-                                cordova.exec(
-                                    function (result)
-                                    {
-                                        cordova.exec(
-                                            function (result)
-                                            {
-                                            },
-                                            function (err)
-                                            {
-                                            },
-                                            "AnnoCordovaPlugin",
-                                            'exit_current_activity',
-                                            []
-                                        );
-                                    },
-                                    function (err)
-                                    {
-                                    },
-                                    "AnnoCordovaPlugin",
-                                    'show_toast',
-                                    ["Your comment has been shared."]
-                                );
-                            }
+                        if (!background)
+                        {
+                            cordova.exec(
+                                function (result)
+                                {
+                                    cordova.exec(
+                                        function (result)
+                                        {
+                                        },
+                                        function (err)
+                                        {
+                                        },
+                                        "AnnoCordovaPlugin",
+                                        'exit_current_activity',
+                                        []
+                                    );
+                                },
+                                function (err)
+                                {
+                                },
+                                "AnnoCordovaPlugin",
+                                'show_toast',
+                                ["Your comment has been shared."]
+                            );
+                        }
 
-                            if (callback)
-                            {
-                                callback();
-                            }
+                        if (callback)
+                        {
+                            callback();
+                        }
+                    },
+                    error: function(error, data)
+                    {
+                        self.sendingAnnoToCloud = false;
 
-                            self.sendingAnnoToCloud = false;
-                        });
-                    });
-                });
+                        // anno duplicated
+                        if (error.message.indexOf(self.duplicateMsgPrefix) == 0)
+                        {
+                            var serverAnnoId = /\d+/.exec(data.error.message);
+                            serverAnnoId = serverAnnoId?serverAnnoId[0]:"";
+                            console.log("got serverAnnoId:"+serverAnnoId);
+                            self.updateAnnoSynchedStateById(serverAnnoId, createdTime);
+                        }
+
+                        if (!background)
+                        {
+                            annoUtil.hideLoadingIndicator();
+                        }
+                    }
+                };
+
+                annoUtil.callGAEAPI(APIConfig);
+
             });
         },
         updateAnno: function(annoId, anno, screenshotDirPath, callback)
@@ -464,106 +430,77 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
             var self = this;
             self.sendingAnnoToCloud = true;
 
-            OAuthUtil.getAccessToken(function(){
-                annoUtil.loadAPI(annoUtil.API.anno, function(){
-                    var updateAnnoApi = gapi.client.anno.anno.merge(anno);
-                    console.log("start update anno.");
-                    updateAnnoApi.execute(function (data)
+            if (!background)
+            {
+                annoUtil.showLoadingIndicator();
+            }
+
+            console.log("start update anno.");
+
+            var APIConfig = {
+                name: annoUtil.API.anno,
+                method: "anno.anno.merge",
+                parameter: anno,
+                showLoadingSpinner: false,
+                needAuth: true,
+                showErrorMessage: !background,
+                success: function(data)
+                {
+                    self.updateAnnoSynchedStateByObjectKey(anno.id);
+                    console.log("update anno succeeded.");
+
+                    if (!background)
                     {
-                        console.error(JSON.stringify(data));
-
-                        if (!data)
-                        {
-                            annoUtil.hideLoadingIndicator();
-
-                            if (background)
+                        cordova.exec(
+                            function (result)
                             {
-                                console.error("response returned from server are empty.");
-                            }
-                            else
-                            {
-                                // alert("response returned from server are empty.");
-                                annoUtil.showToastDialog("response returned from server are empty.");
-                            }
-
-                            if (callback)
-                            {
-                                callback();
-                            }
-
-                            self.sendingAnnoToCloud = false;
-                            return;
-                        }
-
-                        if (data.error)
-                        {
-                            annoUtil.hideLoadingIndicator();
-
-                            if (background)
-                            {
-                                console.error("An error occurred when calling anno.merge api: "+data.error.message);
-                            }
-                            else
-                            {
-                                // alert("An error occurred when calling anno.merge api: "+data.error.message);
-                                annoUtil.showMessageDialog("An error occurred when calling anno.merge api: "+data.error.message);
-                            }
-
-                            if (callback)
-                            {
-                                callback();
-                            }
-
-                            self.sendingAnnoToCloud = false;
-                            return;
-                        }
-
-                        self.updateAnnoSynchedStateByObjectKey(anno.id);
-                        console.log("update anno succeeded.");
-                        annoUtil.hideLoadingIndicator();
-
-                        if (!background)
-                        {
-                            cordova.exec(
-                                function (result)
+                                if (callback)
                                 {
-                                    if (callback)
+                                    callback();
+                                }
+
+                                cordova.exec(
+                                    function (result)
                                     {
-                                        callback();
-                                    }
-
-                                    cordova.exec(
-                                        function (result)
-                                        {
-                                        },
-                                        function (err)
-                                        {
-                                        },
-                                        "AnnoCordovaPlugin",
-                                        'exit_current_activity',
-                                        []
-                                    );
-                                },
-                                function (err)
-                                {
-                                },
-                                "AnnoCordovaPlugin",
-                                'show_toast',
-                                ["Your comment has been updated."]
-                            );
-                        }
-                        else
-                        {
-                            if (callback)
+                                    },
+                                    function (err)
+                                    {
+                                    },
+                                    "AnnoCordovaPlugin",
+                                    'exit_current_activity',
+                                    []
+                                );
+                            },
+                            function (err)
                             {
-                                callback();
-                            }
+                            },
+                            "AnnoCordovaPlugin",
+                            'show_toast',
+                            ["Your comment has been updated."]
+                        );
+                    }
+                    else
+                    {
+                        if (callback)
+                        {
+                            callback();
                         }
+                    }
 
-                        self.sendingAnnoToCloud = false;
-                    });
-                });
-            });
+                    self.sendingAnnoToCloud = false;
+                },
+                error: function(error, data)
+                {
+                    self.sendingAnnoToCloud = false;
+
+                    if (callback)
+                    {
+                        callback();
+                    }
+                }
+            };
+
+            annoUtil.callGAEAPI(APIConfig);
         },
         updateAnnoSynchedStateByCreated: function(cloudKey, ct)
         {
@@ -729,7 +666,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                 if (!res) return;
 
                 var cnt = res.rows.length;
-                console.error('user cnt: '+cnt);
+                console.log('user cnt: ' + cnt);
                 var userInfo = {};
 
                 if (cnt >0)
@@ -752,7 +689,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
         {
             DBUtil.executeUpdateSql(delete_userInfo_sql,[], function(res){
                 if (!res) return;
-                console.error("user removed.");
+                console.log("user removed.");
                 if (callback)
                 {
                     callback();

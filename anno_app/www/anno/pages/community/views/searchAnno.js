@@ -80,28 +80,13 @@ define([
             }
 
             console.log("anno searching, args:" + JSON.stringify(arg));
-            OAuthUtil.getAccessToken(function(){
-                var getAnnoList = searchByCommunity?gapi.client.anno.anno.list(arg):gapi.client.anno.anno.search(arg)
-                getAnnoList.execute(function (data)
+            var APIConfig = {
+                name: annoUtil.API.anno,
+                method: searchByCommunity?"anno.anno.list":"anno.anno.search",
+                parameter: arg,
+                needAuth: true,
+                success: function(data)
                 {
-                    if (!data)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        loadingData = false;
-                        domStyle.set('noResultContainer_search', 'display', 'none');
-                        annoUtil.showToastDialog("Items returned from server are empty.");
-                        return;
-                    }
-
-                    if (data.error)
-                    {
-                        annoUtil.hideLoadingIndicator();
-                        loadingData = false;
-                        domStyle.set('noResultContainer_search', 'display', 'none');
-                        annoUtil.showMessageDialog("An error occurred when calling "+(searchByCommunity?"anno.list":"anno.search")+" api: " + data.error.message);
-                        return;
-                    }
-
                     var annoList = data.result.anno_list || [];
 
                     var spliceArgs = clearData ? [0, eventsModel.model.length] : [eventsModel.model.length, 0];
@@ -152,7 +137,6 @@ define([
                         eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
                     }
 
-                    annoUtil.hideLoadingIndicator();
                     loadingData = false;
 
                     if (searchByCommunity)
@@ -176,9 +160,15 @@ define([
                     {
                         domStyle.set('noResultContainer_search', 'display', 'none');
                     }
-                });
-            });
+                },
+                error: function()
+                {
+                    loadingData = false;
+                    domStyle.set('noResultContainer_search', 'display', 'none');
+                }
+            };
 
+            annoUtil.callGAEAPI(APIConfig);
         };
 
         var loadMoreData = function ()

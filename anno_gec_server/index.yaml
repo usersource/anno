@@ -12,6 +12,11 @@ indexes:
 
 - kind: Anno
   properties:
+  - name: __key__
+  - name: app
+
+- kind: Anno
+  properties:
   - name: anno_text
   - name: x
   - name: y

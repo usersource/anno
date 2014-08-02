@@ -17,6 +17,7 @@ from model.userannostate import UserAnnoState
 from helper.settings import anno_js_client_id
 from helper.utils import auth_user
 from helper.utils import put_search_document
+from helper.utils_enum import SearchIndexName
 
 @endpoints.api(name='flag', version='1.0', description='Flag API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
@@ -53,7 +54,7 @@ class FlagApi(remote.Service):
         UserAnnoState.insert(user=user, anno=anno)
 
         # update flag in search document
-        put_search_document(anno.generate_search_document())
+        put_search_document(anno.generate_search_document(), SearchIndexName.ANNO)
 
         return flag.to_message()
 
@@ -88,7 +89,7 @@ class FlagApi(remote.Service):
                 key.delete()
                 anno.flag_count -= 1
                 anno.put()
-        put_search_document(anno.generate_search_document())
+        put_search_document(anno.generate_search_document(), SearchIndexName.ANNO)
         return message_types.VoidMessage()
 
     @endpoints.method(flag_with_id_resource_container, FlagMessage, http_method='GET', path='flag/{id}',

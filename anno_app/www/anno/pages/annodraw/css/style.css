@@ -265,6 +265,17 @@ body{
     margin-right: 10px;
 }
 
+.appSeparatorItem
+{
+    height: 34px;
+    border-bottom: 1px outset gray;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-style: italic;
+    color: gray;
+}
+
 .appNameItem-active
 {
     color: #ff9900;
@@ -302,10 +313,35 @@ body{
     -webkit-user-select: none;
 }
 
+.newbtn
+{
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    line-height: 1.428571429;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 2px solid gray;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    background-color: white;
+    color: black;
+    font-weight: bold;
+}
+
+.disabledBtn
+{
+    background-color: black;
+    color: gray;
+}
+
 .tabContainer
 {
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 6px;
+    margin-right: 6px;
     padding-bottom: 4px;
 }
 

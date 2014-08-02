@@ -35,3 +35,15 @@ class UserRoleType(object):
 class InvitationStatusType(object):
     ACCEPTED = "accepted"
     PENDING = "pending"
+
+class DeviceType(object):
+    IOS = "iOS"
+    ANDROID = "Android"
+
+class SearchIndexName(object):
+    ANNO = "anno_index"
+    FOLLOWUP = "followup_index"
+
+class AuthSourceType(object):
+    ANNO = "Anno"
+    GOOGLE = "Google"

@@ -1,12 +1,13 @@
 __author__ = 'topcircler'
 
 import logging
-from operator import itemgetter
 
 from google.appengine.ext import ndb
 
 from message.user_message import UserMessage
 from message.appinfo_message import UserFavoriteApp
+from helper.utils_enum import DeviceType
+from helper.utils_enum import AuthSourceType
 
 
 class User(ndb.Model):
@@ -16,9 +17,9 @@ class User(ndb.Model):
     user_email = ndb.StringProperty()  # this field should be unique.
     display_name = ndb.StringProperty()  # this field should be unique.
     password = ndb.StringProperty()
-    auth_source = ndb.StringProperty()  # "Anno" or "Google". If not "Anno", then no password is stored.
+    auth_source = ndb.StringProperty(choices=[AuthSourceType.ANNO, AuthSourceType.GOOGLE])  # If not "Anno", then no password is stored
     device_id = ndb.StringProperty()
-    device_type = ndb.StringProperty(choices=["iOS", "Android"])
+    device_type = ndb.StringProperty(choices=[DeviceType.IOS, DeviceType.ANDROID])
 
     @classmethod
     def find_user_by_email(cls, email):
@@ -30,13 +31,13 @@ class User(ndb.Model):
 
     @classmethod
     def insert_user(cls, email):
-        user = User(display_name=email, user_email=email, auth_source='Google')
+        user = User(display_name=email, user_email=email, auth_source=AuthSourceType.GOOGLE)
         user.put()
         return user
 
     @classmethod
     def insert_normal_user(cls, email, username, password):
-        user = User(user_email=email, display_name=username, password=password, auth_source="Anno")
+        user = User(user_email=email, display_name=username, password=password, auth_source=AuthSourceType.ANNO)
         user.put()
         return user
 
@@ -53,31 +54,35 @@ class User(ndb.Model):
 
     @classmethod
     def list_favorite_apps(cls, user_key):
+        # We are using "query" on key for getting anno data instead of "get" or "get_multi"
+        # Getting anno using "query" is more memory efficient than using "get" or "get_multi",
+        # we don't know why.
+        # Getting anno using "query" also create index for this.
+
         from model.userannostate import UserAnnoState
-        userannostate_list = UserAnnoState.list_by_user(user_key)
+        from model.anno import Anno
 
-        anno_key_list = [ usersource.anno for usersource in userannostate_list ]
-        anno_list = ndb.get_multi(anno_key_list)
-        favorite_apps_dict = {}
+        userannostate_list = UserAnnoState.list_by_user(user_key, 50)
+        anno_key_list = [ userannostate.anno for userannostate in userannostate_list if userannostate.anno is not None ]
 
-        for anno in anno_list:
-            if anno:
-                app = anno.app.get() if anno.app else None
-                app_name = app.name if app else anno.app_name
-                app_icon_url = app.icon_url if app else ""
-
-                if app_name in favorite_apps_dict.keys():
-                    favorite_apps_dict[app_name]["count"] += 1
-                else:
-                    favorite_apps_dict[app_name] = dict(name=app_name, icon_url=app_icon_url, count=1)
-
-        # favorite_apps = [ value for key, value in favorite_apps_dict.iteritems() ]
-        favorite_apps = sorted(favorite_apps_dict.values(), key=itemgetter("count"), reverse=True)
+        if len(anno_key_list):
+            anno_list = Anno.query(ndb.AND(Anno.key.IN(anno_key_list),
+                                           Anno.app != None)
+                                   )\
+                            .fetch(projection=[Anno.app])
+            app_key_list = [ anno.app for anno in anno_list ]
+            app_key_list = sorted(app_key_list, key=app_key_list.count, reverse=True)
+            unique_app_key_list = []
+            [ unique_app_key_list.append(app_key) for app_key in app_key_list if app_key not in unique_app_key_list ]
+            app_list = ndb.get_multi(unique_app_key_list)
+        else:
+            app_list = []
 
         favorite_apps_list = []
-        for app in favorite_apps:
-            app_message = UserFavoriteApp(name=app.get("name"), icon_url=app.get("icon_url"))
-            favorite_apps_list.append(app_message)
+        for app in app_list:
+            if app:
+                app_message = UserFavoriteApp(name=app.name, icon_url=(app.icon_url or ""), version=(app.version or ""))
+                favorite_apps_list.append(app_message)
 
         return favorite_apps_list
 
