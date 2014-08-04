@@ -790,4 +790,11 @@
 	width: calc(100% - 10px);
 	width: -webkit-calc(100% - 10px);
 	padding: 2px;
+	border-radius: 0;
+	-webkit-border-radius: 0;
+	-webkit-appearance: initial;
+}
+
+.mblRoundRectCategory {
+	margin-left: 9px;
 }

@@ -511,7 +511,7 @@ define([
                     dojo.stopEvent(e);
                     var invitedEmailAddress = dom.byId("invitedEmailAddress").value;
                     var invitedDisplayName = dom.byId("invitedDisplayName").value;
-                    inviteNewMember(invitedEmailAddress, invitedDisplayName);
+                    inviteNewMember(invitedDisplayName, invitedEmailAddress);
                     hideInviteBox();
                 }));
                 _connectResults.push(connect.connect(dom.byId("btnCancelInvite"), 'click', function(e)
