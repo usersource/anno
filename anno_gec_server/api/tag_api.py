@@ -3,8 +3,9 @@ from protorpc import message_types
 from protorpc import messages
 from protorpc import remote
 
-from message.anno_api_messages import TagPopularMessage, TagMessage
+from message.tag_api_message import TagPopularMessage, TagMessage
 from model.tags import Tag
+from helper.settings import anno_js_client_id
 
 @endpoints.api(name='tag', version='1.0', description='Tag API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
