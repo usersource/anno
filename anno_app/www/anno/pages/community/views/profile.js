@@ -117,7 +117,7 @@ define([
                     "class": "row",
                     "data-dojo-type":"dojox/mobile/ListItem",
                     "data-dojo-props":"variableHeight:true,clickable:true,noArrow:true,_duration:50,_index:"+i,
-                    innerHTML: '<div>'+data[i].community.name+'</div>'
+                    innerHTML: '<span>'+data[i].community.name+'</span><span id="isCommunityManager" class="icon-bolt annoOrangeColor" style="margin-left: 4px;vertical-align: middle;"></span>'
                 }, itemList.domNode, "last");
             }
 
@@ -132,6 +132,8 @@ define([
                     items[i].on("click", function(){
                         gotoCommunityViewer(this);
                     });
+                } else {
+                    items[i].domNode.childNodes[1].style.display = "none";
                 }
             }
         };
