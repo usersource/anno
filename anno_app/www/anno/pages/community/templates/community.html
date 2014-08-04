@@ -23,8 +23,8 @@
 		<div>
 			<div style="padding: 4px 0;">Invite New Member</div>
 			<div>
-				<textarea id="invitedEmailAddress" class="commentTextbox" rows="1" style="resize: none;width: 98%;font-size: 11pt;" placeholder="Email Address"></textarea></span>
-				<textarea id="invitedDisplayName" class="commentTextbox" rows="1" style="resize: none;width: 98%;font-size: 11pt;" placeholder="Display Name"></textarea></span>
+				<input type="email" id="invitedEmailAddress" class="commentTextbox" placeholder="Email Address" />
+				<input type="text" id="invitedDisplayName" class="commentTextbox" placeholder="Display Name" />
 			</div>
 			<div style="padding: 4px 0;">
 	            <button class="btn" id="btnMakeInvite">Invite</button>
@@ -59,11 +59,11 @@
     <div id="editMemberDetailContainer" style="display: none;padding-left: 32px;">
         <div>
             <span>Email: </span>
-            <textarea type="text" id="editMemberDetailEmail" class="commentTextbox" rows="1" style="resize: none;"></textarea></span>
+            <input type="email" id="editMemberDetailEmail" class="commentTextbox" placeholder="Email Address" />
         </div>
         <div>
             <span>Full Name: </span>
-            <textarea type="text" id="editMemberDetailFullName" class="commentTextbox" rows="1" style="resize: none;"></textarea></span>
+            <input type="text" id="editMemberDetailFullName" class="commentTextbox" placeholder="Display Name" />
         </div>
         <div>
             <button class="btn" id="btnSaveInvite">Save</button>
