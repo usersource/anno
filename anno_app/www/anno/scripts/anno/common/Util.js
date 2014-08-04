@@ -59,7 +59,8 @@
             followUp:"followup",
             vote:"vote",
             flag:"flag",
-            community: "community"
+            community: "community",
+            tag: "tag"
         },
         timeString:{
             prefixAgo: "",

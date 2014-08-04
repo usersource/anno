@@ -723,6 +723,24 @@ define([
             }
         };
 
+        var getTopTags = function(limit) {
+            popularTags = [];
+            var APIConfig = {
+                name : annoUtil.API.tag,
+                method : "tag.tag.popular",
+                parameter : { "limit" : limit },
+                showLoadingSpinner : false,
+                success : function(data) {
+                    data.result.tags.forEach(function(tagData) {
+                        popularTags.push(tagData.text);
+                    });
+                },
+                error : function() {
+                }
+            };
+            annoUtil.callGAEAPI(APIConfig);
+        };
+
         var _init = function()
         {
             if (DBUtil.userChecked)
@@ -750,19 +768,17 @@ define([
                         annoUtil.showLoadingIndicator();
                         OAuthUtil.getAccessToken(function(){
                             loadListData();
-
-                            annoUtil.loadUserCommunities(true, function(data){
-                                var inviteList = data.inviteList;
-
-                                for (var i=0;i<inviteList.length;i++)
-                                {
-                                    acceptInvitation(inviteList[i]);
-                                }
-                            }, true);
-                            initPushService();
-                            window.setTimeout(function(){
+                            window.setTimeout(function() {
+                                annoUtil.loadUserCommunities(true, function(data) {
+                                    var inviteList = data.inviteList;
+                                    for (var i = 0; i < inviteList.length; i++) {
+                                        acceptInvitation(inviteList[i]);
+                                    }
+                                }, true);
+                                initPushService();
                                 AnnoDataHandler.startBackgroundSync();
-                            }, 5*1000);
+                                getTopTags(100);
+                            }, 5 * 1000);
                         });
                     });
 
