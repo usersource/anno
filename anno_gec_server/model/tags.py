@@ -23,7 +23,7 @@ class Tag(ndb.Model):
         '''
         A non fuzzy search for tags by text
         '''
-        return cls.query(Tag.text==text).fetch(limit=1) # should be unique, so why overwork
+        return cls.query(Tag.text==text).get() # should be unique, so why overwork
 
     @classmethod
     def search_tag(cls, text):
@@ -62,7 +62,6 @@ class Tag(ndb.Model):
         tag = None
         if text is not None:
             tag = Tag.get_tag_by_text(text)
-            tag = tag[0] if len(tag) else None # unique so only the first
 
         if tag is not None:
             tag.total = tag.total + total
