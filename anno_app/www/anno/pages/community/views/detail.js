@@ -638,7 +638,7 @@ define([
                 needAuth: true,
                 success: function(data)
                 {
-                    console.error(JSON.stringify(data.result));
+                    // console.error(JSON.stringify(data.result));
                     var currentAnno = eventsModel.cursor||eventsModel.model[0], returnAnno = data.result, deviceInfo = '';
 
                     currentAnno.set('circleX', parseInt(returnAnno.simple_x, 10));

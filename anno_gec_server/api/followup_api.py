@@ -17,6 +17,7 @@ from model.userannostate import UserAnnoState
 from message.followup_message import FollowupMessage
 from message.followup_message import FollowupListMessage
 from helper.utils import put_search_document
+from helper.utils import extract_tags_from_text
 from helper.activity_push_notifications import ActivityPushNotifications
 from helper.utils_enum import AnnoActionType
 from helper.utils_enum import SearchIndexName

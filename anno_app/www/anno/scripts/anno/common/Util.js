@@ -48,7 +48,7 @@
             "UNAUTHORIZED": 401,
             "FORBIDDEN": 403,
             "NOT_FOUND": 404,
-            "INTERNAL_SERVER_ERROR": 500
+            "INTERNAL_SERVER_ERROR": 503
         },
         API:{
             config:serverURLConfig,
@@ -810,39 +810,23 @@
             // error: an error object {type, message}
             // toast: shown as toast, default is false
             // callback: callback function will be called when user tapped OK button in message popup
-            var message = "";
 
-            if (error.message) {
-                message = error.message;
-            } else {
-                message = "Oops, something went wrong. Please try later.";
-            }
+            var message = error.message,
+                default_message = "Oops, something went wrong. Please try later.";
 
             // we can specify different user-friendly message for different error types
-
-            /*if (error.type == this.ERROR_TYPES.API_RETRY_FAILED) {
-                // todo: the user-friendly message
-                if (error.code == this.ERROR_CODE.UNAUTHORIZED) {
-                    message = error.message;
-                }
-            }*/
-            /*else if (error.type == this.ERROR_TYPES.API_RESPONSE_EMPTY)
-            {
-                // todo: the user-friendly message
-                message = "Oops, something went wrong, please try later.";
-            }*/
-
-            if (toast)
-            {
-                this.showToastDialog(message);
+            if (error.code == this.ERROR_CODE.INTERNAL_SERVER_ERROR) {
+                message = default_message;
             }
-            else
-            {
+
+            if (toast) {
+                this.showToastDialog(message);
+            } else {
                 this.showMessageDialog(message, callback);
             }
 
             // output the original error message to console
-            console.error(error.message);
+            console.log(error.message);
         },
         callGAEAPI: function(config, retryCnt)
         {
