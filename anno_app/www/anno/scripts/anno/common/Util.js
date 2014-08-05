@@ -809,16 +809,22 @@
             // error: an error object {type, message}
             // toast: shown as toast, default is false
             // callback: callback function will be called when user tapped OK button in message popup
-            var message = "Oops, something went wrong. Please try later.";
+            var message = "";
+
+            if (error.message) {
+                message = error.message;
+            } else {
+                message = "Oops, something went wrong. Please try later.";
+            }
 
             // we can specify different user-friendly message for different error types
 
-            if (error.type == this.ERROR_TYPES.API_RETRY_FAILED) {
+            /*if (error.type == this.ERROR_TYPES.API_RETRY_FAILED) {
                 // todo: the user-friendly message
                 if (error.code == this.ERROR_CODE.UNAUTHORIZED) {
                     message = error.message;
                 }
-            }
+            }*/
             /*else if (error.type == this.ERROR_TYPES.API_RESPONSE_EMPTY)
             {
                 // todo: the user-friendly message
