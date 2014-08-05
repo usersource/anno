@@ -26,7 +26,6 @@ class TagApi(remote.Service):
         Get the most used tags in the system, limited to a number
         '''
         tags = Tag.get_popular_tags(limit=request.limit)
-        print tags
         tags = [TagMessage(text=t.text, total=t.total) for t in tags]
         return TagPopularMessage(tags=tags)
 
