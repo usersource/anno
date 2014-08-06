@@ -146,7 +146,8 @@ def get_credential(headers):
         credential = base64.b64decode(basic_auth_string[1])
         credential_pair = credential.split(':')
     except Exception as e:
-        logging.exception("Exception on get_credential: %s", e)
+        logging.info("basic auth string: %s", basic_auth_string)
+        logging.exception("Exception in get_credential")
         credential_pair = []
 
     if len(credential_pair) != 2:
