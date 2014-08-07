@@ -1023,10 +1023,11 @@
             };
             this.callGAEAPI(APIConfig);
         },
-        resetTagSuggestion: function() {
+        resetTagSuggestion: function(tagDiv) {
             suggestTags = false;
             countToSuggestTags = 0;
             tagStringArray = [];
+            domStyle.set(tagDiv, "display", "none");
         },
         showSuggestedTags: function(event, tagDiv, inputDiv) {
             var keyCode = event.keyCode, shiftKey = event.shiftKey;
@@ -1047,7 +1048,7 @@
                     countToSuggestTags -= 1;
                     tagStringArray.pop();
                 } else {
-                    this.resetTagSuggestion();
+                    this.resetTagSuggestion(tagDiv);
                 }
 
                 if (countToSuggestTags >= MIN_CHAR_TO_SUGGEST_TAGS) {
@@ -1058,8 +1059,7 @@
             }
         },
         getTagStrings: function(tagDiv, inputDiv) {
-            var annoUtil = this;
-            var tagString = tagStringArray.join("");
+            var annoUtil = this, tagString = tagStringArray.join("");
 
             var suggestedTagsArray = popularTags.filter(function(string) {
                 return string.toLowerCase().indexOf(tagString.toLowerCase()) == 0;
@@ -1074,16 +1074,23 @@
 
                 connect.connect(innerTagDiv, "click", function(e) {
                     dojo.stopEvent(e);
-                    var input = dom.byId(inputDiv);
-                    input.value = input.value.replaceAt((input.selectionStart - tagString.length), tagString.length, tag);
-                    domStyle.set(tagDiv, "display", "none");
-                    annoUtil.resetTagSuggestion();
-                    // window.setTimeout(function() { input.focus(); }, 1000);
+                    var input = dom.byId(inputDiv),
+                        replaceIndex = input.selectionStart - tagString.length;
+                    input.value = input.value.replaceAt(replaceIndex, tagString.length, tag + " ");
+                    annoUtil.resetTagSuggestion(tagDiv);
+
+                    setTimeout(function() {
+                        input.focus();
+                        input.select();
+                        input.selectionStart = input.value.length;
+                    }, 1000);
                 });
             });
 
             if (suggestedTagsArray.length) {
                 domStyle.set(tagDiv, "display", "");
+            } else {
+                domStyle.set(tagDiv, "display", "none");
             }
         }
     };
