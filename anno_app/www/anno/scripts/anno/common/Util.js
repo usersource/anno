@@ -1,6 +1,7 @@
 ﻿define([
     "dojo/_base/declare",
     "dojo/_base/connect",
+    "dojo/dom",
     "dojo/dom-style",
     "dojo/json",
     "dojo/request/xhr",
@@ -12,11 +13,22 @@
     "dojo/text!../../strings.json",
     "anno/common/DBUtil",
     "anno/common/GestureHandler"
-], function(declare, connect, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, stringsRes, DBUtil, GestureHandler){
+], function(declare, connect, dom, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, stringsRes, DBUtil, GestureHandler){
+
+    String.prototype.splice = function(idx, rem, s) {
+        return (this.slice(0, idx) + s + this.slice(idx + Math.abs(rem)));
+    };
+
+    String.prototype.replaceAt = function(startIndex, replaceCount, character) {
+        return this.substr(0, startIndex) + character + this.substr(startIndex + replaceCount);
+    };
 
     serverURLConfig = dojoJson.parse(serverURLConfig);
     stringsRes = dojoJson.parse(stringsRes);
     // console.log("using server Url config:" + JSON.stringify(serverURLConfig));
+    var popularTags = [];
+    var suggestTags = false, countToSuggestTags = 0, tagStringArray = [];
+    var MIN_CHAR_TO_SUGGEST_TAGS = 2;
     var util = {
         loadingIndicator:null,
         _parser:null,
@@ -993,6 +1005,86 @@
                     config.error({type: util.ERROR_TYPES.LOAD_GAE_API ,message:'Load '+config.name+" API failed, "+error.message});
                 }
             });
+        },
+        getTopTags: function(limit) {
+            popularTags = [];
+            var APIConfig = {
+                name : this.API.tag,
+                method : "tag.tag.popular",
+                parameter : { "limit" : limit },
+                showLoadingSpinner : false,
+                success : function(data) {
+                    data.result.tags.forEach(function(tagData) {
+                        popularTags.push(tagData.text);
+                    });
+                },
+                error : function() {
+                }
+            };
+            this.callGAEAPI(APIConfig);
+        },
+        resetTagSuggestion: function() {
+            suggestTags = false;
+            countToSuggestTags = 0;
+            tagStringArray = [];
+        },
+        showSuggestedTags: function(event, tagDiv, inputDiv) {
+            var keyCode = event.keyCode, shiftKey = event.shiftKey;
+
+            if (keyCode == 51 && shiftKey == true) {
+                suggestTags = true;
+                countToSuggestTags = 0;
+                tagStringArray = [];
+            } else if (suggestTags) {
+                if ((keyCode >= 48 && keyCode <= 57) && (shiftKey == false)) {
+                    countToSuggestTags += 1;
+                    tagStringArray.push(String.fromCharCode(keyCode));
+                } else if ((keyCode >= 65 && keyCode <= 90)) {
+                    countToSuggestTags += 1;
+                    keyCode = (shiftKey == false) ? (keyCode + 32) : keyCode;
+                    tagStringArray.push(String.fromCharCode(keyCode));
+                } else if (keyCode == 8) {
+                    countToSuggestTags -= 1;
+                    tagStringArray.pop();
+                } else {
+                    this.resetTagSuggestion();
+                }
+
+                if (countToSuggestTags >= MIN_CHAR_TO_SUGGEST_TAGS) {
+                    this.getTagStrings(tagDiv, inputDiv);
+                } else {
+                    domStyle.set(tagDiv, "display", "none");
+                }
+            }
+        },
+        getTagStrings: function(tagDiv, inputDiv) {
+            var annoUtil = this;
+            var tagString = tagStringArray.join("");
+
+            var suggestedTagsArray = popularTags.filter(function(string) {
+                return string.toLowerCase().indexOf(tagString.toLowerCase()) == 0;
+            });
+
+            dom.byId(tagDiv).innerHTML = "";
+            suggestedTagsArray.forEach(function(tag) {
+                var innerTagDiv = document.createElement("div");
+                innerTagDiv.className = "tag";
+                innerTagDiv.innerText = tag;
+                dom.byId(tagDiv).appendChild(innerTagDiv);
+
+                connect.connect(innerTagDiv, "click", function(e) {
+                    dojo.stopEvent(e);
+                    var input = dom.byId(inputDiv);
+                    input.value = input.value.replaceAt((input.selectionStart - tagString.length), tagString.length, tag);
+                    domStyle.set(tagDiv, "display", "none");
+                    annoUtil.resetTagSuggestion();
+                    // window.setTimeout(function() { input.focus(); }, 1000);
+                });
+            });
+
+            if (suggestedTagsArray.length) {
+                domStyle.set(tagDiv, "display", "");
+            }
         }
     };
 

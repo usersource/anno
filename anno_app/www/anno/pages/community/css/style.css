@@ -798,3 +798,22 @@
 .mblRoundRectCategory {
 	margin-left: 9px;
 }
+#detailSuggestedTags {
+	position: absolute;
+	width: 100%;
+	height: auto;
+	max-height: 78px;
+	font-size: 14px;
+	background: white;
+	overflow: scroll;
+	box-shadow: 0 0 2px 2px;
+	-webkit-box-shadow: 0 0 2px 2px;
+	bottom: 101px;
+}
+.tag {
+	padding: 4px 4px 4px 10px;
+	border-bottom: 1px solid;
+}
+.tag:last-child {
+	border: 0;
+}

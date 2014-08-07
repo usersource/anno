@@ -69,8 +69,9 @@ require([
         var commentBox = surface.createCommentBox({startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight,lineStrokeStyle:lineStrokeStyle});
         updateLastShapePos('Rectangle');
 
+        commentBox.onCommentBoxKeyDown = onCommentBoxKeyDown;
         commentBox.onCommentBoxInput = checkBarShareState;
-        commentBox.onCommentBoxFocus = hideBottomNavBar;
+        commentBox.onCommentBoxFocus = onCommentBoxFocus;
         commentBox.onCommentBoxBlur = showBottomNavBar;
 
         checkBarShareState();
@@ -562,8 +563,9 @@ require([
 
                 if (commentBox.shapeType == surface.shapeTypes.CommentBox)
                 {
+                    commentBox.onCommentBoxKeyDown = onCommentBoxKeyDown;
                     commentBox.onCommentBoxInput = checkBarShareState;
-                    commentBox.onCommentBoxFocus = hideBottomNavBar;
+                    commentBox.onCommentBoxFocus = onCommentBoxFocus;
                     commentBox.onCommentBoxBlur = showBottomNavBar;
                 }
             }
@@ -582,8 +584,9 @@ require([
                 commentBox.animateEarControl();
             }, 500);
 
+            commentBox.onCommentBoxKeyDown = onCommentBoxKeyDown;
             commentBox.onCommentBoxInput = checkBarShareState;
-            commentBox.onCommentBoxFocus = hideBottomNavBar;
+            commentBox.onCommentBoxFocus = onCommentBoxFocus;
             commentBox.onCommentBoxBlur = showBottomNavBar;
         }
     };
@@ -593,6 +596,26 @@ require([
         window.setTimeout(function(){
             domStyle.set("bottomBarContainer", "display", "");
         }, 500);
+    };
+
+    var onCommentBoxKeyDown = function(commentBox, event) {
+        annoUtil.showSuggestedTags(event, "annoDrawSuggestedTags", commentBox.inputElement.id);
+    };
+
+    var onCommentBoxFocus = function() {
+        setSuggestTagDivDimensions();
+        hideBottomNavBar();
+    };
+
+    var setSuggestTagDivDimensions = function() {
+        var canvasContainerClientRect = dom.byId('gfxCanvasContainer').getBoundingClientRect(),
+            targetClientRect = event.target.getBoundingClientRect(),
+            positionTop = (targetClientRect.top - canvasContainerClientRect.top) + targetClientRect.height,
+            suggestedTagsHeight = 78;
+        if ((positionTop + suggestedTagsHeight) > canvasContainerClientRect.height) {
+            positionTop -= ((targetClientRect.height + 10) + suggestedTagsHeight);
+        }
+        domStyle.set("annoDrawSuggestedTags", "top", positionTop + "px");
     };
 
     var hideBottomNavBar = function()
@@ -1266,6 +1289,7 @@ require([
                 // load all needed resources at startup
                 loadCommunities();
                 loadFavoriteApps();
+                annoUtil.getTopTags(100);
 
                 // show or hide tabs of picklist deponds on OS name
                 setShareDialogUI();

@@ -1253,6 +1253,8 @@ define([
                         dom.byId('hiddenBtn').focus();
                     }
 
+                    annoUtil.showSuggestedTags(event, "detailSuggestedTags", "addCommentTextBox");
+
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), "touchstart", function (e)

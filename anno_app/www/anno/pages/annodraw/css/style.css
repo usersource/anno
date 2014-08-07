@@ -240,11 +240,12 @@ body{
 /*overwirte dojo default style*/
 .mblSimpleDialogDecoration
 {
-    background-color: #000000;
-    background-image: none;
-    border-radius: 2px;
-    font-size: 20px;
-    text-align:left;
+    color: #000000;
+    background-color: white;
+    background-image: none !important;
+    border-radius: 4px;
+    text-align:center;
+    border: none;
 }
 
 .menuItem
@@ -357,4 +358,22 @@ body{
 {
     color: black;
     background-color: white;
+}
+#annoDrawSuggestedTags {
+	position: absolute;
+	width: 100%;
+	height: auto;
+	max-height: 78px;
+	font-size: 14px;
+	background: white;
+	overflow: scroll;
+	box-shadow: 0 0 2px 2px;
+	-webkit-box-shadow: 0 0 2px 2px;
+}
+.tag {
+	padding: 4px 4px 4px 10px;
+	border-bottom: 1px solid;
+}
+.tag:last-child {
+	border: 0;
 }

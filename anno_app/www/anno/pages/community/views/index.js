@@ -723,24 +723,6 @@ define([
             }
         };
 
-        var getTopTags = function(limit) {
-            popularTags = [];
-            var APIConfig = {
-                name : annoUtil.API.tag,
-                method : "tag.tag.popular",
-                parameter : { "limit" : limit },
-                showLoadingSpinner : false,
-                success : function(data) {
-                    data.result.tags.forEach(function(tagData) {
-                        popularTags.push(tagData.text);
-                    });
-                },
-                error : function() {
-                }
-            };
-            annoUtil.callGAEAPI(APIConfig);
-        };
-
         var _init = function()
         {
             if (DBUtil.userChecked)
@@ -777,7 +759,7 @@ define([
                                 }, true);
                                 initPushService();
                                 AnnoDataHandler.startBackgroundSync();
-                                getTopTags(100);
+                                annoUtil.getTopTags(100);
                             }, 5 * 1000);
                         });
                     });
