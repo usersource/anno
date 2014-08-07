@@ -14,6 +14,7 @@ from helper.utils import auth_user
 from model.anno import Anno
 from model.follow_up import FollowUp
 from model.userannostate import UserAnnoState
+from model.tags import Tag
 from message.followup_message import FollowupMessage
 from message.followup_message import FollowupListMessage
 from helper.utils import put_search_document

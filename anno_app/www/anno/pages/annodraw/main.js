@@ -611,7 +611,7 @@ require([
         var canvasContainerClientRect = dom.byId('gfxCanvasContainer').getBoundingClientRect(),
             targetClientRect = event.target.getBoundingClientRect(),
             positionTop = (targetClientRect.top - canvasContainerClientRect.top) + targetClientRect.height,
-            suggestedTagsHeight = 78;
+            suggestedTagsHeight = 92; // height of annoDrawSuggestedTags
         if ((positionTop + suggestedTagsHeight) > canvasContainerClientRect.height) {
             positionTop -= ((targetClientRect.height + 10) + suggestedTagsHeight);
         }
