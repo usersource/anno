@@ -46,6 +46,7 @@ __author__ = 'topcircler'
 
 import datetime
 import logging
+import re
 
 import endpoints
 from google.appengine.datastore.datastore_query import Cursor
@@ -64,9 +65,11 @@ from model.flag import Flag
 from model.community import Community
 from model.follow_up import FollowUp
 from model.userannostate import UserAnnoState
+from model.tags import Tag
 from helper.settings import anno_js_client_id
 from helper.utils import auth_user
 from helper.utils import put_search_document
+from helper.utils import extract_tags_from_text
 from helper.activity_push_notifications import ActivityPushNotifications
 from helper.utils_enum import AnnoQueryType, AnnoActionType
 from helper.utils_enum import SearchIndexName
@@ -207,6 +210,12 @@ class AnnoApi(remote.Service):
             raise endpoints.BadRequestException("Duplicate anno(%s) already exists." % exist_anno.key.id())
 
         entity = Anno.insert_anno(request, user)
+        
+        # find all hashtags
+        tags = extract_tags_from_text(entity.anno_text.lower())
+        for tag, count in tags.iteritems():
+            # Write the cumulative amount per tag
+            Tag.add_tag_total(tag, total=count)
 
         # index this document. strange exception here.
         put_search_document(entity.generate_search_document(), SearchIndexName.ANNO)
@@ -279,17 +288,9 @@ class AnnoApi(remote.Service):
         """
         user = auth_user(self.request_state.headers)
         userannostate_list = UserAnnoState.list_by_user(user.key)
-        anno_message_list = []
-
-        for userannostate in userannostate_list:
-            try:
-                anno = userannostate.anno.get()
-            except Exception as e:
-                logging.exception("Exception while getting anno in anno_my_stuff. Anno ID: %s", userannostate.anno.id())
-                anno = None
-
-            if anno:
-                anno_message_list.append(anno.to_response_message())
+        anno_key_list = [ userannostate.anno for userannostate in userannostate_list ]
+        anno_list = Anno.query(Anno.key.IN(anno_key_list)).order(-Anno.last_update_time).fetch()
+        anno_message_list = [ anno.to_response_message() for anno in anno_list if anno is not None ]
         return AnnoListMessage(anno_list=anno_message_list)
 
 

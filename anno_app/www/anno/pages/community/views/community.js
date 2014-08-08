@@ -95,7 +95,9 @@ define([
                 "class": "row annoOrangeColor",
                 "data-dojo-type":"dojox/mobile/ListItem",
                 "data-dojo-props":"variableHeight:true,clickable:false,noArrow:true,_duration:0",
-                innerHTML: '<span class="icon-plus" style="font-size: 11pt;"></span>&nbsp;<span>Invite new member</span>'
+                innerHTML: '<span>Invite New Member</span>\
+                            <span class="icon-pencil2" style="font-size: 17pt;position: absolute;right: 10px;"></span>\
+                            <span class="icon-search" style="font-size: 17pt;position: absolute;right: 60px;"></span>'
             }, itemList.domNode, "last");
 
             annoUtil.getParser().parse(itemList.domNode);
@@ -112,16 +114,32 @@ define([
                 });
             }
 
-            connect.connect(items[items.length-1].domNode, 'click', function(e)
+            connect.connect(items[items.length-1].domNode.querySelector(".icon-search"), 'click', function(e)
             {
                 dojo.stopEvent(e);
-                inviteNewMember();
+                window.plugins.PickContact.chooseContact(function(contact) {
+                    inviteNewMember(contact.displayName, contact.emailAddress);
+                }, function(err) {
+                    console.log('Error: ' + err);
+                });
+            });
+
+            connect.connect(items[items.length-1].domNode.querySelector(".icon-pencil2"), 'click', function(e)
+            {
+                dojo.stopEvent(e);
+                var inviteNewUser = registry.byId("inviteNewUser");
+                inviteNewUser.show();
+                domStyle.set(inviteNewUser._cover[0], {"height": "auto", top:"0px"});
             });
 
         };
 
         var showMemberDetail = function(listItem)
         {
+            if (dom.byId("editMemberDetailContainer") && dom.byId("editMemberDetailContainer").style.display == "") {
+                return;
+            }
+
             currentMemberItem = listItem;
             var data = listItem.userItem;
 
@@ -149,7 +167,28 @@ define([
             else
             {
                 dom.byId("btnRemoveInvite").innerHTML = "Remove";
+                domStyle.set("btnEditInvitation", "display", "none");
             }
+        };
+
+        var editMemberDetail = function(listItem) {
+            currentMemberItem = listItem;
+            var data = listItem.userItem;
+
+            listItem.domNode.appendChild(dom.byId("editMemberDetailContainer"));
+            domStyle.set("memberDetailContainer", "display", "none");
+            domStyle.set("editMemberDetailContainer", "display", "");
+
+            dom.byId("editMemberDetailEmail").value = data.user.user_email;
+            dom.byId("editMemberDetailFullName").value = data.user.display_name;
+        };
+
+        var saveMember = function() {
+            currentMemberItem.userItem.user.user_email = dom.byId("editMemberDetailEmail").value;
+            currentMemberItem.userItem.user.display_name = dom.byId("editMemberDetailFullName").value;
+            dom.byId("invitedUserName").innerHTML = currentMemberItem.userItem.user.display_name;
+            domStyle.set("editMemberDetailContainer", "display", "none");
+            showMemberDetail(currentMemberItem);
         };
 
         var removeMember = function()
@@ -167,7 +206,8 @@ define([
                     return (user.role == "manager" && user.status == "accepted");
                 });
 
-                if (manager_list.length == 1) {
+                var currentUser = currentMemberItem.userItem.user;
+                if ((manager_list.length == 1) && (currentUser.role == "manager") && (currentUser.status == "accepted")) {
                     var last_manager_name = manager_list[0]["user"]["display_name"];
                     annoUtil.showMessageDialog(last_manager_name + " is only active manager for this community. This user can't be removed.");
                     return;
@@ -177,7 +217,7 @@ define([
                     if (ret)
                     {
                         dom.byId("btnRemoveInvite").disabled = true;
-                        var currentUser = currentMemberItem.userItem.user;
+                        // var currentUser = currentMemberItem.userItem.user;
                         doRemoveMember(currentCommunity.community.id, currentUser.id, currentUser.user_email);
                     }
                 });
@@ -330,40 +370,42 @@ define([
             app.transitionToView(document.getElementById('modelApp_community'), {target:'searchAnno',url:'#searchAnno', params:{tag:dom.byId("headerTitleCommunity").innerHTML, communityId:currentCommunity.community.id}});
         };
 
-        var inviteNewMember = function()
+        var inviteNewMember = function(displayName, emailAddress)
         {
-            window.plugins.PickContact.chooseContact(function(contact){
-                var newMember = {
-                    "user":{
-                        "display_name": contact.displayName,
-                        "user_email": contact.emailAddress
-                    },
-                    "status": "pending",
-                    "role": "member",
-                    "newMember": true
-                };
+            var newMember = {
+                "user":{
+                    "display_name": displayName,
+                    "user_email": emailAddress
+                },
+                "status": "pending",
+                "role": "member",
+                "newMember": true
+            };
 
-                members.push(newMember);
+            members.push(newMember);
 
-                var newMemberItem = new ListItem({
-                    variableHeight:true,
-                    clickable:false,
-                    noArrow:true,
-                    _duration:0,
-                    userItem: newMember,
-                    "class": "row listAppName"
-                });
-                registry.byId('communityUserList').addChild(newMemberItem, registry.byId('communityUserList').getChildren().length-1);
-                newMemberItem.domNode.innerHTML = '<div><span class="icon-busy annoOrangeColor" style="font-weight: bold"></span>&nbsp;<span>'+newMember.user.display_name+'</span>&nbsp;<span class="icon-bolt annoOrangeColor" style="font-weight: bold;display: none"></span></div>'
-                showMemberDetail(newMemberItem);
-                connect.connect(newMemberItem.domNode, 'click', newMemberItem,function(e)
-                {
-                    dojo.stopEvent(e);
-                    showMemberDetail(this);
-                });
+            var newMemberItem = new ListItem({
+                variableHeight:true,
+                clickable:false,
+                noArrow:true,
+                _duration:0,
+                userItem: newMember,
+                "class": "row listAppName"
+            });
 
-            },function(err){
-                console.log('Error: ' + err);
+            registry.byId('communityUserList').addChild(newMemberItem, registry.byId('communityUserList').getChildren().length-1);
+            newMemberItem.domNode.appendChild(dom.byId("newMemberItem"));
+            domStyle.set("newMemberItem", "display", "");
+            dom.byId("invitedUserName").innerHTML = newMember.user.display_name;
+            showMemberDetail(newMemberItem);
+            connect.connect(newMemberItem.domNode, 'click', newMemberItem,function(e)
+            {
+                dojo.stopEvent(e);
+                showMemberDetail(this);
+            });
+            connect.connect(dom.byId("btnEditInvitation"), "click", newMemberItem, function(e) {
+                dojo.stopEvent(e);
+                editMemberDetail(this);
             });
         };
 
@@ -395,6 +437,12 @@ define([
 
             annoUtil.callGAEAPI(APIConfig);
         };
+        var hideInviteBox = function() {
+            var inviteNewUser = registry.byId("inviteNewUser");
+            inviteNewUser.hide();
+            dom.byId("invitedEmailAddress").value = "";
+            dom.byId("invitedDisplayName").value = "";
+        };
 
         return {
             // simple view init
@@ -413,6 +461,12 @@ define([
                 {
                     dojo.stopEvent(e);
                     toggleMemberRole();
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("btnSaveInvite"), 'click', function(e)
+                {
+                    dojo.stopEvent(e);
+                    saveMember();
                 }));
 
                 _connectResults.push(connect.connect(dom.byId("communityActivity"), 'click', function(e)
@@ -451,6 +505,19 @@ define([
                     dom.byId("communityWelMsg").innerHTML = oldWelcomeMsg;
                     domStyle.set("btnSaveWelcomeMsgContainer", "display", "none");
                     oldWelcomeMsg = "";
+                }));
+                _connectResults.push(connect.connect(dom.byId("btnMakeInvite"), 'click', function(e)
+                {
+                    dojo.stopEvent(e);
+                    var invitedEmailAddress = dom.byId("invitedEmailAddress").value;
+                    var invitedDisplayName = dom.byId("invitedDisplayName").value;
+                    inviteNewMember(invitedDisplayName, invitedEmailAddress);
+                    hideInviteBox();
+                }));
+                _connectResults.push(connect.connect(dom.byId("btnCancelInvite"), 'click', function(e)
+                {
+                    dojo.stopEvent(e);
+                    hideInviteBox();
                 }));
             },
             afterActivate: function()

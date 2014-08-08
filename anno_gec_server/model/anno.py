@@ -175,6 +175,18 @@ class Anno(BaseModel):
         from model.userannostate import UserAnnoState
         UserAnnoState.delete_by_anno(anno_key=anno.key)
 
+        # deleting FollowUp of anno
+        from model.follow_up import FollowUp
+        FollowUp.delete_by_anno(anno_key=anno.key)
+
+        # deleting Vote of anno
+        from model.vote import Vote
+        Vote.delete_by_anno(anno_key=anno.key)
+
+        # deleting Flag of anno
+        from model.flag import Flag
+        Flag.delete_by_anno(anno_key=anno.key)
+
         anno.key.delete()
         index = search.Index(name=SearchIndexName.ANNO)
         index.delete(anno_id)

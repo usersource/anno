@@ -43,6 +43,7 @@ class DeviceType(object):
 class SearchIndexName(object):
     ANNO = "anno_index"
     FOLLOWUP = "followup_index"
+    TAG = "tag_index"
 
 class AuthSourceType(object):
     ANNO = "Anno"

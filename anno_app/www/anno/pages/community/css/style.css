@@ -727,7 +727,7 @@
     background-color: white;
     background-image: none !important;
     border-radius: 4px;
-    text-align:left;
+    text-align:center;
     border: none;
 }
 
@@ -783,4 +783,18 @@
 .row
 {
     outline: none;
+}
+
+#inviteNewUser .commentTextbox {
+	width: 98%;
+	width: calc(100% - 10px);
+	width: -webkit-calc(100% - 10px);
+	padding: 2px;
+	border-radius: 0;
+	-webkit-border-radius: 0;
+	-webkit-appearance: initial;
+}
+
+.mblRoundRectCategory {
+	margin-left: 9px;
 }

@@ -12,8 +12,10 @@ from model.vote import Vote
 from model.follow_up import FollowUp
 from model.flag import Flag
 from model.appinfo import AppInfo
+from model.tags import Tag
 from helper.utils import put_search_document
 from helper.utils import OPEN_COMMUNITY
+from helper.utils import extract_tags_from_text
 from helper.utils_enum import SearchIndexName
 from message.appinfo_message import AppInfoMessage
 
@@ -25,7 +27,7 @@ class UpdateAnnoHandler(webapp2.RequestHandler):
     def get(self):
 #         add_lowercase_appname()
 #         delete_all_anno_indices()
-#         update_anno_schema()
+        update_anno_schema()
         update_followup_indices()
 #         update_userannostate_schema_from_anno_action(cls=Vote)
 #         update_userannostate_schema_from_anno_action(cls=FollowUp)
@@ -60,15 +62,15 @@ def update_anno_schema(cursor=None):
     anno_update_list = []
     for anno in anno_list:
         # updating app for anno schema
-        if not anno.app:
-            appinfo = AppInfo.get(name=anno.app_name)
-
-            if appinfo is None:
-                appInfoMessage = AppInfoMessage(name=anno.app_name, version=anno.app_version)
-                appinfo = AppInfo.insert(appInfoMessage)
-
-            anno.app = appinfo.key
-            anno_update_list.append(anno)
+#         if not anno.app:
+#             appinfo = AppInfo.get(name=anno.app_name)
+# 
+#             if appinfo is None:
+#                 appInfoMessage = AppInfoMessage(name=anno.app_name, version=anno.app_version)
+#                 appinfo = AppInfo.insert(appInfoMessage)
+# 
+#             anno.app = appinfo.key
+#             anno_update_list.append(anno)
 
         # updating anno schema
 #         if not anno.community:
@@ -79,10 +81,13 @@ def update_anno_schema(cursor=None):
 #         update_userannostate_schema_from_anno(anno)
 
         # updating anno index
-        regenerate_index(anno, SearchIndexName.ANNO)
+#         regenerate_index(anno, SearchIndexName.ANNO)
 
-    if len(anno_update_list):
-        ndb.put_multi(anno_update_list)
+        # extract tag
+        create_tags(anno.anno_text)
+
+#     if len(anno_update_list):
+#         ndb.put_multi(anno_update_list)
 
     if more:
         update_anno_schema(cursor=cursor)
@@ -92,7 +97,8 @@ def update_followup_indices(cursor=None):
     followup_list, cursor, more = FollowUp.query().fetch_page(BATCH_SIZE, start_cursor=cursor)
 
     for followup in followup_list:
-        regenerate_index(followup, SearchIndexName.FOLLOWUP)
+#         regenerate_index(followup, SearchIndexName.FOLLOWUP)
+        create_tags(followup.comment)
 
     if more:
         update_followup_indices(cursor=cursor)
@@ -139,3 +145,8 @@ def add_lowercase_appname(cursor=None):
 
     if more:
         add_lowercase_appname(cursor=cursor)
+
+def create_tags(text):
+    tags = extract_tags_from_text(text.lower())
+    for tag, count in tags.iteritems():
+        Tag.add_tag_total(text=tag, total=count)

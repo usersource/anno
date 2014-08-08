@@ -36,6 +36,18 @@ class FollowUp(BaseModel):
 
 
     @classmethod
+    def delete_by_anno(cls, anno_id=None, anno_key=None):
+        if anno_key is None:
+            anno = Anno.get_by_id(anno_id) if anno_id else None
+            anno_key = anno.key if anno else None
+
+        if anno_key:
+            followups = cls.query(cls.anno_key == anno_key).fetch()
+            followup_key_list = [ followup.key for followup in followups ]
+            ndb.delete_multi(followup_key_list)
+
+
+    @classmethod
     def query_followup_by_author(cls, user):
         query = cls.query(cls.creator == user.key).order(-cls.created)
         followup_list = []

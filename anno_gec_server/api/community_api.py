@@ -146,5 +146,6 @@ class CommunityApi(remote.Service):
     def invite_user(self, request):
         creator = auth_user(self.request_state.headers)
         community_name = Invite.create(request, creator)
+        invite_msg = request.invite_msg or ""
         return CreateInviteResponseMessage(user_name=request.name, user_email=request.email,
-                                           invite_msg=request.invite_msg, community=community_name)
+                                           invite_msg=invite_msg, community=community_name)

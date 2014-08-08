@@ -17,6 +17,7 @@ from model.userannostate import UserAnnoState
 from message.followup_message import FollowupMessage
 from message.followup_message import FollowupListMessage
 from helper.utils import put_search_document
+from helper.utils import extract_tags_from_text
 from helper.activity_push_notifications import ActivityPushNotifications
 from helper.utils_enum import AnnoActionType
 from helper.utils_enum import SearchIndexName
@@ -59,6 +60,12 @@ class FollowupApi(remote.Service):
         # update search document
         put_search_document(anno.generate_search_document(), SearchIndexName.ANNO)
         put_search_document(followup.generate_search_document(), SearchIndexName.FOLLOWUP)
+
+        # find all hashtags
+        tags = extract_tags_from_text(followup.comment.lower())
+        for tag, count in tags.iteritems():
+            # Write the cumulative amount per tag
+            Tag.add_tag_total(tag, total=count)
 
         # send notifications
         ActivityPushNotifications.send_push_notification(first_user=user, anno=anno, action_type=AnnoActionType.COMMENTED,
