@@ -15,10 +15,6 @@
     "anno/common/GestureHandler"
 ], function(declare, connect, dom, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, stringsRes, DBUtil, GestureHandler){
 
-    String.prototype.splice = function(idx, rem, s) {
-        return (this.slice(0, idx) + s + this.slice(idx + Math.abs(rem)));
-    };
-
     String.prototype.replaceAt = function(startIndex, replaceCount, character) {
         return this.substr(0, startIndex) + character + this.substr(startIndex + replaceCount);
     };
@@ -1007,13 +1003,13 @@
             });
         },
         getTopTags: function(limit) {
-            popularTags = [];
             var APIConfig = {
                 name : this.API.tag,
                 method : "tag.tag.popular",
                 parameter : { "limit" : limit },
                 showLoadingSpinner : false,
                 success : function(data) {
+                    popularTags = [];
                     data.result.tags.forEach(function(tagData) {
                         popularTags.push(tagData.text);
                     });
@@ -1021,6 +1017,7 @@
                 error : function() {
                 }
             };
+
             this.callGAEAPI(APIConfig);
         },
         resetTagSuggestion: function(tagDiv) {
@@ -1030,19 +1027,15 @@
             domStyle.set(tagDiv, "display", "none");
         },
         showSuggestedTags: function(event, tagDiv, inputDiv) {
-            var keyCode = event.keyCode, shiftKey = event.shiftKey;
+            var keyCode = event.keyCode;
 
-            if (keyCode == 51 && shiftKey == true) {
+            if (event.keyIdentifier == "U+0023") {
                 suggestTags = true;
                 countToSuggestTags = 0;
                 tagStringArray = [];
             } else if (suggestTags) {
-                if ((keyCode >= 48 && keyCode <= 57) && (shiftKey == false)) {
+                if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90)) {
                     countToSuggestTags += 1;
-                    tagStringArray.push(String.fromCharCode(keyCode));
-                } else if ((keyCode >= 65 && keyCode <= 90)) {
-                    countToSuggestTags += 1;
-                    keyCode = (shiftKey == false) ? (keyCode + 32) : keyCode;
                     tagStringArray.push(String.fromCharCode(keyCode));
                 } else if (keyCode == 8) {
                     countToSuggestTags -= 1;
@@ -1079,11 +1072,11 @@
                     input.value = input.value.replaceAt(replaceIndex, tagString.length, tag + " ");
                     annoUtil.resetTagSuggestion(tagDiv);
 
-                    setTimeout(function() {
+                    /*setTimeout(function() {
                         input.focus();
                         input.select();
                         input.selectionStart = input.value.length;
-                    }, 1000);
+                    }, 1000);*/
                 });
             });
 
