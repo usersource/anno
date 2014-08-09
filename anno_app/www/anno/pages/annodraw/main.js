@@ -595,6 +595,7 @@ require([
     {
         window.setTimeout(function(){
             domStyle.set("bottomBarContainer", "display", "");
+            domStyle.set("annoDrawSuggestedTags", "display", "none");
         }, 500);
     };
 

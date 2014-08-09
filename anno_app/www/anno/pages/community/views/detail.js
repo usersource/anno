@@ -1228,6 +1228,7 @@ define([
                     commentTextBoxFocused = false;
                     window.setTimeout(function(){
                         dom.byId('addCommentTextBox').rows = "1";
+                        domStyle.set('detailSuggestedTags', 'display', 'none');
                     }, 500);
                 }));
 
