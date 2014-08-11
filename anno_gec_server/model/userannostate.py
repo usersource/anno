@@ -28,6 +28,7 @@ class UserAnnoState(ndb.Model):
             entity = cls(user=user.key, anno=anno.key, modified=entity_modified)
         else:
             entity.modified = entity_modified
+            entity.notify = True
 
         entity.put()
         return entity
@@ -64,6 +65,21 @@ class UserAnnoState(ndb.Model):
     def update_last_read(cls, user, anno, last_read):
         entity = cls.get(user=user, anno=anno)
 
-        if entity:
+        if not entity:
+            entity = cls(user=user.key, anno=anno.key, modified=last_read,
+                         last_read=last_read, notify=False)
+        else:
             entity.last_read = last_read
-            entity.put()
+
+        entity.put()
+        return entity
+
+    @classmethod
+    def is_read(cls, user, anno):
+        entity = cls.get(user=user, anno=anno)
+        is_read = False
+
+        if entity and entity.last_read and (entity.last_read >= entity.modified):
+            is_read = True
+
+        return is_read

@@ -132,7 +132,7 @@ class AnnoApi(remote.Service):
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
 
         # set anno basic properties
-        anno_resp_message = anno.to_response_message()
+        anno_resp_message = anno.to_response_message(user)
 
         # set anno association with followups
         followups = FollowUp.find_by_anno(anno)
@@ -189,7 +189,7 @@ class AnnoApi(remote.Service):
             return Anno.query_by_country(request.app, user)
         elif request.query_type == AnnoQueryType.COMMUNITY:
             community = Community.get_by_id(request.community)
-            return Anno.query_by_community(community, limit, select_projection, curs)
+            return Anno.query_by_community(community, limit, select_projection, curs, user)
         else:
             return Anno.query_by_page(limit, select_projection, curs, user)
 
@@ -223,7 +223,7 @@ class AnnoApi(remote.Service):
         # send push notifications
         ActivityPushNotifications.send_push_notification(first_user=user, anno=entity, action_type=AnnoActionType.CREATED)
 
-        return entity.to_response_message()
+        return entity.to_response_message(user)
 
 
     @endpoints.method(anno_update_resource_container, AnnoResponseMessage, path='anno/{id}',
@@ -254,7 +254,7 @@ class AnnoApi(remote.Service):
         # send notifications
         ActivityPushNotifications.send_push_notification(first_user=user, anno=anno, action_type=AnnoActionType.EDITED)
 
-        return anno.to_response_message()
+        return anno.to_response_message(user)
 
 
     @endpoints.method(anno_with_id_resource_container, message_types.VoidMessage, path='anno/{id}',
@@ -290,7 +290,7 @@ class AnnoApi(remote.Service):
         userannostate_list = UserAnnoState.list_by_user(user.key)
         anno_key_list = [ userannostate.anno for userannostate in userannostate_list ]
         anno_list = Anno.query(Anno.key.IN(anno_key_list)).order(-Anno.last_update_time).fetch()
-        anno_message_list = [ anno.to_response_message() for anno in anno_list if anno is not None ]
+        anno_message_list = [ anno.to_response_message(user) for anno in anno_list if anno is not None ]
         return AnnoListMessage(anno_list=anno_message_list)
 
 
