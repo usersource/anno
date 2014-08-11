@@ -188,6 +188,7 @@ define([
                     "transition":'slide',
                     "data-dojo-type":"dojox/mobile/ListItem",
                     "data-dojo-props":"variableHeight:true,clickable:true,noArrow:true,_index:"+(i-2),
+                    "style":"padding: 6px;",
                     innerHTML: dojoString.substitute(annoItemTemplate, annos[i])
                 }, annoItemList.domNode, "last");
             }
