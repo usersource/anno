@@ -502,7 +502,7 @@ define([
 
         var annoRead = window.annoRead = function() {
             if (domClass.contains(this.domNode, "unread")) {
-                domClass.replaceClass(this.domNode, "read", "unread");
+                domClass.replace(this.domNode, "read", "unread");
             }
         };
 
