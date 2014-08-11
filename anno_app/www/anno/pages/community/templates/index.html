@@ -73,9 +73,9 @@
             <div class="fieldset"
                  data-dojo-type="dojox/mvc/Repeat"
                  data-dojo-props="exprchar: '#', children: this.loadedModels.events.model">
-                <li id="event#{this.index}" class="row"
+                <li id="event#{this.index}" class="row #{this.ref[this.index].readStatusClass}"
                     data-dojo-type="dojox/mobile/ListItem"
-                    data-dojo-props="transition:'slide',variableHeight:true,clickable:true,noArrow:true,transitionOptions:{target:'detail',url:'#detail',params:{cursor:'#{this.index}'}}"
+                    data-dojo-props="transition:'slide',variableHeight:true,clickable:true,noArrow:true,transitionOptions:{target:'detail',url:'#detail',params:{cursor:'#{this.index}'}},onClick:annoRead"
                     style="padding: 6px;">
                     <div class="infoContainer">
                         <table style="width: 100%;table-layout: fixed;">

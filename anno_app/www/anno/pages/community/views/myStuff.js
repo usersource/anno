@@ -115,8 +115,14 @@ define([
                             // eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
                             eventData.simple_circle_on_top = false;
                             eventData.created = Util.getTimeAgoString(annoList[i].created);
-
                             eventData.app_icon_url = annoList[i].app_icon_url||"";
+
+                            eventData.readStatusClass = "";
+                            if ('anno_read_status' in annoList[i]) {
+                                eventData.read_status = annoList[i].anno_read_status || false;
+                                eventData.readStatusClass = (eventData.read_status == true) ? "read" : "unread";
+                            }
+
                             if (eventData.app_icon_url)
                             {
                                 eventData.annoIcon = "hidden";
@@ -191,8 +197,9 @@ define([
                 domConstruct.create("li", {
                     "transition":'slide',
                     "data-dojo-type":"dojox/mobile/ListItem",
-                    "data-dojo-props":"variableHeight:true,clickable:true,noArrow:true,_index:"+(i-2),
+                    "data-dojo-props":"variableHeight:true,clickable:true,noArrow:true,_index:"+(i-2)+",onClick:annoRead",
                     "style":"padding: 6px;",
+                    "class":annos[i].readStatusClass,
                     innerHTML: dojoString.substitute(annoItemTemplate, annos[i])
                 }, annoItemList.domNode, "last");
             }

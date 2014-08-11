@@ -799,3 +799,11 @@
 .mblListItem {
 	font-weight: normal;
 }
+
+li.read {
+	background-color: #ededed;
+}
+
+li.unread .listTitle {
+	font-weight: bold;
+}

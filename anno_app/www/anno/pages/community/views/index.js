@@ -27,7 +27,7 @@ define([
         var app = null;
         var listScrollTop = 0;
         var loadingData = false, firstListLoaded = false,
-            offset = 0, limit=30, searchOffset = 0;
+            offset = 0, limit=15, searchOffset = 0;
         var hasMoreData = false,
             hasMoreSearchData = false,
             inSearchMode = false,
@@ -164,6 +164,12 @@ define([
                 eventData.simple_circle_on_top = false;
                 eventData.created = annoUtil.getTimeAgoString(annoList[i].created);
                 eventData.app_icon_url = annoList[i].app_icon_url||"";
+
+                eventData.readStatusClass = "";
+                if ('anno_read_status' in annoList[i]) {
+                    eventData.read_status = annoList[i].anno_read_status || false;
+                    eventData.readStatusClass = (eventData.read_status == true) ? "read" : "unread";
+                }
 
                 if (eventData.app_icon_url)
                 {
@@ -491,6 +497,12 @@ define([
                 fillAppNameList(appNameList);
                 dom.byId('btnAppNameDialogDone').disabled = true;
                 domClass.add('btnAppNameDialogDone', "disabledBtn");
+            }
+        };
+
+        var annoRead = window.annoRead = function() {
+            if (domClass.contains(this.domNode, "unread")) {
+                domClass.replaceClass(this.domNode, "read", "unread");
             }
         };
 
