@@ -70,7 +70,8 @@ define([
                             eventData.id = localAnnos[i]._id;
                             eventData.circleX = parseInt(localAnnos[i].x, 10);
                             eventData.circleY = parseInt(localAnnos[i].y, 10);
-                            eventData.simple_circle_on_top = localAnnos[i].direction==0||localAnnos[i].direction=='false';
+                            // eventData.simple_circle_on_top = localAnnos[i].direction==0||localAnnos[i].direction=='false';
+                            eventData.simple_circle_on_top = false;
 
                             eventData.deviceInfo = (localAnnos[i].model||'&nbsp;')+'&nbsp;'+(localAnnos[i].os_name||'&nbsp;')+(localAnnos[i].os_version||'&nbsp;');
                             eventData.vote = false;
@@ -107,9 +108,12 @@ define([
                             eventData.app = annoList[i].app_name;
                             eventData.author = annoList[i].creator?annoList[i].creator.display_name||annoList[i].creator.user_email||annoList[i].creator.user_id:"";
                             eventData.id = annoList[i].id;
-                            eventData.circleX = parseInt(annoList[i].simple_x, 10);
-                            eventData.circleY = parseInt(annoList[i].simple_y, 10);
-                            eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
+                            // eventData.circleX = parseInt(annoList[i].simple_x, 10);
+                            // eventData.circleY = parseInt(annoList[i].simple_y, 10);
+                            eventData.circleX = 0;
+                            eventData.circleY = 0;
+                            // eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
+                            eventData.simple_circle_on_top = false;
                             eventData.created = Util.getTimeAgoString(annoList[i].created);
 
                             eventData.app_icon_url = annoList[i].app_icon_url||"";
