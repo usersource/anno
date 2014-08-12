@@ -73,38 +73,39 @@
             <div class="fieldset"
                  data-dojo-type="dojox/mvc/Repeat"
                  data-dojo-props="exprchar: '#', children: this.loadedModels.events.model">
-                <li id="event#{this.index}" class="row"
+                <li id="event#{this.index}" class="row #{this.ref[this.index].readStatusClass}"
                     data-dojo-type="dojox/mobile/ListItem"
-                    data-dojo-props="transition:'slide',variableHeight:true,clickable:true,noArrow:true,transitionOptions:{target:'detail',url:'#detail',params:{cursor:'#{this.index}'}}">
+                    data-dojo-props="transition:'slide',variableHeight:true,clickable:true,noArrow:true,transitionOptions:{target:'detail',url:'#detail',params:{cursor:'#{this.index}'}},onClick:annoRead"
+                    style="padding: 6px;">
                     <div class="infoContainer">
                         <table style="width: 100%;table-layout: fixed;">
                             <tr>
                                 <td width="40" align="center">
                                     <span data-dojo-props="class: at('rel:#{this.index}', 'annoIcon')" data-dojo-type="dojox/mvc/Output" class="annoListItemIcon"></span>
-                                    <img data-dojo-type="dojox/mvc/Output" style="width: 40px;height: 40px" data-dojo-props="src: at('rel:#{this.index}', 'app_icon_url'), class: at('rel:#{this.index}', 'appIconClass')" />
+                                    <img data-dojo-type="dojox/mvc/Output" style="width: 40px;height: 40px;border-radius: 8px;" data-dojo-props="src: at('rel:#{this.index}', 'app_icon_url'), class: at('rel:#{this.index}', 'appIconClass')" />
                                 </td>
                                 <td width="95%">
                                     <table style="width: 100%;table-layout: fixed;">
                                         <tr>
-                                            <td style="width: 85%;text-align: left">
+                                            <td style="width: 100%;">
                                                 <div class="listTitle" data-dojo-type="dojox/mvc/Output"
                                                      data-dojo-props="value: at('rel:#{this.index}', 'annoText')"></div>
                                             </td>
-                                            <td style="width: 122px;text-align: right">
-                                                <div class="listAuthor" data-dojo-type="dojox/mvc/Output"
-                                                     data-dojo-props="value: at('rel:#{this.index}', 'created')"></div>
-                                            </td>
                                         </tr>
                                     </table>
-                                    <table style="width: 100%">
+                                    <table style="width: 100%;table-layout: fixed;font-size: 14px;">
                                         <tr>
-                                            <td style="width: 60%;text-align: left">
+                                            <td style="width: 42%;">
                                                 <div class="listAppName" data-dojo-type="dojox/mvc/Output"
                                                      data-dojo-props="value: at('rel:#{this.index}', 'app')"></div>
                                             </td>
-                                            <td style="width: 40%;text-align: right">
+                                            <td style="width: 42%;">
                                                 <div class="listAuthor" data-dojo-type="dojox/mvc/Output"
                                                      data-dojo-props="value: at('rel:#{this.index}', 'author')"></div>
+                                            </td>
+                                            <td style="width: 16%;text-align: right;">
+                                                <div class="listAuthor" data-dojo-type="dojox/mvc/Output"
+                                                     data-dojo-props="value: at('rel:#{this.index}', 'created')"></div>
                                             </td>
                                         </tr>
                                     </table>

@@ -72,19 +72,19 @@
         },
         timeString:{
             prefixAgo: "",
-            suffixAgo: "ago",
-            seconds: "%d seconds",
-            minute: "a minute",
-            minutes: "%d minutes",
-            hour: "an hour",
-            hours: "%d hours",
-            day: "a day",
-            days: "%d days",
-            month: "a month",
-            months: "%d months",
-            year: "a year",
-            years: "%d years",
-            wordSeparator: " ",
+            suffixAgo: "",
+            seconds: "%ds",
+            minute: "1m",
+            minutes: "%dm",
+            hour: "1h",
+            hours: "%dh",
+            day: "1d",
+            days: "%dd",
+            month: "1mo",
+            months: "%dmo",
+            year: "1y",
+            years: "%dy",
+            wordSeparator: "",
             numbers: []
         },
         localStorageKeys:{
@@ -750,7 +750,7 @@
         },
         replaceURLWithLink: function(s, linkScript)
         {
-            s = s.replace(/(^|\W)\b((www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, "$1http://$2");
+            s = s.replace(/(^|\W)\b((www\d{0,3}[.])(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, "$1http://$2");
             return s.replace(/(^|\W)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, linkScript);
         },
         loadUserCommunities: function(includeInvite, callback, keepSpinnerShown)
