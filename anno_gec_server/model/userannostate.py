@@ -22,14 +22,15 @@ class UserAnnoState(ndb.Model):
     @classmethod
     def insert(cls, user, anno, modified=None):
         entity = cls.get(user=user, anno=anno)
-        entity_modified = modified or datetime.datetime.now()
 
-        if not entity:
-            entity = cls(user=user.key, anno=anno.key, modified=entity_modified)
+        if entity:
+            if entity.modified is None:
+                entity.notify = True
         else:
-            entity.modified = entity_modified
-            entity.notify = True
+            entity = cls(user=user.key, anno=anno.key)
 
+        entity.last_read = datetime.datetime.now()
+        entity.modified = modified or entity.last_read
         entity.put()
         return entity
 
@@ -41,7 +42,8 @@ class UserAnnoState(ndb.Model):
 
     @classmethod
     def list_by_user(cls, user_key, limit=None):
-        query = cls.query(cls.user == user_key).order(-cls.modified)
+        query = cls.query(ndb.AND(cls.user == user_key, cls.modified != None))
+        query = query.order(-cls.modified)
 
         if limit:
             result = query.fetch(limit, projection=[cls.anno])
@@ -62,15 +64,13 @@ class UserAnnoState(ndb.Model):
             ndb.delete_multi(userannostate_key_list)
 
     @classmethod
-    def update_last_read(cls, user, anno, last_read):
+    def update_last_read(cls, user, anno):
         entity = cls.get(user=user, anno=anno)
 
         if not entity:
-            entity = cls(user=user.key, anno=anno.key, modified=last_read,
-                         last_read=last_read, notify=False)
-        else:
-            entity.last_read = last_read
+            entity = cls(user=user.key, anno=anno.key, notify=False)
 
+        entity.last_read = datetime.datetime.now()
         entity.put()
         return entity
 
@@ -79,7 +79,8 @@ class UserAnnoState(ndb.Model):
         entity = cls.get(user=user, anno=anno)
         is_read = False
 
-        if entity and entity.last_read and (entity.last_read >= entity.modified):
+        if entity and entity.last_read and anno.last_update_time and \
+            (entity.last_read >= anno.last_update_time):
             is_read = True
 
         return is_read

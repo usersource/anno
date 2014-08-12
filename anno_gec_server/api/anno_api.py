@@ -147,7 +147,7 @@ class AnnoApi(remote.Service):
 
             # update last_read of UserAnnoState
             from model.userannostate import UserAnnoState
-            UserAnnoState.update_last_read(user=user, anno=anno, last_read=datetime.datetime.now())
+            UserAnnoState.update_last_read(user=user, anno=anno)
 
         return anno_resp_message
 
