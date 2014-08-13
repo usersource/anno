@@ -592,7 +592,7 @@ class Anno(BaseModel):
                     query_string += " OR "
             query_string += " )"
             return query_string
-        return None
+        return ""
 
 
     @classmethod

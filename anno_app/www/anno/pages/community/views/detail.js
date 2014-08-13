@@ -716,7 +716,8 @@ define([
 
                     var commentObject = {user_id:author, comment:comment};
                     processFollowupHashTagsOrURLs(commentObject);
-                    currentAnno.comments.splice(0,0,new getStateful(commentObject));
+                    // currentAnno.comments.splice(0, 0, new getStateful(commentObject));
+                    currentAnno.comments.push(new getStateful(commentObject));
                     adjustAnnoCommentSize();
                 },
                 error: function(){

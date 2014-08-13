@@ -32,7 +32,7 @@ class FollowUp(BaseModel):
 
     @classmethod
     def find_by_anno(cls, anno):
-        return cls.query(cls.anno_key == anno.key).order(-cls.last_modified).fetch()
+        return cls.query(cls.anno_key == anno.key).order(cls.last_modified).fetch()
 
 
     @classmethod

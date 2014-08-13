@@ -177,9 +177,10 @@ require([
     connect.connect(dom.byId("btnShare"), 'click', function(e)
     {
         registry.byId('shareDialog').hide();
+
         // enable JS gesture listener, disable native gesture
-        annoUtil.enableJSGesture();
-        annoUtil.disableNativeGesture();
+        // annoUtil.enableJSGesture();
+        // annoUtil.disableNativeGesture();
 
         if (editMode)
         {
@@ -294,9 +295,10 @@ require([
     {
         adjustShareDialogSize();
         registry.byId('shareDialog').show();
+
         // disable JS gesture listener, enable native gesture listener
-        annoUtil.disableJSGesture();
-        annoUtil.enableNativeGesture();
+        // annoUtil.disableJSGesture();
+        // annoUtil.enableNativeGesture();
 
         if (!appNameListFetched&&annoUtil.isAndroid())
         {
@@ -1281,8 +1283,8 @@ require([
                         var shareDialog = registry.byId('shareDialog');
                         shareDialog.hide();
                         // enable JS gesture listener, disable native gesture
-                        annoUtil.enableJSGesture();
-                        annoUtil.disableNativeGesture();
+                        // annoUtil.enableJSGesture();
+                        // annoUtil.disableNativeGesture();
                     });
 
                 }, 500);
@@ -1296,8 +1298,8 @@ require([
                 setShareDialogUI();
             }
 
-            // enable JS gesture listener, disable native gesture
-            annoUtil.enableJSGesture();
+            // disable JS and native gesture listener
+            annoUtil.disableJSGesture();
             annoUtil.disableNativeGesture();
 
             // set the pick list dialog title
@@ -1323,8 +1325,8 @@ require([
         {
             shareDialog.hide();
             // enable JS gesture listener, disable native gesture
-            annoUtil.enableJSGesture();
-            annoUtil.disableNativeGesture();
+            // annoUtil.enableJSGesture();
+            // annoUtil.disableNativeGesture();
         }
         else
         {
