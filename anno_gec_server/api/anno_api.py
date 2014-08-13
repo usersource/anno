@@ -289,8 +289,12 @@ class AnnoApi(remote.Service):
         user = auth_user(self.request_state.headers)
         userannostate_list = UserAnnoState.list_by_user(user.key)
         anno_key_list = [ userannostate.anno for userannostate in userannostate_list ]
-        anno_list = Anno.query(Anno.key.IN(anno_key_list)).order(-Anno.last_update_time).fetch()
-        anno_message_list = [ anno.to_response_message(user) for anno in anno_list if anno is not None ]
+
+        anno_message_list = []
+        if len(anno_key_list):
+            anno_list = Anno.query(Anno.key.IN(anno_key_list)).order(-Anno.last_update_time).fetch()
+            anno_message_list = [ anno.to_response_message(user) for anno in anno_list if anno is not None ]
+
         return AnnoListMessage(anno_list=anno_message_list)
 
 
