@@ -86,6 +86,17 @@
             deviceId: "annoDeviceId"
         },
         userCommunities: null, // all communities for current user
+        deviceList: {
+            "iPhone1,1" : "iPhone",
+            "iPhone1,2" : "iPhone3G",
+            "iPhone2,1" : "iPhone3GS",
+            "iPhone3,1" : "iPhone4",
+            "iPhone4,1" : "iPhone4S",
+            "iPhone5,1" : "iPhone5GSM",
+            "iPhone5,2" : "iPhone5CDMA",
+            "iPhone5,3" : "iPhone5C",
+            "iPhone6,1" : "iPhone5S"
+        },
         hasConnection: function()
         {
             var networkState = navigator.connection.type;
@@ -992,6 +1003,9 @@
                     config.error({type: util.ERROR_TYPES.LOAD_GAE_API ,message:'Load '+config.name+" API failed, "+error.message});
                 }
             });
+        },
+        parseDeviceModel: function(deviceModel) {
+            return (( deviceModel in this.deviceList) ? this.deviceList[deviceModel] : deviceModel);
         }
     };
 
