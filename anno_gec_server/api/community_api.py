@@ -92,6 +92,7 @@ class CommunityApi(remote.Service):
         community = Community.get_by_id(request.community_id)
         role = request.role if request.role else None
 
+        resp = None
         if user and community:
             resp = UserRole.insert(user, community, role)
 
