@@ -252,6 +252,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
     }
     else if (START_EDIT_ANNO_DRAW.equals(action))
     {
+      boolean landscapeMode = args.getBoolean(0);
       Activity activity = this.cordova.getActivity();
 
       String packageName = activity.getPackageName();
@@ -261,6 +262,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
               "io.usersource.anno.AnnoDrawActivity");
       intent.setType("image/*");
       intent.putExtra(AnnoUtils.EDIT_ANNO_MODE, true);
+      intent.putExtra(AnnoUtils.LANDSCAPE_MODE, landscapeMode);
 
       activity.startActivity(intent);
 

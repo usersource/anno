@@ -88,6 +88,10 @@ public class AnnoDrawActivity extends DroidGap
         if (intent.getBooleanExtra(AnnoUtils.EDIT_ANNO_MODE, false))
         {
           this.editMode = true;
+          boolean landscape_mode = intent.getBooleanExtra(AnnoUtils.LANDSCAPE_MODE, false);
+          if (landscape_mode) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+          }
         }
         else
         {
