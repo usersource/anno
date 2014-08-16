@@ -957,6 +957,12 @@ define([
 
             saveCurrentAnnoDataforEdit(annoItem, imageData);
 
+            var imgScreenshot = dom.byId('imgDetailScreenshot'),
+                landscapeMode = false;
+            if (imgScreenshot.naturalWidth > imgScreenshot.naturalHeight) {
+                landscapeMode = true;
+            }
+
             cordova.exec(
                 function (result)
                 {
@@ -966,7 +972,7 @@ define([
                 },
                 "AnnoCordovaPlugin",
                 'start_edit_anno_draw',
-                []
+                [landscapeMode]
             );
 
             checkEditAnnoResult();
