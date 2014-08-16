@@ -83,7 +83,7 @@ define([
 
                 var imgScreenshot = dom.byId('imgDetailScreenshot');
                 var viewPoint = win.getBox();
-                var deviceRatio = parseFloat((viewPoint.w/viewPoint.h).toFixed(2));
+                /*var deviceRatio = parseFloat((viewPoint.w / viewPoint.h).toFixed(2));
                 var orignialDeviceRatio = parseFloat((imgScreenshot.naturalWidth/imgScreenshot.naturalHeight).toFixed(2));
                 var orignialRatio = imgScreenshot.naturalHeight/imgScreenshot.naturalWidth;
 
@@ -106,9 +106,13 @@ define([
                     //imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio - navBarHeight - screenshotControlsHeight;
                     imageHeight = viewPoint.h - navBarHeight - screenshotControlsHeight;
                     imageWidth = Math.round(imageHeight/orignialRatio);
-                }
+                }*/
 
-                borderWidth = Math.floor(imageWidth*0.02);
+                borderWidth = 6;
+                imageWidth = viewPoint.w;
+                imageHeight = (imageWidth - (2 * borderWidth)) / (imgScreenshot.naturalWidth / imgScreenshot.naturalHeight);
+
+                // borderWidth = Math.floor(imageWidth * 0.02);
                 domStyle.set(dom.byId('tbl_screenshotControls').parentNode, 'width', imageWidth+'px');
 
                 applyAnnoLevelColor(eventsModel.cursor.level);
@@ -177,7 +181,8 @@ define([
 
                 domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', top:(-borderWidth)+'px', left:(-borderWidth)+'px'});
                 surface.borderWidth = borderWidth;
-                surface.setDimensions(imageWidth-borderWidth*2, imageHeight-borderWidth*2);
+                // surface.setDimensions(imageWidth - borderWidth * 2, imageHeight - borderWidth * 2);
+                surface.setDimensions(imageWidth - borderWidth * 2, imageHeight);
 
                 surface.parse(elementsObject, lineStrokeStyle);
 
@@ -368,19 +373,23 @@ define([
 
         var applyAnnoLevelColor = function(level)
         {
-            borderWidth = Math.floor(imageWidth*0.02);
-            level = level||1;
-            if (level == 1)
-            {
-                console.log("img width:" + (imageWidth - borderWidth * 2));
-                domStyle.set('screenshotContainerDetail', {width:(imageWidth-borderWidth*2)+'px',height:(imageHeight-borderWidth*2)+'px', 'borderColor': annoUtil.level1Color,'borderStyle':'solid', 'borderWidth':borderWidth+'px'});
-                domStyle.set('imgDetailScreenshot', {width:'100%',height:'100%'});
+            // borderWidth = Math.floor(imageWidth * 0.02);
+            level = level || 1;
+            var borderColor = annoUtil.level1Color;
+
+            if (level == 2) {
+                borderColor = annoUtil.level2Color;
             }
-            else if (level == 2)
-            {
-                domStyle.set('screenshotContainerDetail', {width:(imageWidth-borderWidth*2)+'px',height:(imageHeight-borderWidth*2)+'px', 'borderColor': annoUtil.level2Color,'borderStyle':'solid', 'borderWidth':borderWidth+'px'});
-                domStyle.set('imgDetailScreenshot', {width:'100%',height:'100%'});
-            }
+
+            domStyle.set('screenshotContainerDetail', {
+                width : (imageWidth - borderWidth * 2) + 'px',
+                // height : (imageHeight - borderWidth * 2) + 'px',
+                height : imageHeight + 'px',
+                'borderColor' : borderColor,
+                'borderStyle' : 'solid',
+                'borderWidth' : borderWidth + 'px'
+            });
+            domStyle.set('imgDetailScreenshot', { width : '100%', height : 'auto' });
         };
 
         var adjustAnnoCommentSize = function()
