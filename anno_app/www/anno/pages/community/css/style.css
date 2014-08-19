@@ -810,10 +810,12 @@
 	bottom: 101px;
 	margin-right: 6px;
 }
+
 .tag {
 	padding: 6px 4px 6px 10px;
 	border-bottom: 1px solid;
 }
+
 .tag:last-child {
 	border: 0;
 }
