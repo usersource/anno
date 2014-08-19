@@ -71,7 +71,7 @@ define([
 
         var screenshotImageOnload = function()
         {
-            console.error("screenshot loaded.");
+            console.log("screenshot loaded.");
             if (!loadingDetailData)
             {
                 annoUtil.hideLoadingIndicator();
@@ -89,19 +89,20 @@ define([
 
                 if (orignialDeviceRatio == deviceRatio)
                 {
-                    console.error('same ratio');
+                    console.log('same ratio');
                     imageHeight = viewPoint.h - navBarHeight - screenshotControlsHeight;
                     imageWidth = Math.round(imageHeight/orignialRatio);
-
-                    console.error("image width: "+imageWidth+", image height: "+imageHeight);
+                    console.log("image width: " + imageWidth + ", image height: " + imageHeight);
                 }
                 else if (orignialDeviceRatio < deviceRatio) // taller than current device
-                {console.error('taller ratio: o:'+orignialDeviceRatio+", d:"+ deviceRatio);
+                {
+                    console.log('taller ratio: o:' + orignialDeviceRatio + ", d:" + deviceRatio);
                     imageHeight = viewPoint.h-navBarHeight - screenshotControlsHeight;
                     imageWidth = Math.round(imageHeight/orignialRatio);
                 }
                 else if (orignialDeviceRatio > deviceRatio) // wider than current device
-                {console.error('wider ratio');
+                {
+                    console.log('wider ratio');
                     //imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio - navBarHeight - screenshotControlsHeight;
                     imageHeight = viewPoint.h - navBarHeight - screenshotControlsHeight;
                     imageWidth = Math.round(imageHeight/orignialRatio);
@@ -180,7 +181,7 @@ define([
 
                 surface.parse(elementsObject, lineStrokeStyle);
 
-                console.error('redrawShapes end');
+                console.log('redrawShapes end');
             }
             else
             {
@@ -192,7 +193,8 @@ define([
                 surface.clear();
                 surface.show();
 
-                var earLow = !eventsModel.cursor.simple_circle_on_top;
+                // var earLow = !eventsModel.cursor.simple_circle_on_top;
+                var earLow = true;
 
                 var toolTipDivWidth = (imageWidth-borderWidth*2-60),
                     pxPerChar = 8,
@@ -370,8 +372,7 @@ define([
             level = level||1;
             if (level == 1)
             {
-                console.error("img width:"+(imageWidth-borderWidth*2));
-
+                console.log("img width:" + (imageWidth - borderWidth * 2));
                 domStyle.set('screenshotContainerDetail', {width:(imageWidth-borderWidth*2)+'px',height:(imageHeight-borderWidth*2)+'px', 'borderColor': annoUtil.level1Color,'borderStyle':'solid', 'borderWidth':borderWidth+'px'});
                 domStyle.set('imgDetailScreenshot', {width:'100%',height:'100%'});
             }
@@ -629,7 +630,7 @@ define([
 
             loadingImage = true;
             dom.byId('imgDetailScreenshot').src = imageBaseUrl+"?anno_id="+id;
-            console.error("image url: "+imageBaseUrl+"?anno_id="+id);
+            console.log("image url: " + imageBaseUrl + "?anno_id=" + id);
 
             var APIConfig = {
                 name: annoUtil.API.anno,
@@ -641,8 +642,10 @@ define([
                     // console.error(JSON.stringify(data.result));
                     var currentAnno = eventsModel.cursor||eventsModel.model[0], returnAnno = data.result, deviceInfo = '';
 
-                    currentAnno.set('circleX', parseInt(returnAnno.simple_x, 10));
-                    currentAnno.set('circleY', parseInt(returnAnno.simple_y, 10));
+                    // currentAnno.set('circleX', parseInt(returnAnno.simple_x, 10));
+                    // currentAnno.set('circleY', parseInt(returnAnno.simple_y, 10));
+                    currentAnno.set('circleX', 0);
+                    currentAnno.set('circleY', 0);
 
                     if (returnAnno.followup_list)
                     {
@@ -656,7 +659,10 @@ define([
 
                     currentAnno.set('comments',new getStateful(returnAnno.followup_list||[]));
 
-                    deviceInfo = (returnAnno.device_model||'&nbsp;')+'&nbsp;'+(returnAnno.os_name||'&nbsp;')+(returnAnno.os_version||'&nbsp;');
+                    device_model = annoUtil.parseDeviceModel(returnAnno.device_model) || ' ';
+                    os_name = returnAnno.os_name || ' ';
+                    os_version = returnAnno.os_version || ' ';
+                    deviceInfo = device_model + ' ' + os_name + os_version;
                     currentAnno.set('deviceInfo', deviceInfo);
 
                     currentAnno.set('vote', returnAnno.is_my_vote);
@@ -713,7 +719,8 @@ define([
 
                     var commentObject = {user_id:author, comment:comment};
                     processFollowupHashTagsOrURLs(commentObject);
-                    currentAnno.comments.splice(0,0,new getStateful(commentObject));
+                    // currentAnno.comments.splice(0, 0, new getStateful(commentObject));
+                    currentAnno.comments.push(new getStateful(commentObject));
                     adjustAnnoCommentSize();
                 },
                 error: function(){
@@ -1103,7 +1110,7 @@ define([
         // search anno items by hash tag
         var searchAnnoByHashTag = window.searchAnnoByHashTag = function(tag)
         {
-            console.log(tag);
+            // console.log(tag);
             goingTagSearch = true;
             app.transitionToView(document.getElementById('modelApp_detail'), {target:'searchAnno',url:'#searchAnno', params:{tag:tag}});
         };

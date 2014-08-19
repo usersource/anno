@@ -27,7 +27,7 @@ define([
         var app = null;
         var listScrollTop = 0;
         var loadingData = false, firstListLoaded = false,
-            offset = 0, limit=30, searchOffset = 0;
+            offset = 0, limit=15, searchOffset = 0;
         var hasMoreData = false,
             hasMoreSearchData = false,
             inSearchMode = false,
@@ -156,11 +156,20 @@ define([
                 eventData.appVersion = annoList[i].app_version;
                 eventData.author = annoList[i].creator?annoList[i].creator.display_name||annoList[i].creator.user_email||annoList[i].creator.user_id:"";
                 eventData.id = annoList[i].id;
-                eventData.circleX = parseInt(annoList[i].simple_x, 10);
-                eventData.circleY = parseInt(annoList[i].simple_y, 10);
-                eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
+                // eventData.circleX = parseInt(annoList[i].simple_x, 10);
+                // eventData.circleY = parseInt(annoList[i].simple_y, 10);
+                eventData.circleX = 0;
+                eventData.circleY = 0;
+                // eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
+                eventData.simple_circle_on_top = false;
                 eventData.created = annoUtil.getTimeAgoString(annoList[i].created);
                 eventData.app_icon_url = annoList[i].app_icon_url||"";
+
+                eventData.readStatusClass = "";
+                if ('anno_read_status' in annoList[i]) {
+                    eventData.read_status = annoList[i].anno_read_status || false;
+                    eventData.readStatusClass = (eventData.read_status == true) ? "read" : "unread";
+                }
 
                 if (eventData.app_icon_url)
                 {
@@ -491,6 +500,12 @@ define([
             }
         };
 
+        var annoRead = window.annoRead = function() {
+            if (domClass.contains(this.domNode, "unread")) {
+                domClass.replace(this.domNode, "read", "unread");
+            }
+        };
+
         // pull to refresh
 
         var showPullToRefreshMessage = function()
@@ -789,7 +804,7 @@ define([
                         navigator.camera.getPicture(onSuccess, OnFail, options);
 
                         function onSuccess(imageURI) {
-                            console.error("imageURI: "+imageURI);
+                            console.log("imageURI: " + imageURI);
                             // only support local image uri, TODO: show a message box?
                             if (imageURI.indexOf("https%3A%2F%2F") >0 || imageURI.indexOf("http%3A%2F%2F") >0)
                             {

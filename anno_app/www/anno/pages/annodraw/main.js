@@ -177,9 +177,10 @@ require([
     connect.connect(dom.byId("btnShare"), 'click', function(e)
     {
         registry.byId('shareDialog').hide();
+
         // enable JS gesture listener, disable native gesture
-        annoUtil.enableJSGesture();
-        annoUtil.disableNativeGesture();
+        // annoUtil.enableJSGesture();
+        // annoUtil.disableNativeGesture();
 
         if (editMode)
         {
@@ -294,9 +295,10 @@ require([
     {
         adjustShareDialogSize();
         registry.byId('shareDialog').show();
+
         // disable JS gesture listener, enable native gesture listener
-        annoUtil.disableJSGesture();
-        annoUtil.enableNativeGesture();
+        // annoUtil.disableJSGesture();
+        // annoUtil.enableNativeGesture();
 
         if (!appNameListFetched&&annoUtil.isAndroid())
         {
@@ -822,11 +824,11 @@ require([
                 var annoItem = {
                     "anno_text":defaultCommentBox.inputElement.value,
                     "image":imageKey,
-                    "simple_x":earPoint.x,
-                    "simple_y":earPoint.y,
-                    "simple_circle_on_top":!defaultCommentBox.earLow,
+                    // "simple_x":earPoint.x,
+                    // "simple_y":earPoint.y,
+                    // "simple_circle_on_top":!defaultCommentBox.earLow,
                     "app_version":appVersion||appInfo.appVersion,
-                    "simple_is_moved":defaultCommentBox.isMoved,
+                    // "simple_is_moved":defaultCommentBox.isMoved,
                     "level":appInfo.level,
                     "app_name":appName||appInfo.appName,
                     "device_model":deviceInfo.model,
@@ -896,11 +898,11 @@ require([
                 var annoItem = {
                     "anno_text":surface.getConcatenatedComment(),
                     "image":imageKey,
-                    "simple_x":0,
-                    "simple_y":0,
-                    "simple_circle_on_top":false,
+                    // "simple_x":0,
+                    // "simple_y":0,
+                    // "simple_circle_on_top":false,
                     "app_version":appVersion=="none"?"":appVersion||appInfo.appVersion,
-                    "simple_is_moved":false,
+                    // "simple_is_moved":false,
                     "level":appInfo.level,
                     "app_name":appName||appInfo.appName,
                     "device_model":deviceInfo.model,
@@ -1281,8 +1283,8 @@ require([
                         var shareDialog = registry.byId('shareDialog');
                         shareDialog.hide();
                         // enable JS gesture listener, disable native gesture
-                        annoUtil.enableJSGesture();
-                        annoUtil.disableNativeGesture();
+                        // annoUtil.enableJSGesture();
+                        // annoUtil.disableNativeGesture();
                     });
 
                 }, 500);
@@ -1296,8 +1298,8 @@ require([
                 setShareDialogUI();
             }
 
-            // enable JS gesture listener, disable native gesture
-            annoUtil.enableJSGesture();
+            // disable JS and native gesture listener
+            annoUtil.disableJSGesture();
             annoUtil.disableNativeGesture();
 
             // set the pick list dialog title
@@ -1323,8 +1325,8 @@ require([
         {
             shareDialog.hide();
             // enable JS gesture listener, disable native gesture
-            annoUtil.enableJSGesture();
-            annoUtil.disableNativeGesture();
+            // annoUtil.enableJSGesture();
+            // annoUtil.disableNativeGesture();
         }
         else
         {

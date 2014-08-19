@@ -53,7 +53,7 @@ NSString *screenshotPath = @"";
  @param editModeValue
         YES if it for editing anno item else NO
  */
-+ (void) handleFromShareImage:(NSString *)imageURI
+- (void) handleFromShareImage:(NSString *)imageURI
                    levelValue:(int)levelValue
               isPracticeValue:(BOOL)isPracticeValue
                 editModeValue:(BOOL)editModeValue {
@@ -98,7 +98,7 @@ NSString *screenshotPath = @"";
  Get screenshot path associated with that viewcontroller
  @return path of screenshot
  */
-+ (NSString*) getScreenshotPath {
+- (NSString*) getScreenshotPath {
     return screenshotPath;
 }
 
@@ -106,7 +106,7 @@ NSString *screenshotPath = @"";
  Get level associated with that viewcontroller
  @return value of level
  */
-+ (int) getLevel {
+- (int) getLevel {
     return level;
 }
 
@@ -114,7 +114,7 @@ NSString *screenshotPath = @"";
  Get editMode value associated with that viewcontroller
  @return value of editMode
  */
-+ (BOOL) isEditMode {
+- (BOOL) isEditMode {
     return editMode;
 }
 
@@ -123,11 +123,11 @@ NSString *screenshotPath = @"";
  @param levelValue
         value for level
  */
-+ (void) setLevel:(int)levelValue {
+- (void) setLevel:(int)levelValue {
     level = levelValue;
 }
 
-+ (void) setEditMode:(BOOL)editModeValue {
+- (void) setEditMode:(BOOL)editModeValue {
     editMode = editModeValue;
 }
 

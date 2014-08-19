@@ -108,23 +108,25 @@
                     <div id="annoCommentsSet" class="fieldset"
                          data-dojo-type="dojox/mvc/Repeat"
                          data-dojo-props="exprchar: '*', children: at('rel:', 'comments')">
-                        <div>
-                            <table width="100%" cellpadding="0" cellspacing="0">
-                                <tr>
-                                    <td height="32" width="52" align="center">
-                                        <span class="icon-user personImg"></span>
-                                    </td>
-                                    <td align="left">
-                                        <span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:*{this.index}', 'user_id')"></span><span class="authorDetail">&nbsp;commented</span>
-                                    </td>
-                                    <td align="right" style="padding-right: 20px">
-                                        <span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:*{this.index}', 'timestamp')"></span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="commentDetail">
-                            <div data-dojo-type="dojox/mvc/Output" style="width: 100%" data-dojo-props="value: at('rel:*{this.index}', 'modifiedComment')"></div>
+                        <div style="padding: 4px;">
+	                        <div>
+	                            <table width="100%" cellpadding="0" cellspacing="0">
+	                                <tr>
+	                                    <td height="24" width="32" align="center">
+	                                        <span class="icon-user personImg"></span>
+	                                    </td>
+	                                    <td align="left">
+	                                        <span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:*{this.index}', 'user_id')" style="padding-left: 4px;"></span>
+	                                    </td>
+	                                    <td align="right" style="padding-right: 4px">
+	                                        <span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:*{this.index}', 'timestamp')"></span>
+	                                    </td>
+	                                </tr>
+	                            </table>
+	                        </div>
+	                        <div class="commentDetail">
+	                            <div data-dojo-type="dojox/mvc/Output" style="width: 100%" data-dojo-props="value: at('rel:*{this.index}', 'modifiedComment')"></div>
+	                        </div>
                         </div>
                     </div>
 

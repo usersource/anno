@@ -100,12 +100,20 @@ define([
                         eventData.app = annoList[i].app_name;
                         eventData.author = annoList[i].creator ? annoList[i].creator.display_name || annoList[i].creator.user_email || annoList[i].creator.user_id : "";
                         eventData.id = annoList[i].id;
-                        eventData.circleX = parseInt(annoList[i].simple_x, 10);
-                        eventData.circleY = parseInt(annoList[i].simple_y, 10);
-                        eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
+                        // eventData.circleX = parseInt(annoList[i].simple_x, 10);
+                        // eventData.circleY = parseInt(annoList[i].simple_y, 10);
+                        eventData.circleX = 0;
+                        eventData.circleY = 0;
+                        // eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
+                        eventData.simple_circle_on_top = false;
                         eventData.created = annoUtil.getTimeAgoString(annoList[i].created);
-
                         eventData.app_icon_url = annoList[i].app_icon_url||"";
+
+                        eventData.readStatusClass = "";
+                        if ('anno_read_status' in annoList[i]) {
+                            eventData.read_status = annoList[i].anno_read_status || false;
+                            eventData.readStatusClass = (eventData.read_status == true) ? "read" : "unread";
+                        }
 
                         if (eventData.app_icon_url)
                         {

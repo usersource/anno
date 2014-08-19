@@ -72,19 +72,19 @@
         },
         timeString:{
             prefixAgo: "",
-            suffixAgo: "ago",
-            seconds: "%d seconds",
-            minute: "a minute",
-            minutes: "%d minutes",
-            hour: "an hour",
-            hours: "%d hours",
-            day: "a day",
-            days: "%d days",
-            month: "a month",
-            months: "%d months",
-            year: "a year",
-            years: "%d years",
-            wordSeparator: " ",
+            suffixAgo: "",
+            seconds: "%ds",
+            minute: "1m",
+            minutes: "%dm",
+            hour: "1h",
+            hours: "%dh",
+            day: "1d",
+            days: "%dd",
+            month: "1mo",
+            months: "%dmo",
+            year: "1y",
+            years: "%dy",
+            wordSeparator: "",
             numbers: []
         },
         localStorageKeys:{
@@ -95,6 +95,17 @@
             deviceId: "annoDeviceId"
         },
         userCommunities: null, // all communities for current user
+        deviceList: {
+            "iPhone1,1" : "iPhone",
+            "iPhone1,2" : "iPhone3G",
+            "iPhone2,1" : "iPhone3GS",
+            "iPhone3,1" : "iPhone4",
+            "iPhone4,1" : "iPhone4S",
+            "iPhone5,1" : "iPhone5GSM",
+            "iPhone5,2" : "iPhone5CDMA",
+            "iPhone5,3" : "iPhone5C",
+            "iPhone6,1" : "iPhone5S"
+        },
         hasConnection: function()
         {
             var networkState = navigator.connection.type;
@@ -750,7 +761,7 @@
         },
         replaceURLWithLink: function(s, linkScript)
         {
-            s = s.replace(/(^|\W)\b((www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, "$1http://$2");
+            s = s.replace(/(^|\W)\b((www\d{0,3}[.])(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, "$1http://$2");
             return s.replace(/(^|\W)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, linkScript);
         },
         loadUserCommunities: function(includeInvite, callback, keepSpinnerShown)
@@ -1085,6 +1096,9 @@
             } else {
                 domStyle.set(tagDiv, "display", "none");
             }
+        },
+        parseDeviceModel: function(deviceModel) {
+            return (( deviceModel in this.deviceList) ? this.deviceList[deviceModel] : deviceModel);
         }
     };
 
