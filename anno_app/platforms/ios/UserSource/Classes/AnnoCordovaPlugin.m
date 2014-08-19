@@ -17,7 +17,7 @@ AnnoUtils *annoUtils;
 ScreenshotGestureListener *screenshotGestureListener;
 AppDelegate *appDelegate;
 
-UIViewController *currentViewController;
+NSMutableArray *viewControllerList;
 
 CommunityViewController *communityViewController;
 AnnoDrawViewController *annoDrawViewController;
@@ -35,12 +35,15 @@ OptionFeedbackViewController *optionFeedbackViewController;
         communityViewController = [[CommunityViewController alloc] init];
     }
 
-    currentViewController = appDelegate.window.rootViewController;
+    viewControllerList = [NSMutableArray arrayWithObjects:appDelegate.window.rootViewController, nil];
 }
 
 - (void) showCommunityPage {
+    CDVViewController *currentViewController = [viewControllerList objectAtIndex:0];
+
     if (currentViewController != communityViewController) {
         [currentViewController presentViewController:communityViewController animated:YES completion:nil];
+        [viewControllerList insertObject:communityViewController atIndex:0];
     }
 }
 
@@ -48,27 +51,28 @@ OptionFeedbackViewController *optionFeedbackViewController;
     if (introViewController == nil) {
         introViewController = [[IntroViewController alloc] init];
         [appDelegate.window addSubview:introViewController.view];
-        currentViewController = introViewController;
     } else {
         [appDelegate.viewController presentViewController:introViewController animated:YES completion:nil];
     }
+
+    [viewControllerList insertObject:introViewController atIndex:0];
 }
 
 - (void) showOptionFeedback {
     if (optionFeedbackViewController == nil) {
         optionFeedbackViewController = [[OptionFeedbackViewController alloc] init];
         [appDelegate.window addSubview:optionFeedbackViewController.view];
-        currentViewController = optionFeedbackViewController;
     } else {
         [appDelegate.viewController presentViewController:optionFeedbackViewController animated:YES completion:nil];
     }
+
+    [viewControllerList insertObject:optionFeedbackViewController atIndex:0];
 }
 
 + (void) showAnnoDraw:(NSString*)imageURI levelValue:(int)levelValue editModeValue:(BOOL)editModeValue {
     if (annoDrawViewController == nil) {
         annoDrawViewController = [[AnnoDrawViewController alloc] init];
         [appDelegate.window addSubview:annoDrawViewController.view];
-        currentViewController = annoDrawViewController;
         [annoDrawViewController handleFromShareImage:imageURI
                                           levelValue:levelValue
                                      isPracticeValue:false
@@ -76,9 +80,13 @@ OptionFeedbackViewController *optionFeedbackViewController;
     } else {
         [appDelegate.viewController presentViewController:annoDrawViewController animated:YES completion:nil];
     }
+
+    [viewControllerList insertObject:annoDrawViewController atIndex:0];
 }
 
 - (void) exitActivity {
+    CDVViewController *currentViewController = [viewControllerList objectAtIndex:0];
+
     if (currentViewController == communityViewController) {
         [communityViewController.view removeFromSuperview];
         communityViewController = nil;
@@ -93,7 +101,7 @@ OptionFeedbackViewController *optionFeedbackViewController;
         annoDrawViewController = nil;
     }
 
-    currentViewController = appDelegate.window.rootViewController;
+    [viewControllerList removeObjectAtIndex:0];
 }
 
 - (void) exit_current_activity:(CDVInvokedUrlCommand*)command {
@@ -325,7 +333,7 @@ OptionFeedbackViewController *optionFeedbackViewController;
 }
 
 - (void) trigger_create_anno:(CDVInvokedUrlCommand*)command {
-    [annoUtils triggerCreateAnno:currentViewController];
+    [annoUtils triggerCreateAnno:[viewControllerList objectAtIndex:0]];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
