@@ -216,13 +216,13 @@
     int level = 0;
 
     if ([viewController isKindOfClass:[CommunityViewController class]]) {
-        level = [CommunityViewController getLevel];
+        level = [(CommunityViewController*)viewController getLevel];
     } else if ([viewController isKindOfClass:[OptionFeedbackViewController class]]) {
-        level = [OptionFeedbackViewController getLevel];
+        level = [(OptionFeedbackViewController*)viewController getLevel];
     } else if ([viewController isKindOfClass:[IntroViewController class]]) {
-        level = [IntroViewController getLevel];
+        level = [(IntroViewController*)viewController getLevel];
     } else if ([viewController isKindOfClass:[AnnoDrawViewController class]]) {
-        level = [AnnoDrawViewController getLevel];
+        level = [(AnnoDrawViewController*)viewController getLevel];
     }
 
     if (level >= 2) {

@@ -42,7 +42,7 @@ int level;
  Get level associated with that viewcontroller
  @return value of level
  */
-+ (int) getLevel {
+- (int) getLevel {
     return level;
 }
 
@@ -51,7 +51,7 @@ int level;
  @param levelValue
  value for level
  */
-+ (void) setLevel:(int)levelValue {
+- (void) setLevel:(int)levelValue {
     level = levelValue;
 }
 

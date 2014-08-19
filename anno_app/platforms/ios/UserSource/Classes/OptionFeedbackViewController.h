@@ -11,8 +11,8 @@
 
 @interface OptionFeedbackViewController : CDVViewController
 
-+ (int) getLevel;
-+ (void) setLevel:(int)levelValue;
+- (int) getLevel;
+- (void) setLevel:(int)levelValue;
 
 
 @end

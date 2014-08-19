@@ -45,11 +45,7 @@
 
     int cacheSizeMemory = 8 * 1024 * 1024; // 8MB
     int cacheSizeDisk = 32 * 1024 * 1024; // 32MB
-#if __has_feature(objc_arc)
-        NSURLCache* sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
-#else
-        NSURLCache* sharedCache = [[[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"] autorelease];
-#endif
+    NSURLCache* sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
     [NSURLCache setSharedURLCache:sharedCache];
 
     self = [super init];
@@ -64,18 +60,10 @@
 - (BOOL) application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions {
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
 
-    #if __has_feature(objc_arc)
-        self.window = [[UIWindow alloc] initWithFrame:screenBounds];
-    #else
-        self.window = [[[UIWindow alloc] initWithFrame:screenBounds] autorelease];
-    #endif
+    self.window = [[UIWindow alloc] initWithFrame:screenBounds];
     self.window.autoresizesSubviews = YES;
-    
-    #if __has_feature(objc_arc)
-        self.communityViewController = [[CommunityViewController alloc] init];
-    #else
-        self.communityViewController = [[[CommunityViewController alloc] init] autorelease];
-    #endif
+
+    self.communityViewController = [[CommunityViewController alloc] init];
 
     // Set your app's start page by setting the <content src='foo.html' /> tag in config.xml.
     // If necessary, uncomment the line below to override it.
