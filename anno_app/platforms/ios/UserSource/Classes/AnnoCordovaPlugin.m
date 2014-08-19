@@ -18,7 +18,11 @@ ScreenshotGestureListener *screenshotGestureListener;
 AppDelegate *appDelegate;
 
 UIViewController *currentViewController;
-CDVViewController *communityViewController, *annoDrawViewController, *introViewController, *optionFeedbackViewController;
+
+CommunityViewController *communityViewController;
+AnnoDrawViewController *annoDrawViewController;
+IntroViewController *introViewController;
+OptionFeedbackViewController *optionFeedbackViewController;
 
 - (void) pluginInitialize {
     appDelegate = [[UIApplication sharedApplication] delegate];
@@ -28,11 +32,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
     if ([annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]]) {
         communityViewController = [appDelegate valueForKey:@"communityViewController"];
     } else {
-        #if __has_feature(objc_arc)
-            communityViewController = [[CommunityViewController alloc] init];
-        #else
-            communityViewController = [[[CommunityViewController alloc] init] autorelease];
-        #endif
+        communityViewController = [[CommunityViewController alloc] init];
     }
 
     currentViewController = appDelegate.window.rootViewController;
@@ -46,12 +46,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
 
 - (void) ShowIntroPage {
     if (introViewController == nil) {
-        #if __has_feature(objc_arc)
-            introViewController = [[IntroViewController alloc] init];
-        #else
-            introViewController = [[[IntroViewController alloc] init] autorelease];
-        #endif
-        
+        introViewController = [[IntroViewController alloc] init];
         [appDelegate.window addSubview:introViewController.view];
         currentViewController = introViewController;
     } else {
@@ -61,12 +56,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
 
 - (void) showOptionFeedback {
     if (optionFeedbackViewController == nil) {
-        #if __has_feature(objc_arc)
-            optionFeedbackViewController = [[OptionFeedbackViewController alloc] init];
-        #else
-            optionFeedbackViewController = [[[OptionFeedbackViewController alloc] init] autorelease];
-        #endif
-        
+        optionFeedbackViewController = [[OptionFeedbackViewController alloc] init];
         [appDelegate.window addSubview:optionFeedbackViewController.view];
         currentViewController = optionFeedbackViewController;
     } else {
@@ -76,15 +66,10 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
 
 + (void) showAnnoDraw:(NSString*)imageURI levelValue:(int)levelValue editModeValue:(BOOL)editModeValue {
     if (annoDrawViewController == nil) {
-        #if __has_feature(objc_arc)
-            annoDrawViewController = [[AnnoDrawViewController alloc] init];
-        #else
-            annoDrawViewController = [[[AnnoDrawViewController alloc] init] autorelease];
-        #endif
-        
+        annoDrawViewController = [[AnnoDrawViewController alloc] init];
         [appDelegate.window addSubview:annoDrawViewController.view];
         currentViewController = annoDrawViewController;
-        [AnnoDrawViewController handleFromShareImage:imageURI
+        [annoDrawViewController handleFromShareImage:imageURI
                                           levelValue:levelValue
                                      isPracticeValue:false
                                        editModeValue:editModeValue];
@@ -216,14 +201,14 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
 }
 
 - (void) get_screenshot_path:(CDVInvokedUrlCommand*)command {
-    NSString *level = [NSString stringWithFormat:@"%d", [AnnoDrawViewController getLevel]];
+    NSString *level = [NSString stringWithFormat:@"%d", [annoDrawViewController getLevel]];
     NSString *isAnno = [annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] ? @"true" : @"false";
 
     NSDictionary *jsonData = @{
-        @"screenshotPath" : [AnnoDrawViewController getScreenshotPath],
+        @"screenshotPath" : [annoDrawViewController getScreenshotPath],
         @"level" : level,
         @"isAnno" : isAnno,
-        @"editMode" : [NSNumber numberWithBool:[AnnoDrawViewController isEditMode]]
+        @"editMode" : [NSNumber numberWithBool:[annoDrawViewController isEditMode]]
     };
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
@@ -274,7 +259,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
     if ([base64Str length] > 0) {
         imageData = [[NSData alloc] initWithBase64Encoding:base64Str];
     } else {
-        imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[AnnoDrawViewController getScreenshotPath]]];
+        imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[annoDrawViewController getScreenshotPath]]];
     }
 
     UIImage *image = [UIImage imageWithData:imageData];
@@ -290,7 +275,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
 - (NSDictionary*) getAppInfo {
     NSString *source, *appName;
     
-    if ([annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] && ([AnnoDrawViewController getLevel] != 2)) {
+    if ([annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] && ([annoDrawViewController getLevel] != 2)) {
         source = annoUtils.ANNO_SOURCE_STANDALONE;
         appName = annoUtils.UNKNOWN_APP_NAME;
     } else {
@@ -304,7 +289,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
         @"source" : source,
         @"appName" : appName,
         @"appVersion" : appVersion,
-        @"level" : [NSNumber numberWithInt:[AnnoDrawViewController getLevel]]
+        @"level" : [NSNumber numberWithInt:[annoDrawViewController getLevel]]
     };
     
     return result;

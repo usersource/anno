@@ -11,8 +11,8 @@
 
 @interface CommunityViewController : CDVViewController
 
-+ (int) getLevel;
-+ (void) setLevel:(int)levelValue;
+- (int) getLevel;
+- (void) setLevel:(int)levelValue;
 
 @end
 
