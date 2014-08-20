@@ -1040,7 +1040,10 @@
         showSuggestedTags: function(event, tagDiv, inputDiv) {
             var keyCode = event.keyCode;
 
-            if (event.keyIdentifier == "U+0023") {
+            // for detecting '#' on different platforms:
+            // iOS - event.keyIdentifier should be "U+0023"
+            // Andriod - event.keyCode should be 51 and event.shiftKey should be true
+            if ((event.keyIdentifier == "U+0023") || (keyCode == 51 && event.shiftKey == true)) {
                 suggestTags = true;
                 countToSuggestTags = 0;
                 tagStringArray = [];
