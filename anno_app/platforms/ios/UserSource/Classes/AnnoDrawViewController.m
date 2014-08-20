@@ -10,9 +10,7 @@
 
 @implementation AnnoDrawViewController
 
-bool isPractice, editMode;
-int level;
-NSString *screenshotPath = @"";
+@synthesize isPractice, editMode, level, screenshotPath;
 
 - (id)initWithNibName:(NSString*)nibNameOrNil bundle:(NSBundle*)nibBundleOrNil
 {
@@ -20,6 +18,7 @@ NSString *screenshotPath = @"";
     if (self) {
         self.startPage = @"anno/pages/annodraw/main.html";
         level = 0;
+        screenshotPath = @"";
         // Uncomment to override the CDVCommandDelegateImpl used
         // _commandDelegate = [[AnnoDrawCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
@@ -34,6 +33,7 @@ NSString *screenshotPath = @"";
     if (self) {
         self.startPage = @"anno/pages/annodraw/main.html";
         level = 0;
+        screenshotPath = @"";
         // Uncomment to override the CDVCommandDelegateImpl used
         // _commandDelegate = [[AnnoDrawCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used

@@ -9,7 +9,17 @@
 #import <Cordova/CDVCommandDelegateImpl.h>
 #import <Cordova/CDVCommandQueue.h>
 
-@interface AnnoDrawViewController : CDVViewController
+@interface AnnoDrawViewController : CDVViewController {
+    BOOL isPractice;
+    BOOL editMode;
+    int level;
+    NSString *screenshotPath;
+}
+
+@property (nonatomic) BOOL isPractice;
+@property (nonatomic) BOOL editMode;
+@property (nonatomic) int level;
+@property (nonatomic) NSString *screenshotPath;
 
 - (void) handleFromShareImage:(NSString *)imageURI
                    levelValue:(int)levelValue
