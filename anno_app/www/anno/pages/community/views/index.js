@@ -765,19 +765,17 @@ define([
                         annoUtil.showLoadingIndicator();
                         OAuthUtil.getAccessToken(function(){
                             loadListData();
-
-                            annoUtil.loadUserCommunities(true, function(data){
-                                var inviteList = data.inviteList;
-
-                                for (var i=0;i<inviteList.length;i++)
-                                {
-                                    acceptInvitation(inviteList[i]);
-                                }
-                            }, true);
-                            initPushService();
-                            window.setTimeout(function(){
+                            window.setTimeout(function() {
+                                annoUtil.loadUserCommunities(true, function(data) {
+                                    var inviteList = data.inviteList;
+                                    for (var i = 0; i < inviteList.length; i++) {
+                                        acceptInvitation(inviteList[i]);
+                                    }
+                                }, true);
+                                initPushService();
                                 AnnoDataHandler.startBackgroundSync();
-                            }, 5*1000);
+                                annoUtil.getTopTags(100);
+                            }, 5 * 1000);
                         });
                     });
 
