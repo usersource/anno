@@ -796,6 +796,32 @@
 	margin-left: 9px;
 }
 
+#detailSuggestedTags {
+	position: absolute;
+	width: 93.085%;
+	width: calc(100% - 18px);
+	width: -webkit-calc(100% - 18px);
+	max-height: 92px;
+	font-size: 16px;
+	background: white;
+	overflow-y: scroll;
+	box-shadow: 0 0 2px 2px black;
+	-webkit-box-shadow: 0 0 2px 2px black;
+	/*bottom: 101px;*/
+	margin-right: 6px;
+	z-index: 10000;
+}
+
+.tag {
+	padding: 5px 4px 5px 10px;
+	border-bottom: 1px solid black;
+	color: blue;
+}
+
+.tag:last-child {
+	border: 0;
+}
+
 .mblListItem {
 	font-weight: normal;
 }
