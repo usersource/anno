@@ -1227,6 +1227,7 @@ define([
                     commentTextBoxFocused = true;
                     window.setTimeout(function(){
                         dom.byId('addCommentTextBox').rows = "4";
+                        domStyle.set('detailSuggestedTags', 'bottom', (dom.byId("addCommentTextBox").getBoundingClientRect().height + 5) + "px");
                     }, 500);
                 }));
 
@@ -1262,7 +1263,6 @@ define([
                     }
 
                     annoUtil.showSuggestedTags(event, "detailSuggestedTags", "addCommentTextBox");
-
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), "touchstart", function (e)

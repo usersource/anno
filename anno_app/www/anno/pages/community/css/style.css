@@ -798,7 +798,7 @@
 
 #detailSuggestedTags {
 	position: absolute;
-	width: 95.085%;
+	width: 93.085%;
 	width: calc(100% - 18px);
 	width: -webkit-calc(100% - 18px);
 	max-height: 92px;
@@ -807,7 +807,7 @@
 	overflow-y: scroll;
 	box-shadow: 0 0 2px 2px black;
 	-webkit-box-shadow: 0 0 2px 2px black;
-	bottom: 101px;
+	/*bottom: 101px;*/
 	margin-right: 6px;
 	z-index: 10000;
 }
