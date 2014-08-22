@@ -161,6 +161,11 @@ define([
                         dojo.stopEvent(e);
                         this._closeKeyboard();
                     }
+
+                    if (this.onCommentBoxKeyDown)
+                    {
+                        this.onCommentBoxKeyDown(this, e);
+                    }
                 }));
 
                 this._connects.push(connect.connect(this.inputElement, "focus", this, function (e)

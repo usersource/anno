@@ -1234,6 +1234,7 @@ define([
                     commentTextBoxFocused = true;
                     window.setTimeout(function(){
                         dom.byId('addCommentTextBox').rows = "4";
+                        domStyle.set('detailSuggestedTags', 'bottom', (dom.byId("addCommentTextBox").getBoundingClientRect().height + 5) + "px");
                     }, 500);
                 }));
 
@@ -1242,6 +1243,7 @@ define([
                     commentTextBoxFocused = false;
                     window.setTimeout(function(){
                         dom.byId('addCommentTextBox').rows = "1";
+                        domStyle.set('detailSuggestedTags', 'display', 'none');
                     }, 500);
                 }));
 
@@ -1267,6 +1269,7 @@ define([
                         dom.byId('hiddenBtn').focus();
                     }
 
+                    annoUtil.showSuggestedTags(event, "detailSuggestedTags", "addCommentTextBox");
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), "touchstart", function (e)
