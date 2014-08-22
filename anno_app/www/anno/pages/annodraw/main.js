@@ -21,7 +21,7 @@ require([
     var viewPoint,
         defaultShapeWidth = 160,
         defaultShapeHeight = 80,
-        shareDialogGap = 80,
+        shareDialogGap = 40,
         borderWidth = 4;
 
     var sdTitleHeight = 60, sdTabBarHeight = 30,
@@ -418,7 +418,7 @@ require([
                             // highlight 'something else' tab on iOS
                             dom.byId('barElseApps').click();
                             domStyle.set("tabContainer", "display", "none");
-                            domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-sdBottom-shareDialogGap)+'px');
+                            // domStyle.set('sdAppList', 'height', (viewPoint.h - sdTitleHeight - sdBottom - shareDialogGap) + 'px');
                         }
                     }
                 });
@@ -426,7 +426,7 @@ require([
         }
 
         var tabBox = domGeom.getMarginBox('tabContainer');
-        domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-tabBox.h-sdBottom-shareDialogGap)+'px');
+        // domStyle.set('sdAppList', 'height', (viewPoint.h - sdTitleHeight - tabBox.h - sdBottom - shareDialogGap) + 'px');
     };
 
     var fillAppNameList = function(appList, appContentId, append)
@@ -1252,9 +1252,9 @@ require([
                         // left: borderWidth+"px"
                     });
 
-                    domStyle.set('sdTitle', 'height', sdTitleHeight+'px');
-                    domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-sdTabBarHeight-sdBottom-shareDialogGap)+'px');
-                    domStyle.set('sdBottom', 'height', sdBottom+'px');
+                    // domStyle.set('sdTitle', 'height', sdTitleHeight + 'px');
+                    // domStyle.set('sdAppList', 'height', (viewPoint.h - sdTitleHeight - sdTabBarHeight - sdBottom - shareDialogGap) + 'px');
+                    // domStyle.set('sdBottom', 'height', sdBottom + 'px');
 
                     // reposition the menus dialog
                     var menusDialog = registry.byId('menusDialog');
