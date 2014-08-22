@@ -269,13 +269,16 @@ body{
 
 .appSeparatorItem
 {
-    height: 34px;
+    /*height: 34px;*/
     border-bottom: 1px outset gray;
-    margin-top: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
+    /*margin-top: 10px;*/
+    /*margin-left: 10px;*/
+    /*margin-right: 10px;*/
     font-style: italic;
     color: gray;
+	padding: 8px 0;
+	margin: 0 10px;
+	font-weight: bold;
 }
 
 .appNameItem-active
@@ -344,14 +347,14 @@ body{
 {
     margin-left: 6px;
     margin-right: 6px;
-    padding-bottom: 4px;
+    /*padding-bottom: 4px;*/
 }
 
 .tabContainer td
 {
-    border: 2px solid gray;
-    padding-bottom: 4px;
-    padding-top: 2px;
+    border: 1px solid gray;
+    /*padding-bottom: 4px;*/
+    /*padding-top: 2px;*/
     color: gray;
 }
 

@@ -444,7 +444,7 @@ require([
     {
         var content = dom.byId("sdRecentAppsListContent").innerHTML;
 
-        content = content + '<div class="appSeparatorItem"><div class="appNameValue">-- '+label+' --</div></div>';
+        content = content + '<div class="appSeparatorItem"><div class="appNameValue">' + label.toUpperCase() + '</div></div>';
         dom.byId("sdRecentAppsListContent").innerHTML = content;
     };
 
