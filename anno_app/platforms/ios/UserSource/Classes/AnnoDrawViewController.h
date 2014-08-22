@@ -24,7 +24,8 @@
 - (void) handleFromShareImage:(NSString *)imageURI
                    levelValue:(int)levelValue
               isPracticeValue:(BOOL)isPracticeValue
-                editModeValue:(BOOL)editModeValue;
+                editModeValue:(BOOL)editModeValue
+                landscapeMode:(BOOL)landscapeMode;
 - (NSString*) getScreenshotPath;
 - (int) getLevel;
 - (BOOL) isEditMode;

@@ -65,10 +65,10 @@ OptionFeedbackViewController *optionFeedbackViewController;
     [viewControllerList addObject:optionFeedbackViewController];
 }
 
-+ (void) showAnnoDraw:(NSString*)imageURI levelValue:(int)levelValue editModeValue:(BOOL)editModeValue {
++ (void) showAnnoDraw:(NSString*)imageURI levelValue:(int)levelValue editModeValue:(BOOL)editModeValue landscapeMode:(BOOL)landscapeMode {
     CDVViewController *currentViewController = [viewControllerList lastObject];
     AnnoDrawViewController *annoDrawViewController = [[AnnoDrawViewController alloc] init];
-    [currentViewController presentViewController:annoDrawViewController animated:YES completion:nil];
+    [currentViewController presentViewController:annoDrawViewController animated:NO completion:nil];
 
     // Adding back lastObject of viewControllerList beacause it gets deleted after calling
     // presentViewController on lastObject of viewControllerList with annoDrawViewController
@@ -82,7 +82,8 @@ OptionFeedbackViewController *optionFeedbackViewController;
     [annoDrawViewController handleFromShareImage:imageURI
                                       levelValue:levelValue
                                  isPracticeValue:false
-                                   editModeValue:editModeValue];
+                                   editModeValue:editModeValue
+                                   landscapeMode:landscapeMode];
 }
 
 - (void) exitActivity {
@@ -189,7 +190,7 @@ OptionFeedbackViewController *optionFeedbackViewController;
     NSString *imageURI = [command.arguments objectAtIndex:0];
 
     @try {
-        [AnnoCordovaPlugin showAnnoDraw:imageURI levelValue:0 editModeValue:FALSE];
+        [AnnoCordovaPlugin showAnnoDraw:imageURI levelValue:0 editModeValue:FALSE landscapeMode:NO];
     }
     @catch (NSException *exception) {
         NSLog(@"Exception in start_anno_draw: %@", exception);
@@ -201,7 +202,8 @@ OptionFeedbackViewController *optionFeedbackViewController;
 
 - (void) start_edit_anno_draw:(CDVInvokedUrlCommand*)command {
     @try {
-        [AnnoCordovaPlugin showAnnoDraw:@"" levelValue:0 editModeValue:TRUE];
+        BOOL landscape_mode = [[command.arguments objectAtIndex:0] boolValue];
+        [AnnoCordovaPlugin showAnnoDraw:@"" levelValue:0 editModeValue:TRUE landscapeMode:landscape_mode];
     }
     @catch (NSException *exception) {
         NSLog(@"Exception in start_anno_draw: %@", exception);
