@@ -11,6 +11,7 @@
 @implementation AnnoDrawViewController
 
 @synthesize isPractice, editMode, level, screenshotPath;
+bool landscape_mode = NO;
 
 - (id)initWithNibName:(NSString*)nibNameOrNil bundle:(NSBundle*)nibBundleOrNil
 {
@@ -42,6 +43,14 @@
     return self;
 }
 
+- (void) makeLandscape {
+    landscape_mode = YES;
+    [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationLandscapeRight animated:YES];
+    UIViewController *c = [[UIViewController alloc] init];
+    [self presentViewController:c animated:NO completion:nil];
+    [self dismissViewControllerAnimated:NO completion:nil];
+}
+
 /**
  Saves URL of image which is to be shared via UserSource
  @param imageURI
@@ -56,10 +65,14 @@
 - (void) handleFromShareImage:(NSString *)imageURI
                    levelValue:(int)levelValue
               isPracticeValue:(BOOL)isPracticeValue
-                editModeValue:(BOOL)editModeValue {
+                editModeValue:(BOOL)editModeValue
+                landscapeMode:(BOOL)landscapeMode {
 
     if (editModeValue) {
         editMode = editModeValue;
+        if (landscapeMode) {
+            [self makeLandscape];
+        }
         return;
     }
 
@@ -77,14 +90,16 @@
         @try {
             NSString *orientation = [annoUtils isLandscapeOrPortrait:drawableImage];
             if ([annoUtils.IMAGE_ORIENTATION_LANDSCAPE isEqualToString:orientation]) {
-                // rotating image by 90 degrees if image is landscape
+                [self makeLandscape];
+                /* // rotating image by 90 degrees if image is landscape
                 drawableImage = [annoUtils rotateImage:drawableImage rotatedByDegrees:90.0];
 
                 // saving rotated image in 'tmp' directory
                 screenshotPath = [annoUtils saveImageToTemp:drawableImage];
             } else {
-                screenshotPath = imageURI;
+                screenshotPath = imageURI;*/
             }
+            screenshotPath = imageURI;
         }
         @catch (NSException *exception) {
             if (annoUtils.debugEnabled) {
@@ -173,6 +188,18 @@
 {
     // Return YES for supported orientations
     return [super shouldAutorotateToInterfaceOrientation:interfaceOrientation];
+}
+
+- (NSUInteger) supportedInterfaceOrientations {
+    if (landscape_mode) {
+        return UIInterfaceOrientationMaskLandscape;
+    } else {
+        return UIInterfaceOrientationMaskPortrait;
+    }
+}
+
+- (BOOL)shouldAutorotate {
+    return YES;
 }
 
 /* Comment out the block below to over-ride */

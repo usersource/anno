@@ -21,11 +21,11 @@ require([
     var viewPoint,
         defaultShapeWidth = 160,
         defaultShapeHeight = 80,
-        shareDialogGap = 80,
-        borderWidth;
+        shareDialogGap = 40,
+        borderWidth = 4;
 
     var sdTitleHeight = 60, sdTabBarHeight = 30,
-        sdBottom = 50, barHeight = 50, totalSpace = 0;
+        sdBottom = 50, barHeight = dom.byId('bottomBarContainer').clientHeight, totalSpace = 0;
 
     var lastShapePos;
     var lastBlackRectanglePos;
@@ -418,7 +418,7 @@ require([
                             // highlight 'something else' tab on iOS
                             dom.byId('barElseApps').click();
                             domStyle.set("tabContainer", "display", "none");
-                            domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-sdBottom-shareDialogGap)+'px');
+                            // domStyle.set('sdAppList', 'height', (viewPoint.h - sdTitleHeight - sdBottom - shareDialogGap) + 'px');
                         }
                     }
                 });
@@ -426,7 +426,7 @@ require([
         }
 
         var tabBox = domGeom.getMarginBox('tabContainer');
-        domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-tabBox.h-sdBottom-shareDialogGap)+'px');
+        // domStyle.set('sdAppList', 'height', (viewPoint.h - sdTitleHeight - tabBox.h - sdBottom - shareDialogGap) + 'px');
     };
 
     var fillAppNameList = function(appList, appContentId, append)
@@ -444,7 +444,7 @@ require([
     {
         var content = dom.byId("sdRecentAppsListContent").innerHTML;
 
-        content = content + '<div class="appSeparatorItem"><div class="appNameValue">-- '+label+' --</div></div>';
+        content = content + '<div class="appSeparatorItem"><div class="appNameValue">' + label.toUpperCase() + '</div></div>';
         dom.byId("sdRecentAppsListContent").innerHTML = content;
     };
 
@@ -1192,8 +1192,9 @@ require([
                 window.setTimeout(function(){
 
                     viewPoint = win.getBox();
-                    totalSpace = Math.floor(viewPoint.w*0.02);
-                    borderWidth = Math.round(totalSpace/2);
+                    totalSpace = 0;
+                    // totalSpace = Math.floor(viewPoint.w * 0.02);
+                    // borderWidth = Math.round(totalSpace / 2);
 
                     lastShapePos = {
                         x1:Math.round((viewPoint.w-defaultShapeWidth)/2),
@@ -1211,15 +1212,16 @@ require([
 
                     surface = window.surface = new Surface({
                         container: dom.byId("gfxCanvasContainer"),
-                        width:viewPoint.w-totalSpace*2,
+                        // width:viewPoint.w-totalSpace*2,
+                        width:viewPoint.w-borderWidth*2,
                         height:viewPoint.h-borderWidth*2-barHeight,
                         borderWidth:borderWidth,
                         drawMode:true
                     });
 
                     domStyle.set(surface.container, {
-                        'borderWidth': borderWidth+'px',
-                        'left': borderWidth+"px"
+                        'borderWidth': borderWidth+'px'
+                        // 'left': borderWidth+"px"
                     });
 
                     connect.connect(surface, "onShapeRemoved", function()
@@ -1243,15 +1245,16 @@ require([
 
                     // set screenshot container size
                     domStyle.set('screenshotContainer', {
-                        width: (viewPoint.w-totalSpace*2)+'px',
+                        // width: (viewPoint.w-totalSpace*2)+'px',
+                        width: (viewPoint.w-borderWidth*2)+'px',
                         height: (viewPoint.h-borderWidth*2-barHeight)+'px',
-                        borderWidth:borderWidth+"px",
-                        left: borderWidth+"px"
+                        borderWidth:borderWidth+"px"
+                        // left: borderWidth+"px"
                     });
 
-                    domStyle.set('sdTitle', 'height', sdTitleHeight+'px');
-                    domStyle.set('sdAppList', 'height', (viewPoint.h-sdTitleHeight-sdTabBarHeight-sdBottom-shareDialogGap)+'px');
-                    domStyle.set('sdBottom', 'height', sdBottom+'px');
+                    // domStyle.set('sdTitle', 'height', sdTitleHeight + 'px');
+                    // domStyle.set('sdAppList', 'height', (viewPoint.h - sdTitleHeight - sdTabBarHeight - sdBottom - shareDialogGap) + 'px');
+                    // domStyle.set('sdBottom', 'height', sdBottom + 'px');
 
                     // reposition the menus dialog
                     var menusDialog = registry.byId('menusDialog');

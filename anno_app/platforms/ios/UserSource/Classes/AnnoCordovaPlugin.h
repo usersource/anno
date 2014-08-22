@@ -40,6 +40,9 @@ extern AppDelegate *appDelegate;
 - (void) showCommunityPage;
 - (void) ShowIntroPage;
 - (void) showOptionFeedback;
-+ (void) showAnnoDraw:(NSString*)imageURI levelValue:(int)levelValue editModeValue:(BOOL)editModeValue;
++ (void) showAnnoDraw:(NSString*)imageURI
+           levelValue:(int)levelValue
+        editModeValue:(BOOL)editModeValue
+        landscapeMode:(BOOL)landscapeMode;
 
 @end

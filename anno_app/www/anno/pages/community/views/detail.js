@@ -49,7 +49,7 @@ define([
 
         var imageBaseUrl = annoUtil.getCEAPIConfig().imageServiceURL;
         var surface;
-        var imageWidth, imageHeight;
+        var imageWidth, imageHeight, surfaceWidth, surfaceHeight;
         var tiniestImageData = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=";
         var hashTagTemplate = '$1<span class="hashTag" onclick="searchAnnoByHashTag(this.innerHTML)">$2</span>';
         var commentURLTemplate = '$1<span class="commentURL" onclick="window.open(encodeURI(\'$2\'), \'_blank\', \'location=no\')">$2</span>';
@@ -83,32 +83,32 @@ define([
 
                 var imgScreenshot = dom.byId('imgDetailScreenshot');
                 var viewPoint = win.getBox();
-                var deviceRatio = parseFloat((viewPoint.w/viewPoint.h).toFixed(2));
+                var deviceRatio = parseFloat((viewPoint.w / viewPoint.h).toFixed(2));
                 var orignialDeviceRatio = parseFloat((imgScreenshot.naturalWidth/imgScreenshot.naturalHeight).toFixed(2));
                 var orignialRatio = imgScreenshot.naturalHeight/imgScreenshot.naturalWidth;
 
-                if (orignialDeviceRatio == deviceRatio)
-                {
-                    console.log('same ratio');
+                if ((orignialDeviceRatio == deviceRatio) || (orignialDeviceRatio < deviceRatio)) {
+                    // console.log('same ratio');
                     imageHeight = viewPoint.h - navBarHeight - screenshotControlsHeight;
                     imageWidth = Math.round(imageHeight/orignialRatio);
-                    console.log("image width: " + imageWidth + ", image height: " + imageHeight);
-                }
-                else if (orignialDeviceRatio < deviceRatio) // taller than current device
-                {
-                    console.log('taller ratio: o:' + orignialDeviceRatio + ", d:" + deviceRatio);
-                    imageHeight = viewPoint.h-navBarHeight - screenshotControlsHeight;
-                    imageWidth = Math.round(imageHeight/orignialRatio);
-                }
-                else if (orignialDeviceRatio > deviceRatio) // wider than current device
-                {
+                    borderWidth = Math.floor(imageWidth * 0.02);
+                    surfaceHeight = imageHeight - (2 * borderWidth);
+                    domStyle.set('imgDetailScreenshot', { width : '100%', height : '100%' });
+                    // console.log("image width: " + imageWidth + ", image height: " + imageHeight);
+                } else if (orignialDeviceRatio > deviceRatio) {
                     console.log('wider ratio');
                     //imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio - navBarHeight - screenshotControlsHeight;
-                    imageHeight = viewPoint.h - navBarHeight - screenshotControlsHeight;
-                    imageWidth = Math.round(imageHeight/orignialRatio);
+                    // imageHeight = viewPoint.h - navBarHeight - screenshotControlsHeight;
+                    // imageWidth = Math.round(imageHeight / orignialRatio);
+                    imageWidth = viewPoint.w;
+                    borderWidth = 6;
+                    imageHeight = Math.round((imageWidth - (2 * borderWidth)) / (imgScreenshot.naturalWidth / imgScreenshot.naturalHeight));
+                    surfaceHeight = imageHeight;
+                    domStyle.set('imgDetailScreenshot', { width : '100%', height : 'auto' });
                 }
 
-                borderWidth = Math.floor(imageWidth*0.02);
+                surfaceWidth = imageWidth - (2 * borderWidth);
+
                 domStyle.set(dom.byId('tbl_screenshotControls').parentNode, 'width', imageWidth+'px');
 
                 applyAnnoLevelColor(eventsModel.cursor.level);
@@ -177,7 +177,7 @@ define([
 
                 domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', top:(-borderWidth)+'px', left:(-borderWidth)+'px'});
                 surface.borderWidth = borderWidth;
-                surface.setDimensions(imageWidth-borderWidth*2, imageHeight-borderWidth*2);
+                surface.setDimensions(surfaceWidth, surfaceHeight);
 
                 surface.parse(elementsObject, lineStrokeStyle);
 
@@ -188,7 +188,7 @@ define([
                 domStyle.set(surface.container, {'border': borderWidth+'px solid transparent'});
 
                 surface.borderWidth = borderWidth;
-                surface.setDimensions(imageWidth-borderWidth*2, imageHeight-borderWidth*2);
+                surface.setDimensions(surfaceWidth, surfaceHeight);
 
                 surface.clear();
                 surface.show();
@@ -368,19 +368,20 @@ define([
 
         var applyAnnoLevelColor = function(level)
         {
-            borderWidth = Math.floor(imageWidth*0.02);
-            level = level||1;
-            if (level == 1)
-            {
-                console.log("img width:" + (imageWidth - borderWidth * 2));
-                domStyle.set('screenshotContainerDetail', {width:(imageWidth-borderWidth*2)+'px',height:(imageHeight-borderWidth*2)+'px', 'borderColor': annoUtil.level1Color,'borderStyle':'solid', 'borderWidth':borderWidth+'px'});
-                domStyle.set('imgDetailScreenshot', {width:'100%',height:'100%'});
+            level = level || 1;
+            var borderColor = annoUtil.level1Color;
+
+            if (level == 2) {
+                borderColor = annoUtil.level2Color;
             }
-            else if (level == 2)
-            {
-                domStyle.set('screenshotContainerDetail', {width:(imageWidth-borderWidth*2)+'px',height:(imageHeight-borderWidth*2)+'px', 'borderColor': annoUtil.level2Color,'borderStyle':'solid', 'borderWidth':borderWidth+'px'});
-                domStyle.set('imgDetailScreenshot', {width:'100%',height:'100%'});
-            }
+
+            domStyle.set('screenshotContainerDetail', {
+                'width' : surfaceWidth + 'px',
+                'height' : surfaceHeight + 'px',
+                'borderColor' : borderColor,
+                'borderStyle' : 'solid',
+                'borderWidth' : borderWidth + 'px'
+            });
         };
 
         var adjustAnnoCommentSize = function()
@@ -948,6 +949,12 @@ define([
 
             saveCurrentAnnoDataforEdit(annoItem, imageData);
 
+            var imgScreenshot = dom.byId('imgDetailScreenshot'),
+                landscapeMode = false;
+            if (imgScreenshot.naturalWidth > imgScreenshot.naturalHeight) {
+                landscapeMode = true;
+            }
+
             cordova.exec(
                 function (result)
                 {
@@ -957,7 +964,7 @@ define([
                 },
                 "AnnoCordovaPlugin",
                 'start_edit_anno_draw',
-                []
+                [landscapeMode]
             );
 
             checkEditAnnoResult();
