@@ -48,7 +48,7 @@
         level = 1;
     }
     
-    [AnnoCordovaPlugin showAnnoDraw:screenshotPath levelValue:level editModeValue:FALSE landscapeMode:NO];
+    [AnnoCordovaPlugin showAnnoDraw:screenshotPath levelValue:level editModeValue:FALSE landscapeModeValue:NO];
 }
 
 @end

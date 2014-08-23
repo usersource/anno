@@ -10,8 +10,7 @@
 
 @implementation AnnoDrawViewController
 
-@synthesize isPractice, editMode, level, screenshotPath;
-bool landscape_mode = NO;
+@synthesize isPractice, editMode, level, screenshotPath, landscapeMode;
 
 - (id)initWithNibName:(NSString*)nibNameOrNil bundle:(NSBundle*)nibBundleOrNil
 {
@@ -20,6 +19,7 @@ bool landscape_mode = NO;
         self.startPage = @"anno/pages/annodraw/main.html";
         level = 0;
         screenshotPath = @"";
+        landscapeMode = NO;
         // Uncomment to override the CDVCommandDelegateImpl used
         // _commandDelegate = [[AnnoDrawCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
@@ -35,6 +35,7 @@ bool landscape_mode = NO;
         self.startPage = @"anno/pages/annodraw/main.html";
         level = 0;
         screenshotPath = @"";
+        landscapeMode = NO;
         // Uncomment to override the CDVCommandDelegateImpl used
         // _commandDelegate = [[AnnoDrawCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
@@ -44,7 +45,7 @@ bool landscape_mode = NO;
 }
 
 - (void) makeLandscape {
-    landscape_mode = YES;
+    landscapeMode = YES;
     [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationLandscapeRight animated:YES];
     UIViewController *c = [[UIViewController alloc] init];
     [self presentViewController:c animated:NO completion:nil];
@@ -66,11 +67,11 @@ bool landscape_mode = NO;
                    levelValue:(int)levelValue
               isPracticeValue:(BOOL)isPracticeValue
                 editModeValue:(BOOL)editModeValue
-                landscapeMode:(BOOL)landscapeMode {
+           landscapeModeValue:(BOOL)landscapeModeValue {
 
     if (editModeValue) {
         editMode = editModeValue;
-        if (landscapeMode) {
+        if (landscapeModeValue) {
             [self makeLandscape];
         }
         return;
@@ -189,7 +190,7 @@ bool landscape_mode = NO;
 }
 
 - (NSUInteger) supportedInterfaceOrientations {
-    if (landscape_mode) {
+    if (landscapeMode) {
         return UIInterfaceOrientationMaskLandscape;
     } else {
         return UIInterfaceOrientationMaskPortrait;

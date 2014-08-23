@@ -43,6 +43,6 @@ extern AppDelegate *appDelegate;
 + (void) showAnnoDraw:(NSString*)imageURI
            levelValue:(int)levelValue
         editModeValue:(BOOL)editModeValue
-        landscapeMode:(BOOL)landscapeMode;
+   landscapeModeValue:(BOOL)landscapeModeValue;
 
 @end

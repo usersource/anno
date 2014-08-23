@@ -12,12 +12,14 @@
 @interface AnnoDrawViewController : CDVViewController {
     BOOL isPractice;
     BOOL editMode;
+    BOOL landscapeMode;
     int level;
     NSString *screenshotPath;
 }
 
 @property (nonatomic) BOOL isPractice;
 @property (nonatomic) BOOL editMode;
+@property (nonatomic) BOOL landscapeMode;
 @property (nonatomic) int level;
 @property (nonatomic) NSString *screenshotPath;
 
@@ -25,7 +27,7 @@
                    levelValue:(int)levelValue
               isPracticeValue:(BOOL)isPracticeValue
                 editModeValue:(BOOL)editModeValue
-                landscapeMode:(BOOL)landscapeMode;
+           landscapeModeValue:(BOOL)landscapeModeValue;
 - (NSString*) getScreenshotPath;
 - (int) getLevel;
 - (BOOL) isEditMode;
