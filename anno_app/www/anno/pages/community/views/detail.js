@@ -47,6 +47,7 @@ define([
             screenshotControlsHeight = 86,
             borderWidth,
             zoomBorderWidth = 4;
+        var zoomSurface, oldSurface;
 
         var imageBaseUrl = annoUtil.getCEAPIConfig().imageServiceURL;
         var surface;
@@ -367,16 +368,21 @@ define([
             return false;
         };
 
-        var applyAnnoLevelColor = function(level)
+        var applyAnnoLevelColor = function(level, zoomImage)
         {
-            level = level || 1;
-            var borderColor = annoUtil.level1Color;
+            var borderColor = annoUtil.level1Color,
+                screenshotContainerDetail = 'screenshotContainerDetail';
 
+            level = level || 1;
             if (level == 2) {
                 borderColor = annoUtil.level2Color;
             }
 
-            domStyle.set('screenshotContainerDetail', {
+            if (zoomImage) {
+                screenshotContainerDetail = 'zoomScreenshotContainerDetail';
+            }
+
+            domStyle.set(screenshotContainerDetail, {
                 'width' : surfaceWidth + 'px',
                 'height' : surfaceHeight + 'px',
                 'borderColor' : borderColor,
@@ -1137,14 +1143,6 @@ define([
                 zoomImgDetailScreenshotHeight = zoomImgDetailScreenshot.naturalHeight,
                 zoomImageHeight = Math.round(zoomImageWidth / (zoomImgDetailScreenshotWidth / zoomImgDetailScreenshotHeight));
 
-            var zoomSurface = new Surface({
-                container : dom.byId("zoomGfxCanvasContainer"),
-                width : 500,
-                height : 500,
-                editable : false,
-                borderWidth : 0
-            });
-
             domStyle.set('zoomScreenshotContainerDetail', {
                 width : zoomImageWidth + "px",
                 height : zoomImageHeight + "px"
@@ -1158,9 +1156,12 @@ define([
             surfaceWidth = imageWidth = zoomImageWidth;
             surfaceHeight = imageHeight = zoomImageHeight;
             borderWidth = zoomBorderWidth;
-            surface = zoomSurface;
 
-            applyAnnoLevelColor(currentAnno.level);
+            oldSurface = surface;
+            surface = zoomSurface;
+            surface.registry = {};
+
+            applyAnnoLevelColor(currentAnno.level, true);
             redrawShapes();
 
             domStyle.set('zoomScreenshotContainerDetail', 'display', '');
@@ -1169,6 +1170,9 @@ define([
         };
 
         var zoomClose = function() {
+            surface.clear();
+            surface = oldSurface;
+
             domStyle.set('zoomScreenshotContainerDetail', 'display', 'none');
             domStyle.set('headingDetail', 'display', '');
             domStyle.set('detailContentContainer', 'display', '');
@@ -1416,6 +1420,14 @@ define([
                     height:500,
                     editable:false,
                     borderWidth:0
+                });
+
+                zoomSurface = new Surface({
+                    container : dom.byId("zoomGfxCanvasContainer"),
+                    width : 500,
+                    height : 500,
+                    editable : false,
+                    borderWidth : 0
                 });
             },
             afterActivate: function()
