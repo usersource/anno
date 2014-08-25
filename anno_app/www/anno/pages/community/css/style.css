@@ -833,3 +833,16 @@ li.read {
 li.unread .listTitle {
 	font-weight: bold;
 }
+
+#zoomScreenshotContainerDetail {
+	position: absolute;
+	top: 0;
+	left: 0;
+	border: 4px solid rgb(255, 153, 0);
+}
+
+#zoomGfxCanvasContainer {
+	position: absolute;
+	top: -4px;
+	left: -4px;
+}

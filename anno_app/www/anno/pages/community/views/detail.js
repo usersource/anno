@@ -45,7 +45,8 @@ define([
             navBarHeight = 50,
             trayScreenHeight = 0,
             screenshotControlsHeight = 86,
-            borderWidth;
+            borderWidth,
+            zoomBorderWidth = 4;
 
         var imageBaseUrl = annoUtil.getCEAPIConfig().imageServiceURL;
         var surface;
@@ -1122,6 +1123,45 @@ define([
             app.transitionToView(document.getElementById('modelApp_detail'), {target:'searchAnno',url:'#searchAnno', params:{tag:tag}});
         };
 
+        var zoomImage = function() {
+            var currentAnno = eventsModel.cursor,
+                zoomImgDetailScreenshot = dom.byId('zoomImgDetailScreenshot'),
+                zoomImageWidth = win.getBox().w - (2 * zoomBorderWidth),
+                zoomImgDetailScreenshotWidth = zoomImgDetailScreenshot.naturalWidth,
+                zoomImgDetailScreenshotHeight = zoomImgDetailScreenshot.naturalHeight,
+                zoomImageHeight = Math.round(zoomImageWidth / (zoomImgDetailScreenshotWidth / zoomImgDetailScreenshotHeight));
+
+            var zoomSurface = new Surface({
+                container : dom.byId("zoomGfxCanvasContainer"),
+                width : 500,
+                height : 500,
+                editable : false,
+                borderWidth : 0
+            });
+
+            domStyle.set('zoomScreenshotContainerDetail', {
+                width : zoomImageWidth + "px",
+                height : zoomImageHeight + "px"
+            });
+
+            domStyle.set('zoomGfxCanvasContainer', {
+                width : (zoomImageWidth + (2 * zoomBorderWidth)) + "px",
+                height : (zoomImageHeight + (2 * zoomBorderWidth)) + "px"
+            });
+
+            surfaceWidth = imageWidth = zoomImageWidth;
+            surfaceHeight = imageHeight = zoomImageHeight;
+            borderWidth = zoomBorderWidth;
+            surface = zoomSurface;
+
+            applyAnnoLevelColor(currentAnno.level);
+            redrawShapes();
+
+            domStyle.set('zoomScreenshotContainerDetail', 'display', '');
+            domStyle.set('headingDetail', 'display', 'none');
+            domStyle.set('detailContentContainer', 'display', 'none');
+        };
+
         var startX, startY, commentTextBoxFocused = false;
         return {
             // simple view init
@@ -1340,9 +1380,16 @@ define([
                     });
                 }));
 
+                _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), 'click', function() {
+                    dom.byId('zoomImgDetailScreenshot').src = imageBaseUrl + "?anno_id=" + eventsModel.cursor.id;
+                }));
+
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;
                 dom.byId("imgDetailScreenshot").onerror = screenshotImageOnerror;
                 dom.byId("imgDetailScreenshot").crossOrigin = "anonymous";
+
+                dom.byId("zoomImgDetailScreenshot").onload = zoomImage;
+                dom.byId("zoomImgDetailScreenshot").crossOrigin = "anonymous";
 
                 // create surface
                 surface = new Surface({
