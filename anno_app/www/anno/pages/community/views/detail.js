@@ -368,21 +368,16 @@ define([
             return false;
         };
 
-        var applyAnnoLevelColor = function(level, isZoomImage)
+        var applyAnnoLevelColor = function(level)
         {
-            var borderColor = annoUtil.level1Color,
-                screenshotContainerDetail = 'screenshotContainerDetail';
+            var borderColor = annoUtil.level1Color;
 
             level = level || 1;
             if (level == 2) {
                 borderColor = annoUtil.level2Color;
             }
 
-            if (isZoomImage) {
-                screenshotContainerDetail = 'zoomScreenshotContainerDetail';
-            }
-
-            domStyle.set(screenshotContainerDetail, {
+            domStyle.set('screenshotContainerDetail', {
                 'width' : surfaceWidth + 'px',
                 'height' : surfaceHeight + 'px',
                 'borderColor' : borderColor,
@@ -1144,9 +1139,19 @@ define([
                 zoomImgDetailScreenshotHeight = zoomImgDetailScreenshot.naturalHeight,
                 zoomImageHeight = Math.round(zoomImageWidth / (zoomImgDetailScreenshotWidth / zoomImgDetailScreenshotHeight));
 
-            domStyle.set('zoomScreenshotContainerDetail', {
+            var borderColor = annoUtil.level1Color,
+                level = currentAnno.level || 1;
+
+            if (level == 2) {
+                borderColor = annoUtil.level2Color;
+            }
+
+            domStyle.set('zoomImgDetailScreenshot', {
                 width : zoomImageWidth + "px",
-                height : zoomImageHeight + "px"
+                height : zoomImageHeight + "px",
+                borderColor : borderColor,
+                borderStyle : 'solid',
+                borderWidth : zoomBorderWidth + "px"
             });
 
             domStyle.set('zoomGfxCanvasContainer', {
@@ -1154,18 +1159,17 @@ define([
                 height : (zoomImageHeight + (2 * zoomBorderWidth)) + "px"
             });
 
-            surfaceWidth = imageWidth = zoomImageWidth;
-            surfaceHeight = imageHeight = zoomImageHeight;
-            borderWidth = zoomBorderWidth;
-
-            oldSurface = surface;
-            surface = zoomSurface;
+            imageWidth = zoomImageWidth;
+            imageHeight = zoomImageHeight;
+            surfaceWidth = zoomImageWidth + (2 * zoomBorderWidth);
+            surfaceHeight = zoomImageHeight + (2 * zoomBorderWidth);
 
             if (zoomFactor == 1) {
+                oldSurface = surface;
+                surface = zoomSurface;
                 surface.registry = {};
             }
 
-            applyAnnoLevelColor(currentAnno.level, true);
             redrawShapes();
 
             domStyle.set('zoomScreenshotContainerDetail', 'display', '');
