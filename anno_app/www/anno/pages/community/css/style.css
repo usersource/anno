@@ -846,3 +846,16 @@ li.unread .listTitle {
 	top: -4px;
 	left: -4px;
 }
+
+#zoomClose {
+	position: absolute;
+	padding: 4px 6px;
+	right: 0;
+	background: rgba(0, 0, 0, 0.7);
+	color: white;
+	font-weight: bold;
+	font-size: 16px;
+	border-radius: 8px;
+	margin: 4px;
+	z-index: 100;
+}

@@ -1162,6 +1162,12 @@ define([
             domStyle.set('detailContentContainer', 'display', 'none');
         };
 
+        var zoomClose = function() {
+            domStyle.set('zoomScreenshotContainerDetail', 'display', 'none');
+            domStyle.set('headingDetail', 'display', '');
+            domStyle.set('detailContentContainer', 'display', '');
+        };
+
         var startX, startY, commentTextBoxFocused = false;
         return {
             // simple view init
@@ -1383,6 +1389,8 @@ define([
                 _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), 'click', function() {
                     dom.byId('zoomImgDetailScreenshot').src = imageBaseUrl + "?anno_id=" + eventsModel.cursor.id;
                 }));
+
+                _connectResults.push(connect.connect(dom.byId('zoomClose'), 'click', zoomClose));
 
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;
                 dom.byId("imgDetailScreenshot").onerror = screenshotImageOnerror;
