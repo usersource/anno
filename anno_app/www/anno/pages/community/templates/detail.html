@@ -1,5 +1,10 @@
 <div id="detailView" class="view mblView" style="overflow-x: hidden;">
     <script type="dojo/require">at: "dojox/mvc/at"</script>
+	<div id="zoomScreenshotContainerDetail" style="display: none;">
+		<div id="zoomClose">Close</div>
+		<img id="zoomImgDetailScreenshot" style="width: 100%;height: 100%;" />
+		<div id="zoomGfxCanvasContainer" style="display: none;"></div>
+	</div>
     <div id="headingDetail" style="position:absolute;top:0px;left:0px;background-color: #000000;z-index: 9000;color:white;height: 50px" data-dojo-type="dojox/mobile/Heading">
         <table width="100%" height="100%">
             <tr>
@@ -28,11 +33,6 @@
             </tr>
         </table>
 
-    </div>
-    <div id="zoomScreenshotContainerDetail" style="display: none;">
-		<div id="zoomClose">Close</div>
-        <img id="zoomImgDetailScreenshot" style="width: 100%;height: 100%;" />
-        <div id="zoomGfxCanvasContainer" style="display: none;"></div>
     </div>
     <div id="detailContentContainer" style="margin-top: 50px;-webkit-transition: all 500ms ease;">
         <div id="mvcGroupDetail" data-dojo-type="dojox/mvc/Group"

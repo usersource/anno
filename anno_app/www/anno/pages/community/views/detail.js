@@ -368,7 +368,7 @@ define([
             return false;
         };
 
-        var applyAnnoLevelColor = function(level, zoomImage)
+        var applyAnnoLevelColor = function(level, isZoomImage)
         {
             var borderColor = annoUtil.level1Color,
                 screenshotContainerDetail = 'screenshotContainerDetail';
@@ -378,7 +378,7 @@ define([
                 borderColor = annoUtil.level2Color;
             }
 
-            if (zoomImage) {
+            if (isZoomImage) {
                 screenshotContainerDetail = 'zoomScreenshotContainerDetail';
             }
 
@@ -1135,10 +1135,11 @@ define([
             app.transitionToView(document.getElementById('modelApp_detail'), {target:'searchAnno',url:'#searchAnno', params:{tag:tag}});
         };
 
-        var zoomImage = function() {
-            var currentAnno = eventsModel.cursor,
+        var zoomImage = function(zoomFactor) {
+            var zoomFactor = zoomFactor || 1,
+                currentAnno = eventsModel.cursor,
                 zoomImgDetailScreenshot = dom.byId('zoomImgDetailScreenshot'),
-                zoomImageWidth = win.getBox().w - (2 * zoomBorderWidth),
+                zoomImageWidth = (win.getBox().w - (2 * zoomBorderWidth)) * zoomFactor,
                 zoomImgDetailScreenshotWidth = zoomImgDetailScreenshot.naturalWidth,
                 zoomImgDetailScreenshotHeight = zoomImgDetailScreenshot.naturalHeight,
                 zoomImageHeight = Math.round(zoomImageWidth / (zoomImgDetailScreenshotWidth / zoomImgDetailScreenshotHeight));
@@ -1159,7 +1160,10 @@ define([
 
             oldSurface = surface;
             surface = zoomSurface;
-            surface.registry = {};
+
+            if (zoomFactor == 1) {
+                surface.registry = {};
+            }
 
             applyAnnoLevelColor(currentAnno.level, true);
             redrawShapes();
@@ -1400,13 +1404,17 @@ define([
                     dom.byId('zoomImgDetailScreenshot').src = imageBaseUrl + "?anno_id=" + eventsModel.cursor.id;
                 }));
 
+                _connectResults.push(connect.connect(dom.byId('zoomScreenshotContainerDetail'), 'click', function() {
+                    zoomImage(2);
+                }));
+
                 _connectResults.push(connect.connect(dom.byId('zoomClose'), 'click', zoomClose));
 
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;
                 dom.byId("imgDetailScreenshot").onerror = screenshotImageOnerror;
                 dom.byId("imgDetailScreenshot").crossOrigin = "anonymous";
 
-                dom.byId("zoomImgDetailScreenshot").onload = zoomImage;
+                dom.byId("zoomImgDetailScreenshot").onload = function() { zoomImage() };
                 dom.byId("zoomImgDetailScreenshot").crossOrigin = "anonymous";
 
                 if (annoUtil.isAndroid()) {
