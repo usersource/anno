@@ -430,6 +430,12 @@ define([
 
         var handleBackButton = function()
         {
+            var zoomData = dom.byId('zoomScreenshotContainerDetail');
+            if (zoomData && (zoomData.style.display == '' || zoomData.style.display == 'block')) {
+                zoomClose();
+                return;
+            }
+
             var dlg = registry.byId('dlg_common_confirm_message');
 
             if (dlg&&(dlg.domNode.style.display == ''||dlg.domNode.style.display == 'block'))
@@ -1398,6 +1404,10 @@ define([
 
                 dom.byId("zoomImgDetailScreenshot").onload = zoomImage;
                 dom.byId("zoomImgDetailScreenshot").crossOrigin = "anonymous";
+
+                if (annoUtil.isAndroid()) {
+                    domStyle.set('zoomClose', 'display', 'none');
+                }
 
                 // create surface
                 surface = new Surface({
