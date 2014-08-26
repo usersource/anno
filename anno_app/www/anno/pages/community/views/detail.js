@@ -111,7 +111,7 @@ define([
 
                 surfaceWidth = imageWidth - (2 * borderWidth);
 
-                domStyle.set(dom.byId('tbl_screenshotControls').parentNode, 'width', imageWidth+'px');
+                // domStyle.set(dom.byId('tbl_screenshotControls').parentNode, 'width', imageWidth + 'px');
 
                 applyAnnoLevelColor(eventsModel.cursor.level);
 
@@ -344,11 +344,13 @@ define([
                 {
                     domStyle.set('td_shtCtrl_edit', 'display', '');
                     domStyle.set('td_shtCtrl_remove', 'display', '');
+                    domStyle.set('td_shtCtrl_hideAnnotations', 'text-align', 'left');
                 }
                 else
                 {
                     domStyle.set('td_shtCtrl_edit', 'display', 'none');
                     domStyle.set('td_shtCtrl_remove', 'display', 'none');
+                    domStyle.set('td_shtCtrl_hideAnnotations', 'text-align', 'center');
                 }
             }
         };
@@ -857,13 +859,13 @@ define([
             if (showAnnotations)
             {
                 showAnnotations = false;
-                dom.byId('td_shtCtrl_hideAnnotations').children[0].innerHTML = "show annotations";
+                dom.byId('td_shtCtrl_hideAnnotations').children[0].innerHTML = "Show Annotations";
                 surface.hide();
             }
             else
             {
                 showAnnotations = true;
-                dom.byId('td_shtCtrl_hideAnnotations').children[0].innerHTML = "hide annotations";
+                dom.byId('td_shtCtrl_hideAnnotations').children[0].innerHTML = "Hide Annotations";
                 surface.show();
             }
         };
