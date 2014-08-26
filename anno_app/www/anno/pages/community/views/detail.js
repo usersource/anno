@@ -47,7 +47,7 @@ define([
             screenshotControlsHeight = 86,
             borderWidth,
             zoomBorderWidth = 4;
-        var zoomSurface, oldSurface;
+        var zoomSurface, oldSurface, zoomAnnoID;
 
         var imageBaseUrl = annoUtil.getCEAPIConfig().imageServiceURL;
         var surface;
@@ -1131,13 +1131,22 @@ define([
         };
 
         var zoomImage = function(zoomFactor) {
+            var zoomImgDetailScreenshot = dom.byId('zoomImgDetailScreenshot'),
+                zoomImgDetailScreenshotWidth = zoomImgDetailScreenshot.naturalWidth,
+                zoomImgDetailScreenshotHeight = zoomImgDetailScreenshot.naturalHeight;
+
             var zoomFactor = zoomFactor || 1,
                 currentAnno = eventsModel.cursor,
-                zoomImgDetailScreenshot = dom.byId('zoomImgDetailScreenshot'),
-                zoomImageWidth = (win.getBox().w - (2 * zoomBorderWidth)) * zoomFactor,
-                zoomImgDetailScreenshotWidth = zoomImgDetailScreenshot.naturalWidth,
-                zoomImgDetailScreenshotHeight = zoomImgDetailScreenshot.naturalHeight,
+                zoomImageWidth,
+                zoomImageHeight;
+
+            if (zoomImgDetailScreenshotWidth > zoomImgDetailScreenshotHeight) {
+                zoomImageHeight = (win.getBox().h - (2 * zoomBorderWidth)) * zoomFactor;
+                zoomImageWidth = Math.round(zoomImageHeight / (zoomImgDetailScreenshotHeight / zoomImgDetailScreenshotWidth));
+            } else {
+                zoomImageWidth = (win.getBox().w - (2 * zoomBorderWidth)) * zoomFactor;
                 zoomImageHeight = Math.round(zoomImageWidth / (zoomImgDetailScreenshotWidth / zoomImgDetailScreenshotHeight));
+            }
 
             var borderColor = annoUtil.level1Color,
                 level = currentAnno.level || 1;
@@ -1155,23 +1164,28 @@ define([
             });
 
             domStyle.set('zoomGfxCanvasContainer', {
-                width : (zoomImageWidth + (2 * zoomBorderWidth)) + "px",
-                height : (zoomImageHeight + (2 * zoomBorderWidth)) + "px"
+                width : (zoomImageWidth + zoomBorderWidth) + "px",
+                height : (zoomImageHeight + zoomBorderWidth) + "px"
             });
 
             imageWidth = zoomImageWidth;
             imageHeight = zoomImageHeight;
-            surfaceWidth = zoomImageWidth + (2 * zoomBorderWidth);
-            surfaceHeight = zoomImageHeight + (2 * zoomBorderWidth);
+            surfaceWidth = zoomImageWidth + zoomBorderWidth;
+            surfaceHeight = zoomImageHeight + zoomBorderWidth;
+            borderWidth = zoomBorderWidth;
 
             if (zoomFactor == 1) {
                 oldSurface = surface;
                 surface = zoomSurface;
                 surface.registry = {};
+
+                dom.byId('zoomScreenshotContainerDetail').scrollLeft = 0;
+                dom.byId('zoomScreenshotContainerDetail').scrollTop = 0;
             }
 
             redrawShapes();
 
+            annoUtil.hideLoadingIndicator();
             domStyle.set('zoomScreenshotContainerDetail', 'display', '');
             domStyle.set('headingDetail', 'display', 'none');
             domStyle.set('detailContentContainer', 'display', 'none');
@@ -1180,6 +1194,7 @@ define([
         var zoomClose = function() {
             surface.clear();
             surface = oldSurface;
+            annoUtil.hideLoadingIndicator();
 
             domStyle.set('zoomScreenshotContainerDetail', 'display', 'none');
             domStyle.set('headingDetail', 'display', '');
@@ -1405,7 +1420,11 @@ define([
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), 'click', function() {
-                    dom.byId('zoomImgDetailScreenshot').src = imageBaseUrl + "?anno_id=" + eventsModel.cursor.id;
+                    annoUtil.showLoadingIndicator();
+                    if (zoomAnnoID != eventsModel.cursor.id) {
+                        dom.byId('zoomImgDetailScreenshot').src = imageBaseUrl + "?anno_id=" + eventsModel.cursor.id;
+                        zoomAnnoID = eventsModel.cursor.id;
+                    }
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('zoomScreenshotContainerDetail'), 'click', function() {
