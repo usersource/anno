@@ -1386,6 +1386,12 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId('modelApp_detail'), "scroll", function (e)
                 {
+                    dojo.stopEvent(e);
+                    var zoomData = dom.byId('zoomScreenshotContainerDetail');
+                    if (zoomData && (zoomData.style.display == '' || zoomData.style.display == 'block')) {
+                        return;
+                    }
+
                     setScreenshotTalkAreaState();
 
                     if (!commentTextBoxFocused)
@@ -1419,19 +1425,27 @@ define([
                     });
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), 'click', function() {
+                _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), 'click', function(e) {
+                    dojo.stopEvent(e);
                     annoUtil.showLoadingIndicator();
+
                     if (zoomAnnoID != eventsModel.cursor.id) {
                         dom.byId('zoomImgDetailScreenshot').src = imageBaseUrl + "?anno_id=" + eventsModel.cursor.id;
                         zoomAnnoID = eventsModel.cursor.id;
+                    } else {
+                        zoomImage();
                     }
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('zoomScreenshotContainerDetail'), 'click', function() {
+                _connectResults.push(connect.connect(dom.byId('zoomScreenshotContainerDetail'), 'click', function(e) {
+                    dojo.stopEvent(e);
                     zoomImage(2);
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('zoomClose'), 'click', zoomClose));
+                _connectResults.push(connect.connect(dom.byId('zoomClose'), 'click', function(e) {
+                    dojo.stopEvent(e);
+                    zoomClose();
+                }));
 
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;
                 dom.byId("imgDetailScreenshot").onerror = screenshotImageOnerror;
