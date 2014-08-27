@@ -1129,7 +1129,8 @@ define([
                 target : 'searchAnno',
                 url : '#searchAnno',
                 params : {
-                    tag : dom.byId("appNameSpanDetail").innerHTML
+                    tag : dom.byId("appNameSpanDetail").innerHTML,
+                    app : dom.byId("appNameSpanDetail").innerHTML
                 }
             });
         };
