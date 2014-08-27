@@ -1124,6 +1124,17 @@ define([
             app.transitionToView(document.getElementById('modelApp_detail'), {target:'searchAnno',url:'#searchAnno', params:{tag:tag}});
         };
 
+        var searchAnnoByApp = function() {
+            app.transitionToView(document.getElementById('modelApp_detail'), {
+                target : 'searchAnno',
+                url : '#searchAnno',
+                params : {
+                    tag : dom.byId("appNameSpanDetail").innerHTML,
+                    app : dom.byId("appNameSpanDetail").innerHTML
+                }
+            });
+        };
+
         var startX, startY, commentTextBoxFocused = false;
         return {
             // simple view init
@@ -1340,6 +1351,10 @@ define([
                             deleteAnnoItem();
                         }
                     });
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("appNameSpanDetail"), 'click', function() {
+                    searchAnnoByApp();
                 }));
 
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;

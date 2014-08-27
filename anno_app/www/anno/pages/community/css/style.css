@@ -777,6 +777,11 @@
     color: blue;
 }
 
+.clickableDiv {
+	color: blue;
+	text-decoration: underline;
+}
+
 .row
 {
     outline: none;
