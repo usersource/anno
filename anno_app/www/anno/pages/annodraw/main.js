@@ -45,6 +45,8 @@ require([
         editDrawElementsJson = "";
     var favoriteApps, favoriteAppsFetched, appNameList = [];
 
+    var appListDom = '<div class="appNameItem"><div class="appNameValue" data-type="{type}" data-app-version="{versionName}">{appName}</div></div>';
+
     connect.connect(dom.byId("barArrow"), touch.release, function()
     {
         if (domClass.contains(dom.byId("barArrow"), 'barIconInactive')) return;
@@ -314,10 +316,12 @@ require([
                             if (installedApps&&installedApps.length>0)
                             {
                                 appNameList = installedApps;
-                                // sort the app array by name
+
+                                // DON'T SORT RECENT APPS
+                                /* // sort the app array by name
                                 result.sort(function (a, b){
                                     return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;
-                                });
+                                });*/
 
                                 // make a copy of recent apps
                                 var recentAppPlainList = [];
@@ -335,11 +339,11 @@ require([
                                 });
 
                                 // add "recent" separator
-                                addAppListSeparator("recent");
-                                fillAppNameList(result, "sdRecentAppsListContent", true);
+                                addAppListSeparator("recent", "sdRecentAppsListContent");
+                                fillNameList(result, "sdRecentAppsListContent", true);
                                 // add "installed" separator
-                                addAppListSeparator("installed");
-                                fillAppNameList(installedApps, "sdRecentAppsListContent", true);
+                                addAppListSeparator("installed", "sdRecentAppsListContent");
+                                fillNameList(installedApps, "sdRecentAppsListContent", true);
                             }
                         },
                         function (err)
@@ -376,7 +380,9 @@ require([
                     return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;
                 });
 
-                fillAppNameList(listCommunities, "sdFavoriteAppsListContent");
+                // add "teams" separator
+                addAppListSeparator("Teams", "sdFavoriteAppsListContent");
+                fillNameList(listCommunities, "sdFavoriteAppsListContent", true, "community");
 
                 loadFavoriteApps(function(favoriteApps){
                     var listCommunitiesPlainList = [];
@@ -389,9 +395,10 @@ require([
                         return listCommunitiesPlainList.indexOf(item.name) < 0;
                     });
 
-                    favoriteApps.sort(function (a, b){
+                    // DON'T SORT FAVORITE APPS
+                    /*favoriteApps.sort(function (a, b){
                         return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;
-                    });
+                    });*/
 
                     var list = [];
 
@@ -400,7 +407,11 @@ require([
                         list.push({versionName:favoriteApps[i].version||"", name:favoriteApps[i].name});
                     }
 
-                    fillAppNameList(list, "sdFavoriteAppsListContent", true);
+                    list = removeDuplicatesAppsItems(list);
+
+                    // add "Apps" separator
+                    addAppListSeparator("Apps", "sdFavoriteAppsListContent");
+                    fillNameList(list, "sdFavoriteAppsListContent", true);
 
                     // no teams and no favorites, then list all installed apps on Android
                     if (favoriteApps.length <=0 && communityList.length <=0)
@@ -429,23 +440,24 @@ require([
         // domStyle.set('sdAppList', 'height', (viewPoint.h - sdTitleHeight - tabBox.h - sdBottom - shareDialogGap) + 'px');
     };
 
-    var fillAppNameList = function(appList, appContentId, append)
-    {
-        var content = append?dom.byId(appContentId).innerHTML:"";
-        for (var i = 0, c = appList.length; i < c; i++)
-        {
-            content = content + '<div class="appNameItem"><div class="appNameValue" data-app-version="'+appList[i].versionName+'">' + appList[i].name + '</div></div>'
+    var fillNameList = function(appList, appContentId, append, type) {
+        var content = append ? dom.byId(appContentId).innerHTML : "";
+        type = type || "app";
+
+        for (var i = 0, c = appList.length; i < c; i++) {
+            var app = appListDom.replace("{type}", type);
+            app = app.replace("{versionName}", appList[i].versionName);
+            app = app.replace("{appName}", appList[i].name);
+            content = content + app;
         }
 
         dom.byId(appContentId).innerHTML = content;
     };
 
-    var addAppListSeparator = function(label)
-    {
-        var content = dom.byId("sdRecentAppsListContent").innerHTML;
-
+    var addAppListSeparator = function(label, parentDiv) {
+        var content = dom.byId(parentDiv).innerHTML;
         content = content + '<div class="appSeparatorItem"><div class="appNameValue">' + label.toUpperCase() + '</div></div>';
-        dom.byId("sdRecentAppsListContent").innerHTML = content;
+        dom.byId(parentDiv).innerHTML = content;
     };
 
     var removeDuplicatesAppsItems = function (appsList) {
