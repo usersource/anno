@@ -66,6 +66,7 @@ from model.community import Community
 from model.follow_up import FollowUp
 from model.userannostate import UserAnnoState
 from model.tags import Tag
+from model.appinfo import AppInfo
 from helper.settings import anno_js_client_id
 from helper.utils import auth_user
 from helper.utils import put_search_document
@@ -190,6 +191,9 @@ class AnnoApi(remote.Service):
         elif request.query_type == AnnoQueryType.COMMUNITY:
             community = Community.get_by_id(request.community)
             return Anno.query_by_community(community, limit, select_projection, curs, user)
+        elif request.query_type == AnnoQueryType.APP:
+            app = AppInfo.get(request.app)
+            return Anno.query_by_app(app, limit, select_projection, curs, user)
         else:
             return Anno.query_by_page(limit, select_projection, curs, user)
 

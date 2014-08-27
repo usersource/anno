@@ -387,6 +387,33 @@ class Anno(BaseModel):
             return AnnoListMessage(anno_list=[])
 
     @classmethod
+    def query_by_app(cls, app, limit, projection, curs, user):
+        if app:
+            query = cls.query(cls.app == app.key)
+            query = query.order(-cls.created)
+            query = filter_anno_by_user(query, user)
+
+            if (curs is not None) and (projection is not None):
+                annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)
+            elif (curs is not None) and (projection is None):
+                annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
+            elif (curs is None) and (projection is not None):
+                annos, next_curs, more = query.fetch_page(limit, projection=projection)
+            else:
+                annos, next_curs, more = query.fetch_page(limit)
+            if projection is not None:
+                items = [entity.to_response_message_by_projection(projection) for entity in annos]
+            else:
+                items = [entity.to_response_message(user) for entity in annos]
+
+            if more:
+                return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
+            else:
+                return AnnoListMessage(anno_list=items, has_more=more)
+        else:
+            return AnnoListMessage(anno_list=[])
+
+    @classmethod
     def is_anno_exists(cls, user, message):
         query = cls.query() \
             .filter(cls.app_name == message.app_name) \

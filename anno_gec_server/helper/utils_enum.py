@@ -11,6 +11,7 @@ class AnnoQueryType(object):
     LAST_ACTIVITY = "by_last_activity" #:
     COUNTRY = "by_country" #:
     COMMUNITY = "by_community" #:
+    APP = "by_app" #:
 
 class AnnoActionType(object):
     CREATED = "created"
