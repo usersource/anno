@@ -71,7 +71,7 @@ class AppInfo(ndb.Model):
             entity = cls.get(name=message.name)
 
         # Only match of the same platform
-        if entity and getattr(message, 'platform', None) == entity.platform:
+        if entity and getattr(message, 'platform', None) != entity.platform:
             entity = None
 
         if entity is None:
