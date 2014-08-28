@@ -1,4 +1,4 @@
-from model.appinfo import AppInfo
+from model.appinfo import AppInfo, AppInfoPlatforms
 
 from urllib2 import urlopen, URLError
 from urllib import urlencode, quote
@@ -10,21 +10,56 @@ import json
 import logging
 
 class StoreTypeEnum:
-	PLAY_STORE="PlayStore"
-	APP_STORE="AppStore"
+	PLAY_STORE = "PlayStore"
+	APP_STORE = "AppStore"
 
 class CountryEnum:
-	US='us'
+	US = 'us'
 
 class PlayStoreCollectionEnum:
-	TOP_SELLING_FREE="topselling_free"
+	TOP_SELLING_FREE = "topselling_free"
+	TOP_SELLING_PAID = "topselling_paid"
+	TOP_GROSSING = "topgrossing"
+	TOP_SELLING_NEW_FREE = "topselling_new_free"
+	TOP_SELLING_NEW_PAID = "topselling_new_paid"
 
 class AppStoreRSSTypeEnum:
-	TOP_FREE='topfreeapplications'
+	TOP_FREE = 'topfreeapplications'
+	NEW_FREE = 'newfreeapplications'
+	NEW_PAID = 'newpaidapplications'
+	NEW_APPS = 'newapplications'
+	TOP_GROSSING = 'topgrossingapplications'
+	TOP_PAID = 'toppaidapplications'
+
+class AppStoreRSSGenreEnum:
+	ALL = None
+	BOOKS = 6018
+	BUSINESS = 6000
+	CATALOGS = 6022
+	EDUCATION = 6017
+	ENTERTAINMENT = 6016
+	FINANCE = 6015
+	FOOD_AND_DRINK = 6023
+	GAMES = 6014
+	HEALTH_AND_FITNESS = 6013
+	LIFESTYLE = 6012
+	MEDICAL = 6020
+	MUSIC = 6011
+	NAVIGATION = 6010
+	NEWS = 6009
+	NEWSSTAND = 6021
+	PHOTO_AND_VIDEO = 6008
+	PRODUCTIVITY = 6007
+	REFERENCE = 6006
+	SOCIAL_NETWORKING = 6005
+	SPORTS = 6004
+	TRAVEL = 6003
+	UTILITIES = 6002
+	WEATHER = 6001
 
 class QueryTypeEnum:
-	SEARCH="Search"
-	FETCH="Fetch"
+	SEARCH = "Search"
+	FETCH = "Fetch"
 
 
 class GooglePlayStoreScraper(HTMLParser):
@@ -65,7 +100,7 @@ class GooglePlayStoreScraper(HTMLParser):
 			body = urlencode(body)
 			data = urlopen(url, data=body)
 		except URLError as e:
-			logging.getLogger.exception("Error in Play Store Query url:%s, collection:%s, start:%s, num:%s, kargs:%s, Reply:%s", \
+			logging.getLogger().exception("Error in Play Store Query url:%s, collection:%s, start:%s, num:%s, kargs:%s, Reply:%s", \
 				url, collection, start, num, kargs, e.read())
 			return None
 
@@ -167,7 +202,7 @@ class iTunesAppStoreRSSAndSearch(object):
 		try:
 			data = urlopen(url)
 		except URLError as e:
-			logging.getLogger.exception("Error in App Store Query url:%s, rss_type:%s, limit:%s, genre:%s, kargs:%s, Reply:%s", \
+			logging.getLogger().exception("Error in App Store Query url:%s, rss_type:%s, limit:%s, genre:%s, kargs:%s, Reply:%s", \
 				url, rss_type, limit, genre_id , kargs, e.read())
 			return None
 
@@ -256,7 +291,8 @@ class AppInfoPopulate(object):
 				version=None,
 				developer=app.get('artistName'),
 				company_name=app.get('artistName'),
-				app_url=app.get('trackViewUrl')
+				app_url=app.get('trackViewUrl'),
+				platform=AppInfoPlatforms.iOS
 			)
 			AppInfo.update(entity)
 
@@ -281,11 +317,12 @@ class AppInfoPopulate(object):
 				version=None,
 				developer=app.get('artist'),
 				company_name=app.get('artist'),
-				app_url=app.get('link')
+				app_url=app.get('link'),
+				platform=AppInfoPlatforms.iOS
 			)
 			AppInfo.update(entity)
 
-		logging.getLogger.debug("Inserted %s successfully", len(apps))
+		logging.getLogger().debug("Inserted %s successfully", len(apps))
 
 
 	@classmethod
@@ -315,7 +352,7 @@ class AppInfoPopulate(object):
 		parser = GooglePlayStoreScraper()
 
 		if data:
-			parser.feed(data)
+			parser.feed(data.decode('utf-8'))
 			apps = parser.apps
 		else:
 			apps = []
@@ -330,8 +367,9 @@ class AppInfoPopulate(object):
 				version=None,
 				developer=app.get('developer'),
 				company_name=app.get('developer'),
-				app_url=app.get('link')
+				app_url=app.get('link'),
+				platform=AppInfoPlatforms.ANDROID
 			)
 			AppInfo.update(entity)
 
-		logging.getLogger.debug("Inserted %s successfully", len(apps))
+		logging.getLogger().debug("Inserted %s successfully", len(apps))

@@ -1,4 +1,5 @@
-from helper.app_info_helper import StoreTypeEnum, QueryTypeEnum, AppInfoPopulate
+from helper.app_info_helper import StoreTypeEnum, QueryTypeEnum,\
+    AppInfoPopulate, PlayStoreCollectionEnum, AppStoreRSSTypeEnum, AppStoreRSSGenreEnum
 
 import webapp2
 from google.appengine.api import taskqueue
@@ -52,3 +53,32 @@ class AppInfoHandler(webapp2.RequestHandler):
 
     def get(self):
         self.response.out.write('App Info Service Running...')
+
+        is_cron = self.request.headers.get('X-Appengine-Cron') is not None
+
+        if is_cron and self.request.get('cron_type') == 'basic_weekly':
+            # Tasks
+            # Page through 240 Apps per Category
+            for page in range(0, 181, 60):
+                # Fetch and populate Play Store Top Selling Free Apps
+                AppInfoTaskQueue.add(StoreTypeEnum.PLAY_STORE, QueryTypeEnum.FETCH, collection=PlayStoreCollectionEnum.TOP_SELLING_FREE, start=page, num=60)
+                # Fetch and populate Play Store Top Selling Paid Apps
+                AppInfoTaskQueue.add(StoreTypeEnum.PLAY_STORE, QueryTypeEnum.FETCH, collection=PlayStoreCollectionEnum.TOP_SELLING_PAID, start=page, num=60)
+                # Fetch and populate Play Store Top Grossing Apps
+                AppInfoTaskQueue.add(StoreTypeEnum.PLAY_STORE, QueryTypeEnum.FETCH, collection=PlayStoreCollectionEnum.TOP_GROSSING, start=page, num=60)
+                # Fetch and populate Play Store Top Selling New Free Apps
+                AppInfoTaskQueue.add(StoreTypeEnum.PLAY_STORE, QueryTypeEnum.FETCH, collection=PlayStoreCollectionEnum.TOP_SELLING_NEW_FREE, start=page, num=60)
+                # Fetch and populate Play Store Top Selling New Paid Apps
+                AppInfoTaskQueue.add(StoreTypeEnum.PLAY_STORE, QueryTypeEnum.FETCH, collection=PlayStoreCollectionEnum.TOP_SELLING_NEW_PAID, start=page, num=60)
+
+            # Fetch and populate App Store Top Apps for each genre in each category
+            for genre in ['ALL']: #dir(AppStoreRSSGenreEnum):
+                # Only valid enum values
+                if callable(getattr(AppStoreRSSGenreEnum, genre)) or genre.startswith('__'): continue
+                AppInfoTaskQueue.add(StoreTypeEnum.APP_STORE, QueryTypeEnum.FETCH, collection=AppStoreRSSTypeEnum.TOP_FREE, genre_id=getattr(AppStoreRSSGenreEnum, genre))
+                AppInfoTaskQueue.add(StoreTypeEnum.APP_STORE, QueryTypeEnum.FETCH, collection=AppStoreRSSTypeEnum.TOP_GROSSING, genre_id=getattr(AppStoreRSSGenreEnum, genre))
+                AppInfoTaskQueue.add(StoreTypeEnum.APP_STORE, QueryTypeEnum.FETCH, collection=AppStoreRSSTypeEnum.TOP_PAID, genre_id=getattr(AppStoreRSSGenreEnum, genre))
+                AppInfoTaskQueue.add(StoreTypeEnum.APP_STORE, QueryTypeEnum.FETCH, collection=AppStoreRSSTypeEnum.NEW_APPS, genre_id=getattr(AppStoreRSSGenreEnum, genre))
+                AppInfoTaskQueue.add(StoreTypeEnum.APP_STORE, QueryTypeEnum.FETCH, collection=AppStoreRSSTypeEnum.NEW_FREE, genre_id=getattr(AppStoreRSSGenreEnum, genre))
+                AppInfoTaskQueue.add(StoreTypeEnum.APP_STORE, QueryTypeEnum.FETCH, collection=AppStoreRSSTypeEnum.NEW_PAID, genre_id=getattr(AppStoreRSSGenreEnum, genre))
+
