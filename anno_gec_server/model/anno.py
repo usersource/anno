@@ -7,7 +7,6 @@ Anno data store model definition.
 import datetime
 import logging
 
-import endpoints
 from google.appengine.api import search
 from google.appengine.ext import ndb
 
@@ -127,30 +126,7 @@ class Anno(BaseModel):
         """
         create a new anno model from request message.
         """
-        if message.app_name:
-            appinfo = AppInfo.get(name=message.app_name)
-            community = None
-
-            if appinfo is None:
-                appInfoMessage = AppInfoMessage(name=message.app_name, version=message.app_version)
-                appinfo = AppInfo.insert(appInfoMessage)
-            else:
-                app_community = getCommunityForApp(id=appinfo.key.id())
-                if app_community and isMember(app_community, user):
-                    community = app_community
-
-        elif message.community_name:
-            community_id = Community.getCommunity(community_name=message.community_name).id
-            community = Community.get_by_id(community_id)
-            community_apps = getCommunityApps(community_id, app_count=1)
-
-            if len(community_apps):
-                appinfo = AppInfo.get_by_id(community_apps[0].id())
-            else:
-                raise endpoints.NotFoundException("Selected community doesn't have any app associated with it. Please select another option.")
-
-        else:
-            raise endpoints.BadRequestException("Please specify a community or app")
+        appinfo, community = getAppAndCommunity(message, user)
 
         entity = cls(anno_text=message.anno_text, anno_type=message.anno_type,
                      level=message.level, device_model=message.device_model, 
@@ -210,12 +186,18 @@ class Anno(BaseModel):
         index.delete(anno_id)
 
 
-    def merge_from_message(self, message):
+    def merge_from_message(self, message, user):
         """
         populate current anno with non-null fields in request message.(used in merge)
 
         creator isn't update-able.
         """
+        appinfo, community = getAppAndCommunity(message, user)
+
+        # set appinfo and community
+        self.app = appinfo.key
+        self.community = community.key if community else None
+
         if message.anno_text is not None:
             self.anno_text = message.anno_text
 #         if message.simple_x is not None:
@@ -234,10 +216,6 @@ class Anno(BaseModel):
             self.level = message.level
         if message.device_model is not None:
             self.device_model = message.device_model
-        if message.app_name is not None:
-            self.app_name = message.app_name
-        if message.app_version is not None:
-            self.app_version = message.app_version
         if message.os_name is not None:
             self.os_name = message.os_name
         if message.os_version is not None:
