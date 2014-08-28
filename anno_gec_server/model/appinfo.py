@@ -5,6 +5,9 @@ from google.appengine.ext import ndb
 
 from message.appinfo_message import AppInfoMessage
 
+class AppInfoPlatforms:
+    ANDROID = "Android"
+    iOS = "iOS"
 
 class AppInfo(ndb.Model):
     """
@@ -12,6 +15,7 @@ class AppInfo(ndb.Model):
     """
     name = ndb.StringProperty(required=True)
     lc_name = ndb.StringProperty()
+    bundleid = ndb.StringProperty()
     icon = ndb.BlobProperty()
     icon_url = ndb.StringProperty()
     description = ndb.TextProperty()
@@ -19,32 +23,56 @@ class AppInfo(ndb.Model):
     developer = ndb.StringProperty()
     company_name = ndb.StringProperty()
     app_url = ndb.StringProperty()
+    platform = ndb.StringProperty(choices=[AppInfoPlatforms.ANDROID, AppInfoPlatforms.iOS])
     created = ndb.DateTimeProperty(auto_now_add=True)
 
 
     @classmethod
-    def get(cls, name):
+    def get(cls, name=None, bundleid=None):
         appinfo = None
         if name:
             lc_name = name.lower()
             appinfo = cls.query(ndb.OR(cls.lc_name == lc_name, cls.name == name)).get()
+        elif bundleid:
+            appinfo = cls.query(cls.bundleid == bundleid).get()
         return appinfo
 
 
     @classmethod
-    def insert(cls, message):
-        lowercase_name = message.name.lower()
-        entity = cls(name=message.name, lc_name=lowercase_name, icon=message.icon,
-                     icon_url=message.icon_url, description=message.description,
-                     version=message.version, developer=message.developer,
-                     company_name=message.company_name, app_url=message.app_url)
+    def insert_raw_data(cls, name, platform, bundleid, icon, icon_url, description, version, developer, company_name, app_url):
+        lc_name = name.lower()
+        entity = cls(name=name, lc_name=lc_name, bundleid=bundleid, icon=icon,
+                     icon_url=icon_url, description=description,
+                     version=version, developer=developer,
+                     company_name=company_name, platform=platform, app_url=app_url)
         entity.put()
         return entity
 
 
     @classmethod
+    def insert(cls, message):
+        entity = cls.insert_raw_data(name=message.name, 
+                    platform=getattr(message, 'platform', None),
+                    bundleid=getattr(message, 'bundleid', None), icon=message.icon,
+                    icon_url=message.icon_url, description=message.description,
+                    version=message.version, developer=message.developer,
+                    company_name=message.company_name, app_url=message.app_url)
+        return entity
+
+
+    @classmethod
     def update(cls, message):
-        entity = cls.get(name=message.name)
+        entity = None
+
+        # bundleid take precedence
+        if getattr(message, 'bundleid', None):
+            entity = cls.get(bundleid=message.bundleid)
+        else:
+            entity = cls.get(name=message.name)
+
+        # Only match of the same platform
+        if entity and getattr(message, 'platform', None) == entity.platform:
+            entity = None
 
         if entity is None:
             entity = cls.insert(message)
@@ -56,6 +84,8 @@ class AppInfo(ndb.Model):
             entity.developer = message.developer or entity.developer
             entity.company_name = message.company_name or entity.company_name
             entity.app_url = message.app_url or entity.app_url
+            entity.bundleid = getattr(message, 'bundleid', None) or entity.bundleid
+            entity.platform = getattr(message, 'platform', None) or entity.platform
             entity.put()
 
         return entity
