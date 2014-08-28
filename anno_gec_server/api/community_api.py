@@ -46,7 +46,7 @@ class CommunityApi(remote.Service):
     @endpoints.method(community_with_id_resource_container, CommunityMessage,
                       path="community/{id}", http_method="GET", name="community.get")
     def community_get(self, request):
-        return Community.getCommunity(request.id)
+        return Community.getCommunity(community_id=request.id)
 
     @endpoints.method(CommunityMessage, ResponseMessage, path="community",
                       http_method="POST", name="community.insert")
