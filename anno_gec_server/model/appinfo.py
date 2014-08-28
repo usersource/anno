@@ -67,11 +67,13 @@ class AppInfo(ndb.Model):
         # bundleid take precedence
         if getattr(message, 'bundleid', None):
             entity = cls.get(bundleid=message.bundleid)
-        else:
+
+        # if not found try name
+        if not entity:
             entity = cls.get(name=message.name)
 
         # Only match of the same platform
-        if entity and getattr(message, 'platform', None) != entity.platform:
+        if entity and entity.platform is not None and getattr(message, 'platform', None) != entity.platform:
             entity = None
 
         if entity is None:
