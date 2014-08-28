@@ -1,0 +1,4 @@
+cron:
+- description: Basic Weekly App Info Update
+  url: /appinfo?cron_type=basic_weekly
+  schedule: every sunday 09:00
