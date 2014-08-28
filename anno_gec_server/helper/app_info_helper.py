@@ -133,7 +133,7 @@ class GooglePlayStoreScraper(HTMLParser):
 
 		# The App store link
 		elif tag == 'a' and attrs_d.get('class') == 'card-click-target':
-			self._current_app['link'] = attrs_d.get('href')
+			self._current_app['link'] = 'https://play.google.com' + attrs_d.get('href', '/no-link-found')
 
 		# The App title
 		elif tag == 'a' and attrs_d.get('class') == 'title' and attrs_d.has_key('title'):
