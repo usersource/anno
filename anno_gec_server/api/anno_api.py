@@ -66,6 +66,7 @@ from model.community import Community
 from model.follow_up import FollowUp
 from model.userannostate import UserAnnoState
 from model.tags import Tag
+from model.appinfo import AppInfo
 from helper.settings import anno_js_client_id
 from helper.utils import auth_user
 from helper.utils import put_search_document
@@ -99,7 +100,9 @@ class AnnoApi(remote.Service):
 
     anno_update_resource_container = endpoints.ResourceContainer(
         AnnoMergeMessage,
-        id=messages.IntegerField(2, required=True)
+        id=messages.IntegerField(2, required=True),
+        app_name=messages.StringField(3),
+        community_name=messages.StringField(4)
     )
 
     anno_search_resource_container = endpoints.ResourceContainer(
@@ -190,6 +193,9 @@ class AnnoApi(remote.Service):
         elif request.query_type == AnnoQueryType.COMMUNITY:
             community = Community.get_by_id(request.community)
             return Anno.query_by_community(community, limit, select_projection, curs, user)
+        elif request.query_type == AnnoQueryType.APP:
+            app = AppInfo.get(request.app)
+            return Anno.query_by_app(app, limit, select_projection, curs, user)
         else:
             return Anno.query_by_page(limit, select_projection, curs, user)
 
@@ -242,7 +248,7 @@ class AnnoApi(remote.Service):
         if anno is None:
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
 
-        anno.merge_from_message(request)
+        anno.merge_from_message(request, user)
         # set last update time & activity
         anno.last_update_time = datetime.datetime.now()
         anno.last_activity = 'anno'

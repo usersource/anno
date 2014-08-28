@@ -26,8 +26,15 @@ class Community(ndb.Model):
                             )
 
     @classmethod
-    def getCommunity(cls, community_id):
-        return cls.get_by_id(community_id).to_response_message()
+    def getCommunity(cls, community_id=None, community_name=None):
+        community = None
+
+        if community_id:
+            community = cls.get_by_id(community_id)
+        if community_name:
+            community = cls.query(cls.name == community_name).get()
+
+        return community.to_response_message() if community else None
 
     @classmethod
     def insert(cls, message):

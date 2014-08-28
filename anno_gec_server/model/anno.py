@@ -126,19 +126,7 @@ class Anno(BaseModel):
         """
         create a new anno model from request message.
         """
-        appinfo = AppInfo.get(name=message.app_name)
-        community = None
-
-        if appinfo is None:
-            appInfoMessage = AppInfoMessage(name=message.app_name, version=message.app_version)
-            appinfo = AppInfo.insert(appInfoMessage)
-        else:
-            app_community = getCommunityForApp(id=appinfo.key.id())
-            if app_community and isMember(app_community, user):
-                community = app_community
-
-        if type(community) is Community:
-            community = community.key
+        appinfo, community = getAppAndCommunity(message, user)
 
         entity = cls(anno_text=message.anno_text, anno_type=message.anno_type,
                      level=message.level, device_model=message.device_model, 
@@ -150,7 +138,7 @@ class Anno(BaseModel):
 
         # set appinfo and community
         entity.app = appinfo.key
-        entity.community = community
+        entity.community = community.key if community else None
 
         # set created time if provided in the message.
         if message.created is not None:
@@ -198,12 +186,18 @@ class Anno(BaseModel):
         index.delete(anno_id)
 
 
-    def merge_from_message(self, message):
+    def merge_from_message(self, message, user):
         """
         populate current anno with non-null fields in request message.(used in merge)
 
         creator isn't update-able.
         """
+        appinfo, community = getAppAndCommunity(message, user)
+
+        # set appinfo and community
+        self.app = appinfo.key
+        self.community = community.key if community else None
+
         if message.anno_text is not None:
             self.anno_text = message.anno_text
 #         if message.simple_x is not None:
@@ -222,10 +216,6 @@ class Anno(BaseModel):
             self.level = message.level
         if message.device_model is not None:
             self.device_model = message.device_model
-        if message.app_name is not None:
-            self.app_name = message.app_name
-        if message.app_version is not None:
-            self.app_version = message.app_version
         if message.os_name is not None:
             self.os_name = message.os_name
         if message.os_version is not None:
@@ -379,6 +369,33 @@ class Anno(BaseModel):
             else:
                 items = [entity.to_response_message(user) for entity in annos]
     
+            if more:
+                return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
+            else:
+                return AnnoListMessage(anno_list=items, has_more=more)
+        else:
+            return AnnoListMessage(anno_list=[])
+
+    @classmethod
+    def query_by_app(cls, app, limit, projection, curs, user):
+        if app:
+            query = cls.query(cls.app == app.key)
+            query = query.order(-cls.created)
+            query = filter_anno_by_user(query, user)
+
+            if (curs is not None) and (projection is not None):
+                annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)
+            elif (curs is not None) and (projection is None):
+                annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
+            elif (curs is None) and (projection is not None):
+                annos, next_curs, more = query.fetch_page(limit, projection=projection)
+            else:
+                annos, next_curs, more = query.fetch_page(limit)
+            if projection is not None:
+                items = [entity.to_response_message_by_projection(projection) for entity in annos]
+            else:
+                items = [entity.to_response_message(user) for entity in annos]
+
             if more:
                 return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
             else:
