@@ -6,7 +6,7 @@ from model.userannostate import UserAnnoState
 from model.userrole import UserRole
 from tasks.push_notifications_task import PushTaskQueue
 from helper.utils_enum import AnnoActionType
-from helper.utils_enum import DeviceType
+from helper.utils_enum import PlatformType
 from helper.utils_enum import AnnoPushNotificationMessage
 from helper.utils import APP_NAME
 
@@ -28,7 +28,7 @@ class ActivityPushNotifications():
         :returns: list of user device ids
         :rtype: list
         '''
-        user_deviceids = { DeviceType.IOS: [], DeviceType.ANDROID: [] }
+        user_deviceids = { PlatformType.IOS: [], PlatformType.ANDROID: [] }
 
         try:
             user_list = [ data.user.get() for data in data_list ]
@@ -64,7 +64,7 @@ class ActivityPushNotifications():
         ios_msg = cls.create_ios_notf_msg(user_name, anno_text, anno_app_name, anno_id, action_type)
         android_msg = cls.create_android_notf_msg(user_name, anno_text, anno_app_name, anno_id, action_type)
 
-        return { DeviceType.IOS: ios_msg, DeviceType.ANDROID: android_msg }
+        return { PlatformType.IOS: ios_msg, PlatformType.ANDROID: android_msg }
 
 
     @classmethod
@@ -113,8 +113,8 @@ class ActivityPushNotifications():
         :returns: list of device ids for iOS and Android devices
         :rtype: dict
         '''
-        interested_user_deviceids = { DeviceType.IOS: [], DeviceType.ANDROID: [] }
-        community_manager_deviceids = { DeviceType.IOS: [], DeviceType.ANDROID: [] }
+        interested_user_deviceids = { PlatformType.IOS: [], PlatformType.ANDROID: [] }
+        community_manager_deviceids = { PlatformType.IOS: [], PlatformType.ANDROID: [] }
 
         # get all interested users for anno if action_type is other than "created"
         if action_type != AnnoActionType.CREATED:

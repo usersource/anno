@@ -2,7 +2,7 @@ __author__ = 'topcircler'
 
 from google.appengine.ext import ndb
 
-from helper.utils_enum import DeviceType
+from helper.utils_enum import PlatformType
 
 class AppInfo(ndb.Model):
     """
@@ -18,7 +18,7 @@ class AppInfo(ndb.Model):
     developer = ndb.StringProperty()
     company_name = ndb.StringProperty()
     app_url = ndb.StringProperty()
-    platform = ndb.StringProperty(choices=[DeviceType.ANDROID, DeviceType.IOS])
+    platform = ndb.StringProperty(choices=[PlatformType.ANDROID, PlatformType.IOS])
     created = ndb.DateTimeProperty(auto_now_add=True)
 
 

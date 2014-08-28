@@ -1,5 +1,5 @@
 from model.appinfo import AppInfo
-from helper.utils_enum import DeviceType
+from helper.utils_enum import PlatformType
 
 from urllib2 import urlopen, URLError
 from urllib import urlencode, quote
@@ -293,7 +293,7 @@ class AppInfoPopulate(object):
 				developer=app.get('artistName'),
 				company_name=app.get('artistName'),
 				app_url=app.get('trackViewUrl'),
-				platform=DeviceType.IOS
+				platform=PlatformType.IOS
 			)
 			AppInfo.update(entity)
 
@@ -319,7 +319,7 @@ class AppInfoPopulate(object):
 				developer=app.get('artist'),
 				company_name=app.get('artist'),
 				app_url=app.get('link'),
-				platform=DeviceType.IOS
+				platform=PlatformType.IOS
 			)
 			AppInfo.update(entity)
 
@@ -369,7 +369,7 @@ class AppInfoPopulate(object):
 				developer=app.get('developer'),
 				company_name=app.get('developer'),
 				app_url=app.get('link'),
-				platform=DeviceType.ANDROID
+				platform=PlatformType.ANDROID
 			)
 			AppInfo.update(entity)
 
