@@ -458,7 +458,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                             {
                                 if (callback)
                                 {
-                                    callback();
+                                    callback(data);
                                 }
 
                                 cordova.exec(
@@ -485,7 +485,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                     {
                         if (callback)
                         {
-                            callback();
+                            callback(data);
                         }
                     }
 
@@ -494,11 +494,6 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                 error: function(error, data)
                 {
                     self.sendingAnnoToCloud = false;
-
-                    if (callback)
-                    {
-                        callback();
-                    }
                 }
             };
 
