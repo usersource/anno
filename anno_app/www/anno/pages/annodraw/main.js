@@ -1006,20 +1006,22 @@ require([
                         "level":level
                     };
 
-                    callbackAnnoItem = {
-                        "comment":annoItem["anno_text"],
-                        "draw_elements":annoItem["draw_elements"],
-                        "image":screenshotDirPath+"/"+annoItem["image"]
-                    };
-
                     if (selectedType == "app") {
-                        annoItem["app_name"] = callbackAnnoItem["appName"] = appName;
-                        annoItem["app_version"] = callbackAnnoItem["appVersion"] = appVersion;
+                        annoItem["app_name"] = appName;
+                        annoItem["app_version"] = appVersion;
                     } else if (selectedType == "community") {
-                        annoItem["community_name"] = callbackAnnoItem["appName"] = appName;
+                        annoItem["community_name"] = appName;
                     }
 
-                    AnnoDataHandler.updateAnno(editAnnoId, annoItem, screenshotDirPath, function(){
+                    AnnoDataHandler.updateAnno(editAnnoId, annoItem, screenshotDirPath, function(data) {
+                        callbackAnnoItem = {
+                            "comment" : annoItem["anno_text"],
+                            "draw_elements" : annoItem["draw_elements"],
+                            "image" : screenshotDirPath + "/" + annoItem["image"],
+                            "appName" : data["app_name"],
+                            "appVersion" : data["app_version"]
+                        };
+
                         window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "done");
                         window.localStorage.setItem(annoUtil.localStorageKeys.updatedAnnoData, dojoJson.stringify(callbackAnnoItem));
                     });
@@ -1044,19 +1046,21 @@ require([
                 "level":level
             };
 
-            callbackAnnoItem = {
-                "comment":annoItem["anno_text"],
-                "draw_elements":annoItem["draw_elements"]
-            };
-
             if (selectedType == "app") {
-                annoItem["app_name"] = callbackAnnoItem["appName"] = appName;
-                annoItem["app_version"] = callbackAnnoItem["appVersion"] = appVersion;
+                annoItem["app_name"] = appName;
+                annoItem["app_version"] = appVersion;
             } else if (selectedType == "community") {
-                annoItem["community_name"] = callbackAnnoItem["appName"] = appName;
+                annoItem["community_name"] = appName;
             }
 
-            AnnoDataHandler.updateAnno(editAnnoId, annoItem, "", function(){
+            AnnoDataHandler.updateAnno(editAnnoId, annoItem, "", function(data) {
+                callbackAnnoItem = {
+                    "comment" : annoItem["anno_text"],
+                    "draw_elements" : annoItem["draw_elements"],
+                    "appName" : data["app_name"],
+                    "appVersion" : data["app_version"]
+                };
+
                 window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "done");
                 window.localStorage.setItem(annoUtil.localStorageKeys.updatedAnnoData, dojoJson.stringify(callbackAnnoItem));
             });

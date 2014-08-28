@@ -260,6 +260,10 @@ class AnnoApi(remote.Service):
         # send notifications
         ActivityPushNotifications.send_push_notification(first_user=user, anno=anno, action_type=AnnoActionType.EDITED)
 
+        # update last_read of UserAnnoState
+        from model.userannostate import UserAnnoState
+        UserAnnoState.update_last_read(user=user, anno=anno)
+
         return anno.to_response_message(user)
 
 
