@@ -7,6 +7,7 @@ Anno data store model definition.
 import datetime
 import logging
 
+import endpoints
 from google.appengine.api import search
 from google.appengine.ext import ndb
 
@@ -126,19 +127,30 @@ class Anno(BaseModel):
         """
         create a new anno model from request message.
         """
-        appinfo = AppInfo.get(name=message.app_name)
-        community = None
+        if message.app_name:
+            appinfo = AppInfo.get(name=message.app_name)
+            community = None
 
-        if appinfo is None:
-            appInfoMessage = AppInfoMessage(name=message.app_name, version=message.app_version)
-            appinfo = AppInfo.insert(appInfoMessage)
+            if appinfo is None:
+                appInfoMessage = AppInfoMessage(name=message.app_name, version=message.app_version)
+                appinfo = AppInfo.insert(appInfoMessage)
+            else:
+                app_community = getCommunityForApp(id=appinfo.key.id())
+                if app_community and isMember(app_community, user):
+                    community = app_community
+
+        elif message.community_name:
+            community_id = Community.getCommunity(community_name=message.community_name).id
+            community = Community.get_by_id(community_id)
+            community_apps = getCommunityApps(community_id, app_count=1)
+
+            if len(community_apps):
+                appinfo = AppInfo.get_by_id(community_apps[0].id())
+            else:
+                raise endpoints.NotFoundException("Selected community doesn't have any app associated with it. Please select another option.")
+
         else:
-            app_community = getCommunityForApp(id=appinfo.key.id())
-            if app_community and isMember(app_community, user):
-                community = app_community
-
-        if type(community) is Community:
-            community = community.key
+            raise endpoints.BadRequestException("Please specify a community or app")
 
         entity = cls(anno_text=message.anno_text, anno_type=message.anno_type,
                      level=message.level, device_model=message.device_model, 
@@ -150,7 +162,7 @@ class Anno(BaseModel):
 
         # set appinfo and community
         entity.app = appinfo.key
-        entity.community = community
+        entity.community = community.key if community else None
 
         # set created time if provided in the message.
         if message.created is not None:

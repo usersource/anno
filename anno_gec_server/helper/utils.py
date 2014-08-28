@@ -211,6 +211,10 @@ def getCommunityForApp(id=None, app_name=None):
 
     return app_community
 
+def getCommunityApps(community_id, app_count=None):
+    community = Community.get_by_id(community_id)
+    return community.apps[0:app_count] if app_count else community.apps
+
 def user_community(user):
     userroles = UserRole.query().filter(UserRole.user == user.key)\
                                 .fetch(projection=[UserRole.community, UserRole.role])
