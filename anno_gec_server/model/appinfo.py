@@ -1,13 +1,8 @@
 __author__ = 'topcircler'
 
-import endpoints
 from google.appengine.ext import ndb
 
-from message.appinfo_message import AppInfoMessage
-
-class AppInfoPlatforms:
-    ANDROID = "Android"
-    iOS = "iOS"
+from helper.utils_enum import DeviceType
 
 class AppInfo(ndb.Model):
     """
@@ -23,7 +18,7 @@ class AppInfo(ndb.Model):
     developer = ndb.StringProperty()
     company_name = ndb.StringProperty()
     app_url = ndb.StringProperty()
-    platform = ndb.StringProperty(choices=[AppInfoPlatforms.ANDROID, AppInfoPlatforms.iOS])
+    platform = ndb.StringProperty(choices=[DeviceType.ANDROID, DeviceType.IOS])
     created = ndb.DateTimeProperty(auto_now_add=True)
 
 
