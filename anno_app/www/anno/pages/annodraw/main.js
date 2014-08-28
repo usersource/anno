@@ -33,7 +33,7 @@ require([
     var surface, drawMode = false;
     var defaultCommentBox;
 
-    var selectedAppName, screenShotPath, selectedAppVersionName;
+    var selectedAppName, screenShotPath, selectedAppVersionName, selectedType;
     var level1Color = annoUtil.level1Color,
         level2Color = annoUtil.level2Color;
     var level = 1;
@@ -164,11 +164,13 @@ require([
             domStyle.set(itemNode.children[0], "color", "#ff9900");
             selectedAppName = itemNode.children[0].innerHTML;
             selectedAppVersionName = "";
+            selectedType = itemNode.children[0].getAttribute('data-type');
         }
         else
         {
             selectedAppName = itemNode.children[0].innerHTML;
             selectedAppVersionName = itemNode.children[0].getAttribute('data-app-version');
+            selectedType = itemNode.children[0].getAttribute('data-type');
         }
 
         dom.byId("btnShare").disabled = false;
@@ -913,10 +915,8 @@ require([
                     // "simple_x":0,
                     // "simple_y":0,
                     // "simple_circle_on_top":false,
-                    "app_version":appVersion=="none"?"":appVersion||appInfo.appVersion,
                     // "simple_is_moved":false,
                     "level":appInfo.level,
-                    "app_name":appName||appInfo.appName,
                     "device_model":deviceInfo.model,
                     "os_name":deviceInfo.osName,
                     "os_version":deviceInfo.osVersion,
@@ -924,6 +924,13 @@ require([
                     "screenshot_is_anonymized":isScreenshotAnonymized,
                     "anno_type":"draw comment"
                 };
+
+                if (selectedType == "app") {
+                    annoItem["app_name"] = appName || appInfo.appName;
+                    annoItem["app_version"] = appVersion == "none" ? "" : appVersion || appInfo.appVersion;
+                } else if (selectedType == "community") {
+                    annoItem["community_name"] = appName || appInfo.appName;
+                }
 
                 AnnoDataHandler.insertAnno(annoItem, appInfo.source, screenshotDirPath);
             },
