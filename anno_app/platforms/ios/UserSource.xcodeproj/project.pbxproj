@@ -637,6 +637,7 @@
 				BUNDLE_LOADER = "";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -673,7 +674,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = UserSource;
-				PROVISIONING_PROFILE = "6281C503-8440-42CF-8B9B-B6EB7B433186";
+				PROVISIONING_PROFILE = "498bc07c-0de7-4fe2-91db-e8ee584c2455";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
@@ -689,6 +690,7 @@
 				BUNDLE_LOADER = "";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -722,7 +724,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = UserSource;
-				PROVISIONING_PROFILE = "6281C503-8440-42CF-8B9B-B6EB7B433186";
+				PROVISIONING_PROFILE = "498bc07c-0de7-4fe2-91db-e8ee584c2455";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
