@@ -999,8 +999,6 @@ require([
 
                     annoItem = {
                         "anno_text":surface.getConcatenatedComment(),
-                        "app_name":appName,
-                        "app_version":appVersion,
                         "image":imageKey,
                         "draw_elements":dojoJson.stringify(shapesJson),
                         "screenshot_is_anonymized":isScreenshotAnonymized,
@@ -1010,11 +1008,17 @@ require([
 
                     callbackAnnoItem = {
                         "comment":annoItem["anno_text"],
-                        "appName":annoItem["app_name"],
-                        "appVersion":annoItem["app_version"],
                         "draw_elements":annoItem["draw_elements"],
                         "image":screenshotDirPath+"/"+annoItem["image"]
                     };
+
+                    if (selectedType == "app") {
+                        annoItem["app_name"] = callbackAnnoItem["appName"] = appName;
+                        annoItem["app_version"] = callbackAnnoItem["appVersion"] = appVersion;
+                    } else if (selectedType == "community") {
+                        annoItem["community_name"] = callbackAnnoItem["appName"] = appName;
+                    }
+
                     AnnoDataHandler.updateAnno(editAnnoId, annoItem, screenshotDirPath, function(){
                         window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "done");
                         window.localStorage.setItem(annoUtil.localStorageKeys.updatedAnnoData, dojoJson.stringify(callbackAnnoItem));
@@ -1034,8 +1038,6 @@ require([
             isScreenshotAnonymized =isScreenshotAnonymized||originalGrayBoxCnt>0;
             annoItem = {
                 "anno_text":surface.getConcatenatedComment(),
-                "app_name":appName,
-                "app_version":appVersion,
                 "draw_elements":dojoJson.stringify(shapesJson),
                 "screenshot_is_anonymized":isScreenshotAnonymized,
                 "anno_type":"draw comment",
@@ -1044,10 +1046,15 @@ require([
 
             callbackAnnoItem = {
                 "comment":annoItem["anno_text"],
-                "appName":annoItem["app_name"],
-                "appVersion":annoItem["app_version"],
                 "draw_elements":annoItem["draw_elements"]
             };
+
+            if (selectedType == "app") {
+                annoItem["app_name"] = callbackAnnoItem["appName"] = appName;
+                annoItem["app_version"] = callbackAnnoItem["appVersion"] = appVersion;
+            } else if (selectedType == "community") {
+                annoItem["community_name"] = callbackAnnoItem["appName"] = appName;
+            }
 
             AnnoDataHandler.updateAnno(editAnnoId, annoItem, "", function(){
                 window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "done");
