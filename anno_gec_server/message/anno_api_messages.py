@@ -39,6 +39,7 @@ class AnnoMessage(messages.Message):
     geo_position = messages.StringField(19) #:
     latitude = messages.FloatField(20) #:
     longitude = messages.FloatField(21) #:
+    community_name = messages.StringField(22) #:
  
 
 class AnnoMergeMessage(messages.Message):

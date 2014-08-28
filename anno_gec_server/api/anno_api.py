@@ -100,7 +100,9 @@ class AnnoApi(remote.Service):
 
     anno_update_resource_container = endpoints.ResourceContainer(
         AnnoMergeMessage,
-        id=messages.IntegerField(2, required=True)
+        id=messages.IntegerField(2, required=True),
+        app_name=messages.StringField(3),
+        community_name=messages.StringField(4)
     )
 
     anno_search_resource_container = endpoints.ResourceContainer(
@@ -246,7 +248,7 @@ class AnnoApi(remote.Service):
         if anno is None:
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
 
-        anno.merge_from_message(request)
+        anno.merge_from_message(request, user)
         # set last update time & activity
         anno.last_update_time = datetime.datetime.now()
         anno.last_activity = 'anno'
