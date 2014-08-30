@@ -32,6 +32,11 @@ class AppInfo(ndb.Model):
             appinfo = cls.query(cls.bundleid == bundleid).get()
         return appinfo
 
+    @classmethod
+    def get_unknown(cls):
+        apps = cls.query(ndb.AND(cls.bundleid == None, cls.developer == None)).fetch()
+        return apps
+
 
     @classmethod
     def insert_raw_data(cls, name, platform, bundleid, icon, icon_url, description, version, developer, company_name, app_url):

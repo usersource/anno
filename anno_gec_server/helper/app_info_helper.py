@@ -173,7 +173,7 @@ class GooglePlayStoreScraper(HTMLParser):
 
 		# While the flag is active, all data is part of the description
 		elif self.APP_STATE == 'in-description' and self._current_app.has_key('description'):
-			self._current_app['description'] += data
+			self._current_app['description'] += (' ' + data)
 
 class iTunesAppStoreRSSAndSearch(object):
 	'''
@@ -297,6 +297,8 @@ class AppInfoPopulate(object):
 			)
 			AppInfo.update(entity)
 
+		return apps
+
 	@classmethod
 	def app_store_fetch(cls, **parameters):
 		'''
@@ -324,6 +326,7 @@ class AppInfoPopulate(object):
 			AppInfo.update(entity)
 
 		logging.getLogger().debug("Inserted %s successfully", len(apps))
+		return apps
 
 
 	@classmethod
@@ -374,3 +377,30 @@ class AppInfoPopulate(object):
 			AppInfo.update(entity)
 
 		logging.getLogger().debug("Inserted %s successfully", len(apps))
+		return apps
+
+class AppInfoScan(object):
+
+	@classmethod
+	def scan_for_unknown_apps(cls):
+		apps = AppInfo.get_unknown()
+		for app in apps:
+			# Search the Play Store, this update any matched items in the database
+			play_store_apps = AppInfoPopulate.play_store_search(term=app.name)
+			# Only if the first app is an exact match
+			first_app = play_store_apps[0]
+			if first_app.get('name') == app.name:
+				# we have a match
+				# Nothing to do this has already probably merged
+				pass
+
+			# Search the App Store
+			# This will update any matched items in the database
+			app_store_apps = AppInfoPopulate.app_store_search(term=app.name)
+			first_app = app_store_apps[0]
+			if first_app.get('name') == app.name:
+				# we have a match
+				# Nothing to do this has already probably merged
+				pass
+
+		return apps
