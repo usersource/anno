@@ -12,7 +12,6 @@ from google.appengine.ext import ndb
 
 from message.anno_api_messages import AnnoResponseMessage
 from message.anno_api_messages import AnnoListMessage
-from message.appinfo_message import AppInfoMessage
 from model.base_model import BaseModel
 from model.community import Community
 from model.appinfo import AppInfo
