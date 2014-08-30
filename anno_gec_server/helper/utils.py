@@ -19,6 +19,7 @@ from model.userrole import UserRole
 from helper.utils_enum import UserRoleType
 from helper.utils_enum import SearchIndexName
 from helper.settings import SUPPORT_EMAIL_ID
+from message.appinfo_message import AppInfoMessage
 
 
 APP_NAME = "UserSource"
@@ -217,11 +218,12 @@ def getCommunityApps(community_id, app_count=None):
 
 def getAppAndCommunity(message, user):
     if message.app_name:
-        appinfo = AppInfo.get(name=message.app_name)
+        appinfo = AppInfo.get(name=message.app_name, platform=message.platform_type)
         community = None
 
         if appinfo is None:
-            appInfoMessage = AppInfoMessage(name=message.app_name, version=message.app_version)
+            appInfoMessage = AppInfoMessage(name=message.app_name, version=message.app_version,
+                                            platform=message.platform_type)
             appinfo = AppInfo.insert(appInfoMessage)
         else:
             app_community = getCommunityForApp(id=appinfo.key.id())
