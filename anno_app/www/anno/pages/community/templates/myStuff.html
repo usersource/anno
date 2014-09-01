@@ -5,7 +5,47 @@
         <span class="headingTitle" style="padding-left: 20px;padding-top: 6px">Activity</span>
     </div>
     <div id="listContainerMyStuff" style="width: 100%;overflow: auto">
-        <ul id="annoListMyStuff" data-dojo-type="dojox/mobile/EdgeToEdgeList"></ul>
+        <ul id="annoListMyStuff" data-dojo-type="dojox/mobile/EdgeToEdgeList">
+			<div class="fieldset"
+                 data-dojo-type="dojox/mvc/Repeat"
+                 data-dojo-props="exprchar: '#', children: this.loadedModels.mystuff.model">
+                <li class="row #{this.ref[this.index].readStatusClass}"
+                    data-dojo-type="dojox/mobile/ListItem"
+                    data-dojo-props="transition:'slide',variableHeight:true,clickable:true,noArrow:true,transitionOptions:{target:'detail',url:'#detail',params:{cursor:'#{this.index}', source:'mystuff'}},onClick:annoRead"
+                    style="padding: 6px;">
+                    <div class="infoContainer">
+					    <table style="width: 100%;table-layout: fixed;">
+					        <tr>
+					            <td width="40" align="center">
+					                <span class="annoListItemIcon" data-dojo-props="class: at('rel:#{this.index}', 'annoIcon')" data-dojo-type="dojox/mvc/Output"></span>
+					                <img style="width: 40px;height: 40px;border-radius: 8px;" data-dojo-type="dojox/mvc/Output" data-dojo-props="src: at('rel:#{this.index}', 'app_icon_url'), class: at('rel:#{this.index}', 'appIconClass')" />
+					            </td>
+					            <td width="95%" style="padding-left: 4px;font-size: 14px;">
+					                <div class="listTitle" data-dojo-type="dojox/mvc/Output"
+										data-dojo-props="value: at('rel:#{this.index}', 'annoText')"></div>
+					                <div style="padding-top: 2px;">
+					                    <div class="listAppName" style="float: left;width: 50%">
+					                        <span id="annoActIndicator_#{this.index}" class="annoOrangeColor" data-dojo-type="dojox/mvc/Output"
+												data-dojo-props="class: at('rel:#{this.index}', 'lastActivityClass')" ></span>
+					                        <span id="annoActText_#{this.index}" data-dojo-type="dojox/mvc/Output"
+												data-dojo-props="value: at('rel:#{this.index}', 'lastActivityText')"></span>
+					                    </div>
+					                    <div id="annoActWhen_#{this.index}" class="annoOrangeColor" style="float: left;width: 50%;text-align: right"
+											data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:#{this.index}', 'when')"></div>
+					                </div>
+					                <div>
+					                    <div class="listAppName" style="float: left;width: 50%" data-dojo-type="dojox/mvc/Output"
+											data-dojo-props="value: at('rel:#{this.index}', 'app')"></div>
+					                    <div class="listAuthor" style="float: left;width: 50%;text-align: right" data-dojo-type="dojox/mvc/Output"
+											data-dojo-props="value: at('rel:#{this.index}', 'author')"></div>
+					                </div>
+					            </td>
+					        </tr>
+					    </table>
+					</div>
+                </li>
+            </div>
+        </ul>
     </div>
     <div id="learnHowContainer" style="display:none;text-align: center;margin-top: 20px;color: #D37011">
         <div>You haven’t created or discussed any items yet.  Try discussing or voting on some existing items, which you can find in the Feed or using Search.  Make your own comments on apps and other things. To learn how, view the Intro under the settings menu.</div>

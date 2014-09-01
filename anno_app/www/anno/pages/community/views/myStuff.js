@@ -12,10 +12,9 @@ define([
     "dojox/mvc/getStateful",
     "anno/anno/AnnoDataHandler",
     "anno/common/Util",
-    "anno/common/OAuthUtil",
-    "dojo/text!../templates/localAnnoItem.html"
+    "anno/common/OAuthUtil"
 ],
-    function (lang, dom, domClass, domConstruct, domGeom, domStyle, dojoString, connect, win, registry, getStateful, AnnoDataHandler, Util, OAuthUtil, annoItemTemplate)
+    function (lang, dom, domClass, domConstruct, domGeom, domStyle, dojoString, connect, win, registry, getStateful, AnnoDataHandler, Util, OAuthUtil)
     {
         var _connectResults = []; // events connect results
         var app = null, eventsModel = null, needRefresh = true,
@@ -188,32 +187,14 @@ define([
         var drawAnnos = function(annos)
         {
             var annoItemList = registry.byId('annoListMyStuff');
-            annoItemList.destroyDescendants();
-
-            for (var i= 2,c=annos.length;i<c;i++)
-            {
-                if (!annos[i].annoIcon)
-                    annos[i].annoIcon = annos[i].anno_type == Util.annoType.DrawComment?"icon-shapes":"icon-simplecomment";
-                domConstruct.create("li", {
-                    "transition":'slide',
-                    "data-dojo-type":"dojox/mobile/ListItem",
-                    "data-dojo-props":"variableHeight:true,clickable:true,noArrow:true,_index:"+(i-2)+",onClick:annoRead",
-                    "style":"padding: 6px;",
-                    "class":annos[i].readStatusClass,
-                    innerHTML: dojoString.substitute(annoItemTemplate, annos[i])
-                }, annoItemList.domNode, "last");
-            }
-
-            Util.getParser().parse(annoItemList.domNode);
-
-            var items = annoItemList.getChildren();
+            var items = annoItemList.getChildren()[0].domNode.children;
 
             for (var i= 0,c=items.length;i<c;i++)
             {
-                items[i].annoItem = annos[i+2];
-                items[i].on("click", function(){
-                    gotoLocalAnnoViewer(this,this.annoItem);
-                });
+                items[i].onclick = function() {
+                    needRefresh = false;
+                    lastOpenAnnoId = annos[i].id;
+                };
             }
 
             if (annos.length <=0)
@@ -234,13 +215,6 @@ define([
             var parentBox = domGeom.getMarginBox("headingMyStuff");
 
             domStyle.set("listContainerMyStuff", "height", (viewPoint.h-parentBox.h)+"px");
-        };
-
-        var gotoLocalAnnoViewer = function(listItem, annoItem)
-        {
-            app.transitionToView(listItem.domNode, {target:'detail',url:'#detail', params:{cursor:listItem._index, source:"mystuff"}});
-            needRefresh = false;
-            lastOpenAnnoId = annoItem.id;
         };
 
         var goBack = function()
