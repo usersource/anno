@@ -164,6 +164,12 @@ define([
                     }
                 });
 
+                var versionInfo = annoUtil.getVersionInfo();
+                if (versionInfo["version"] != "" && versionInfo["build"] != "") {
+                    dom.byId("versionInfo").innerHTML = "v" + versionInfo["version"] + " build " + versionInfo["build"];
+                    domStyle.set("versionInfo", "display", "");
+                }
+
                 _connectResults.push(connect.connect(registry.byId("settingItemIntro"), 'onClick', function(e)
                 {
                     annoUtil.startActivity("Intro", false);

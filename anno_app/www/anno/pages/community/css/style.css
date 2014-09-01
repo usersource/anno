@@ -849,3 +849,12 @@ li.unread .listTitle {
 	outline: 0;
 	-webkit-user-select: auto !important;
 }
+
+#versionInfo {
+	position: absolute;
+	bottom: 5px;
+	width: 100%;
+	text-align: center;
+	font-size: 14px;
+	color: gray;
+}
