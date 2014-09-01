@@ -1170,6 +1170,7 @@ define([
                     adjustSize();
 
                     initialized = true;
+                    annoUtil.setVersionInfo();
                 }
             }
             else
