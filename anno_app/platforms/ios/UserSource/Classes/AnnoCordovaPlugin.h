@@ -36,6 +36,7 @@ extern AppDelegate *appDelegate;
 - (void) get_installed_app_list:(CDVInvokedUrlCommand*)command;
 - (void) enable_native_gesture_listener:(CDVInvokedUrlCommand*)command;
 - (void) trigger_create_anno:(CDVInvokedUrlCommand*)command;
+- (void) get_app_version:(CDVInvokedUrlCommand*)command;
 
 - (void) showCommunityPage;
 - (void) ShowIntroPage;

@@ -106,6 +106,7 @@
             "iPhone5,3" : "iPhone5C",
             "iPhone6,1" : "iPhone5S"
         },
+        versionInfo: { "version" : "", "build" : "" },
         hasConnection: function()
         {
             var networkState = navigator.connection.type;
@@ -1102,6 +1103,22 @@
         },
         parseDeviceModel: function(deviceModel) {
             return (( deviceModel in this.deviceList) ? this.deviceList[deviceModel] : deviceModel);
+        },
+        getVersionInfo: function() {
+            return this.versionInfo;
+        },
+        setVersionInfo: function() {
+            var self = this;
+            cordova.exec(
+                function(result) {
+                    self.versionInfo["version"] = result[0];
+                    self.versionInfo["build"] = result[1];
+                },
+                function(err) {},
+                "AnnoCordovaPlugin",
+                "get_app_version",
+                []
+            );
         }
     };
 
