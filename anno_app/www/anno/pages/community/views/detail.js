@@ -1186,9 +1186,11 @@ define([
             }
 
             redrawShapes();
-
             annoUtil.hideLoadingIndicator();
+
             domStyle.set('zoomScreenshotContainerDetail', 'display', '');
+            domStyle.set('headingDetail', 'display', 'none');
+            domStyle.set('detailContentContainer', 'display', 'none');
 
             // disable native gesture to scroll horizontal properly
             annoUtil.disableNativeGesture();
@@ -1198,8 +1200,11 @@ define([
             surface.clear();
             surface = oldSurface;
             annoUtil.hideLoadingIndicator();
-            domStyle.set('zoomScreenshotContainerDetail', 'display', 'none');
             annoUtil.enableNativeGesture();
+
+            domStyle.set('zoomScreenshotContainerDetail', 'display', 'none');
+            domStyle.set('headingDetail', 'display', '');
+            domStyle.set('detailContentContainer', 'display', '');
         };
 
         var searchAnnoByApp = function() {
