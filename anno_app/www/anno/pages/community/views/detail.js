@@ -1189,6 +1189,9 @@ define([
 
             annoUtil.hideLoadingIndicator();
             domStyle.set('zoomScreenshotContainerDetail', 'display', '');
+
+            // disable native gesture to scroll horizontal properly
+            annoUtil.disableNativeGesture();
         };
 
         var zoomClose = function() {
@@ -1196,6 +1199,7 @@ define([
             surface = oldSurface;
             annoUtil.hideLoadingIndicator();
             domStyle.set('zoomScreenshotContainerDetail', 'display', 'none');
+            annoUtil.enableNativeGesture();
         };
 
         var searchAnnoByApp = function() {
