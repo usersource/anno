@@ -1189,18 +1189,13 @@ define([
 
             annoUtil.hideLoadingIndicator();
             domStyle.set('zoomScreenshotContainerDetail', 'display', '');
-            domStyle.set('headingDetail', 'display', 'none');
-            domStyle.set('detailContentContainer', 'display', 'none');
         };
 
         var zoomClose = function() {
             surface.clear();
             surface = oldSurface;
             annoUtil.hideLoadingIndicator();
-
             domStyle.set('zoomScreenshotContainerDetail', 'display', 'none');
-            domStyle.set('headingDetail', 'display', '');
-            domStyle.set('detailContentContainer', 'display', '');
         };
 
         var searchAnnoByApp = function() {
