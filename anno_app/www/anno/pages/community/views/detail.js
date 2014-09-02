@@ -45,7 +45,9 @@ define([
             navBarHeight = 50,
             trayScreenHeight = 0,
             screenshotControlsHeight = 86,
-            borderWidth;
+            borderWidth,
+            zoomBorderWidth = 4;
+        var zoomSurface, oldSurface, zoomAnnoID;
 
         var imageBaseUrl = annoUtil.getCEAPIConfig().imageServiceURL;
         var surface;
@@ -370,9 +372,9 @@ define([
 
         var applyAnnoLevelColor = function(level)
         {
-            level = level || 1;
             var borderColor = annoUtil.level1Color;
 
+            level = level || 1;
             if (level == 2) {
                 borderColor = annoUtil.level2Color;
             }
@@ -431,6 +433,12 @@ define([
 
         var handleBackButton = function()
         {
+            var zoomData = dom.byId('zoomScreenshotContainerDetail');
+            if (zoomData && (zoomData.style.display == '' || zoomData.style.display == 'block')) {
+                zoomClose();
+                return;
+            }
+
             var dlg = registry.byId('dlg_common_confirm_message');
 
             if (dlg&&(dlg.domNode.style.display == ''||dlg.domNode.style.display == 'block'))
@@ -1124,6 +1132,76 @@ define([
             app.transitionToView(document.getElementById('modelApp_detail'), {target:'searchAnno',url:'#searchAnno', params:{tag:tag}});
         };
 
+        var zoomImage = function(zoomFactor) {
+            var zoomImgDetailScreenshot = dom.byId('zoomImgDetailScreenshot'),
+                zoomImgDetailScreenshotWidth = zoomImgDetailScreenshot.naturalWidth,
+                zoomImgDetailScreenshotHeight = zoomImgDetailScreenshot.naturalHeight;
+
+            var zoomFactor = zoomFactor || 1,
+                currentAnno = eventsModel.cursor,
+                zoomImageWidth,
+                zoomImageHeight;
+
+            if (zoomImgDetailScreenshotWidth > zoomImgDetailScreenshotHeight) {
+                zoomImageHeight = (win.getBox().h - (2 * zoomBorderWidth)) * zoomFactor;
+                zoomImageWidth = Math.round(zoomImageHeight / (zoomImgDetailScreenshotHeight / zoomImgDetailScreenshotWidth));
+            } else {
+                zoomImageWidth = (win.getBox().w - (2 * zoomBorderWidth)) * zoomFactor;
+                zoomImageHeight = Math.round(zoomImageWidth / (zoomImgDetailScreenshotWidth / zoomImgDetailScreenshotHeight));
+            }
+
+            var borderColor = annoUtil.level1Color,
+                level = currentAnno.level || 1;
+
+            if (level == 2) {
+                borderColor = annoUtil.level2Color;
+            }
+
+            domStyle.set('zoomImgDetailScreenshot', {
+                width : zoomImageWidth + "px",
+                height : zoomImageHeight + "px",
+                borderColor : borderColor,
+                borderStyle : 'solid',
+                borderWidth : zoomBorderWidth + "px"
+            });
+
+            domStyle.set('zoomGfxCanvasContainer', {
+                width : (zoomImageWidth + zoomBorderWidth) + "px",
+                height : (zoomImageHeight + zoomBorderWidth) + "px"
+            });
+
+            imageWidth = zoomImageWidth;
+            imageHeight = zoomImageHeight;
+            surfaceWidth = zoomImageWidth + zoomBorderWidth;
+            surfaceHeight = zoomImageHeight + zoomBorderWidth;
+            borderWidth = zoomBorderWidth;
+
+            if (zoomFactor == 1) {
+                oldSurface = surface;
+                surface = zoomSurface;
+                surface.registry = {};
+
+                dom.byId('zoomScreenshotContainerDetail').scrollLeft = 0;
+                dom.byId('zoomScreenshotContainerDetail').scrollTop = 0;
+            }
+
+            redrawShapes();
+
+            annoUtil.hideLoadingIndicator();
+            domStyle.set('zoomScreenshotContainerDetail', 'display', '');
+
+            // disable native gesture to scroll horizontal properly
+            annoUtil.disableNativeGesture();
+        };
+
+        var zoomClose = function() {
+            surface.clear();
+            surface = oldSurface;
+            annoUtil.hideLoadingIndicator();
+            domStyle.set('zoomScreenshotContainerDetail', 'display', 'none');
+            annoUtil.enableNativeGesture();
+        };
+
         var searchAnnoByApp = function() {
             app.transitionToView(document.getElementById('modelApp_detail'), {
                 target : 'searchAnno',
@@ -1320,6 +1398,12 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId('modelApp_detail'), "scroll", function (e)
                 {
+                    dojo.stopEvent(e);
+                    var zoomData = dom.byId('zoomScreenshotContainerDetail');
+                    if (zoomData && (zoomData.style.display == '' || zoomData.style.display == 'block')) {
+                        return;
+                    }
+
                     setScreenshotTalkAreaState();
 
                     if (!commentTextBoxFocused)
@@ -1353,6 +1437,28 @@ define([
                     });
                 }));
 
+                _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), 'click', function(e) {
+                    dojo.stopEvent(e);
+                    annoUtil.showLoadingIndicator();
+
+                    if (zoomAnnoID != eventsModel.cursor.id) {
+                        dom.byId('zoomImgDetailScreenshot').src = imageBaseUrl + "?anno_id=" + eventsModel.cursor.id;
+                        zoomAnnoID = eventsModel.cursor.id;
+                    } else {
+                        zoomImage();
+                    }
+                }));
+
+                _connectResults.push(connect.connect(dom.byId('zoomScreenshotContainerDetail'), 'click', function(e) {
+                    dojo.stopEvent(e);
+                    zoomImage(2);
+                }));
+
+                _connectResults.push(connect.connect(dom.byId('zoomClose'), 'click', function(e) {
+                    dojo.stopEvent(e);
+                    zoomClose();
+                }));
+
                 _connectResults.push(connect.connect(dom.byId("appNameSpanDetail"), 'click', function() {
                     searchAnnoByApp();
                 }));
@@ -1361,6 +1467,13 @@ define([
                 dom.byId("imgDetailScreenshot").onerror = screenshotImageOnerror;
                 dom.byId("imgDetailScreenshot").crossOrigin = "anonymous";
 
+                dom.byId("zoomImgDetailScreenshot").onload = function() { zoomImage() };
+                dom.byId("zoomImgDetailScreenshot").crossOrigin = "anonymous";
+
+                if (annoUtil.isAndroid()) {
+                    domStyle.set('zoomClose', 'display', 'none');
+                }
+
                 // create surface
                 surface = new Surface({
                     container: dom.byId("gfxCanvasContainer"),
@@ -1368,6 +1481,14 @@ define([
                     height:500,
                     editable:false,
                     borderWidth:0
+                });
+
+                zoomSurface = new Surface({
+                    container : dom.byId("zoomGfxCanvasContainer"),
+                    width : 500,
+                    height : 500,
+                    editable : false,
+                    borderWidth : 0
                 });
             },
             afterActivate: function()
