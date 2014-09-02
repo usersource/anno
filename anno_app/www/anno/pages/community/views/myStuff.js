@@ -186,17 +186,6 @@ define([
 
         var drawAnnos = function(annos)
         {
-            var annoItemList = registry.byId('annoListMyStuff');
-            var items = annoItemList.getChildren()[0].domNode.children;
-
-            for (var i= 0,c=items.length;i<c;i++)
-            {
-                items[i].onclick = function() {
-                    needRefresh = false;
-                    lastOpenAnnoId = annos[i].id;
-                };
-            }
-
             if (annos.length <=0)
             {
                 domStyle.set('listContainerMyStuff', 'display', 'none');
@@ -221,6 +210,14 @@ define([
         {
             needRefresh = true;
             history.back();
+        };
+
+        var annoMyStuffRead = window.annoMyStuffRead = function() {
+            needRefresh = false;
+            lastOpenAnnoId = this._index;
+            if (domClass.contains(this.domNode, "unread")) {
+                domClass.replace(this.domNode, "read", "unread");
+            }
         };
 
         return {
