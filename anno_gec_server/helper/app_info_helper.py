@@ -271,7 +271,7 @@ class AppInfoPopulate(object):
 	'''
 
 	@classmethod
-	def app_store_search(cls, **parameters):
+	def app_store_search(cls, update=True, **parameters):
 		'''
 		Run the Search Query on the Apple App Store
 		and thereafter populate the database
@@ -280,7 +280,7 @@ class AppInfoPopulate(object):
 		if apps:
 			apps = json.loads(apps)
 		else:
-			return
+			return []
 
 		for app in apps.get('results', []):
 			entity = AppInfo(
@@ -295,9 +295,9 @@ class AppInfoPopulate(object):
 				app_url=app.get('trackViewUrl'),
 				platform=DeviceType.IOS
 			)
-			AppInfo.update(entity)
+			if update: AppInfo.update(entity)
 
-		return apps
+		return apps.get('results', [])
 
 	@classmethod
 	def app_store_fetch(cls, **parameters):
@@ -330,13 +330,13 @@ class AppInfoPopulate(object):
 
 
 	@classmethod
-	def play_store_search(cls, **parameters):
+	def play_store_search(cls, update=True, **parameters):
 		'''
 		Run the Search Query on the Google Play Store
 		and thereafter populate the database
 		'''
 		data = GooglePlayStoreScraper.search(**parameters)
-		return cls._process_store_data(data)
+		return cls._process_store_data(data, update=update)
 
 	@classmethod
 	def play_store_fetch(cls, **parameters):
@@ -348,7 +348,7 @@ class AppInfoPopulate(object):
 		return cls._process_store_data(data)
 
 	@classmethod
-	def _process_store_data(cls, data):
+	def _process_store_data(cls, data, update=True):
 		'''
 		Internal, parse the Query data
 		and populate the database, for Play Store only
@@ -374,7 +374,7 @@ class AppInfoPopulate(object):
 				app_url=app.get('link'),
 				platform=DeviceType.ANDROID
 			)
-			AppInfo.update(entity)
+			if update: AppInfo.update(entity)
 
 		logging.getLogger().debug("Inserted %s successfully", len(apps))
 		return apps
@@ -382,25 +382,34 @@ class AppInfoPopulate(object):
 class AppInfoScan(object):
 
 	@classmethod
-	def scan_for_unknown_apps(cls):
+	def scan_for_unknown_apps(cls, platforms=[StoreTypeEnum.PLAY_STORE, StoreTypeEnum.APP_STORE], auto_update=True):
 		apps = AppInfo.get_unknown()
+		all_apps = []
 		for app in apps:
-			# Search the Play Store, this update any matched items in the database
-			play_store_apps = AppInfoPopulate.play_store_search(term=app.name)
-			# Only if the first app is an exact match
-			first_app = play_store_apps[0]
-			if first_app.get('name') == app.name:
-				# we have a match
-				# Nothing to do this has already probably merged
-				pass
 
-			# Search the App Store
-			# This will update any matched items in the database
-			app_store_apps = AppInfoPopulate.app_store_search(term=app.name)
-			first_app = app_store_apps[0]
-			if first_app.get('name') == app.name:
-				# we have a match
-				# Nothing to do this has already probably merged
-				pass
+			if StoreTypeEnum.PLAY_STORE in platforms:
+				# Search the Play Store, this update any matched items in the database
+				play_store_apps = AppInfoPopulate.play_store_search(term=app.name, update=auto_update)
+				# Only if the first app is an exact match
+				if len(play_store_apps) > 0:
+					first_app = play_store_apps[0]
+					if first_app.get('name') == app.name:
+						# we have a match
+						# Nothing to do this has already probably merged
+						pass
+					all_apps += play_store_apps
 
-		return apps
+			if StoreTypeEnum.APP_STORE in platforms:
+				# Search the App Store
+				# This will update any matched items in the database
+				app_store_apps = AppInfoPopulate.app_store_search(term=app.name, update=auto_update)
+				print app_store_apps
+				if len(app_store_apps) > 0:
+					first_app = app_store_apps[0]
+					if first_app.get('name') == app.name:
+						# we have a match
+						# Nothing to do this has already probably merged
+						pass
+					all_apps += app_store_apps
+
+		return all_apps

@@ -64,7 +64,8 @@ class AppInfoHandler(webapp2.RequestHandler):
                     AppInfoPopulate.play_store_search(**parameters)
 
         elif task == 'scan':
-            apps = AppInfoScan.scan_for_unknown_apps()
+            # App Store only for now
+            apps = AppInfoScan.scan_for_unknown_apps(platforms=[StoreTypeEnum.APP_STORE], auto_update=False)            
             # Currently the act of Searching for Apps adds them to the Database
             # So nothing more is to be done
             logging.getLogger().debug("Unknown Apps found: %s", apps)
@@ -77,18 +78,20 @@ class AppInfoHandler(webapp2.RequestHandler):
 
         if is_cron and cron_type == 'basic_appinfo_update':
             # Tasks
+
+            ## For now only iOS App Store
             # Page through 240 Apps per Category
-            for page in range(0, 181, 60):
-                # Fetch and populate Play Store Top Selling Free Apps
-                AppInfoTaskQueue.add_update(StoreTypeEnum.PLAY_STORE, QueryTypeEnum.FETCH, collection=PlayStoreCollectionEnum.TOP_SELLING_FREE, start=page, num=60)
-                # Fetch and populate Play Store Top Selling Paid Apps
-                AppInfoTaskQueue.add_update(StoreTypeEnum.PLAY_STORE, QueryTypeEnum.FETCH, collection=PlayStoreCollectionEnum.TOP_SELLING_PAID, start=page, num=60)
-                # Fetch and populate Play Store Top Grossing Apps
-                AppInfoTaskQueue.add_update(StoreTypeEnum.PLAY_STORE, QueryTypeEnum.FETCH, collection=PlayStoreCollectionEnum.TOP_GROSSING, start=page, num=60)
-                # Fetch and populate Play Store Top Selling New Free Apps
-                AppInfoTaskQueue.add_update(StoreTypeEnum.PLAY_STORE, QueryTypeEnum.FETCH, collection=PlayStoreCollectionEnum.TOP_SELLING_NEW_FREE, start=page, num=60)
-                # Fetch and populate Play Store Top Selling New Paid Apps
-                AppInfoTaskQueue.add_update(StoreTypeEnum.PLAY_STORE, QueryTypeEnum.FETCH, collection=PlayStoreCollectionEnum.TOP_SELLING_NEW_PAID, start=page, num=60)
+            # for page in range(0, 181, 60):
+            #     # Fetch and populate Play Store Top Selling Free Apps
+            #     AppInfoTaskQueue.add_update(StoreTypeEnum.PLAY_STORE, QueryTypeEnum.FETCH, collection=PlayStoreCollectionEnum.TOP_SELLING_FREE, start=page, num=60)
+            #     # Fetch and populate Play Store Top Selling Paid Apps
+            #     AppInfoTaskQueue.add_update(StoreTypeEnum.PLAY_STORE, QueryTypeEnum.FETCH, collection=PlayStoreCollectionEnum.TOP_SELLING_PAID, start=page, num=60)
+            #     # Fetch and populate Play Store Top Grossing Apps
+            #     AppInfoTaskQueue.add_update(StoreTypeEnum.PLAY_STORE, QueryTypeEnum.FETCH, collection=PlayStoreCollectionEnum.TOP_GROSSING, start=page, num=60)
+            #     # Fetch and populate Play Store Top Selling New Free Apps
+            #     AppInfoTaskQueue.add_update(StoreTypeEnum.PLAY_STORE, QueryTypeEnum.FETCH, collection=PlayStoreCollectionEnum.TOP_SELLING_NEW_FREE, start=page, num=60)
+            #     # Fetch and populate Play Store Top Selling New Paid Apps
+            #     AppInfoTaskQueue.add_update(StoreTypeEnum.PLAY_STORE, QueryTypeEnum.FETCH, collection=PlayStoreCollectionEnum.TOP_SELLING_NEW_PAID, start=page, num=60)
 
             # Fetch and populate App Store Top Apps for each genre in each category
             for genre in ['ALL']: #dir(AppStoreRSSGenreEnum):
