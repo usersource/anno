@@ -35,9 +35,11 @@
 <div id="screenshotContainer" class="screenshotContainer">
     <img id="imageScreenshot" src="" width="100%" height="100%">
 </div>
-<div id="gfxCanvasContainer" style="width: 500px; height: 500px;"></div>
+<div id="gfxCanvasContainer" style="width: 500px; height: 500px;">
+	<div id="annoDrawSuggestedTags" style="display: none;"></div>
+</div>
 <div id="bottomBarContainer">
-    <table width="100%">
+    <table width="100%" style="border-spacing: 0;">
         <tr>
             <td width="20%" align="center">
                 <span id="barComment" class="barIcon icon-chat" style="font-size: 32px;"></span>
@@ -62,7 +64,7 @@
 </div>
 <div id="shareDialog" data-dojo-type="dojox/mobile/SimpleDialog" style="display: none">
     <div id="sdTitle">
-        <div style="text-align:center;padding-top: 16px;"></div>
+        <div style="text-align:center;padding: 10px 0;"></div>
     </div>
     <div id="tabContainer" class="tabContainer">
         <table width="100%" height="100%" style="border-spacing: 4px;table-layout: fixed;">
@@ -79,25 +81,25 @@
             </tr>
         </table>
     </div>
-    <div id="sdAppList">
+    <div id="sdAppList" style="height: 74.194%;height: calc(100% - 126px);height: -webkit-calc(100% - 126px);">
         <div id="sdFavoriteAppsListContent" style="overflow-y:auto;height: 100%">
-            <div style="margin-left: 10px;margin-right: 10px;padding-top: 4px;"></div>
+            <!-- <div style="margin-left: 10px;margin-right: 10px;padding-top: 4px;"></div> -->
         </div>
         <div id="sdRecentAppsListContent" style="overflow-y:auto;height: 100%;display: none">
-            <div style="margin-left: 10px;margin-right: 10px;padding-top: 4px;"></div>
+            <!-- <div style="margin-left: 10px;margin-right: 10px;padding-top: 4px;"></div> -->
         </div>
         <div id="sdElseAppListContent" style="display: none;overflow-y:auto;height: 100%">
-            <div class="appNameItem" style="margin-top: 6px;height: 38px;">
+            <div class="appNameItem">
                 <div id="appOsName" class="appNameValue"></div>
             </div>
-            <div class="appNameItem" style="margin-top: 6px;height: 38px;">
-                <input type="text" id="txtAppName" placeholder="something else" class="appNameValue signin-input"
-                       style="background-color: black;color: white;font-size: 20px;outline-color: white;">
+            <div class="appNameItem">
+                <input type="text" id="txtAppName" data-type="app" placeholder="something else" class="appNameValue signin-input"
+                       style="background-color: black;color: white;font-size: 16px;outline-color: white;height: auto;padding: 2px 10px;">
             </div>
         </div>
     </div>
     <div id="sdBottom">
-        <div id="sdShareBtn" style="text-align: center;padding-top: 4px">
+        <div id="sdShareBtn" style="text-align: center;padding: 8px 0;">
             <button class="newbtn" id="btnCancel" type="button" style="display: none">Cancel</button>
             <button class="newbtn disabledBtn" disabled id="btnShare" type="button">Done</button>
         </div>

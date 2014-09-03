@@ -66,6 +66,7 @@ from model.community import Community
 from model.follow_up import FollowUp
 from model.userannostate import UserAnnoState
 from model.tags import Tag
+from model.appinfo import AppInfo
 from helper.settings import anno_js_client_id
 from helper.utils import auth_user
 from helper.utils import put_search_document
@@ -99,7 +100,10 @@ class AnnoApi(remote.Service):
 
     anno_update_resource_container = endpoints.ResourceContainer(
         AnnoMergeMessage,
-        id=messages.IntegerField(2, required=True)
+        id=messages.IntegerField(2, required=True),
+        app_name=messages.StringField(3),
+        community_name=messages.StringField(4),
+        platform_type=messages.StringField(5)
     )
 
     anno_search_resource_container = endpoints.ResourceContainer(
@@ -132,7 +136,7 @@ class AnnoApi(remote.Service):
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
 
         # set anno basic properties
-        anno_resp_message = anno.to_response_message()
+        anno_resp_message = anno.to_response_message(user)
 
         # set anno association with followups
         followups = FollowUp.find_by_anno(anno)
@@ -147,7 +151,7 @@ class AnnoApi(remote.Service):
 
             # update last_read of UserAnnoState
             from model.userannostate import UserAnnoState
-            UserAnnoState.update_last_read(user=user, anno=anno, last_read=datetime.datetime.now())
+            UserAnnoState.update_last_read(user=user, anno=anno)
 
         return anno_resp_message
 
@@ -189,7 +193,10 @@ class AnnoApi(remote.Service):
             return Anno.query_by_country(request.app, user)
         elif request.query_type == AnnoQueryType.COMMUNITY:
             community = Community.get_by_id(request.community)
-            return Anno.query_by_community(community, limit, select_projection, curs)
+            return Anno.query_by_community(community, limit, select_projection, curs, user)
+        elif request.query_type == AnnoQueryType.APP:
+            app = AppInfo.get(request.app)
+            return Anno.query_by_app(app, limit, select_projection, curs, user)
         else:
             return Anno.query_by_page(limit, select_projection, curs, user)
 
@@ -223,7 +230,7 @@ class AnnoApi(remote.Service):
         # send push notifications
         ActivityPushNotifications.send_push_notification(first_user=user, anno=entity, action_type=AnnoActionType.CREATED)
 
-        return entity.to_response_message()
+        return entity.to_response_message(user)
 
 
     @endpoints.method(anno_update_resource_container, AnnoResponseMessage, path='anno/{id}',
@@ -242,7 +249,7 @@ class AnnoApi(remote.Service):
         if anno is None:
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
 
-        anno.merge_from_message(request)
+        anno.merge_from_message(request, user)
         # set last update time & activity
         anno.last_update_time = datetime.datetime.now()
         anno.last_activity = 'anno'
@@ -254,7 +261,11 @@ class AnnoApi(remote.Service):
         # send notifications
         ActivityPushNotifications.send_push_notification(first_user=user, anno=anno, action_type=AnnoActionType.EDITED)
 
-        return anno.to_response_message()
+        # update last_read of UserAnnoState
+        from model.userannostate import UserAnnoState
+        UserAnnoState.update_last_read(user=user, anno=anno)
+
+        return anno.to_response_message(user)
 
 
     @endpoints.method(anno_with_id_resource_container, message_types.VoidMessage, path='anno/{id}',
@@ -289,8 +300,12 @@ class AnnoApi(remote.Service):
         user = auth_user(self.request_state.headers)
         userannostate_list = UserAnnoState.list_by_user(user.key)
         anno_key_list = [ userannostate.anno for userannostate in userannostate_list ]
-        anno_list = Anno.query(Anno.key.IN(anno_key_list)).order(-Anno.last_update_time).fetch()
-        anno_message_list = [ anno.to_response_message() for anno in anno_list if anno is not None ]
+
+        anno_message_list = []
+        if len(anno_key_list):
+            anno_list = Anno.query(Anno.key.IN(anno_key_list)).order(-Anno.last_update_time).fetch()
+            anno_message_list = [ anno.to_response_message(user) for anno in anno_list if anno is not None ]
+
         return AnnoListMessage(anno_list=anno_message_list)
 
 

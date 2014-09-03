@@ -1,6 +1,7 @@
 ﻿define([
     "dojo/_base/declare",
     "dojo/_base/connect",
+    "dojo/dom",
     "dojo/dom-style",
     "dojo/json",
     "dojo/request/xhr",
@@ -12,11 +13,18 @@
     "dojo/text!../../strings.json",
     "anno/common/DBUtil",
     "anno/common/GestureHandler"
-], function(declare, connect, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, stringsRes, DBUtil, GestureHandler){
+], function(declare, connect, dom, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, stringsRes, DBUtil, GestureHandler){
+
+    String.prototype.replaceAt = function(startIndex, replaceCount, character) {
+        return this.substr(0, startIndex) + character + this.substr(startIndex + replaceCount);
+    };
 
     serverURLConfig = dojoJson.parse(serverURLConfig);
     stringsRes = dojoJson.parse(stringsRes);
     // console.log("using server Url config:" + JSON.stringify(serverURLConfig));
+    var popularTags = [];
+    var suggestTags = false, countToSuggestTags = 0, tagStringArray = [];
+    var MIN_CHAR_TO_SUGGEST_TAGS = 2;
     var util = {
         loadingIndicator:null,
         _parser:null,
@@ -59,23 +67,24 @@
             followUp:"followup",
             vote:"vote",
             flag:"flag",
-            community: "community"
+            community: "community",
+            tag: "tag"
         },
         timeString:{
             prefixAgo: "",
-            suffixAgo: "ago",
-            seconds: "%d seconds",
-            minute: "a minute",
-            minutes: "%d minutes",
-            hour: "an hour",
-            hours: "%d hours",
-            day: "a day",
-            days: "%d days",
-            month: "a month",
-            months: "%d months",
-            year: "a year",
-            years: "%d years",
-            wordSeparator: " ",
+            suffixAgo: "",
+            seconds: "%ds",
+            minute: "1m",
+            minutes: "%dm",
+            hour: "1h",
+            hours: "%dh",
+            day: "1d",
+            days: "%dd",
+            month: "1mo",
+            months: "%dmo",
+            year: "1y",
+            years: "%dy",
+            wordSeparator: "",
             numbers: []
         },
         localStorageKeys:{
@@ -86,6 +95,18 @@
             deviceId: "annoDeviceId"
         },
         userCommunities: null, // all communities for current user
+        deviceList: {
+            "iPhone1,1" : "iPhone",
+            "iPhone1,2" : "iPhone3G",
+            "iPhone2,1" : "iPhone3GS",
+            "iPhone3,1" : "iPhone4",
+            "iPhone4,1" : "iPhone4S",
+            "iPhone5,1" : "iPhone5GSM",
+            "iPhone5,2" : "iPhone5CDMA",
+            "iPhone5,3" : "iPhone5C",
+            "iPhone6,1" : "iPhone5S"
+        },
+        versionInfo: { "version" : "", "build" : "" },
         hasConnection: function()
         {
             var networkState = navigator.connection.type;
@@ -741,7 +762,7 @@
         },
         replaceURLWithLink: function(s, linkScript)
         {
-            s = s.replace(/(^|\W)\b((www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, "$1http://$2");
+            s = s.replace(/(^|\W)\b((www\d{0,3}[.])(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, "$1http://$2");
             return s.replace(/(^|\W)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, linkScript);
         },
         loadUserCommunities: function(includeInvite, callback, keepSpinnerShown)
@@ -992,6 +1013,112 @@
                     config.error({type: util.ERROR_TYPES.LOAD_GAE_API ,message:'Load '+config.name+" API failed, "+error.message});
                 }
             });
+        },
+        getTopTags: function(limit) {
+            var APIConfig = {
+                name : this.API.tag,
+                method : "tag.tag.popular",
+                parameter : { "limit" : limit },
+                showLoadingSpinner : false,
+                success : function(data) {
+                    popularTags = [];
+                    data.result.tags.forEach(function(tagData) {
+                        popularTags.push(tagData.text);
+                    });
+                },
+                error : function() {
+                }
+            };
+
+            this.callGAEAPI(APIConfig);
+        },
+        resetTagSuggestion: function(tagDiv) {
+            suggestTags = false;
+            countToSuggestTags = 0;
+            tagStringArray = [];
+            domStyle.set(tagDiv, "display", "none");
+        },
+        showSuggestedTags: function(event, tagDiv, inputDiv) {
+            var keyCode = event.keyCode;
+
+            // for detecting '#' on different platforms:
+            // iOS - event.keyIdentifier should be "U+0023"
+            // Andriod - event.keyCode should be 51 and event.shiftKey should be true
+            if ((event.keyIdentifier == "U+0023") || (keyCode == 51 && event.shiftKey == true)) {
+                suggestTags = true;
+                countToSuggestTags = 0;
+                tagStringArray = [];
+            } else if (suggestTags) {
+                if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90)) {
+                    countToSuggestTags += 1;
+                    tagStringArray.push(String.fromCharCode(keyCode));
+                } else if (keyCode == 8) {
+                    countToSuggestTags -= 1;
+                    tagStringArray.pop();
+                } else {
+                    this.resetTagSuggestion(tagDiv);
+                }
+
+                if (countToSuggestTags >= MIN_CHAR_TO_SUGGEST_TAGS) {
+                    this.getTagStrings(tagDiv, inputDiv);
+                } else {
+                    domStyle.set(tagDiv, "display", "none");
+                }
+            }
+        },
+        getTagStrings: function(tagDiv, inputDiv) {
+            var annoUtil = this, tagString = tagStringArray.join("");
+
+            var suggestedTagsArray = popularTags.filter(function(string) {
+                return string.toLowerCase().indexOf(tagString.toLowerCase()) == 0;
+            });
+
+            dom.byId(tagDiv).innerHTML = "";
+            suggestedTagsArray.forEach(function(tag) {
+                var innerTagDiv = document.createElement("div");
+                innerTagDiv.className = "tag";
+                innerTagDiv.innerText = tag;
+                dom.byId(tagDiv).appendChild(innerTagDiv);
+
+                connect.connect(innerTagDiv, "click", function(e) {
+                    dojo.stopEvent(e);
+                    var input = dom.byId(inputDiv),
+                        replaceIndex = input.selectionStart - tagString.length;
+                    input.value = input.value.replaceAt(replaceIndex, tagString.length, tag + " ");
+                    annoUtil.resetTagSuggestion(tagDiv);
+
+                    /*setTimeout(function() {
+                        input.focus();
+                        input.select();
+                        input.selectionStart = input.value.length;
+                    }, 1000);*/
+                });
+            });
+
+            if (suggestedTagsArray.length) {
+                domStyle.set(tagDiv, "display", "");
+            } else {
+                domStyle.set(tagDiv, "display", "none");
+            }
+        },
+        parseDeviceModel: function(deviceModel) {
+            return (( deviceModel in this.deviceList) ? this.deviceList[deviceModel] : deviceModel);
+        },
+        getVersionInfo: function() {
+            return this.versionInfo;
+        },
+        setVersionInfo: function() {
+            var self = this;
+            cordova.exec(
+                function(result) {
+                    self.versionInfo["version"] = result[0];
+                    self.versionInfo["build"] = result[1];
+                },
+                function(err) {},
+                "AnnoCordovaPlugin",
+                "get_app_version",
+                []
+            );
         }
     };
 

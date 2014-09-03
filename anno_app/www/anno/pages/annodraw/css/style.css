@@ -122,11 +122,11 @@ body{
     position: absolute;
     bottom: 0px;
     left: 0px;
-    height: 46px;
+    height: 40px;
     width: 100%;
     background-color: #404040;
     color: white;
-    padding-top: 4px;
+    /*padding-top: 4px;*/
 }
 
 #topBar
@@ -178,7 +178,7 @@ body{
 .barBlackRectangle
 {
     width: 40px;
-    height: 24px;
+    height: 22px;
     border: 2px solid white;
     border-radius: 4px;
     opacity: 1;
@@ -207,7 +207,7 @@ body{
 .barRectangle
 {
     width: 40px;
-    height: 24px;
+    height: 22px;
     border: 2px solid white;
     border-radius: 4px;
     opacity: 1;
@@ -240,11 +240,11 @@ body{
 /*overwirte dojo default style*/
 .mblSimpleDialogDecoration
 {
-    background-color: #000000;
-    background-image: none;
-    border-radius: 2px;
-    font-size: 20px;
-    text-align:left;
+	background-color: #000000;
+	background-image: none;
+	border-radius: 2px;
+	font-size: 20px;
+	text-align:left;
 }
 
 .menuItem
@@ -258,22 +258,27 @@ body{
 
 .appNameItem
 {
-    height: 34px;
+    /*height: 34px;*/
     border-bottom: 1px outset gray;
-    margin-top: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
+    /*margin-top: 10px;*/
+    /*margin-left: 10px;*/
+    /*margin-right: 10px;*/
+   padding: 8px 0;
+   margin: 0 10px;
 }
 
 .appSeparatorItem
 {
-    height: 34px;
+    /*height: 34px;*/
     border-bottom: 1px outset gray;
-    margin-top: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
+    /*margin-top: 10px;*/
+    /*margin-left: 10px;*/
+    /*margin-right: 10px;*/
     font-style: italic;
     color: gray;
+	padding: 8px 0;
+	margin: 0 10px;
+	font-weight: bold;
 }
 
 .appNameItem-active
@@ -342,14 +347,14 @@ body{
 {
     margin-left: 6px;
     margin-right: 6px;
-    padding-bottom: 4px;
+    /*padding-bottom: 4px;*/
 }
 
 .tabContainer td
 {
-    border: 2px solid gray;
-    padding-bottom: 4px;
-    padding-top: 2px;
+    border: 1px solid gray;
+    /*padding-bottom: 4px;*/
+    /*padding-top: 2px;*/
     color: gray;
 }
 
@@ -357,4 +362,30 @@ body{
 {
     color: black;
     background-color: white;
+}
+#annoDrawSuggestedTags {
+	position: absolute;
+	width: 100%;
+	max-height: 92px;
+	font-size: 16px;
+	background: white;
+	overflow-y: scroll;
+	box-shadow: 0 0 2px 2px black;
+	-webkit-box-shadow: 0 0 2px 2px black;
+	z-index: 10000;
+}
+.tag {
+	padding: 5px 4px 5px 10px;
+	border-bottom: 1px solid black;
+	color: blue;
+}
+.tag:last-child {
+	border: 0;
+}
+
+#shareDialog {
+	border-radius: 0;
+	padding: 0;
+	border-width: 1px;
+	font-size: 16px;
 }

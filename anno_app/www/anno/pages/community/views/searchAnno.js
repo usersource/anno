@@ -22,7 +22,9 @@ define([
             limit = 30,
             searchTag = "";
         var dataStackLength = 0, dataStack = [];
-        var searchByCommunity = false, communityId;
+        var communityId, appName;
+        var searchByCommunity = false,
+            searchByApp = false;
 
         var emptyAnno = {
             "id": 0,
@@ -41,6 +43,11 @@ define([
             }]
         };
 
+        var methodType = {
+            LIST : "anno.anno.list",
+            SEARCH : "anno.anno.search"
+        };
+
         var adjustSize = function()
         {
             viewPoint = win.getBox();
@@ -54,35 +61,36 @@ define([
             annoUtil.showLoadingIndicator();
 
             var arg = {outcome: 'cursor,has_more,anno_list', limit: limit};
+            var method;
 
-            if (searchByCommunity)
-            {
+            if (searchByCommunity) {
                 arg.community = communityId;
                 arg.query_type = "by_community";
-            }
-            else
-            {
+                method = methodType.LIST;
+            } else if (searchByApp) {
+                arg.app = appName;
+                arg.query_type = "by_app";
+                method = methodType.LIST;
+            } else {
                 arg.order_type = "recent";
                 arg.search_string = searchTag + " " + searchTag.substr(1);
                 arg["only_my_apps"] = false;
+                method = methodType.SEARCH;
             }
 
-            if (poffset)
-            {
-                if (searchByCommunity)
-                {
+            if (poffset) {
+                if (method == methodType.LIST) {
                     arg.cursor = poffset;
-                }
-                else
-                {
+                } else {
                     arg.offset = poffset;
                 }
             }
 
             console.log("anno searching, args:" + JSON.stringify(arg));
+
             var APIConfig = {
                 name: annoUtil.API.anno,
-                method: searchByCommunity?"anno.anno.list":"anno.anno.search",
+                method: method,
                 parameter: arg,
                 needAuth: true,
                 success: function(data)
@@ -100,12 +108,20 @@ define([
                         eventData.app = annoList[i].app_name;
                         eventData.author = annoList[i].creator ? annoList[i].creator.display_name || annoList[i].creator.user_email || annoList[i].creator.user_id : "";
                         eventData.id = annoList[i].id;
-                        eventData.circleX = parseInt(annoList[i].simple_x, 10);
-                        eventData.circleY = parseInt(annoList[i].simple_y, 10);
-                        eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
+                        // eventData.circleX = parseInt(annoList[i].simple_x, 10);
+                        // eventData.circleY = parseInt(annoList[i].simple_y, 10);
+                        eventData.circleX = 0;
+                        eventData.circleY = 0;
+                        // eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
+                        eventData.simple_circle_on_top = false;
                         eventData.created = annoUtil.getTimeAgoString(annoList[i].created);
-
                         eventData.app_icon_url = annoList[i].app_icon_url||"";
+
+                        eventData.readStatusClass = "";
+                        if ('anno_read_status' in annoList[i]) {
+                            eventData.read_status = annoList[i].anno_read_status || false;
+                            eventData.readStatusClass = (eventData.read_status == true) ? "read" : "unread";
+                        }
 
                         if (eventData.app_icon_url)
                         {
@@ -139,12 +155,9 @@ define([
 
                     loadingData = false;
 
-                    if (searchByCommunity)
-                    {
+                    if (method == methodType.LIST) {
                         searchOffset = data.result.cursor;
-                    }
-                    else
-                    {
+                    } else {
                         searchOffset = data.result.offset;
                     }
 
@@ -206,26 +219,20 @@ define([
             },
             afterActivate: function()
             {
-                console.log(document.referrer);
+                // console.log(document.referrer);
                 domStyle.set('noResultContainer_search', 'display', 'none');
+
                 searchTag = this.params["tag"];
-                communityId = this.params["communityId"];
-
-                if (communityId)
-                {
-                    searchByCommunity = true;
-                }
-                else
-                {
-                    searchByCommunity = false;
-                }
-
                 dom.byId('headerTitleSearchAnno').innerHTML = searchTag;
 
+                communityId = this.params["communityId"];
+                searchByCommunity = communityId ? true : false;
+
+                appName = this.params["app"];
+                searchByApp = appName ? true : false;
 
                 // if user goes to this page by clicking backbutton, then just restore the previous data back
                 // if not, then do the searching action
-
                 if (app.isBackwardFired())
                 {
                     if (dataStack.length)

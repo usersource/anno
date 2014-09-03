@@ -10,9 +10,7 @@
 
 @implementation AnnoDrawViewController
 
-bool isPractice, editMode;
-int level;
-NSString *screenshotPath = @"";
+@synthesize isPractice, editMode, level, screenshotPath, landscapeMode;
 
 - (id)initWithNibName:(NSString*)nibNameOrNil bundle:(NSBundle*)nibBundleOrNil
 {
@@ -20,6 +18,8 @@ NSString *screenshotPath = @"";
     if (self) {
         self.startPage = @"anno/pages/annodraw/main.html";
         level = 0;
+        screenshotPath = @"";
+        landscapeMode = NO;
         // Uncomment to override the CDVCommandDelegateImpl used
         // _commandDelegate = [[AnnoDrawCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
@@ -34,12 +34,22 @@ NSString *screenshotPath = @"";
     if (self) {
         self.startPage = @"anno/pages/annodraw/main.html";
         level = 0;
+        screenshotPath = @"";
+        landscapeMode = NO;
         // Uncomment to override the CDVCommandDelegateImpl used
         // _commandDelegate = [[AnnoDrawCommandDelegate alloc] initWithViewController:self];
         // Uncomment to override the CDVCommandQueue used
         // _commandQueue = [[AnnoDrawCommandQueue alloc] initWithViewController:self];
     }
     return self;
+}
+
+- (void) makeLandscape {
+    landscapeMode = YES;
+    [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationLandscapeRight animated:YES];
+    UIViewController *c = [[UIViewController alloc] init];
+    [self presentViewController:c animated:NO completion:nil];
+    [self dismissViewControllerAnimated:NO completion:nil];
 }
 
 /**
@@ -53,13 +63,17 @@ NSString *screenshotPath = @"";
  @param editModeValue
         YES if it for editing anno item else NO
  */
-+ (void) handleFromShareImage:(NSString *)imageURI
+- (void) handleFromShareImage:(NSString *)imageURI
                    levelValue:(int)levelValue
               isPracticeValue:(BOOL)isPracticeValue
-                editModeValue:(BOOL)editModeValue {
+                editModeValue:(BOOL)editModeValue
+           landscapeModeValue:(BOOL)landscapeModeValue {
 
     if (editModeValue) {
         editMode = editModeValue;
+        if (landscapeModeValue) {
+            [self makeLandscape];
+        }
         return;
     }
 
@@ -77,14 +91,16 @@ NSString *screenshotPath = @"";
         @try {
             NSString *orientation = [annoUtils isLandscapeOrPortrait:drawableImage];
             if ([annoUtils.IMAGE_ORIENTATION_LANDSCAPE isEqualToString:orientation]) {
-                // rotating image by 90 degrees if image is landscape
+                [self makeLandscape];
+                /* // rotating image by 90 degrees if image is landscape
                 drawableImage = [annoUtils rotateImage:drawableImage rotatedByDegrees:90.0];
 
                 // saving rotated image in 'tmp' directory
                 screenshotPath = [annoUtils saveImageToTemp:drawableImage];
             } else {
-                screenshotPath = imageURI;
+                screenshotPath = imageURI;*/
             }
+            screenshotPath = imageURI;
         }
         @catch (NSException *exception) {
             if (annoUtils.debugEnabled) {
@@ -98,7 +114,7 @@ NSString *screenshotPath = @"";
  Get screenshot path associated with that viewcontroller
  @return path of screenshot
  */
-+ (NSString*) getScreenshotPath {
+- (NSString*) getScreenshotPath {
     return screenshotPath;
 }
 
@@ -106,7 +122,7 @@ NSString *screenshotPath = @"";
  Get level associated with that viewcontroller
  @return value of level
  */
-+ (int) getLevel {
+- (int) getLevel {
     return level;
 }
 
@@ -114,7 +130,7 @@ NSString *screenshotPath = @"";
  Get editMode value associated with that viewcontroller
  @return value of editMode
  */
-+ (BOOL) isEditMode {
+- (BOOL) isEditMode {
     return editMode;
 }
 
@@ -123,11 +139,11 @@ NSString *screenshotPath = @"";
  @param levelValue
         value for level
  */
-+ (void) setLevel:(int)levelValue {
+- (void) setLevel:(int)levelValue {
     level = levelValue;
 }
 
-+ (void) setEditMode:(BOOL)editModeValue {
+- (void) setEditMode:(BOOL)editModeValue {
     editMode = editModeValue;
 }
 
@@ -145,6 +161,10 @@ NSString *screenshotPath = @"";
     // View defaults to full size.  If you want to customize the view's size, or its subviews (e.g. webView),
     // you can do so here.
     [super viewWillAppear:animated];
+}
+
+- (void) viewDidLoad {
+    [super viewDidLoad];
 
     NSArray *versionCompatibility = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
     NSInteger iOSVersion = [[versionCompatibility objectAtIndex:0] intValue];
@@ -154,12 +174,6 @@ NSString *screenshotPath = @"";
         CGFloat viewHeight = self.view.frame.size.height;
         [self.webView setFrame:CGRectMake(0, 20, viewWidth, viewHeight - 20)];
     }
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
 }
 
 - (void)viewDidUnload
@@ -173,6 +187,18 @@ NSString *screenshotPath = @"";
 {
     // Return YES for supported orientations
     return [super shouldAutorotateToInterfaceOrientation:interfaceOrientation];
+}
+
+- (NSUInteger) supportedInterfaceOrientations {
+    if (landscapeMode) {
+        return UIInterfaceOrientationMaskLandscape;
+    } else {
+        return UIInterfaceOrientationMaskPortrait;
+    }
+}
+
+- (BOOL)shouldAutorotate {
+    return YES;
 }
 
 /* Comment out the block below to over-ride */

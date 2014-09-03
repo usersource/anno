@@ -45,11 +45,13 @@ define([
             navBarHeight = 50,
             trayScreenHeight = 0,
             screenshotControlsHeight = 86,
-            borderWidth;
+            borderWidth,
+            zoomBorderWidth = 4;
+        var zoomSurface, oldSurface, zoomAnnoID;
 
         var imageBaseUrl = annoUtil.getCEAPIConfig().imageServiceURL;
         var surface;
-        var imageWidth, imageHeight;
+        var imageWidth, imageHeight, surfaceWidth, surfaceHeight;
         var tiniestImageData = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=";
         var hashTagTemplate = '$1<span class="hashTag" onclick="searchAnnoByHashTag(this.innerHTML)">$2</span>';
         var commentURLTemplate = '$1<span class="commentURL" onclick="window.open(encodeURI(\'$2\'), \'_blank\', \'location=no\')">$2</span>';
@@ -71,7 +73,7 @@ define([
 
         var screenshotImageOnload = function()
         {
-            console.error("screenshot loaded.");
+            console.log("screenshot loaded.");
             if (!loadingDetailData)
             {
                 annoUtil.hideLoadingIndicator();
@@ -83,32 +85,33 @@ define([
 
                 var imgScreenshot = dom.byId('imgDetailScreenshot');
                 var viewPoint = win.getBox();
-                var deviceRatio = parseFloat((viewPoint.w/viewPoint.h).toFixed(2));
+                var deviceRatio = parseFloat((viewPoint.w / viewPoint.h).toFixed(2));
                 var orignialDeviceRatio = parseFloat((imgScreenshot.naturalWidth/imgScreenshot.naturalHeight).toFixed(2));
                 var orignialRatio = imgScreenshot.naturalHeight/imgScreenshot.naturalWidth;
 
-                if (orignialDeviceRatio == deviceRatio)
-                {
-                    console.error('same ratio');
+                if ((orignialDeviceRatio == deviceRatio) || (orignialDeviceRatio < deviceRatio)) {
+                    // console.log('same ratio');
                     imageHeight = viewPoint.h - navBarHeight - screenshotControlsHeight;
                     imageWidth = Math.round(imageHeight/orignialRatio);
-
-                    console.error("image width: "+imageWidth+", image height: "+imageHeight);
-                }
-                else if (orignialDeviceRatio < deviceRatio) // taller than current device
-                {console.error('taller ratio: o:'+orignialDeviceRatio+", d:"+ deviceRatio);
-                    imageHeight = viewPoint.h-navBarHeight - screenshotControlsHeight;
-                    imageWidth = Math.round(imageHeight/orignialRatio);
-                }
-                else if (orignialDeviceRatio > deviceRatio) // wider than current device
-                {console.error('wider ratio');
+                    borderWidth = Math.floor(imageWidth * 0.02);
+                    surfaceHeight = imageHeight - (2 * borderWidth);
+                    domStyle.set('imgDetailScreenshot', { width : '100%', height : '100%' });
+                    // console.log("image width: " + imageWidth + ", image height: " + imageHeight);
+                } else if (orignialDeviceRatio > deviceRatio) {
+                    console.log('wider ratio');
                     //imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio - navBarHeight - screenshotControlsHeight;
-                    imageHeight = viewPoint.h - navBarHeight - screenshotControlsHeight;
-                    imageWidth = Math.round(imageHeight/orignialRatio);
+                    // imageHeight = viewPoint.h - navBarHeight - screenshotControlsHeight;
+                    // imageWidth = Math.round(imageHeight / orignialRatio);
+                    imageWidth = viewPoint.w;
+                    borderWidth = 6;
+                    imageHeight = Math.round((imageWidth - (2 * borderWidth)) / (imgScreenshot.naturalWidth / imgScreenshot.naturalHeight));
+                    surfaceHeight = imageHeight;
+                    domStyle.set('imgDetailScreenshot', { width : '100%', height : 'auto' });
                 }
 
-                borderWidth = Math.floor(imageWidth*0.02);
-                domStyle.set(dom.byId('tbl_screenshotControls').parentNode, 'width', imageWidth+'px');
+                surfaceWidth = imageWidth - (2 * borderWidth);
+
+                // domStyle.set(dom.byId('tbl_screenshotControls').parentNode, 'width', imageWidth + 'px');
 
                 applyAnnoLevelColor(eventsModel.cursor.level);
 
@@ -176,23 +179,24 @@ define([
 
                 domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', top:(-borderWidth)+'px', left:(-borderWidth)+'px'});
                 surface.borderWidth = borderWidth;
-                surface.setDimensions(imageWidth-borderWidth*2, imageHeight-borderWidth*2);
+                surface.setDimensions(surfaceWidth, surfaceHeight);
 
                 surface.parse(elementsObject, lineStrokeStyle);
 
-                console.error('redrawShapes end');
+                console.log('redrawShapes end');
             }
             else
             {
                 domStyle.set(surface.container, {'border': borderWidth+'px solid transparent'});
 
                 surface.borderWidth = borderWidth;
-                surface.setDimensions(imageWidth-borderWidth*2, imageHeight-borderWidth*2);
+                surface.setDimensions(surfaceWidth, surfaceHeight);
 
                 surface.clear();
                 surface.show();
 
-                var earLow = !eventsModel.cursor.simple_circle_on_top;
+                // var earLow = !eventsModel.cursor.simple_circle_on_top;
+                var earLow = true;
 
                 var toolTipDivWidth = (imageWidth-borderWidth*2-60),
                     pxPerChar = 8,
@@ -340,11 +344,13 @@ define([
                 {
                     domStyle.set('td_shtCtrl_edit', 'display', '');
                     domStyle.set('td_shtCtrl_remove', 'display', '');
+                    domStyle.set('td_shtCtrl_hideAnnotations', 'text-align', 'left');
                 }
                 else
                 {
                     domStyle.set('td_shtCtrl_edit', 'display', 'none');
                     domStyle.set('td_shtCtrl_remove', 'display', 'none');
+                    domStyle.set('td_shtCtrl_hideAnnotations', 'text-align', 'center');
                 }
             }
         };
@@ -366,20 +372,20 @@ define([
 
         var applyAnnoLevelColor = function(level)
         {
-            borderWidth = Math.floor(imageWidth*0.02);
-            level = level||1;
-            if (level == 1)
-            {
-                console.error("img width:"+(imageWidth-borderWidth*2));
+            var borderColor = annoUtil.level1Color;
 
-                domStyle.set('screenshotContainerDetail', {width:(imageWidth-borderWidth*2)+'px',height:(imageHeight-borderWidth*2)+'px', 'borderColor': annoUtil.level1Color,'borderStyle':'solid', 'borderWidth':borderWidth+'px'});
-                domStyle.set('imgDetailScreenshot', {width:'100%',height:'100%'});
+            level = level || 1;
+            if (level == 2) {
+                borderColor = annoUtil.level2Color;
             }
-            else if (level == 2)
-            {
-                domStyle.set('screenshotContainerDetail', {width:(imageWidth-borderWidth*2)+'px',height:(imageHeight-borderWidth*2)+'px', 'borderColor': annoUtil.level2Color,'borderStyle':'solid', 'borderWidth':borderWidth+'px'});
-                domStyle.set('imgDetailScreenshot', {width:'100%',height:'100%'});
-            }
+
+            domStyle.set('screenshotContainerDetail', {
+                'width' : surfaceWidth + 'px',
+                'height' : surfaceHeight + 'px',
+                'borderColor' : borderColor,
+                'borderStyle' : 'solid',
+                'borderWidth' : borderWidth + 'px'
+            });
         };
 
         var adjustAnnoCommentSize = function()
@@ -427,6 +433,12 @@ define([
 
         var handleBackButton = function()
         {
+            var zoomData = dom.byId('zoomScreenshotContainerDetail');
+            if (zoomData && (zoomData.style.display == '' || zoomData.style.display == 'block')) {
+                zoomClose();
+                return;
+            }
+
             var dlg = registry.byId('dlg_common_confirm_message');
 
             if (dlg&&(dlg.domNode.style.display == ''||dlg.domNode.style.display == 'block'))
@@ -629,7 +641,7 @@ define([
 
             loadingImage = true;
             dom.byId('imgDetailScreenshot').src = imageBaseUrl+"?anno_id="+id;
-            console.error("image url: "+imageBaseUrl+"?anno_id="+id);
+            console.log("image url: " + imageBaseUrl + "?anno_id=" + id);
 
             var APIConfig = {
                 name: annoUtil.API.anno,
@@ -641,8 +653,10 @@ define([
                     // console.error(JSON.stringify(data.result));
                     var currentAnno = eventsModel.cursor||eventsModel.model[0], returnAnno = data.result, deviceInfo = '';
 
-                    currentAnno.set('circleX', parseInt(returnAnno.simple_x, 10));
-                    currentAnno.set('circleY', parseInt(returnAnno.simple_y, 10));
+                    // currentAnno.set('circleX', parseInt(returnAnno.simple_x, 10));
+                    // currentAnno.set('circleY', parseInt(returnAnno.simple_y, 10));
+                    currentAnno.set('circleX', 0);
+                    currentAnno.set('circleY', 0);
 
                     if (returnAnno.followup_list)
                     {
@@ -656,7 +670,10 @@ define([
 
                     currentAnno.set('comments',new getStateful(returnAnno.followup_list||[]));
 
-                    deviceInfo = (returnAnno.device_model||'&nbsp;')+'&nbsp;'+(returnAnno.os_name||'&nbsp;')+(returnAnno.os_version||'&nbsp;');
+                    device_model = annoUtil.parseDeviceModel(returnAnno.device_model) || ' ';
+                    os_name = returnAnno.os_name || ' ';
+                    os_version = returnAnno.os_version || ' ';
+                    deviceInfo = device_model + ' ' + os_name + os_version;
                     currentAnno.set('deviceInfo', deviceInfo);
 
                     currentAnno.set('vote', returnAnno.is_my_vote);
@@ -713,7 +730,8 @@ define([
 
                     var commentObject = {user_id:author, comment:comment};
                     processFollowupHashTagsOrURLs(commentObject);
-                    currentAnno.comments.splice(0,0,new getStateful(commentObject));
+                    // currentAnno.comments.splice(0, 0, new getStateful(commentObject));
+                    currentAnno.comments.push(new getStateful(commentObject));
                     adjustAnnoCommentSize();
                 },
                 error: function(){
@@ -841,13 +859,13 @@ define([
             if (showAnnotations)
             {
                 showAnnotations = false;
-                dom.byId('td_shtCtrl_hideAnnotations').children[0].innerHTML = "show annotations";
+                dom.byId('td_shtCtrl_hideAnnotations').children[0].innerHTML = "Show Annotations";
                 surface.hide();
             }
             else
             {
                 showAnnotations = true;
-                dom.byId('td_shtCtrl_hideAnnotations').children[0].innerHTML = "hide annotations";
+                dom.byId('td_shtCtrl_hideAnnotations').children[0].innerHTML = "Hide Annotations";
                 surface.show();
             }
         };
@@ -941,6 +959,12 @@ define([
 
             saveCurrentAnnoDataforEdit(annoItem, imageData);
 
+            var imgScreenshot = dom.byId('imgDetailScreenshot'),
+                landscapeMode = false;
+            if (imgScreenshot.naturalWidth > imgScreenshot.naturalHeight) {
+                landscapeMode = true;
+            }
+
             cordova.exec(
                 function (result)
                 {
@@ -950,7 +974,7 @@ define([
                 },
                 "AnnoCordovaPlugin",
                 'start_edit_anno_draw',
-                []
+                [landscapeMode]
             );
 
             checkEditAnnoResult();
@@ -1103,9 +1127,97 @@ define([
         // search anno items by hash tag
         var searchAnnoByHashTag = window.searchAnnoByHashTag = function(tag)
         {
-            console.log(tag);
+            // console.log(tag);
             goingTagSearch = true;
             app.transitionToView(document.getElementById('modelApp_detail'), {target:'searchAnno',url:'#searchAnno', params:{tag:tag}});
+        };
+
+        var zoomImage = function(zoomFactor) {
+            var zoomImgDetailScreenshot = dom.byId('zoomImgDetailScreenshot'),
+                zoomImgDetailScreenshotWidth = zoomImgDetailScreenshot.naturalWidth,
+                zoomImgDetailScreenshotHeight = zoomImgDetailScreenshot.naturalHeight;
+
+            var zoomFactor = zoomFactor || 1,
+                currentAnno = eventsModel.cursor,
+                zoomImageWidth,
+                zoomImageHeight;
+
+            if (zoomImgDetailScreenshotWidth > zoomImgDetailScreenshotHeight) {
+                zoomImageHeight = (win.getBox().h - (2 * zoomBorderWidth)) * zoomFactor;
+                zoomImageWidth = Math.round(zoomImageHeight / (zoomImgDetailScreenshotHeight / zoomImgDetailScreenshotWidth));
+            } else {
+                zoomImageWidth = (win.getBox().w - (2 * zoomBorderWidth)) * zoomFactor;
+                zoomImageHeight = Math.round(zoomImageWidth / (zoomImgDetailScreenshotWidth / zoomImgDetailScreenshotHeight));
+            }
+
+            var borderColor = annoUtil.level1Color,
+                level = currentAnno.level || 1;
+
+            if (level == 2) {
+                borderColor = annoUtil.level2Color;
+            }
+
+            domStyle.set('zoomImgDetailScreenshot', {
+                width : zoomImageWidth + "px",
+                height : zoomImageHeight + "px",
+                borderColor : borderColor,
+                borderStyle : 'solid',
+                borderWidth : zoomBorderWidth + "px"
+            });
+
+            domStyle.set('zoomGfxCanvasContainer', {
+                width : (zoomImageWidth + zoomBorderWidth) + "px",
+                height : (zoomImageHeight + zoomBorderWidth) + "px"
+            });
+
+            domStyle.set('zoomClose', 'color', borderColor);
+
+            imageWidth = zoomImageWidth;
+            imageHeight = zoomImageHeight;
+            surfaceWidth = zoomImageWidth + zoomBorderWidth;
+            surfaceHeight = zoomImageHeight + zoomBorderWidth;
+            borderWidth = zoomBorderWidth;
+
+            if (zoomFactor == 1) {
+                oldSurface = surface;
+                surface = zoomSurface;
+                surface.registry = {};
+
+                dom.byId('zoomScreenshotContainerDetail').scrollLeft = 0;
+                dom.byId('zoomScreenshotContainerDetail').scrollTop = 0;
+            }
+
+            redrawShapes();
+            annoUtil.hideLoadingIndicator();
+
+            domStyle.set('zoomScreenshotContainerDetail', 'display', '');
+            domStyle.set('headingDetail', 'display', 'none');
+            domStyle.set('detailContentContainer', 'display', 'none');
+
+            // disable native gesture to scroll horizontal properly
+            annoUtil.disableNativeGesture();
+        };
+
+        var zoomClose = function() {
+            surface.clear();
+            surface = oldSurface;
+            annoUtil.hideLoadingIndicator();
+            annoUtil.enableNativeGesture();
+
+            domStyle.set('zoomScreenshotContainerDetail', 'display', 'none');
+            domStyle.set('headingDetail', 'display', '');
+            domStyle.set('detailContentContainer', 'display', '');
+        };
+
+        var searchAnnoByApp = function() {
+            app.transitionToView(document.getElementById('modelApp_detail'), {
+                target : 'searchAnno',
+                url : '#searchAnno',
+                params : {
+                    tag : dom.byId("appNameSpanDetail").innerHTML,
+                    app : dom.byId("appNameSpanDetail").innerHTML
+                }
+            });
         };
 
         var startX, startY, commentTextBoxFocused = false;
@@ -1220,6 +1332,7 @@ define([
                     commentTextBoxFocused = true;
                     window.setTimeout(function(){
                         dom.byId('addCommentTextBox').rows = "4";
+                        domStyle.set('detailSuggestedTags', 'bottom', (dom.byId("addCommentTextBox").getBoundingClientRect().height + 5) + "px");
                     }, 500);
                 }));
 
@@ -1228,6 +1341,7 @@ define([
                     commentTextBoxFocused = false;
                     window.setTimeout(function(){
                         dom.byId('addCommentTextBox').rows = "1";
+                        domStyle.set('detailSuggestedTags', 'display', 'none');
                     }, 500);
                 }));
 
@@ -1253,6 +1367,7 @@ define([
                         dom.byId('hiddenBtn').focus();
                     }
 
+                    annoUtil.showSuggestedTags(event, "detailSuggestedTags", "addCommentTextBox");
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), "touchstart", function (e)
@@ -1290,6 +1405,12 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId('modelApp_detail'), "scroll", function (e)
                 {
+                    dojo.stopEvent(e);
+                    var zoomData = dom.byId('zoomScreenshotContainerDetail');
+                    if (zoomData && (zoomData.style.display == '' || zoomData.style.display == 'block')) {
+                        return;
+                    }
+
                     setScreenshotTalkAreaState();
 
                     if (!commentTextBoxFocused)
@@ -1323,9 +1444,42 @@ define([
                     });
                 }));
 
+                _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), 'click', function(e) {
+                    dojo.stopEvent(e);
+                    annoUtil.showLoadingIndicator();
+
+                    if (zoomAnnoID != eventsModel.cursor.id) {
+                        dom.byId('zoomImgDetailScreenshot').src = imageBaseUrl + "?anno_id=" + eventsModel.cursor.id;
+                        zoomAnnoID = eventsModel.cursor.id;
+                    } else {
+                        zoomImage();
+                    }
+                }));
+
+                _connectResults.push(connect.connect(dom.byId('zoomScreenshotContainerDetail'), 'click', function(e) {
+                    dojo.stopEvent(e);
+                    zoomImage(2);
+                }));
+
+                _connectResults.push(connect.connect(dom.byId('zoomClose'), 'click', function(e) {
+                    dojo.stopEvent(e);
+                    zoomClose();
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("appNameSpanDetail"), 'click', function() {
+                    searchAnnoByApp();
+                }));
+
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;
                 dom.byId("imgDetailScreenshot").onerror = screenshotImageOnerror;
                 dom.byId("imgDetailScreenshot").crossOrigin = "anonymous";
+
+                dom.byId("zoomImgDetailScreenshot").onload = function() { zoomImage() };
+                dom.byId("zoomImgDetailScreenshot").crossOrigin = "anonymous";
+
+                if (annoUtil.isAndroid()) {
+                    domStyle.set('zoomClose', 'display', 'none');
+                }
 
                 // create surface
                 surface = new Surface({
@@ -1334,6 +1488,14 @@ define([
                     height:500,
                     editable:false,
                     borderWidth:0
+                });
+
+                zoomSurface = new Surface({
+                    container : dom.byId("zoomGfxCanvasContainer"),
+                    width : 500,
+                    height : 500,
+                    editable : false,
+                    borderWidth : 0
                 });
             },
             afterActivate: function()

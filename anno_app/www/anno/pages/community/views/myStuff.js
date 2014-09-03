@@ -12,10 +12,9 @@ define([
     "dojox/mvc/getStateful",
     "anno/anno/AnnoDataHandler",
     "anno/common/Util",
-    "anno/common/OAuthUtil",
-    "dojo/text!../templates/localAnnoItem.html"
+    "anno/common/OAuthUtil"
 ],
-    function (lang, dom, domClass, domConstruct, domGeom, domStyle, dojoString, connect, win, registry, getStateful, AnnoDataHandler, Util, OAuthUtil, annoItemTemplate)
+    function (lang, dom, domClass, domConstruct, domGeom, domStyle, dojoString, connect, win, registry, getStateful, AnnoDataHandler, Util, OAuthUtil)
     {
         var _connectResults = []; // events connect results
         var app = null, eventsModel = null, needRefresh = true,
@@ -70,7 +69,8 @@ define([
                             eventData.id = localAnnos[i]._id;
                             eventData.circleX = parseInt(localAnnos[i].x, 10);
                             eventData.circleY = parseInt(localAnnos[i].y, 10);
-                            eventData.simple_circle_on_top = localAnnos[i].direction==0||localAnnos[i].direction=='false';
+                            // eventData.simple_circle_on_top = localAnnos[i].direction==0||localAnnos[i].direction=='false';
+                            eventData.simple_circle_on_top = false;
 
                             eventData.deviceInfo = (localAnnos[i].model||'&nbsp;')+'&nbsp;'+(localAnnos[i].os_name||'&nbsp;')+(localAnnos[i].os_version||'&nbsp;');
                             eventData.vote = false;
@@ -107,12 +107,21 @@ define([
                             eventData.app = annoList[i].app_name;
                             eventData.author = annoList[i].creator?annoList[i].creator.display_name||annoList[i].creator.user_email||annoList[i].creator.user_id:"";
                             eventData.id = annoList[i].id;
-                            eventData.circleX = parseInt(annoList[i].simple_x, 10);
-                            eventData.circleY = parseInt(annoList[i].simple_y, 10);
-                            eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
+                            // eventData.circleX = parseInt(annoList[i].simple_x, 10);
+                            // eventData.circleY = parseInt(annoList[i].simple_y, 10);
+                            eventData.circleX = 0;
+                            eventData.circleY = 0;
+                            // eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
+                            eventData.simple_circle_on_top = false;
                             eventData.created = Util.getTimeAgoString(annoList[i].created);
-
                             eventData.app_icon_url = annoList[i].app_icon_url||"";
+
+                            eventData.readStatusClass = "";
+                            if ('anno_read_status' in annoList[i]) {
+                                eventData.read_status = annoList[i].anno_read_status || false;
+                                eventData.readStatusClass = (eventData.read_status == true) ? "read" : "unread";
+                            }
+
                             if (eventData.app_icon_url)
                             {
                                 eventData.annoIcon = "hidden";
@@ -177,33 +186,6 @@ define([
 
         var drawAnnos = function(annos)
         {
-            var annoItemList = registry.byId('annoListMyStuff');
-            annoItemList.destroyDescendants();
-
-            for (var i= 2,c=annos.length;i<c;i++)
-            {
-                if (!annos[i].annoIcon)
-                    annos[i].annoIcon = annos[i].anno_type == Util.annoType.DrawComment?"icon-shapes":"icon-simplecomment";
-                domConstruct.create("li", {
-                    "transition":'slide',
-                    "data-dojo-type":"dojox/mobile/ListItem",
-                    "data-dojo-props":"variableHeight:true,clickable:true,noArrow:true,_index:"+(i-2),
-                    innerHTML: dojoString.substitute(annoItemTemplate, annos[i])
-                }, annoItemList.domNode, "last");
-            }
-
-            Util.getParser().parse(annoItemList.domNode);
-
-            var items = annoItemList.getChildren();
-
-            for (var i= 0,c=items.length;i<c;i++)
-            {
-                items[i].annoItem = annos[i+2];
-                items[i].on("click", function(){
-                    gotoLocalAnnoViewer(this,this.annoItem);
-                });
-            }
-
             if (annos.length <=0)
             {
                 domStyle.set('listContainerMyStuff', 'display', 'none');
@@ -224,17 +206,18 @@ define([
             domStyle.set("listContainerMyStuff", "height", (viewPoint.h-parentBox.h)+"px");
         };
 
-        var gotoLocalAnnoViewer = function(listItem, annoItem)
-        {
-            app.transitionToView(listItem.domNode, {target:'detail',url:'#detail', params:{cursor:listItem._index, source:"mystuff"}});
-            needRefresh = false;
-            lastOpenAnnoId = annoItem.id;
-        };
-
         var goBack = function()
         {
             needRefresh = true;
             history.back();
+        };
+
+        var annoMyStuffRead = window.annoMyStuffRead = function() {
+            needRefresh = false;
+            lastOpenAnnoId = this._index;
+            if (domClass.contains(this.domNode, "unread")) {
+                domClass.replace(this.domNode, "read", "unread");
+            }
         };
 
         return {

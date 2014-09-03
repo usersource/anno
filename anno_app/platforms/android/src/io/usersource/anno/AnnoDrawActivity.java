@@ -3,6 +3,8 @@ package io.usersource.anno;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.gesture.GestureOverlayView;
 import android.graphics.Bitmap;
@@ -86,6 +88,10 @@ public class AnnoDrawActivity extends DroidGap
         if (intent.getBooleanExtra(AnnoUtils.EDIT_ANNO_MODE, false))
         {
           this.editMode = true;
+          boolean landscape_mode = intent.getBooleanExtra(AnnoUtils.LANDSCAPE_MODE, false);
+          if (landscape_mode) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+          }
         }
         else
         {
@@ -120,7 +126,10 @@ public class AnnoDrawActivity extends DroidGap
                 rc.openInputStream(imageUri));
         if (AnnoUtils.IMAGE_ORIENTATION_LANDSCAPE.equals(AnnoUtils
                 .isLandscapeOrPortrait(drawable))) {
-          drawable = AnnoUtils.rotateImage(drawable, 90);
+          if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+          }
+          /*drawable = AnnoUtils.rotateImage(drawable, 90);
 
           Bitmap bmp = drawable.getBitmap();
           FileOutputStream fos = new FileOutputStream(realUrl);
@@ -132,8 +141,9 @@ public class AnnoDrawActivity extends DroidGap
         }
         else
         {
-          this.screenshotPath = realUrl;
+          this.screenshotPath = realUrl;*/
         }
+        this.screenshotPath = realUrl;
       } catch (Exception e) {
         if (AnnoUtils.debugEnabled) {
           Log.e(TAG, e.getMessage(), e);

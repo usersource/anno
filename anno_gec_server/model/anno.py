@@ -12,7 +12,6 @@ from google.appengine.ext import ndb
 
 from message.anno_api_messages import AnnoResponseMessage
 from message.anno_api_messages import AnnoListMessage
-from message.appinfo_message import AppInfoMessage
 from model.base_model import BaseModel
 from model.community import Community
 from model.appinfo import AppInfo
@@ -61,7 +60,7 @@ class Anno(BaseModel):
     def __hash__(self):
         return hash(self.key.id())
 
-    def to_response_message(self):
+    def to_response_message(self, user):
         """
         Convert anno model to AnnoResponseMessage.
         """
@@ -73,6 +72,11 @@ class Anno(BaseModel):
         app_name = app.name if app else self.app_name
         app_icon_url = app.icon_url if app else None
         app_version = app.version if app else self.app_version
+
+        anno_read_status = False
+        if user:
+            from model.userannostate import UserAnnoState
+            anno_read_status = UserAnnoState.is_read(user, self)
 
         return AnnoResponseMessage(id=self.key.id(),
                                    anno_text=self.anno_text,
@@ -100,7 +104,8 @@ class Anno(BaseModel):
                                    followup_count=self.followup_count,
                                    last_update_time=self.last_update_time,
                                    last_activity=self.last_activity,
-                                   last_update_type=self.last_update_type
+                                   last_update_type=self.last_update_type,
+                                   anno_read_status=anno_read_status
         )
 
     def to_response_message_by_projection(self, projection):
@@ -120,19 +125,7 @@ class Anno(BaseModel):
         """
         create a new anno model from request message.
         """
-        appinfo = AppInfo.get(name=message.app_name)
-        community = None
-
-        if appinfo is None:
-            appInfoMessage = AppInfoMessage(name=message.app_name, version=message.app_version)
-            appinfo = AppInfo.insert(appInfoMessage)
-        else:
-            app_community = getCommunityForApp(id=appinfo.key.id())
-            if app_community and isMember(app_community, user):
-                community = app_community
-
-        if type(community) is Community:
-            community = community.key
+        appinfo, community = getAppAndCommunity(message, user)
 
         entity = cls(anno_text=message.anno_text, anno_type=message.anno_type,
                      level=message.level, device_model=message.device_model, 
@@ -144,7 +137,7 @@ class Anno(BaseModel):
 
         # set appinfo and community
         entity.app = appinfo.key
-        entity.community = community
+        entity.community = community.key if community else None
 
         # set created time if provided in the message.
         if message.created is not None:
@@ -192,12 +185,18 @@ class Anno(BaseModel):
         index.delete(anno_id)
 
 
-    def merge_from_message(self, message):
+    def merge_from_message(self, message, user):
         """
         populate current anno with non-null fields in request message.(used in merge)
 
         creator isn't update-able.
         """
+        appinfo, community = getAppAndCommunity(message, user)
+
+        # set appinfo and community
+        self.app = appinfo.key
+        self.community = community.key if community else None
+
         if message.anno_text is not None:
             self.anno_text = message.anno_text
 #         if message.simple_x is not None:
@@ -216,10 +215,6 @@ class Anno(BaseModel):
             self.level = message.level
         if message.device_model is not None:
             self.device_model = message.device_model
-        if message.app_name is not None:
-            self.app_name = message.app_name
-        if message.app_version is not None:
-            self.app_version = message.app_version
         if message.os_name is not None:
             self.os_name = message.os_name
         if message.os_version is not None:
@@ -250,7 +245,7 @@ class Anno(BaseModel):
         if projection is not None:
             items = [entity.to_response_message_by_projection(projection) for entity in annos]
         else:
-            items = [entity.to_response_message() for entity in annos]
+            items = [entity.to_response_message(user) for entity in annos]
 
         if more:
             return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
@@ -265,7 +260,7 @@ class Anno(BaseModel):
 
         anno_list = []
         for anno in query:
-            anno_message = anno.to_response_message()
+            anno_message = anno.to_response_message(user)
             anno_message.vote_count = anno.vote_count
             anno_list.append(anno_message)
         return AnnoListMessage(anno_list=anno_list)
@@ -278,7 +273,7 @@ class Anno(BaseModel):
 
         anno_list = []
         for anno in query:
-            anno_message = anno.to_response_message()
+            anno_message = anno.to_response_message(user)
             anno_message.flag_count = anno.flag_count
             anno_list.append(anno_message)
         return AnnoListMessage(anno_list=anno_list)
@@ -308,7 +303,7 @@ class Anno(BaseModel):
 
         anno_list = []
         for anno in query:
-            anno_message = anno.to_response_message()
+            anno_message = anno.to_response_message(user)
             anno_message.last_update_time = anno.last_update_time
             anno_message.last_activity = anno.last_activity
             anno_list.append(anno_message)
@@ -347,7 +342,7 @@ class Anno(BaseModel):
         if projection is not None:
             items = [entity.to_response_message_by_projection(projection) for entity in annos]
         else:
-            items = [entity.to_response_message() for entity in annos]
+            items = [entity.to_response_message(user) for entity in annos]
 
         if more:
             return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
@@ -355,7 +350,7 @@ class Anno(BaseModel):
             return AnnoListMessage(anno_list=items, has_more=more)
 
     @classmethod
-    def query_by_community(cls, community, limit, projection, curs):
+    def query_by_community(cls, community, limit, projection, curs, user):
         if community:
             query = cls.query(cls.community == community.key)
             query = query.order(-cls.created)
@@ -371,8 +366,35 @@ class Anno(BaseModel):
             if projection is not None:
                 items = [entity.to_response_message_by_projection(projection) for entity in annos]
             else:
-                items = [entity.to_response_message() for entity in annos]
+                items = [entity.to_response_message(user) for entity in annos]
     
+            if more:
+                return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
+            else:
+                return AnnoListMessage(anno_list=items, has_more=more)
+        else:
+            return AnnoListMessage(anno_list=[])
+
+    @classmethod
+    def query_by_app(cls, app, limit, projection, curs, user):
+        if app:
+            query = cls.query(cls.app == app.key)
+            query = query.order(-cls.created)
+            query = filter_anno_by_user(query, user)
+
+            if (curs is not None) and (projection is not None):
+                annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)
+            elif (curs is not None) and (projection is None):
+                annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
+            elif (curs is None) and (projection is not None):
+                annos, next_curs, more = query.fetch_page(limit, projection=projection)
+            else:
+                annos, next_curs, more = query.fetch_page(limit)
+            if projection is not None:
+                items = [entity.to_response_message_by_projection(projection) for entity in annos]
+            else:
+                items = [entity.to_response_message(user) for entity in annos]
+
             if more:
                 return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
             else:
@@ -406,7 +428,7 @@ class Anno(BaseModel):
         query = cls.query().filter(cls.creator == user.key).order(-cls.last_update_time)
         anno_list = []
         for anno in query:
-            anno_message = anno.to_response_message()
+            anno_message = anno.to_response_message(user)
             anno_list.append(anno_message)
         return anno_list
 
@@ -586,7 +608,7 @@ class Anno(BaseModel):
                     query_string += " OR "
             query_string += " )"
             return query_string
-        return None
+        return ""
 
 
     @classmethod
@@ -619,7 +641,7 @@ class Anno(BaseModel):
                     anno = None
 
                 if anno:
-                    anno_list.append(anno.to_response_message())
+                    anno_list.append(anno.to_response_message(user))
 
         return AnnoListMessage(anno_list=anno_list, offset=offset, has_more=has_more)
 

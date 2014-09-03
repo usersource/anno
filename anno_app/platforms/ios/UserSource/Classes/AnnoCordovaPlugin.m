@@ -17,8 +17,11 @@ AnnoUtils *annoUtils;
 ScreenshotGestureListener *screenshotGestureListener;
 AppDelegate *appDelegate;
 
-UIViewController *currentViewController;
-CDVViewController *communityViewController, *annoDrawViewController, *introViewController, *optionFeedbackViewController;
+NSMutableArray *viewControllerList, *annoDrawViewControllerList;
+
+CommunityViewController *communityViewController;
+IntroViewController *introViewController;
+OptionFeedbackViewController *optionFeedbackViewController;
 
 - (void) pluginInitialize {
     appDelegate = [[UIApplication sharedApplication] delegate];
@@ -28,87 +31,84 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
     if ([annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]]) {
         communityViewController = [appDelegate valueForKey:@"communityViewController"];
     } else {
-        #if __has_feature(objc_arc)
-            communityViewController = [[CommunityViewController alloc] init];
-        #else
-            communityViewController = [[[CommunityViewController alloc] init] autorelease];
-        #endif
+        communityViewController = [[CommunityViewController alloc] init];
     }
 
-    currentViewController = appDelegate.window.rootViewController;
+    viewControllerList = [NSMutableArray arrayWithObjects:appDelegate.window.rootViewController, nil];
+    annoDrawViewControllerList = [[NSMutableArray alloc] init];
 }
 
 - (void) showCommunityPage {
+    CDVViewController *currentViewController = [viewControllerList lastObject];
+
     if (currentViewController != communityViewController) {
         [currentViewController presentViewController:communityViewController animated:YES completion:nil];
+        [viewControllerList addObject:communityViewController];
     }
 }
 
 - (void) ShowIntroPage {
     if (introViewController == nil) {
-        #if __has_feature(objc_arc)
-            introViewController = [[IntroViewController alloc] init];
-        #else
-            introViewController = [[[IntroViewController alloc] init] autorelease];
-        #endif
-        
-        [appDelegate.window addSubview:introViewController.view];
-        currentViewController = introViewController;
-    } else {
-        [appDelegate.viewController presentViewController:introViewController animated:YES completion:nil];
+        introViewController = [[IntroViewController alloc] init];
     }
+
+    [[viewControllerList lastObject] presentViewController:introViewController animated:YES completion:nil];
+    [viewControllerList addObject:introViewController];
 }
 
 - (void) showOptionFeedback {
     if (optionFeedbackViewController == nil) {
-        #if __has_feature(objc_arc)
-            optionFeedbackViewController = [[OptionFeedbackViewController alloc] init];
-        #else
-            optionFeedbackViewController = [[[OptionFeedbackViewController alloc] init] autorelease];
-        #endif
-        
-        [appDelegate.window addSubview:optionFeedbackViewController.view];
-        currentViewController = optionFeedbackViewController;
-    } else {
-        [appDelegate.viewController presentViewController:optionFeedbackViewController animated:YES completion:nil];
+        optionFeedbackViewController = [[OptionFeedbackViewController alloc] init];
     }
+
+    [[viewControllerList lastObject] presentViewController:optionFeedbackViewController animated:YES completion:nil];
+    [viewControllerList addObject:optionFeedbackViewController];
 }
 
-+ (void) showAnnoDraw:(NSString*)imageURI levelValue:(int)levelValue editModeValue:(BOOL)editModeValue {
-    if (annoDrawViewController == nil) {
-        #if __has_feature(objc_arc)
-            annoDrawViewController = [[AnnoDrawViewController alloc] init];
-        #else
-            annoDrawViewController = [[[AnnoDrawViewController alloc] init] autorelease];
-        #endif
-        
-        [appDelegate.window addSubview:annoDrawViewController.view];
-        currentViewController = annoDrawViewController;
-        [AnnoDrawViewController handleFromShareImage:imageURI
-                                          levelValue:levelValue
-                                     isPracticeValue:false
-                                       editModeValue:editModeValue];
-    } else {
-        [appDelegate.viewController presentViewController:annoDrawViewController animated:YES completion:nil];
++ (void) showAnnoDraw:(NSString*)imageURI
+           levelValue:(int)levelValue
+        editModeValue:(BOOL)editModeValue
+   landscapeModeValue:(BOOL)landscapeModeValue {
+    CDVViewController *currentViewController = [viewControllerList lastObject];
+    AnnoDrawViewController *annoDrawViewController = [[AnnoDrawViewController alloc] init];
+    [currentViewController presentViewController:annoDrawViewController animated:NO completion:nil];
+
+    // Adding back lastObject of viewControllerList beacause it gets deleted after calling
+    // presentViewController on lastObject of viewControllerList with annoDrawViewController
+    if ([currentViewController isKindOfClass:[AnnoDrawViewController class]]) {
+        [viewControllerList addObject:currentViewController];
+        [annoDrawViewControllerList addObject:currentViewController];
     }
+
+    [viewControllerList addObject:annoDrawViewController];
+    [annoDrawViewControllerList addObject:annoDrawViewController];
+    [annoDrawViewController handleFromShareImage:imageURI
+                                      levelValue:levelValue
+                                 isPracticeValue:false
+                                   editModeValue:editModeValue
+                              landscapeModeValue:landscapeModeValue];
 }
 
 - (void) exitActivity {
-    if (currentViewController == communityViewController) {
-        [communityViewController.view removeFromSuperview];
+    CDVViewController *currentViewController = [viewControllerList lastObject];
+
+    if ([currentViewController isKindOfClass:[CommunityViewController class]]) {
+        [communityViewController dismissViewControllerAnimated:YES completion:nil];
         communityViewController = nil;
-    } else if (currentViewController == introViewController) {
-        [introViewController.view removeFromSuperview];
+    } else if ([currentViewController isKindOfClass:[IntroViewController class]]) {
+        [introViewController dismissViewControllerAnimated:YES completion:nil];
         introViewController = nil;
-    } else if (currentViewController == optionFeedbackViewController) {
-        [optionFeedbackViewController.view removeFromSuperview];
+    } else if ([currentViewController isKindOfClass:[OptionFeedbackViewController class]]) {
+        [optionFeedbackViewController dismissViewControllerAnimated:YES completion:nil];
         optionFeedbackViewController = nil;
-    } else if (currentViewController == annoDrawViewController) {
-        [annoDrawViewController.view removeFromSuperview];
-        annoDrawViewController = nil;
+    } else if ([currentViewController isKindOfClass:[AnnoDrawViewController class]]) {
+        AnnoDrawViewController *currentAnnoDrawViewController = [annoDrawViewControllerList lastObject];
+        [currentAnnoDrawViewController dismissViewControllerAnimated:YES completion:nil];
+        currentAnnoDrawViewController = nil;
+        [annoDrawViewControllerList removeLastObject];
     }
 
-    currentViewController = appDelegate.window.rootViewController;
+    [viewControllerList removeLastObject];
 }
 
 - (void) exit_current_activity:(CDVInvokedUrlCommand*)command {
@@ -193,7 +193,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
     NSString *imageURI = [command.arguments objectAtIndex:0];
 
     @try {
-        [AnnoCordovaPlugin showAnnoDraw:imageURI levelValue:0 editModeValue:FALSE];
+        [AnnoCordovaPlugin showAnnoDraw:imageURI levelValue:0 editModeValue:FALSE landscapeModeValue:NO];
     }
     @catch (NSException *exception) {
         NSLog(@"Exception in start_anno_draw: %@", exception);
@@ -205,7 +205,8 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
 
 - (void) start_edit_anno_draw:(CDVInvokedUrlCommand*)command {
     @try {
-        [AnnoCordovaPlugin showAnnoDraw:@"" levelValue:0 editModeValue:TRUE];
+        BOOL landscapeModeValue = [[command.arguments objectAtIndex:0] boolValue];
+        [AnnoCordovaPlugin showAnnoDraw:@"" levelValue:0 editModeValue:TRUE landscapeModeValue:landscapeModeValue];
     }
     @catch (NSException *exception) {
         NSLog(@"Exception in start_anno_draw: %@", exception);
@@ -216,14 +217,15 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
 }
 
 - (void) get_screenshot_path:(CDVInvokedUrlCommand*)command {
-    NSString *level = [NSString stringWithFormat:@"%d", [AnnoDrawViewController getLevel]];
+    AnnoDrawViewController *currentAnnoDrawViewController = [annoDrawViewControllerList lastObject];
+    NSString *level = [NSString stringWithFormat:@"%d", [currentAnnoDrawViewController getLevel]];
     NSString *isAnno = [annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] ? @"true" : @"false";
 
     NSDictionary *jsonData = @{
-        @"screenshotPath" : [AnnoDrawViewController getScreenshotPath],
+        @"screenshotPath" : [currentAnnoDrawViewController getScreenshotPath],
         @"level" : level,
         @"isAnno" : isAnno,
-        @"editMode" : [NSNumber numberWithBool:[AnnoDrawViewController isEditMode]]
+        @"editMode" : [NSNumber numberWithBool:[currentAnnoDrawViewController isEditMode]]
     };
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
@@ -274,7 +276,8 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
     if ([base64Str length] > 0) {
         imageData = [[NSData alloc] initWithBase64Encoding:base64Str];
     } else {
-        imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[AnnoDrawViewController getScreenshotPath]]];
+        AnnoDrawViewController *currentAnnoDrawViewController = [annoDrawViewControllerList lastObject];
+        imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[currentAnnoDrawViewController getScreenshotPath]]];
     }
 
     UIImage *image = [UIImage imageWithData:imageData];
@@ -289,8 +292,9 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
 
 - (NSDictionary*) getAppInfo {
     NSString *source, *appName;
+    AnnoDrawViewController *currentAnnoDrawViewController = [annoDrawViewControllerList lastObject];
     
-    if ([annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] && ([AnnoDrawViewController getLevel] != 2)) {
+    if ([annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] && ([currentAnnoDrawViewController getLevel] != 2)) {
         source = annoUtils.ANNO_SOURCE_STANDALONE;
         appName = annoUtils.UNKNOWN_APP_NAME;
     } else {
@@ -304,7 +308,7 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
         @"source" : source,
         @"appName" : appName,
         @"appVersion" : appVersion,
-        @"level" : [NSNumber numberWithInt:[AnnoDrawViewController getLevel]]
+        @"level" : [NSNumber numberWithInt:[currentAnnoDrawViewController getLevel]]
     };
     
     return result;
@@ -340,8 +344,20 @@ CDVViewController *communityViewController, *annoDrawViewController, *introViewC
 }
 
 - (void) trigger_create_anno:(CDVInvokedUrlCommand*)command {
-    [annoUtils triggerCreateAnno:currentViewController];
+    [annoUtils triggerCreateAnno:[viewControllerList lastObject]];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) get_app_version:(CDVInvokedUrlCommand*)command {
+    NSString *app_version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    NSString *app_build = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+
+    NSMutableArray *args = [[NSMutableArray alloc] init];
+    [args addObject:app_version];
+    [args addObject:app_build];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:(NSString*)args];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 

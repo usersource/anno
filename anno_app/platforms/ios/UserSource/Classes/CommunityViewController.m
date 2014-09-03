@@ -42,7 +42,7 @@ int level;
  Get level associated with that viewcontroller
  @return value of level
  */
-+ (int) getLevel {
+- (int) getLevel {
     return level;
 }
 
@@ -51,7 +51,7 @@ int level;
  @param levelValue
  value for level
  */
-+ (void) setLevel:(int)levelValue {
+- (void) setLevel:(int)levelValue {
     level = levelValue;
 }
 
@@ -69,6 +69,10 @@ int level;
     // View defaults to full size.  If you want to customize the view's size, or its subviews (e.g. webView),
     // you can do so here.
     [super viewWillAppear:animated];
+}
+
+- (void) viewDidLoad {
+    [super viewDidLoad];
 
     NSArray *versionCompatibility = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
     NSInteger iOSVersion = [[versionCompatibility objectAtIndex:0] intValue];
@@ -78,12 +82,6 @@ int level;
         CGFloat viewHeight = self.view.frame.size.height;
         [self.webView setFrame:CGRectMake(0, 20, viewWidth, viewHeight - 20)];
     }
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
 }
 
 - (void)viewDidUnload

@@ -41,12 +41,12 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                     createdTime,
                     anno.anno_text,
                     anno.image,
-                    anno.simple_x,
-                    anno.simple_y,
-                    anno.simple_circle_on_top?1:0,
+                    // anno.simple_x,
+                    // anno.simple_y,
+                    // anno.simple_circle_on_top?1:0,
                     anno.app_version,
                     anno.os_version,
-                    anno.simple_is_moved?1:0,
+                    // anno.simple_is_moved?1:0,
                     anno.level,
                     anno.app_name,
                     anno.device_model,
@@ -149,8 +149,13 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                 annoUtil.showLoadingIndicator();
             }
 
-            anno.simple_circle_on_top = anno.simple_circle_on_top==1;
-            anno.simple_is_moved = anno.simple_is_moved==1;
+            // anno.simple_circle_on_top = anno.simple_circle_on_top==1;
+            // anno.simple_is_moved = anno.simple_is_moved==1;
+            anno.simple_circle_on_top = false;
+            anno.simple_is_moved = false;
+
+            // appending platform info
+            anno.platform_type = device.platform;
 
             annoUtil.getBase64FileContent(screenshotDirPath+"/"+anno.image, function(base64Str){
                 anno.image = base64Str;
@@ -437,6 +442,9 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
 
             console.log("start update anno.");
 
+            // appending platform info
+            anno.platform_type = device.platform;
+
             var APIConfig = {
                 name: annoUtil.API.anno,
                 method: "anno.anno.merge",
@@ -456,7 +464,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                             {
                                 if (callback)
                                 {
-                                    callback();
+                                    callback(data);
                                 }
 
                                 cordova.exec(
@@ -483,7 +491,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                     {
                         if (callback)
                         {
-                            callback();
+                            callback(data);
                         }
                     }
 
@@ -492,11 +500,6 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                 error: function(error, data)
                 {
                     self.sendingAnnoToCloud = false;
-
-                    if (callback)
-                    {
-                        callback();
-                    }
                 }
             };
 
@@ -527,7 +530,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
 
                 var annos = [];
                 var cnt = res.rows.length;
-                console.error('local annos: '+cnt);
+                console.log('local annos: ' + cnt);
 
                 for (var i=0;i<cnt;i++)
                 {
@@ -573,11 +576,11 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                         annoItem = {
                             "anno_text":item.comment,
                             "image":item.screenshot_key,
-                            "simple_x":item.x,
-                            "simple_y":item.y,
-                            "simple_circle_on_top":item.direction,
+                            // "simple_x":item.x,
+                            // "simple_y":item.y,
+                            // "simple_circle_on_top":item.direction,
                             "app_version":item.app_version,
-                            "simple_is_moved":item.is_moved,
+                            // "simple_is_moved":item.is_moved,
                             "level":item.level,
                             "app_name":item.app_name,
                             "device_model":item.model,

@@ -70,6 +70,13 @@ indexes:
 
 - kind: Anno
   properties:
+  - name: app
+  - name: community
+  - name: created
+    direction: desc
+
+- kind: Anno
+  properties:
   - name: app_name
   - name: country
 

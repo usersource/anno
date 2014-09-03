@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -60,6 +61,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
   public static final String TRIGGER_CREATE_ANNO = "trigger_create_anno";
   public static final String START_ANNO_DRAW = "start_anno_draw";
   public static final String START_EDIT_ANNO_DRAW = "start_edit_anno_draw";
+  public static final String GET_APP_VERSION = "get_app_version";
 
   // activity names
   public static final String ACTIVITY_INTRO = "Intro";
@@ -68,6 +70,8 @@ public class AnnoCordovaPlugin extends CordovaPlugin
   public static final String ACTIVITY_COMMUNITY = "Community";
 
   private static final int COMPRESS_QUALITY = 70;
+
+  PackageInfo pInfo;
 
   @Override
   public boolean execute(String action, JSONArray args,
@@ -252,6 +256,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
     }
     else if (START_EDIT_ANNO_DRAW.equals(action))
     {
+      boolean landscapeMode = args.getBoolean(0);
       Activity activity = this.cordova.getActivity();
 
       String packageName = activity.getPackageName();
@@ -261,10 +266,28 @@ public class AnnoCordovaPlugin extends CordovaPlugin
               "io.usersource.anno.AnnoDrawActivity");
       intent.setType("image/*");
       intent.putExtra(AnnoUtils.EDIT_ANNO_MODE, true);
+      intent.putExtra(AnnoUtils.LANDSCAPE_MODE, landscapeMode);
 
       activity.startActivity(intent);
 
       return true;
+    }
+    else if (GET_APP_VERSION.equals(action)) {
+		try {
+			Activity activity = this.cordova.getActivity();
+			pInfo = activity.getPackageManager().getPackageInfo(
+					activity.getPackageName(), 0);
+			String version = pInfo.versionName;
+			int build = pInfo.versionCode;
+
+			JSONArray returnData = new JSONArray();
+			returnData.put(version);
+			returnData.put(build);
+			callbackContext.success(returnData);
+			return true;
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
     }
 
     return false;
