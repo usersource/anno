@@ -1170,6 +1170,8 @@ define([
                 height : (zoomImageHeight + zoomBorderWidth) + "px"
             });
 
+            domStyle.set('zoomClose', 'color', borderColor);
+
             imageWidth = zoomImageWidth;
             imageHeight = zoomImageHeight;
             surfaceWidth = zoomImageWidth + zoomBorderWidth;
