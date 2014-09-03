@@ -1,5 +1,5 @@
 from model.appinfo import AppInfo
-from helper.utils_enum import DeviceType
+from helper.utils_enum import PlatformType
 
 from urllib2 import urlopen, URLError
 from urllib import urlencode, quote
@@ -293,7 +293,7 @@ class AppInfoPopulate(object):
 				developer=app.get('artistName'),
 				company_name=app.get('artistName'),
 				app_url=app.get('trackViewUrl'),
-				platform=DeviceType.IOS
+				platform=PlatformType.IOS
 			)
 			if update: AppInfo.update(entity)
 
@@ -321,7 +321,7 @@ class AppInfoPopulate(object):
 				developer=app.get('artist'),
 				company_name=app.get('artist'),
 				app_url=app.get('link'),
-				platform=DeviceType.IOS
+				platform=PlatformType.IOS
 			)
 			AppInfo.update(entity)
 
@@ -372,7 +372,7 @@ class AppInfoPopulate(object):
 				developer=app.get('developer'),
 				company_name=app.get('developer'),
 				app_url=app.get('link'),
-				platform=DeviceType.ANDROID
+				platform=PlatformType.ANDROID
 			)
 			if update: AppInfo.update(entity)
 
@@ -386,7 +386,6 @@ class AppInfoScan(object):
 		apps = AppInfo.get_unknown()
 		all_apps = []
 		for app in apps:
-
 			if StoreTypeEnum.PLAY_STORE in platforms:
 				# Search the Play Store, this update any matched items in the database
 				play_store_apps = AppInfoPopulate.play_store_search(term=app.name, update=auto_update)

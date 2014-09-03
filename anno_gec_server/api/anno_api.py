@@ -102,7 +102,8 @@ class AnnoApi(remote.Service):
         AnnoMergeMessage,
         id=messages.IntegerField(2, required=True),
         app_name=messages.StringField(3),
-        community_name=messages.StringField(4)
+        community_name=messages.StringField(4),
+        platform_type=messages.StringField(5)
     )
 
     anno_search_resource_container = endpoints.ResourceContainer(

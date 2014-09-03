@@ -37,7 +37,7 @@ class InvitationStatusType(object):
     ACCEPTED = "accepted"
     PENDING = "pending"
 
-class DeviceType(object):
+class PlatformType(object):
     IOS = "iOS"
     ANDROID = "Android"
 

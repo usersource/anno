@@ -154,6 +154,9 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
             anno.simple_circle_on_top = false;
             anno.simple_is_moved = false;
 
+            // appending platform info
+            anno.platform_type = device.platform;
+
             annoUtil.getBase64FileContent(screenshotDirPath+"/"+anno.image, function(base64Str){
                 anno.image = base64Str;
                 console.log("start insert anno.");
@@ -438,6 +441,9 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
             }
 
             console.log("start update anno.");
+
+            // appending platform info
+            anno.platform_type = device.platform;
 
             var APIConfig = {
                 name: annoUtil.API.anno,

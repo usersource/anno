@@ -2,7 +2,7 @@ __author__ = 'topcircler'
 
 from google.appengine.ext import ndb
 
-from helper.utils_enum import DeviceType
+from helper.utils_enum import PlatformType
 
 class AppInfo(ndb.Model):
     """
@@ -18,16 +18,19 @@ class AppInfo(ndb.Model):
     developer = ndb.StringProperty()
     company_name = ndb.StringProperty()
     app_url = ndb.StringProperty()
-    platform = ndb.StringProperty(choices=[DeviceType.ANDROID, DeviceType.IOS])
+    platform = ndb.StringProperty(choices=[PlatformType.ANDROID, PlatformType.IOS])
     created = ndb.DateTimeProperty(auto_now_add=True)
 
 
     @classmethod
-    def get(cls, name=None, bundleid=None):
+    def get(cls, name=None, bundleid=None, platform=None):
         appinfo = None
         if name:
             lc_name = name.lower()
-            appinfo = cls.query(ndb.OR(cls.lc_name == lc_name, cls.name == name)).get()
+            query = cls.query(ndb.OR(cls.lc_name == lc_name, cls.name == name))
+            if platform:
+                query = query.filter(cls.platform == platform)
+            appinfo = query.get()
         elif bundleid:
             appinfo = cls.query(cls.bundleid == bundleid).get()
         return appinfo
@@ -70,11 +73,8 @@ class AppInfo(ndb.Model):
 
         # if not found try name
         if not entity:
-            entity = cls.get(name=message.name)
-
-        # Only match of the same platform
-        if entity and entity.platform is not None and getattr(message, 'platform', None) != entity.platform:
-            entity = None
+            platform = getattr(message, 'platform', None)
+            entity = cls.get(name=message.name, platform=platform)
 
         if entity is None:
             entity = cls.insert(message)

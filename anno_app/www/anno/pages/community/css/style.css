@@ -528,7 +528,7 @@
 
 .appNameDetail
 {
-    width: 100%;
+    /*width: 100%;*/
     height: 24px;
     padding-bottom: 8px;
 }
@@ -841,6 +841,29 @@ li.unread .listTitle {
 	font-weight: bold;
 }
 
+#zoomScreenshotContainerDetail {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	overflow: scroll;
+	background-color: black;
+}
+
+#zoomClose {
+	position: fixed;
+	padding: 4px 6px;
+	right: 0;
+	background: rgba(0, 0, 0, 0.7);
+	color: white;
+	font-weight: bold;
+	font-size: 16px;
+	border-radius: 8px;
+	margin: 4px;
+	z-index: 100;
+}
+
 #communityWelMsg {
 	margin: 7px 9px 4px;
 	padding: 6px 6px 6px 6px;
@@ -848,4 +871,13 @@ li.unread .listTitle {
 	border-radius: 8px;
 	outline: 0;
 	-webkit-user-select: auto !important;
+}
+
+#versionInfo {
+	position: absolute;
+	bottom: 5px;
+	width: 100%;
+	text-align: center;
+	font-size: 14px;
+	color: gray;
 }
