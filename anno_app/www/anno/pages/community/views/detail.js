@@ -141,6 +141,9 @@ define([
                     redrawShapes();
                 }
 
+                domStyle.set("AnnoScreenshotLoading", "display", "none");
+                domStyle.set("AnnoScreenshot", "display", "");
+
             }, 10);
         };
 
@@ -601,6 +604,10 @@ define([
         {
             if (loadingDetailData||loadingImage) return;
 
+            domStyle.set("AnnoScreenshotLoading", "display", "");
+            domStyle.set("AnnoScreenshot", "display", "none");
+            domStyle.set("AnnoDetails", "display", "none");
+
             loadingDetailData = true;
             setControlsState();
 
@@ -690,6 +697,7 @@ define([
                     }
 
                     setDetailsContext(cursor);
+                    domStyle.set("AnnoDetails", "display", "");
                 },
                 error: function()
                 {
