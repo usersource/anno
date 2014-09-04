@@ -62,8 +62,8 @@ define([
             //domStyle.set("imgDetailScreenshot", "width", (viewPoint.w-screenshotMargin)+"px");
 
             var h = (viewPoint.h-6);
-            domStyle.set("annoTextDetail", "width", (viewPoint.w-6-6-10-6-28)+"px");
-            domStyle.set("voteFlagContainer", "width", (viewPoint.w-6-6-10-6-28)+"px");
+            // domStyle.set("annoTextDetail", "width", (viewPoint.w-6-6-10-6-28)+"px");
+            // domStyle.set("voteFlagContainer", "width", (viewPoint.w-6-6-10-6-28)+"px");
 
             trayScreenHeight = h-40;
 
@@ -1474,7 +1474,8 @@ define([
                     zoomClose();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId("appNameSpanDetail"), 'click', function() {
+                _connectResults.push(connect.connect(dom.byId("appNameSpanDetail"), 'click', function(e) {
+                    dojo.stopEvent(e);
                     searchAnnoByApp();
                 }));
 

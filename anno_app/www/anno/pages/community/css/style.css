@@ -545,14 +545,9 @@
 
 .annoTextDetail
 {
-    width: 100%;
     border: 2px solid #ff9900;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    padding-left: 2px;
-    padding-right: 2px;
-    margin-left: 14px;
-    margin-right: 14px;
+    padding: 2px;
+    margin: 0 8px;
 }
 
 .commentDetail
