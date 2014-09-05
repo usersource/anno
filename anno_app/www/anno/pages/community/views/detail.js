@@ -1242,22 +1242,22 @@ define([
                     //adjustSize();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnNext'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnNext'), 'click', function ()
                 {
                     goNextRecord();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnTray'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnTray'), 'click', function ()
                 {
                     scrollToTalkArea();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnScreenshot'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnScreenshot'), 'click', function ()
                 {
                     scrollToScreenshot();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnPrevious'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnPrevious'), 'click', function ()
                 {
                     goPreviousRecord();
                 }));
@@ -1280,7 +1280,7 @@ define([
                     domStyle.set('editAppNameImg', 'display', '');
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdAddCommentImg'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('tdAddCommentImg'), 'click', function ()
                 {
                     var text = dom.byId('addCommentTextBox').value.trim();
 
@@ -1300,7 +1300,7 @@ define([
                     dom.byId('hiddenBtn').focus();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('imgThumbsUp'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('imgThumbsUp'), 'click', function ()
                 {
                     if (domClass.contains('imgThumbsUp','icoImgActive'))
                     {
@@ -1318,7 +1318,7 @@ define([
                     }
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('imgFlag'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('imgFlag'), 'click', function ()
                 {
                     if (domClass.contains('imgFlag','icoImgActive'))
                     {
@@ -1330,7 +1330,7 @@ define([
                     }
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('imgSocialSharing'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('imgSocialSharing'), 'click', function ()
                 {
                     doSocialShare();
                 }));
@@ -1406,7 +1406,7 @@ define([
                     }
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('editAppNameImg'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('editAppNameImg'), 'click', function ()
                 {
                     showAppNameTextBox();
                 }));
@@ -1428,19 +1428,19 @@ define([
                 }));
 
                 // screenshot controls
-                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_hideAnnotations'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_hideAnnotations'), 'click', function ()
                 {
                     if (domClass.contains('td_shtCtrl_hideAnnotations', 'barIconDisabled')) return;
                     toggleAnnotations();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_edit'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_edit'), 'click', function ()
                 {
                     if (domClass.contains('td_shtCtrl_edit', 'barIconDisabled')) return;
                     editAnnoItem();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_remove'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_remove'), 'click', function ()
                 {
                     if (domClass.contains('td_shtCtrl_remove', 'barIconDisabled')) return;
 
