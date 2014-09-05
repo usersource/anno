@@ -1389,17 +1389,13 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), "touchmove", function (e)
                 {
-                    if( e.touches.length == 1 )
-                    {
+                    if (e.touches.length == 1) {
                         var endX = e.touches[0].pageX;
                         var endY = e.touches[0].pageY;
-                        if ((startX-endX) >=6 &&Math.abs(startY-endY)<10)
-                        {
+                        if ((startX - endX) >= 30 && Math.abs(startY - endY) < 10) {
                             dojo.stopEvent(e);
                             goNextRecord();
-                        }
-                        else if ((startX-endX) <=-6 &&Math.abs(startY-endY)<10)
-                        {
+                        } else if ((startX - endX) <= -30 && Math.abs(startY - endY) < 10) {
                             dojo.stopEvent(e);
                             goPreviousRecord();
                         }
