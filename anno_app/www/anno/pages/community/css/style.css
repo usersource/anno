@@ -646,7 +646,6 @@
 {
     color: #ffffff;
     background-color: #ff9900;
-    border-color: #ff9900;
     display: inline-block;
     padding: 6px 12px;
     margin-bottom: 0;
@@ -657,7 +656,8 @@
     white-space: nowrap;
     vertical-align: middle;
     cursor: pointer;
-    border: 1px solid transparent;
+    border: 0;
+    outline: 0;
     border-radius: 4px;
     -webkit-user-select: none;
 }
@@ -875,4 +875,13 @@ li.unread .listTitle {
 	text-align: center;
 	font-size: 14px;
 	color: gray;
+}
+
+#learnHowContainer {
+	width: 100%;
+	height: 91.535%;
+	height: calc(100% - 48px);
+	height: -webkit-calc(100% - 48px);
+	text-align: center;
+	color: rgb(211, 112, 17);
 }

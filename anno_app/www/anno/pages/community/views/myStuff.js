@@ -186,7 +186,7 @@ define([
 
         var drawAnnos = function(annos)
         {
-            if (annos.length <=0)
+            if (annos.length <= 2)
             {
                 domStyle.set('listContainerMyStuff', 'display', 'none');
                 domStyle.set('learnHowContainer', 'display', '');
@@ -230,7 +230,7 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId("btnLearnHow"), 'click', function(e)
                 {
-                    Util.startActivity("Intro", true);
+                    Util.startActivity("Intro", false);
                 }));
 
                 _connectResults.push(connect.connect(dom.byId("iconBackMyStuff"), 'click', function(e)
