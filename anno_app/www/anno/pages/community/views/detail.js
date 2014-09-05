@@ -1580,6 +1580,10 @@ define([
 
                 dom.byId('detailContentContainer').parentNode.scrollTop = 0;
                 document.addEventListener("backbutton", handleBackButton, false);
+
+                domStyle.set("AnnoScreenshotLoading", "display", "");
+                domStyle.set("AnnoScreenshot", "display", "none");
+                domStyle.set("AnnoDetails", "display", "none");
             },
             beforeDeactivate: function()
             {
