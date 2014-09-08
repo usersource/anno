@@ -17,7 +17,7 @@ define([
         return declare("anno.draw.shapes.ArrowLine", [BaseShape], {
             arrowLength: 25,
             arrowAngle: Math.PI / 8,
-            lineStrokeStyle: {color: annoUtil.level1Color, width: 3},
+            lineStrokeStyle: { color : annoUtil.level1Color, width : annoUtil.annotationWidth },
             arrowHeadFillStyle: "rgba("+annoUtil.level1ColorRGB+", 1)",
             shapeType: "ArrowLine",
             minSize:100,

@@ -15,7 +15,7 @@ define([
          * Rectangle class
          */
         return declare("anno.draw.shapes.Rectangle", [BaseShape], {
-            lineStrokeStyle: {color: annoUtil.level1Color, width: 3},
+            lineStrokeStyle: {color: annoUtil.level1Color, width: annoUtil.annotationWidth},
             shapeType: "Rectangle",
             minSize:50,
             createShape: function (args)

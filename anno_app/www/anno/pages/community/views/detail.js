@@ -169,7 +169,10 @@ define([
             if (dom.byId('imgDetailScreenshot').src === tiniestImageData) return;
 
         	var drawElements = eventsModel.cursor.draw_elements;
-            var lineStrokeStyle = {color: eventsModel.cursor.level==1?annoUtil.level1Color:annoUtil.level2Color, width: 3};
+            var lineStrokeStyle = {
+                color : eventsModel.cursor.level == 1 ? annoUtil.level1Color : annoUtil.level2Color,
+                width : annoUtil.annotationWidth
+            };
             if (drawElements)
             {
                 var elementsObject = dojoJson.parse(drawElements);

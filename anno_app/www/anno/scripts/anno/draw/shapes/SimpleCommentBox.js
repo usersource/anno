@@ -20,7 +20,7 @@ define([
          * CommentBox class
          */
         return declare("anno.draw.shapes.SimpleCommentBox", [BaseShape], {
-            lineStrokeStyle: {color: '#000000', width: 3},
+            lineStrokeStyle: {color: '#000000', width: annoUtil.annotationWidth},
             shapeType: "SimpleCommentBox",
             minSize:50,
             shapePadding: 30,
@@ -28,7 +28,7 @@ define([
             earDistance: 44,
             boxHeight:34,
             shareBtnWidth: 64,
-            placeholder:"Enter suggestion here",
+            placeholder:"Enter Suggestion Here",
             grayColor: "#A9A9A9",
             normalColor: "#000000",
             earLow:false,

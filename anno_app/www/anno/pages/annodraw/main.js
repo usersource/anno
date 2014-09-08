@@ -67,7 +67,10 @@ require([
     {
         if (domClass.contains(dom.byId("barComment"), 'barIconInactive')) return;
 
-        var lineStrokeStyle = {color: level==1?level1Color:level2Color, width: 3};
+        var lineStrokeStyle = {
+            color : level == 1 ? level1Color : level2Color,
+            width : annoUtil.annotationWidth
+        };
         var commentBox = surface.createCommentBox({startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight,lineStrokeStyle:lineStrokeStyle});
         updateLastShapePos('Rectangle');
 
@@ -549,9 +552,11 @@ require([
     var switchMode = function(mode)
     {
         drawMode = true;
-        var lineStrokeStyle = {color: level==1?level1Color:level2Color, width: 3},
-            drawElements, drawItem;
-        var commentBox;
+        var lineStrokeStyle = {
+            color : level == 1 ? level1Color : level2Color,
+            width : annoUtil.annotationWidth
+        };
+        var drawElements, drawItem, commentBox;
 
         if (editMode)
         {
@@ -1371,7 +1376,7 @@ require([
 
     document.addEventListener("deviceready", function(){
         DBUtil.initDB(function(){
-            console.error("DB is readay!");
+            console.log("DB is readay!");
             annoUtil.readSettings(function(){
                 init();
             });
