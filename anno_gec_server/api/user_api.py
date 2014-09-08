@@ -118,7 +118,7 @@ class UserApi(remote.Service):
     @endpoints.method(user_email_with_id_resource_container, UserCommunityListMessage,
                       path="community/list", http_method="GET", name="community.list")
     def list_user_communities(self, request):
-        if request.email:
+        if request.id or request.email:
             user = get_user_from_request(user_id=request.id, user_email=request.email)
         else:
             user = auth_user(self.request_state.headers)
@@ -138,7 +138,7 @@ class UserApi(remote.Service):
         pending_invites_list = []
 
         if request.include_invite:
-            pending_invites = Invite.list_by_user(user.email or (auth_user(self.request_state.headers)).user_email)
+            pending_invites = Invite.list_by_user(user.user_email)
             for pending_invite in pending_invites:
                 community = pending_invite.community.get().to_response_message()
                 pending_invites_list.append(UserInviteMessage(community=community,
