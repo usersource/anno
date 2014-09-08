@@ -65,10 +65,10 @@ def handle_user(creator_id):
 def auth_user(headers):
     current_user = get_endpoints_current_user(raise_unauthorized=False)
     user = None
-
     if current_user is None:
         credential_pair = get_credential(headers)
         email = credential_pair[0]
+        # print email
         validate_email(email)
         User.authenticate(credential_pair[0], md5(credential_pair[1]))
         user = User.find_user_by_email(email)
