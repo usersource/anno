@@ -92,18 +92,25 @@ define([
 
         var saveNickname = function()
         {
+            var nickName = dom.byId("nickNameSignin").value;
+
+            if (nickName.length <= 0) {
+                annoUtil.showMessageDialog("Please enter Nickname.");
+                return;
+            }
+
             // save nick name.
             var userInfo = {};
             userInfo.userId = currentSignInUserInfo.id;
             userInfo.email = currentSignInUserInfo.email;
             userInfo.signinMethod = "google";
-            userInfo.nickname = dom.byId("nickNameSignin").value;
+            userInfo.nickname = nickName;
 
             var APIConfig = {
                 name: annoUtil.API.account,
                 method: "account.account.bind_account",
                 parameter: {
-                    'display_name':dom.byId("nickNameSignin").value,
+                    'display_name':nickName,
                     'auth_source':'Google'
                 },
                 success: function(data){
@@ -401,15 +408,13 @@ define([
                 {
                     if (e.keyCode == 13)
                     {
-                        if (dom.byId("nickNameSignin").value.length <= 0)
-                        {
-                            annoUtil.showMessageDialog("Please enter Nickname.");
-                        }
-                        else
-                        {
-                            saveNickname();
-                        }
+                        saveNickname();
                     }
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("saveNickNameSignIn"), 'click', function(e)
+                {
+                    saveNickname();
                 }));
 
                 _connectResults.push(connect.connect(dom.byId("imgGoogle"), 'click', function(e)

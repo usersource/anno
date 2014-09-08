@@ -28,8 +28,6 @@ class AppInfo(ndb.Model):
         if name:
             lc_name = name.lower()
             query = cls.query(ndb.OR(cls.lc_name == lc_name, cls.name == name))
-            if platform:
-                query = query.filter(cls.platform == platform)
             appinfo = query.get()
         elif bundleid:
             appinfo = cls.query(cls.bundleid == bundleid).get()
