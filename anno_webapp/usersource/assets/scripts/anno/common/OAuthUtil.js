@@ -35,7 +35,7 @@ define([
                 "?client_id=" + apiConfig.clientId +
                 "&redirect_uri=" + this.oauthOptions.redirect_uri +
                 "&response_type=code" +
-                "&origin=http://localhost:8080" +
+                "&origin=" + location.origin +
                 "&access_type=offline" +
                 "&approval_prompt=force" +
                 "&scope=" + this.oauthOptions.scope;
