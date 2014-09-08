@@ -745,9 +745,10 @@
 .signin-input
 {
     border: none;
+    outline: 0;
     height: 34px;
-    line-height: 20px;
-    margin: 0px;
+    line-height: 22px;
+    margin: 4px 0px 0px 0px;
     font-size: 13pt;
     vertical-align: middle;
     padding: 6px 12px;
@@ -792,6 +793,10 @@
 	border-radius: 0;
 	-webkit-border-radius: 0;
 	-webkit-appearance: initial;
+	box-shadow: none;
+	font-size: 16px;
+	line-height: 22px;
+	outline: 0;
 }
 
 .mblRoundRectCategory {
