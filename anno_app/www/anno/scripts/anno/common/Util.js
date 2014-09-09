@@ -39,7 +39,7 @@
         level2ColorRGB:"255, 0, 0",
         myIPIsServiceUrl:"http://178.18.16.111/myipis",
         annoScreenshotPath:null,
-        API_RETRY_TIMES: 3,
+        API_RETRY_TIMES: 0,
         annoPermaLinkBaseUrl:"http://anno-webapp.appspot.com/usersource/pages/permalink/index.html#/anno/",
         ERROR_TYPES:{
             "LOAD_GAE_API": 1,
