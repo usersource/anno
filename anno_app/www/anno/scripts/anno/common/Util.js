@@ -375,8 +375,8 @@
 
             dlg._callback = callback;
             dlg.show();
-            domStyle.set(dlg._cover[0], {"height": "100%", top:"0px"});
-            domStyle.set(dlg.containerNode.firstChild, {"margin" : "0 0 3px 0"});
+            // domStyle.set(dlg._cover[0], { "height" : "100%", "top" : "0px" });
+            domStyle.set(dlg.containerNode.firstChild, { "margin" : "0", "padding" : "3px 0" });
         },
         showToastDialog: function (message, timeOut) {
             var dlg = registry.byId('dlg_common_toast');
@@ -831,6 +831,8 @@
             // error: an error object {type, message}
             // toast: shown as toast, default is false
             // callback: callback function will be called when user tapped OK button in message popup
+
+            toast = (toast === undefined) ? true : toast;
 
             var error_message = error.message,
                 default_message = "Oops, something went wrong. Please try later.";
