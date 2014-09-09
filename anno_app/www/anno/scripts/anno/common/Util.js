@@ -1007,7 +1007,7 @@
             {
                 // TODO: Loading API failed, do we need retry?
                 util.showErrorMessage({type: util.ERROR_TYPES.LOAD_GAE_API ,message:'Load '+config.name+" API failed, "+error.message});
-                console.error('Load '+config.name+" API failed, "+res.error.message);
+                console.error("Load " + config.name + " API failed, " + error.message);
                 if (!config.keepLoadingSpinnerShown)
                 {
                     util.hideLoadingIndicator();
