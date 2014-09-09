@@ -32,7 +32,7 @@
             SimpleComment:"simple comment",
             DrawComment:"draw comment"
         },
-        annotationWidth: 3,
+        annotationWidth: 4,
         level1Color:"#ff9900",
         level1ColorRGB:"255, 153, 0",
         level2Color:"#ff0000",
