@@ -832,12 +832,16 @@
             // toast: shown as toast, default is false
             // callback: callback function will be called when user tapped OK button in message popup
 
-            var message = error.message,
+            var error_message = error.message,
                 default_message = "Oops, something went wrong. Please try later.";
 
             // we can specify different user-friendly message for different error types
-            if (error.code == this.ERROR_CODE.INTERNAL_SERVER_ERROR) {
-                message = default_message;
+            var message = default_message;
+            if ((error.code == this.ERROR_CODE.BAD_REQUEST) && (error.type == this.ERROR_TYPES.API_CALL_FAILED) ||
+                (error.code == this.ERROR_CODE.UNAUTHORIZED) && (error.type == this.ERROR_TYPES.API_RETRY_FAILED) ||
+                (error.code == this.ERROR_CODE.FORBIDDEN) && (error.type == this.ERROR_TYPES.API_CALL_FAILED) ||
+                (error.code == this.ERROR_CODE.NOT_FOUND) && (error.type == this.ERROR_TYPES.API_CALL_FAILED)) {
+                message = error_message;
             }
 
             if (toast) {

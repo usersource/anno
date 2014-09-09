@@ -258,7 +258,7 @@ define([
                 showLoadingSpinner: false,
                 success: function(resp)
                 {
-                    console.log("user.displayname.get: "+ JSON.stringify(resp));
+                    // console.log("user.displayname.get: " + JSON.stringify(resp));
 
                     if (resp.display_name)
                     {
