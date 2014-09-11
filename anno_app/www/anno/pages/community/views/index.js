@@ -753,6 +753,24 @@ define([
             }
         };
 
+        var checkInternetConnection = function(callback) {
+            if (!annoUtil.hasConnection()) {
+                dom.byId("errorMessage").innerHTML = "We couldn't detect a network connection.";
+                dom.byId("btnErrorAction").innerHTML = "Retry";
+                domStyle.set('errorWindow', 'display', '');
+
+                var handle = connect.connect(dom.byId("btnErrorAction"), 'click', function(e) {
+                    dojo.stopEvent(e);
+                    connect.disconnect(handle);
+                    load_gapi_client();
+                    domStyle.set('errorWindow', 'display', 'none');
+                    checkInternetConnection(callback);
+                });
+            } else {
+                callback();
+            }
+        };
+
         var _init = function()
         {
             if (DBUtil.userChecked)
@@ -1189,12 +1207,8 @@ define([
             {
                 eventsModel = this.loadedModels.events;
                 app = this.app;
-                app.inSearchMode = function()
-                {
-                    return inSearchMode;
-                };
-
-                _init();
+                app.inSearchMode = function() { return inSearchMode; };
+                checkInternetConnection(_init);
             },
             afterActivate: function()
             {
