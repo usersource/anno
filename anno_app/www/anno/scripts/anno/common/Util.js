@@ -396,7 +396,7 @@
             }
 
             dlg.show();
-            domStyle.set(dlg._cover[0], { "height" : "100%", "top" : "0" });
+            // domStyle.set(dlg._cover[0], { "height" : "100%", "top" : "0" });
             domStyle.set(dlg.domNode, { "top" : "initial", "bottom" : "50px" });
             domStyle.set(dlg.containerNode.firstChild, { "margin" : "0" });
 
