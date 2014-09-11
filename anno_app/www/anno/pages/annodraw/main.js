@@ -595,6 +595,7 @@ require([
             color : level == 1 ? level1Color : level2Color,
             width : annoUtil.annotationWidth
         };
+        var arrowHeadFillStyle = level == 1 ? level1Color : level2Color;
         var drawElements, drawItem, commentBox;
 
         if (editMode)
@@ -604,7 +605,7 @@ require([
             drawElements = dojoJson.parse(editDrawElementsJson);
 
             surface.switchMode(true);
-            surface.parse(drawElements, lineStrokeStyle, true);
+            surface.parse(drawElements, lineStrokeStyle, arrowHeadFillStyle, true, level);
 
             for (var p in drawElements)
             {

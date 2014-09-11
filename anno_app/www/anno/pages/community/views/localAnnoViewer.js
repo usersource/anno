@@ -61,6 +61,7 @@ define([
                 color : annoItem.level == 1 ? Util.level1Color : Util.level2Color,
                 width : annoUtil.annotationWidth
             };
+            var arrowHeadFillStyle = annoItem.level == 1 ? Util.level1Color : Util.level2Color;
 
             if (drawElements)
             {
@@ -69,7 +70,7 @@ define([
                 surface.show();
                 domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', left:'0px',top:'0px'});
 
-                surface.parse(elementsObject, lineStrokeStyle);
+                surface.parse(elementsObject, lineStrokeStyle, arrowHeadFillStyle);
 
                 console.error('redrawShapes end');
             }

@@ -325,10 +325,11 @@ define([
 
                 return anonymized;
             },
-            parse: function(shapesJson, cbxStrokeStyle, cbxFillStyle, selectable)
+            parse: function(shapesJson, cbxStrokeStyle, cbxFillStyle, selectable, level)
             {
                 selectable = selectable == null?false:selectable;
                 this.clear();
+                level = level || 1;
 
                 var item;
                 for (var p in shapesJson)
@@ -341,7 +342,8 @@ define([
                             shapeJson : item,
                             selectable : selectable,
                             lineStrokeStyle : cbxStrokeStyle,
-                            arrowHeadFillStyle : cbxFillStyle
+                            arrowHeadFillStyle : cbxFillStyle,
+                            level : level
                         });
                     }
                     else if (item.type == this.shapeTypes.Rectangle)
@@ -349,7 +351,8 @@ define([
                         this.createRectangle({
                             shapeJson : item,
                             selectable : selectable,
-                            lineStrokeStyle : cbxStrokeStyle
+                            lineStrokeStyle : cbxStrokeStyle,
+                            level : level
                         });
                     }
                     else if (item.type == this.shapeTypes.AnonymizedRectangle)
@@ -361,7 +364,8 @@ define([
                         this.createCommentBox({
                             shapeJson : item,
                             selectable : selectable,
-                            lineStrokeStyle : cbxStrokeStyle
+                            lineStrokeStyle : cbxStrokeStyle,
+                            level : level
                         });
                     }
 
