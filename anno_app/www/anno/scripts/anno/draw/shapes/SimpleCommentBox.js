@@ -38,6 +38,8 @@ define([
             createShape: function (args)
             {
                 this.createCommentBox(args);
+                this.checkLevelColor(this.level);
+
                 if (this.selectable)
                 {
                     this.surface.selectShape(this);
@@ -525,6 +527,16 @@ define([
                 var textarea = this.inputElement;
                 // #rows = #newlines+1
                 textarea.rows = (textarea.value.match(/\n/g) || []).length + 1;
+            },
+            checkLevelColor: function(level) {
+                if (level == 2) {
+                    var levelColor = annoUtil.level2ColorRGB;
+                    this.endpointStrokeStyle = "rgba(" + levelColor + ", 1)";
+                    this.endpointFillStyle = "rgba(" + levelColor + ", 0.5)";
+                    this.endpointHiddenStrokeStyle = "rgba(" + levelColor + ", 0)";
+                    this.endpointHiddenFillStyle = "rgba(" + levelColor + ", 0)";
+                    this.xColor = "rgba(" + levelColor + ", 1)";
+                }
             }
         });
     });

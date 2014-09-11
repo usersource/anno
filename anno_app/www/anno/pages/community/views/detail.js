@@ -173,6 +173,7 @@ define([
                 color : eventsModel.cursor.level == 1 ? annoUtil.level1Color : annoUtil.level2Color,
                 width : annoUtil.annotationWidth
             };
+            var arrowHeadFillStyle = eventsModel.cursor.level == 1 ? annoUtil.level1Color : annoUtil.level2Color;
             if (drawElements)
             {
                 var elementsObject = dojoJson.parse(drawElements);
@@ -187,7 +188,7 @@ define([
                 surface.borderWidth = borderWidth;
                 surface.setDimensions(surfaceWidth, surfaceHeight);
 
-                surface.parse(elementsObject, lineStrokeStyle);
+                surface.parse(elementsObject, lineStrokeStyle, arrowHeadFillStyle);
 
                 console.log('redrawShapes end');
             }
