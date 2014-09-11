@@ -835,14 +835,15 @@
             toast = (toast === undefined) ? true : toast;
 
             var error_message = error.message,
-                default_message = "Oops, something went wrong. Please try later.";
+                default_message = "Could not connect to server";
 
             // we can specify different user-friendly message for different error types
             var message = default_message;
-            if ((error.code == this.ERROR_CODE.BAD_REQUEST) && (error.type == this.ERROR_TYPES.API_CALL_FAILED) ||
+            if (error_message && (
+                (error.code == this.ERROR_CODE.BAD_REQUEST) && (error.type == this.ERROR_TYPES.API_CALL_FAILED) ||
                 (error.code == this.ERROR_CODE.UNAUTHORIZED) && (error.type == this.ERROR_TYPES.API_RETRY_FAILED) ||
                 (error.code == this.ERROR_CODE.FORBIDDEN) && (error.type == this.ERROR_TYPES.API_CALL_FAILED) ||
-                (error.code == this.ERROR_CODE.NOT_FOUND) && (error.type == this.ERROR_TYPES.API_CALL_FAILED)) {
+                (error.code == this.ERROR_CODE.NOT_FOUND) && (error.type == this.ERROR_TYPES.API_CALL_FAILED))) {
                 message = error_message;
             }
 
