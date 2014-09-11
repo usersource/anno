@@ -44,6 +44,7 @@ define([
             appNameDialogGap = 80,
             searchAppNameContainerHeight = 26,
             searchSortsBarHeight = 26;
+        var firstLaunch = true;
         var emptyAnno = {
             "id": 0,
             "annoText": "0",
@@ -116,6 +117,20 @@ define([
                 success: function(data)
                 {
                     drawAnnoList(data, search, order, clearData);
+                    if (firstLaunch) {
+                        window.setTimeout(function() {
+                            initPushService();
+                            AnnoDataHandler.startBackgroundSync();
+                            annoUtil.getTopTags(100);
+                            annoUtil.loadUserCommunities(true, function(data) {
+                                var inviteList = data.inviteList;
+                                for (var i = 0; i < inviteList.length; i++) {
+                                    acceptInvitation(inviteList[i]);
+                                }
+                            }, true);
+                            firstLaunch = false;
+                        }, 5 * 1000);
+                    }
                 },
                 error: function()
                 {
@@ -765,17 +780,6 @@ define([
                         annoUtil.showLoadingIndicator();
                         OAuthUtil.getAccessToken(function(){
                             loadListData();
-                            window.setTimeout(function() {
-                                annoUtil.loadUserCommunities(true, function(data) {
-                                    var inviteList = data.inviteList;
-                                    for (var i = 0; i < inviteList.length; i++) {
-                                        acceptInvitation(inviteList[i]);
-                                    }
-                                }, true);
-                                initPushService();
-                                AnnoDataHandler.startBackgroundSync();
-                                annoUtil.getTopTags(100);
-                            }, 5 * 1000);
                         });
                     });
 
