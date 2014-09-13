@@ -32,7 +32,7 @@ define([
             TOP_RIGHT:8
         };
         return declare("anno.draw.shapes.CommentBox", [BaseShape], {
-            lineStrokeStyle: {color: '#000000', width: 3},
+            lineStrokeStyle: {color: '#000000', width: annoUtil.annotationWidth},
             shapeType: "CommentBox",
             minSize:44,
             shapePadding: 30,
@@ -40,13 +40,15 @@ define([
             earDistance: 24,
             boxHeight:30,
             earDirection:EAR_DIRECTION.TOP, // top
-            placeholder:"Enter suggestion here",
+            placeholder:"Enter Suggestion Here",
             grayColor: "#A9A9A9",
             normalColor: "#000000",
             earGap:10,
             createShape: function (args)
             {
                 this.createCommentBox(args);
+                this.checkLevelColor(this.level);
+
                 if (this.selectable)
                 {
                     this.surface.selectShape(this);
@@ -1235,6 +1237,16 @@ define([
                     }
 
                 }, 50);
+            },
+            checkLevelColor: function(level) {
+                if (level == 2) {
+                    var levelColor = annoUtil.level2ColorRGB;
+                    this.endpointStrokeStyle = "rgba(" + levelColor + ", 1)";
+                    this.endpointFillStyle = "rgba(" + levelColor + ", 0.5)";
+                    this.endpointHiddenStrokeStyle = "rgba(" + levelColor + ", 0)";
+                    this.endpointHiddenFillStyle = "rgba(" + levelColor + ", 0)";
+                    this.xColor = "rgba(" + levelColor + ", 1)";
+                }
             }
         });
     });

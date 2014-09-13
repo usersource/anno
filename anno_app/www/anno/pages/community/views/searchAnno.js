@@ -74,6 +74,7 @@ define([
             } else {
                 arg.order_type = "recent";
                 arg.search_string = searchTag + " " + searchTag.substr(1);
+                // arg.search_string = searchTag && (searchTag[0] == "#") ? encodeURIComponent(searchTag) : searchTag;
                 arg["only_my_apps"] = false;
                 method = methodType.SEARCH;
             }
@@ -194,7 +195,7 @@ define([
 
         var handleBackButton = function()
         {
-            app.setBackwardFired(true);
+            // app.setBackwardFired(true);
             history.back();
         };
 
@@ -224,6 +225,7 @@ define([
 
                 searchTag = this.params["tag"];
                 dom.byId('headerTitleSearchAnno').innerHTML = searchTag;
+                // dom.byId('headerTitleSearchAnno').innerHTML = decodeURIComponent(searchTag);
 
                 communityId = this.params["communityId"];
                 searchByCommunity = communityId ? true : false;

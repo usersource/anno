@@ -62,8 +62,8 @@ define([
             //domStyle.set("imgDetailScreenshot", "width", (viewPoint.w-screenshotMargin)+"px");
 
             var h = (viewPoint.h-6);
-            domStyle.set("annoTextDetail", "width", (viewPoint.w-6-6-10-6-28)+"px");
-            domStyle.set("voteFlagContainer", "width", (viewPoint.w-6-6-10-6-28)+"px");
+            // domStyle.set("annoTextDetail", "width", (viewPoint.w-6-6-10-6-28)+"px");
+            // domStyle.set("voteFlagContainer", "width", (viewPoint.w-6-6-10-6-28)+"px");
 
             trayScreenHeight = h-40;
 
@@ -141,6 +141,9 @@ define([
                     redrawShapes();
                 }
 
+                domStyle.set("AnnoScreenshotLoading", "display", "none");
+                domStyle.set("AnnoScreenshot", "display", "");
+
             }, 10);
         };
 
@@ -166,7 +169,11 @@ define([
             if (dom.byId('imgDetailScreenshot').src === tiniestImageData) return;
 
         	var drawElements = eventsModel.cursor.draw_elements;
-            var lineStrokeStyle = {color: eventsModel.cursor.level==1?annoUtil.level1Color:annoUtil.level2Color, width: 3};
+            var lineStrokeStyle = {
+                color : eventsModel.cursor.level == 1 ? annoUtil.level1Color : annoUtil.level2Color,
+                width : annoUtil.annotationWidth
+            };
+            var arrowHeadFillStyle = eventsModel.cursor.level == 1 ? annoUtil.level1Color : annoUtil.level2Color;
             if (drawElements)
             {
                 var elementsObject = dojoJson.parse(drawElements);
@@ -181,7 +188,7 @@ define([
                 surface.borderWidth = borderWidth;
                 surface.setDimensions(surfaceWidth, surfaceHeight);
 
-                surface.parse(elementsObject, lineStrokeStyle);
+                surface.parse(elementsObject, lineStrokeStyle, arrowHeadFillStyle);
 
                 console.log('redrawShapes end');
             }
@@ -601,6 +608,10 @@ define([
         {
             if (loadingDetailData||loadingImage) return;
 
+            domStyle.set("AnnoScreenshotLoading", "display", "");
+            domStyle.set("AnnoScreenshot", "display", "none");
+            domStyle.set("AnnoDetails", "display", "none");
+
             loadingDetailData = true;
             setControlsState();
 
@@ -690,6 +701,7 @@ define([
                     }
 
                     setDetailsContext(cursor);
+                    domStyle.set("AnnoDetails", "display", "");
                 },
                 error: function()
                 {
@@ -1234,22 +1246,22 @@ define([
                     //adjustSize();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnNext'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnNext'), 'click', function ()
                 {
                     goNextRecord();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnTray'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnTray'), 'click', function ()
                 {
                     scrollToTalkArea();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnScreenshot'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnScreenshot'), 'click', function ()
                 {
                     scrollToScreenshot();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnPrevious'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('tdNavBtnPrevious'), 'click', function ()
                 {
                     goPreviousRecord();
                 }));
@@ -1272,7 +1284,7 @@ define([
                     domStyle.set('editAppNameImg', 'display', '');
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdAddCommentImg'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('tdAddCommentImg'), 'click', function ()
                 {
                     var text = dom.byId('addCommentTextBox').value.trim();
 
@@ -1292,7 +1304,7 @@ define([
                     dom.byId('hiddenBtn').focus();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('imgThumbsUp'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('imgThumbsUp'), 'click', function ()
                 {
                     if (domClass.contains('imgThumbsUp','icoImgActive'))
                     {
@@ -1310,7 +1322,7 @@ define([
                     }
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('imgFlag'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('imgFlag'), 'click', function ()
                 {
                     if (domClass.contains('imgFlag','icoImgActive'))
                     {
@@ -1322,7 +1334,7 @@ define([
                     }
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('imgSocialSharing'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('imgSocialSharing'), 'click', function ()
                 {
                     doSocialShare();
                 }));
@@ -1381,24 +1393,20 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), "touchmove", function (e)
                 {
-                    if( e.touches.length == 1 )
-                    {
+                    if (e.touches.length == 1) {
                         var endX = e.touches[0].pageX;
                         var endY = e.touches[0].pageY;
-                        if ((startX-endX) >=6 &&Math.abs(startY-endY)<10)
-                        {
+                        if ((startX - endX) >= 30 && Math.abs(startY - endY) < 10) {
                             dojo.stopEvent(e);
                             goNextRecord();
-                        }
-                        else if ((startX-endX) <=-6 &&Math.abs(startY-endY)<10)
-                        {
+                        } else if ((startX - endX) <= -30 && Math.abs(startY - endY) < 10) {
                             dojo.stopEvent(e);
                             goPreviousRecord();
                         }
                     }
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('editAppNameImg'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('editAppNameImg'), 'click', function ()
                 {
                     showAppNameTextBox();
                 }));
@@ -1420,19 +1428,19 @@ define([
                 }));
 
                 // screenshot controls
-                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_hideAnnotations'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_hideAnnotations'), 'click', function ()
                 {
                     if (domClass.contains('td_shtCtrl_hideAnnotations', 'barIconDisabled')) return;
                     toggleAnnotations();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_edit'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_edit'), 'click', function ()
                 {
                     if (domClass.contains('td_shtCtrl_edit', 'barIconDisabled')) return;
                     editAnnoItem();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_remove'), touch.release, function ()
+                _connectResults.push(connect.connect(dom.byId('td_shtCtrl_remove'), 'click', function ()
                 {
                     if (domClass.contains('td_shtCtrl_remove', 'barIconDisabled')) return;
 
@@ -1466,7 +1474,8 @@ define([
                     zoomClose();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId("appNameSpanDetail"), 'click', function() {
+                _connectResults.push(connect.connect(dom.byId("appNameSpanDetail"), 'click', function(e) {
+                    dojo.stopEvent(e);
                     searchAnnoByApp();
                 }));
 
@@ -1571,6 +1580,10 @@ define([
 
                 dom.byId('detailContentContainer').parentNode.scrollTop = 0;
                 document.addEventListener("backbutton", handleBackButton, false);
+
+                domStyle.set("AnnoScreenshotLoading", "display", "");
+                domStyle.set("AnnoScreenshot", "display", "none");
+                domStyle.set("AnnoDetails", "display", "none");
             },
             beforeDeactivate: function()
             {

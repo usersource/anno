@@ -32,13 +32,14 @@
             SimpleComment:"simple comment",
             DrawComment:"draw comment"
         },
+        annotationWidth: 4,
         level1Color:"#ff9900",
         level1ColorRGB:"255, 153, 0",
         level2Color:"#ff0000",
         level2ColorRGB:"255, 0, 0",
         myIPIsServiceUrl:"http://178.18.16.111/myipis",
         annoScreenshotPath:null,
-        API_RETRY_TIMES: 3,
+        API_RETRY_TIMES: 0,
         annoPermaLinkBaseUrl:"http://anno-webapp.appspot.com/usersource/pages/permalink/index.html#/anno/",
         ERROR_TYPES:{
             "LOAD_GAE_API": 1,
@@ -374,8 +375,8 @@
 
             dlg._callback = callback;
             dlg.show();
-            domStyle.set(dlg._cover[0], {"height": "100%", top:"0px"});
-            domStyle.set(dlg.containerNode.firstChild, {"margin" : "0 0 3px 0"});
+            // domStyle.set(dlg._cover[0], { "height" : "100%", "top" : "0px" });
+            domStyle.set(dlg.containerNode.firstChild, { "margin" : "0", "padding" : "3px 0" });
         },
         showToastDialog: function (message, timeOut) {
             var dlg = registry.byId('dlg_common_toast');
@@ -395,7 +396,7 @@
             }
 
             dlg.show();
-            domStyle.set(dlg._cover[0], { "height" : "100%", "top" : "0" });
+            // domStyle.set(dlg._cover[0], { "height" : "100%", "top" : "0" });
             domStyle.set(dlg.domNode, { "top" : "initial", "bottom" : "50px" });
             domStyle.set(dlg.containerNode.firstChild, { "margin" : "0" });
 
@@ -831,12 +832,19 @@
             // toast: shown as toast, default is false
             // callback: callback function will be called when user tapped OK button in message popup
 
-            var message = error.message,
-                default_message = "Oops, something went wrong. Please try later.";
+            toast = (toast === undefined) ? true : toast;
+
+            var error_message = error.message,
+                default_message = "Could not connect to server";
 
             // we can specify different user-friendly message for different error types
-            if (error.code == this.ERROR_CODE.INTERNAL_SERVER_ERROR) {
-                message = default_message;
+            var message = default_message;
+            if (error_message && (
+                (error.code == this.ERROR_CODE.BAD_REQUEST) && (error.type == this.ERROR_TYPES.API_CALL_FAILED) ||
+                (error.code == this.ERROR_CODE.UNAUTHORIZED) && (error.type == this.ERROR_TYPES.API_RETRY_FAILED) ||
+                (error.code == this.ERROR_CODE.FORBIDDEN) && (error.type == this.ERROR_TYPES.API_CALL_FAILED) ||
+                (error.code == this.ERROR_CODE.NOT_FOUND) && (error.type == this.ERROR_TYPES.API_CALL_FAILED))) {
+                message = error_message;
             }
 
             if (toast) {
@@ -1002,7 +1010,7 @@
             {
                 // TODO: Loading API failed, do we need retry?
                 util.showErrorMessage({type: util.ERROR_TYPES.LOAD_GAE_API ,message:'Load '+config.name+" API failed, "+error.message});
-                console.error('Load '+config.name+" API failed, "+res.error.message);
+                console.error("Load " + config.name + " API failed, " + error.message);
                 if (!config.keepLoadingSpinnerShown)
                 {
                     util.hideLoadingIndicator();

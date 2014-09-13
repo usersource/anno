@@ -57,7 +57,11 @@ define([
             var viewPoint = win.getBox();
             var imageWidth = viewPoint.w,imageHeight = viewPoint.h, borderWidth = Math.floor(imageWidth*0.02);
             var drawElements = annoItem.draw_elements;
-            var lineStrokeStyle = {color: annoItem.level==1?Util.level1Color:Util.level2Color, width: 3};
+            var lineStrokeStyle = {
+                color : annoItem.level == 1 ? Util.level1Color : Util.level2Color,
+                width : annoUtil.annotationWidth
+            };
+            var arrowHeadFillStyle = annoItem.level == 1 ? Util.level1Color : Util.level2Color;
 
             if (drawElements)
             {
@@ -66,7 +70,7 @@ define([
                 surface.show();
                 domStyle.set(surface.container, {'border': borderWidth+'px solid transparent', left:'0px',top:'0px'});
 
-                surface.parse(elementsObject, lineStrokeStyle);
+                surface.parse(elementsObject, lineStrokeStyle, arrowHeadFillStyle);
 
                 console.error('redrawShapes end');
             }

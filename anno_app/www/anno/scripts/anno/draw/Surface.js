@@ -325,10 +325,11 @@ define([
 
                 return anonymized;
             },
-            parse: function(shapesJson, cbxStrokeStyle, selectable)
+            parse: function(shapesJson, cbxStrokeStyle, cbxFillStyle, selectable, level)
             {
                 selectable = selectable == null?false:selectable;
                 this.clear();
+                level = level || 1;
 
                 var item;
                 for (var p in shapesJson)
@@ -337,11 +338,22 @@ define([
 
                     if (item.type == this.shapeTypes.ArrowLine)
                     {
-                        this.createArrowLine({shapeJson:item, selectable:selectable});
+                        this.createArrowLine({
+                            shapeJson : item,
+                            selectable : selectable,
+                            lineStrokeStyle : cbxStrokeStyle,
+                            arrowHeadFillStyle : cbxFillStyle,
+                            level : level
+                        });
                     }
                     else if (item.type == this.shapeTypes.Rectangle)
                     {
-                        this.createRectangle({shapeJson:item, selectable:selectable});
+                        this.createRectangle({
+                            shapeJson : item,
+                            selectable : selectable,
+                            lineStrokeStyle : cbxStrokeStyle,
+                            level : level
+                        });
                     }
                     else if (item.type == this.shapeTypes.AnonymizedRectangle)
                     {
@@ -349,7 +361,12 @@ define([
                     }
                     else if (item.type == this.shapeTypes.CommentBox)
                     {
-                        this.createCommentBox({shapeJson:item, selectable:selectable, lineStrokeStyle:cbxStrokeStyle});
+                        this.createCommentBox({
+                            shapeJson : item,
+                            selectable : selectable,
+                            lineStrokeStyle : cbxStrokeStyle,
+                            level : level
+                        });
                     }
 
                 }

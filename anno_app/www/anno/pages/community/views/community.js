@@ -437,11 +437,22 @@ define([
 
             annoUtil.callGAEAPI(APIConfig);
         };
+
         var hideInviteBox = function() {
             var inviteNewUser = registry.byId("inviteNewUser");
             inviteNewUser.hide();
             dom.byId("invitedEmailAddress").value = "";
             dom.byId("invitedDisplayName").value = "";
+        };
+
+        var handleBackButton = function() {
+            var dlg = registry.byId('inviteNewUser');
+            if (dlg && (dlg.domNode.style.display == '' || dlg.domNode.style.display == 'block')) {
+                hideInviteBox();
+            } else {
+                app.setBackwardFired(true);
+                history.back();
+            }
         };
 
         return {
@@ -524,7 +535,8 @@ define([
             {
                 var idx = this.params["index"];
                 loadCommunityDetails(idx);
-                app.isBackwardFired();
+                document.addEventListener("backbutton", handleBackButton, false);
+                // app.isBackwardFired();
             },
             beforeDeactivate: function()
             {
@@ -532,6 +544,7 @@ define([
                 domConstruct.place("memberDetailContainer", "listContainerCommunity", "after");
                 var itemList = registry.byId('communityUserList');
                 itemList.destroyDescendants();
+                document.removeEventListener("backbutton", handleBackButton, false);
             },
             destroy:function ()
             {

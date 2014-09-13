@@ -545,14 +545,9 @@
 
 .annoTextDetail
 {
-    width: 100%;
     border: 2px solid #ff9900;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    padding-left: 2px;
-    padding-right: 2px;
-    margin-left: 14px;
-    margin-right: 14px;
+    padding: 2px 4px;
+    margin: 0 8px;
 }
 
 .commentDetail
@@ -651,7 +646,6 @@
 {
     color: #ffffff;
     background-color: #ff9900;
-    border-color: #ff9900;
     display: inline-block;
     padding: 6px 12px;
     margin-bottom: 0;
@@ -662,7 +656,8 @@
     white-space: nowrap;
     vertical-align: middle;
     cursor: pointer;
-    border: 1px solid transparent;
+    border: 0;
+    outline: 0;
     border-radius: 4px;
     -webkit-user-select: none;
 }
@@ -714,7 +709,7 @@
 /*overwirte dojo default style*/
 .mblSimpleDialogCover
 {
-    background-color: rgba(0,0,0, 0.5);
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 .mblSimpleDialogDecoration
@@ -722,9 +717,11 @@
     color: #000000;
     background-color: white;
     background-image: none !important;
-    border-radius: 4px;
+    border-radius: 6px;
     text-align:center;
     border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
 }
 
 .menuItem
@@ -750,9 +747,10 @@
 .signin-input
 {
     border: none;
+    outline: 0;
     height: 34px;
-    line-height: 20px;
-    margin: 0px;
+    line-height: 22px;
+    margin: 4px 0px 0px 0px;
     font-size: 13pt;
     vertical-align: middle;
     padding: 6px 12px;
@@ -797,6 +795,10 @@
 	border-radius: 0;
 	-webkit-border-radius: 0;
 	-webkit-appearance: initial;
+	box-shadow: none;
+	font-size: 16px;
+	line-height: 22px;
+	outline: 0;
 }
 
 .mblRoundRectCategory {
@@ -880,4 +882,13 @@ li.unread .listTitle {
 	text-align: center;
 	font-size: 14px;
 	color: gray;
+}
+
+#learnHowContainer, #errorWindow {
+	width: 100%;
+	height: 91.535%;
+	height: calc(100% - 48px);
+	height: -webkit-calc(100% - 48px);
+	text-align: center;
+	color: rgb(211, 112, 17);
 }

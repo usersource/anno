@@ -1,0 +1,17 @@
+<div class="container">
+    <ul>
+    	<li ng-repeat="anno in anno_list" class="" style="list-style: none;">
+    		<a href="/usersource/pages/permalink/index.html#/anno/{{anno.id}}">
+    			{{anno.anno_text}}
+    		</a>
+    		<br />
+            <div ng-if="!anno_read_status" style="color: darkgreen;">Unread</div>
+			<div>
+                {{anno.app_name}}
+                <span style= "font-size: 0.8em; color: gray;">{{anno.os_name}} {{anno.os_version}}</span>
+            </div>
+    		<hr/>
+    	</li>
+    </ul>
+    <input ng-if="has_more" type="button" value="Load More" ng-click="load_more_annos();"/>
+</div>

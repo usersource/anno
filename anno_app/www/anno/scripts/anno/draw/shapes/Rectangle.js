@@ -15,12 +15,13 @@ define([
          * Rectangle class
          */
         return declare("anno.draw.shapes.Rectangle", [BaseShape], {
-            lineStrokeStyle: {color: annoUtil.level1Color, width: 3},
+            lineStrokeStyle: {color: annoUtil.level1Color, width: annoUtil.annotationWidth},
             shapeType: "Rectangle",
             minSize:50,
             createShape: function (args)
             {
                 this.createRectangle(args);
+                this.checkLevelColor(this.level);
 
                 if (this.selectable)
                 {
@@ -218,6 +219,16 @@ define([
                 ps.y = this.translateValue(ps.y, false);
                 ps.width = this.translateValue(ps.width, true);
                 ps.height = this.translateValue(ps.height, false);
+            },
+            checkLevelColor: function(level) {
+                if (level == 2) {
+                    var levelColor = annoUtil.level2ColorRGB;
+                    this.endpointStrokeStyle = "rgba(" + levelColor + ", 1)";
+                    this.endpointFillStyle = "rgba(" + levelColor + ", 0.5)";
+                    this.endpointHiddenStrokeStyle = "rgba(" + levelColor + ", 0)";
+                    this.endpointHiddenFillStyle = "rgba(" + levelColor + ", 0)";
+                    this.xColor = "rgba(" + levelColor + ", 1)";
+                }
             }
         });
     });

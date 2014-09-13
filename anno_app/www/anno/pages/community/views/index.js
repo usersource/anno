@@ -44,6 +44,7 @@ define([
             appNameDialogGap = 80,
             searchAppNameContainerHeight = 26,
             searchSortsBarHeight = 26;
+        var firstLaunch = true;
         var emptyAnno = {
             "id": 0,
             "annoText": "0",
@@ -116,6 +117,20 @@ define([
                 success: function(data)
                 {
                     drawAnnoList(data, search, order, clearData);
+                    if (firstLaunch) {
+                        window.setTimeout(function() {
+                            initPushService();
+                            AnnoDataHandler.startBackgroundSync();
+                            annoUtil.getTopTags(100);
+                            annoUtil.loadUserCommunities(true, function(data) {
+                                var inviteList = data.inviteList;
+                                for (var i = 0; i < inviteList.length; i++) {
+                                    acceptInvitation(inviteList[i]);
+                                }
+                            }, true);
+                            firstLaunch = false;
+                        }, 5 * 1000);
+                    }
                 },
                 error: function()
                 {
@@ -158,10 +173,10 @@ define([
                 eventData.id = annoList[i].id;
                 // eventData.circleX = parseInt(annoList[i].simple_x, 10);
                 // eventData.circleY = parseInt(annoList[i].simple_y, 10);
-                eventData.circleX = 0;
-                eventData.circleY = 0;
                 // eventData.simple_circle_on_top = annoList[i].simple_circle_on_top;
                 eventData.simple_circle_on_top = false;
+                eventData.level = parseInt(annoList[i].level);
+                eventData.deviceInfo = annoList[i].device_model;
                 eventData.created = annoUtil.getTimeAgoString(annoList[i].created);
                 eventData.app_icon_url = annoList[i].app_icon_url||"";
 
@@ -738,6 +753,29 @@ define([
             }
         };
 
+        var checkInternetConnection = function(callback) {
+            if (!annoUtil.hasConnection()) {
+                annoUtil.showLoadingIndicator();
+                dom.byId("errorMessage").innerHTML = "We couldn't detect a network connection.";
+                dom.byId("btnErrorAction").innerHTML = "Retry";
+
+                var handle = connect.connect(dom.byId("btnErrorAction"), 'click', function(e) {
+                    dojo.stopEvent(e);
+                    connect.disconnect(handle);
+                    load_gapi_client();
+                    domStyle.set('errorWindow', 'display', 'none');
+                    checkInternetConnection(callback);
+                });
+
+                setTimeout(function() {
+                    annoUtil.hideLoadingIndicator();
+                    domStyle.set('errorWindow', 'display', '');
+                }, 2000);
+            } else {
+                callback();
+            }
+        };
+
         var _init = function()
         {
             if (DBUtil.userChecked)
@@ -765,17 +803,6 @@ define([
                         annoUtil.showLoadingIndicator();
                         OAuthUtil.getAccessToken(function(){
                             loadListData();
-                            window.setTimeout(function() {
-                                annoUtil.loadUserCommunities(true, function(data) {
-                                    var inviteList = data.inviteList;
-                                    for (var i = 0; i < inviteList.length; i++) {
-                                        acceptInvitation(inviteList[i]);
-                                    }
-                                }, true);
-                                initPushService();
-                                AnnoDataHandler.startBackgroundSync();
-                                annoUtil.getTopTags(100);
-                            }, 5 * 1000);
                         });
                     });
 
@@ -1185,12 +1212,8 @@ define([
             {
                 eventsModel = this.loadedModels.events;
                 app = this.app;
-                app.inSearchMode = function()
-                {
-                    return inSearchMode;
-                };
-
-                _init();
+                app.inSearchMode = function() { return inSearchMode; };
+                checkInternetConnection(_init);
             },
             afterActivate: function()
             {
