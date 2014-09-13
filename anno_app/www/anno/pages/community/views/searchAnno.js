@@ -195,7 +195,7 @@ define([
 
         var handleBackButton = function()
         {
-            app.setBackwardFired(true);
+            // app.setBackwardFired(true);
             history.back();
         };
 
