@@ -755,9 +755,9 @@ define([
 
         var checkInternetConnection = function(callback) {
             if (!annoUtil.hasConnection()) {
+                annoUtil.showLoadingIndicator();
                 dom.byId("errorMessage").innerHTML = "We couldn't detect a network connection.";
                 dom.byId("btnErrorAction").innerHTML = "Retry";
-                domStyle.set('errorWindow', 'display', '');
 
                 var handle = connect.connect(dom.byId("btnErrorAction"), 'click', function(e) {
                     dojo.stopEvent(e);
@@ -766,6 +766,11 @@ define([
                     domStyle.set('errorWindow', 'display', 'none');
                     checkInternetConnection(callback);
                 });
+
+                setTimeout(function() {
+                    annoUtil.hideLoadingIndicator();
+                    domStyle.set('errorWindow', 'display', '');
+                }, 2000);
             } else {
                 callback();
             }
