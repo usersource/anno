@@ -919,8 +919,18 @@
             {
                 // API Loaded, make API call.
                 var method = eval("gapi.client."+config.method)(config.parameter);
+                var start_ts = Date.now();
                 method.execute(function(response)
                 {
+                    var time_ms = Date.now() - start_ts;
+                    try {
+                        if (util.isGASetup()) {
+                            util.timingGATracking(config.method, config.parameter, time_ms, response? JSON.stringify(response): "No response");
+                        }
+                    } catch(e) {
+                        console.error("Exception while trying xhr timing analytics");
+                        console.error(e);
+                    }
                     if (!response)
                     {
                         if (!config.keepLoadingSpinnerShown) util.hideLoadingIndicator();
@@ -1126,6 +1136,50 @@
                 "get_app_version",
                 []
             );
+        },
+        isGASetup: function() {
+            return typeof ga !== 'undefined';
+        },
+        setupGATracking: function(propertyID /*Optional*/) {
+            if (!propertyID) {
+                var settings = this.getSettings();
+                var config = serverURLConfig[settings.ServerURL];
+                if (config) {
+                    propertyID = config.GAPropertyID;
+                }
+                if (!propertyID) return false;
+            }
+
+            /** Google Tracking code */
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;
+                a.onload=function(){console.error("GA Load Succeeded");};a.onerror=function(evt){console.error("GA Load Failed");};m.parentNode.insertBefore(a,m);
+                })(window,document,'script','/android_asset/www/anno/scripts/analytics.js','ga');
+
+            // Create a user session with the device ID
+            ga('create', propertyID, {
+                'storage': 'none',
+                'clientId': device.uuid
+            });
+            // Allow file: protocol tracking
+            ga('set', 'checkProtocolTask', null);
+            // Track the current page
+            ga('send', 'pageview', {'page': location.pathname});
+            /** End Google Tracking code */
+            console.error("Google Tracking Enabled: " + propertyID + " " + device.uuid);
+
+            return true;
+        },
+        actionGATracking: function(category, action, label/*optional*/, value/*optional*/) {
+            if (this.isGASetup()) {
+                ga('send', 'event', category, action, label, value);
+            }
+        },
+        timingGATracking: function(category, varname, value, label) {
+            if (this.isGASetup()) {
+                ga('send', 'timing', category, varname, value, label);
+            }
         }
     };
 

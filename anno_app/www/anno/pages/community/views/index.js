@@ -734,12 +734,16 @@ define([
             }
             else
             {
+                annoUtil.actionGATracking("feed", "nav to activity", "homescreen");
                 app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
             }
         };
 
         var _init = function()
         {
+            // Auto tracking setup
+            annoUtil.setupGATracking();
+            
             if (DBUtil.userChecked)
             {
                 var authResult = OAuthUtil.isAuthorized();
@@ -1073,6 +1077,8 @@ define([
                         var toEnd = false;
                         var listContainer = dom.byId('listContainerStart');
                         if ((listContainer.clientHeight + listContainer.scrollTop) >= listContainer.scrollHeight) toEnd = true;
+
+                        annoUtil.actionGATracking('feed', 'scroll', 'homescreen', 'toEnd='+toEnd);
 
                         if (toEnd)
                         {
