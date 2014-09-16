@@ -854,6 +854,9 @@
 
             // output the original error message to console
             console.log(error.message);
+
+            // Analytics
+            this.exceptionGATracking(error.message || message, false); // These are not fatal errors
         },
         callGAEAPI: function(config, retryCnt)
         {
@@ -1179,6 +1182,11 @@
         timingGATracking: function(category, varname, value, label) {
             if (this.isGASetup()) {
                 ga('send', 'timing', category, varname, value, label);
+            }
+        },
+        exceptionGATracking: function(desciption, fatal) {
+            if (this.isGASetup()) {
+                ga('send', 'exception', {'exDescription': description, 'exFatal': fatal || false});
             }
         }
     };
