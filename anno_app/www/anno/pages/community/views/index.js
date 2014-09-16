@@ -1078,10 +1078,9 @@ define([
                         var listContainer = dom.byId('listContainerStart');
                         if ((listContainer.clientHeight + listContainer.scrollTop) >= listContainer.scrollHeight) toEnd = true;
 
-                        annoUtil.actionGATracking('feed', 'scroll', 'homescreen', 'toEnd='+toEnd);
-
                         if (toEnd)
                         {
+                            annoUtil.actionGATracking('feed', 'scroll', 'homescreen');
                             loadMoreData();
                         }
                     }));

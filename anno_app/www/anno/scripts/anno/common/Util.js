@@ -918,18 +918,22 @@
         },
         _callGAEAPI: function(config, retryCnt)
         {
+            var start_ts = Date.now();
             util.loadAPI(config.name, function ()
             {
+                var load_ms = Date.now() - start_ts;
+                console.error("GAPI Load API: " + config.name + " " + load_ms);
+                if (load_ms > 100) { // more than 100 ms to load API
+                    util.timingGATracking("GAPI Load API", config.name, load_ms);
+                }
                 // API Loaded, make API call.
                 var method = eval("gapi.client."+config.method)(config.parameter);
-                var start_ts = Date.now();
+                start_ts = Date.now();
                 method.execute(function(response)
                 {
                     var time_ms = Date.now() - start_ts;
                     try {
-                        if (util.isGASetup()) {
-                            util.timingGATracking(config.method, config.parameter, time_ms, response? JSON.stringify(response): "No response");
-                        }
+                        util.timingGATracking(config.method, config.parameter, time_ms, response? JSON.stringify(response): "No response");
                     } catch(e) {
                         console.error("Exception while trying xhr timing analytics");
                         console.error(e);
