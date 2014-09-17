@@ -233,13 +233,13 @@ define([
                     Util.startActivity("Intro", false);
                 }));
 
-                _connectResults.push(connect.connect(dom.byId("iconBackMyStuff"), 'click', function(e)
-                {
+                _connectResults.push(connect.connect(dom.byId("iconBackMyStuff"), 'click', function(e) {
+                    dojo.stopEvent(e);
                     goBack();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId("navBtnBackMyStuff"), 'click', function(e)
-                {
+                _connectResults.push(connect.connect(dom.byId("navBtnBackMyStuff"), 'click', function(e) {
+                    dojo.stopEvent(e);
                     goBack();
                 }));
             },
