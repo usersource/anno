@@ -111,7 +111,7 @@
         analytics: {
             category: {
                 feed: 'feed',
-                detail: 'detail'
+                detail: 'detail',
                 signin: 'signin'
             }
         },
