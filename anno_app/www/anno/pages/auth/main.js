@@ -17,7 +17,7 @@ require([
         console.log("Worked!");
 
         // Analytics
-        annoUtil.setupGATracking();
+        // annoUtil.setupGATracking();
 
         document.addEventListener("deviceready", function ()
         {
