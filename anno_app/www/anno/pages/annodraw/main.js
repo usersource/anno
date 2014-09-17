@@ -33,7 +33,7 @@ require([
     var surface, drawMode = false;
     var defaultCommentBox;
 
-    var selectedAppName, screenShotPath, selectedAppVersionName, selectedType;
+    var selectedAppName, screenShotPath, selectedAppVersionName, selectedType = "app";
     var level1Color = annoUtil.level1Color,
         level2Color = annoUtil.level2Color;
     var level = 1;
@@ -51,7 +51,23 @@ require([
     {
         if (domClass.contains(dom.byId("barArrow"), 'barIconInactive')) return;
 
-        var arrowLine = surface.createArrowLine({x1:lastShapePos.x1, y1: lastShapePos.y1, x2: lastShapePos.x2, y2: lastShapePos.y2});
+        var lineStrokeStyle = {
+            color : level == 1 ? level1Color : level2Color,
+            width : annoUtil.annotationWidth
+        };
+
+        var arrowHeadFillStyle = level == 1 ? level1Color : level2Color;
+
+        var arrowLine = surface.createArrowLine({
+            x1 : lastShapePos.x1,
+            y1 : lastShapePos.y1,
+            x2 : lastShapePos.x2,
+            y2 : lastShapePos.y2,
+            level : level,
+            lineStrokeStyle : lineStrokeStyle,
+            arrowHeadFillStyle : arrowHeadFillStyle
+        });
+
         updateLastShapePos(arrowLine.shapeType);
     });
 
@@ -59,7 +75,20 @@ require([
     {
         if (domClass.contains(dom.byId("barRectangle"), 'barIconInactive')) return;
 
-        var rectangle = surface.createRectangle({startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight});
+        var lineStrokeStyle = {
+            color : level == 1 ? level1Color : level2Color,
+            width : annoUtil.annotationWidth
+        };
+
+        var rectangle = surface.createRectangle({
+            startX : lastShapePos.x1,
+            startY : lastShapePos.y1 - defaultShapeHeight - 50,
+            width : defaultShapeWidth,
+            height : defaultShapeHeight,
+            level : level,
+            lineStrokeStyle : lineStrokeStyle
+        });
+
         updateLastShapePos(rectangle.shapeType);
     });
 
@@ -71,7 +100,16 @@ require([
             color : level == 1 ? level1Color : level2Color,
             width : annoUtil.annotationWidth
         };
-        var commentBox = surface.createCommentBox({startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight,lineStrokeStyle:lineStrokeStyle});
+
+        var commentBox = surface.createCommentBox({
+            startX : lastShapePos.x1,
+            startY : lastShapePos.y1 - defaultShapeHeight - 50,
+            width : defaultShapeWidth,
+            height : defaultShapeHeight,
+            lineStrokeStyle : lineStrokeStyle,
+            level : level
+        });
+
         updateLastShapePos('Rectangle');
 
         commentBox.onCommentBoxKeyDown = onCommentBoxKeyDown;
@@ -543,7 +581,8 @@ require([
             startX: lastBlackRectanglePos.x1,
             startY: lastBlackRectanglePos.y1 - defaultShapeHeight - 50,
             width: defaultShapeWidth,
-            height: defaultShapeHeight
+            height: defaultShapeHeight,
+            level: level
         });
 
         updateLastBlackRectanglePos();
@@ -556,6 +595,7 @@ require([
             color : level == 1 ? level1Color : level2Color,
             width : annoUtil.annotationWidth
         };
+        var arrowHeadFillStyle = level == 1 ? level1Color : level2Color;
         var drawElements, drawItem, commentBox;
 
         if (editMode)
@@ -565,7 +605,7 @@ require([
             drawElements = dojoJson.parse(editDrawElementsJson);
 
             surface.switchMode(true);
-            surface.parse(drawElements, lineStrokeStyle, true);
+            surface.parse(drawElements, lineStrokeStyle, arrowHeadFillStyle, true, level);
 
             for (var p in drawElements)
             {
@@ -596,9 +636,17 @@ require([
         else
         {
             // create default comment box
-            commentBox = surface.createCommentBox({deletable:false, startX:lastShapePos.x1, startY: lastShapePos.y1-defaultShapeHeight-50, width: defaultShapeWidth, height: defaultShapeHeight,lineStrokeStyle:lineStrokeStyle});
-            updateLastShapePos('Rectangle');
+            commentBox = surface.createCommentBox({
+                deletable : false,
+                startX : lastShapePos.x1,
+                startY : lastShapePos.y1 - defaultShapeHeight - 50,
+                width : defaultShapeWidth,
+                height : defaultShapeHeight,
+                lineStrokeStyle : lineStrokeStyle,
+                level: level
+            });
 
+            updateLastShapePos('Rectangle');
             surface.switchMode(true);
 
             window.setTimeout(function(){

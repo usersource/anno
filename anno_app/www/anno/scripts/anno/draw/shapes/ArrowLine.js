@@ -26,6 +26,7 @@ define([
             createShape: function (args)
             {
                 this.createArrowLine(args);
+                this.checkLevelColor(this.level);
 
                 if (this.selectable)
                 {
@@ -386,6 +387,16 @@ define([
                 _o.y1 = this.translateValue(_o.y1, false);
                 _o.x2 = this.translateValue(_o.x2, true);
                 _o.y2 = this.translateValue(_o.y2, false);
+            },
+            checkLevelColor: function(level) {
+                if (level == 2) {
+                    var levelColor = annoUtil.level2ColorRGB;
+                    this.endpointStrokeStyle = "rgba(" + levelColor + ", 1)";
+                    this.endpointFillStyle = "rgba(" + levelColor + ", 0.5)";
+                    this.endpointHiddenStrokeStyle = "rgba(" + levelColor + ", 0)";
+                    this.endpointHiddenFillStyle = "rgba(" + levelColor + ", 0)";
+                    this.xColor = "rgba(" + levelColor + ", 1)";
+                }
             }
         });
     });
