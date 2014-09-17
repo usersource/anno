@@ -16,6 +16,9 @@ require([
         var config = jsonRef.fromJson(config);
         console.log("Worked!");
 
+        // Analytics
+        annoUtil.setupGATracking();
+
         document.addEventListener("deviceready", function ()
         {
 

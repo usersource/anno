@@ -1513,6 +1513,10 @@ define([
                 loadingImage = false;
 
                 var cursor = this.params["cursor"];
+                
+                // GA Tracking
+                annoUtil.actionGATracking(annoUtil.analytics.category.detail, "loaded anno", cursor);
+
                 if (cursor != null)
                 {
                     var source = this.params["source"];

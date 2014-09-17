@@ -734,12 +734,16 @@ define([
             }
             else
             {
+                annoUtil.actionGATracking(annoUtil.analytics.category.feed, "nav to activity", "homescreen");
                 app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
             }
         };
 
         var _init = function()
         {
+            // Auto tracking setup
+            annoUtil.setupGATracking();
+            
             if (DBUtil.userChecked)
             {
                 var authResult = OAuthUtil.isAuthorized();
@@ -1076,6 +1080,7 @@ define([
 
                         if (toEnd)
                         {
+                            annoUtil.actionGATracking(annoUtil.analytics.category.feed, 'scroll', 'homescreen');
                             loadMoreData();
                         }
                     }));

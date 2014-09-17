@@ -108,6 +108,13 @@
             "iPhone6,1" : "iPhone5S"
         },
         versionInfo: { "version" : "", "build" : "" },
+        analytics: {
+            category: {
+                feed: 'feed',
+                detail: 'detail'
+                signin: 'signin'
+            }
+        },
         hasConnection: function()
         {
             var networkState = navigator.connection.type;
@@ -854,6 +861,10 @@
 
             // output the original error message to console
             console.log(error.message);
+
+            // Analytics
+            // These are not fatal errors
+            this.exceptionGATracking(["<ShowErrorMessage> code:", error.code, "type:", error.type, "msg:", error.message].join(" "), false);
         },
         callGAEAPI: function(config, retryCnt)
         {
@@ -915,12 +926,26 @@
         },
         _callGAEAPI: function(config, retryCnt)
         {
+            var start_ts = Date.now();
             util.loadAPI(config.name, function ()
             {
+                var load_ms = Date.now() - start_ts;
+                console.log("GAPI Load API: " + config.name + " " + load_ms);
+                if (load_ms > 100) { // more than 100 ms to load API
+                    util.timingGATracking("GAPI Load API", config.name, load_ms);
+                }
                 // API Loaded, make API call.
                 var method = eval("gapi.client."+config.method)(config.parameter);
+                start_ts = Date.now();
                 method.execute(function(response)
                 {
+                    var time_ms = Date.now() - start_ts;
+                    try {
+                        util.timingGATracking(config.method, config.parameter, time_ms, response? JSON.stringify(response): "No response");
+                    } catch(e) {
+                        console.error("Exception while trying xhr timing analytics");
+                        console.error(e);
+                    }
                     if (!response)
                     {
                         if (!config.keepLoadingSpinnerShown) util.hideLoadingIndicator();
@@ -1126,6 +1151,59 @@
                 "get_app_version",
                 []
             );
+        },
+        isGASetup: function() {
+            return typeof ga !== 'undefined';
+        },
+        setupGATracking: function(propertyID /*Optional*/) {
+            if (this.isGASetup()) {
+                return true;
+            }
+
+            if (!propertyID) {
+                var settings = this.getSettings();
+                var config = serverURLConfig[settings.ServerURL];
+                if (config) {
+                    propertyID = config.GAPropertyID;
+                }
+                if (!propertyID) return false;
+            }
+
+            /** Google Tracking code */
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;
+                a.onload=function(){console.log("GA Load Succeeded");};a.onerror=function(evt){console.error("GA Load Failed");};m.parentNode.insertBefore(a,m);
+                })(window,document,'script','/android_asset/www/anno/scripts/analytics.js','ga');
+
+            // Create a user session with the device ID
+            ga('create', propertyID, {
+                'storage': 'none',
+                'clientId': device.uuid
+            });
+            // Allow file: protocol tracking
+            ga('set', 'checkProtocolTask', null);
+            // Track the current page
+            ga('send', 'pageview', {'page': location.pathname});
+            /** End Google Tracking code */
+            console.log("Google Tracking Enabled: " + propertyID + " " + device.uuid);
+
+            return true;
+        },
+        actionGATracking: function(category, action, label/*optional*/, value/*optional*/) {
+            if (this.isGASetup()) {
+                ga('send', 'event', category, action, label, value);
+            }
+        },
+        timingGATracking: function(category, varname, value, label) {
+            if (this.isGASetup()) {
+                ga('send', 'timing', category, varname, value, label);
+            }
+        },
+        exceptionGATracking: function(desciption, fatal) {
+            if (this.isGASetup()) {
+                ga('send', 'exception', {'exDescription': description, 'exFatal': fatal || false});
+            }
         }
     };
 
