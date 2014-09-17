@@ -1515,7 +1515,7 @@ define([
                 var cursor = this.params["cursor"];
                 
                 // GA Tracking
-                annoUtil.actionGATracking("detail", "loaded anno", cursor);
+                annoUtil.actionGATracking(annoUtil.analytics.category.detail, "loaded anno", cursor);
 
                 if (cursor != null)
                 {

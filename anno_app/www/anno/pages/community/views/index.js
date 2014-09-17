@@ -734,7 +734,7 @@ define([
             }
             else
             {
-                annoUtil.actionGATracking("feed", "nav to activity", "homescreen");
+                annoUtil.actionGATracking(annoUtil.analytics.category.feed, "nav to activity", "homescreen");
                 app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
             }
         };
@@ -1080,7 +1080,7 @@ define([
 
                         if (toEnd)
                         {
-                            annoUtil.actionGATracking('feed', 'scroll', 'homescreen');
+                            annoUtil.actionGATracking(annoUtil.analytics.category.feed, 'scroll', 'homescreen');
                             loadMoreData();
                         }
                     }));

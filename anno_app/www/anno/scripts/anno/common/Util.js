@@ -108,6 +108,13 @@
             "iPhone6,1" : "iPhone5S"
         },
         versionInfo: { "version" : "", "build" : "" },
+        analytics: {
+            category: {
+                feed: 'feed',
+                detail: 'detail'
+                signin: 'signin'
+            }
+        },
         hasConnection: function()
         {
             var networkState = navigator.connection.type;
@@ -856,7 +863,8 @@
             console.log(error.message);
 
             // Analytics
-            this.exceptionGATracking(error.message || message, false); // These are not fatal errors
+            // These are not fatal errors
+            this.exceptionGATracking(["<ShowErrorMessage> code:", error.code, "type:", error.type, "msg:", error.message].join(" "), false);
         },
         callGAEAPI: function(config, retryCnt)
         {
@@ -922,7 +930,7 @@
             util.loadAPI(config.name, function ()
             {
                 var load_ms = Date.now() - start_ts;
-                console.error("GAPI Load API: " + config.name + " " + load_ms);
+                console.log("GAPI Load API: " + config.name + " " + load_ms);
                 if (load_ms > 100) { // more than 100 ms to load API
                     util.timingGATracking("GAPI Load API", config.name, load_ms);
                 }
@@ -1148,6 +1156,10 @@
             return typeof ga !== 'undefined';
         },
         setupGATracking: function(propertyID /*Optional*/) {
+            if (this.isGASetup()) {
+                return true;
+            }
+
             if (!propertyID) {
                 var settings = this.getSettings();
                 var config = serverURLConfig[settings.ServerURL];
@@ -1161,7 +1173,7 @@
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
                 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
                 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;
-                a.onload=function(){console.error("GA Load Succeeded");};a.onerror=function(evt){console.error("GA Load Failed");};m.parentNode.insertBefore(a,m);
+                a.onload=function(){console.log("GA Load Succeeded");};a.onerror=function(evt){console.error("GA Load Failed");};m.parentNode.insertBefore(a,m);
                 })(window,document,'script','/android_asset/www/anno/scripts/analytics.js','ga');
 
             // Create a user session with the device ID
@@ -1174,7 +1186,7 @@
             // Track the current page
             ga('send', 'pageview', {'page': location.pathname});
             /** End Google Tracking code */
-            console.error("Google Tracking Enabled: " + propertyID + " " + device.uuid);
+            console.log("Google Tracking Enabled: " + propertyID + " " + device.uuid);
 
             return true;
         },

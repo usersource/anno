@@ -1222,6 +1222,9 @@ require([
                     }
                 });
 
+                // Analytics
+                annoUtil.setupGATracking();
+
                 initBackgroundImage();
 
                 window.setTimeout(function(){
