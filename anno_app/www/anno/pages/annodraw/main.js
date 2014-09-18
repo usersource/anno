@@ -1393,8 +1393,9 @@ require([
 
             // set the pick list dialog title
             dom.byId('sdTitle').children[0].innerHTML = annoUtil.getResourceString("title_app_pick_list");
-            dom.byId('appOsName').innerHTML = annoUtil.isIOS()?"iOS":"Android";
+            dom.byId('appOsName').innerHTML = annoUtil.isIOS() ? "iOS" : "Android";
             dom.byId('appOsName').setAttribute("data-app-version", device.version);
+            dom.byId('appOsName').setAttribute("data-type", "app");
         }
         else
         {

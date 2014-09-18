@@ -1201,7 +1201,7 @@
                 ga('send', 'timing', category, varname, value, label);
             }
         },
-        exceptionGATracking: function(desciption, fatal) {
+        exceptionGATracking: function(description, fatal) {
             if (this.isGASetup()) {
                 ga('send', 'exception', {'exDescription': description, 'exFatal': fatal || false});
             }
