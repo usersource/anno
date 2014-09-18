@@ -932,7 +932,7 @@
             {
                 var load_ms = Date.now() - start_ts;
                 console.log("GAPI Load API: " + config.method + " " + load_ms);
-                if (load_ms > 100) { // more than 100 ms to load API
+                if (load_ms > 400) { // more than 400 ms to load API
                     util.timingGATracking("GAPI Load API", config.name, load_ms);
                 }
                 // API Loaded, make API call.
