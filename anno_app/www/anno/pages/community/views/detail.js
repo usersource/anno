@@ -442,6 +442,9 @@ define([
         {
             var zoomData = dom.byId('zoomScreenshotContainerDetail');
             if (zoomData && (zoomData.style.display == '' || zoomData.style.display == 'block')) {
+                // Analytics
+                annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'zoom close', 'android back');
+
                 zoomClose();
                 return;
             }
@@ -454,6 +457,9 @@ define([
             }
             else
             {
+                // Analytics
+                annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'android back button');
+
                 app.setBackwardFired(true);
                 history.back();
             }
@@ -751,6 +757,8 @@ define([
             };
 
             annoUtil.callGAEAPI(APIConfig);
+            // Analytics
+            annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'submit comment');
         };
 
         var saveVote = function(action)
@@ -798,6 +806,8 @@ define([
             };
 
             annoUtil.callGAEAPI(APIConfig);
+            // Analytics
+            annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'save vote', action == "add_vote"? "insert": "delete");
         };
 
         var saveFlag = function(action)
@@ -844,6 +854,8 @@ define([
             };
 
             annoUtil.callGAEAPI(APIConfig);
+            // Analytics
+            annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'save flag', action !== "remove"? "insert": "delete");
         };
 
         var doSocialShare = function()
@@ -863,6 +875,8 @@ define([
                 subject,
                 null,
                 annoUtil.annoPermaLinkBaseUrl+id);
+            // Analytics
+            annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'share via');
         };
 
         // screenshot controls
@@ -880,6 +894,8 @@ define([
                 dom.byId('td_shtCtrl_hideAnnotations').children[0].innerHTML = "Hide Annotations";
                 surface.show();
             }
+            // Analytics
+            annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'toggle annotations', showAnnotations? 'on': 'off');
         };
 
         var setScreenshotTalkAreaState = function()
@@ -990,6 +1006,9 @@ define([
             );
 
             checkEditAnnoResult();
+
+            // Analytics
+            annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'edit item');
         };
 
         var saveCurrentAnnoDataforEdit = function(annoItem, imageData)
@@ -1110,6 +1129,9 @@ define([
             };
 
             annoUtil.callGAEAPI(APIConfig);
+
+            // Analytics
+            annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'delete item');
         };
 
         // hash tags
@@ -1208,6 +1230,9 @@ define([
 
             // disable native gesture to scroll horizontal properly
             annoUtil.disableNativeGesture();
+
+            // Analytics
+            annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'zoom detail', '', zoomFactor);
         };
 
         var zoomClose = function() {
@@ -1246,8 +1271,18 @@ define([
                     //adjustSize();
                 }));
 
+                _connectResults.push(connect.connect(dom.byId('navBtnTdBackScreenshot'), 'click', function () {
+                    // Analytics
+                    annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'nav back button');
+
+                    history.back();
+                }));
+
                 _connectResults.push(connect.connect(dom.byId('tdNavBtnNext'), 'click', function ()
                 {
+                    // Analytics
+                    annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'header next arrow');
+
                     goNextRecord();
                 }));
 
@@ -1263,6 +1298,9 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId('tdNavBtnPrevious'), 'click', function ()
                 {
+                    // Analytics
+                    annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'header prev arrow');
+
                     goPreviousRecord();
                 }));
 
@@ -1398,9 +1436,17 @@ define([
                         var endY = e.touches[0].pageY;
                         if ((startX - endX) >= 30 && Math.abs(startY - endY) < 10) {
                             dojo.stopEvent(e);
+
+                            // Analytics
+                            annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'swipe to next record');
+
                             goNextRecord();
                         } else if ((startX - endX) <= -30 && Math.abs(startY - endY) < 10) {
                             dojo.stopEvent(e);
+
+                            // Analytics
+                            annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'swipe to prev record');
+
                             goPreviousRecord();
                         }
                     }
@@ -1471,6 +1517,10 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId('zoomClose'), 'click', function(e) {
                     dojo.stopEvent(e);
+
+                    // Analytics
+                    annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'zoom close', 'soft key');
+
                     zoomClose();
                 }));
 
