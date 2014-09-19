@@ -207,6 +207,9 @@ define([
                 app = this.app;
                 adjustSize();
 
+                // Analytics
+                annoUtil.screenGATracking(annoUtil.analytics.category.search);
+
                 _connectResults.push(connect.connect(dom.byId('listContainerSearch'), "scroll", this, function(){
                     var toEnd = false;
                     var listContainer = dom.byId('listContainerSearch');

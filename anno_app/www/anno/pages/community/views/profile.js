@@ -150,6 +150,9 @@ define([
                 app = this.app;
                 adjustSize();
 
+                // Analytics
+                annoUtil.screenGATracking(annoUtil.analytics.category.profile);
+
                 _connectResults.push(connect.connect(registry.byId("profileItemChangePassword"), 'onClick', function(e)
                 {
                     openChangePasswordDialog();

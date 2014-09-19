@@ -146,6 +146,9 @@ define([
                 adjustSize();
                 initServerUrlRadioButtons();
 
+                // Analytics
+                annoUtil.screenGATracking(annoUtil.analytics.category.settings);
+
                 annoUtil.readSettings(function(settings){
                     var serverURLDialog = registry.byId('serverURLDialog');
 

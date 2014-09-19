@@ -112,6 +112,10 @@
             category: {
                 feed: 'feed',
                 detail: 'detail',
+                search: 'search',
+                my_stuff: 'myStuff',
+                settings: 'settings',
+                profile: 'profile',
                 signin: 'signin'
             }
         },
@@ -942,7 +946,7 @@
                 {
                     var time_ms = Date.now() - start_ts;
                     try {
-                        util.timingGATracking(config.method, config.parameter, time_ms, response? JSON.stringify(response): "No response");
+                        util.timingGATracking(config.method, JSON.stringify(config.parameter), time_ms, "Response length: " + (response? JSON.stringify(response).length: 0));
                     } catch(e) {
                         console.error("Exception while trying xhr timing analytics");
                         console.error(e);
@@ -1185,11 +1189,17 @@
             // Allow file: protocol tracking
             ga('set', 'checkProtocolTask', null);
             // Track the current page
-            ga('send', 'pageview', {'page': location.pathname});
+            ga('set', 'page', location.pathname);
+            ga('send', 'pageview');
             /** End Google Tracking code */
             console.log("Google Tracking Enabled: " + propertyID + " " + device.uuid);
 
             return true;
+        },
+        screenGATracking: function(screenname) {
+            if (this.isGASetup()) {
+                ga('send', 'screenview', screenname);
+            }
         },
         actionGATracking: function(category, action, label/*optional*/, value/*optional*/) {
             if (this.isGASetup()) {

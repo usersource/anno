@@ -1266,6 +1266,9 @@ define([
                 eventsModel = this.loadedModels.events;
                 localScreenshotPath = annoUtil.getAnnoScreenshotPath();
 
+                // Analytics
+                annoUtil.screenGATracking(annoUtil.analytics.category.detail);
+
                 _connectResults.push(connect.connect(window, has("ios") ? "orientationchange" : "resize", this, function (e)
                 {
                     //adjustSize();
