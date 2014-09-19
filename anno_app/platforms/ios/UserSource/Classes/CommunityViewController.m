@@ -160,10 +160,10 @@ int level;
    not the commandQueue (from JavaScript). To see execute calls from JavaScript, see
    CommunityCommandQueue below
 */
-- (BOOL)execute:(CDVInvokedUrlCommand*)command
+/*- (BOOL)execute:(CDVInvokedUrlCommand*)command
 {
     return [super execute:command];
-}
+}*/
 
 - (NSString*)pathForResource:(NSString*)resourcepath;
 {
