@@ -34,6 +34,10 @@ require([
             // console.log("setBackwardFired: "+ this._backwardFired);
         };
 
+        document.addEventListener("pause", function() {
+            dom.byId("headingStart").focus();
+        });
+
         document.addEventListener("deviceready", function(){
             DBUtil.initDB(function(){
                 console.log("[community:main.js] DB is ready.");
