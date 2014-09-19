@@ -56,7 +56,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                     0];
 
                 DBUtil.executeUpdateSql(insert_anno_draw_sql,params, function(res){
-                    console.error(res);
+                    console.log(res);
                     self.localAnnoSaved = true;
                 }, onSQLError);
             }
