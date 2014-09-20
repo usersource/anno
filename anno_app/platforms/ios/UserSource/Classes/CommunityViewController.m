@@ -77,7 +77,7 @@ int level;
     NSArray *versionCompatibility = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
     NSInteger iOSVersion = [[versionCompatibility objectAtIndex:0] intValue];
 
-    if (iOSVersion == 7) {
+    if (iOSVersion >= 7) {
         CGFloat viewWidth = self.view.frame.size.width;
         CGFloat viewHeight = self.view.frame.size.height;
         [self.webView setFrame:CGRectMake(0, 20, viewWidth, viewHeight - 20)];
