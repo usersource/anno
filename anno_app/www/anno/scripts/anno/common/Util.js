@@ -180,12 +180,12 @@
             }
 
             function beforeCallback() {
-                console.error(filePath);
+                console.log(filePath);
                 localFileSystem.root.getFile(filePath, {create:false,exclusive: false}, function(f){
                     f.file(function(e){
                         var reader = new FileReader();
                         reader.onloadend = function (evt) {
-                            console.error("file read end:");
+                            console.log("file read end");
                             var pos = evt.target.result.lastIndexOf(",");
                             callback(evt.target.result.substr(pos+1));
                         };
