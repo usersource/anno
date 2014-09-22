@@ -16,9 +16,6 @@ require([
         var config = jsonRef.fromJson(config);
         console.log("Worked!");
 
-        // Analytics
-        // annoUtil.setupGATracking();
-
         document.addEventListener("deviceready", function ()
         {
 
@@ -42,6 +39,11 @@ require([
                     {
                         annoUtil.setDefaultServer();
                     }
+                    
+                    // Settings have been read here
+                    // Analytics
+                    annoUtil.setupGATracking();
+                    annoUtil.screenGATracking(annoUtil.analytics.category.auth);
 
                     Application(config);
                 });

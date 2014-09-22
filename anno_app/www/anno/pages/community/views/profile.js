@@ -150,9 +150,6 @@ define([
                 app = this.app;
                 adjustSize();
 
-                // Analytics
-                annoUtil.screenGATracking(annoUtil.analytics.category.profile);
-
                 _connectResults.push(connect.connect(registry.byId("profileItemChangePassword"), 'onClick', function(e)
                 {
                     openChangePasswordDialog();
@@ -203,6 +200,9 @@ define([
             afterActivate: function()
             {
                 document.addEventListener("backbutton", exitApp, false);
+
+                // Analytics
+                annoUtil.screenGATracking(annoUtil.analytics.category.profile);
             },
             beforeDeactivate: function()
             {

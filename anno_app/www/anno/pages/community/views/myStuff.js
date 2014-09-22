@@ -250,9 +250,6 @@ define([
                 app.refreshMyActivites = loadMyAnnos;
                 loadMyAnnos();
 
-                // Analytics
-                Util.screenGATracking(Util.analytics.category.my_activity);
-
                 _connectResults.push(connect.connect(dom.byId("btnLearnHow"), 'click', function(e)
                 {
                     Util.startActivity("Intro", false);
@@ -277,6 +274,9 @@ define([
             },
             afterActivate: function()
             {
+                // Analytics
+                Util.screenGATracking(Util.analytics.category.my_activity);
+                
                 adjustSize();
 
                 if (!needRefresh)
