@@ -116,7 +116,9 @@
                 my_stuff: 'myStuff',
                 settings: 'settings',
                 profile: 'profile',
-                signin: 'signin'
+                signin: 'signin',
+                annodraw: 'annoDraw',
+                auth: 'auth'
             }
         },
         hasConnection: function()
@@ -1188,9 +1190,9 @@
             });
             // Allow file: protocol tracking
             ga('set', 'checkProtocolTask', null);
-            // Track the current page
-            ga('set', 'page', location.pathname);
-            ga('send', 'pageview');
+            // Track the current page (now we must do an explicit screen track)
+            // ga('set', 'page', location.pathname);
+            // ga('send', 'pageview');
             /** End Google Tracking code */
             console.log("Google Tracking Enabled: " + propertyID + " " + device.uuid);
 
@@ -1198,7 +1200,10 @@
         },
         screenGATracking: function(screenname) {
             if (this.isGASetup()) {
-                ga('send', 'screenview', screenname);
+                // ga('send', 'screenview', screenname);
+                // Screenviews do not seem to be tracked in websites (bad documentation)
+                ga('set', 'page', "/" + screenname);
+                ga('send', 'pageview');
             }
         },
         actionGATracking: function(category, action, label/*optional*/, value/*optional*/) {
