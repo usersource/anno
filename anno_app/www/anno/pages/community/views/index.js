@@ -805,8 +805,6 @@ define([
                         }
 
                         annoUtil.showLoadingIndicator();
-                        // Analytics
-                        annoUtil.screenGATracking(annoUtil.analytics.category.feed);
                         
                         OAuthUtil.getAccessToken(function(){
                             loadListData();
@@ -1225,6 +1223,9 @@ define([
             },
             afterActivate: function()
             {
+                // Analytics
+                annoUtil.screenGATracking(annoUtil.analytics.category.feed);
+                        
                 adjustSize();
                 var listContainer = dom.byId('listContainerStart');
                 listContainer.scrollTop = listScrollTop;

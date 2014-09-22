@@ -1272,6 +1272,7 @@ require([
 
                 // Analytics
                 annoUtil.setupGATracking();
+                annoUtil.screenGATracking(annoUtil.analytics.category.annodraw);
 
                 initBackgroundImage();
 
