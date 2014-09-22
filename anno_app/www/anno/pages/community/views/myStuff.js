@@ -19,6 +19,9 @@ define([
         var _connectResults = []; // events connect results
         var app = null, eventsModel = null, needRefresh = true,
             lastOpenAnnoId = "";
+        var offset = 0, limit = 15, hasMoreData = false;
+        var listScrollTop = 0;
+        var loadingData = false;
         var emptyAnno = {
             "id": 0,
             "annoText": "0",
@@ -38,12 +41,19 @@ define([
 
         var loadMyAnnos = function()
         {
+            loadingData = true;
+            var arg = { limit : limit };
+
+            if (offset) {
+                arg.cursor = offset;
+            }
+
             AnnoDataHandler.loadLocalAnnos(function (localAnnos){
                 console.log("getting my stuff from server.");
                 var APIConfig = {
                     name: Util.API.anno,
                     method: "anno.anno.mystuff",
-                    parameter: {},
+                    parameter: arg,
                     needAuth: true,
                     success: function(data)
                     {
@@ -54,7 +64,10 @@ define([
                             annoList = data.result.anno_list||[];
                         }
 
-                        var spliceArgs = [0, eventsModel.model.length], eventData, userInfo = Util.getCurrentUserInfo(), userName = userInfo.nickname;
+                        var spliceArgs = [eventsModel.model.length, 0],
+                            userInfo = Util.getCurrentUserInfo(),
+                            userName = userInfo.nickname,
+                            eventData;
 
                         for (var i= 0, l=localAnnos.length;i<l;i++)
                         {
@@ -133,17 +146,20 @@ define([
                             }
 
                             handleAnnoActivityInfo(eventData, annoList[i]);
-
                             spliceArgs.push(new getStateful(eventData));
                         }
 
                         eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
                         Util.hideLoadingIndicator();
 
+                        loadingData = false;
+                        offset = data.result.cursor;
+                        hasMoreData = data.result.has_more;
+
                         drawAnnos(spliceArgs);
                     },
-                    error: function()
-                    {
+                    error: function() {
+                        loadingData = false;
                     }
                 };
 
@@ -220,6 +236,11 @@ define([
             }
         };
 
+        var loadMoreData = function() {
+            if (loadingData || !hasMoreData) return;
+            loadMyAnnos();
+        };
+
         return {
             // simple view init
             init:function ()
@@ -227,6 +248,7 @@ define([
                 app = this.app;
                 eventsModel = this.loadedModels.mystuff;
                 app.refreshMyActivites = loadMyAnnos;
+                loadMyAnnos();
 
                 // Analytics
                 Util.screenGATracking(Util.analytics.category.my_activity);
@@ -245,16 +267,19 @@ define([
                     dojo.stopEvent(e);
                     goBack();
                 }));
+
+                _connectResults.push(connect.connect(dom.byId("listContainerMyStuff"), "scroll", this, function() {
+                    var listContainer = dom.byId("listContainerMyStuff");
+                    if ((listContainer.clientHeight + listContainer.scrollTop) >= listContainer.scrollHeight) {
+                        loadMoreData();
+                    }
+                }));
             },
             afterActivate: function()
             {
                 adjustSize();
 
-                if (needRefresh)
-                {
-                    loadMyAnnos();
-                }
-                else
+                if (!needRefresh)
                 {
                     // update opened anno activity info
                     var activityIndicator = dom.byId("annoActIndicator_"+lastOpenAnnoId);
@@ -273,11 +298,16 @@ define([
                     }
                 }
 
+                var listContainer = dom.byId('listContainerMyStuff');
+                listContainer.scrollTop = listScrollTop;
+
                 document.removeEventListener("backbutton", goBack, false);
                 document.addEventListener("backbutton", goBack, false);
             },
             beforeDeactivate: function()
             {
+                var listContainer = dom.byId('listContainerMyStuff');
+                listScrollTop = listContainer.scrollTop;
                 document.removeEventListener("backbutton", goBack, false);
             },
             destroy:function ()

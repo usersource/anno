@@ -424,13 +424,26 @@ class Anno(BaseModel):
         return None
 
     @classmethod
-    def query_my_anno(cls, user):
-        query = cls.query().filter(cls.creator == user.key).order(-cls.last_update_time)
-        anno_list = []
-        for anno in query:
-            anno_message = anno.to_response_message(user)
-            anno_list.append(anno_message)
-        return anno_list
+    def query_my_anno(cls, limit, curs, user):
+        if user:
+            from model.userannostate import UserAnnoState
+            userannostate_list = UserAnnoState.list_by_user(user_key=user.key)
+            anno_key_list = [ userannostate.anno for userannostate in userannostate_list ]
+
+            anno_message_list = []
+            more = False
+            if len(anno_key_list):
+                query = cls.query(cls.key.IN(anno_key_list)).order(-cls.last_update_time, cls.key)
+                anno_list, next_curs, more = query.fetch_page(limit, start_cursor=curs)
+                print more, len(anno_list)
+                anno_message_list = [ anno.to_response_message(user) for anno in anno_list if anno is not None ]
+
+            if more:
+                return AnnoListMessage(anno_list=anno_message_list, cursor=next_curs.urlsafe(), has_more=more)
+            else:
+                return AnnoListMessage(anno_list=anno_message_list, has_more=more)
+        else:
+            return AnnoListMessage(anno_list=[])
 
     @classmethod
     def query_by_followup(cls, search_string, query_string):
