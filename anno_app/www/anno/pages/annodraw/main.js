@@ -946,7 +946,7 @@ require([
         annoUtil.showLoadingIndicator();
 
         var deviceInfo = annoUtil.getDeviceInfo();
-        console.error(JSON.stringify(deviceInfo));
+        console.log(JSON.stringify(deviceInfo));
 
         var pluginParam = [], isScreenshotAnonymized = surface.isScreenshotAnonymized();
 
