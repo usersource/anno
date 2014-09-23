@@ -551,10 +551,9 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
 
             if (this.sendingAnnoToCloud)
             {
-                window.setTimeout(function(){
+                annoUtil.startBackgroundSyncTimer = window.setTimeout(function() {
                     annoDataHandler.startBackgroundSync();
                 }, annoDataHandler.syncInterval);
-
                 return;
             }
 
@@ -593,7 +592,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
 
                         annoUtil.getAnnoScreenshotPath(function(scPath){
                             self.insertAnnoToCloud(annoItem, scPath, item._id, true, function(){
-                                window.setTimeout(function(){
+                                annoUtil.startBackgroundSyncTimer = window.setTimeout(function() {
                                     annoDataHandler.startBackgroundSync();
                                 }, annoDataHandler.syncInterval);
                             });
@@ -611,7 +610,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                         };
 
                         self.updateAnnoToCloud(annoItem, "", true, function(){
-                            window.setTimeout(function(){
+                            annoUtil.startBackgroundSyncTimer = window.setTimeout(function() {
                                 annoDataHandler.startBackgroundSync();
                             }, annoDataHandler.syncInterval);
                         });
@@ -630,7 +629,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
 
                         annoUtil.getAnnoScreenshotPath(function(scPath){
                             self.updateAnnoToCloud(annoItem, scPath, true, function(){
-                                window.setTimeout(function(){
+                                annoUtil.startBackgroundSyncTimer = window.setTimeout(function() {
                                     annoDataHandler.startBackgroundSync();
                                 }, annoDataHandler.syncInterval);
                             });
@@ -639,7 +638,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                 }
                 else
                 {
-                    window.setTimeout(function(){
+                    annoUtil.startBackgroundSyncTimer = window.setTimeout(function() {
                         annoDataHandler.startBackgroundSync();
                     }, annoDataHandler.syncInterval);
                 }
