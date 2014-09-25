@@ -1063,9 +1063,11 @@
                 showLoadingSpinner : false,
                 success : function(data) {
                     popularTags = [];
-                    data.result.tags.forEach(function(tagData) {
-                        popularTags.push(tagData.text);
-                    });
+                    if ("tags" in data.result) {
+                        data.result.tags.forEach(function(tagData) {
+                            popularTags.push(tagData.text);
+                        });
+                    }
                 },
                 error : function() {
                 }
