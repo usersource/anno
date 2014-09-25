@@ -399,6 +399,7 @@ define([
         var resetDetailPage = function() {
             surface.clear();
             surface.hide();
+            domStyle.set('modelApp_detail', 'scrollTop', '0px');
             domStyle.set('addCommentContainer', 'display', 'none');
             domAddCommentTextBox.blur();
             domAddCommentTextBox.value = '';
