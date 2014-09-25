@@ -25,6 +25,7 @@
     var popularTags = [];
     var suggestTags = false, countToSuggestTags = 0, tagStringArray = [];
     var MIN_CHAR_TO_SUGGEST_TAGS = 2;
+    var timings = [{label: 'start', t: Date.now()}];
     var util = {
         loadingIndicator:null,
         _parser:null,
@@ -41,6 +42,7 @@
         annoScreenshotPath:null,
         API_RETRY_TIMES: 0,
         annoPermaLinkBaseUrl:"http://anno-webapp.appspot.com/usersource/pages/permalink/index.html#/anno/",
+        startBackgroundSyncTimer: null,
         ERROR_TYPES:{
             "LOAD_GAE_API": 1,
             "API_RESPONSE_EMPTY": 2,
@@ -113,7 +115,7 @@
                 feed: 'feed',
                 detail: 'detail',
                 search: 'search',
-                my_stuff: 'myStuff',
+                my_activity: 'myActivity',
                 settings: 'settings',
                 profile: 'profile',
                 signin: 'signin',
@@ -848,7 +850,7 @@
             toast = (toast === undefined) ? true : toast;
 
             var error_message = error.message,
-                default_message = "Could not connect to server";
+                default_message = "Oops! Something went wrong";
 
             // we can specify different user-friendly message for different error types
             var message = default_message;
@@ -1181,7 +1183,7 @@
                 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
                 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;
                 a.onload=function(){console.log("GA Load Succeeded");};a.onerror=function(evt){console.error("GA Load Failed");};m.parentNode.insertBefore(a,m);
-                })(window,document,'script','/android_asset/www/anno/scripts/analytics.js','ga');
+                })(window,document,'script','http://www.google-analytics.com/analytics.js','ga');
 
             // Create a user session with the device ID
             ga('create', propertyID, {
@@ -1217,9 +1219,28 @@
             }
         },
         exceptionGATracking: function(description, fatal) {
-            if (this.isGASetup()) {
-                ga('send', 'exception', {'exDescription': description, 'exFatal': fatal || false});
+            util.actionGATracking('exception', description, 'fatal=' + (fatal? 'yes':'no'));
+
+            // This is only for Mobile Application views in the reporting dashboard (I can only guess)
+            // if (this.isGASetup()) {
+            //     ga('send', 'exception', {'exDescription': description, 'exFatal': fatal || false});
+            // }
+        },
+        timeit: function(label) {
+            var o = {label: label, t: Date.now()};
+            timings.push(o);
+            var last = timings[timings.length-2]
+            return o['t'] - timings['t'];
+        },
+        time_since: function(label) {
+            label = label || 'start';
+            var cumulative = 0;
+            for (var i = 0; i < timings.length; i ++) {
+                if (timings[i]['label'] === label) {
+                    return Date.now() - timings[i]['t'];
+                }
             }
+            return -1;
         }
     };
 
