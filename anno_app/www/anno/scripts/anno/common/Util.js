@@ -1120,7 +1120,7 @@
             suggestedTagsArray.forEach(function(tag) {
                 var innerTagDiv = document.createElement("div");
                 innerTagDiv.className = "tag";
-                innerTagDiv.innerText = tag;
+                innerTagDiv.innerText = "#" + tag;
                 dom.byId(tagDiv).appendChild(innerTagDiv);
 
                 connect.connect(innerTagDiv, "click", function(e) {

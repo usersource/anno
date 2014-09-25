@@ -1373,7 +1373,6 @@ define([
                     commentTextBoxFocused = true;
                     window.setTimeout(function(){
                         domAddCommentTextBox.rows = "4";
-                        domStyle.set('detailSuggestedTags', 'bottom', (dom.byId("addCommentTextBox").getBoundingClientRect().height + 5) + "px");
                     }, 500);
                 }));
 
