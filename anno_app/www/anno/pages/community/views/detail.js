@@ -43,11 +43,14 @@ define([
             deletingData = false,
             trayBarHeight = 30,
             navBarHeight = 50,
-            trayScreenHeight = 0,
+            // trayScreenHeight = 0,
             screenshotControlsHeight = 86,
             borderWidth,
             zoomBorderWidth = 4;
         var zoomSurface, oldSurface, zoomAnnoID;
+
+        var viewPoint = win.getBox(),
+            deviceRatio = parseFloat((viewPoint.w / viewPoint.h).toFixed(2));
 
         var imageBaseUrl = annoUtil.getCEAPIConfig().imageServiceURL;
         var surface;
@@ -56,19 +59,26 @@ define([
         var hashTagTemplate = '$1<span class="hashTag" onclick="searchAnnoByHashTag(this.innerHTML)">$2</span>';
         var commentURLTemplate = '$1<span class="commentURL" onclick="window.open(encodeURI(\'$2\'), \'_blank\', \'location=no\')">$2</span>';
 
+        // DOM objects
+        var domAddCommentTextBox;
+
+        var dom_init = function() {
+            domAddCommentTextBox = dom.byId('addCommentTextBox');
+        };
+
         var adjustSize = function()
         {
-            var viewPoint = win.getBox();
+            // var viewPoint = win.getBox();
             //domStyle.set("imgDetailScreenshot", "width", (viewPoint.w-screenshotMargin)+"px");
 
-            var h = (viewPoint.h-6);
+            // var h = (viewPoint.h-6);
             // domStyle.set("annoTextDetail", "width", (viewPoint.w-6-6-10-6-28)+"px");
             // domStyle.set("voteFlagContainer", "width", (viewPoint.w-6-6-10-6-28)+"px");
 
-            trayScreenHeight = h-40;
+            // trayScreenHeight = h-40;
 
-            domStyle.set("appNameTextBox", "width", (viewPoint.w-30-6-10-40)+"px");
-            domStyle.set("lightCover", {"width": (viewPoint.w)+"px", "height":(viewPoint.h)+'px'});
+            domStyle.set("appNameTextBox", "width", (viewPoint.w - 30 - 6 - 10 - 40) + "px");
+            domStyle.set("lightCover", { "width" : (viewPoint.w) + "px", "height" : (viewPoint.h) + 'px' });
         };
 
         var screenshotImageOnload = function()
@@ -81,13 +91,11 @@ define([
 
             loadingImage = false;
             annoTooltipY = null;
-            window.setTimeout(function(){
 
-                var imgScreenshot = dom.byId('imgDetailScreenshot');
-                var viewPoint = win.getBox();
-                var deviceRatio = parseFloat((viewPoint.w / viewPoint.h).toFixed(2));
-                var orignialDeviceRatio = parseFloat((imgScreenshot.naturalWidth/imgScreenshot.naturalHeight).toFixed(2));
-                var orignialRatio = imgScreenshot.naturalHeight/imgScreenshot.naturalWidth;
+            window.setTimeout(function() {
+                var imgScreenshot = dom.byId('imgDetailScreenshot'),
+                    orignialDeviceRatio = parseFloat((imgScreenshot.naturalWidth/imgScreenshot.naturalHeight).toFixed(2)),
+                    orignialRatio = imgScreenshot.naturalHeight/imgScreenshot.naturalWidth;
 
                 if ((orignialDeviceRatio == deviceRatio) || (orignialDeviceRatio < deviceRatio)) {
                     // console.log('same ratio');
@@ -404,34 +412,34 @@ define([
 
         };
 
-        var goNextRecord = function()
-        {
-            if ( (currentIndex+1)< eventsModel.model.length)
-            {
-                window.setTimeout(function(){
-                	surface.clear();
-                	surface.hide();
-                    loadDetailData(currentIndex+1);
+        var resetDetailPage = function() {
+            surface.clear();
+            surface.hide();
+            domStyle.set('addCommentContainer', 'display', 'none');
+            domAddCommentTextBox.blur();
+            domAddCommentTextBox.value = '';
+        };
+
+        var goNextRecord = function() {
+            if ((currentIndex + 1) < eventsModel.model.length) {
+                resetDetailPage();
+                window.setTimeout(function() {
+                    loadDetailData(currentIndex + 1);
                     goingNextRecord = true;
                 }, 50);
-
                 return true;
             }
 
             return false;
         };
 
-        var goPreviousRecord = function()
-        {
-            if ( (currentIndex-1)>=0)
-            {
-                window.setTimeout(function(){
-                	surface.clear();
-                	surface.hide();
-                    loadDetailData(currentIndex-1);
+        var goPreviousRecord = function() {
+            if ((currentIndex - 1) >= 0) {
+                resetDetailPage();
+                window.setTimeout(function() {
+                    loadDetailData(currentIndex - 1);
                     goingNextRecord = false;
                 }, 50);
-
                 return true;
             }
 
@@ -925,7 +933,7 @@ define([
         var isVoteFlagContainerVisible = function()
         {
             var pos = domGeom.position(dom.byId('voteFlagContainer'));
-            var viewPoint = win.getBox();
+            // var viewPoint = win.getBox();
 
             if ((pos.y + 50) <= viewPoint.h)
             {
@@ -938,7 +946,7 @@ define([
         var isBottomPlaceHolderVisible = function()
         {
             var pos = domGeom.position(dom.byId('detailBottomPlaceholder'));
-            var viewPoint = win.getBox();
+            // var viewPoint = win.getBox();
 
             if ((pos.y + 50) <= viewPoint.h)
             {
@@ -1177,10 +1185,10 @@ define([
                 zoomImageHeight;
 
             if (zoomImgDetailScreenshotWidth > zoomImgDetailScreenshotHeight) {
-                zoomImageHeight = (win.getBox().h - (2 * zoomBorderWidth)) * zoomFactor;
+                zoomImageHeight = (viewPoint.h - (2 * zoomBorderWidth)) * zoomFactor;
                 zoomImageWidth = Math.round(zoomImageHeight / (zoomImgDetailScreenshotHeight / zoomImgDetailScreenshotWidth));
             } else {
-                zoomImageWidth = (win.getBox().w - (2 * zoomBorderWidth)) * zoomFactor;
+                zoomImageWidth = (viewPoint.w - (2 * zoomBorderWidth)) * zoomFactor;
                 zoomImageHeight = Math.round(zoomImageWidth / (zoomImgDetailScreenshotWidth / zoomImgDetailScreenshotHeight));
             }
 
@@ -1265,6 +1273,7 @@ define([
                 app = this.app;
                 eventsModel = this.loadedModels.events;
                 localScreenshotPath = annoUtil.getAnnoScreenshotPath();
+                dom_init();
 
                 _connectResults.push(connect.connect(window, has("ios") ? "orientationchange" : "resize", this, function (e)
                 {
@@ -1324,13 +1333,13 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId('tdAddCommentImg'), 'click', function ()
                 {
-                    var text = dom.byId('addCommentTextBox').value.trim();
+                    var text = domAddCommentTextBox.value.trim();
 
                     if (!text)
                     {
                         // alert('Please enter comment.');
                         annoUtil.showMessageDialog('Please enter comment.');
-                        dom.byId('addCommentTextBox').focus();
+                        domAddCommentTextBox.focus();
                         return;
                     }
 
@@ -1338,7 +1347,7 @@ define([
                         saveComment(text);
                     },10);
 
-                    dom.byId('addCommentTextBox').value = '';
+                    domAddCommentTextBox.value = '';
                     dom.byId('hiddenBtn').focus();
                 }));
 
@@ -1377,35 +1386,35 @@ define([
                     doSocialShare();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "focus", function ()
+                _connectResults.push(connect.connect(domAddCommentTextBox, "focus", function ()
                 {
                     commentTextBoxFocused = true;
                     window.setTimeout(function(){
-                        dom.byId('addCommentTextBox').rows = "4";
+                        domAddCommentTextBox.rows = "4";
                         domStyle.set('detailSuggestedTags', 'bottom', (dom.byId("addCommentTextBox").getBoundingClientRect().height + 5) + "px");
                     }, 500);
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "blur", function ()
+                _connectResults.push(connect.connect(domAddCommentTextBox, "blur", function ()
                 {
                     commentTextBoxFocused = false;
                     window.setTimeout(function(){
-                        dom.byId('addCommentTextBox').rows = "1";
+                        domAddCommentTextBox.rows = "1";
                         domStyle.set('detailSuggestedTags', 'display', 'none');
                     }, 500);
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "keydown", function (e)
+                _connectResults.push(connect.connect(domAddCommentTextBox, "keydown", function (e)
                 {
                     if (e.keyCode == 13)
                     {
-                        var text = dom.byId('addCommentTextBox').value.trim();
+                        var text = domAddCommentTextBox.value.trim();
 
                         if (!text)
                         {
                             // alert('Please enter comment.');
                             annoUtil.showMessageDialog('Please enter comment.');
-                            dom.byId('addCommentTextBox').focus();
+                            domAddCommentTextBox.focus();
                             return;
                         }
 
@@ -1413,7 +1422,7 @@ define([
                             saveComment(text);
                         },10);
 
-                        dom.byId('addCommentTextBox').value = '';
+                        domAddCommentTextBox.value = '';
                         dom.byId('hiddenBtn').focus();
                     }
 
