@@ -42,6 +42,7 @@
         annoScreenshotPath:null,
         API_RETRY_TIMES: 0,
         annoPermaLinkBaseUrl:"http://anno-webapp.appspot.com/usersource/pages/permalink/index.html#/anno/",
+        startBackgroundSyncTimer: null,
         ERROR_TYPES:{
             "LOAD_GAE_API": 1,
             "API_RESPONSE_EMPTY": 2,
@@ -849,7 +850,7 @@
             toast = (toast === undefined) ? true : toast;
 
             var error_message = error.message,
-                default_message = "Could not connect to server";
+                default_message = "Oops! Something went wrong";
 
             // we can specify different user-friendly message for different error types
             var message = default_message;

@@ -8,9 +8,10 @@ require([
     "dojox/mobile/_ContentPaneMixin",
     "anno/common/DBUtil",
     "anno/common/Util",
+    "anno/anno/AnnoDataHandler",
     "dojo/text!./app.json",
     "dojo/sniff"],
-    function (declare, dom, registry, domClass, Application, jsonRef, _ContentPaneMixin, DBUtil, annoUtil, config, has)
+    function (declare, dom, registry, domClass, Application, jsonRef, _ContentPaneMixin, DBUtil, annoUtil, annoDataHandler, config, has)
     {
         var config = jsonRef.fromJson(config);
         // console.error("Worked!");
@@ -35,7 +36,11 @@ require([
         };
 
         document.addEventListener("pause", function() {
-            dom.byId("headingStart").focus();
+            window.clearTimeout(annoUtil.startBackgroundSyncTimer);
+        });
+
+        document.addEventListener("resume", function() {
+            annoDataHandler.startBackgroundSync();
         });
 
         document.addEventListener("deviceready", function(){

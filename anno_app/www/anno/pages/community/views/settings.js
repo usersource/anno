@@ -206,6 +206,10 @@ define([
             {
                 // Analytics
                 annoUtil.screenGATracking(annoUtil.analytics.category.settings);
+
+                if (annoUtil.isIOS()) {
+                    domStyle.set(dom.byId("settingItemFeedback"), "display", "none");
+                }
             },
             beforeDeactivate: function()
             {
