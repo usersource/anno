@@ -43,7 +43,6 @@ define([
             deletingData = false,
             trayBarHeight = 30,
             navBarHeight = 50,
-            // trayScreenHeight = 0,
             screenshotControlsHeight = 86,
             borderWidth,
             zoomBorderWidth = 4;
@@ -60,23 +59,17 @@ define([
         var commentURLTemplate = '$1<span class="commentURL" onclick="window.open(encodeURI(\'$2\'), \'_blank\', \'location=no\')">$2</span>';
 
         // DOM objects
-        var domAddCommentTextBox;
+        var domAddCommentTextBox,
+            domScreenshotContainerDetail,
+            domImgDetailScreenshot;
 
         var dom_init = function() {
             domAddCommentTextBox = dom.byId('addCommentTextBox');
+            domScreenshotContainerDetail = dom.byId('screenshotContainerDetail');
+            domImgDetailScreenshot = dom.byId('imgDetailScreenshot');
         };
 
-        var adjustSize = function()
-        {
-            // var viewPoint = win.getBox();
-            //domStyle.set("imgDetailScreenshot", "width", (viewPoint.w-screenshotMargin)+"px");
-
-            // var h = (viewPoint.h-6);
-            // domStyle.set("annoTextDetail", "width", (viewPoint.w-6-6-10-6-28)+"px");
-            // domStyle.set("voteFlagContainer", "width", (viewPoint.w-6-6-10-6-28)+"px");
-
-            // trayScreenHeight = h-40;
-
+        var adjustSize = function() {
             domStyle.set("appNameTextBox", "width", (viewPoint.w - 30 - 6 - 10 - 40) + "px");
             domStyle.set("lightCover", { "width" : (viewPoint.w) + "px", "height" : (viewPoint.h) + 'px' });
         };
@@ -93,34 +86,25 @@ define([
             annoTooltipY = null;
 
             window.setTimeout(function() {
-                var imgScreenshot = dom.byId('imgDetailScreenshot'),
-                    orignialDeviceRatio = parseFloat((imgScreenshot.naturalWidth/imgScreenshot.naturalHeight).toFixed(2)),
-                    orignialRatio = imgScreenshot.naturalHeight/imgScreenshot.naturalWidth;
+                var orignialDeviceRatio = parseFloat((domImgDetailScreenshot.naturalWidth / domImgDetailScreenshot.naturalHeight).toFixed(2)),
+                    orignialRatio = domImgDetailScreenshot.naturalHeight / domImgDetailScreenshot.naturalWidth;
 
                 if ((orignialDeviceRatio == deviceRatio) || (orignialDeviceRatio < deviceRatio)) {
-                    // console.log('same ratio');
                     imageHeight = viewPoint.h - navBarHeight - screenshotControlsHeight;
                     imageWidth = Math.round(imageHeight/orignialRatio);
                     borderWidth = Math.floor(imageWidth * 0.02);
                     surfaceHeight = imageHeight - (2 * borderWidth);
                     domStyle.set('imgDetailScreenshot', { width : '100%', height : '100%' });
-                    // console.log("image width: " + imageWidth + ", image height: " + imageHeight);
                 } else if (orignialDeviceRatio > deviceRatio) {
                     console.log('wider ratio');
-                    //imageHeight = (viewPoint.w-screenshotMargin)*orignialRatio - navBarHeight - screenshotControlsHeight;
-                    // imageHeight = viewPoint.h - navBarHeight - screenshotControlsHeight;
-                    // imageWidth = Math.round(imageHeight / orignialRatio);
                     imageWidth = viewPoint.w;
                     borderWidth = 6;
-                    imageHeight = Math.round((imageWidth - (2 * borderWidth)) / (imgScreenshot.naturalWidth / imgScreenshot.naturalHeight));
+                    imageHeight = Math.round((imageWidth - (2 * borderWidth)) / (domImgDetailScreenshot.naturalWidth / domImgDetailScreenshot.naturalHeight));
                     surfaceHeight = imageHeight;
                     domStyle.set('imgDetailScreenshot', { width : '100%', height : 'auto' });
                 }
 
                 surfaceWidth = imageWidth - (2 * borderWidth);
-
-                // domStyle.set(dom.byId('tbl_screenshotControls').parentNode, 'width', imageWidth + 'px');
-
                 applyAnnoLevelColor(eventsModel.cursor.level);
 
                 adjustNavBarZIndex();
@@ -130,14 +114,14 @@ define([
                 {
                     if (goingNextRecord)
                     {
-                        transit(null, dom.byId('screenshotContainerDetail'), {
+                        transit(null, domScreenshotContainerDetail, {
                             transition:"slide",
                             duration:600
                         }).then(redrawShapes);
                     }
                     else
                     {
-                        transit(null, dom.byId('screenshotContainerDetail'), {
+                        transit(null, domScreenshotContainerDetail, {
                             transition:"slide",
                             duration:600,
                             reverse: true
@@ -174,7 +158,7 @@ define([
         	if (!imageWidth || !imageHeight) return;
 
         	// don't draw annotations when imgDetailScreenshot's src is tiniestImageData
-            if (dom.byId('imgDetailScreenshot').src === tiniestImageData) return;
+            if (domImgDetailScreenshot.src === tiniestImageData) return;
 
         	var drawElements = eventsModel.cursor.draw_elements;
             var lineStrokeStyle = {
@@ -604,7 +588,7 @@ define([
         var showLocalAnno = function()
         {
             var currentAnno = eventsModel.cursor;
-            dom.byId('imgDetailScreenshot').src = localScreenshotPath+"/"+currentAnno.screenshot_key;
+            domImgDetailScreenshot.src = localScreenshotPath + "/" + currentAnno.screenshot_key;
         };
 
         /**
@@ -615,7 +599,7 @@ define([
         var setDetailScreenshotNull = function() {
             surface.clear();
             surface.hide();
-            dom.byId('imgDetailScreenshot').src = tiniestImageData;
+            domImgDetailScreenshot.src = tiniestImageData;
         };
 
         var loadDetailData = function(cursor)
@@ -633,7 +617,7 @@ define([
 
             if (previousAnno) {
                 // showing tiniest gif image instead of empty image data
-            	dom.byId('imgDetailScreenshot').src = tiniestImageData
+                domImgDetailScreenshot.src = tiniestImageData;
             }
 
             eventsModel.set("cursorIndex", cursor);
@@ -665,8 +649,10 @@ define([
             }
 
             loadingImage = true;
-            dom.byId('imgDetailScreenshot').src = imageBaseUrl+"?anno_id="+id;
-            console.log("image url: " + imageBaseUrl + "?anno_id=" + id);
+
+            var annoImage = imageBaseUrl + "?anno_id=" + id;
+            domImgDetailScreenshot.src = annoImage;
+            console.log("image url: " + annoImage);
 
             var APIConfig = {
                 name: annoUtil.API.anno,
@@ -958,7 +944,7 @@ define([
 
         var isScreenshotVisible = function()
         {
-            var pos = domGeom.position(dom.byId('screenshotContainerDetail'));
+            var pos = domGeom.position(domScreenshotContainerDetail);
 
             if (pos.y >=0) return true;
 
@@ -995,9 +981,8 @@ define([
 
             saveCurrentAnnoDataforEdit(annoItem, imageData);
 
-            var imgScreenshot = dom.byId('imgDetailScreenshot'),
-                landscapeMode = false;
-            if (imgScreenshot.naturalWidth > imgScreenshot.naturalHeight) {
+            var landscapeMode = false;
+            if (domImgDetailScreenshot.naturalWidth > domImgDetailScreenshot.naturalHeight) {
                 landscapeMode = true;
             }
 
@@ -1056,7 +1041,7 @@ define([
 
                     if (updatedAnnoData.image)
                     {
-                        dom.byId('imgDetailScreenshot').src = updatedAnnoData.image;
+                        domImgDetailScreenshot.src = updatedAnnoData.image;
                     }
 
                     redrawShapes();
@@ -1082,11 +1067,10 @@ define([
         var outputImage = function()
         {
             var hiddenCanvas = dom.byId('backgroundCanvas');
-            var imgScreenshot = dom.byId('imgDetailScreenshot');
-            hiddenCanvas.width = imgScreenshot.naturalWidth;
-            hiddenCanvas.height = imgScreenshot.naturalHeight;
+            hiddenCanvas.width = domImgDetailScreenshot.naturalWidth;
+            hiddenCanvas.height = domImgDetailScreenshot.naturalHeight;
             var ctx = hiddenCanvas.getContext('2d');
-            ctx.drawImage(imgScreenshot, 0, 0, imgScreenshot.naturalWidth, imgScreenshot.naturalHeight);
+            ctx.drawImage(domImgDetailScreenshot, 0, 0, domImgDetailScreenshot.naturalWidth, domImgDetailScreenshot.naturalHeight);
 
             var dataUrl = hiddenCanvas.toDataURL("image/png");
             return dataUrl;
@@ -1167,11 +1151,13 @@ define([
         };
 
         // search anno items by hash tag
-        var searchAnnoByHashTag = window.searchAnnoByHashTag = function(tag)
-        {
-            // console.log(tag);
+        var searchAnnoByHashTag = window.searchAnnoByHashTag = function(tag) {
             goingTagSearch = true;
-            app.transitionToView(document.getElementById('modelApp_detail'), {target:'searchAnno',url:'#searchAnno', params:{tag:tag}});
+            app.transitionToView(document.getElementById('modelApp_detail'), {
+                target : 'searchAnno',
+                url : '#searchAnno',
+                params : { tag : tag }
+            });
         };
 
         var zoomImage = function(zoomFactor) {
@@ -1429,7 +1415,7 @@ define([
                     annoUtil.showSuggestedTags(event, "detailSuggestedTags", "addCommentTextBox");
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), "touchstart", function (e)
+                _connectResults.push(connect.connect(domScreenshotContainerDetail, "touchstart", function (e)
                 {
                     if( e.touches.length == 1 )
                     {
@@ -1438,7 +1424,7 @@ define([
                     }
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), "touchmove", function (e)
+                _connectResults.push(connect.connect(domScreenshotContainerDetail, "touchmove", function (e)
                 {
                     if (e.touches.length == 1) {
                         var endX = e.touches[0].pageX;
@@ -1507,7 +1493,7 @@ define([
                     });
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), 'click', function(e) {
+                _connectResults.push(connect.connect(domScreenshotContainerDetail, 'click', function(e) {
                     dojo.stopEvent(e);
                     annoUtil.showLoadingIndicator();
 
@@ -1616,25 +1602,21 @@ define([
                      * if user goes to this page by clicking backbutton(from searchAnno page), then check if current anno id
                      * is same to the cursor id, if true, then don't need to reload data, but need to reload the screenshot
                      */
-                    if (app.isBackwardFired()&&currentAnnoId==eventsModel.model[parseInt(cursor, 10)].id)
-                    {
+                    if (app.isBackwardFired() && currentAnnoId == eventsModel.model[parseInt(cursor, 10)].id) {
                         // set data model cursor
                         eventsModel.set("cursorIndex", cursor);
-                        if (dom.byId('imgDetailScreenshot').src == tiniestImageData)
-                        {
+                        if (domImgDetailScreenshot.src == tiniestImageData) {
                             // reload the screenshot
                             annoUtil.showLoadingIndicator();
-                            dom.byId('imgDetailScreenshot').src = imageBaseUrl+"?anno_id="+eventsModel.cursor.id;
+                            domImgDetailScreenshot.src = imageBaseUrl + "?anno_id=" + eventsModel.cursor.id;
                         }
-                    }
-                    else
-                    {
-                        window.setTimeout(function(){
+                    } else {
+                        window.setTimeout(function() {
                             loadDetailData(cursor);
                         }, 50);
                     }
-
                 }
+
                 adjustSize();
 
                 domStyle.set("headingDetail", "display", '');
