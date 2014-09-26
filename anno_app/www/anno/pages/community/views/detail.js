@@ -431,30 +431,25 @@ define([
             return false;
         };
 
-        var handleBackButton = function()
-        {
-            var zoomData = dom.byId('zoomScreenshotContainerDetail');
+        var handleBackButton = function() {
+            var zoomData = dom.byId('zoomScreenshotContainerDetail'),
+                dlg = registry.byId('dlg_common_confirm_message');
+
             if (zoomData && (zoomData.style.display == '' || zoomData.style.display == 'block')) {
                 // Analytics
                 annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'zoom close', 'android back');
-
                 zoomClose();
                 return;
             }
 
-            var dlg = registry.byId('dlg_common_confirm_message');
-
-            if (dlg&&(dlg.domNode.style.display == ''||dlg.domNode.style.display == 'block'))
-            {
+            if (dlg && (dlg.domNode.style.display == '' || dlg.domNode.style.display == 'block')) {
                 dlg.hide();
-            }
-            else
-            {
+            } else {
                 // Analytics
                 annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'android back button');
-
                 app.setBackwardFired(true);
                 history.back();
+                resetDetailPage();
             }
         };
 
@@ -1378,7 +1373,6 @@ define([
                     commentTextBoxFocused = true;
                     window.setTimeout(function(){
                         domAddCommentTextBox.rows = "4";
-                        domStyle.set('detailSuggestedTags', 'bottom', (dom.byId("addCommentTextBox").getBoundingClientRect().height + 5) + "px");
                     }, 500);
                 }));
 

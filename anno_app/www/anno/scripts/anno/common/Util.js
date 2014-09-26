@@ -1070,9 +1070,11 @@
                 showLoadingSpinner : false,
                 success : function(data) {
                     popularTags = [];
-                    data.result.tags.forEach(function(tagData) {
-                        popularTags.push(tagData.text);
-                    });
+                    if ("tags" in data.result) {
+                        data.result.tags.forEach(function(tagData) {
+                            popularTags.push(tagData.text);
+                        });
+                    }
                 },
                 error : function() {
                 }
@@ -1125,7 +1127,7 @@
             suggestedTagsArray.forEach(function(tag) {
                 var innerTagDiv = document.createElement("div");
                 innerTagDiv.className = "tag";
-                innerTagDiv.innerText = tag;
+                innerTagDiv.innerText = "#" + tag;
                 dom.byId(tagDiv).appendChild(innerTagDiv);
 
                 connect.connect(innerTagDiv, "click", function(e) {
