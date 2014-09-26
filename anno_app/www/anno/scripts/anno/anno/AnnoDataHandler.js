@@ -218,6 +218,10 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                         {
                             callback();
                         }
+
+                        if (background) {
+                            annoUtil.showToastDialog("A previously saved Comment has been shared", 7000);
+                        }
                     },
                     error: function(error, data)
                     {
@@ -231,11 +235,14 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                             console.log("got serverAnnoId:"+serverAnnoId);
                             self.updateAnnoSynchedStateById(serverAnnoId, createdTime);
                         }
-
+                        console.error("Backgrnd : " + background);
                         if (!background)
                         {
                             annoUtil.hideLoadingIndicator();
                         }
+                        var msg = "We were unable to share your Comment at the moment.<br/> It has been Saved and will be shared at the earliest." +
+                            "<br/><hr/> Thanks for participating."
+                        annoUtil.showToastDialog(msg, 7000);
                     }
                 };
 
