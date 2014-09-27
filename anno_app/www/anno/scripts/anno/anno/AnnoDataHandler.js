@@ -1,19 +1,19 @@
 define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DBUtil, annoUtil, OAuthUtil){
 
-    var insert_anno_draw_sql = "insert into feedback_comment(draw_elements,draw_is_anonymized,created,last_update,comment,screenshot_key,x,y,direction,app_version,os_version,is_moved,level,app_name,model,source,os_name,anno_type,synched)"+
-        " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    var insert_anno_draw_sql = "insert into feedback_comment(draw_elements,draw_is_anonymized,created,last_update,comment,screenshot_key,app_version,os_version,level,app_name,model,source,os_name,anno_type,synched)"+
+        " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     var update_anno_synched_by_created_sql = "update feedback_comment set synched=1,object_key=? where created=?";
     var update_anno_synched_by_id_sql = "update feedback_comment set synched=1,object_key=? where _id=?";
     var update_anno_synched_by_object_key_sql = "update feedback_comment set synched=1 where object_key=?";
     var select_anno_sql = "select * from feedback_comment where synched=0";
     var select_anno_by_objectKey_sql = "select _id as id from feedback_comment where object_key=?";
     // synched state: 0--non synched inserted anno, -1--non synched updated anno without image changed, -2--non synched updated anno with image changed
-    var select_anno_sync_sql = "select * from feedback_comment where synched=0 or synched=-1 or synched=-2 LIMIT 1";
+    var select_anno_sync_sql = "select * from feedback_comment where synched IN (0,-1,-2)";
     var save_userInfo_sql = "insert into app_users(userid,email,signinmethod,nickname,password,signedup) values (?,?,?,?,?,?)";
     var select_userInfo_sql = "select * from app_users";
     var delete_userInfo_sql = "delete from app_users";
-    var insert_anno_unsynched_sql = "insert into feedback_comment(object_key,draw_elements,draw_is_anonymized,last_update,comment,screenshot_key,x,y,direction,is_moved,level,app_name,app_version,anno_type,synched)"+
-        " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    var insert_anno_unsynched_sql = "insert into feedback_comment(object_key,draw_elements,draw_is_anonymized,last_update,comment,screenshot_key,level,app_name,app_version,anno_type,synched)"+
+        " values(?,?,?,?,?,?,?,?,?,?)";
     var update_anno_unsynched_sql = "update feedback_comment set draw_elements=?,comment=?,app_name=?,app_version=?,draw_is_anonymized=?,synched=? where _id=?";
     var update_anno_unsynched_including_image_sql = "update feedback_comment set screenshot_key=?,draw_elements=?,comment=?,app_name=?,app_version=?,draw_is_anonymized=?,synched=? where _id=?";
 
@@ -56,11 +56,9 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                     0];
 
                 DBUtil.executeUpdateSql(insert_anno_draw_sql,params, function(res){
-                    console.log(res);
                     self.localAnnoSaved = true;
                 }, onSQLError);
             }
-
             this.insertAnnoToCloud(anno, screenshotDirPath, this.localAnnoCreatedTime, false);
         },
         insertAnnoToCloud: function(anno, screenshotDirPath, createdTime, background, callback)
@@ -220,6 +218,10 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                         {
                             callback();
                         }
+
+                        if (background) {
+                            annoUtil.showToastDialog("A previously saved Comment has been shared", 7000);
+                        }
                     },
                     error: function(error, data)
                     {
@@ -233,11 +235,14 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                             console.log("got serverAnnoId:"+serverAnnoId);
                             self.updateAnnoSynchedStateById(serverAnnoId, createdTime);
                         }
-
+                        console.error("Backgrnd : " + background);
                         if (!background)
                         {
                             annoUtil.hideLoadingIndicator();
                         }
+                        var msg = "We were unable to share your Comment at the moment.<br/> It has been Saved and will be shared at the earliest." +
+                            "<br/><hr/> Thanks for participating."
+                        annoUtil.showToastDialog(msg, 7000);
                     }
                 };
 
@@ -258,6 +263,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                     var params, createdTime = annoUtil.getTimeStamp();
                     if (res.rows.length == 0)
                     {
+                        object_key,draw_elements,draw_is_anonymized,last_update,comment,screenshot_key,level,app_name,app_version,anno_type,synched
                         params = [
                             annoId,
                             anno.draw_elements||'',
@@ -265,10 +271,6 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                             createdTime,
                             anno.anno_text,
                             anno.image||"none",
-                            0,
-                            0,
-                            0,
-                            0,
                             anno.level,
                             anno.app_name,
                             anno.app_version,
@@ -278,7 +280,6 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
 
                         DBUtil.executeUpdateSql(insert_anno_unsynched_sql,params, function(res){
                             if (!res) return;
-                            console.error(JSON.stringify(res));
                             self.localAnnoSaved = true;
                         }, onSQLError);
 
@@ -564,14 +565,16 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
 
                 if (cnt)
                 {
-                    console.error('startBackgroundSync annos: '+cnt);
+
+                    for (var i = 0; i < cnt; i ++) {
+                        var item = res.rows.item(i);
+                        var synchedState = item.synched, annoItem;
+                    }
 
                     var item = res.rows.item(0);
-                    var synchedState = item.synched, annoItem;
 
                     if (synchedState == 0)
                     {
-                        console.error('startBackgroundSync annos: '+JSON.stringify(item));
                         annoItem = {
                             "anno_text":item.comment,
                             "image":item.screenshot_key,
@@ -644,7 +647,6 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                 }
 
             }, function(err){
-                console.error("startBackgroundSync: "+err);
             });
         },
         saveUserInfo: function(userInfo, callback)

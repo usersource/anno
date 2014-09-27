@@ -673,11 +673,11 @@ require([
     };
 
     var onCommentBoxFocus = function() {
-        setSuggestTagDivDimensions();
+        // setSuggestTagDivDimensions();
         hideBottomNavBar();
     };
 
-    var setSuggestTagDivDimensions = function() {
+    /*var setSuggestTagDivDimensions = function() {
         var canvasContainerClientRect = dom.byId('gfxCanvasContainer').getBoundingClientRect(),
             targetClientRect = event.target.getBoundingClientRect(),
             positionTop = (targetClientRect.top - canvasContainerClientRect.top) + targetClientRect.height,
@@ -686,7 +686,7 @@ require([
             positionTop -= ((targetClientRect.height + 10) + suggestedTagsHeight);
         }
         domStyle.set("annoDrawSuggestedTags", "top", positionTop + "px");
-    };
+    };*/
 
     var hideBottomNavBar = function()
     {

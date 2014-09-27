@@ -42,9 +42,9 @@ define([
             loadingImage = false,
             deletingData = false,
             trayBarHeight = 30,
-            navBarHeight = 50,
-            screenshotControlsHeight = 86,
-            borderWidth,
+            navBarHeight,
+            screenshotControlsHeight,
+            borderWidth = 4,
             zoomBorderWidth = 4;
         var zoomSurface, oldSurface, zoomAnnoID;
 
@@ -63,7 +63,10 @@ define([
             domScreenshotContainerDetail,
             domImgDetailScreenshot;
 
-        var dom_init = function() {
+        var _init = function() {
+            navBarHeight = domStyle.get("headingDetail", "height");
+            screenshotControlsHeight = domStyle.get("tbl_screenshotControls", "height");
+
             domAddCommentTextBox = dom.byId('addCommentTextBox');
             domScreenshotContainerDetail = dom.byId('screenshotContainerDetail');
             domImgDetailScreenshot = dom.byId('imgDetailScreenshot');
@@ -86,25 +89,22 @@ define([
             annoTooltipY = null;
 
             window.setTimeout(function() {
-                var orignialDeviceRatio = parseFloat((domImgDetailScreenshot.naturalWidth / domImgDetailScreenshot.naturalHeight).toFixed(2)),
-                    orignialRatio = domImgDetailScreenshot.naturalHeight / domImgDetailScreenshot.naturalWidth;
+                var naturalImageWidth = domImgDetailScreenshot.naturalWidth,
+                    naturalImageHeight = domImgDetailScreenshot.naturalHeight,
+                    originalRatio = naturalImageWidth / naturalImageHeight,
+                    originalDeviceRatio = parseFloat(originalRatio.toFixed(2));
 
-                if ((orignialDeviceRatio == deviceRatio) || (orignialDeviceRatio < deviceRatio)) {
-                    imageHeight = viewPoint.h - navBarHeight - screenshotControlsHeight;
-                    imageWidth = Math.round(imageHeight/orignialRatio);
-                    borderWidth = Math.floor(imageWidth * 0.02);
-                    surfaceHeight = imageHeight - (2 * borderWidth);
-                    domStyle.set('imgDetailScreenshot', { width : '100%', height : '100%' });
-                } else if (orignialDeviceRatio > deviceRatio) {
-                    console.log('wider ratio');
+                if ((originalDeviceRatio == deviceRatio) || (originalDeviceRatio < deviceRatio)) {
+                    imageHeight = viewPoint.h - (navBarHeight + screenshotControlsHeight + (2 * borderWidth));
+                    imageWidth = Math.round(imageHeight / (1 / originalRatio));
+                } else {
                     imageWidth = viewPoint.w;
-                    borderWidth = 6;
-                    imageHeight = Math.round((imageWidth - (2 * borderWidth)) / (domImgDetailScreenshot.naturalWidth / domImgDetailScreenshot.naturalHeight));
-                    surfaceHeight = imageHeight;
-                    domStyle.set('imgDetailScreenshot', { width : '100%', height : 'auto' });
+                    imageHeight = Math.round((imageWidth - (2 * borderWidth)) / originalRatio);
                 }
 
+                domStyle.set('imgDetailScreenshot', { width : '100%', height : '100%' });
                 surfaceWidth = imageWidth - (2 * borderWidth);
+                surfaceHeight = imageHeight;
                 applyAnnoLevelColor(eventsModel.cursor.level);
 
                 adjustNavBarZIndex();
@@ -1255,7 +1255,7 @@ define([
                 app = this.app;
                 eventsModel = this.loadedModels.events;
                 localScreenshotPath = annoUtil.getAnnoScreenshotPath();
-                dom_init();
+                _init();
 
                 _connectResults.push(connect.connect(window, has("ios") ? "orientationchange" : "resize", this, function (e)
                 {
@@ -1373,7 +1373,6 @@ define([
                     commentTextBoxFocused = true;
                     window.setTimeout(function(){
                         domAddCommentTextBox.rows = "4";
-                        domStyle.set('detailSuggestedTags', 'bottom', (dom.byId("addCommentTextBox").getBoundingClientRect().height + 5) + "px");
                     }, 500);
                 }));
 
