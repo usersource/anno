@@ -170,7 +170,7 @@ define([
                     domStyle.set("versionInfo", "display", "");
                 }
 
-                if (annoUtil.isIOS() || true) {
+                if (annoUtil.isIOS()) {
                     domStyle.set(dom.byId("settingItemFeedback"), "display", "none");
                 }
 
