@@ -362,7 +362,6 @@
         showMessageDialog: function (message, callback)
         {
             var dlg = registry.byId('dlg_common_message');
-
             if (!dlg)
             {
                 dlg = new (declare([SimpleDialog, _ContentPaneMixin]))({
@@ -864,7 +863,7 @@
 
             if (toast) {
                 this.showToastDialog(message);
-            } else {
+            } else if (!error.silent) {
                 this.showMessageDialog(message, callback);
             }
 
@@ -944,7 +943,15 @@
                     util.timingGATracking("GAPI Load API", config.name, load_ms);
                 }
                 // API Loaded, make API call.
-                var method = eval("gapi.client."+config.method)(config.parameter);
+                try {
+                    var method = eval("gapi.client."+config.method)(config.parameter);
+                } catch(e) {
+                    util.showErrorMessage({type: util.ERROR_TYPES.LOAD_GAE_API ,message:'Load Client '+config.method+" API failed"}, true);
+                    if (config.error) {
+                        config.error({type: util.ERROR_TYPES.LOAD_GAE_API ,message:'Load Client '+config.method+" API failed"});
+                    }
+                    return;
+                }
                 start_ts = Date.now();
                 method.execute(function(response)
                 {
@@ -1063,9 +1070,11 @@
                 showLoadingSpinner : false,
                 success : function(data) {
                     popularTags = [];
-                    data.result.tags.forEach(function(tagData) {
-                        popularTags.push(tagData.text);
-                    });
+                    if ("tags" in data.result) {
+                        data.result.tags.forEach(function(tagData) {
+                            popularTags.push(tagData.text);
+                        });
+                    }
                 },
                 error : function() {
                 }
@@ -1118,7 +1127,7 @@
             suggestedTagsArray.forEach(function(tag) {
                 var innerTagDiv = document.createElement("div");
                 innerTagDiv.className = "tag";
-                innerTagDiv.innerText = tag;
+                innerTagDiv.innerText = "#" + tag;
                 dom.byId(tagDiv).appendChild(innerTagDiv);
 
                 connect.connect(innerTagDiv, "click", function(e) {

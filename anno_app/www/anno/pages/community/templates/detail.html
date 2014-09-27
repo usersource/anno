@@ -13,11 +13,11 @@
 			</tr>
 		</table>
 	</div>
-    <div id="headingDetail" style="position:absolute;top:0px;left:0px;background-color: #000000;z-index: 9000;color:white;height: 50px" data-dojo-type="dojox/mobile/Heading">
+    <div id="headingDetail" style="position:fixed;top:0px;left:0px;background-color: #000000;z-index: 9000;color:white;height: 50px" data-dojo-type="dojox/mobile/Heading">
         <table width="100%" height="100%">
             <tr>
                 <td width="15%" id="navBtnTdBackScreenshot" align="left">
-                    <span id="navBtnBackScreenshot" class="icon-forward" data-dojo-type="dojox.mobile.ToolBarButton"></span>
+                    <span id="navBtnBackScreenshot" class="icon-forward navBtnBack" data-dojo-type="dojox.mobile.ToolBarButton"></span>
                     <span id="detailPageName">Explore</span>
                 </td>
                 <td align="right" width="75%">
@@ -46,7 +46,7 @@
         <div id="mvcGroupDetail" data-dojo-type="dojox/mvc/Group"
              data-dojo-props="target: at(this.loadedModels.events, 'cursor')">
              <div id="AnnoScreenshot">
-	            <div style="height: 6px"></div>
+	            <!-- <div style="height: 6px"></div> -->
 	            <div id="screenshotContainerDetail" style="margin-left: auto;margin-right: auto;position: relative;">
 	                <img id="imgDetailScreenshot" class="imgDetailScreenshot" style="background-color: #c5ccd3;width: 100%;height: 100%;" />
 	                <div id="gfxCanvasContainer" class="gfxCanvasContainer" style="width: 500px; height: 500px;display: none;top: 50px"></div>
