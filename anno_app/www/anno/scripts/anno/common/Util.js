@@ -25,6 +25,7 @@
     var popularTags = [];
     var suggestTags = false, countToSuggestTags = 0, tagStringArray = [];
     var MIN_CHAR_TO_SUGGEST_TAGS = 2;
+    var timings = [{label: 'start', t: Date.now()}];
     var util = {
         loadingIndicator:null,
         _parser:null,
@@ -41,6 +42,7 @@
         annoScreenshotPath:null,
         API_RETRY_TIMES: 0,
         annoPermaLinkBaseUrl:"http://anno-webapp.appspot.com/usersource/pages/permalink/index.html#/anno/",
+        startBackgroundSyncTimer: null,
         ERROR_TYPES:{
             "LOAD_GAE_API": 1,
             "API_RESPONSE_EMPTY": 2,
@@ -108,6 +110,19 @@
             "iPhone6,1" : "iPhone5S"
         },
         versionInfo: { "version" : "", "build" : "" },
+        analytics: {
+            category: {
+                feed: 'feed',
+                detail: 'detail',
+                search: 'search',
+                my_activity: 'myActivity',
+                settings: 'settings',
+                profile: 'profile',
+                signin: 'signin',
+                annodraw: 'annoDraw',
+                auth: 'auth'
+            }
+        },
         hasConnection: function()
         {
             var networkState = navigator.connection.type;
@@ -169,12 +184,12 @@
             }
 
             function beforeCallback() {
-                console.error(filePath);
+                console.log(filePath);
                 localFileSystem.root.getFile(filePath, {create:false,exclusive: false}, function(f){
                     f.file(function(e){
                         var reader = new FileReader();
                         reader.onloadend = function (evt) {
-                            console.error("file read end:");
+                            console.log("file read end");
                             var pos = evt.target.result.lastIndexOf(",");
                             callback(evt.target.result.substr(pos+1));
                         };
@@ -347,7 +362,6 @@
         showMessageDialog: function (message, callback)
         {
             var dlg = registry.byId('dlg_common_message');
-
             if (!dlg)
             {
                 dlg = new (declare([SimpleDialog, _ContentPaneMixin]))({
@@ -835,7 +849,7 @@
             toast = (toast === undefined) ? true : toast;
 
             var error_message = error.message,
-                default_message = "Could not connect to server";
+                default_message = "Oops! Something went wrong";
 
             // we can specify different user-friendly message for different error types
             var message = default_message;
@@ -849,12 +863,16 @@
 
             if (toast) {
                 this.showToastDialog(message);
-            } else {
+            } else if (!error.silent) {
                 this.showMessageDialog(message, callback);
             }
 
             // output the original error message to console
             console.log(error.message);
+
+            // Analytics
+            // These are not fatal errors
+            this.exceptionGATracking(["<ShowErrorMessage> code:", error.code, "type:", error.type, "msg:", error.message].join(" "), false);
         },
         callGAEAPI: function(config, retryCnt)
         {
@@ -916,12 +934,34 @@
         },
         _callGAEAPI: function(config, retryCnt)
         {
+            var start_ts = Date.now();
             util.loadAPI(config.name, function ()
             {
+                var load_ms = Date.now() - start_ts;
+                console.log("GAPI Load API: " + config.method + " " + load_ms);
+                if (load_ms > 400) { // more than 400 ms to load API
+                    util.timingGATracking("GAPI Load API", config.name, load_ms);
+                }
                 // API Loaded, make API call.
-                var method = eval("gapi.client."+config.method)(config.parameter);
+                try {
+                    var method = eval("gapi.client."+config.method)(config.parameter);
+                } catch(e) {
+                    util.showErrorMessage({type: util.ERROR_TYPES.LOAD_GAE_API ,message:'Load Client '+config.method+" API failed"}, true);
+                    if (config.error) {
+                        config.error({type: util.ERROR_TYPES.LOAD_GAE_API ,message:'Load Client '+config.method+" API failed"});
+                    }
+                    return;
+                }
+                start_ts = Date.now();
                 method.execute(function(response)
                 {
+                    var time_ms = Date.now() - start_ts;
+                    try {
+                        util.timingGATracking(config.method, JSON.stringify(config.parameter), time_ms, "Response length: " + (response? JSON.stringify(response).length: 0));
+                    } catch(e) {
+                        console.error("Exception while trying xhr timing analytics");
+                        console.error(e);
+                    }
                     if (!response)
                     {
                         if (!config.keepLoadingSpinnerShown) util.hideLoadingIndicator();
@@ -1030,9 +1070,11 @@
                 showLoadingSpinner : false,
                 success : function(data) {
                     popularTags = [];
-                    data.result.tags.forEach(function(tagData) {
-                        popularTags.push(tagData.text);
-                    });
+                    if ("tags" in data.result) {
+                        data.result.tags.forEach(function(tagData) {
+                            popularTags.push(tagData.text);
+                        });
+                    }
                 },
                 error : function() {
                 }
@@ -1085,7 +1127,7 @@
             suggestedTagsArray.forEach(function(tag) {
                 var innerTagDiv = document.createElement("div");
                 innerTagDiv.className = "tag";
-                innerTagDiv.innerText = tag;
+                innerTagDiv.innerText = "#" + tag;
                 dom.byId(tagDiv).appendChild(innerTagDiv);
 
                 connect.connect(innerTagDiv, "click", function(e) {
@@ -1127,6 +1169,87 @@
                 "get_app_version",
                 []
             );
+        },
+        isGASetup: function() {
+            return typeof ga !== 'undefined';
+        },
+        setupGATracking: function(propertyID /*Optional*/) {
+            if (this.isGASetup()) {
+                return true;
+            }
+
+            if (!propertyID) {
+                var settings = this.getSettings();
+                var config = serverURLConfig[settings.ServerURL];
+                if (config) {
+                    propertyID = config.GAPropertyID;
+                }
+                if (!propertyID) return false;
+            }
+
+            /** Google Tracking code */
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;
+                a.onload=function(){console.log("GA Load Succeeded");};a.onerror=function(evt){console.error("GA Load Failed");};m.parentNode.insertBefore(a,m);
+                })(window,document,'script','http://www.google-analytics.com/analytics.js','ga');
+
+            // Create a user session with the device ID
+            ga('create', propertyID, {
+                'storage': 'none',
+                'clientId': device.uuid
+            });
+            // Allow file: protocol tracking
+            ga('set', 'checkProtocolTask', null);
+            // Track the current page (now we must do an explicit screen track)
+            // ga('set', 'page', location.pathname);
+            // ga('send', 'pageview');
+            /** End Google Tracking code */
+            console.log("Google Tracking Enabled: " + propertyID + " " + device.uuid);
+
+            return true;
+        },
+        screenGATracking: function(screenname) {
+            if (this.isGASetup()) {
+                // ga('send', 'screenview', screenname);
+                // Screenviews do not seem to be tracked in websites (bad documentation)
+                ga('set', 'page', "/" + screenname);
+                ga('send', 'pageview');
+            }
+        },
+        actionGATracking: function(category, action, label/*optional*/, value/*optional*/) {
+            if (this.isGASetup()) {
+                ga('send', 'event', category, action, label, value);
+            }
+        },
+        timingGATracking: function(category, varname, value, label) {
+            if (this.isGASetup()) {
+                ga('send', 'timing', category, varname, value, label);
+            }
+        },
+        exceptionGATracking: function(description, fatal) {
+            util.actionGATracking('exception', description, 'fatal=' + (fatal? 'yes':'no'));
+
+            // This is only for Mobile Application views in the reporting dashboard (I can only guess)
+            // if (this.isGASetup()) {
+            //     ga('send', 'exception', {'exDescription': description, 'exFatal': fatal || false});
+            // }
+        },
+        timeit: function(label) {
+            var o = {label: label, t: Date.now()};
+            timings.push(o);
+            var last = timings[timings.length-2]
+            return o['t'] - timings['t'];
+        },
+        time_since: function(label) {
+            label = label || 'start';
+            var cumulative = 0;
+            for (var i = 0; i < timings.length; i ++) {
+                if (timings[i]['label'] === label) {
+                    return Date.now() - timings[i]['t'];
+                }
+            }
+            return -1;
         }
     };
 

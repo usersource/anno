@@ -188,7 +188,7 @@ define([
                 handleAs: "json"
             }).then(function (data)
                 {
-                    console.error("access token res: " + JSON.stringify(data));
+                    console.log("access token res: " + JSON.stringify(data));
                     self.setAccessToken(data, callback);
                 }, function (err)
                 {

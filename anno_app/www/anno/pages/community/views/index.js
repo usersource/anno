@@ -62,6 +62,9 @@ define([
                 comment:''
             }]
         };
+        var timingLabels = {
+            loading_list_done: 'loading_list_done'
+        };
 
         var sdTitleHeight = 100,
             sdBottom = 90;
@@ -110,6 +113,11 @@ define([
             }
 
             console.log("anno "+(search?"search":"list")+"ing, args:"+JSON.stringify(arg));
+
+            if (search) {
+                annoUtil.actionGATracking(annoUtil.analytics.category.search, 'submit search query', JSON.stringify(arg));
+            }
+
             var APIConfig = {
                 name: annoUtil.API.anno,
                 method: search?"anno.anno.search":"anno.anno.list",
@@ -206,6 +214,12 @@ define([
             else
             {
                 eventsModel.model.splice.apply(eventsModel.model, spliceArgs);
+            }
+
+            if (!firstListLoaded) {
+                annoUtil.timeit(timingLabels.loading_list_done);
+                var t = annoUtil.time_since()
+                annoUtil.timingGATracking('Feed list loaded', 'Since page load', t);
             }
 
             annoUtil.hideLoadingIndicator();
@@ -377,6 +391,7 @@ define([
 
             inSearchMode = false;
             searchDone = false;
+            annoUtil.actionGATracking(annoUtil.analytics.category.search, 'cancel search', 'homescreen');
         };
 
         var hideMenuDialog = function()
@@ -648,6 +663,7 @@ define([
                         annoUtil.showConfirmMessageDialog("Notification: <br/>"+ e.payload.message +"<br/><br/>would you like to check it now?", function(ret){
                             if (ret)
                             {
+                                annoUtil.actionGATracking(annoUtil.analytics.category.feed, "selected view from push notification");
                                 goActivitiesScreen();
                             }
                         });
@@ -655,6 +671,7 @@ define([
                     else
                     {
                         // otherwise we were launched because the user touched a notification in the notification tray.
+                        annoUtil.actionGATracking(annoUtil.analytics.category.feed, "launch by push notification");
                         goActivitiesScreen();
                     }
 
@@ -679,10 +696,12 @@ define([
                 annoUtil.showConfirmMessageDialog("Notification: <br/>"+ message +"<br/><br/>would you like to check it now?",
                     function(ret) {
                         if (ret) {
+                            annoUtil.actionGATracking(annoUtil.analytics.category.feed, "selected view from push notification");
                             goActivitiesScreen();
                         }
                     });
             } else {
+                annoUtil.actionGATracking(annoUtil.analytics.category.feed, "launch by push notification");
                 goActivitiesScreen();
             }
         };
@@ -749,6 +768,7 @@ define([
             }
             else
             {
+                annoUtil.actionGATracking(annoUtil.analytics.category.feed, "nav to activity", "homescreen");
                 app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
             }
         };
@@ -778,6 +798,9 @@ define([
 
         var _init = function()
         {
+            // Auto tracking setup
+            annoUtil.setupGATracking();
+            
             if (DBUtil.userChecked)
             {
                 var authResult = OAuthUtil.isAuthorized();
@@ -801,6 +824,7 @@ define([
                         }
 
                         annoUtil.showLoadingIndicator();
+                        
                         OAuthUtil.getAccessToken(function(){
                             loadListData();
                         });
@@ -811,6 +835,7 @@ define([
                         dojo.stopEvent(e);
                         hideMenuDialog();
 
+                        annoUtil.actionGATracking(annoUtil.analytics.category.feed, "nav to activity", "homescreen");
                         app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
                     }));
 
@@ -829,6 +854,7 @@ define([
 
 
                         navigator.camera.getPicture(onSuccess, OnFail, options);
+                        annoUtil.actionGATracking(annoUtil.analytics.category.feed, 'header button to create', 'homescreen');
 
                         function onSuccess(imageURI) {
                             console.log("imageURI: " + imageURI);
@@ -898,10 +924,12 @@ define([
                         inSearchMode = true;
                         dojo.stopEvent(e);
 
+                        annoUtil.actionGATracking(annoUtil.analytics.category.feed, 'header button to search', 'homescreen');
                     }));
 
                     _connectResults.push(connect.connect(dom.byId("tdBarSettings"), 'click', function(e) {
                         app.transitionToView(document.getElementById('modelApp_home'), {target: 'settings', url: '#settings'});
+                        annoUtil.actionGATracking(annoUtil.analytics.category.feed, 'header button to settings', 'homescreen');
                     }));
 
                     _connectResults.push(connect.connect(dom.byId("barMoreMenuHome"), 'click', function(e)
@@ -950,6 +978,8 @@ define([
 
                         searchOrder = SEARCH_ORDER.RECENT;
                         loadListData(true, null, SEARCH_ORDER.RECENT, true);
+
+                        annoUtil.actionGATracking(annoUtil.analytics.category.search, 'select recent', 'homescreen');
                     }));
 
                     _connectResults.push(connect.connect(dom.byId('searchSortsBarActive'), "click", function ()
@@ -961,6 +991,8 @@ define([
 
                         searchOrder = SEARCH_ORDER.ACTIVE;
                         loadListData(true, null, SEARCH_ORDER.ACTIVE, true);
+
+                        annoUtil.actionGATracking(annoUtil.analytics.category.search, 'select active', 'homescreen');
                     }));
 
                     _connectResults.push(connect.connect(dom.byId('searchSortsBarPopular'), "click", function ()
@@ -972,6 +1004,8 @@ define([
 
                         searchOrder = SEARCH_ORDER.POPULAR;
                         loadListData(true, null, SEARCH_ORDER.POPULAR, true);
+
+                        annoUtil.actionGATracking(annoUtil.analytics.category.search, 'select popular', 'homescreen');
                     }));
 
                     _connectResults.push(connect.connect(dom.byId('txtSearchAnno'), "keydown", function (e)
@@ -1103,6 +1137,7 @@ define([
 
                         if (toEnd)
                         {
+                            annoUtil.actionGATracking(annoUtil.analytics.category.feed, 'scroll', 'homescreen');
                             loadMoreData();
                         }
                     }));
@@ -1217,6 +1252,9 @@ define([
             },
             afterActivate: function()
             {
+                // Analytics
+                annoUtil.screenGATracking(annoUtil.analytics.category.feed);
+                        
                 adjustSize();
                 var listContainer = dom.byId('listContainerStart');
                 listContainer.scrollTop = listScrollTop;

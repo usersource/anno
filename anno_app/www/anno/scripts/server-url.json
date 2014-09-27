@@ -7,7 +7,8 @@
         "clientId" : "22913132792.apps.googleusercontent.com",
         "clientSecret": "LBlzLWXDgGXyvjlT-5gUjZGA",
         "proxyKey":"3",
-        "gcm_sender_id":"22913132792"
+        "gcm_sender_id":"22913132792",
+        "GAPropertyID": "UA-54600534-1"
     },
     "2": {
         "serverId":"Test",
@@ -17,7 +18,8 @@
         "clientId" : "394023691674-7j5afcjlibblt47qehnsh3d4o931orek.apps.googleusercontent.com",
         "clientSecret": "n0fJeoZ-4UFWZaIG41mNg41_",
         "proxyKey":"4",
-        "gcm_sender_id":"394023691674"
+        "gcm_sender_id":"394023691674",
+        "GAPropertyID": "UA-54600534-3"
     },
     "3": {
         "serverId":"Dev",
@@ -27,7 +29,8 @@
         "clientId" : "955803277195.apps.googleusercontent.com",
         "clientSecret": "l5UwDYJuv2BdUUBF2tu9fsol",
         "proxyKey":"6",
-        "gcm_sender_id":"955803277195"
+        "gcm_sender_id":"955803277195",
+        "GAPropertyID": "UA-54600534-3"
     },
     "4": {
         "serverId":"Localhost",
@@ -37,6 +40,7 @@
         "clientId" : "955803277195.apps.googleusercontent.com",
         "clientSecret": "l5UwDYJuv2BdUUBF2tu9fsol",
         "proxyKey":"6",
-        "gcm_sender_id":"955803277195"
+        "gcm_sender_id":"955803277195",
+        "GAPropertyID": "UA-54600534-3"
     }
 }

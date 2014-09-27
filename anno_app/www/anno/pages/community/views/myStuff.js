@@ -38,6 +38,8 @@ define([
 
         var loadMyAnnos = function()
         {
+            var showLoadingSpinner = document.querySelectorAll("#annoListMyStuff li").length > 0 ? false : true;
+
             AnnoDataHandler.loadLocalAnnos(function (localAnnos){
                 console.log("getting my stuff from server.");
                 var APIConfig = {
@@ -45,6 +47,7 @@ define([
                     method: "anno.anno.mystuff",
                     parameter: {},
                     needAuth: true,
+                    showLoadingSpinner: showLoadingSpinner,
                     success: function(data)
                     {
                         var annoList = [];
@@ -233,18 +236,21 @@ define([
                     Util.startActivity("Intro", false);
                 }));
 
-                _connectResults.push(connect.connect(dom.byId("iconBackMyStuff"), 'click', function(e)
-                {
+                _connectResults.push(connect.connect(dom.byId("iconBackMyStuff"), 'click', function(e) {
+                    dojo.stopEvent(e);
                     goBack();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId("navBtnBackMyStuff"), 'click', function(e)
-                {
+                _connectResults.push(connect.connect(dom.byId("navBtnBackMyStuff"), 'click', function(e) {
+                    dojo.stopEvent(e);
                     goBack();
                 }));
             },
             afterActivate: function()
             {
+                // Analytics
+                Util.screenGATracking(Util.analytics.category.my_activity);
+                
                 adjustSize();
 
                 if (needRefresh)

@@ -220,6 +220,9 @@ define([
             },
             afterActivate: function()
             {
+                // Analytics
+                annoUtil.screenGATracking(annoUtil.analytics.category.search);
+                
                 // console.log(document.referrer);
                 domStyle.set('noResultContainer_search', 'display', 'none');
 

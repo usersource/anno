@@ -673,11 +673,11 @@ require([
     };
 
     var onCommentBoxFocus = function() {
-        setSuggestTagDivDimensions();
+        // setSuggestTagDivDimensions();
         hideBottomNavBar();
     };
 
-    var setSuggestTagDivDimensions = function() {
+    /*var setSuggestTagDivDimensions = function() {
         var canvasContainerClientRect = dom.byId('gfxCanvasContainer').getBoundingClientRect(),
             targetClientRect = event.target.getBoundingClientRect(),
             positionTop = (targetClientRect.top - canvasContainerClientRect.top) + targetClientRect.height,
@@ -686,7 +686,7 @@ require([
             positionTop -= ((targetClientRect.height + 10) + suggestedTagsHeight);
         }
         domStyle.set("annoDrawSuggestedTags", "top", positionTop + "px");
-    };
+    };*/
 
     var hideBottomNavBar = function()
     {
@@ -946,7 +946,7 @@ require([
         annoUtil.showLoadingIndicator();
 
         var deviceInfo = annoUtil.getDeviceInfo();
-        console.error(JSON.stringify(deviceInfo));
+        console.log(JSON.stringify(deviceInfo));
 
         var pluginParam = [], isScreenshotAnonymized = surface.isScreenshotAnonymized();
 
@@ -1270,6 +1270,10 @@ require([
                     }
                 });
 
+                // Analytics
+                annoUtil.setupGATracking();
+                annoUtil.screenGATracking(annoUtil.analytics.category.annodraw);
+
                 initBackgroundImage();
 
                 window.setTimeout(function(){
@@ -1390,8 +1394,9 @@ require([
 
             // set the pick list dialog title
             dom.byId('sdTitle').children[0].innerHTML = annoUtil.getResourceString("title_app_pick_list");
-            dom.byId('appOsName').innerHTML = annoUtil.isIOS()?"iOS":"Android";
+            dom.byId('appOsName').innerHTML = annoUtil.isIOS() ? "iOS" : "Android";
             dom.byId('appOsName').setAttribute("data-app-version", device.version);
+            dom.byId('appOsName').setAttribute("data-type", "app");
         }
         else
         {

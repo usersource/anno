@@ -39,6 +39,11 @@ require([
                     {
                         annoUtil.setDefaultServer();
                     }
+                    
+                    // Settings have been read here
+                    // Analytics
+                    annoUtil.setupGATracking();
+                    annoUtil.screenGATracking(annoUtil.analytics.category.auth);
 
                     Application(config);
                 });

@@ -142,18 +142,18 @@
 }
 
 
-#navBtnBackMyStuff, #navBtnBackSearchAnno, #navBtnBackScreenshot, #navBtnBackHome, #navBtnBackSettings, #navBtnBackProfile, #navBtnBackCommunity
-{
-    background-color: transparent;
-    background: none;
-    background-image: none;
-    border: none;
-    font-size: 24px;
-    box-shadow:none;
-    -webkit-box-shadow:none;
-    margin-top: 8px;
-    width: 12px;
-    padding-left: 2px;
+.navBtnBack {
+	width: auto;
+	height: auto;
+	margin: 0;
+	padding: 0 3px 0 5px;
+	font-size: 24px;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    outline: 0;
+    line-height: inherit;
 }
 
 .barMoreMenu
@@ -385,17 +385,15 @@
     -webkit-user-select: none;
 }
 
-#headingStart, .topHeading
-{
+#headingStart, .topHeading {
     background-image: none !important;
     background-color: #000000;
-    text-shadow:none;
+    text-shadow: none;
     color: white;
-    /*border-bottom: 1px solid #aeaeae;*/
     height: 44px;
     padding-top: 4px;
     border: none !important;
-    line-height: normal;
+    line-height: 44px;
 }
 
 .barIcon
@@ -582,6 +580,9 @@
     z-index: 4000;
     padding-left: 2px;
     padding-right: 0px;
+    border-radius: 0;
+    -webkit-appearance: none;
+	resize: none;
 }
 
 .lightCover {
@@ -756,6 +757,7 @@
     padding: 6px 12px;
     width: 100%;
     box-sizing: border-box;
+    border-radius: 0;
 }
 .mblBackground
 {
@@ -806,29 +808,23 @@
 }
 
 #detailSuggestedTags {
-	position: absolute;
-	width: 93.085%;
-	width: calc(100% - 18px);
-	width: -webkit-calc(100% - 18px);
-	max-height: 92px;
+	width: 100%;
+	height: 30px;
+	position: fixed;
+	left: 0;
+	bottom: 0;
 	font-size: 16px;
-	background: white;
-	overflow-y: scroll;
-	box-shadow: 0 0 2px 2px black;
-	-webkit-box-shadow: 0 0 2px 2px black;
-	/*bottom: 101px;*/
-	margin-right: 6px;
+	background: #F4F4F4;
+	border-top: 1px solid #CFCFCF;
 	z-index: 10000;
+	white-space: nowrap;
+	overflow-x: auto;
 }
 
 .tag {
-	padding: 5px 4px 5px 10px;
-	border-bottom: 1px solid black;
+	display: inline-block;
+	padding: 5px 10px;
 	color: blue;
-}
-
-.tag:last-child {
-	border: 0;
 }
 
 .mblListItem {

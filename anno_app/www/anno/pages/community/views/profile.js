@@ -200,6 +200,9 @@ define([
             afterActivate: function()
             {
                 document.addEventListener("backbutton", exitApp, false);
+
+                // Analytics
+                annoUtil.screenGATracking(annoUtil.analytics.category.profile);
             },
             beforeDeactivate: function()
             {
