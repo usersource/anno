@@ -1014,8 +1014,7 @@ define([
                         ps[6].y += dy;
                     }
 
-                    // Commented to not change height of commentBox
-                    // ps[5].y = ps[6].y = ps[0].y + boxHeight;
+                    ps[5].y = ps[6].y = ps[0].y + boxHeight;
 
                     // fix the x7, x5 error value generated in previously version
                     if (ps[6].x != ps[0].x)
@@ -1088,10 +1087,7 @@ define([
                         }
                     }
 
-                    {
-                        // Commented to not change height of commentBox
-                        // ps[4].y = ps[5].y = ps[0].y + boxHeight;
-                    }
+                    ps[4].y = ps[5].y = ps[0].y + boxHeight;
                 }
                 else if (ed == EAR_DIRECTION.BOTTOM||ed == EAR_DIRECTION.RIGHT_BOTTOM)
                 {
@@ -1128,8 +1124,7 @@ define([
                         ps[6].y -= dy;
                     }
 
-                    // Commented to not change height of commentBox
-                    // ps[1].y = ps[2].y = ps[4].y = ps[5].y = ps[0].y + boxHeight;
+                    ps[1].y = ps[2].y = ps[4].y = ps[5].y = ps[0].y + boxHeight;
                 }
                 else if (ed == EAR_DIRECTION.RIGHT)
                 {
@@ -1190,8 +1185,7 @@ define([
                         }
                     }
 
-                    // Commented to not change height of commentBox
-                    // ps[5].y = ps[6].y = ps[0].y + boxHeight;
+                    ps[5].y = ps[6].y = ps[0].y + boxHeight;
                 }
 
             },

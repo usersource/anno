@@ -1265,8 +1265,8 @@ define([
                 _connectResults.push(connect.connect(dom.byId('navBtnTdBackScreenshot'), 'click', function () {
                     // Analytics
                     annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'nav back button');
-
                     history.back();
+                    resetDetailPage();
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('tdNavBtnNext'), 'click', function ()
