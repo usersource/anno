@@ -131,7 +131,7 @@ define([
                             AnnoDataHandler.startBackgroundSync();
                             annoUtil.getTopTags(100);
                             annoUtil.loadUserCommunities(true, function(data) {
-                                var inviteList = data.inviteList;
+                                var inviteList = data.inviteList || [];
                                 for (var i = 0; i < inviteList.length; i++) {
                                     acceptInvitation(inviteList[i]);
                                 }
