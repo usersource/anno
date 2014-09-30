@@ -24,6 +24,7 @@
     // console.log("using server Url config:" + JSON.stringify(serverURLConfig));
     var popularTags = [];
     var suggestTags = false, countToSuggestTags = 0, tagStringArray = [];
+    var previousTagDiv = "", inputValueLength = 0;
     var MIN_CHAR_TO_SUGGEST_TAGS = 2;
     var timings = [{label: 'start', t: Date.now()}];
     var util = {
@@ -1087,14 +1088,29 @@
             countToSuggestTags = 0;
             tagStringArray = [];
             domStyle.set(tagDiv, "display", "none");
+            previousTagDiv = "";
+            inputValueLength = 0;
         },
-        showSuggestedTags: function(event, tagDiv, inputDiv) {
-            var keyCode = event.keyCode;
+        showSuggestedTags: function(e, tagDiv, inputDiv) {
+            var inputDom = dom.byId(inputDiv),
+                inputValue = inputDom.value,
+                keyCodeNull = false,
+                keyCode = 0,
+                charDeleted = false;
 
-            // for detecting '#' on different platforms:
-            // iOS - event.keyIdentifier should be "U+0023"
-            // Andriod - event.keyCode should be 51 and event.shiftKey should be true
-            if ((event.keyIdentifier == "U+0023") || (keyCode == 51 && event.shiftKey == true)) {
+            if (previousTagDiv && (previousTagDiv === tagDiv) && (inputValueLength > 0) && (inputValueLength > inputValue.length)) {
+                charDeleted = true;
+            }
+
+            previousTagDiv = tagDiv;
+            inputValueLength = inputValue.length;
+
+            if (!charDeleted) {
+                keyCodeNull = true;
+                keyCode = inputValue.toUpperCase().charCodeAt(inputDom.selectionStart - 1);
+            }
+
+            if (keyCode === 35 && keyCodeNull === true) {
                 suggestTags = true;
                 countToSuggestTags = 0;
                 tagStringArray = [];
@@ -1102,7 +1118,7 @@
                 if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90)) {
                     countToSuggestTags += 1;
                     tagStringArray.push(String.fromCharCode(keyCode));
-                } else if (keyCode == 8) {
+                } else if (keyCode === 8 || charDeleted) {
                     countToSuggestTags -= 1;
                     tagStringArray.pop();
                 } else {

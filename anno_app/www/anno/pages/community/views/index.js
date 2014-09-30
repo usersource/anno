@@ -636,8 +636,6 @@ define([
 
         // push notification callback for android
         var onNotification = window.onNotification = function(e) {
-            console.log(e);
-            console.log("onNotification: "+JSON.stringify(e));
             switch( e.event )
             {
                 case 'registered':
