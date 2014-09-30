@@ -60,6 +60,43 @@
 <script type="text/javascript">
     function load_gapi_client() {
         var gapi_client_url = "https://apis.google.com/js/client.js?onload=gce_init";
+        var now = Date.now();
+        var gapi_local_client = localStorage['Google API Client code'];
+        var gapi_local_client_t = localStorage['Google API Client time'];
+        console.log("Reading from local " + (Date.now() - now) + "ms");
+        try {
+            //gapi_local_client = JSON.parse(gapi_local_client);
+            if (Number(gapi_local_client_t) > Date.now() - (24*60*60*1000)) {
+                console.error("GAE Client Library From local");
+                now = Date.now();
+                eval(gapi_local_client);
+                console.log("Evaling from local " + (Date.now() - now) + "ms");
+                // gce_init();
+                return;
+            }
+        } catch(e) {
+            console.error(e);
+            console.error("Defaulting to cloud");
+        }
+
+        console.error("GAE Client Library From cloud");
+        // Get from cloud
+        dojo.xhrGet({
+            url: gapi_client_url
+            , handleAs: 'text'
+            , load: function(resp) {
+                var gapi_client = {t: Date.now(), code: resp};
+                localStorage['Google API Client code'] = resp;
+                localStorage['Google API Client time'] = Date.now();
+                eval(resp);
+                gce_init();
+            }
+            , error: function(resp) {
+                console.error(resp);
+                console.error("Could not load GAPI");
+            }
+        });
+
         var scriptTag = document.querySelector("script[src='" + gapi_client_url + "']");
         if (scriptTag) { scriptTag.remove(); }
         var po = document.createElement('script');
