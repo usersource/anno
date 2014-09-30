@@ -38,6 +38,8 @@ define([
 
         var loadMyAnnos = function()
         {
+            var showLoadingSpinner = document.querySelectorAll("#annoListMyStuff li").length > 0 ? false : true;
+
             AnnoDataHandler.loadLocalAnnos(function (localAnnos){
                 console.log("getting my stuff from server.");
                 var APIConfig = {
@@ -45,6 +47,7 @@ define([
                     method: "anno.anno.mystuff",
                     parameter: {},
                     needAuth: true,
+                    showLoadingSpinner: showLoadingSpinner,
                     success: function(data)
                     {
                         var annoList = [];

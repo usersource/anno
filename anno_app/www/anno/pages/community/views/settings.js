@@ -170,6 +170,10 @@ define([
                     domStyle.set("versionInfo", "display", "");
                 }
 
+                if (annoUtil.isIOS()) {
+                    domStyle.set(dom.byId("settingItemFeedback"), "display", "none");
+                }
+
                 _connectResults.push(connect.connect(registry.byId("settingItemIntro"), 'onClick', function(e)
                 {
                     annoUtil.startActivity("Intro", false);
@@ -206,10 +210,6 @@ define([
             {
                 // Analytics
                 annoUtil.screenGATracking(annoUtil.analytics.category.settings);
-
-                if (annoUtil.isIOS()) {
-                    domStyle.set(dom.byId("settingItemFeedback"), "display", "none");
-                }
             },
             beforeDeactivate: function()
             {

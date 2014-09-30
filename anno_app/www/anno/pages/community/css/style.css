@@ -580,6 +580,9 @@
     z-index: 4000;
     padding-left: 2px;
     padding-right: 0px;
+    border-radius: 0;
+    -webkit-appearance: none;
+	resize: none;
 }
 
 .lightCover {
@@ -754,6 +757,7 @@
     padding: 6px 12px;
     width: 100%;
     box-sizing: border-box;
+    border-radius: 0;
 }
 .mblBackground
 {
