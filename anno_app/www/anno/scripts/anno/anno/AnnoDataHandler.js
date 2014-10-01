@@ -652,14 +652,14 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
         },
         saveUserInfo: function(userInfo, callback)
         {
-            console.error("saveUserInfo invoked.");
+            console.log("saveUserInfo invoked.");
             this.removeUser(function(){
                 DBUtil.executeUpdateSql(save_userInfo_sql,[userInfo.userId, userInfo.email, userInfo.signinMethod, userInfo.nickname, userInfo.password||'', userInfo.signedup==null?1:userInfo.signedup], function(res){
                     if (!res) return;
-                    console.error("save userInfo end:"+ JSON.stringify(res));
+                    console.log("save userInfo end:" + JSON.stringify(res));
                     if (callback)
                     {
-                        console.error("saveUserInfo callback invoked.");
+                        console.log("saveUserInfo callback invoked.");
                         callback();
                     }
                 }, onSQLError);
