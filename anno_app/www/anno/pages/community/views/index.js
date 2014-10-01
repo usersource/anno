@@ -636,8 +636,6 @@ define([
 
         // push notification callback for android
         var onNotification = window.onNotification = function(e) {
-            console.log(e);
-            console.log("onNotification: "+JSON.stringify(e));
             switch( e.event )
             {
                 case 'registered':
@@ -782,6 +780,8 @@ define([
                 var handle = connect.connect(dom.byId("btnErrorAction"), 'click', function(e) {
                     dojo.stopEvent(e);
                     connect.disconnect(handle);
+                    delete gapi;
+                    delete ___jsl;
                     load_gapi_client();
                     domStyle.set('errorWindow', 'display', 'none');
                     checkInternetConnection(callback);

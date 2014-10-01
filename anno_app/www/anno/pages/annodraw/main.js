@@ -112,8 +112,7 @@ require([
 
         updateLastShapePos('Rectangle');
 
-        commentBox.onCommentBoxKeyDown = onCommentBoxKeyDown;
-        commentBox.onCommentBoxInput = checkBarShareState;
+        commentBox.onCommentBoxInput = onCommentBoxInput;
         commentBox.onCommentBoxFocus = onCommentBoxFocus;
         commentBox.onCommentBoxBlur = showBottomNavBar;
 
@@ -624,8 +623,7 @@ require([
 
                 if (commentBox.shapeType == surface.shapeTypes.CommentBox)
                 {
-                    commentBox.onCommentBoxKeyDown = onCommentBoxKeyDown;
-                    commentBox.onCommentBoxInput = checkBarShareState;
+                    commentBox.onCommentBoxInput = onCommentBoxInput;
                     commentBox.onCommentBoxFocus = onCommentBoxFocus;
                     commentBox.onCommentBoxBlur = showBottomNavBar;
                 }
@@ -653,8 +651,7 @@ require([
                 commentBox.animateEarControl();
             }, 500);
 
-            commentBox.onCommentBoxKeyDown = onCommentBoxKeyDown;
-            commentBox.onCommentBoxInput = checkBarShareState;
+            commentBox.onCommentBoxInput = onCommentBoxInput;
             commentBox.onCommentBoxFocus = onCommentBoxFocus;
             commentBox.onCommentBoxBlur = showBottomNavBar;
         }
@@ -668,12 +665,14 @@ require([
         }, 500);
     };
 
-    var onCommentBoxKeyDown = function(commentBox, event) {
-        annoUtil.showSuggestedTags(event, "annoDrawSuggestedTags", commentBox.inputElement.id);
+    var onCommentBoxInput = function(commentBox, event) {
+        checkBarShareState();
+        window.setTimeout(function() {
+            annoUtil.showSuggestedTags(event, "annoDrawSuggestedTags", commentBox.inputElement.id);
+        }, 0);
     };
 
     var onCommentBoxFocus = function() {
-        // setSuggestTagDivDimensions();
         hideBottomNavBar();
     };
 
