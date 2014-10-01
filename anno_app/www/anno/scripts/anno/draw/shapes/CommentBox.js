@@ -182,7 +182,7 @@ define([
                 {
                     if (this.onCommentBoxInput)
                     {
-                        this.onCommentBoxInput(this);
+                        this.onCommentBoxInput(this, e);
                     }
                 }));
 

@@ -1404,7 +1404,7 @@ define([
                 _connectResults.push(connect.connect(domAddCommentTextBox, "input", function(e) {
                     window.setTimeout(function() {
                         annoUtil.showSuggestedTags(e, "detailSuggestedTags", "addCommentTextBox");
-                    }, 10);
+                    }, 0);
                 }));
 
                 _connectResults.push(connect.connect(domScreenshotContainerDetail, "touchstart", function (e)
