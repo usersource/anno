@@ -1161,11 +1161,11 @@
                     input.value = input.value.replaceAt(replaceIndex, tagString.length, tag + " ");
                     annoUtil.resetTagSuggestion(tagDiv);
 
-                    /*setTimeout(function() {
-                        input.focus();
-                        input.select();
+                    setTimeout(function() {
+                        // input.focus();
+                        // input.select();
                         input.selectionStart = input.value.length;
-                    }, 1000);*/
+                    }, 100);
                 });
             });
 
