@@ -104,11 +104,17 @@
             "iPhone1,2" : "iPhone3G",
             "iPhone2,1" : "iPhone3GS",
             "iPhone3,1" : "iPhone4",
+            "iPhone3,2" : "iPhone4",
+            "iPhone3,3" : "iPhone4",
             "iPhone4,1" : "iPhone4S",
             "iPhone5,1" : "iPhone5GSM",
             "iPhone5,2" : "iPhone5CDMA",
             "iPhone5,3" : "iPhone5C",
-            "iPhone6,1" : "iPhone5S"
+            "iPhone5,4" : "iPhone5C",
+            "iPhone6,1" : "iPhone5S",
+            "iPhone6,2" : "iPhone5S",
+            "iPhone7,1" : "iPhone6Plus",
+            "iPhone7,2" : "iPhone6"
         },
         versionInfo: { "version" : "", "build" : "" },
         analytics: {
