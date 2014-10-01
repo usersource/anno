@@ -148,59 +148,69 @@ define([
             this.annoDB.executeSql("pragma table_info (feedback_comment);", [], function(res) {
                 if (!res) return;
 
+                // console.error("doUpgrade "+JSON.stringify(tempObj));
+                var columns = [
+                    {name:'_id', type:'integer', extra:'primary key autoincrement'},
+                    {name:'comment', type:'text', constraint:'not null'},
+                    {name:'screenshot_key', type:'text', constraint:'not null'},
+                    {name:'app_version', type:'text'},
+                    {name:'os_version', type:'text'},
+                    {name:'last_update', type:'integer', constraint:'not null'},
+                    {name:'object_key', type:'text'},
+                    {name:'level', type:'integer', constraint: 'not null'},
+                    {name:'app_name', type:'text'},
+                    {name:'model', type:'text'},
+                    {name:'source', type:'text'},
+                    {name:'os_name', type:'text', 'default':"'Android'"},
+                    {name:'anno_type', type:'text', 'default':"'simple comment'"},
+                    {name:'synched', type:'integer', 'default':0},
+                    {name:'created', type:'VARCHAR(30)', 'default':"'0'"},
+                    {name:'draw_elements', type:'text'},
+                    {name:'draw_is_anonymized', type:'integer', 'default':0},
+                    // {name:'column_is_anonymized', type:'integer', 'default':0}
+                ];
+
                 var rows = res.rows;
                 var tempObj = {};
+                var name_list = [];
                 for (var i=0;i<rows.length;i++)
                 {
                     var item = rows.item(i);
                     tempObj[item.name] = item;
+                    name_list.push(item.name);
                 }
 
-                // console.error("doUpgrade "+JSON.stringify(tempObj));
+                
 
-                if (!tempObj["os_name"])
-                {
-                    self.annoDB.executeSql("alter table feedback_comment add column os_name text default 'Android'", [], function(res){
-                        console.error("os_name column added.");
-                    });
+                for(var i = 0; i < columns.length; i ++) {
+                    if (tempObj[columns[i].name]) {
+                        name_list.splice(name_list.indexOf(columns[i].name), 1);
+                        continue;
+                    }
+
+                    var alter_stmnt = 'alter table feedback_comment add column ' + columns[i].name + ' ' + columns[i].type;
+                    if (columns[i].constraint !== undefined)
+                        alter_stmnt += (' ' + columns[i].constraint);
+                    if (columns[i].default !== undefined)
+                        alter_stmnt += (' default ' + columns[i].default);
+                    if (columns[i].extra !== undefined)
+                        alter_stmnt += (' ' + columns[i].extra);
+
+                    console.error("Do Upgrade Schema: " + alter_stmnt);
+                    self.annoDB.executeSql(alter_stmnt, [], function(res) {
+                        console.error("Add Column: " + JSON.stringify(res));
+                    }); 
                 }
 
-                if (!tempObj["anno_type"])
-                {
-                    self.annoDB.executeSql("alter table feedback_comment add column anno_type text default 'Simple Comment'", [], function(res){
-                        console.error("anno_type column added.");
-                    });
-                }
+                // No Drop column support in SQLite
+                // for (var i = 0; i < name_list.length; i ++) {
+                //     alter_stmnt = "alter table feedback_comment drop " + name_list[i];
+                //     console.error(alter_stmnt);
+                //     self.annoDB.executeSql(alter_stmnt, [], function(res) {
+                //         console.error("Drop Column: " + JSON.stringify(res));
+                //     }); 
+                // }
 
-                if (!tempObj["synched"])
-                {
-                    self.annoDB.executeSql("alter table feedback_comment add column synched integer default 0", [], function(res){
-                        console.error("synched column added.");
-                    });
-                }
-
-                if (!tempObj["created"])
-                {
-                    self.annoDB.executeSql("alter table feedback_comment add column created VARCHAR(30) default '0'", [], function(res){
-                        console.error("created column added.");
-                    });
-
-                    self.annoDB.executeSql('CREATE INDEX feedback_comment_created ON feedback_comment(created)');
-                }
-
-                if (!tempObj["draw_elements"])
-                {
-                    self.annoDB.executeSql("alter table feedback_comment add column draw_elements text", [], function(res){
-                        console.error("draw_elements column added.");
-                    });
-                }
-
-                if (!tempObj["draw_is_anonymized"])
-                {
-                    self.annoDB.executeSql("alter table feedback_comment add column draw_is_anonymized integer default 0", [], function(res){
-                        console.error("draw_is_anonymized column added.");
-                    });
-                }
             });
 
             this.annoDB.executeSql("SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name='app_settings'", [], function(res) {
