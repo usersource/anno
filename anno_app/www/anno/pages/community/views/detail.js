@@ -1385,29 +1385,26 @@ define([
                     }, 500);
                 }));
 
-                _connectResults.push(connect.connect(domAddCommentTextBox, "keydown", function (e)
-                {
-                    if (e.keyCode == 13)
-                    {
+                _connectResults.push(connect.connect(domAddCommentTextBox, "keydown", function(e) {
+                    if (e.keyCode == 13) {
                         var text = domAddCommentTextBox.value.trim();
 
-                        if (!text)
-                        {
-                            // alert('Please enter comment.');
+                        if (!text) {
                             annoUtil.showMessageDialog('Please enter comment.');
                             domAddCommentTextBox.focus();
                             return;
                         }
 
-                        window.setTimeout(function(){
-                            saveComment(text);
-                        },10);
-
+                        window.setTimeout(function() { saveComment(text); }, 10);
                         domAddCommentTextBox.value = '';
                         dom.byId('hiddenBtn').focus();
                     }
+                }));
 
-                    annoUtil.showSuggestedTags(event, "detailSuggestedTags", "addCommentTextBox");
+                _connectResults.push(connect.connect(domAddCommentTextBox, "input", function(e) {
+                    window.setTimeout(function() {
+                        annoUtil.showSuggestedTags(e, "detailSuggestedTags", "addCommentTextBox");
+                    }, 10);
                 }));
 
                 _connectResults.push(connect.connect(domScreenshotContainerDetail, "touchstart", function (e)
