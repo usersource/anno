@@ -1083,11 +1083,19 @@
 
             this.callGAEAPI(APIConfig);
         },
+        showTagDiv: function(tagDiv) {
+            domStyle.set(tagDiv, "display", "");
+            this.disableNativeGesture();
+        },
+        hideTagDiv: function(tagDiv) {
+            domStyle.set(tagDiv, "display", "none");
+            this.enableNativeGesture();
+        },
         resetTagSuggestion: function(tagDiv) {
             suggestTags = false;
             countToSuggestTags = 0;
             tagStringArray = [];
-            domStyle.set(tagDiv, "display", "none");
+            this.hideTagDiv(tagDiv);
             previousTagDiv = "";
             inputValueLength = 0;
         },
@@ -1128,7 +1136,7 @@
                 if (countToSuggestTags >= MIN_CHAR_TO_SUGGEST_TAGS) {
                     this.getTagStrings(tagDiv, inputDiv);
                 } else {
-                    domStyle.set(tagDiv, "display", "none");
+                    this.hideTagDiv(tagDiv);
                 }
             }
         },
@@ -1162,9 +1170,9 @@
             });
 
             if (suggestedTagsArray.length) {
-                domStyle.set(tagDiv, "display", "");
+                this.showTagDiv(tagDiv);
             } else {
-                domStyle.set(tagDiv, "display", "none");
+                this.hideTagDiv(tagDiv);
             }
         },
         parseDeviceModel: function(deviceModel) {
