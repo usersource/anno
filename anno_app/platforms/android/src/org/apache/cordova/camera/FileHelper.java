@@ -86,7 +86,7 @@ public class FileHelper {
      * @param uriString the URI string from which to obtain the input stream
      * @param cordova the current application context
      * @return an input stream into the data at the given URI or null if given an invalid URI string
-     * @throws java.io.IOException
+     * @throws IOException
      */
     public static InputStream getInputStreamFromUriString(String uriString, CordovaInterface cordova) throws IOException {
         if (uriString.startsWith("content")) {

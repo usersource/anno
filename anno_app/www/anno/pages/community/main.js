@@ -43,12 +43,12 @@ require([
             annoDataHandler.startBackgroundSync();
         });
 
-        document.addEventListener("deviceready", function(){
-            DBUtil.initDB(function(){
-                console.log("[community:main.js] DB is ready.");
-                annoUtil.readSettings(function(){
-                    Application(config);
+        document.addEventListener("deviceready", function() {
+            window.setTimeout(function() {
+                DBUtil.initDB(function() {
+                    console.log("[community:main.js] DB is ready.");
+                    annoUtil.readSettings(function() { Application(config); });
                 });
-            });
+            }, 5000);
         }, false);
     });

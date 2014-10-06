@@ -9,23 +9,11 @@
                 "parents": {
                     "/*": [
                         {
-                            "xml": "<feature name=\"Device\"><param name=\"ios-package\" value=\"CDVDevice\" /></feature>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<feature name=\"NetworkStatus\"><param name=\"ios-package\" value=\"CDVConnection\" /></feature>",
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"File\"><param name=\"ios-package\" value=\"CDVFile\" /><param name=\"onload\" value=\"true\" /></feature>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<feature name=\"Geolocation\"><param name=\"ios-package\" value=\"CDVLocation\" /></feature>",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"Camera\"><param name=\"ios-package\" value=\"CDVCamera\" /></feature>",
                             "count": 1
                         },
                         {
@@ -38,6 +26,22 @@
                         },
                         {
                             "xml": "<feature name=\"InAppBrowser\"><param name=\"ios-package\" value=\"CDVInAppBrowser\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Device\"><param name=\"ios-package\" value=\"CDVDevice\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"File\"><param name=\"ios-package\" value=\"CDVFile\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Camera\"><param name=\"ios-package\" value=\"CDVCamera\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<preference name=\"CameraUsesGeolocation\" value=\"false\" />",
                             "count": 1
                         }
                     ]
@@ -54,7 +58,7 @@
                     "CoreGraphics.framework": [
                         {
                             "xml": "false",
-                            "count": 2
+                            "count": 3
                         }
                     ],
                     "AssetsLibrary.framework": [
@@ -100,6 +104,16 @@
                         }
                     ]
                 }
+            },
+            "*-Info.plist": {
+                "parents": {
+                    "NSLocationWhenInUseUsageDescription": [
+                        {
+                            "xml": "<string />",
+                            "count": 1
+                        }
+                    ]
+                }
             }
         },
         "framework": {
@@ -125,19 +139,10 @@
         }
     },
     "installed_plugins": {
-        "org.apache.cordova.device": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        },
         "org.apache.cordova.network-information": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
-        "org.apache.cordova.file": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        },
         "org.apache.cordova.geolocation": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        },
-        "org.apache.cordova.camera": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "com.phonegap.plugins.sqlite": {
@@ -153,6 +158,15 @@
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "org.apache.cordova.inappbrowser": {
+            "PACKAGE_NAME": "io.usersource.anno"
+        },
+        "org.apache.cordova.device": {
+            "PACKAGE_NAME": "io.usersource.anno"
+        },
+        "org.apache.cordova.file": {
+            "PACKAGE_NAME": "io.usersource.anno"
+        },
+        "org.apache.cordova.camera": {
             "PACKAGE_NAME": "io.usersource.anno"
         }
     },

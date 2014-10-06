@@ -1,13 +1,6 @@
 cordova.define('cordova/plugin_list', function(require, exports, module) {
 module.exports = [
     {
-        "file": "plugins/org.apache.cordova.device/www/device.js",
-        "id": "org.apache.cordova.device.device",
-        "clobbers": [
-            "device"
-        ]
-    },
-    {
         "file": "plugins/org.apache.cordova.network-information/www/network.js",
         "id": "org.apache.cordova.network-information.network",
         "clobbers": [
@@ -20,6 +13,76 @@ module.exports = [
         "id": "org.apache.cordova.network-information.Connection",
         "clobbers": [
             "Connection"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.geolocation/www/Coordinates.js",
+        "id": "org.apache.cordova.geolocation.Coordinates",
+        "clobbers": [
+            "Coordinates"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.geolocation/www/PositionError.js",
+        "id": "org.apache.cordova.geolocation.PositionError",
+        "clobbers": [
+            "PositionError"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.geolocation/www/Position.js",
+        "id": "org.apache.cordova.geolocation.Position",
+        "clobbers": [
+            "Position"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.geolocation/www/geolocation.js",
+        "id": "org.apache.cordova.geolocation.geolocation",
+        "clobbers": [
+            "navigator.geolocation"
+        ]
+    },
+    {
+        "file": "plugins/com.phonegap.plugins.sqlite/www/SQLitePlugin.js",
+        "id": "com.phonegap.plugins.sqlite.SQLitePlugin",
+        "clobbers": [
+            "SQLitePlugin"
+        ]
+    },
+    {
+        "file": "plugins/nl.x-services.plugins.socialsharing/www/SocialSharing.js",
+        "id": "nl.x-services.plugins.socialsharing.SocialSharing",
+        "clobbers": [
+            "window.plugins.socialsharing"
+        ]
+    },
+    {
+        "file": "plugins/com.kolwit.pickcontact/www/PickContact.js",
+        "id": "com.kolwit.pickcontact.PickContact",
+        "clobbers": [
+            "PickContact"
+        ]
+    },
+    {
+        "file": "plugins/com.phonegap.plugins.PushPlugin/www/PushNotification.js",
+        "id": "com.phonegap.plugins.PushPlugin.PushNotification",
+        "clobbers": [
+            "PushNotification"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.inappbrowser/www/inappbrowser.js",
+        "id": "org.apache.cordova.inappbrowser.inappbrowser",
+        "clobbers": [
+            "window.open"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.device/www/device.js",
+        "id": "org.apache.cordova.device.device",
+        "clobbers": [
+            "device"
         ]
     },
     {
@@ -131,6 +194,10 @@ module.exports = [
         ]
     },
     {
+        "file": "plugins/org.apache.cordova.file/www/fileSystems.js",
+        "id": "org.apache.cordova.file.fileSystems"
+    },
+    {
         "file": "plugins/org.apache.cordova.file/www/requestFileSystem.js",
         "id": "org.apache.cordova.file.requestFileSystem",
         "clobbers": [
@@ -145,46 +212,24 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/org.apache.cordova.file/www/ios/Entry.js",
-        "id": "org.apache.cordova.file.iosEntry",
-        "merges": [
-            "window.Entry"
-        ]
-    },
-    {
         "file": "plugins/org.apache.cordova.file/www/ios/FileSystem.js",
         "id": "org.apache.cordova.file.iosFileSystem",
         "merges": [
-            "window.FileSystem"
+            "FileSystem"
         ]
     },
     {
-        "file": "plugins/org.apache.cordova.geolocation/www/Coordinates.js",
-        "id": "org.apache.cordova.geolocation.Coordinates",
-        "clobbers": [
-            "Coordinates"
-        ]
+        "file": "plugins/org.apache.cordova.file/www/fileSystems-roots.js",
+        "id": "org.apache.cordova.file.fileSystems-roots",
+        "runs": true
     },
     {
-        "file": "plugins/org.apache.cordova.geolocation/www/PositionError.js",
-        "id": "org.apache.cordova.geolocation.PositionError",
-        "clobbers": [
-            "PositionError"
-        ]
-    },
-    {
-        "file": "plugins/org.apache.cordova.geolocation/www/Position.js",
-        "id": "org.apache.cordova.geolocation.Position",
-        "clobbers": [
-            "Position"
-        ]
-    },
-    {
-        "file": "plugins/org.apache.cordova.geolocation/www/geolocation.js",
-        "id": "org.apache.cordova.geolocation.geolocation",
-        "clobbers": [
-            "navigator.geolocation"
-        ]
+        "file": "plugins/org.apache.cordova.file/www/fileSystemPaths.js",
+        "id": "org.apache.cordova.file.fileSystemPaths",
+        "merges": [
+            "cordova"
+        ],
+        "runs": true
     },
     {
         "file": "plugins/org.apache.cordova.camera/www/CameraConstants.js",
@@ -213,56 +258,21 @@ module.exports = [
         "clobbers": [
             "CameraPopoverHandle"
         ]
-    },
-    {
-        "file": "plugins/com.phonegap.plugins.sqlite/www/SQLitePlugin.js",
-        "id": "com.phonegap.plugins.sqlite.SQLitePlugin",
-        "clobbers": [
-            "SQLitePlugin"
-        ]
-    },
-    {
-        "file": "plugins/nl.x-services.plugins.socialsharing/www/SocialSharing.js",
-        "id": "nl.x-services.plugins.socialsharing.SocialSharing",
-        "clobbers": [
-            "window.plugins.socialsharing"
-        ]
-    },
-    {
-        "file": "plugins/com.kolwit.pickcontact/www/PickContact.js",
-        "id": "com.kolwit.pickcontact.PickContact",
-        "clobbers": [
-            "PickContact"
-        ]
-    },
-    {
-        "file": "plugins/com.phonegap.plugins.PushPlugin/www/PushNotification.js",
-        "id": "com.phonegap.plugins.PushPlugin.PushNotification",
-        "clobbers": [
-            "PushNotification"
-        ]
-    },
-    {
-        "file": "plugins/org.apache.cordova.inappbrowser/www/inappbrowser.js",
-        "id": "org.apache.cordova.inappbrowser.inappbrowser",
-        "clobbers": [
-            "window.open"
-        ]
     }
 ];
 module.exports.metadata = 
 // TOP OF METADATA
 {
-    "org.apache.cordova.device": "0.2.8",
     "org.apache.cordova.network-information": "0.2.7",
-    "org.apache.cordova.file": "1.0.1",
     "org.apache.cordova.geolocation": "0.3.6",
-    "org.apache.cordova.camera": "0.2.8",
     "com.phonegap.plugins.sqlite": "1.0.0",
     "nl.x-services.plugins.socialsharing": "4.3.0",
     "com.kolwit.pickcontact": "1.0.2",
     "com.phonegap.plugins.PushPlugin": "2.2.1",
-    "org.apache.cordova.inappbrowser": "0.5.0"
+    "org.apache.cordova.inappbrowser": "0.5.0",
+    "org.apache.cordova.device": "0.2.12",
+    "org.apache.cordova.file": "1.3.1",
+    "org.apache.cordova.camera": "0.3.2"
 }
 // BOTTOM OF METADATA
 });
