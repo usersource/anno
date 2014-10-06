@@ -7,8 +7,6 @@
 	objects = {
 /* Begin PBXBuildFile section */
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
-		1D3E586E196A827A00FF9FC0 /* AppDelegate+notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E586B196A827A00FF9FC0 /* AppDelegate+notification.m */; };
-		1D3E586F196A827A00FF9FC0 /* PushPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E586D196A827A00FF9FC0 /* PushPlugin.m */; };
 		1D44E81D18F7FEF5007A1635 /* AnnoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D44E81C18F7FEF5007A1635 /* AnnoUtils.m */; };
 		1D49F333198BC30D0077DE51 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1D49F332198BC30D0077DE51 /* Images.xcassets */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -39,6 +37,7 @@
 		C3AA7A364FE644849DA6FDE2 /* CDVReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 941DE4CAE98246CE88EB2AE0 /* CDVReachability.m */; };
 		E35BE7B14B9640F59C913E26 /* SQLitePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C4B59A7AF94273A2748F6B /* SQLitePlugin.m */; };
 		2852AE0E0F5C485C8FD5A934 /* SocialSharing.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D309A94B6C24ABFA47CBCEA /* SocialSharing.m */; };
+		B9624E3A7E584C16883A2465 /* AppDelegate+notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F520B5D923E4132B4618BBA /* AppDelegate+notification.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,8 +72,6 @@
 		1D02CDFF19531D41003A8C2F /* PickContact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PickContact.m; path = com.kolwit.pickcontact/PickContact.m; sourceTree = "<group>"; };
 		1D3623240D0F684500981E51 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		1D3E586A196A827A00FF9FC0 /* AppDelegate+notification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AppDelegate+notification.h"; path = "com.phonegap.plugins.PushPlugin/AppDelegate+notification.h"; sourceTree = "<group>"; };
-		1D3E586B196A827A00FF9FC0 /* AppDelegate+notification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "AppDelegate+notification.m"; path = "com.phonegap.plugins.PushPlugin/AppDelegate+notification.m"; sourceTree = "<group>"; };
 		1D3E586C196A827A00FF9FC0 /* PushPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PushPlugin.h; path = com.phonegap.plugins.PushPlugin/PushPlugin.h; sourceTree = "<group>"; };
 		1D3E586D196A827A00FF9FC0 /* PushPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PushPlugin.m; path = com.phonegap.plugins.PushPlugin/PushPlugin.m; sourceTree = "<group>"; };
 		1D44E81B18F7FEF5007A1635 /* AnnoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnnoUtils.h; sourceTree = "<group>"; };
@@ -141,6 +138,8 @@
 		90A26A89ECCE4B33B39AC061 /* SQLitePlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "SQLitePlugin.h"; path = "com.brodysoft.sqlitePlugin/SQLitePlugin.h"; sourceTree = "<group>"; fileEncoding = 4; };
 		2D309A94B6C24ABFA47CBCEA /* SocialSharing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "SocialSharing.m"; path = "nl.x-services.plugins.socialsharing/SocialSharing.m"; sourceTree = "<group>"; fileEncoding = 4; };
 		5491A59902AB44CA90766B19 /* SocialSharing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "SocialSharing.h"; path = "nl.x-services.plugins.socialsharing/SocialSharing.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		5F520B5D923E4132B4618BBA /* AppDelegate+notification.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "AppDelegate+notification.m"; path = "com.phonegap.plugins.PushPlugin/AppDelegate+notification.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		85D00F43132F4DD7BDD6C46D /* AppDelegate+notification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "AppDelegate+notification.h"; path = "com.phonegap.plugins.PushPlugin/AppDelegate+notification.h"; sourceTree = "<group>"; fileEncoding = 4; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -295,8 +294,6 @@
 		307C750510C5A3420062BCA9 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
-				1D3E586A196A827A00FF9FC0 /* AppDelegate+notification.h */,
-				1D3E586B196A827A00FF9FC0 /* AppDelegate+notification.m */,
 				1D3E586C196A827A00FF9FC0 /* PushPlugin.h */,
 				1D3E586D196A827A00FF9FC0 /* PushPlugin.m */,
 				1D02CDFE19531D41003A8C2F /* PickContact.h */,
@@ -328,6 +325,8 @@
 				90A26A89ECCE4B33B39AC061 /* SQLitePlugin.h */,
 				2D309A94B6C24ABFA47CBCEA /* SocialSharing.m */,
 				5491A59902AB44CA90766B19 /* SocialSharing.h */,
+				5F520B5D923E4132B4618BBA /* AppDelegate+notification.m */,
+				85D00F43132F4DD7BDD6C46D /* AppDelegate+notification.h */,
 			);
 			name = Plugins;
 			path = UserSource/Plugins;
@@ -475,16 +474,15 @@
 				1D6F35CA1908CDE7002051ED /* ScreenshotGestureListener.m in Sources */,
 				1D933EBA18F26F6400C82F37 /* AnnoCordovaPlugin.m in Sources */,
 				1D44E81D18F7FEF5007A1635 /* AnnoUtils.m in Sources */,
-				1D3E586E196A827A00FF9FC0 /* AppDelegate+notification.m in Sources */,
 				1DDCA4EE18F41A2B006E63FE /* OptionFeedbackViewController.m in Sources */,
 				1DDCA4EB18F41A2B006E63FE /* AnnoDrawViewController.m in Sources */,
-				1D3E586F196A827A00FF9FC0 /* PushPlugin.m in Sources */,
 				1DDCA4ED18F41A2B006E63FE /* IntroViewController.m in Sources */,
 				1DDCA4EC18F41A2B006E63FE /* CommunityViewController.m in Sources */,
 				24B1BE5E9503465BBC4A8AA3 /* CDVConnection.m in Sources */,
 				C3AA7A364FE644849DA6FDE2 /* CDVReachability.m in Sources */,
 				E35BE7B14B9640F59C913E26 /* SQLitePlugin.m in Sources */,
 				2852AE0E0F5C485C8FD5A934 /* SocialSharing.m in Sources */,
+				B9624E3A7E584C16883A2465 /* AppDelegate+notification.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

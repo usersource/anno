@@ -28,9 +28,6 @@
         <param name="onload" value="true" />
     </feature>
     <plugin name="AnnoCordovaPlugin" value="AnnoCordovaPlugin" />
-    <feature name="PushPlugin">
-        <param name="ios-package" value="PushPlugin" />
-    </feature>
     <feature name="Device">
         <param name="ios-package" value="CDVDevice" />
     </feature>
@@ -60,5 +57,8 @@
     </feature>
     <feature name="PickContact">
         <param name="ios-package" value="PickContact" />
+    </feature>
+    <feature name="PushPlugin">
+        <param name="ios-package" value="PushPlugin" />
     </feature>
 </widget>

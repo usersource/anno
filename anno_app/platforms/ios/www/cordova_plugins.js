@@ -1,13 +1,6 @@
 cordova.define('cordova/plugin_list', function(require, exports, module) {
 module.exports = [
     {
-        "file": "plugins/com.phonegap.plugins.PushPlugin/www/PushNotification.js",
-        "id": "com.phonegap.plugins.PushPlugin.PushNotification",
-        "clobbers": [
-            "PushNotification"
-        ]
-    },
-    {
         "file": "plugins/org.apache.cordova.device/www/device.js",
         "id": "org.apache.cordova.device.device",
         "clobbers": [
@@ -258,12 +251,18 @@ module.exports = [
         "clobbers": [
             "PickContact"
         ]
+    },
+    {
+        "file": "plugins/com.phonegap.plugins.PushPlugin/www/PushNotification.js",
+        "id": "com.phonegap.plugins.PushPlugin.PushNotification",
+        "clobbers": [
+            "PushNotification"
+        ]
     }
 ];
 module.exports.metadata = 
 // TOP OF METADATA
 {
-    "com.phonegap.plugins.PushPlugin": "2.2.1",
     "org.apache.cordova.device": "0.2.12",
     "org.apache.cordova.file": "1.3.1",
     "org.apache.cordova.camera": "0.3.2",
@@ -272,7 +271,8 @@ module.exports.metadata =
     "org.apache.cordova.inappbrowser": "0.5.2",
     "com.brodysoft.sqlitePlugin": "1.0.3",
     "nl.x-services.plugins.socialsharing": "4.3.8",
-    "com.kolwit.pickcontact": "1.0.4"
+    "com.kolwit.pickcontact": "1.0.4",
+    "com.phonegap.plugins.PushPlugin": "2.3.1"
 }
 // BOTTOM OF METADATA
 });

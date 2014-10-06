@@ -47,6 +47,10 @@
                         {
                             "xml": "<feature name=\"PickContact\"><param name=\"ios-package\" value=\"PickContact\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"PushPlugin\"><param name=\"ios-package\" value=\"PushPlugin\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -163,9 +167,6 @@
         }
     },
     "installed_plugins": {
-        "com.phonegap.plugins.PushPlugin": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        },
         "org.apache.cordova.device": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
@@ -191,6 +192,9 @@
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "com.kolwit.pickcontact": {
+            "PACKAGE_NAME": "io.usersource.anno"
+        },
+        "com.phonegap.plugins.PushPlugin": {
             "PACKAGE_NAME": "io.usersource.anno"
         }
     },
