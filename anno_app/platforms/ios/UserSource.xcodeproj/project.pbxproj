@@ -6,7 +6,6 @@
 	objectVersion = 46;
 	objects = {
 /* Begin PBXBuildFile section */
-		1D02CE0019531D41003A8C2F /* PickContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D02CDFF19531D41003A8C2F /* PickContact.m */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
 		1D3E586E196A827A00FF9FC0 /* AppDelegate+notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E586B196A827A00FF9FC0 /* AppDelegate+notification.m */; };
 		1D3E586F196A827A00FF9FC0 /* PushPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E586D196A827A00FF9FC0 /* PushPlugin.m */; };
@@ -35,8 +34,6 @@
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		302D95F214D2391D003F00A1 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 302D95F014D2391D003F00A1 /* MainViewController.xib */; };
 		305D5FD1115AB8F900A74A75 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 305D5FD0115AB8F900A74A75 /* MobileCoreServices.framework */; };
-		35BDFEEAB4F94B689A3E2257 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD5266640B0344749F49768A /* AddressBookUI.framework */; };
-		66109EEB8D5C4DD29B41B849 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F583DEA5C56F422C875065F3 /* AddressBook.framework */; };
 		F840E1F1165FE0F500CFE078 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = F840E1F0165FE0F500CFE078 /* config.xml */; };
 		24B1BE5E9503465BBC4A8AA3 /* CDVConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = F4815447178640BD972A8AE6 /* CDVConnection.m */; };
 		C3AA7A364FE644849DA6FDE2 /* CDVReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 941DE4CAE98246CE88EB2AE0 /* CDVReachability.m */; };
@@ -154,8 +151,6 @@
 				1DF9C52A18FBBD54004077BE /* AssetsLibrary.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
 				305D5FD1115AB8F900A74A75 /* MobileCoreServices.framework in Frameworks */,
-				66109EEB8D5C4DD29B41B849 /* AddressBook.framework in Frameworks */,
-				35BDFEEAB4F94B689A3E2257 /* AddressBookUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,7 +479,6 @@
 				1DDCA4EE18F41A2B006E63FE /* OptionFeedbackViewController.m in Sources */,
 				1DDCA4EB18F41A2B006E63FE /* AnnoDrawViewController.m in Sources */,
 				1D3E586F196A827A00FF9FC0 /* PushPlugin.m in Sources */,
-				1D02CE0019531D41003A8C2F /* PickContact.m in Sources */,
 				1DDCA4ED18F41A2B006E63FE /* IntroViewController.m in Sources */,
 				1DDCA4EC18F41A2B006E63FE /* CommunityViewController.m in Sources */,
 				24B1BE5E9503465BBC4A8AA3 /* CDVConnection.m in Sources */,

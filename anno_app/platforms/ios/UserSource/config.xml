@@ -28,9 +28,6 @@
         <param name="onload" value="true" />
     </feature>
     <plugin name="AnnoCordovaPlugin" value="AnnoCordovaPlugin" />
-    <feature name="PickContact">
-        <param name="ios-package" value="PickContact" />
-    </feature>
     <feature name="PushPlugin">
         <param name="ios-package" value="PushPlugin" />
     </feature>
@@ -60,5 +57,8 @@
     <feature name="SocialSharing">
         <param name="ios-package" value="SocialSharing" />
         <param name="onload" value="true" />
+    </feature>
+    <feature name="PickContact">
+        <param name="ios-package" value="PickContact" />
     </feature>
 </widget>
