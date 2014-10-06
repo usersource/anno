@@ -49,6 +49,6 @@ require([
                     console.log("[community:main.js] DB is ready.");
                     annoUtil.readSettings(function() { Application(config); });
                 });
-            }, 5000);
+            }, 0);
         }, false);
     });

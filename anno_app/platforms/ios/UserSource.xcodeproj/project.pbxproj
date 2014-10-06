@@ -42,7 +42,6 @@
 		35BDFEEAB4F94B689A3E2257 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD5266640B0344749F49768A /* AddressBookUI.framework */; };
 		66109EEB8D5C4DD29B41B849 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F583DEA5C56F422C875065F3 /* AddressBook.framework */; };
 		D30CDCA731D849908D0C9C0A /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F713FA28964CB18D9D3278 /* libsqlite3.dylib */; };
-		D463F4129A2645109F71CFE9 /* CDVLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = D691F1E126C04979A8ADECC6 /* CDVLocation.m */; };
 		D4C36414B2114E45BEC100FE /* SQLitePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C8F926C672B44F2A7402EA1 /* SQLitePlugin.m */; };
 		F840E1F1165FE0F500CFE078 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = F840E1F0165FE0F500CFE078 /* config.xml */; };
 		24B1BE5E9503465BBC4A8AA3 /* CDVConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = F4815447178640BD972A8AE6 /* CDVConnection.m */; };
@@ -492,7 +491,6 @@
 				1D3E586F196A827A00FF9FC0 /* PushPlugin.m in Sources */,
 				1D02CE0019531D41003A8C2F /* PickContact.m in Sources */,
 				1DDCA4ED18F41A2B006E63FE /* IntroViewController.m in Sources */,
-				D463F4129A2645109F71CFE9 /* CDVLocation.m in Sources */,
 				1DDCA4EC18F41A2B006E63FE /* CommunityViewController.m in Sources */,
 				D4C36414B2114E45BEC100FE /* SQLitePlugin.m in Sources */,
 				24B1BE5E9503465BBC4A8AA3 /* CDVConnection.m in Sources */,
