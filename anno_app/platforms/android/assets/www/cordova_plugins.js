@@ -1,21 +1,6 @@
 cordova.define('cordova/plugin_list', function(require, exports, module) {
 module.exports = [
     {
-        "file": "plugins/org.apache.cordova.network-information/www/network.js",
-        "id": "org.apache.cordova.network-information.network",
-        "clobbers": [
-            "navigator.connection",
-            "navigator.network.connection"
-        ]
-    },
-    {
-        "file": "plugins/org.apache.cordova.network-information/www/Connection.js",
-        "id": "org.apache.cordova.network-information.Connection",
-        "clobbers": [
-            "Connection"
-        ]
-    },
-    {
         "file": "plugins/org.apache.cordova.geolocation/www/Coordinates.js",
         "id": "org.apache.cordova.geolocation.Coordinates",
         "clobbers": [
@@ -258,12 +243,26 @@ module.exports = [
         "clobbers": [
             "CameraPopoverHandle"
         ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.network-information/www/network.js",
+        "id": "org.apache.cordova.network-information.network",
+        "clobbers": [
+            "navigator.connection",
+            "navigator.network.connection"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.network-information/www/Connection.js",
+        "id": "org.apache.cordova.network-information.Connection",
+        "clobbers": [
+            "Connection"
+        ]
     }
 ];
 module.exports.metadata = 
 // TOP OF METADATA
 {
-    "org.apache.cordova.network-information": "0.2.7",
     "org.apache.cordova.geolocation": "0.3.6",
     "com.phonegap.plugins.sqlite": "1.0.0",
     "nl.x-services.plugins.socialsharing": "4.3.0",
@@ -272,7 +271,8 @@ module.exports.metadata =
     "org.apache.cordova.inappbrowser": "0.5.0",
     "org.apache.cordova.device": "0.2.12",
     "org.apache.cordova.file": "1.3.1",
-    "org.apache.cordova.camera": "0.3.2"
+    "org.apache.cordova.camera": "0.3.2",
+    "org.apache.cordova.network-information": "0.2.12"
 }
 // BOTTOM OF METADATA
 });
