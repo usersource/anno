@@ -18,9 +18,6 @@
     <feature name="AnnoCordovaPlugin">
         <param name="android-package" value="io.usersource.annoplugin.AnnoCordovaPlugin" />
     </feature>
-    <feature name="SQLitePlugin">
-        <param name="android-package" value="org.pgsqlite.SQLitePlugin" />
-    </feature>
     <feature name="File">
         <param name="android-package" value="org.apache.cordova.file.FileUtils" />
     </feature>
@@ -51,5 +48,8 @@
     </feature>
     <feature name="InAppBrowser">
         <param name="android-package" value="org.apache.cordova.inappbrowser.InAppBrowser" />
+    </feature>
+    <feature name="SQLitePlugin">
+        <param name="android-package" value="org.pgsqlite.SQLitePlugin" />
     </feature>
 </widget>
