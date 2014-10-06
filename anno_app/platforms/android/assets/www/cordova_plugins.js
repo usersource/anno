@@ -1,13 +1,6 @@
 cordova.define('cordova/plugin_list', function(require, exports, module) {
 module.exports = [
     {
-        "file": "plugins/nl.x-services.plugins.socialsharing/www/SocialSharing.js",
-        "id": "nl.x-services.plugins.socialsharing.SocialSharing",
-        "clobbers": [
-            "window.plugins.socialsharing"
-        ]
-    },
-    {
         "file": "plugins/com.kolwit.pickcontact/www/PickContact.js",
         "id": "com.kolwit.pickcontact.PickContact",
         "clobbers": [
@@ -230,12 +223,18 @@ module.exports = [
         "clobbers": [
             "SQLitePlugin"
         ]
+    },
+    {
+        "file": "plugins/nl.x-services.plugins.socialsharing/www/SocialSharing.js",
+        "id": "nl.x-services.plugins.socialsharing.SocialSharing",
+        "clobbers": [
+            "window.plugins.socialsharing"
+        ]
     }
 ];
 module.exports.metadata = 
 // TOP OF METADATA
 {
-    "nl.x-services.plugins.socialsharing": "4.3.0",
     "com.kolwit.pickcontact": "1.0.2",
     "com.phonegap.plugins.PushPlugin": "2.2.1",
     "org.apache.cordova.device": "0.2.12",
@@ -244,7 +243,8 @@ module.exports.metadata =
     "org.apache.cordova.network-information": "0.2.12",
     "org.apache.cordova.geolocation": "0.3.10",
     "org.apache.cordova.inappbrowser": "0.5.2",
-    "com.brodysoft.sqlitePlugin": "1.0.3"
+    "com.brodysoft.sqlitePlugin": "1.0.3",
+    "nl.x-services.plugins.socialsharing": "4.3.8"
 }
 // BOTTOM OF METADATA
 });

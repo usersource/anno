@@ -24,9 +24,6 @@
     <feature name="Geolocation">
         <param name="android-package" value="org.apache.cordova.geolocation.GeoBroker" />
     </feature>
-    <feature name="SocialSharing">
-        <param name="android-package" value="nl.xservices.plugins.SocialSharing" />
-    </feature>
     <feature name="PickContact">
         <param name="android-package" value="com.kolwit.cordova.PickContactPlugin" />
     </feature>
@@ -51,5 +48,8 @@
     </feature>
     <feature name="SQLitePlugin">
         <param name="android-package" value="org.pgsqlite.SQLitePlugin" />
+    </feature>
+    <feature name="SocialSharing">
+        <param name="android-package" value="nl.xservices.plugins.SocialSharing" />
     </feature>
 </widget>
