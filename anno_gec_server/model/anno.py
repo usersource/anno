@@ -431,7 +431,7 @@ class Anno(BaseModel):
     def query_my_anno(cls, limit, curs, user):
         if user:
             from model.userannostate import UserAnnoState
-            userannostate_list = UserAnnoState.list_by_user(user_key=user.key, limit=100)
+            userannostate_list = UserAnnoState.list_by_user(user_key=user.key)
             anno_id_list = [ userannostate.anno.id() for userannostate in userannostate_list ]
 
             anno_message_list = []
