@@ -58,4 +58,7 @@
     <feature name="PushPlugin">
         <param name="ios-package" value="PushPlugin" />
     </feature>
+    <feature name="Contacts">
+        <param name="ios-package" value="CDVContacts" />
+    </feature>
 </widget>

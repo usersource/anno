@@ -47,6 +47,10 @@
                         {
                             "xml": "<feature name=\"PushPlugin\"><param name=\"ios-package\" value=\"PushPlugin\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Contacts\"><param name=\"ios-package\" value=\"CDVContacts\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -62,7 +66,7 @@
                     "CoreGraphics.framework": [
                         {
                             "xml": "false",
-                            "count": 3
+                            "count": 4
                         }
                     ],
                     "AssetsLibrary.framework": [
@@ -115,8 +119,18 @@
                             "count": 1
                         }
                     ],
-                    "AddressBook.framework": [],
-                    "AddressBookUI.framework": []
+                    "AddressBook.framework": [
+                        {
+                            "xml": "true",
+                            "count": 1
+                        }
+                    ],
+                    "AddressBookUI.framework": [
+                        {
+                            "xml": "true",
+                            "count": 1
+                        }
+                    ]
                 }
             },
             "*-Info.plist": {
@@ -178,6 +192,9 @@
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "com.phonegap.plugins.PushPlugin": {
+            "PACKAGE_NAME": "io.usersource.anno"
+        },
+        "org.apache.cordova.contacts": {
             "PACKAGE_NAME": "io.usersource.anno"
         }
     },

@@ -53,6 +53,8 @@
 		C3AA7A364FE644849DA6FDE2 /* CDVReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 941DE4CAE98246CE88EB2AE0 /* CDVReachability.m */; };
 		E35BE7B14B9640F59C913E26 /* SQLitePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C4B59A7AF94273A2748F6B /* SQLitePlugin.m */; };
 		F840E1F1165FE0F500CFE078 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = F840E1F0165FE0F500CFE078 /* config.xml */; };
+		852052763AC64C2998E8BC7E /* CDVContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB0F3648F894BB2AD5AB705 /* CDVContacts.m */; };
+		6BE62938A34540E889ADB114 /* CDVContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 664D9BA08F294C4BA6067E35 /* CDVContact.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -153,6 +155,10 @@
 		F840E1F0165FE0F500CFE078 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = UserSource/config.xml; sourceTree = "<group>"; };
 		FD5266640B0344749F49768A /* AddressBookUI.framework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		FFA2D6AB6D364653839AC60B /* CDVFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVFile.m; path = org.apache.cordova.file/CDVFile.m; sourceTree = "<group>"; };
+		3FB0F3648F894BB2AD5AB705 /* CDVContacts.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVContacts.m"; path = "org.apache.cordova.contacts/CDVContacts.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		664D9BA08F294C4BA6067E35 /* CDVContact.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVContact.m"; path = "org.apache.cordova.contacts/CDVContact.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		03682C3B0E3143BEB90C5DC9 /* CDVContacts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVContacts.h"; path = "org.apache.cordova.contacts/CDVContacts.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		F2418451C4C6486CA194768D /* CDVContact.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVContact.h"; path = "org.apache.cordova.contacts/CDVContact.h"; sourceTree = "<group>"; fileEncoding = 4; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -343,6 +349,10 @@
 				5491A59902AB44CA90766B19 /* SocialSharing.h */,
 				5F520B5D923E4132B4618BBA /* AppDelegate+notification.m */,
 				85D00F43132F4DD7BDD6C46D /* AppDelegate+notification.h */,
+				3FB0F3648F894BB2AD5AB705 /* CDVContacts.m */,
+				664D9BA08F294C4BA6067E35 /* CDVContact.m */,
+				03682C3B0E3143BEB90C5DC9 /* CDVContacts.h */,
+				F2418451C4C6486CA194768D /* CDVContact.h */,
 			);
 			name = Plugins;
 			path = UserSource/Plugins;
@@ -508,6 +518,8 @@
 				E35BE7B14B9640F59C913E26 /* SQLitePlugin.m in Sources */,
 				2852AE0E0F5C485C8FD5A934 /* SocialSharing.m in Sources */,
 				B9624E3A7E584C16883A2465 /* AppDelegate+notification.m in Sources */,
+				852052763AC64C2998E8BC7E /* CDVContacts.m in Sources */,
+				6BE62938A34540E889ADB114 /* CDVContact.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
