@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
 		1D44E81D18F7FEF5007A1635 /* AnnoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D44E81C18F7FEF5007A1635 /* AnnoUtils.m */; };
@@ -14,7 +13,6 @@
 		1D613FB1190B93E90068C1B7 /* ScreenshotGestureListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D6F35C91908CDE7002051ED /* ScreenshotGestureListener.m */; };
 		1D6F35CA1908CDE7002051ED /* ScreenshotGestureListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D6F35C91908CDE7002051ED /* ScreenshotGestureListener.m */; };
 		1D7E1E9519E2A90F00E5754E /* PushPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E586D196A827A00FF9FC0 /* PushPlugin.m */; };
-		1D7E1E9619E2A90F00E5754E /* PickContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D02CDFF19531D41003A8C2F /* PickContact.m */; };
 		1D7E1E9719E2A90F00E5754E /* CDVDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9920240F974842C08E3C61EA /* CDVDevice.m */; };
 		1D7E1E9819E2A90F00E5754E /* CDVInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = B357E14529B745B4AEF4D613 /* CDVInAppBrowser.m */; };
 		1D7E1E9919E2A90F00E5754E /* CDVFile.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA2D6AB6D364653839AC60B /* CDVFile.m */; };
@@ -29,8 +27,6 @@
 		1D7E1EA319E2AA9100E5754E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 994E9862B7E0481DAE979731 /* SystemConfiguration.framework */; };
 		1D7E1EA419E2AAA400E5754E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F713FA28964CB18D9D3278 /* libsqlite3.dylib */; };
 		1D7E1EA519E2AAAB00E5754E /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B82173E04CF6475A970FD85E /* ImageIO.framework */; };
-		1D7E1EA619E2AABA00E5754E /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F583DEA5C56F422C875065F3 /* AddressBook.framework */; };
-		1D7E1EA719E2AABA00E5754E /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD5266640B0344749F49768A /* AddressBookUI.framework */; };
 		1D933EBA18F26F6400C82F37 /* AnnoCordovaPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D933EB918F26F6400C82F37 /* AnnoCordovaPlugin.m */; };
 		1DAA38FE19023FC600FCE403 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */; };
 		1DAA39011902406000FCE403 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 305D5FD0115AB8F900A74A75 /* MobileCoreServices.framework */; };
@@ -164,8 +160,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1D7E1EA619E2AABA00E5754E /* AddressBook.framework in Frameworks */,
-				1D7E1EA719E2AABA00E5754E /* AddressBookUI.framework in Frameworks */,
 				1D7E1EA519E2AAAB00E5754E /* ImageIO.framework in Frameworks */,
 				1D7E1EA419E2AAA400E5754E /* libsqlite3.dylib in Frameworks */,
 				1D7E1EA319E2AA9100E5754E /* SystemConfiguration.framework in Frameworks */,
@@ -494,7 +488,6 @@
 				1D7E1E9E19E2A95300E5754E /* CDVCamera.m in Sources */,
 				1D7E1E9F19E2A95300E5754E /* CDVJpegHeaderWriter.m in Sources */,
 				1D7E1E9519E2A90F00E5754E /* PushPlugin.m in Sources */,
-				1D7E1E9619E2A90F00E5754E /* PickContact.m in Sources */,
 				1D7E1E9719E2A90F00E5754E /* CDVDevice.m in Sources */,
 				1D7E1E9819E2A90F00E5754E /* CDVInAppBrowser.m in Sources */,
 				1D7E1E9919E2A90F00E5754E /* CDVFile.m in Sources */,

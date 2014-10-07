@@ -218,13 +218,6 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/com.kolwit.pickcontact/www/PickContact.js",
-        "id": "com.kolwit.pickcontact.PickContact",
-        "clobbers": [
-            "PickContact"
-        ]
-    },
-    {
         "file": "plugins/com.phonegap.plugins.PushPlugin/www/PushNotification.js",
         "id": "com.phonegap.plugins.PushPlugin.PushNotification",
         "clobbers": [
@@ -243,7 +236,6 @@ module.exports.metadata =
     "org.apache.cordova.inappbrowser": "0.5.2",
     "com.brodysoft.sqlitePlugin": "1.0.3",
     "nl.x-services.plugins.socialsharing": "4.3.8",
-    "com.kolwit.pickcontact": "1.0.4",
     "com.phonegap.plugins.PushPlugin": "2.3.1"
 }
 // BOTTOM OF METADATA

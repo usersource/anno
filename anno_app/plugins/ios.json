@@ -45,10 +45,6 @@
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"PickContact\"><param name=\"ios-package\" value=\"PickContact\" /></feature>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<feature name=\"PushPlugin\"><param name=\"ios-package\" value=\"PushPlugin\" /></feature>",
                             "count": 1
                         }
@@ -119,18 +115,8 @@
                             "count": 1
                         }
                     ],
-                    "AddressBook.framework": [
-                        {
-                            "xml": "false",
-                            "count": 1
-                        }
-                    ],
-                    "AddressBookUI.framework": [
-                        {
-                            "xml": "false",
-                            "count": 1
-                        }
-                    ]
+                    "AddressBook.framework": [],
+                    "AddressBookUI.framework": []
                 }
             },
             "*-Info.plist": {
@@ -189,9 +175,6 @@
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "nl.x-services.plugins.socialsharing": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        },
-        "com.kolwit.pickcontact": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "com.phonegap.plugins.PushPlugin": {

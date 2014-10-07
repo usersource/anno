@@ -37,10 +37,6 @@
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"PickContact\"><param name=\"android-package\" value=\"com.kolwit.cordova.PickContactPlugin\" /></feature>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<feature name=\"PushPlugin\"><param name=\"android-package\" value=\"com.plugin.gcm.PushPlugin\" /></feature>",
                             "count": 1
                         }
@@ -64,10 +60,6 @@
                         },
                         {
                             "xml": "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\" />",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<uses-permission android:name=\"android.permission.READ_CONTACTS\" />",
                             "count": 1
                         }
                     ],
@@ -177,9 +169,6 @@
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "nl.x-services.plugins.socialsharing": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        },
-        "com.kolwit.pickcontact": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "com.phonegap.plugins.PushPlugin": {
