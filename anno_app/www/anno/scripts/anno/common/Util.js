@@ -500,7 +500,7 @@
             if (token)
             {
                 var tokenObject = dojoJson.parse(decodeURIComponent(token[1]));
-                console.error("got token object:" + JSON.stringify(tokenObject));
+                console.log("got token object:" + JSON.stringify(tokenObject));
 
                 return tokenObject;
             }
@@ -529,9 +529,8 @@
         needAuth:function(token)
         {
             var ret = false;
-            console.error("_localUserInfo:"+JSON.stringify(_localUserInfo));
-            if ((!token&&!_hasUserInLocalDB)||(!token&&_hasUserInLocalDB&&_localUserInfo.signinmethod=='google'))
-            {
+            console.log("_localUserInfo:" + JSON.stringify(_localUserInfo));
+            if ((!token && !_hasUserInLocalDB) || (!token && _hasUserInLocalDB && _localUserInfo.signinmethod == 'google')) {
                 ret = true;
             }
 
@@ -561,7 +560,7 @@
             token.expires_in = 3600*24;
             token.access_token = this.encodeBase64(userInfo.email+":"+userInfo.password);
 
-            console.error("basic token:"+ JSON.stringify(token));
+            console.log("basic token:" + JSON.stringify(token));
 
             return token;
         },
@@ -978,7 +977,7 @@
                             util.showErrorMessage({type: util.ERROR_TYPES.API_RESPONSE_EMPTY, message:"API response is empty."}, true);
                         }
 
-                        console.error("API response is empty.");
+                        console.log("API response is empty.");
 
                         if (config.error)
                         {

@@ -114,7 +114,7 @@ define([
                     'auth_source':'Google'
                 },
                 success: function(data){
-                    console.error("bind_account:"+JSON.stringify(data));
+                    console.log("bind_account:" + JSON.stringify(data));
                     AnnoDataHandler.saveUserInfo(userInfo, function(){
                         _currentAuthResult.newUser = true;
                         doCallback(_currentAuthResult);
@@ -135,7 +135,7 @@ define([
 
         var authCallback = function(result)
         {
-            console.error("authCallback invoked.");
+            console.log("authCallback invoked.");
             annoUtil.hideLoadingIndicator();
             if (result.success)
             {
@@ -228,7 +228,7 @@ define([
             }
 
 
-            console.error("authCallback url:" + cbURL);
+            console.log("authCallback url:" + cbURL);
             window.open(cbURL, "_self");
         };
 
