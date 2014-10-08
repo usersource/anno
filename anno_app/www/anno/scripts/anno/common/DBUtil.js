@@ -31,7 +31,7 @@ define([
         reconnectToDB:function()
         {
             this.annoDB = window.sqlitePlugin.openDatabase({name: "anno", bgType2: 1});
-            console.error("db reconnected.");
+            console.log("db reconnected.");
         },
         checkTables: function()
         {
@@ -105,7 +105,7 @@ define([
                         if (!tempObj["signedup"])
                         {
                             self.annoDB.executeSql("alter table app_users add column signedup integer default 0", [], function(pures){
-                                console.error("signedup column added.");
+                                console.log("signedup column added.");
 
                                 self.annoDB.executeSql("update app_users set signedup=?", [1], function(pures){
                                     if (pures)
@@ -113,12 +113,12 @@ define([
                                         self.annoDB.executeSql("select * from app_users", [], function(psres){
                                             if (psres)
                                             {
-                                                console.error("app_users2: "+psres.rows.length);
+                                                console.log("app_users2: " + psres.rows.length);
                                                 self.hasUserInLocalDB = psres.rows.length>0;
                                                 if (psres.rows.length>0)
                                                     self.localUserInfo = psres.rows.item(0);
                                                 self.userChecked = true;
-                                                console.error("app_users: "+JSON.stringify(self.localUserInfo));
+                                                console.log("app_users: " + JSON.stringify(self.localUserInfo));
                                             }
                                         });
                                     }
@@ -196,9 +196,9 @@ define([
                     if (columns[i].extra !== undefined)
                         alter_stmnt += (' ' + columns[i].extra);
 
-                    console.error("Do Upgrade Schema: " + alter_stmnt);
+                    console.log("Do Upgrade Schema: " + alter_stmnt);
                     self.annoDB.executeSql(alter_stmnt, [], function(res) {
-                        console.error("Add Column: " + JSON.stringify(res));
+                        console.log("Add Column: " + JSON.stringify(res));
                     }); 
                 }
 
@@ -250,7 +250,7 @@ define([
                     if (psres.rows.length>0)
                         self.localUserInfo = psres.rows.item(0);
                     self.userChecked = true;
-                    console.error("app_users: "+JSON.stringify(self.localUserInfo));
+                    console.log("app_users: " + JSON.stringify(self.localUserInfo));
                 }
             });
         },
