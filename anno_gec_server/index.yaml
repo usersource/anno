@@ -17,6 +17,12 @@ indexes:
 
 - kind: Anno
   properties:
+  - name: anno_id
+  - name: last_update_time
+    direction: desc
+
+- kind: Anno
+  properties:
   - name: anno_text
   - name: x
   - name: y
