@@ -24,6 +24,7 @@ class Anno(BaseModel):
     """
     This class represents Annotation Model(in datastore).
     """
+    anno_id = ndb.IntegerProperty()
     anno_text = ndb.StringProperty(required=True)
 #     simple_x = ndb.FloatProperty(required=True)
 #     simple_y = ndb.FloatProperty(required=True)
@@ -156,6 +157,9 @@ class Anno(BaseModel):
         entity.last_update_time = datetime.datetime.now()
         entity.last_activity = 'UserSource'
         entity.last_update_type = 'create'
+        anno_key = entity.put()
+
+        entity.anno_id = anno_key.id()
         entity.put()
 
         # update user anno state
@@ -429,13 +433,25 @@ class Anno(BaseModel):
         return None
 
     @classmethod
-    def query_my_anno(cls, user):
-        query = cls.query().filter(cls.creator == user.key).order(-cls.last_update_time)
-        anno_list = []
-        for anno in query:
-            anno_message = anno.to_response_message(user)
-            anno_list.append(anno_message)
-        return anno_list
+    def query_my_anno(cls, limit, curs, user):
+        if user:
+            from model.userannostate import UserAnnoState
+            userannostate_list = UserAnnoState.list_by_user(user_key=user.key)
+            anno_id_list = [ userannostate.anno.id() for userannostate in userannostate_list ]
+
+            anno_message_list = []
+            more = False
+            if len(anno_id_list):
+                query = cls.query(cls.anno_id.IN(anno_id_list)).order(-cls.last_update_time, cls.key)
+                anno_list, next_curs, more = query.fetch_page(limit, start_cursor=curs)
+                anno_message_list = [ anno.to_response_message(user) for anno in anno_list if anno is not None ]
+
+            if more:
+                return AnnoListMessage(anno_list=anno_message_list, cursor=next_curs.urlsafe(), has_more=more)
+            else:
+                return AnnoListMessage(anno_list=anno_message_list, has_more=more)
+        else:
+            return AnnoListMessage(anno_list=[])
 
     @classmethod
     def query_by_followup(cls, search_string, query_string):
