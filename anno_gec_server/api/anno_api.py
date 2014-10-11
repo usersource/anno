@@ -136,7 +136,7 @@ class AnnoApi(remote.Service):
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
 
         # set anno basic properties
-        anno_resp_message = anno.to_response_message(user)
+        anno_resp_message = anno.to_response_message(user, list_message=False)
 
         # set anno association with followups
         followups = FollowUp.find_by_anno(anno)
