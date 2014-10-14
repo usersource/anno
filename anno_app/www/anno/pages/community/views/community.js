@@ -117,10 +117,17 @@ define([
             connect.connect(items[items.length-1].domNode.querySelector(".icon-search"), 'click', function(e)
             {
                 dojo.stopEvent(e);
-                window.plugins.PickContact.chooseContact(function(contact) {
-                    inviteNewMember(contact.displayName, contact.emailAddress);
+                navigator.contacts.pickContact(function(contact) {
+                    var contact_name = contact.name.formatted,
+                        contact_emails = contact.emails;
+
+                    if (contact_emails && contact_emails.length) {
+                        inviteNewMember(contact_name, contact_emails[0].value);
+                    } else {
+                        annoUtil.showMessageDialog("Selected contact doesn't have an email address.");
+                    }
                 }, function(err) {
-                    console.log('Error: ' + err);
+                    console.error("Error:" + err);
                 });
             });
 

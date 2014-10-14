@@ -28,7 +28,7 @@ class UpdateAnnoHandler(webapp2.RequestHandler):
 #         add_lowercase_appname()
 #         delete_all_anno_indices()
         update_anno_schema()
-        update_followup_indices()
+#         update_followup_indices()
 #         update_userannostate_schema_from_anno_action(cls=Vote)
 #         update_userannostate_schema_from_anno_action(cls=FollowUp)
 #         update_userannostate_schema_from_anno_action(cls=Flag)
@@ -72,10 +72,15 @@ def update_anno_schema(cursor=None):
 #             anno.app = appinfo.key
 #             anno_update_list.append(anno)
 
-        # updating anno schema
+        # updating anno schema for community
 #         if not anno.community:
 #             anno.community = None
 #             anno_update_list.append(anno)
+
+        # updating anno schema for anno_id
+        if not anno.anno_id:
+            anno.anno_id = anno.key.id()
+            anno_update_list.append(anno)
 
         # updating userannostate from anno
 #         update_userannostate_schema_from_anno(anno)
@@ -84,10 +89,10 @@ def update_anno_schema(cursor=None):
 #         regenerate_index(anno, SearchIndexName.ANNO)
 
         # extract tag
-        create_tags(anno.anno_text)
+#         create_tags(anno.anno_text)
 
-#     if len(anno_update_list):
-#         ndb.put_multi(anno_update_list)
+    if len(anno_update_list):
+        ndb.put_multi(anno_update_list)
 
     if more:
         update_anno_schema(cursor=cursor)

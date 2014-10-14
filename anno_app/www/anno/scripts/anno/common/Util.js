@@ -24,6 +24,7 @@
     // console.log("using server Url config:" + JSON.stringify(serverURLConfig));
     var popularTags = [];
     var suggestTags = false, countToSuggestTags = 0, tagStringArray = [];
+    var previousTagDiv = "", inputValueLength = 0;
     var MIN_CHAR_TO_SUGGEST_TAGS = 2;
     var timings = [{label: 'start', t: Date.now()}];
     var util = {
@@ -103,11 +104,17 @@
             "iPhone1,2" : "iPhone3G",
             "iPhone2,1" : "iPhone3GS",
             "iPhone3,1" : "iPhone4",
+            "iPhone3,2" : "iPhone4",
+            "iPhone3,3" : "iPhone4",
             "iPhone4,1" : "iPhone4S",
             "iPhone5,1" : "iPhone5GSM",
             "iPhone5,2" : "iPhone5CDMA",
             "iPhone5,3" : "iPhone5C",
-            "iPhone6,1" : "iPhone5S"
+            "iPhone5,4" : "iPhone5C",
+            "iPhone6,1" : "iPhone5S",
+            "iPhone6,2" : "iPhone5S",
+            "iPhone7,1" : "iPhone6Plus",
+            "iPhone7,2" : "iPhone6"
         },
         versionInfo: { "version" : "", "build" : "" },
         analytics: {
@@ -493,7 +500,7 @@
             if (token)
             {
                 var tokenObject = dojoJson.parse(decodeURIComponent(token[1]));
-                console.error("got token object:" + JSON.stringify(tokenObject));
+                console.log("got token object:" + JSON.stringify(tokenObject));
 
                 return tokenObject;
             }
@@ -522,9 +529,8 @@
         needAuth:function(token)
         {
             var ret = false;
-            console.error("_localUserInfo:"+JSON.stringify(_localUserInfo));
-            if ((!token&&!_hasUserInLocalDB)||(!token&&_hasUserInLocalDB&&_localUserInfo.signinmethod=='google'))
-            {
+            console.log("_localUserInfo:" + JSON.stringify(_localUserInfo));
+            if ((!token && !_hasUserInLocalDB) || (!token && _hasUserInLocalDB && _localUserInfo.signinmethod == 'google')) {
                 ret = true;
             }
 
@@ -554,7 +560,7 @@
             token.expires_in = 3600*24;
             token.access_token = this.encodeBase64(userInfo.email+":"+userInfo.password);
 
-            console.error("basic token:"+ JSON.stringify(token));
+            console.log("basic token:" + JSON.stringify(token));
 
             return token;
         },
@@ -971,7 +977,7 @@
                             util.showErrorMessage({type: util.ERROR_TYPES.API_RESPONSE_EMPTY, message:"API response is empty."}, true);
                         }
 
-                        console.error("API response is empty.");
+                        console.log("API response is empty.");
 
                         if (config.error)
                         {
@@ -1082,19 +1088,42 @@
 
             this.callGAEAPI(APIConfig);
         },
+        showTagDiv: function(tagDiv) {
+            domStyle.set(tagDiv, "display", "");
+            this.disableNativeGesture();
+        },
+        hideTagDiv: function(tagDiv) {
+            domStyle.set(tagDiv, "display", "none");
+            this.enableNativeGesture();
+        },
         resetTagSuggestion: function(tagDiv) {
             suggestTags = false;
             countToSuggestTags = 0;
             tagStringArray = [];
-            domStyle.set(tagDiv, "display", "none");
+            this.hideTagDiv(tagDiv);
+            previousTagDiv = "";
+            inputValueLength = 0;
         },
-        showSuggestedTags: function(event, tagDiv, inputDiv) {
-            var keyCode = event.keyCode;
+        showSuggestedTags: function(e, tagDiv, inputDiv) {
+            var inputDom = dom.byId(inputDiv),
+                inputValue = inputDom.value,
+                keyCodeNull = false,
+                keyCode = 0,
+                charDeleted = false;
 
-            // for detecting '#' on different platforms:
-            // iOS - event.keyIdentifier should be "U+0023"
-            // Andriod - event.keyCode should be 51 and event.shiftKey should be true
-            if ((event.keyIdentifier == "U+0023") || (keyCode == 51 && event.shiftKey == true)) {
+            if (previousTagDiv && (previousTagDiv === tagDiv) && (inputValueLength > 0) && (inputValueLength > inputValue.length)) {
+                charDeleted = true;
+            }
+
+            previousTagDiv = tagDiv;
+            inputValueLength = inputValue.length;
+
+            if (!charDeleted) {
+                keyCodeNull = true;
+                keyCode = inputValue.toUpperCase().charCodeAt(inputDom.selectionStart - 1);
+            }
+
+            if (keyCode === 35 && keyCodeNull === true) {
                 suggestTags = true;
                 countToSuggestTags = 0;
                 tagStringArray = [];
@@ -1102,7 +1131,7 @@
                 if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90)) {
                     countToSuggestTags += 1;
                     tagStringArray.push(String.fromCharCode(keyCode));
-                } else if (keyCode == 8) {
+                } else if (keyCode === 8 || charDeleted) {
                     countToSuggestTags -= 1;
                     tagStringArray.pop();
                 } else {
@@ -1112,7 +1141,7 @@
                 if (countToSuggestTags >= MIN_CHAR_TO_SUGGEST_TAGS) {
                     this.getTagStrings(tagDiv, inputDiv);
                 } else {
-                    domStyle.set(tagDiv, "display", "none");
+                    this.hideTagDiv(tagDiv);
                 }
             }
         },
@@ -1137,18 +1166,18 @@
                     input.value = input.value.replaceAt(replaceIndex, tagString.length, tag + " ");
                     annoUtil.resetTagSuggestion(tagDiv);
 
-                    /*setTimeout(function() {
-                        input.focus();
-                        input.select();
+                    setTimeout(function() {
+                        // input.focus();
+                        // input.select();
                         input.selectionStart = input.value.length;
-                    }, 1000);*/
+                    }, 100);
                 });
             });
 
             if (suggestedTagsArray.length) {
-                domStyle.set(tagDiv, "display", "");
+                this.showTagDiv(tagDiv);
             } else {
-                domStyle.set(tagDiv, "display", "none");
+                this.hideTagDiv(tagDiv);
             }
         },
         parseDeviceModel: function(deviceModel) {

@@ -66,19 +66,15 @@ FileEntry.prototype.createWriter = function(successCallback, errorCallback) {
  * @param {Function} errorCallback is called with a FileError
  */
 FileEntry.prototype.file = function(successCallback, errorCallback) {
-    var localURL = this.filesystem.__format__(this.fullPath);
+    var localURL = this.toInternalURL();
     var win = successCallback && function(f) {
-        //var file = new File(f.name, localURL, f.type, f.lastModifiedDate, f.size);
-        // modified by David Lee
-        var file = new File(f.name, f.fullPath, f.type, f.lastModifiedDate, f.size);
+        var file = new File(f.name, localURL, f.type, f.lastModifiedDate, f.size);
         successCallback(file);
     };
     var fail = errorCallback && function(code) {
         errorCallback(new FileError(code));
     };
-    //exec(win, fail, "File", "getFileMetadata", [localURL]);
-    // modified by David Lee
-    exec(win, fail, "File", "getFileMetadata", [this.fullPath]);
+    exec(win, fail, "File", "getFileMetadata", [localURL]);
 };
 
 

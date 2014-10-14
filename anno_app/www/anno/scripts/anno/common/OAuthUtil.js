@@ -76,7 +76,7 @@ define([
                     handleAs: "json"
                 }).then(function (data)
                     {
-                        console.error("post res: " + JSON.stringify(data));
+                        console.log("post res: " + JSON.stringify(data));
 
                         if (data&&data.refresh_token)
                         {
@@ -136,10 +136,10 @@ define([
                 }
                 else
                 {
-                    console.error("oauth loaded");
+                    console.log("oauth loaded");
                     var request = gapi.client.oauth2.userinfo.get();
                     request.execute(function(userinfo){
-                        console.error("get userinfo res: "+ userinfo);
+                        console.log("get userinfo res: " + userinfo);
                         if (userinfo.error)
                         {
                             annoUtil.showErrorMessage({type: annoUtil.ERROR_TYPES.API_CALL_FAILED, message: "Get userinfo failed: "+ userinfo.error.message});
@@ -302,10 +302,9 @@ define([
         },
         openAuthPage: function(source)
         {
-            var url = this.getPhoneGapPath(source)+"anno/pages/auth/main.html?callback="+document.location.href;
+            var url = this.getPhoneGapPath(source) + "anno/pages/auth/main.html?callback=" + document.location.href;
             var ref2 = window.open(url, '_self', 'location=no');
-
-            console.error("anno auth page url: "+url);
+            console.log("anno auth page url: " + url);
         },
         processBasicAuthToken: function(userInfo)
         {

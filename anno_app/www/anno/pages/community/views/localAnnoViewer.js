@@ -72,7 +72,7 @@ define([
 
                 surface.parse(elementsObject, lineStrokeStyle, arrowHeadFillStyle);
 
-                console.error('redrawShapes end');
+                console.log('redrawShapes end');
             }
             else
             {

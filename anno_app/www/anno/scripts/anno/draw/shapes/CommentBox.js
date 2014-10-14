@@ -130,30 +130,29 @@ define([
                     this.inputElement.value = comment;
                 }
 
-                this._connects.push(connect.connect(this.inputElement, "blur", this, function (e)
-                {
-                    domStyle.set(this.txtNode, 'display', '');
-                    domStyle.set(this.inputNode, 'display', 'none');
+                this._connects.push(connect.connect(this.inputElement, "blur", this, function(e) {
+                    var self = this;
 
-                    var textDiv = dom.byId('textDiv_'+this.id);
-                    textDiv.innerHTML = this.inputElement.value.replace(/\n/g, "<br>");
+                    setTimeout(function() {
+                        domStyle.set(self.txtNode, 'display', '');
+                        domStyle.set(self.inputNode, 'display', 'none');
 
-                    if (this.inputElement.value.length <=0)
-                    {
-                        textDiv.innerHTML = this.placeholder;
-                        domStyle.set(textDiv, 'color', this.grayColor);
-                    }
-                    else
-                    {
-                        domStyle.set(textDiv, 'color', this.normalColor);
-                    }
+                        var textDiv = dom.byId('textDiv_' + self.id);
+                        textDiv.innerHTML = self.inputElement.value.replace(/\n/g, "<br>");
 
-                    dom.byId("hiddenBtn").focus();
+                        if (self.inputElement.value.length <= 0) {
+                            textDiv.innerHTML = self.placeholder;
+                            domStyle.set(textDiv, 'color', self.grayColor);
+                        } else {
+                            domStyle.set(textDiv, 'color', self.normalColor);
+                        }
 
-                    if (this.onCommentBoxBlur)
-                    {
-                        this.onCommentBoxBlur(this);
-                    }
+                        dom.byId("hiddenBtn").focus();
+
+                        if (self.onCommentBoxBlur) {
+                            self.onCommentBoxBlur(self);
+                        }
+                    }, 0);
                 }));
 
                 this._connects.push(connect.connect(this.inputElement, "keydown", this, function (e)
@@ -182,7 +181,7 @@ define([
                 {
                     if (this.onCommentBoxInput)
                     {
-                        this.onCommentBoxInput(this);
+                        this.onCommentBoxInput(this, e);
                     }
                 }));
 

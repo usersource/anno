@@ -144,7 +144,7 @@ define([
                 cbURL = _callbackURL+"?token=9&newuser=1&signinmethod=anno";
             }
 
-            console.error("authCallback url:" + cbURL);
+            console.log("authCallback url:" + cbURL);
             window.open(cbURL, "_self");
         };
 
@@ -155,7 +155,7 @@ define([
                 var params = annoUtil.parseUrlParams(document.location.search);
                 _callbackURL = params['callback'];
 
-                console.error("_callbackURL:"+_callbackURL);
+                console.log("_callbackURL:" + _callbackURL);
 
                 app = this.app;
 

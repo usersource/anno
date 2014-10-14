@@ -114,8 +114,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 		} else {
 			mBuilder.setContentText("<missing message content>");
 		}
-
-		// added by Ignite Team (not present in PushPlugin)
+		
 		if (extras.getString("bigview") != null) {
 			boolean bigview = Boolean.parseBoolean(extras.getString("bigview"));
 			if (bigview) {

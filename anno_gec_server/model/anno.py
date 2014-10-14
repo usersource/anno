@@ -12,6 +12,7 @@ from google.appengine.ext import ndb
 
 from message.anno_api_messages import AnnoResponseMessage
 from message.anno_api_messages import AnnoListMessage
+from message.user_message import UserMessage
 from model.base_model import BaseModel
 from model.community import Community
 from model.appinfo import AppInfo
@@ -23,6 +24,7 @@ class Anno(BaseModel):
     """
     This class represents Annotation Model(in datastore).
     """
+    anno_id = ndb.IntegerProperty()
     anno_text = ndb.StringProperty(required=True)
 #     simple_x = ndb.FloatProperty(required=True)
 #     simple_y = ndb.FloatProperty(required=True)
@@ -60,31 +62,37 @@ class Anno(BaseModel):
     def __hash__(self):
         return hash(self.key.id())
 
-    def to_response_message(self, user):
+    def to_response_message(self, user, list_message=True):
         """
         Convert anno model to AnnoResponseMessage.
         """
         user_message = None
         if self.creator is not None:
-            user_message = self.creator.get().to_message()
+            user_info = self.creator.get()
+            user_message = UserMessage(display_name=user_info.display_name)
 
         app = self.app.get() if self.app else None
         app_name = app.name if app else self.app_name
         app_icon_url = app.icon_url if app else None
         app_version = app.version if app else self.app_version
 
-        anno_read_status = False
-        if user:
-            from model.userannostate import UserAnnoState
-            anno_read_status = UserAnnoState.is_read(user, self)
+        if list_message:
+            anno_read_status = False
+            if user:
+                from model.userannostate import UserAnnoState
+                anno_read_status = UserAnnoState.is_read(user, self)
 
-        return AnnoResponseMessage(id=self.key.id(),
+            anno_message = AnnoResponseMessage(id=self.key.id(), anno_text=self.anno_text,
+                                               anno_type=self.anno_type, app_name=app_name,
+                                               app_icon_url=app_icon_url, created=self.created,
+                                               creator=user_message, last_update_time=self.last_update_time,
+                                               last_activity=self.last_activity, last_update_type=self.last_update_type,
+                                               anno_read_status=anno_read_status
+                                            )
+        else:
+            anno_message = AnnoResponseMessage(id=self.key.id(),
                                    anno_text=self.anno_text,
-#                                    simple_x=self.simple_x,
-#                                    simple_y=self.simple_y,
                                    anno_type=self.anno_type,
-#                                    simple_circle_on_top=self.simple_circle_on_top,
-#                                    simple_is_moved=self.simple_is_moved,
                                    level=self.level,
                                    device_model=self.device_model,
                                    app_name=app_name,
@@ -96,17 +104,15 @@ class Anno(BaseModel):
                                    creator=user_message,
                                    draw_elements=self.draw_elements,
                                    screenshot_is_anonymized=self.screenshot_is_anonymized,
-                                   latitude=self.latitude,
-                                   longitude=self.longitude,
-                                   country=self.country,
                                    vote_count=self.vote_count,
                                    flag_count=self.flag_count,
                                    followup_count=self.followup_count,
                                    last_update_time=self.last_update_time,
                                    last_activity=self.last_activity,
                                    last_update_type=self.last_update_type,
-                                   anno_read_status=anno_read_status
         )
+
+        return anno_message
 
     def to_response_message_by_projection(self, projection):
         """
@@ -151,6 +157,9 @@ class Anno(BaseModel):
         entity.last_update_time = datetime.datetime.now()
         entity.last_activity = 'UserSource'
         entity.last_update_type = 'create'
+        anno_key = entity.put()
+
+        entity.anno_id = anno_key.id()
         entity.put()
 
         # update user anno state
@@ -424,13 +433,25 @@ class Anno(BaseModel):
         return None
 
     @classmethod
-    def query_my_anno(cls, user):
-        query = cls.query().filter(cls.creator == user.key).order(-cls.last_update_time)
-        anno_list = []
-        for anno in query:
-            anno_message = anno.to_response_message(user)
-            anno_list.append(anno_message)
-        return anno_list
+    def query_my_anno(cls, limit, curs, user):
+        if user:
+            from model.userannostate import UserAnnoState
+            userannostate_list = UserAnnoState.list_by_user(user_key=user.key)
+            anno_id_list = [ userannostate.anno.id() for userannostate in userannostate_list ]
+
+            anno_message_list = []
+            more = False
+            if len(anno_id_list):
+                query = cls.query(cls.anno_id.IN(anno_id_list)).order(-cls.last_update_time, cls.key)
+                anno_list, next_curs, more = query.fetch_page(limit, start_cursor=curs)
+                anno_message_list = [ anno.to_response_message(user) for anno in anno_list if anno is not None ]
+
+            if more:
+                return AnnoListMessage(anno_list=anno_message_list, cursor=next_curs.urlsafe(), has_more=more)
+            else:
+                return AnnoListMessage(anno_list=anno_message_list, has_more=more)
+        else:
+            return AnnoListMessage(anno_list=[])
 
     @classmethod
     def query_by_followup(cls, search_string, query_string):

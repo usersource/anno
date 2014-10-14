@@ -136,7 +136,7 @@ class AnnoApi(remote.Service):
             raise endpoints.NotFoundException('No anno entity with the id "%s" exists.' % request.id)
 
         # set anno basic properties
-        anno_resp_message = anno.to_response_message(user)
+        anno_resp_message = anno.to_response_message(user, list_message=False)
 
         # set anno association with followups
         followups = FollowUp.find_by_anno(anno)
@@ -150,7 +150,6 @@ class AnnoApi(remote.Service):
             anno_resp_message.is_my_flag = Flag.is_belongs_user(anno, user)
 
             # update last_read of UserAnnoState
-            from model.userannostate import UserAnnoState
             UserAnnoState.update_last_read(user=user, anno=anno)
 
         return anno_resp_message
@@ -291,22 +290,23 @@ class AnnoApi(remote.Service):
         return message_types.VoidMessage()
 
 
-    @endpoints.method(message_types.VoidMessage, AnnoListMessage, path='anno_my_stuff',
+    @endpoints.method(anno_list_resource_container, AnnoListMessage, path='anno_my_stuff',
                       http_method='GET', name='anno.mystuff')
     def anno_my_stuff(self, request):
         """
         Exposes an API endpoint to return all my anno list.
         """
         user = auth_user(self.request_state.headers)
-        userannostate_list = UserAnnoState.list_by_user(user.key)
-        anno_key_list = [ userannostate.anno for userannostate in userannostate_list ]
+        limit = request.limit or 10
 
-        anno_message_list = []
-        if len(anno_key_list):
-            anno_list = Anno.query(Anno.key.IN(anno_key_list)).order(-Anno.last_update_time).fetch()
-            anno_message_list = [ anno.to_response_message(user) for anno in anno_list if anno is not None ]
+        curs = None
+        if request.cursor is not None:
+            try:
+                curs = Cursor(urlsafe=request.cursor)
+            except BadValueError:
+                raise endpoints.BadRequestException('Invalid cursor %s.' % request.cursor)
 
-        return AnnoListMessage(anno_list=anno_message_list)
+        return Anno.query_my_anno(limit, curs, user)
 
 
     @endpoints.method(anno_search_resource_container, AnnoListMessage, path='anno_search', http_method='GET',
