@@ -8,21 +8,6 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/org.apache.cordova.network-information/www/network.js",
-        "id": "org.apache.cordova.network-information.network",
-        "clobbers": [
-            "navigator.connection",
-            "navigator.network.connection"
-        ]
-    },
-    {
-        "file": "plugins/org.apache.cordova.network-information/www/Connection.js",
-        "id": "org.apache.cordova.network-information.Connection",
-        "clobbers": [
-            "Connection"
-        ]
-    },
-    {
         "file": "plugins/org.apache.cordova.file/www/DirectoryEntry.js",
         "id": "org.apache.cordova.file.DirectoryEntry",
         "clobbers": [
@@ -131,6 +116,10 @@ module.exports = [
         ]
     },
     {
+        "file": "plugins/org.apache.cordova.file/www/fileSystems.js",
+        "id": "org.apache.cordova.file.fileSystems"
+    },
+    {
         "file": "plugins/org.apache.cordova.file/www/requestFileSystem.js",
         "id": "org.apache.cordova.file.requestFileSystem",
         "clobbers": [
@@ -145,17 +134,66 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/org.apache.cordova.file/www/ios/Entry.js",
-        "id": "org.apache.cordova.file.iosEntry",
-        "merges": [
-            "window.Entry"
-        ]
-    },
-    {
         "file": "plugins/org.apache.cordova.file/www/ios/FileSystem.js",
         "id": "org.apache.cordova.file.iosFileSystem",
         "merges": [
-            "window.FileSystem"
+            "FileSystem"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.file/www/fileSystems-roots.js",
+        "id": "org.apache.cordova.file.fileSystems-roots",
+        "runs": true
+    },
+    {
+        "file": "plugins/org.apache.cordova.file/www/fileSystemPaths.js",
+        "id": "org.apache.cordova.file.fileSystemPaths",
+        "merges": [
+            "cordova"
+        ],
+        "runs": true
+    },
+    {
+        "file": "plugins/org.apache.cordova.camera/www/CameraConstants.js",
+        "id": "org.apache.cordova.camera.Camera",
+        "clobbers": [
+            "Camera"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.camera/www/CameraPopoverOptions.js",
+        "id": "org.apache.cordova.camera.CameraPopoverOptions",
+        "clobbers": [
+            "CameraPopoverOptions"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.camera/www/Camera.js",
+        "id": "org.apache.cordova.camera.camera",
+        "clobbers": [
+            "navigator.camera"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.camera/www/ios/CameraPopoverHandle.js",
+        "id": "org.apache.cordova.camera.CameraPopoverHandle",
+        "clobbers": [
+            "CameraPopoverHandle"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.network-information/www/network.js",
+        "id": "org.apache.cordova.network-information.network",
+        "clobbers": [
+            "navigator.connection",
+            "navigator.network.connection"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.network-information/www/Connection.js",
+        "id": "org.apache.cordova.network-information.Connection",
+        "clobbers": [
+            "Connection"
         ]
     },
     {
@@ -187,36 +225,15 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/org.apache.cordova.camera/www/CameraConstants.js",
-        "id": "org.apache.cordova.camera.Camera",
+        "file": "plugins/org.apache.cordova.inappbrowser/www/inappbrowser.js",
+        "id": "org.apache.cordova.inappbrowser.inappbrowser",
         "clobbers": [
-            "Camera"
+            "window.open"
         ]
     },
     {
-        "file": "plugins/org.apache.cordova.camera/www/CameraPopoverOptions.js",
-        "id": "org.apache.cordova.camera.CameraPopoverOptions",
-        "clobbers": [
-            "CameraPopoverOptions"
-        ]
-    },
-    {
-        "file": "plugins/org.apache.cordova.camera/www/Camera.js",
-        "id": "org.apache.cordova.camera.camera",
-        "clobbers": [
-            "navigator.camera"
-        ]
-    },
-    {
-        "file": "plugins/org.apache.cordova.camera/www/ios/CameraPopoverHandle.js",
-        "id": "org.apache.cordova.camera.CameraPopoverHandle",
-        "clobbers": [
-            "CameraPopoverHandle"
-        ]
-    },
-    {
-        "file": "plugins/com.phonegap.plugins.sqlite/www/SQLitePlugin.js",
-        "id": "com.phonegap.plugins.sqlite.SQLitePlugin",
+        "file": "plugins/com.brodysoft.sqlitePlugin/www/SQLitePlugin.js",
+        "id": "com.brodysoft.sqlitePlugin.SQLitePlugin",
         "clobbers": [
             "SQLitePlugin"
         ]
@@ -229,13 +246,6 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/com.kolwit.pickcontact/www/PickContact.js",
-        "id": "com.kolwit.pickcontact.PickContact",
-        "clobbers": [
-            "PickContact"
-        ]
-    },
-    {
         "file": "plugins/com.phonegap.plugins.PushPlugin/www/PushNotification.js",
         "id": "com.phonegap.plugins.PushPlugin.PushNotification",
         "clobbers": [
@@ -243,26 +253,96 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/org.apache.cordova.inappbrowser/www/inappbrowser.js",
-        "id": "org.apache.cordova.inappbrowser.inappbrowser",
+        "file": "plugins/org.apache.cordova.contacts/www/contacts.js",
+        "id": "org.apache.cordova.contacts.contacts",
         "clobbers": [
-            "window.open"
+            "navigator.contacts"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/Contact.js",
+        "id": "org.apache.cordova.contacts.Contact",
+        "clobbers": [
+            "Contact"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/ContactAddress.js",
+        "id": "org.apache.cordova.contacts.ContactAddress",
+        "clobbers": [
+            "ContactAddress"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/ContactError.js",
+        "id": "org.apache.cordova.contacts.ContactError",
+        "clobbers": [
+            "ContactError"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/ContactField.js",
+        "id": "org.apache.cordova.contacts.ContactField",
+        "clobbers": [
+            "ContactField"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/ContactFindOptions.js",
+        "id": "org.apache.cordova.contacts.ContactFindOptions",
+        "clobbers": [
+            "ContactFindOptions"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/ContactName.js",
+        "id": "org.apache.cordova.contacts.ContactName",
+        "clobbers": [
+            "ContactName"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/ContactOrganization.js",
+        "id": "org.apache.cordova.contacts.ContactOrganization",
+        "clobbers": [
+            "ContactOrganization"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/ContactFieldType.js",
+        "id": "org.apache.cordova.contacts.ContactFieldType",
+        "merges": [
+            ""
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/ios/contacts.js",
+        "id": "org.apache.cordova.contacts.contacts-ios",
+        "merges": [
+            "navigator.contacts"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/ios/Contact.js",
+        "id": "org.apache.cordova.contacts.Contact-iOS",
+        "merges": [
+            "Contact"
         ]
     }
 ];
 module.exports.metadata = 
 // TOP OF METADATA
 {
-    "org.apache.cordova.device": "0.2.8",
-    "org.apache.cordova.network-information": "0.2.7",
-    "org.apache.cordova.file": "1.0.1",
-    "org.apache.cordova.geolocation": "0.3.6",
-    "org.apache.cordova.camera": "0.2.8",
-    "com.phonegap.plugins.sqlite": "1.0.0",
-    "nl.x-services.plugins.socialsharing": "4.3.0",
-    "com.kolwit.pickcontact": "1.0.2",
-    "com.phonegap.plugins.PushPlugin": "2.2.1",
-    "org.apache.cordova.inappbrowser": "0.5.0"
+    "org.apache.cordova.device": "0.2.12",
+    "org.apache.cordova.file": "1.3.1",
+    "org.apache.cordova.camera": "0.3.2",
+    "org.apache.cordova.network-information": "0.2.12",
+    "org.apache.cordova.geolocation": "0.3.10",
+    "org.apache.cordova.inappbrowser": "0.5.2",
+    "com.brodysoft.sqlitePlugin": "1.0.3",
+    "nl.x-services.plugins.socialsharing": "4.3.8",
+    "com.phonegap.plugins.PushPlugin": "2.3.1",
+    "org.apache.cordova.contacts": "0.2.13"
 }
 // BOTTOM OF METADATA
 });
