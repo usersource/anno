@@ -45,11 +45,11 @@
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"PushPlugin\"><param name=\"ios-package\" value=\"PushPlugin\" /></feature>",
+                            "xml": "<feature name=\"Contacts\"><param name=\"ios-package\" value=\"CDVContacts\" /></feature>",
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"Contacts\"><param name=\"ios-package\" value=\"CDVContacts\" /></feature>",
+                            "xml": "<feature name=\"PushPlugin\"><param name=\"ios-package\" value=\"PushPlugin\" /></feature>",
                             "count": 1
                         }
                     ]
@@ -191,10 +191,10 @@
         "nl.x-services.plugins.socialsharing": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
-        "com.phonegap.plugins.PushPlugin": {
+        "org.apache.cordova.contacts": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
-        "org.apache.cordova.contacts": {
+        "com.phonegap.plugins.PushPlugin": {
             "PACKAGE_NAME": "io.usersource.anno"
         }
     },
