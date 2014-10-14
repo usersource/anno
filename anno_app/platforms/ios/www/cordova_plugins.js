@@ -246,13 +246,6 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/com.phonegap.plugins.PushPlugin/www/PushNotification.js",
-        "id": "com.phonegap.plugins.PushPlugin.PushNotification",
-        "clobbers": [
-            "PushNotification"
-        ]
-    },
-    {
         "file": "plugins/org.apache.cordova.contacts/www/contacts.js",
         "id": "org.apache.cordova.contacts.contacts",
         "clobbers": [
@@ -328,6 +321,13 @@ module.exports = [
         "merges": [
             "Contact"
         ]
+    },
+    {
+        "file": "plugins/com.phonegap.plugins.PushPlugin/www/PushNotification.js",
+        "id": "com.phonegap.plugins.PushPlugin.PushNotification",
+        "clobbers": [
+            "PushNotification"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -341,8 +341,8 @@ module.exports.metadata =
     "org.apache.cordova.inappbrowser": "0.5.2",
     "com.brodysoft.sqlitePlugin": "1.0.3",
     "nl.x-services.plugins.socialsharing": "4.3.8",
-    "com.phonegap.plugins.PushPlugin": "2.3.1",
-    "org.apache.cordova.contacts": "0.2.13"
+    "org.apache.cordova.contacts": "0.2.13",
+    "com.phonegap.plugins.PushPlugin": "2.4.0"
 }
 // BOTTOM OF METADATA
 });

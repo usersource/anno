@@ -37,11 +37,11 @@
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"PushPlugin\"><param name=\"android-package\" value=\"com.plugin.gcm.PushPlugin\" /></feature>",
+                            "xml": "<feature name=\"Contacts\"><param name=\"android-package\" value=\"org.apache.cordova.contacts.ContactManager\" /></feature>",
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"Contacts\"><param name=\"android-package\" value=\"org.apache.cordova.contacts.ContactManager\" /></feature>",
+                            "xml": "<feature name=\"PushPlugin\"><param name=\"android-package\" value=\"com.plugin.gcm.PushPlugin\" /></feature>",
                             "count": 1
                         }
                     ]
@@ -187,10 +187,10 @@
         "nl.x-services.plugins.socialsharing": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
-        "com.phonegap.plugins.PushPlugin": {
+        "org.apache.cordova.contacts": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
-        "org.apache.cordova.contacts": {
+        "com.phonegap.plugins.PushPlugin": {
             "PACKAGE_NAME": "io.usersource.anno"
         }
     },
