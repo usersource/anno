@@ -137,7 +137,7 @@ class UserApi(remote.Service):
 
         pending_invites_list = []
 
-        if request.include_invite:
+        if request.include_invite and user:
             pending_invites = Invite.list_by_user(user.user_email)
             for pending_invite in pending_invites:
                 community = pending_invite.community.get().to_response_message()
