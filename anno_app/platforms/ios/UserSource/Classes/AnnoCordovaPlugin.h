@@ -6,7 +6,7 @@
 //
 
 #import <Cordova/CDV.h>
-#import "AppDelegate.h"
+#import "UserSourceAppDelegate.h"
 #import "AnnoDrawViewController.h"
 #import "CommunityViewController.h"
 #import "IntroViewController.h"
@@ -18,7 +18,7 @@
 
 extern AnnoUtils *annoUtils;
 extern ScreenshotGestureListener *screenshotGestureListener;
-extern AppDelegate *appDelegate;
+extern UserSourceAppDelegate *appDelegate;
 
 - (void) exit_current_activity:(CDVInvokedUrlCommand*)command;
 - (void) show_toast:(CDVInvokedUrlCommand*)command;

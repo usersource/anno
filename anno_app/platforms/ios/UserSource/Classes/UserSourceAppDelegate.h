@@ -28,7 +28,7 @@
 #import <UIKit/UIKit.h>
 #import <Cordova/CDVViewController.h>
 
-@interface AppDelegate : NSObject <UIApplicationDelegate> {}
+@interface UserSourceAppDelegate : NSObject <UIApplicationDelegate> {}
 
 // invoke string is passed to your app on launch, this is only valid if you
 // edit UserSource-Info.plist to add a protocol
