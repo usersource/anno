@@ -1,5 +1,3 @@
-__author__ = 'topcircler'
-
 import logging
 
 from google.appengine.ext import ndb
@@ -20,6 +18,7 @@ class User(ndb.Model):
     auth_source = ndb.StringProperty(choices=[AuthSourceType.ANNO, AuthSourceType.GOOGLE])  # If not "Anno", then no password is stored
     device_id = ndb.StringProperty()
     device_type = ndb.StringProperty(choices=[PlatformType.IOS, PlatformType.ANDROID])
+    account_type = ndb.StringProperty()
 
     @classmethod
     def find_user_by_email(cls, email):

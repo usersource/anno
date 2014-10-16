@@ -1,5 +1,3 @@
-__author__ = "rekenerd"
-
 class AnnoQueryType(object):
     '''
     Enum class for querying Anno
@@ -32,6 +30,7 @@ class CommunityType(object):
 class UserRoleType(object):
     MEMBER = "member"
     MANAGER = "manager"
+    ADMIN = "admin"
 
 class InvitationStatusType(object):
     ACCEPTED = "accepted"

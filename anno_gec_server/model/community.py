@@ -1,5 +1,3 @@
-__author__ = "rekenerd"
-
 import logging
 
 from google.appengine.ext import ndb
@@ -15,6 +13,9 @@ class Community(ndb.Model):
     type = ndb.StringProperty(choices=[CommunityType.PRIVATE, CommunityType.PUBLIC], required=True)
     apps = ndb.KeyProperty(kind=AppInfo, repeated=True)
     created = ndb.DateTimeProperty(auto_now_add=True)
+    team_key = ndb.StringProperty()
+    team_secret = ndb.StringProperty()
+    circles = ndb.JsonProperty()
 
     def to_response_message(self):
         return CommunityMessage(id=self.key.id(),

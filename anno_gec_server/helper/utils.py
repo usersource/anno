@@ -247,11 +247,11 @@ def getAppAndCommunity(message, user):
 
 def user_community(user):
     userroles = UserRole.query().filter(UserRole.user == user.key)\
-                                .fetch(projection=[UserRole.community, UserRole.role])
+                                .fetch(projection=[UserRole.community, UserRole.role, UserRole.circle_level])
 
     results = []
     for userrole in userroles:
-        results.append(dict(community=userrole.community, role=userrole.role))
+        results.append(dict(community=userrole.community, role=userrole.role, circle_level=userrole.circle_level))
 
     return results
 
@@ -271,10 +271,21 @@ def isMember(community, user, include_manager=True):
 
 def filter_anno_by_user(query, user):
     from model.anno import Anno
-    user_community_list = [ userrole.get("community") for userrole in user_community(user) ]
-    user_community_list.append(None)
-    query = query.filter(Anno.community.IN(user_community_list))
-    return query.order(Anno._key)
+    user_communities = user_community(user)
+
+    if len(user_communities):
+        user_community_dict = { userrole.get("community") : userrole.get("circle_level") for userrole in user_communities }
+
+        filter_strings = []
+        for community, circle_level in user_community_dict.iteritems():
+            filter_strings.append("ndb.AND(Anno.community == " + str(community) + ", Anno.circle_level <= " + str(circle_level) + ")")
+
+        from google.appengine.ext.ndb import Key
+        filter_strings.append("Anno.community == " + str(None))
+        query = eval("query.filter(ndb.OR(%s))" % ", ".join(filter_strings))
+        query = query.order(Anno.circle_level)
+
+    return query
 
 def get_user_from_request(user_id=None, user_email=None):
     user = None

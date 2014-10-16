@@ -118,6 +118,13 @@ indexes:
 - kind: Anno
   properties:
   - name: community
+  - name: circle_level
+  - name: created
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: community
   - name: created
     direction: desc
 
@@ -169,6 +176,13 @@ indexes:
   - name: community
   - name: role
   - name: user
+
+- kind: UserRole
+  properties:
+  - name: user
+  - name: circle_level
+  - name: community
+  - name: role
 
 - kind: UserRole
   properties:
