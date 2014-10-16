@@ -25,12 +25,13 @@
 //  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
 //
 
-#import "AppDelegate.h"
+#import "UserSourceAppDelegate.h"
 #import "CommunityViewController.h"
+#import <UserSourceStatic/UserSourceStatic.h>
 
 #import <Cordova/CDVPlugin.h>
 
-@implementation AppDelegate
+@implementation UserSourceAppDelegate
 
 @synthesize window, viewController;
 

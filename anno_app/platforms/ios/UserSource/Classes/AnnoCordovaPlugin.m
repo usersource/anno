@@ -15,7 +15,7 @@ float COMPRESSION_QUALITY = 0.7;
 
 AnnoUtils *annoUtils;
 ScreenshotGestureListener *screenshotGestureListener;
-AppDelegate *appDelegate;
+UserSourceAppDelegate *appDelegate;
 
 NSMutableArray *viewControllerList, *annoDrawViewControllerList;
 
