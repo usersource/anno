@@ -29,7 +29,7 @@
 int main(int argc, char* argv[])
 {
     @autoreleasepool {
-        int retVal = UIApplicationMain(argc, argv, nil, @"AppDelegate");
+        int retVal = UIApplicationMain(argc, argv, nil, @"UserSourceAppDelegate");
         return retVal;
     }
 }

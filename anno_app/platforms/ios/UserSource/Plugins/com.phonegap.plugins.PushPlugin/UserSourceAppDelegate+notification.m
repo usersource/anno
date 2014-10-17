@@ -6,13 +6,13 @@
 //
 //
 
-#import "AppDelegate+notification.h"
+#import "UserSourceAppDelegate+notification.h"
 #import "PushPlugin.h"
 #import <objc/runtime.h>
 
 static char launchNotificationKey;
 
-@implementation AppDelegate (notification)
+@implementation UserSourceAppDelegate (notification)
 
 - (id) getCommandInstance:(NSString*)className
 {
@@ -30,7 +30,7 @@ static char launchNotificationKey;
     method_exchangeImplementations(original, swizzled);
 }
 
-- (AppDelegate *)swizzled_init
+- (UserSourceAppDelegate *)swizzled_init
 {
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(createNotificationChecker:)
                name:@"UIApplicationDidFinishLaunchingNotification" object:nil];

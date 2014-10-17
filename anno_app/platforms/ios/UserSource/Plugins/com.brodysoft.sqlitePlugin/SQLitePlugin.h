@@ -13,7 +13,7 @@
 #import <Cordova/CDVPlugin.h>
 #import <Cordova/CDVJSON.h>
 
-#import "AppDelegate.h"
+#import "UserSourceAppDelegate.h"
 
 enum WebSQLError {
     UNKNOWN_ERR = 0,

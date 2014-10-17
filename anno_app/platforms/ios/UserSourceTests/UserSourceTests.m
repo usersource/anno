@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "AppDelegate.h"
+#import "UserSourceAppDelegate.h"
 #import "AnnoCordovaPlugin.h"
 
 @interface UserSourceTests : XCTestCase
@@ -15,7 +15,7 @@
 
 @implementation UserSourceTests
 
-AppDelegate *appDelegate;
+UserSourceAppDelegate *appDelegate;
 
 // XCTest works only for iOS 7 or later
 - (void) setUp {
