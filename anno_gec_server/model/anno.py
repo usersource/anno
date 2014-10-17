@@ -14,6 +14,7 @@ from message.user_message import UserMessage
 from model.base_model import BaseModel
 from model.community import Community
 from model.appinfo import AppInfo
+from model.userrole import UserRole
 from helper.utils import *
 from helper.utils_enum import SearchIndexName
 
@@ -132,6 +133,10 @@ class Anno(BaseModel):
         """
         appinfo, community = getAppAndCommunity(message, user)
 
+        circle_level = 0
+        if community:
+            circle_level = message.circle_level or UserRole.getCircleLevel(user, community)
+
         entity = cls(anno_text=message.anno_text, anno_type=message.anno_type,
                      level=message.level, device_model=message.device_model, 
                      os_name=message.os_name, os_version=message.os_version, 
@@ -143,6 +148,7 @@ class Anno(BaseModel):
         # set appinfo and community
         entity.app = appinfo.key
         entity.community = community.key if community else None
+        entity.circle_level = circle_level
 
         # set created time if provided in the message.
         if message.created is not None:

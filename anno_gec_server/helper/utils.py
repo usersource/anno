@@ -219,6 +219,14 @@ def getCommunityApps(community_id, app_count=None):
     community = Community.get_by_id(community_id)
     return community.apps[0:app_count] if app_count else community.apps
 
+def getAppInfo(community_id):
+    community_apps = getCommunityApps(community_id, app_count=1)
+    if len(community_apps):
+        appinfo = AppInfo.get_by_id(community_apps[0].id())
+    else:
+        raise endpoints.NotFoundException("Selected community doesn't have any app associated with it. Please select another option.")
+    return appinfo
+
 def getAppAndCommunity(message, user):
     if message.app_name:
         appinfo = AppInfo.get(name=message.app_name, platform=message.platform_type)
@@ -236,12 +244,11 @@ def getAppAndCommunity(message, user):
     elif message.community_name:
         community_id = Community.getCommunity(community_name=message.community_name).id
         community = Community.get_by_id(community_id)
-        community_apps = getCommunityApps(community_id, app_count=1)
+        appinfo = getAppInfo(community_id)
 
-        if len(community_apps):
-            appinfo = AppInfo.get_by_id(community_apps[0].id())
-        else:
-            raise endpoints.NotFoundException("Selected community doesn't have any app associated with it. Please select another option.")
+    elif message.team_key:
+        community = Community.getCommunityFromTeamKey(team_key=message.team_key)
+        appinfo = getAppInfo(community.key.id())
 
     else:
         raise endpoints.BadRequestException("Please specify a community or app")

@@ -67,6 +67,7 @@ from model.follow_up import FollowUp
 from model.userannostate import UserAnnoState
 from model.tags import Tag
 from model.appinfo import AppInfo
+from model.user import User
 from helper.settings import anno_js_client_id
 from helper.utils import auth_user
 from helper.utils import put_search_document
@@ -208,7 +209,10 @@ class AnnoApi(remote.Service):
 
         if current user doesn't exist, the user will be created first.
         """
-        user = auth_user(self.request_state.headers)
+        if request.team_key and request.user_email:
+            user = User.find_user_by_email(email=request.email, team_key=request.team_key)
+        else:
+            user = auth_user(self.request_state.headers)
 
         # checking if same anno exists
         exist_anno = Anno.is_anno_exists(user, request)
