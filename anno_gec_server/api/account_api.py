@@ -53,7 +53,7 @@ class AccountApi(remote.Service):
             validate_team_secret(team_secret)
             if not user:
                 user = User.insert_user(email=email, account_type=team_key)
-                community = Community.query(Community.team_key == team_key).get()
+                community = Community.getCommunityFromTeamKey()
                 UserRole.insert(user, community)
             if not Community.authenticate(team_key, md5(team_secret)):
                 raise endpoints.UnauthorizedException("Authentication failed. Team key and secret are not matched.")

@@ -43,6 +43,10 @@ class Community(ndb.Model):
         return community.to_response_message() if community else None
 
     @classmethod
+    def getCommunityFromTeamKey(cls, team_key):
+        return cls.query(cls.team_key == team_key).get()
+
+    @classmethod
     def insert(cls, message):
         try:
             if message.name is None:
