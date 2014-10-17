@@ -48,3 +48,4 @@ class SearchIndexName(object):
 class AuthSourceType(object):
     ANNO = "Anno"
     GOOGLE = "Google"
+    PLUGIN = "Plugin"

@@ -1,5 +1,3 @@
-__author__ = 'topcircler'
-
 import logging
 
 import endpoints
@@ -67,7 +65,7 @@ class UserApi(remote.Service):
         email = request.creator_id + "@gmail.com"
         user = User.find_user_by_email(email)
         if user is None:
-            User.insert_user(email)
+            User.insert_user(email=email)
             print "user " + request.creator_id + " was inserted."
         else:
             print "user" + request.creator_id + " already exists."

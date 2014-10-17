@@ -27,6 +27,11 @@ class Community(ndb.Model):
                             )
 
     @classmethod
+    def authenticate(cls, team_key, team_secret):
+        query = cls.query().filter(ndb.AND(cls.team_key == team_key, cls.team_secret == team_secret))
+        return query.get() is not None
+
+    @classmethod
     def getCommunity(cls, community_id=None, community_name=None):
         community = None
 

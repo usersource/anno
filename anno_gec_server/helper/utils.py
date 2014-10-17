@@ -1,5 +1,3 @@
-__author__ = 'topcircler'
-
 import re
 import httplib
 import json
@@ -50,16 +48,16 @@ def handle_user(creator_id):
         if creator_id is not None:
             user = User.find_user_by_email(creator_id + "@gmail.com")
             if user is None:
-                user = User.insert_user(creator_id + "@gmail.com")
+                user = User.insert_user(email=creator_id + "@gmail.com")
         else:
             email = 'anonymous@usersource.com'
             user = User.find_user_by_email(email)
             if user is None:
-                user = User.insert_user(email)
+                user = User.insert_user(email=email)
     else:
         user = User.find_user_by_email(current_user.email())
         if user is None:
-            user = User.insert_user(current_user.email())
+            user = User.insert_user(email=current_user.email())
     return user
 
 def auth_user(headers):
@@ -124,6 +122,11 @@ def validate_email(email):
 def validate_password(password):
     if password is None or password == '':
         raise endpoints.BadRequestException("User password can't be empty.")
+
+
+def validate_team_secret(team_secret):
+    if team_secret is None or team_secret == '':
+        raise endpoints.BadRequestException("Team Secret can't be empty.")
 
 
 def md5(content):

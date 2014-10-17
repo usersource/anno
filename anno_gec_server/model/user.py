@@ -15,34 +15,35 @@ class User(ndb.Model):
     user_email = ndb.StringProperty()  # this field should be unique.
     display_name = ndb.StringProperty()  # this field should be unique.
     password = ndb.StringProperty()
-    auth_source = ndb.StringProperty(choices=[AuthSourceType.ANNO, AuthSourceType.GOOGLE])  # If not "Anno", then no password is stored
+    auth_source = ndb.StringProperty(choices=[AuthSourceType.ANNO, AuthSourceType.GOOGLE, AuthSourceType.PLUGIN])  # If "Anno" then password is required.
     device_id = ndb.StringProperty()
     device_type = ndb.StringProperty(choices=[PlatformType.IOS, PlatformType.ANDROID])
     account_type = ndb.StringProperty()
 
     @classmethod
-    def find_user_by_email(cls, email):
-        return cls.query(User.user_email == email).get()
+    def find_user_by_email(cls, email, team_key=None):
+        query = cls.query().filter(cls.user_email == email)
+        if team_key:
+            query = query.filter(cls.account_type == team_key)
+        return query.get()
 
     @classmethod
     def find_user_by_display_name(cls, display_name):
         return cls.query(User.display_name == display_name).get()
 
     @classmethod
-    def insert_user(cls, email):
-        user = User(display_name=email, user_email=email, auth_source=AuthSourceType.GOOGLE)
-        user.put()
-        return user
+    def insert_user(cls, email, username=None, password=None, auth_source=None, account_type=None):
+        username = username or email.split('@')[0]
 
-    @classmethod
-    def insert_normal_user(cls, email, username, password):
-        user = User(user_email=email, display_name=username, password=password, auth_source=AuthSourceType.ANNO)
-        user.put()
-        return user
+        if password:
+            auth_source = AuthSourceType.ANNO
+        elif account_type:
+            auth_source = AuthSourceType.PLUGIN
+        else:
+            auth_source = AuthSourceType.GOOGLE
 
-    @classmethod
-    def insert_user(cls, email, username, auth_source):
-        user = User(user_email=email, display_name=username, auth_source=auth_source)
+        user = User(user_email=email, display_name=username, password=password, 
+                    auth_source=auth_source, account_type=account_type)
         user.put()
         return user
 
