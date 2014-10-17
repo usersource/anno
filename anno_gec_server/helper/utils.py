@@ -22,6 +22,7 @@ from message.appinfo_message import AppInfoMessage
 
 APP_NAME = "UserSource"
 OPEN_COMMUNITY = "__open__"
+FIRST_CIRCLE = "community"
 
 
 def get_endpoints_current_user(raise_unauthorized=True):
@@ -297,12 +298,12 @@ def filter_anno_by_user(query, user):
 
     return query
 
-def get_user_from_request(user_id=None, user_email=None):
+def get_user_from_request(user_id=None, user_email=None, team_key=None):
     user = None
     if user_id:
         user = User.get_by_id(user_id)
     elif user_email:
-        user = User.find_user_by_email(user_email)
+        user = User.find_user_by_email(user_email, team_key)
     return user
 
 def reset_password(user, email):

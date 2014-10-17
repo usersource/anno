@@ -49,6 +49,8 @@ class Community(ndb.Model):
     @classmethod
     def insert(cls, message):
         try:
+            from helper.utils import get_user_from_request, FIRST_CIRCLE
+
             if message.name is None:
                 return "Community name is required"
 
@@ -65,16 +67,19 @@ class Community(ndb.Model):
                 message.type = CommunityType.PRIVATE
 
             community = cls(name=message.name, description=message.description,
-                            welcome_msg=message.welcome_msg, type=message.type)
+                            welcome_msg=message.welcome_msg, type=message.type,
+                            team_key=message.team_key, team_secret=message.team_secret)
+            community.circles = { 0 : FIRST_CIRCLE }
             community.put()
             respData = "Community created."
 
-            from helper.utils import get_user_from_request
-            user = get_user_from_request(user_id=message.user.id, user_email=message.user.user_email)
+            user = get_user_from_request(user_id=message.user.id, user_email=message.user.user_email,
+                                         team_key=message.team_key)
             userrole = None
+            userrole_type = UserRoleType.ADMIN if message.team_key else UserRoleType.MANAGER
             if user:
                 from model.userrole import UserRole
-                userrole = UserRole.insert(user, community, UserRoleType.MANAGER)
+                userrole = UserRole.insert(user, community, userrole_type)
 
             if userrole is None:
                 community.key.delete()

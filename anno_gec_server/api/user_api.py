@@ -35,13 +35,8 @@ class UserApi(remote.Service):
 
     user_email_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
-        email=messages.StringField(1)
-    )
-
-    user_deviceid_resource_container = endpoints.ResourceContainer(
-        message_types.VoidMessage,
-        deviceid=messages.StringField(1),
-        device_type=messages.StringField(2)
+        email=messages.StringField(1),
+        account_type=messages.StringField(2)
     )
 
     user_email_with_id_resource_container = endpoints.ResourceContainer(
@@ -187,3 +182,12 @@ class UserApi(remote.Service):
             user = auth_user(self.request_state.headers)
 
         return UserFavoriteAppList(app_list=User.list_favorite_apps(user.key))
+
+
+    @endpoints.method(user_email_resource_container, message_types.VoidMessage,
+                      path="user/teamkey/update", http_method="POST", name="user.teamkey.update")
+    def update_teamkey(self, request):
+        user = User.find_user_by_email(request.email)
+        user.account_type = request.account_type
+        user.put()
+        return message_types.VoidMessage()
