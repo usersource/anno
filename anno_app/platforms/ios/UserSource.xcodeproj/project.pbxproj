@@ -72,10 +72,11 @@
 		5BB6D28319EFAE1A00AAF4A2 /* SocialSharing.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D309A94B6C24ABFA47CBCEA /* SocialSharing.m */; };
 		5BB6D28419EFAE1A00AAF4A2 /* CDVContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB0F3648F894BB2AD5AB705 /* CDVContacts.m */; };
 		5BB6D28519EFAE1A00AAF4A2 /* CDVContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 664D9BA08F294C4BA6067E35 /* CDVContact.m */; };
-		5BB6D28619EFAE1A00AAF4A2 /* AppDelegate+notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3A51F59B2349C08F199D4F /* AppDelegate+notification.m */; };
+		5BB6D28619EFAE1A00AAF4A2 /* UserSourceAppDelegate+notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3A51F59B2349C08F199D4F /* UserSourceAppDelegate+notification.m */; };
 		5BB6D28919EFAE5500AAF4A2 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F583DEA5C56F422C875065F3 /* AddressBook.framework */; };
 		5BB6D28B19EFAF6900AAF4A2 /* libUserSourceStatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BBAD08119E66C560060A80D /* libUserSourceStatic.a */; };
 		5BB6D28C19EFAF7A00AAF4A2 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F713FA28964CB18D9D3278 /* libsqlite3.dylib */; };
+		5BBAAB9919F004C800AAC24D /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD5266640B0344749F49768A /* AddressBookUI.framework */; };
 		F840E1F1165FE0F500CFE078 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = F840E1F0165FE0F500CFE078 /* config.xml */; };
 /* End PBXBuildFile section */
 
@@ -146,7 +147,7 @@
 /* Begin PBXFileReference section */
 		02D37BE39E244D0CBE31F43E /* CDVExif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVExif.h; path = org.apache.cordova.camera/CDVExif.h; sourceTree = "<group>"; };
 		03682C3B0E3143BEB90C5DC9 /* CDVContacts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVContacts.h; path = org.apache.cordova.contacts/CDVContacts.h; sourceTree = "<group>"; };
-		0A3A51F59B2349C08F199D4F /* AppDelegate+notification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "AppDelegate+notification.m"; path = "com.phonegap.plugins.PushPlugin/AppDelegate+notification.m"; sourceTree = "<group>"; };
+		0A3A51F59B2349C08F199D4F /* UserSourceAppDelegate+notification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UserSourceAppDelegate+notification.m"; path = "com.phonegap.plugins.PushPlugin/UserSourceAppDelegate+notification.m"; sourceTree = "<group>"; };
 		1D02161618EED12600E97738 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		1D02161818EED18600E97738 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -215,7 +216,7 @@
 		5E365714C57442BFA98F7272 /* CDVCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVCamera.h; path = org.apache.cordova.camera/CDVCamera.h; sourceTree = "<group>"; };
 		664D9BA08F294C4BA6067E35 /* CDVContact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVContact.m; path = org.apache.cordova.contacts/CDVContact.m; sourceTree = "<group>"; };
 		68CE6AE042F64A29ABB97844 /* CDVAssetLibraryFilesystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVAssetLibraryFilesystem.m; path = org.apache.cordova.file/CDVAssetLibraryFilesystem.m; sourceTree = "<group>"; };
-		68F2E17157404E209E5111E0 /* AppDelegate+notification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AppDelegate+notification.h"; path = "com.phonegap.plugins.PushPlugin/AppDelegate+notification.h"; sourceTree = "<group>"; };
+		68F2E17157404E209E5111E0 /* UserSourceAppDelegate+notification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UserSourceAppDelegate+notification.h"; path = "com.phonegap.plugins.PushPlugin/UserSourceAppDelegate+notification.h"; sourceTree = "<group>"; };
 		6B97616FA62A4AF7A287521D /* CDVCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVCamera.m; path = org.apache.cordova.camera/CDVCamera.m; sourceTree = "<group>"; };
 		7124E1BBEF22405AA3FC57AD /* CDVDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVDevice.h; path = org.apache.cordova.device/CDVDevice.h; sourceTree = "<group>"; };
 		8377F476DE96474692965016 /* CDVFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVFile.h; path = org.apache.cordova.file/CDVFile.h; sourceTree = "<group>"; };
@@ -247,6 +248,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BBAAB9919F004C800AAC24D /* AddressBookUI.framework in Frameworks */,
 				5BB6D28C19EFAF7A00AAF4A2 /* libsqlite3.dylib in Frameworks */,
 				5BB6D28B19EFAF6900AAF4A2 /* libUserSourceStatic.a in Frameworks */,
 				1DF9C52A18FBBD54004077BE /* AssetsLibrary.framework in Frameworks */,
@@ -463,8 +465,8 @@
 				664D9BA08F294C4BA6067E35 /* CDVContact.m */,
 				03682C3B0E3143BEB90C5DC9 /* CDVContacts.h */,
 				F2418451C4C6486CA194768D /* CDVContact.h */,
-				0A3A51F59B2349C08F199D4F /* AppDelegate+notification.m */,
-				68F2E17157404E209E5111E0 /* AppDelegate+notification.h */,
+				0A3A51F59B2349C08F199D4F /* UserSourceAppDelegate+notification.m */,
+				68F2E17157404E209E5111E0 /* UserSourceAppDelegate+notification.h */,
 			);
 			name = Plugins;
 			path = UserSource/Plugins;
@@ -821,7 +823,7 @@
 				5BB6D28319EFAE1A00AAF4A2 /* SocialSharing.m in Sources */,
 				5BB6D28419EFAE1A00AAF4A2 /* CDVContacts.m in Sources */,
 				5BB6D28519EFAE1A00AAF4A2 /* CDVContact.m in Sources */,
-				5BB6D28619EFAE1A00AAF4A2 /* AppDelegate+notification.m in Sources */,
+				5BB6D28619EFAE1A00AAF4A2 /* UserSourceAppDelegate+notification.m in Sources */,
 				5BB6D26719EFADAD00AAF4A2 /* AnnoUtils.m in Sources */,
 				5BB6D26819EFADAD00AAF4A2 /* AnnoDrawViewController.m in Sources */,
 				5BB6D26919EFADAD00AAF4A2 /* CommunityViewController.m in Sources */,

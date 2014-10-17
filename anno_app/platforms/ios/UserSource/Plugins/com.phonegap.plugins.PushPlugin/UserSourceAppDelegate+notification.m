@@ -6,7 +6,7 @@
 //
 //
 
-#import "AppDelegate+notification.h"
+#import "UserSourceAppDelegate+notification.h"
 #import "PushPlugin.h"
 #import <objc/runtime.h>
 
