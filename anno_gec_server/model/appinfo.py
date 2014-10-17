@@ -9,7 +9,7 @@ class AppInfo(ndb.Model):
     This class represents a 3rd party app information.
     """
     name = ndb.StringProperty(required=True)
-    lc_name = ndb.StringProperty()
+    lc_name = ndb.ComputedProperty(lambda self: self.name.lower())
     bundleid = ndb.StringProperty()
     icon = ndb.BlobProperty()
     icon_url = ndb.StringProperty()
@@ -41,8 +41,7 @@ class AppInfo(ndb.Model):
 
     @classmethod
     def insert_raw_data(cls, name, platform, bundleid, icon, icon_url, description, version, developer, company_name, app_url):
-        lc_name = name.lower()
-        entity = cls(name=name, lc_name=lc_name, bundleid=bundleid, icon=icon,
+        entity = cls(name=name, bundleid=bundleid, icon=icon,
                      icon_url=icon_url, description=description,
                      version=version, developer=developer,
                      company_name=company_name, platform=platform, app_url=app_url)
