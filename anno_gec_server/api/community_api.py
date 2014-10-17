@@ -1,5 +1,3 @@
-__author__ = "rekenerd"
-
 '''
 Community API implemented using Google Cloud Endpoints.
 '''
@@ -37,6 +35,13 @@ class CommunityApi(remote.Service):
         include_invite=messages.BooleanField(3, default=False)
     )
 
+    community_with_circles_resource_container = endpoints.ResourceContainer(
+        message_types.VoidMessage,
+        id=messages.IntegerField(2, required=True),
+        circle_name=messages.StringField(3),
+        circle_value=messages.IntegerField(4)
+    )
+
     community_welcome_msg_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
         id=messages.IntegerField(2, required=True),
@@ -58,6 +63,12 @@ class CommunityApi(remote.Service):
                       http_method="POST", name="app.insert")
     def app_insert(self, request):
         resp = Community.addApp(request)
+        return ResponseMessage(success=True if resp else False)
+
+    @endpoints.method(community_with_circles_resource_container, ResponseMessage, path="circle",
+                      http_method="POST", name="circle.insert")
+    def insert_circle(self, request):
+        resp = Community.addCircle(request)
         return ResponseMessage(success=True if resp else False)
 
     @endpoints.method(community_with_id_resource_container, CommunityUserListMessage,

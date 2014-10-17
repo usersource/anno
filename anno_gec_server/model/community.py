@@ -108,3 +108,18 @@ class Community(ndb.Model):
                 community.apps.append(app.key)
                 entity = community.put()
         return entity
+
+    @classmethod
+    def addCircle(cls, request):
+        entity = None
+        community_id = request.id
+        community = cls.get_by_id(community_id) if community_id else None
+
+        circle_name = request.circle_name
+        circle_value = request.circle_value
+
+        if community and circle_name and circle_value:
+            community.circles[circle_value] = circle_name
+            entity = community.put()
+            print community.circles
+        return entity
