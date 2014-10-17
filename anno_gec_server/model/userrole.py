@@ -19,14 +19,12 @@ class UserRole(ndb.Model):
     circle_level = ndb.IntegerProperty(required=True, default=0)
     
     @classmethod
-    def insert(cls, user, community, role=None):
+    def insert(cls, user, community, role=None, circle_level=0):
         entity = None
-
-        if role is None:
-            role = UserRoleType.MEMBER
+        role = role or UserRoleType.MEMBER
 
         if user and community:
-            entity = cls(user=user.key, community=community.key, role=role)
+            entity = cls(user=user.key, community=community.key, role=role, circle_level=circle_level)
             entity.put()
 
         return entity
