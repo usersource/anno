@@ -796,6 +796,56 @@ define([
             }
         };
 
+        var authenticatePluginSession = function() {
+            var email = 'imran.ahmed@ignitesol.com',
+                team_key = 'com.ignitesol.exposureapp',
+                team_secret = 'kaklik';
+
+            var APIConfig = {
+                name : annoUtil.API.account,
+                method : "account.account.authenticate",
+                parameter : {
+                    'user_email' : email,
+                    'team_key' : team_key,
+                    'team_secret' : team_secret
+                },
+                success : function(resp) {
+                    var userInfo = {};
+                    userInfo.userId = resp.result.id;
+                    userInfo.email = email;
+                    userInfo.signinMethod = "plugin";
+                    userInfo.nickname = resp.result.display_name;
+                    userInfo.team_key = team_key;
+                    userInfo.team_secret = team_secret;
+
+                    AnnoDataHandler.saveUserInfo(userInfo, function() {
+                        var params = annoUtil.parseUrlParams(document.location.search),
+                            _callbackURL = params['callback'],
+                            joinString = "?",
+                            cbURL = "",
+                            tokenString = "token=9&newuser=0&signinmethod=anno";
+
+                        if (_callbackURL.indexOf("?") > 0 || _callbackURL.indexOf("#") > 0) {
+                            joinString = "&";
+                        }
+
+                        cbURL = _callbackURL + joinString + tokenString;
+                        window.open(cbURL, "_self");
+                    });
+                },
+                error : function() {
+                }
+            };
+
+            // Set server
+            // annoUtil.setDefaultServer();
+            annoUtil.saveSettings({ item : "ServerURL", value : "4" }, function(success) {}, true);
+            annoUtil.settings.ServerURL = "4";
+
+            annoUtil.showLoadingIndicator();
+            annoUtil.callGAEAPI(APIConfig);
+        };
+
         var _init = function()
         {
             // Auto tracking setup
@@ -804,9 +854,12 @@ define([
             if (DBUtil.userChecked)
             {
                 var authResult = OAuthUtil.isAuthorized();
-                if (!authResult.authorized)
-                {
-                    OAuthUtil.openAuthPage();
+                if (!authResult.authorized) {
+                    if (annoUtil.isPlugin) {
+                        authenticatePluginSession();
+                    } else {
+                        OAuthUtil.openAuthPage();
+                    }
                     return;
                 }
                 else

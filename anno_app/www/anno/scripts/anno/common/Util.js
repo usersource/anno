@@ -316,7 +316,7 @@
         checkIfPlugin: function() {
             var self = this;
             cordova.exec(function (result) {
-                self.isPlugin = result;
+                self.isPlugin = result[0];
             }, function (err) {}, "AnnoCordovaPlugin", "is_plugin", []);
         },
         readSettings: function(callback)

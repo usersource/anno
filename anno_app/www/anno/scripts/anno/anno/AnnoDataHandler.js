@@ -9,7 +9,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
     var select_anno_by_objectKey_sql = "select _id as id from feedback_comment where object_key=?";
     // synched state: 0--non synched inserted anno, -1--non synched updated anno without image changed, -2--non synched updated anno with image changed
     var select_anno_sync_sql = "select * from feedback_comment where synched IN (0,-1,-2)";
-    var save_userInfo_sql = "insert into app_users(userid,email,signinmethod,nickname,password,signedup) values (?,?,?,?,?,?)";
+    var save_userInfo_sql = "insert into app_users(userid,email,signinmethod,nickname,password,signedup,teamkey,teamsecret) values (?,?,?,?,?,?,?,?)";
     var select_userInfo_sql = "select * from app_users";
     var delete_userInfo_sql = "delete from app_users";
     var insert_anno_unsynched_sql = "insert into feedback_comment(x,y,direction,is_moved,object_key,draw_elements,draw_is_anonymized,last_update,comment,screenshot_key,level,app_name,app_version,anno_type,synched)"+
@@ -653,12 +653,20 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
         saveUserInfo: function(userInfo, callback)
         {
             console.log("saveUserInfo invoked.");
-            this.removeUser(function(){
-                DBUtil.executeUpdateSql(save_userInfo_sql,[userInfo.userId, userInfo.email, userInfo.signinMethod, userInfo.nickname, userInfo.password||'', userInfo.signedup==null?1:userInfo.signedup], function(res){
+            this.removeUser(function() {
+                var userInfoList = [userInfo.userId,
+                                    userInfo.email,
+                                    userInfo.signinMethod,
+                                    userInfo.nickname,
+                                    userInfo.password || '',
+                                    userInfo.signedup == null ? 1 : userInfo.signedup,
+                                    userInfo.team_key,
+                                    userInfo.team_secret];
+
+                DBUtil.executeUpdateSql(save_userInfo_sql, userInfoList, function(res) {
                     if (!res) return;
                     console.log("save userInfo end:" + JSON.stringify(res));
-                    if (callback)
-                    {
+                    if (callback) {
                         console.log("saveUserInfo callback invoked.");
                         callback();
                     }
