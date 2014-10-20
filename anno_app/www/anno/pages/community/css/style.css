@@ -248,6 +248,12 @@
 	text-overflow: ellipsis;
 }
 
+.annoActWhen {
+    float: left;
+    width: 50%;
+    text-align: right
+}
+
 .listTitle{
 	font-size: 16px;
     white-space: nowrap;
@@ -419,6 +425,14 @@
     color: #333333;
     border-bottom: none;
     border-top: none;
+
+    position:fixed;
+    top:0px;
+    left:0px;
+    background-color: #000000;
+    z-index: 9000;
+    color:white;
+    height: 50px;
 }
 
 .imgDetailScreenshot{
@@ -557,6 +571,15 @@
     padding-right: 4px;
     box-sizing: border-box;
     /*    overflow-x: hidden;*/
+}
+
+#addCommentContainer {
+    padding-left: 6px;
+    border-top: 2px solid #aeebfc;
+    width: 100%;
+    background-color: #ffffff;
+    position: fixed;
+    bottom: 0px;
 }
 
 .commentTextbox{
