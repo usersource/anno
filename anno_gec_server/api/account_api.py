@@ -5,6 +5,7 @@ from protorpc import remote
 from helper.settings import anno_js_client_id
 from helper.utils import validate_email
 from helper.utils import validate_password
+from helper.utils import validate_team_secret
 from helper.utils import md5
 from helper.utils import get_endpoints_current_user
 from helper.utils import reset_password
