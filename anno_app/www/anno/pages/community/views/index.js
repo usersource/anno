@@ -127,15 +127,18 @@ define([
                     drawAnnoList(data, search, order, clearData);
                     if (firstLaunch) {
                         window.setTimeout(function() {
-                            initPushService();
                             AnnoDataHandler.startBackgroundSync();
                             annoUtil.getTopTags(100);
-                            annoUtil.loadUserCommunities(true, function(data) {
-                                var inviteList = data.inviteList || [];
-                                for (var i = 0; i < inviteList.length; i++) {
-                                    acceptInvitation(inviteList[i]);
-                                }
-                            }, true);
+
+                            if (!annoUtil.isPlugin) {
+                                initPushService();
+                                annoUtil.loadUserCommunities(true, function(data) {
+                                    var inviteList = data.inviteList || [];
+                                    for (var i = 0; i < inviteList.length; i++) {
+                                        acceptInvitation(inviteList[i]);
+                                    }
+                                }, true);
+                            }
                             firstLaunch = false;
                         }, 5 * 1000);
                     }
