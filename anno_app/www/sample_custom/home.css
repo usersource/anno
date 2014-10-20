@@ -1,0 +1,72 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto+Condensed);
+.mobile body {
+	font-family: 'Roboto Condensed';
+	background-color: #333333;
+}
+
+/* My Stuff Screen */
+
+/* The Top Bar */
+#headingMyStuff {
+	background-color: #333333;
+}
+#headingMyStuff .headingTitle:before {
+	content: " Exposure ";
+}
+
+/* The List of entries */
+#listContainerMyStuff li.row {
+	color: white;
+	border: none;
+}
+
+#listContainerMyStuff li.row.read {
+	background-color: #333333;
+}
+
+#listContainerMyStuff li.row.unread {
+	background-color: #555555;
+}
+
+/* Time */
+.annoActWhen {
+	color: white;
+}
+
+/* Action Icon */
+.annoActIndicator {
+	color: white;
+}
+
+/* Name and other details */
+.listAppName {
+	color: white;
+}
+
+/* Author */
+.listAuthor {
+	color: white;
+}
+
+/* Detail Screen */
+
+/* The Top Bar */
+#headingDetail {
+	background-color: #333333;
+}
+
+/* The Container */
+#detailContentContainer {
+	background-color: #333333;
+	color: white;
+}
+
+#detailContentContainer .clickableDiv,
+#detailContentContainer .hashTag {
+	color: white;
+}
+
+#addCommentContainer {
+	border: none;
+	background-color: none;
+}

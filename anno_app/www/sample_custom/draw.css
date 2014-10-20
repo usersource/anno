@@ -1,0 +1,19 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto+Condensed);
+.mobile body {
+	font-family: 'Roboto Condensed';
+	background-color: #333333;
+}
+
+/* Draw Screen */
+#bottomBarContainer {
+	background-color: #333333;
+}
+
+svg circle {
+	fill: #A000A0;
+	stroke: #A000A0;
+}
+
+svg path {
+	stroke: #A000A0;
+}
