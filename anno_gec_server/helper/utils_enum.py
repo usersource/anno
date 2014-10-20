@@ -2,14 +2,14 @@ class AnnoQueryType(object):
     '''
     Enum class for querying Anno
     '''
-    CREATED = "by_created" #:
-    VOTE_COUNT = "by_vote_count" #:
-    FLAG_COUNT = "by_flag_count" #:
-    ACTIVITY_COUNT = "by_activity_count" #:
-    LAST_ACTIVITY = "by_last_activity" #:
-    COUNTRY = "by_country" #:
-    COMMUNITY = "by_community" #:
-    APP = "by_app" #:
+    CREATED = "by_created"  # :
+    VOTE_COUNT = "by_vote_count"  # :
+    FLAG_COUNT = "by_flag_count"  # :
+    ACTIVITY_COUNT = "by_activity_count"  # :
+    LAST_ACTIVITY = "by_last_activity"  # :
+    COUNTRY = "by_country"  # :
+    COMMUNITY = "by_community"  # :
+    APP = "by_app"  # :
 
 class AnnoActionType(object):
     CREATED = "created"
@@ -49,3 +49,7 @@ class AuthSourceType(object):
     ANNO = "Anno"
     GOOGLE = "Google"
     PLUGIN = "Plugin"
+
+class SignInMethod(object):
+    ANNO = "anno"
+    PLUGIN = "plugin"

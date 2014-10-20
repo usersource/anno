@@ -16,6 +16,7 @@ from model.community import Community
 from model.userrole import UserRole
 from helper.utils_enum import UserRoleType
 from helper.utils_enum import SearchIndexName
+from helper.utils_enum import SignInMethod
 from helper.settings import SUPPORT_EMAIL_ID
 from message.appinfo_message import AppInfoMessage
 
@@ -67,10 +68,15 @@ def auth_user(headers):
 
     if current_user is None:
         credential_pair = get_credential(headers)
-        email = credential_pair[0]
+        signinMethod, email, password, team_key, team_secret = credential_pair
         validate_email(email)
-        User.authenticate(credential_pair[0], md5(credential_pair[1]))
-        user = User.find_user_by_email(email)
+
+        if signinMethod == SignInMethod.ANNO:
+            User.authenticate(email, md5(password))
+        elif signinMethod == SignInMethod.PLUGIN:
+            Community.authenticate(team_key, md5(team_secret))
+
+        user = User.find_user_by_email(email, team_key)
     else:
         user = User.find_user_by_email(current_user.email())
 
@@ -155,7 +161,7 @@ def get_credential(headers):
         logging.exception("Exception in get_credential")
         credential_pair = []
 
-    if len(credential_pair) != 2:
+    if len(credential_pair) != 5:
         raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
 
     return credential_pair
