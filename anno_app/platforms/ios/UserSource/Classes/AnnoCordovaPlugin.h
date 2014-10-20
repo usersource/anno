@@ -38,6 +38,7 @@ extern UserSourceAppDelegate *appDelegate;
 - (void) trigger_create_anno:(CDVInvokedUrlCommand*)command;
 - (void) get_app_version:(CDVInvokedUrlCommand*)command;
 - (void) is_plugin:(CDVInvokedUrlCommand*)command;
+- (void) get_user_info:(CDVInvokedUrlCommand*)command;
 
 - (void) showCommunityPage;
 - (void) ShowIntroPage;

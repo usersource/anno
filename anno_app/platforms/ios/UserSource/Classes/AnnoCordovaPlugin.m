@@ -23,7 +23,17 @@ CommunityViewController *communityViewController;
 IntroViewController *introViewController;
 OptionFeedbackViewController *optionFeedbackViewController;
 
-- (void) pluginInitialize {
+NSString *email, *userImageURL, *teamKey, *teamSecret;
+
+- (void) initialize:(NSString*)email
+       userImageURL:(NSString*)userImageURL
+            teamKey:(NSString*)teamKey
+         teamSecret:(NSString*)teamSecret {
+    email = email;
+    userImageURL = userImageURL;
+    teamKey = teamKey;
+    teamSecret = teamSecret;
+
     appDelegate = [[UIApplication sharedApplication] delegate];
     annoUtils = [[AnnoUtils alloc] init];
     screenshotGestureListener = [[ScreenshotGestureListener alloc] init];
@@ -366,6 +376,17 @@ OptionFeedbackViewController *optionFeedbackViewController;
 
     NSMutableArray *args = [[NSMutableArray alloc] init];
     [args addObject:[NSNumber numberWithBool:!isPlugin]];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:(NSString*)args];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) get_user_info:(CDVInvokedUrlCommand*)command {
+    NSMutableArray *args = [[NSMutableArray alloc] init];
+    [args addObject:email];
+    [args addObject:userImageURL];
+    [args addObject:teamKey];
+    [args addObject:teamSecret];
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:(NSString*)args];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
