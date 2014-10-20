@@ -862,23 +862,18 @@ define([
                 }
                 else
                 {
-                    AnnoDataHandler.getCurrentUserInfo(function(userInfo){
-
-                        if (authResult.newUser)
-                        {
+                    AnnoDataHandler.getCurrentUserInfo(function(userInfo) {
+                        if (authResult.newUser) {
                             annoUtil.startActivity("Intro", false);
                         }
 
-                        if (userInfo.signinMethod == OAuthUtil.signinMethod.anno)
-                        {
+                        if (userInfo.signinMethod == OAuthUtil.signinMethod.anno ||
+                            userInfo.signinMethod == OAuthUtil.signinMethod.plugin) {
                             OAuthUtil.processBasicAuthToken(userInfo);
                         }
 
                         annoUtil.showLoadingIndicator();
-                        
-                        OAuthUtil.getAccessToken(function(){
-                            loadListData();
-                        });
+                        OAuthUtil.getAccessToken(function() { loadListData(); });
                     });
 
                     _connectResults.push(connect.connect(dom.byId("tdBarMyStuff"), 'click', function(e)

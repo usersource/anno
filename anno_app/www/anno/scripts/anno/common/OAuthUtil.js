@@ -164,7 +164,8 @@ define([
         getAccessToken:function(callback, errorCallback)
         {
             var userInfo = annoUtil.getCurrentUserInfo();
-            if (userInfo.signinmethod == this.signinMethod.anno)
+            if (userInfo.signinmethod == this.signinMethod.anno ||
+                userInfo.signinmethod == this.signinMethod.plugin)
             {
                 callback();
                 return;
@@ -307,11 +308,11 @@ define([
         },
         processBasicAuthToken: function(userInfo)
         {
-            var token = {'token_type':'Basic'};
+            var token = { 'token_type' : 'Basic' },
+                userInfoData = [userInfo.signinMethod, userInfo.email, userInfo.password, userInfo.team_key, userInfo.team_secret];
 
-            token.expires_in = 3600*24;
-            token.access_token = annoUtil.encodeBase64(userInfo.email+":"+userInfo.password);
-
+            token.expires_in = 3600 * 24;
+            token.access_token = annoUtil.encodeBase64(userInfoData.join(":"));
             this.setBasicAuthToken(token);
             return token;
         },

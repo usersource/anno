@@ -692,6 +692,8 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                     userInfo.signinMethod = data.signinmethod;
                     userInfo.nickname = data.nickname;
                     userInfo.signedup = data.signedup;
+                    userInfo.team_key = data.teamkey;
+                    userInfo.team_secret = data.teamsecret;
                 }
 
                 window.currentUserInfo = userInfo;
