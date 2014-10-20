@@ -838,9 +838,7 @@ define([
             };
 
             // Set server
-            // annoUtil.setDefaultServer();
-            annoUtil.saveSettings({ item : "ServerURL", value : "4" }, function(success) {}, true);
-            annoUtil.settings.ServerURL = "4";
+            annoUtil.setDefaultServer("4");
 
             annoUtil.showLoadingIndicator();
             annoUtil.callGAEAPI(APIConfig);

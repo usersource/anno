@@ -641,11 +641,11 @@
         {
             navigator.geolocation.getCurrentPosition(callback, errorCallback, {maximumAge: 1000*60*60, timeout: 10000, enableHighAccuracy: false});
         },
-        setDefaultServer: function()
+        setDefaultServer: function(serverValue)
         {
-            this.saveSettings({item:"ServerURL", value:"1"}, function(success){
-            }, true);
-            this.settings.ServerURL = "1";
+            serverValue = serverValue || "1";
+            this.saveSettings({ item : "ServerURL", value : serverValue }, function(success) {}, true);
+            this.settings.ServerURL = serverValue;
         },
         triggerCreateAnno: function()
         {
