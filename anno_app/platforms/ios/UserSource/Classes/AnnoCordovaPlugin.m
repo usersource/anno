@@ -361,4 +361,14 @@ OptionFeedbackViewController *optionFeedbackViewController;
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void) is_plugin:(CDVInvokedUrlCommand*)command {
+    BOOL isPlugin = [annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]];
+
+    NSMutableArray *args = [[NSMutableArray alloc] init];
+    [args addObject:[NSNumber numberWithBool:!isPlugin]];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:(NSString*)args];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 @end
