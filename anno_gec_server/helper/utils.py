@@ -286,7 +286,7 @@ def isMember(community, user, include_manager=True):
     results = query.get()
     return True if results else False
 
-def filter_anno_by_user(query, user):
+def filter_anno_by_user(query, user, is_plugin=False):
     from model.anno import Anno
     user_communities = user_community(user)
 
@@ -298,7 +298,8 @@ def filter_anno_by_user(query, user):
             filter_strings.append("ndb.AND(Anno.community == " + str(community) + ", Anno.circle_level <= " + str(circle_level) + ")")
 
         from google.appengine.ext.ndb import Key
-        filter_strings.append("Anno.community == " + str(None))
+        if not is_plugin:
+            filter_strings.append("Anno.community == " + str(None))
         query = eval("query.filter(ndb.OR(%s))" % ", ".join(filter_strings))
         query = query.order(Anno.circle_level)
 

@@ -341,9 +341,9 @@ class Anno(BaseModel):
         return AnnoListMessage(anno_list=anno_list)
 
     @classmethod
-    def query_by_page(cls, limit, projection, curs, user):
+    def query_by_page(cls, limit, projection, curs, user, is_plugin=False):
         query = cls.query()
-        query = filter_anno_by_user(query, user)
+        query = filter_anno_by_user(query, user, is_plugin)
         query = query.order(-cls.created, cls._key)
 
         if (curs is not None) and (projection is not None):
