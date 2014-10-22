@@ -6,123 +6,28 @@
 //
 
 #import "AnnoCordovaPlugin.h"
+#import "AnnoSingleton.h"
 
 @implementation AnnoCordovaPlugin
+
+@synthesize communityViewController;
 
 NSString *ACTIVITY_INTRO = @"Intro";
 NSString *ACTIVITY_FEEDBACK = @"Feedback";
 float COMPRESSION_QUALITY = 0.7;
 
 AnnoUtils *annoUtils;
-ScreenshotGestureListener *screenshotGestureListener;
-UserSourceAppDelegate *appDelegate;
+//ScreenshotGestureListener *screenshotGestureListener;
+AnnoSingleton *annoSingleton;
 
-NSMutableArray *viewControllerList, *annoDrawViewControllerList;
-
-CommunityViewController *communityViewController;
-IntroViewController *introViewController;
-OptionFeedbackViewController *optionFeedbackViewController;
-
-NSString *email, *userImageURL, *teamKey, *teamSecret;
-
-- (void) initialize:(NSString*)email
-       userImageURL:(NSString*)userImageURL
-            teamKey:(NSString*)teamKey
-         teamSecret:(NSString*)teamSecret {
-    email = email;
-    userImageURL = userImageURL;
-    teamKey = teamKey;
-    teamSecret = teamSecret;
-
-    appDelegate = [[UIApplication sharedApplication] delegate];
-    annoUtils = [[AnnoUtils alloc] init];
-    screenshotGestureListener = [[ScreenshotGestureListener alloc] init];
-
-    if ([annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]]) {
-        communityViewController = [appDelegate valueForKey:@"communityViewController"];
-    } else {
-        communityViewController = [[CommunityViewController alloc] init];
-    }
-
-    viewControllerList = [NSMutableArray arrayWithObjects:appDelegate.window.rootViewController, nil];
-    annoDrawViewControllerList = [[NSMutableArray alloc] init];
-}
-
-- (void) showCommunityPage {
-    CDVViewController *currentViewController = [viewControllerList lastObject];
-
-    if (currentViewController != communityViewController) {
-        [currentViewController presentViewController:communityViewController animated:YES completion:nil];
-        [viewControllerList addObject:communityViewController];
-    }
-}
-
-- (void) ShowIntroPage {
-    if (introViewController == nil) {
-        introViewController = [[IntroViewController alloc] init];
-    }
-
-    [[viewControllerList lastObject] presentViewController:introViewController animated:YES completion:nil];
-    [viewControllerList addObject:introViewController];
-}
-
-- (void) showOptionFeedback {
-    if (optionFeedbackViewController == nil) {
-        optionFeedbackViewController = [[OptionFeedbackViewController alloc] init];
-    }
-
-    [[viewControllerList lastObject] presentViewController:optionFeedbackViewController animated:YES completion:nil];
-    [viewControllerList addObject:optionFeedbackViewController];
-}
-
-+ (void) showAnnoDraw:(NSString*)imageURI
-           levelValue:(int)levelValue
-        editModeValue:(BOOL)editModeValue
-   landscapeModeValue:(BOOL)landscapeModeValue {
-    CDVViewController *currentViewController = [viewControllerList lastObject];
-    AnnoDrawViewController *annoDrawViewController = [[AnnoDrawViewController alloc] init];
-    [currentViewController presentViewController:annoDrawViewController animated:NO completion:nil];
-
-    // Adding back lastObject of viewControllerList beacause it gets deleted after calling
-    // presentViewController on lastObject of viewControllerList with annoDrawViewController
-    if ([currentViewController isKindOfClass:[AnnoDrawViewController class]]) {
-        [viewControllerList addObject:currentViewController];
-        [annoDrawViewControllerList addObject:currentViewController];
-    }
-
-    [viewControllerList addObject:annoDrawViewController];
-    [annoDrawViewControllerList addObject:annoDrawViewController];
-    [annoDrawViewController handleFromShareImage:imageURI
-                                      levelValue:levelValue
-                                 isPracticeValue:false
-                                   editModeValue:editModeValue
-                              landscapeModeValue:landscapeModeValue];
-}
-
-- (void) exitActivity {
-    CDVViewController *currentViewController = [viewControllerList lastObject];
-
-    if ([currentViewController isKindOfClass:[CommunityViewController class]]) {
-        [communityViewController dismissViewControllerAnimated:YES completion:nil];
-        communityViewController = nil;
-    } else if ([currentViewController isKindOfClass:[IntroViewController class]]) {
-        [introViewController dismissViewControllerAnimated:YES completion:nil];
-        introViewController = nil;
-    } else if ([currentViewController isKindOfClass:[OptionFeedbackViewController class]]) {
-        [optionFeedbackViewController dismissViewControllerAnimated:YES completion:nil];
-        optionFeedbackViewController = nil;
-    } else if ([currentViewController isKindOfClass:[AnnoDrawViewController class]]) {
-        AnnoDrawViewController *currentAnnoDrawViewController = [annoDrawViewControllerList lastObject];
-        [currentAnnoDrawViewController dismissViewControllerAnimated:YES completion:nil];
-        currentAnnoDrawViewController = nil;
-        [annoDrawViewControllerList removeLastObject];
-    }
-
-    [viewControllerList removeLastObject];
+- (void) pluginInitialize {
+    NSLog(@"pluginIntialize");
+    annoSingleton = (AnnoSingleton*)[AnnoSingleton sharedInstance];
+    annoSingleton.annoPlugin = self;
 }
 
 - (void) exit_current_activity:(CDVInvokedUrlCommand*)command {
-    [self exitActivity];
+    [annoSingleton exitActivity];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
@@ -156,10 +61,9 @@ NSString *email, *userImageURL, *teamKey, *teamSecret;
     NSString* payload = nil;
     
     @try {
-        [self exitActivity];
-        [self showCommunityPage];
-    }
-    @catch (NSException *exception) {
+        [annoSingleton exitActivity];
+        [annoSingleton showCommunityPage];
+    } @catch (NSException *exception) {
         NSLog(@"Exception in goto_anno_home: %@", exception);
     }
     
@@ -178,14 +82,14 @@ NSString *email, *userImageURL, *teamKey, *teamSecret;
     BOOL closeCurrentActivity = [[command.arguments objectAtIndex:1] boolValue];
 
     if (closeCurrentActivity) {
-        [self exitActivity];
+        [annoSingleton exitActivity];
     }
     
     @try {
         if ([activityName isEqualToString:ACTIVITY_INTRO]) {
-            [self ShowIntroPage];
+            [annoSingleton showIntroPage];
         } else if ([activityName isEqualToString:ACTIVITY_FEEDBACK]) {
-            [self showOptionFeedback];
+            [annoSingleton showOptionFeedback];
         }
     } @catch(NSException *exception) {
         NSLog(@"Exception in start_activity: %@", exception);
@@ -203,7 +107,7 @@ NSString *email, *userImageURL, *teamKey, *teamSecret;
     NSString *imageURI = [command.arguments objectAtIndex:0];
 
     @try {
-        [AnnoCordovaPlugin showAnnoDraw:imageURI levelValue:0 editModeValue:FALSE landscapeModeValue:NO];
+        [annoSingleton showAnnoDraw:imageURI levelValue:0 editModeValue:FALSE landscapeModeValue:NO];
     }
     @catch (NSException *exception) {
         NSLog(@"Exception in start_anno_draw: %@", exception);
@@ -216,7 +120,7 @@ NSString *email, *userImageURL, *teamKey, *teamSecret;
 - (void) start_edit_anno_draw:(CDVInvokedUrlCommand*)command {
     @try {
         BOOL landscapeModeValue = [[command.arguments objectAtIndex:0] boolValue];
-        [AnnoCordovaPlugin showAnnoDraw:@"" levelValue:0 editModeValue:TRUE landscapeModeValue:landscapeModeValue];
+        [annoSingleton showAnnoDraw:@"" levelValue:0 editModeValue:TRUE landscapeModeValue:landscapeModeValue];
     }
     @catch (NSException *exception) {
         NSLog(@"Exception in start_anno_draw: %@", exception);
@@ -227,7 +131,7 @@ NSString *email, *userImageURL, *teamKey, *teamSecret;
 }
 
 - (void) get_screenshot_path:(CDVInvokedUrlCommand*)command {
-    AnnoDrawViewController *currentAnnoDrawViewController = [annoDrawViewControllerList lastObject];
+    AnnoDrawViewController *currentAnnoDrawViewController = [annoSingleton.annoDrawViewControllerList lastObject];
     NSString *level = [NSString stringWithFormat:@"%d", [currentAnnoDrawViewController getLevel]];
     NSString *isAnno = [annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] ? @"true" : @"false";
 
@@ -286,7 +190,7 @@ NSString *email, *userImageURL, *teamKey, *teamSecret;
     if ([base64Str length] > 0) {
         imageData = [[NSData alloc] initWithBase64Encoding:base64Str];
     } else {
-        AnnoDrawViewController *currentAnnoDrawViewController = [annoDrawViewControllerList lastObject];
+        AnnoDrawViewController *currentAnnoDrawViewController = [annoSingleton.annoDrawViewControllerList lastObject];
         imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[currentAnnoDrawViewController getScreenshotPath]]];
     }
 
@@ -302,7 +206,7 @@ NSString *email, *userImageURL, *teamKey, *teamSecret;
 
 - (NSDictionary*) getAppInfo {
     NSString *source, *appName;
-    AnnoDrawViewController *currentAnnoDrawViewController = [annoDrawViewControllerList lastObject];
+    AnnoDrawViewController *currentAnnoDrawViewController = [annoSingleton.annoDrawViewControllerList lastObject];
     
     if ([annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] && ([currentAnnoDrawViewController getLevel] != 2)) {
         source = annoUtils.ANNO_SOURCE_STANDALONE;
@@ -325,7 +229,7 @@ NSString *email, *userImageURL, *teamKey, *teamSecret;
 }
 
 - (void) exit_intro:(CDVInvokedUrlCommand*)command {
-    [self exitActivity];
+    [annoSingleton exitActivity];
 }
 
 - (void) get_recent_applist:(CDVInvokedUrlCommand*)command {
@@ -354,7 +258,7 @@ NSString *email, *userImageURL, *teamKey, *teamSecret;
 }
 
 - (void) trigger_create_anno:(CDVInvokedUrlCommand*)command {
-    [annoUtils triggerCreateAnno:[viewControllerList lastObject]];
+    [annoUtils triggerCreateAnno:[annoSingleton.viewControllerList lastObject]];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
@@ -372,22 +276,17 @@ NSString *email, *userImageURL, *teamKey, *teamSecret;
 }
 
 - (void) is_plugin:(CDVInvokedUrlCommand*)command {
-    BOOL isPlugin = [annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]];
+    BOOL isPlugin = (![annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]]);
 
     NSMutableArray *args = [[NSMutableArray alloc] init];
-    [args addObject:[NSNumber numberWithBool:!isPlugin]];
+    [args addObject:[NSNumber numberWithBool:isPlugin]];
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:(NSString*)args];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) get_user_info:(CDVInvokedUrlCommand*)command {
-    NSMutableArray *args = [[NSMutableArray alloc] init];
-    [args addObject:email];
-    [args addObject:userImageURL];
-    [args addObject:teamKey];
-    [args addObject:teamSecret];
-
+    NSArray *args = [[NSArray alloc] initWithObjects:annoSingleton.email, annoSingleton.userImageURL, annoSingleton.teamKey, annoSingleton.teamSecret, nil];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:(NSString*)args];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
