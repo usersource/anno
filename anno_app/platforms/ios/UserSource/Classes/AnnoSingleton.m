@@ -38,10 +38,10 @@
         return self;
     }
 
-    - (void) setupAnnoWithEmail:(NSString*)emailValue
-                   userImageURL:(NSString*)userImageURLValue
-                        teamKey:(NSString*)teamKeyValue
-                     teamSecret:(NSString*)teamSecretValue {
+    - (void) setupWithEmail:(NSString*)emailValue
+               userImageURL:(NSString*)userImageURLValue
+                    teamKey:(NSString*)teamKeyValue
+                 teamSecret:(NSString*)teamSecretValue {
         self.communityViewController = [[CommunityViewController alloc] init];
         self.email = emailValue;
         self.userImageURL = userImageURLValue;
