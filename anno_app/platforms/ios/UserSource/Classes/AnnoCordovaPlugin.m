@@ -21,9 +21,10 @@ AnnoUtils *annoUtils;
 AnnoSingleton *annoSingleton;
 
 - (void) pluginInitialize {
-    NSLog(@"pluginIntialize");
     annoSingleton = (AnnoSingleton*)[AnnoSingleton sharedInstance];
     annoSingleton.annoPlugin = self;
+
+    annoUtils = [[AnnoUtils alloc] init];
 }
 
 - (void) exit_current_activity:(CDVInvokedUrlCommand*)command {
