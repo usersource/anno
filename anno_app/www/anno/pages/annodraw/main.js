@@ -1244,27 +1244,72 @@ require([
         }
     };
 
+    var authenticatePluginSession = function() {
+        var APIConfig = {
+            name : annoUtil.API.account,
+            method : "account.account.authenticate",
+            parameter : {
+                'user_email' : annoUtil.pluginUserEmail,
+                'team_key' : annoUtil.pluginTeamKey,
+                'team_secret' : annoUtil.pluginTeamSecret
+            },
+            success : function(resp) {
+                var userInfo = {};
+                userInfo.userId = resp.result.id;
+                userInfo.email = annoUtil.pluginUserEmail;
+                userInfo.signinMethod = "plugin";
+                userInfo.nickname = resp.result.display_name;
+                userInfo.team_key = annoUtil.pluginTeamKey;
+                userInfo.team_secret = annoUtil.pluginTeamSecret;
+
+                AnnoDataHandler.saveUserInfo(userInfo, function() {
+                    var params = annoUtil.parseUrlParams(document.location.href),
+                        _callbackURL = params['callback'],
+                        joinString = "?",
+                        cbURL = "",
+                        tokenString = "token=9&newuser=0&signinmethod=anno";
+
+                    if (_callbackURL.indexOf("?") > 0 || _callbackURL.indexOf("#") > 0) {
+                        joinString = "&";
+                    }
+
+                    cbURL = _callbackURL + joinString + tokenString;
+                    window.open(cbURL, "_self");
+                });
+            },
+            error : function() {
+            }
+        };
+
+        annoUtil.setDefaultServer(annoUtil.pluginServer);
+        annoUtil.showLoadingIndicator();
+        annoUtil.callGAEAPI(APIConfig);
+    };
+
     var init = function()
     {
         if (DBUtil.userChecked)
         {
             var authResult = OAuthUtil.isAuthorized();
-            if (annoUtil.hasConnection()&&!annoUtil.isRunningAsPlugin()&&!authResult.authorized)
-            {
-                OAuthUtil.openAuthPage("annodraw");
+            if (annoUtil.hasConnection() && !authResult.authorized) {
+                if (annoUtil.isPlugin) {
+                    annoUtil.getPluginUserInfo(function() {
+                        authenticatePluginSession();
+                    });
+                } else {
+                    OAuthUtil.openAuthPage("annodraw");
+                }
                 return;
             }
             else
             {
-                AnnoDataHandler.getCurrentUserInfo(function(userInfo){
-
-                    if (authResult.newUser)
-                    {
+                AnnoDataHandler.getCurrentUserInfo(function(userInfo) {
+                    if (authResult.newUser) {
                         annoUtil.startActivity("Intro", false);
                     }
 
-                    if (userInfo.signinMethod == OAuthUtil.signinMethod.anno)
-                    {
+                    if (userInfo.signinMethod == OAuthUtil.signinMethod.anno ||
+                        userInfo.signinMethod == OAuthUtil.signinMethod.plugin) {
                         OAuthUtil.processBasicAuthToken(userInfo);
                     }
                 });
@@ -1348,7 +1393,7 @@ require([
                     menusDialog.left = (viewPoint.w-204)+'px';
                     domStyle.set(menusDialog.domNode, "backgroundColor", "white");
 
-                    if (annoUtil.isRunningAsPlugin())
+                    if (annoUtil.isPlugin)
                     {
                         domStyle.set('menuItemFeed', 'display', '');
                         domStyle.set(menusDialog.domNode, 'height', '80px');
@@ -1426,12 +1471,13 @@ require([
         }
     }, false);
 
-    document.addEventListener("deviceready", function(){
-        DBUtil.initDB(function(){
-            console.log("DB is readay!");
-            annoUtil.readSettings(function(){
-                init();
+    document.addEventListener("deviceready", function() {
+        window.setTimeout(function() {
+            annoUtil.checkIfPlugin();
+            DBUtil.initDB(function() {
+                console.log("[annodraw:main.js] DB is readay!");
+                annoUtil.readSettings(function() { init(); });
             });
-        });
+        }, 0);
     }, false);
 });
