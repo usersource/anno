@@ -36,9 +36,9 @@
         editModeValue:(BOOL)editModeValue
    landscapeModeValue:(BOOL)landscapeModeValue;
 
-- (void) setupAnnoWithEmail:(NSString*)email
-               userImageURL:(NSString*)userImageURL
-                    teamKey:(NSString*)teamKey
-                 teamSecret:(NSString*)teamSecret;
+- (void) setupWithEmail:(NSString*)email
+           userImageURL:(NSString*)userImageURL
+                teamKey:(NSString*)teamKey
+             teamSecret:(NSString*)teamSecret;
 
 @end
