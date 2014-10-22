@@ -54,7 +54,7 @@ class Anno(BaseModel):
     latitude = ndb.FloatProperty()
     longitude = ndb.FloatProperty()
     country = ndb.StringProperty()
-    circle_level = ndb.IntegerProperty(required=True, default=0)
+    circle_level = ndb.IntegerProperty(default=0)
 
     def __eq__(self, other):
         return self.key.id() == other.key.id()
