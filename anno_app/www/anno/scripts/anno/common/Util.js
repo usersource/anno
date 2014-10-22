@@ -45,6 +45,10 @@
         annoPermaLinkBaseUrl:"http://anno-webapp.appspot.com/usersource/pages/permalink/index.html#/anno/",
         startBackgroundSyncTimer: null,
         isPlugin: false,
+        pluginUserEmail : "",
+        pluginUserImageURL : "",
+        pluginTeamKey : "",
+        pluginTeamSecret : "",
         ERROR_TYPES:{
             "LOAD_GAE_API": 1,
             "API_RESPONSE_EMPTY": 2,
@@ -318,6 +322,16 @@
             cordova.exec(function (result) {
                 self.isPlugin = result[0];
             }, function (err) {}, "AnnoCordovaPlugin", "is_plugin", []);
+        },
+        getPluginUserInfo : function(callback) {
+            var self = this;
+            cordova.exec(function (result) {
+                self.pluginUserEmail = result[0];
+                self.pluginUserImageURL = result[1];
+                self.pluginTeamKey = result[2];
+                self.pluginTeamSecret = result[3];
+                callback();
+            }, function (err) { console.error("Error in getting plugin user info. " + err); }, "AnnoCordovaPlugin", "get_user_info", []);
         },
         readSettings: function(callback)
         {
