@@ -185,8 +185,9 @@
  @return UIImage of screenshot
  */
 - (UIImage*) takeScreenshot {
-    UIGraphicsBeginImageContextWithOptions(appDelegate.window.bounds.size, YES, 0.0);
-    [appDelegate.window.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
+    UIGraphicsBeginImageContextWithOptions(window.bounds.size, YES, 0.0);
+    [window.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return image;
@@ -232,16 +233,16 @@
         return;
     }
 
-    @try {
-        NSString *screenshotPath = [screenshotGestureListener takeScreenshot];
-        [screenshotGestureListener launchAnnoPlugin:viewController screenshotPath:screenshotPath];
-    }
-    @catch (NSException *exception) {
-        if (annoUtils.debugEnabled) {
-            NSLog(@"Exception in triggerCreateAnno: %@", exception);
-        }
-        [annoUtils displayError:screenshotGestureListener.TAKE_SCREENSHOT_FAIL_MESSAGE];
-    }
+//    @try {
+//        NSString *screenshotPath = [screenshotGestureListener takeScreenshot];
+//        [screenshotGestureListener launchAnnoPlugin:viewController screenshotPath:screenshotPath];
+//    }
+//    @catch (NSException *exception) {
+//        if (annoUtils.debugEnabled) {
+//            NSLog(@"Exception in triggerCreateAnno: %@", exception);
+//        }
+//        [annoUtils displayError:screenshotGestureListener.TAKE_SCREENSHOT_FAIL_MESSAGE];
+//    }
 }
 
 - (NSString*) generateUniqueImageKey {

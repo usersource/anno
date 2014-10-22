@@ -102,6 +102,11 @@ define([
 
                         // console.error("doUpgrade "+JSON.stringify(tempObj));
 
+                        if (!tempObj["teamkey"] && !tempObj["teamsecret"]) {
+                            self.annoDB.executeSql("alter table app_users add column teamkey text");
+                            self.annoDB.executeSql("alter table app_users add column teamsecret text");
+                        }
+
                         if (!tempObj["signedup"])
                         {
                             self.annoDB.executeSql("alter table app_users add column signedup integer default 0", [], function(pures){

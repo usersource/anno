@@ -42,6 +42,8 @@
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		302D95F214D2391D003F00A1 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 302D95F014D2391D003F00A1 /* MainViewController.xib */; };
 		305D5FD1115AB8F900A74A75 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 305D5FD0115AB8F900A74A75 /* MobileCoreServices.framework */; };
+		5BB64FE019F7ABD10017F6FE /* AnnoSingleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BB64FDC19F79C0E0017F6FE /* AnnoSingleton.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5BB64FE119F7ABE50017F6FE /* AnnoSingleton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB64FDD19F79C0E0017F6FE /* AnnoSingleton.m */; };
 		5BB6D26719EFADAD00AAF4A2 /* AnnoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D44E81C18F7FEF5007A1635 /* AnnoUtils.m */; };
 		5BB6D26819EFADAD00AAF4A2 /* AnnoDrawViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDCA4E418F41A2B006E63FE /* AnnoDrawViewController.m */; };
 		5BB6D26919EFADAD00AAF4A2 /* CommunityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDCA4E618F41A2B006E63FE /* CommunityViewController.m */; };
@@ -193,6 +195,8 @@
 		5491A59902AB44CA90766B19 /* SocialSharing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SocialSharing.h; path = "nl.x-services.plugins.socialsharing/SocialSharing.h"; sourceTree = "<group>"; };
 		5AEE5B34173C68D80009041E /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		5BB64FDC19F79C0E0017F6FE /* AnnoSingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnnoSingleton.h; sourceTree = "<group>"; };
+		5BB64FDD19F79C0E0017F6FE /* AnnoSingleton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnnoSingleton.m; sourceTree = "<group>"; };
 		5BB6D26119EFAC5500AAF4A2 /* UserSourceAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserSourceAppDelegate.h; sourceTree = "<group>"; };
 		5BB6D26219EFAC5500AAF4A2 /* UserSourceAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserSourceAppDelegate.m; sourceTree = "<group>"; };
 		5BBAD08119E66C560060A80D /* libUserSourceStatic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libUserSourceStatic.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -314,6 +318,8 @@
 				1D3623250D0F684500981E51 /* AppDelegate.m */,
 				1D6F35C81908CDE7002051ED /* ScreenshotGestureListener.h */,
 				1D6F35C91908CDE7002051ED /* ScreenshotGestureListener.m */,
+				5BB64FDC19F79C0E0017F6FE /* AnnoSingleton.h */,
+				5BB64FDD19F79C0E0017F6FE /* AnnoSingleton.m */,
 			);
 			name = Classes;
 			path = UserSource/Classes;
@@ -543,6 +549,7 @@
 				5BB6D27519EFADD000AAF4A2 /* UserSourceAppDelegate.h in Headers */,
 				5BB6D27619EFADD000AAF4A2 /* ScreenshotGestureListener.h in Headers */,
 				1DAE4C2F19F528B200E3A1BA /* UserSourceStatic.h in Headers */,
+				5BB64FE019F7ABD10017F6FE /* AnnoSingleton.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -810,6 +817,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BB64FE119F7ABE50017F6FE /* AnnoSingleton.m in Sources */,
 				5BB6D27719EFAE1A00AAF4A2 /* PushPlugin.m in Sources */,
 				5BB6D27819EFAE1A00AAF4A2 /* CDVDevice.m in Sources */,
 				5BB6D27919EFAE1A00AAF4A2 /* CDVInAppBrowser.m in Sources */,

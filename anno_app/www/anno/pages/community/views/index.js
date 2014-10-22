@@ -74,30 +74,25 @@ define([
         var loadListData = function (search, poffset, order, clearData)
         {
             loadingData = true;
-            search = search == null?false:search;
-            clearData = clearData == null?false:clearData;
+            search = search == null ? false : search;
+            clearData = clearData == null ? false : clearData;
 
-            var arg = {outcome: 'cursor,has_more,anno_list', limit: limit};
+            var arg = {
+                outcome : 'cursor,has_more,anno_list',
+                limit : limit,
+                is_plugin : annoUtil.isPlugin
+            };
 
             if (search)
             {
-                arg.order_type = order||SEARCH_ORDER.RECENT;
+                arg.order_type = order || SEARCH_ORDER.RECENT;
                 arg.search_string = dom.byId("txtSearchAnno").value;
+                arg.only_my_apps = registry.byId("chkLimitToMyApps").checked ? true : false;
 
                 if (selectedAppName)
                 {
                     arg.app_name = selectedAppName;
                 }
-
-                if (registry.byId("chkLimitToMyApps").checked)
-                {
-                    arg["only_my_apps"] = true;
-                }
-                else
-                {
-                    arg["only_my_apps"] = false;
-                }
-
             }
 
             if (poffset)
@@ -799,27 +794,347 @@ define([
             }
         };
 
-        var authenticatePluginSession = function() {
-            var email = 'imran.ahmed@ignitesol.com',
-                team_key = 'com.ignitesol.exposureapp',
-                team_secret = 'kaklik';
+        var connectDomElements = function() {
+            _connectResults.push(connect.connect(dom.byId("tdBarMyStuff"), 'click', function(e) {
+                dojo.stopEvent(e);
+                hideMenuDialog();
+    
+                annoUtil.actionGATracking(annoUtil.analytics.category.feed, "nav to activity", "homescreen");
+                app.transitionToView(document.getElementById('modelApp_home'), {
+                    target : 'myStuff',
+                    url : '#myStuff'
+                });
+            }));
 
+            _connectResults.push(connect.connect(dom.byId("tdBarAddImage"), 'click', function(e) {
+                var options = {
+                    destinationType : Camera.DestinationType.FILE_URI,
+                    sourceType : Camera.PictureSourceType.PHOTOLIBRARY,
+                    mediaType : Camera.MediaType.PICTURE
+                };
+
+                if (annoUtil.isAndroid()) {
+                    options.sourceType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
+                    options.destinationType = Camera.DestinationType.NATIVE_URI;
+                }
+
+                navigator.camera.getPicture(onSuccess, OnFail, options);
+                annoUtil.actionGATracking(annoUtil.analytics.category.feed, 'header button to create', 'homescreen');
+
+                function onSuccess(imageURI) {
+                    console.log("imageURI: " + imageURI);
+                    // only support local image uri, TODO: show a message box?
+                    if (imageURI.indexOf("https%3A%2F%2F") > 0 || imageURI.indexOf("http%3A%2F%2F") > 0) {
+                        cordova.exec(function(result) {
+                        }, function(err) {
+                        }, "AnnoCordovaPlugin", 'show_toast', ["UserSource support local images files only."]);
+    
+                        return;
+                    }
+
+                    if (annoUtil.isAndroid()) {
+                        cordova.exec(function(result) {
+                        }, function(err) {
+                        }, "AnnoCordovaPlugin", 'start_anno_draw', [imageURI]);
+                    } else {
+                        // iOS: Setting timeout as AnnoDrawViewController doesn't come up
+                        // when photo library is dismissing.
+                        setTimeout(function() {
+                            cordova.exec(function(result) {
+                            }, function(err) {
+                            }, "AnnoCordovaPlugin", 'start_anno_draw', [imageURI]);
+                        }, 1000);
+                    }
+                }
+
+                function OnFail() {
+                }
+            }));
+
+            _connectResults.push(connect.connect(dom.byId("tdBarSearchAnno"), 'click', function(e) {
+                hideMenuDialog();
+
+                domStyle.set("listContainerStart", "height", (viewPoint.h - topBarHeight - searchSortsBarHeight) + "px");
+
+                domStyle.set('navBtnBackHome', 'display', '');
+                domStyle.set('navLogoTextHome', 'display', 'none');
+                domStyle.set('tdBarMyStuff', 'display', 'none');
+                domStyle.set('tdBarAddImage', 'display', 'none');
+                domStyle.set('tdBarSearchAnno', 'display', 'none');
+                domStyle.set('tdBarSettings', 'display', 'none');
+                domStyle.set('tdBarMoreMenuHome', 'display', '');
+                domStyle.set('txtSearchAnno', 'display', '');
+                domStyle.set('tdHeadingLeft', 'width', '95px');
+                domStyle.set('annoLogoHome', 'paddingLeft', '0px');
+                domStyle.set('searchSortsBarHome', 'display', '');
+
+                dom.byId('txtSearchAnno').focus();
+                inSearchMode = true;
+                dojo.stopEvent(e);
+
+                annoUtil.actionGATracking(annoUtil.analytics.category.feed, 'header button to search', 'homescreen');
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId("tdBarSettings"), 'click', function(e) {
+                app.transitionToView(document.getElementById('modelApp_home'), {
+                    target : 'settings',
+                    url : '#settings'
+                });
+                annoUtil.actionGATracking(annoUtil.analytics.category.feed, 'header button to settings', 'homescreen');
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId("barMoreMenuHome"), 'click', function(e) {
+                if (inSearchMode) {
+                    window.setTimeout(function() { showAppNameDialog(); }, 500);
+                } else {
+                    var menusDialog = registry.byId('menusDialog');
+                    if (menusDialog.domNode.style.display === "") {
+                        hideMenuDialog();
+                    } else {
+                        showMenuDialog();
+                    }
+                }
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId("tdLogo"), 'click', function(e) {
+                cancelSearch();
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId('btnLoadListData'), "click", function() {
+                loadListData();
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId('navBtnBackStart'), "click", function() {
+                goBackActivity();
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId('searchSortsBarRecent'), "click", function() {
+                if (domClass.contains(dom.byId('searchSortsBarRecent').parentNode, 'searchSortItemActive')) {
+                    return;
+                }
+    
+                searchOrder = SEARCH_ORDER.RECENT;
+                loadListData(true, null, SEARCH_ORDER.RECENT, true);
+    
+                annoUtil.actionGATracking(annoUtil.analytics.category.search, 'select recent', 'homescreen');
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId('searchSortsBarActive'), "click", function() {
+                if (domClass.contains(dom.byId('searchSortsBarActive').parentNode, 'searchSortItemActive')) {
+                    return;
+                }
+    
+                searchOrder = SEARCH_ORDER.ACTIVE;
+                loadListData(true, null, SEARCH_ORDER.ACTIVE, true);
+    
+                annoUtil.actionGATracking(annoUtil.analytics.category.search, 'select active', 'homescreen');
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId('searchSortsBarPopular'), "click", function() {
+                if (domClass.contains(dom.byId('searchSortsBarPopular').parentNode, 'searchSortItemActive')) {
+                    return;
+                }
+    
+                searchOrder = SEARCH_ORDER.POPULAR;
+                loadListData(true, null, SEARCH_ORDER.POPULAR, true);
+    
+                annoUtil.actionGATracking(annoUtil.analytics.category.search, 'select popular', 'homescreen');
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId('txtSearchAnno'), "keydown", function(e) {
+                if (e.keyCode == 13) {
+                    dom.byId("hiddenBtn").focus();
+                    loadListData(true, null, searchOrder, true);
+                }
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId('btnAppNameDialogCancel'), "click", function() {
+                hideAppNameDialog();
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId('txtSearchAppName'), "keydown", function(e) {
+                if (e.keyCode == 13) {
+                    dom.byId("hiddenBtn").focus();
+                    doFilterAppName();
+                }
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId('txtSearchAppName'), "input", function(e) {
+                if (dom.byId('txtSearchAppName').value.trim().length > 0) {
+                    dom.byId('btnAppNameDialogDone').disabled = false;
+                    domClass.remove('btnAppNameDialogDone', "disabledBtn");
+                } else {
+                    dom.byId('btnAppNameDialogDone').disabled = true;
+                    domClass.add('btnAppNameDialogDone', "disabledBtn");
+                }
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId('icoSearchAppName'), "click", function() {
+                dom.byId("hiddenBtn").focus();
+                doFilterAppName();
+            }));
+    
+            // handle app name list click event
+            _connectResults.push(connect.connect(dom.byId("sdAppListContent"), 'click', function(e) {
+                var itemNode = e.target;
+    
+                if (domClass.contains(itemNode, 'appNameValue')) {
+                    itemNode = itemNode.parentNode;
+                }
+    
+                if (!domClass.contains(itemNode, 'appNameItem')) {
+                    return;
+                }
+    
+                var allItems = query('.appNameItem', dom.byId("sdAppList"));
+    
+                for (var i = 0; i < allItems.length; i++) {
+                    domClass.remove(allItems[i], 'appNameItem-active');
+                }
+    
+                domClass.add(itemNode, 'appNameItem-active');
+    
+                selectedAppName = itemNode.children[0].innerHTML;
+                dom.byId('btnAppNameDialogDone').disabled = false;
+                domClass.remove('btnAppNameDialogDone', "disabledBtn");
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId('btnAppNameDialogDone'), "click", function() {
+                if (domClass.contains('btnAppNameDialogDone', 'disabledBtn')) {
+                    return;
+                }
+    
+                var appName = selectedAppName;
+    
+                if (!appName) {
+                    if (dom.byId('txtSearchAppName').value.trim().length > 0) {
+                        appName = dom.byId('txtSearchAppName').value.trim();
+                        selectedAppName = appName;
+                    } else if (!registry.byId("chkLimitToMyApps").checked) {
+                        annoUtil.showMessageDialog("Please select app in apps list or enter app in search text box.");
+                        return;
+                    }
+                }
+    
+                hideAppNameDialog();
+    
+                if (appName) {
+                    domStyle.set('searchAppNameContainer', 'display', '');
+                    dom.byId('searchAppName').innerHTML = appName;
+                } else {
+                    domStyle.set('searchAppNameContainer', 'display', 'none');
+                    dom.byId('searchAppName').innerHTML = "";
+                }
+    
+                domStyle.set("listContainerStart", "height", (viewPoint.h - topBarHeight - searchSortsBarHeight - searchAppNameContainerHeight) + "px");
+                loadListData(true, null, searchOrder, true);
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId('closeSearchAppName'), "click", function() {
+                domStyle.set('searchAppNameContainer', 'display', 'none');
+                dom.byId('searchAppName').innerHTML = "";
+                selectedAppName = "";
+    
+                domStyle.set("listContainerStart", "height", (viewPoint.h - topBarHeight - searchSortsBarHeight) + "px");
+                loadListData(true, null, searchOrder, true);
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId('listContainerStart'), "scroll", this, function() {
+                var toEnd = false;
+                var listContainer = dom.byId('listContainerStart');
+                if ((listContainer.clientHeight + listContainer.scrollTop) >= listContainer.scrollHeight)
+                    toEnd = true;
+    
+                if (toEnd) {
+                    annoUtil.actionGATracking(annoUtil.analytics.category.feed, 'scroll', 'homescreen');
+                    loadMoreData();
+                }
+            }));
+    
+            // pull to refresh
+            _connectResults.push(connect.connect(dom.byId('listContainerStart'), "touchmove", this, function(e) {
+                if (!loadingData && firstListLoaded && !inSearchMode) {
+                    var listContainer = dom.byId('listContainerStart');
+    
+                    if (startPull) {
+                        e.preventDefault();
+                        var delta = e.touches[0].pageY - pullStartY;
+                        registry.byId('progressBar').showSmoothProgress(delta);
+                    } else {
+                        if (listContainer.scrollTop <= 0 && (e.touches[0].pageY - touchStartY) > 0) {
+                            e.preventDefault();
+                            startPull = true;
+                            pullStartY = e.touches[0].pageY;
+                            showPullToRefreshMessage();
+                        }
+                    }
+                }
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId('listContainerStart'), "touchstart", this, function(e) {
+                startPull = false;
+                pullStartY = 0;
+                touchStartY = e.touches[0].pageY;
+            }));
+    
+            _connectResults.push(connect.connect(registry.byId('progressBar'), "onSmoothProgressComplete", this, function() {
+                // now we can start refreshing anno feeds
+                hidePullToRefreshMessage();
+                showStartRefreshMessage();
+                registry.byId('progressBar').showIndeterminateProgress();
+                doRefresh();
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId('listContainerStart'), "touchend", this, function(e) {
+                if (!loadingData) {
+                    var progressBar = registry.byId('progressBar');
+    
+                    if (startPull && !progressBar.showingIndeterminateProgress) {
+                        registry.byId('progressBar').showSmoothProgress(0);
+                        hidePullToRefreshMessage();
+                    }
+    
+                    startPull = false;
+                    pullStartY = 0;
+                    touchStartY = 0;
+                }
+            }));
+    
+            _connectResults.push(connect.connect(dom.byId('listContainerStart'), "touchcancel", this, function(e) {
+                if (!loadingData) {
+                    var progressBar = registry.byId('progressBar');
+    
+                    if (startPull && !progressBar.showingIndeterminateProgress) {
+                        registry.byId('progressBar').showSmoothProgress(0);
+                        hidePullToRefreshMessage();
+                    }
+    
+                    startPull = false;
+                    pullStartY = 0;
+                    touchStartY = 0;
+                }
+            }));
+    
+            // pull to refresh end
+        }; 
+
+        var authenticatePluginSession = function() {
             var APIConfig = {
                 name : annoUtil.API.account,
                 method : "account.account.authenticate",
                 parameter : {
-                    'user_email' : email,
-                    'team_key' : team_key,
-                    'team_secret' : team_secret
+                    'user_email' : annoUtil.pluginUserEmail,
+                    'team_key' : annoUtil.pluginTeamKey,
+                    'team_secret' : annoUtil.pluginTeamSecret
                 },
                 success : function(resp) {
                     var userInfo = {};
                     userInfo.userId = resp.result.id;
-                    userInfo.email = email;
+                    userInfo.email = annoUtil.pluginUserEmail;
                     userInfo.signinMethod = "plugin";
                     userInfo.nickname = resp.result.display_name;
-                    userInfo.team_key = team_key;
-                    userInfo.team_secret = team_secret;
+                    userInfo.team_key = annoUtil.pluginTeamKey;
+                    userInfo.team_secret = annoUtil.pluginTeamSecret;
 
                     AnnoDataHandler.saveUserInfo(userInfo, function() {
                         var params = annoUtil.parseUrlParams(document.location.search),
@@ -840,31 +1155,24 @@ define([
                 }
             };
 
-            // Set server
             annoUtil.setDefaultServer("4");
-
             annoUtil.showLoadingIndicator();
             annoUtil.callGAEAPI(APIConfig);
         };
 
-        var _init = function()
-        {
-            // Auto tracking setup
-            annoUtil.setupGATracking();
-            
-            if (DBUtil.userChecked)
-            {
+        var launchCommunityPage = function() {
+            if (DBUtil.userChecked) {
                 var authResult = OAuthUtil.isAuthorized();
                 if (!authResult.authorized) {
                     if (annoUtil.isPlugin) {
-                        authenticatePluginSession();
+                        annoUtil.getPluginUserInfo(function() {
+                            authenticatePluginSession();
+                        });
                     } else {
                         OAuthUtil.openAuthPage();
                     }
                     return;
-                }
-                else
-                {
+                } else {
                     AnnoDataHandler.getCurrentUserInfo(function(userInfo) {
                         if (authResult.newUser) {
                             annoUtil.startActivity("Intro", false);
@@ -879,415 +1187,20 @@ define([
                         OAuthUtil.getAccessToken(function() { loadListData(); });
                     });
 
-                    _connectResults.push(connect.connect(dom.byId("tdBarMyStuff"), 'click', function(e)
-                    {
-                        dojo.stopEvent(e);
-                        hideMenuDialog();
-
-                        annoUtil.actionGATracking(annoUtil.analytics.category.feed, "nav to activity", "homescreen");
-                        app.transitionToView(document.getElementById('modelApp_home'), {target:'myStuff',url:'#myStuff'});
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId("tdBarAddImage"), 'click', function(e) {
-                        var options = {
-                            destinationType : Camera.DestinationType.FILE_URI,
-                            sourceType : Camera.PictureSourceType.PHOTOLIBRARY,
-                            mediaType : Camera.MediaType.PICTURE
-                        };
-
-                        if (annoUtil.isAndroid())
-                        {
-                            options.sourceType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
-                            options.destinationType = Camera.DestinationType.NATIVE_URI;
-                        }
-
-
-                        navigator.camera.getPicture(onSuccess, OnFail, options);
-                        annoUtil.actionGATracking(annoUtil.analytics.category.feed, 'header button to create', 'homescreen');
-
-                        function onSuccess(imageURI) {
-                            console.log("imageURI: " + imageURI);
-                            // only support local image uri, TODO: show a message box?
-                            if (imageURI.indexOf("https%3A%2F%2F") >0 || imageURI.indexOf("http%3A%2F%2F") >0)
-                            {
-                                cordova.exec(
-                                    function (result)
-                                    {
-                                    },
-                                    function (err)
-                                    {
-                                    },
-                                    "AnnoCordovaPlugin",
-                                    'show_toast',
-                                    ["UserSource support local images files only."]
-                                );
-
-                                return;
-                            }
-
-                            if (annoUtil.isAndroid())
-                            {
-                                cordova.exec(
-                                    function (result) {},
-                                    function (err) {},
-                                    "AnnoCordovaPlugin", 'start_anno_draw', [imageURI]
-                                );
-                            }
-                            else
-                            {
-                                // iOS: Setting timeout as AnnoDrawViewController doesn't come up
-                                // when photo library is dismissing.
-                                setTimeout(function() {
-                                    cordova.exec(
-                                        function (result) {},
-                                        function (err) {},
-                                        "AnnoCordovaPlugin", 'start_anno_draw', [imageURI]
-                                    );
-                                }, 1000);
-                            }
-
-                        }
-
-                        function OnFail() {}
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId("tdBarSearchAnno"), 'click', function(e)
-                    {
-                        hideMenuDialog();
-
-                        domStyle.set("listContainerStart", "height", (viewPoint.h-topBarHeight-searchSortsBarHeight)+"px");
-
-                        domStyle.set('navBtnBackHome', 'display', '');
-                        domStyle.set('navLogoTextHome', 'display', 'none');
-                        domStyle.set('tdBarMyStuff', 'display', 'none');
-                        domStyle.set('tdBarAddImage', 'display', 'none');
-                        domStyle.set('tdBarSearchAnno', 'display', 'none');
-                        domStyle.set('tdBarSettings', 'display', 'none');
-                        domStyle.set('tdBarMoreMenuHome', 'display', '');
-                        domStyle.set('txtSearchAnno', 'display', '');
-                        domStyle.set('tdHeadingLeft', 'width', '95px');
-                        domStyle.set('annoLogoHome', 'paddingLeft', '0px');
-                        domStyle.set('searchSortsBarHome', 'display', '');
-
-                        dom.byId('txtSearchAnno').focus();
-                        inSearchMode = true;
-                        dojo.stopEvent(e);
-
-                        annoUtil.actionGATracking(annoUtil.analytics.category.feed, 'header button to search', 'homescreen');
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId("tdBarSettings"), 'click', function(e) {
-                        app.transitionToView(document.getElementById('modelApp_home'), {target: 'settings', url: '#settings'});
-                        annoUtil.actionGATracking(annoUtil.analytics.category.feed, 'header button to settings', 'homescreen');
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId("barMoreMenuHome"), 'click', function(e)
-                    {
-                        if (inSearchMode)
-                        {
-                            window.setTimeout(function(){
-                                showAppNameDialog();
-                            }, 500);
-                        }
-                        else
-                        {
-                            var menusDialog = registry.byId('menusDialog');
-                            if (menusDialog.domNode.style.display === "")
-                            {
-                                hideMenuDialog();
-                            }
-                            else
-                            {
-                                showMenuDialog();
-                            }
-                        }
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId("tdLogo"), 'click', function(e)
-                    {
-                        cancelSearch();
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId('btnLoadListData'), "click", function ()
-                    {
-                        loadListData();
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId('navBtnBackStart'), "click", function ()
-                    {
-                        goBackActivity();
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId('searchSortsBarRecent'), "click", function ()
-                    {
-                        if (domClass.contains(dom.byId('searchSortsBarRecent').parentNode, 'searchSortItemActive'))
-                        {
-                            return;
-                        }
-
-                        searchOrder = SEARCH_ORDER.RECENT;
-                        loadListData(true, null, SEARCH_ORDER.RECENT, true);
-
-                        annoUtil.actionGATracking(annoUtil.analytics.category.search, 'select recent', 'homescreen');
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId('searchSortsBarActive'), "click", function ()
-                    {
-                        if (domClass.contains(dom.byId('searchSortsBarActive').parentNode, 'searchSortItemActive'))
-                        {
-                            return;
-                        }
-
-                        searchOrder = SEARCH_ORDER.ACTIVE;
-                        loadListData(true, null, SEARCH_ORDER.ACTIVE, true);
-
-                        annoUtil.actionGATracking(annoUtil.analytics.category.search, 'select active', 'homescreen');
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId('searchSortsBarPopular'), "click", function ()
-                    {
-                        if (domClass.contains(dom.byId('searchSortsBarPopular').parentNode, 'searchSortItemActive'))
-                        {
-                            return;
-                        }
-
-                        searchOrder = SEARCH_ORDER.POPULAR;
-                        loadListData(true, null, SEARCH_ORDER.POPULAR, true);
-
-                        annoUtil.actionGATracking(annoUtil.analytics.category.search, 'select popular', 'homescreen');
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId('txtSearchAnno'), "keydown", function (e)
-                    {
-                        if (e.keyCode == 13)
-                        {
-                            dom.byId("hiddenBtn").focus();
-                            loadListData(true, null, searchOrder, true);
-                        }
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId('btnAppNameDialogCancel'), "click", function ()
-                    {
-                        hideAppNameDialog();
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId('txtSearchAppName'), "keydown", function (e)
-                    {
-                        if (e.keyCode == 13)
-                        {
-                            dom.byId("hiddenBtn").focus();
-                            doFilterAppName();
-                        }
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId('txtSearchAppName'), "input", function (e)
-                    {
-                        if (dom.byId('txtSearchAppName').value.trim().length >0)
-                        {
-                            dom.byId('btnAppNameDialogDone').disabled = false;
-                            domClass.remove('btnAppNameDialogDone', "disabledBtn");
-                        }
-                        else
-                        {
-                            dom.byId('btnAppNameDialogDone').disabled = true;
-                            domClass.add('btnAppNameDialogDone', "disabledBtn");
-                        }
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId('icoSearchAppName'), "click", function ()
-                    {
-                        dom.byId("hiddenBtn").focus();
-                        doFilterAppName();
-                    }));
-
-                    // handle app name list click event
-                    _connectResults.push(connect.connect(dom.byId("sdAppListContent"), 'click', function(e)
-                    {
-                        var itemNode = e.target;
-
-                        if (domClass.contains(itemNode, 'appNameValue'))
-                        {
-                            itemNode = itemNode.parentNode;
-                        }
-
-                        if (!domClass.contains(itemNode, 'appNameItem'))
-                        {
-                            return;
-                        }
-
-                        var allItems = query('.appNameItem', dom.byId("sdAppList"));
-
-                        for (var i=0;i<allItems.length;i++)
-                        {
-                            domClass.remove(allItems[i], 'appNameItem-active');
-                        }
-
-                        domClass.add(itemNode, 'appNameItem-active');
-
-                        selectedAppName = itemNode.children[0].innerHTML;
-                        dom.byId('btnAppNameDialogDone').disabled = false;
-                        domClass.remove('btnAppNameDialogDone', "disabledBtn");
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId('btnAppNameDialogDone'), "click", function ()
-                    {
-                        if (domClass.contains('btnAppNameDialogDone', 'disabledBtn'))
-                        {
-                            return;
-                        }
-
-                        var appName = selectedAppName;
-
-                        if (!appName)
-                        {
-                            if (dom.byId('txtSearchAppName').value.trim().length >0)
-                            {
-                                appName = dom.byId('txtSearchAppName').value.trim();
-                                selectedAppName = appName;
-                            }
-                            else if(!registry.byId("chkLimitToMyApps").checked)
-                            {
-                                annoUtil.showMessageDialog("Please select app in apps list or enter app in search text box.");
-                                return;
-                            }
-                        }
-
-                        hideAppNameDialog();
-
-                        if (appName)
-                        {
-                            domStyle.set('searchAppNameContainer', 'display', '');
-                            dom.byId('searchAppName').innerHTML = appName;
-                        }
-                        else
-                        {
-                            domStyle.set('searchAppNameContainer', 'display', 'none');
-                            dom.byId('searchAppName').innerHTML = "";
-                        }
-
-                        domStyle.set("listContainerStart", "height", (viewPoint.h-topBarHeight-searchSortsBarHeight-searchAppNameContainerHeight)+"px");
-                        loadListData(true, null, searchOrder, true);
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId('closeSearchAppName'), "click", function ()
-                    {
-                        domStyle.set('searchAppNameContainer', 'display', 'none');
-                        dom.byId('searchAppName').innerHTML = "";
-                        selectedAppName = "";
-
-                        domStyle.set("listContainerStart", "height", (viewPoint.h-topBarHeight-searchSortsBarHeight)+"px");
-                        loadListData(true, null, searchOrder, true);
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId('listContainerStart'), "scroll", this, function(){
-                        var toEnd = false;
-                        var listContainer = dom.byId('listContainerStart');
-                        if ((listContainer.clientHeight + listContainer.scrollTop) >= listContainer.scrollHeight) toEnd = true;
-
-                        if (toEnd)
-                        {
-                            annoUtil.actionGATracking(annoUtil.analytics.category.feed, 'scroll', 'homescreen');
-                            loadMoreData();
-                        }
-                    }));
-
-                    // pull to refresh
-                    _connectResults.push(connect.connect(dom.byId('listContainerStart'), "touchmove", this, function(e){
-
-                        if (!loadingData&&firstListLoaded&&!inSearchMode)
-                        {
-                            var listContainer = dom.byId('listContainerStart');
-
-                            if (startPull)
-                            {
-                                e.preventDefault();
-
-                                var delta = e.touches[0].pageY - pullStartY;
-                                registry.byId('progressBar').showSmoothProgress(delta);
-                            }
-                            else
-                            {
-                                if (listContainer.scrollTop <=0 && (e.touches[0].pageY-touchStartY)>0)
-                                {
-                                    e.preventDefault();
-
-                                    startPull = true;
-                                    pullStartY = e.touches[0].pageY;
-
-                                    showPullToRefreshMessage();
-                                }
-                            }
-                        }
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId('listContainerStart'), "touchstart", this, function(e){
-                        startPull = false;
-
-                        pullStartY = 0;
-                        touchStartY = e.touches[0].pageY;
-                    }));
-
-                    _connectResults.push(connect.connect(registry.byId('progressBar'), "onSmoothProgressComplete", this, function(){
-                        // now we can start refreshing anno feeds
-                        hidePullToRefreshMessage();
-                        showStartRefreshMessage();
-                        registry.byId('progressBar').showIndeterminateProgress();
-
-                        doRefresh();
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId('listContainerStart'), "touchend", this, function(e){
-
-                        if (!loadingData)
-                        {
-                            var progressBar = registry.byId('progressBar');
-
-                            if (startPull&&!progressBar.showingIndeterminateProgress)
-                            {
-                                registry.byId('progressBar').showSmoothProgress(0);
-                                hidePullToRefreshMessage();
-                            }
-
-                            startPull = false;
-
-                            pullStartY = 0;
-                            touchStartY = 0;
-                        }
-
-                    }));
-
-                    _connectResults.push(connect.connect(dom.byId('listContainerStart'), "touchcancel", this, function(e){
-
-                        if (!loadingData)
-                        {
-                            var progressBar = registry.byId('progressBar');
-
-                            if (startPull&&!progressBar.showingIndeterminateProgress)
-                            {
-                                registry.byId('progressBar').showSmoothProgress(0);
-                                hidePullToRefreshMessage();
-                            }
-
-                            startPull = false;
-
-                            pullStartY = 0;
-                            touchStartY = 0;
-                        }
-
-                    }));
-
-                    // pull to refresh end
-
                     adjustSize();
 
                     initialized = true;
                     annoUtil.setVersionInfo();
                 }
+            } else {
+                window.setTimeout(launchCommunityPage, 20);
             }
-            else
-            {
-                window.setTimeout(_init, 20);
-            }
+        }; 
+
+        var _init = function() {
+            annoUtil.setupGATracking();
+            connectDomElements();
+            launchCommunityPage();
         };
 
         return {
