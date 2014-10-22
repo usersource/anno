@@ -134,12 +134,12 @@ AnnoSingleton *annoSingleton;
 - (void) get_screenshot_path:(CDVInvokedUrlCommand*)command {
     AnnoDrawViewController *currentAnnoDrawViewController = [annoSingleton.annoDrawViewControllerList lastObject];
     NSString *level = [NSString stringWithFormat:@"%d", [currentAnnoDrawViewController getLevel]];
-    NSString *isAnno = [annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]] ? @"true" : @"false";
+    BOOL isAnno = [annoUtils isAnno:[[NSBundle mainBundle] bundleIdentifier]];
 
     NSDictionary *jsonData = @{
         @"screenshotPath" : [currentAnnoDrawViewController getScreenshotPath],
         @"level" : level,
-        @"isAnno" : isAnno,
+        @"isAnno" : [NSNumber numberWithBool:isAnno],
         @"editMode" : [NSNumber numberWithBool:[currentAnnoDrawViewController isEditMode]]
     };
 
