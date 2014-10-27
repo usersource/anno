@@ -1211,6 +1211,10 @@ define([
                 app = this.app;
                 app.inSearchMode = function() { return inSearchMode; };
                 checkInternetConnection(_init);
+
+                if (annoUtil.isPlugin) {
+                    domClass.add(document.querySelector("body"), "plugin");
+                }
             },
             afterActivate: function()
             {

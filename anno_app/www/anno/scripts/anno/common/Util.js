@@ -801,7 +801,7 @@
         },
         replaceHashTagWithLink: function(s, linkScript)
         {
-            return s.replace(/(^|\W)(#[a-z\d][\w-]*)/ig, linkScript);
+            return this.isPlugin ? s : s.replace(/(^|\W)(#[a-z\d][\w-]*)/ig, linkScript);
         },
         replaceURLWithLink: function(s, linkScript)
         {

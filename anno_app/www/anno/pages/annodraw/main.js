@@ -1397,12 +1397,12 @@ require([
                     menusDialog.left = (viewPoint.w-204)+'px';
                     domStyle.set(menusDialog.domNode, "backgroundColor", "white");
 
-                    if (annoUtil.isPlugin)
+                    /*if (annoUtil.isPlugin)
                     {
                         domStyle.set('menuItemFeed', 'display', '');
                         domStyle.set(menusDialog.domNode, 'height', '80px');
                         menusDialog.top = (viewPoint.h-barHeight-84)+'px';
-                    }
+                    }*/
 
                     connect.connect(dom.byId("barMoreMenu"), 'click', function(e)
                     {
