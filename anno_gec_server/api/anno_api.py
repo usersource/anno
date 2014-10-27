@@ -212,10 +212,7 @@ class AnnoApi(remote.Service):
 
         if current user doesn't exist, the user will be created first.
         """
-        if request.team_key and request.user_email:
-            user = User.find_user_by_email(email=request.email, team_key=request.team_key)
-        else:
-            user = auth_user(self.request_state.headers)
+        user = auth_user(self.request_state.headers)
 
         # checking if same anno exists
         exist_anno = Anno.is_anno_exists(user, request)

@@ -235,7 +235,11 @@ def getAppInfo(community_id):
     return appinfo
 
 def getAppAndCommunity(message, user):
-    if message.app_name:
+    if message.team_key:
+        community = Community.getCommunityFromTeamKey(team_key=message.team_key)
+        appinfo = getAppInfo(community.key.id())
+
+    elif message.app_name:
         appinfo = AppInfo.get(name=message.app_name, platform=message.platform_type)
         community = None
 
@@ -252,10 +256,6 @@ def getAppAndCommunity(message, user):
         community_id = Community.getCommunity(community_name=message.community_name).id
         community = Community.get_by_id(community_id)
         appinfo = getAppInfo(community_id)
-
-    elif message.team_key:
-        community = Community.getCommunityFromTeamKey(team_key=message.team_key)
-        appinfo = getAppInfo(community.key.id())
 
     else:
         raise endpoints.BadRequestException("Please specify a community or app")
