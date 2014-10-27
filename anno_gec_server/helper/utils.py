@@ -68,7 +68,14 @@ def auth_user(headers):
 
     if current_user is None:
         credential_pair = get_credential(headers)
-        signinMethod, email, password, team_key, team_secret = credential_pair
+
+        if len(credential_pair) == 2:
+            email, password = credential_pair
+            signinMethod = SignInMethod.ANNO
+            team_key = None
+        else:
+            signinMethod, email, password, team_key, team_secret = credential_pair
+
         validate_email(email)
 
         if signinMethod == SignInMethod.ANNO:
@@ -161,7 +168,8 @@ def get_credential(headers):
         logging.exception("Exception in get_credential")
         credential_pair = []
 
-    if len(credential_pair) != 5:
+    # length of credential_pair for old JS is 2 while for new is 5
+    if not (len(credential_pair) == 2 or len(credential_pair) == 5):
         raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
 
     return credential_pair
