@@ -66,6 +66,7 @@ class AnnoMergeMessage(messages.Message):
     draw_elements = messages.StringField(16) #:
     screenshot_is_anonymized = messages.BooleanField(17) #:
     geo_position = messages.StringField(18) #:
+    team_key = messages.StringField(19) #:
 
 
 class AnnoResponseMessage(messages.Message):
