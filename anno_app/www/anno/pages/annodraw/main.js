@@ -975,7 +975,7 @@ require([
                     "draw_elements":dojoJson.stringify(surface.toJSON()),
                     "screenshot_is_anonymized":isScreenshotAnonymized,
                     "anno_type":"draw comment",
-                    "team_key":annoUtil.pluginTeamKey
+                    "team_key":annoUtil.pluginTeamKey||""
                 };
 
                 if (selectedType == "app") {
@@ -1425,13 +1425,16 @@ require([
 
                 }, 500);
 
-                // load all needed resources at startup
-                loadCommunities();
-                loadFavoriteApps();
-                annoUtil.getTopTags(100);
+                if (!annoUtil.isPlugin) {
+                    // load all needed resources at startup
+                    loadCommunities();
+                    loadFavoriteApps();
 
-                // show or hide tabs of picklist deponds on OS name
-                setShareDialogUI();
+                    // show or hide tabs of picklist deponds on OS name
+                    setShareDialogUI();
+                }
+
+                annoUtil.getTopTags(100);
             }
 
             // disable JS and native gesture listener
