@@ -1056,7 +1056,8 @@ require([
                         "draw_elements":dojoJson.stringify(shapesJson),
                         "screenshot_is_anonymized":isScreenshotAnonymized,
                         "anno_type":"draw comment",
-                        "level":level
+                        "level":level,
+                        "team_key":annoUtil.pluginTeamKey||""
                     };
 
                     if (selectedType == "app") {
@@ -1096,7 +1097,8 @@ require([
                 "draw_elements":dojoJson.stringify(shapesJson),
                 "screenshot_is_anonymized":isScreenshotAnonymized,
                 "anno_type":"draw comment",
-                "level":level
+                "level":level,
+                "team_key":annoUtil.pluginTeamKey||""
             };
 
             if (selectedType == "app") {

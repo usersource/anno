@@ -12,10 +12,10 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
     var save_userInfo_sql = "insert into app_users(userid,email,signinmethod,nickname,password,signedup,teamkey,teamsecret) values (?,?,?,?,?,?,?,?)";
     var select_userInfo_sql = "select * from app_users";
     var delete_userInfo_sql = "delete from app_users";
-    var insert_anno_unsynched_sql = "insert into feedback_comment(x,y,direction,is_moved,object_key,draw_elements,draw_is_anonymized,last_update,comment,screenshot_key,level,app_name,app_version,anno_type,synched)"+
-        " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-    var update_anno_unsynched_sql = "update feedback_comment set draw_elements=?,comment=?,app_name=?,app_version=?,draw_is_anonymized=?,synched=? where _id=?";
-    var update_anno_unsynched_including_image_sql = "update feedback_comment set screenshot_key=?,draw_elements=?,comment=?,app_name=?,app_version=?,draw_is_anonymized=?,synched=? where _id=?";
+    var insert_anno_unsynched_sql = "insert into feedback_comment(x,y,direction,is_moved,object_key,draw_elements,draw_is_anonymized,last_update,comment,screenshot_key,level,app_name,app_version,anno_type,synched,team_key)"+
+        " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    var update_anno_unsynched_sql = "update feedback_comment set draw_elements=?,comment=?,app_name=?,app_version=?,draw_is_anonymized=?,synched=?,team_key=? where _id=?";
+    var update_anno_unsynched_including_image_sql = "update feedback_comment set screenshot_key=?,draw_elements=?,comment=?,app_name=?,app_version=?,draw_is_anonymized=?,synched=?,team_key=? where _id=?";
 
     var annoDataHandler = {
         duplicateMsgPrefix:"Duplicate anno",
@@ -276,7 +276,8 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                             anno.app_name,
                             anno.app_version,
                             anno.anno_type,
-                            anno.image?-2:-1
+                            anno.image?-2:-1,
+                            anno.team_key
                         ];
 
                         DBUtil.executeUpdateSql(insert_anno_unsynched_sql,params, function(res){
@@ -296,6 +297,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                             anno.app_version,
                             anno.screenshot_is_anonymized?1:0,
                             anno.image?-2:-1,
+                            anno.team_key,
                             res.rows.item(0).id
                         ];
 
