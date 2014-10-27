@@ -303,13 +303,27 @@ def filter_anno_by_user(query, user, is_plugin=False):
 
         filter_strings = []
         for community, circle_level in user_community_dict.iteritems():
-            filter_strings.append("ndb.AND(Anno.community == " + str(community) + ", Anno.circle_level <= " + str(circle_level) + ")")
+            circle_level_list = [None]
+
+            if circle_level > 0:
+                community_circles = community.get().circles
+                if community_circles:
+                    for circle_level_value, circle_level_name in community_circles.iteritems():
+                        if int(circle_level_value) <= circle_level:
+                            circle_level_list.append(int(circle_level_value))
+            else:
+                circle_level_list.append(circle_level)
+
+            filter_strings.append("ndb.AND(Anno.community == " + str(community) +
+                                  ", Anno.circle_level.IN(" + str(circle_level_list) +
+                                  "))")
 
         from google.appengine.ext.ndb import Key
         if not is_plugin:
             filter_strings.append("Anno.community == " + str(None))
+
         query = eval("query.filter(ndb.OR(%s))" % ", ".join(filter_strings))
-        query = query.order(Anno.circle_level)
+        query = query.order(Anno._key)
 
     return query
 
