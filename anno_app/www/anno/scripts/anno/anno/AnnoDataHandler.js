@@ -1,7 +1,7 @@
 define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DBUtil, annoUtil, OAuthUtil){
 
-    var insert_anno_draw_sql = "insert into feedback_comment(x,y,direction,is_moved,draw_elements,draw_is_anonymized,created,last_update,comment,screenshot_key,app_version,os_version,level,app_name,model,source,os_name,anno_type,synched)"+
-        " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    var insert_anno_draw_sql = "insert into feedback_comment(x,y,direction,is_moved,draw_elements,draw_is_anonymized,created,last_update,comment,screenshot_key,app_version,os_version,level,app_name,model,source,os_name,anno_type,synched,team_key)"+
+        " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     var update_anno_synched_by_created_sql = "update feedback_comment set synched=1,object_key=? where created=?";
     var update_anno_synched_by_id_sql = "update feedback_comment set synched=1,object_key=? where _id=?";
     var update_anno_synched_by_object_key_sql = "update feedback_comment set synched=1 where object_key=?";
@@ -54,7 +54,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                     source,
                     anno.os_name,
                     anno.anno_type,
-                    0];
+                    0, anno.team_key];
 
                 DBUtil.executeUpdateSql(insert_anno_draw_sql,params, function(res){
                     self.localAnnoSaved = true;

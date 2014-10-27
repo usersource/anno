@@ -172,6 +172,7 @@ define([
                     {name:'created', type:'VARCHAR(30)', 'default':"'0'"},
                     {name:'draw_elements', type:'text'},
                     {name:'draw_is_anonymized', type:'integer', 'default':0},
+                    {name:'team_key', type:'text'}
                     // {name:'column_is_anonymized', type:'integer', 'default':0}
                 ];
 

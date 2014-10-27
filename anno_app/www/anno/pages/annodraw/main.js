@@ -974,7 +974,8 @@ require([
                     "os_version":deviceInfo.osVersion,
                     "draw_elements":dojoJson.stringify(surface.toJSON()),
                     "screenshot_is_anonymized":isScreenshotAnonymized,
-                    "anno_type":"draw comment"
+                    "anno_type":"draw comment",
+                    "team_key":annoUtil.pluginTeamKey
                 };
 
                 if (selectedType == "app") {
@@ -1317,6 +1318,7 @@ require([
                 // Analytics
                 annoUtil.setupGATracking();
                 annoUtil.screenGATracking(annoUtil.analytics.category.annodraw);
+                annoUtil.getPluginUserInfo();
 
                 initBackgroundImage();
 
