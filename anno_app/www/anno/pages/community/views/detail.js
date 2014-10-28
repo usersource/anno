@@ -1148,6 +1148,7 @@ define([
 
         // search anno items by hash tag
         var searchAnnoByHashTag = window.searchAnnoByHashTag = function(tag) {
+            if (annoUtil.isPlugin) return;
             goingTagSearch = true;
             app.transitionToView(document.getElementById('modelApp_detail'), {
                 target : 'searchAnno',

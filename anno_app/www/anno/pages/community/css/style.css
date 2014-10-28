@@ -917,12 +917,26 @@ body.plugin #tdBarSearchAnno,
 body.plugin #tdBarSettings,
 body.plugin #tdNavBtnScreenshot,
 body.plugin #tdNavBtnTray,
-body.plugin #appNameContainer {
+body.plugin #appNameContainer,
+body.plugin #tdTxtSearchAnno {
 	display: none !important;
+}
+
+body.plugin #tdNavBtnBackFeeds {
+	display: block !important;
+}
+
+body.plugin #tdBarMyStuff  {
+	width: 45px !important;
+	padding-right: 6px !important;
+}
+
+body.plugin #tdBarAddImage {
+	width: 45px !important;
+	padding-right: 0 !important;
 }
 
 body.plugin #barAddImage,
 body.plugin #barMyStuff  {
-	width: 45px !important;
 	line-height: 44px; !important;
 }
