@@ -47,6 +47,7 @@
         isPlugin: false,
         pluginServer: "4",
         pluginUserEmail : "",
+        pluginUserDisplayName : "",
         pluginUserImageURL : "",
         pluginTeamKey : "",
         pluginTeamSecret : "",
@@ -328,9 +329,10 @@
             var self = this;
             cordova.exec(function (result) {
                 self.pluginUserEmail = result[0];
-                self.pluginUserImageURL = result[1];
-                self.pluginTeamKey = result[2];
-                self.pluginTeamSecret = result[3];
+                self.pluginUserDisplayName = result[1];
+                self.pluginUserImageURL = result[2];
+                self.pluginTeamKey = result[3];
+                self.pluginTeamSecret = result[4];
                 callback();
             }, function (err) { console.error("Error in getting plugin user info. " + err); }, "AnnoCordovaPlugin", "get_user_info", []);
         },
