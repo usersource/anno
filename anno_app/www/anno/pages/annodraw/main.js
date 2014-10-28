@@ -1307,6 +1307,15 @@ require([
             else
             {
                 AnnoDataHandler.getCurrentUserInfo(function(userInfo) {
+                    annoUtil.getPluginUserInfo(function() {
+                        if (annoUtil.isPlugin && (userInfo.email !== annoUtil.pluginUserEmail)) {
+                            AnnoDataHandler.removeUser(function () {
+                                OAuthUtil.clearRefreshToken();
+                                authenticatePluginSession();
+                            });
+                        }
+                    });
+
                     if (authResult.newUser) {
                         annoUtil.startActivity("Intro", false);
                     }
@@ -1320,7 +1329,6 @@ require([
                 // Analytics
                 annoUtil.setupGATracking();
                 annoUtil.screenGATracking(annoUtil.analytics.category.annodraw);
-                annoUtil.getPluginUserInfo();
 
                 initBackgroundImage();
 
