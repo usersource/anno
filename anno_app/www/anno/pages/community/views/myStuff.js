@@ -118,7 +118,8 @@ define([
                             eventData.annoType = annoList[i].anno_type;
                             eventData.annoIcon = annoList[i].anno_type == Util.annoType.SimpleComment?"icon-simplecomment":"icon-shapes";
                             eventData.app = annoList[i].app_name;
-                            eventData.author = annoList[i].creator?annoList[i].creator.display_name||annoList[i].creator.user_email||annoList[i].creator.user_id:"";
+                            eventData.author = annoList[i].creator ? annoList[i].creator.display_name || annoList[i].creator.user_email || annoList[i].creator.user_id : "";
+                            eventData.author_image_url = annoList[i].creator ? annoList[i].creator.image_url : "";
                             eventData.id = annoList[i].id;
                             // eventData.circleX = parseInt(annoList[i].simple_x, 10);
                             // eventData.circleY = parseInt(annoList[i].simple_y, 10);

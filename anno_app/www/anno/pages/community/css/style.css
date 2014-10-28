@@ -918,11 +918,14 @@ body.plugin #tdBarSettings,
 body.plugin #tdNavBtnScreenshot,
 body.plugin #tdNavBtnTray,
 body.plugin #appNameContainer,
-body.plugin #tdTxtSearchAnno {
+body.plugin #tdTxtSearchAnno,
+body.plugin .annoListItemIcon,
+body.plugin .appIconImage {
 	display: none !important;
 }
 
-body.plugin #tdNavBtnBackFeeds {
+body.plugin #tdNavBtnBackFeeds,
+body.plugin .userProfileImage {
 	display: block !important;
 }
 
