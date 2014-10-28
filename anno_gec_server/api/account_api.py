@@ -53,7 +53,7 @@ class AccountApi(remote.Service):
             team_secret = request.team_secret
             validate_team_secret(team_secret)
             if not user:
-                user = User.insert_user(email=email, account_type=team_key)
+                user = User.insert_user(email=email, account_type=team_key, image_url=request.user_image_url)
                 community = Community.getCommunityFromTeamKey(team_key)
                 UserRole.insert(user, community)
             if not Community.authenticate(team_key, md5(team_secret)):

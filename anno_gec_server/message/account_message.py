@@ -7,3 +7,4 @@ class AccountMessage(messages.Message):
     auth_source = messages.StringField(4)
     team_key = messages.StringField(5)
     team_secret = messages.StringField(6)
+    user_image_url = messages.StringField(7)

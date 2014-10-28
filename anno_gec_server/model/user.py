@@ -15,6 +15,7 @@ class User(ndb.Model):
     user_email = ndb.StringProperty()  # this field should be unique.
     display_name = ndb.StringProperty()  # this field should be unique.
     password = ndb.StringProperty()
+    image_url = ndb.StringProperty()
     auth_source = ndb.StringProperty(choices=[AuthSourceType.ANNO, AuthSourceType.GOOGLE, AuthSourceType.PLUGIN])  # If "Anno" then password is required.
     device_id = ndb.StringProperty()
     device_type = ndb.StringProperty(choices=[PlatformType.IOS, PlatformType.ANDROID])
@@ -32,7 +33,7 @@ class User(ndb.Model):
         return cls.query(User.display_name == display_name).get()
 
     @classmethod
-    def insert_user(cls, email, username=None, password=None, auth_source=None, account_type=None):
+    def insert_user(cls, email, username=None, password=None, auth_source=None, account_type=None, image_url=None):
         username = username or email.split('@')[0]
 
         if password:
@@ -43,7 +44,8 @@ class User(ndb.Model):
             auth_source = AuthSourceType.GOOGLE
 
         user = User(user_email=email, display_name=username, password=password, 
-                    auth_source=auth_source, account_type=account_type)
+                    auth_source=auth_source, account_type=account_type,
+                    image_url=image_url)
         user.put()
         return user
 
