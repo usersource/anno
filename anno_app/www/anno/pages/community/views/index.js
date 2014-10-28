@@ -1142,8 +1142,7 @@ define([
                     userInfo.team_secret = annoUtil.pluginTeamSecret;
 
                     AnnoDataHandler.saveUserInfo(userInfo, function() {
-                        var params = annoUtil.parseUrlParams(document.location.href),
-                            _callbackURL = params['callback'],
+                        var _callbackURL = document.location.href,
                             joinString = "?",
                             cbURL = "",
                             tokenString = "token=9&newuser=0&signinmethod=anno";
