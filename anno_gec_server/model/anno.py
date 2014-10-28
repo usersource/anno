@@ -69,7 +69,8 @@ class Anno(BaseModel):
         user_message = None
         if self.creator is not None:
             user_info = self.creator.get()
-            user_message = UserMessage(display_name=user_info.display_name)
+            user_message = UserMessage(display_name=user_info.display_name,
+                                       image_url=user_info.image_url)
 
         app = self.app.get() if self.app else None
         app_name = app.name if app else self.app_name
