@@ -177,6 +177,8 @@ define([
                 eventData.appVersion = annoList[i].app_version;
                 eventData.author = annoList[i].creator ? annoList[i].creator.display_name || annoList[i].creator.user_email || annoList[i].creator.user_id : "";
                 eventData.author_image_url = annoList[i].creator ? annoList[i].creator.image_url : "";
+                eventData.userProfile = "";
+                eventData.userProfileClass = "hidden";
                 eventData.id = annoList[i].id;
                 // eventData.circleX = parseInt(annoList[i].simple_x, 10);
                 // eventData.circleY = parseInt(annoList[i].simple_y, 10);
@@ -201,6 +203,11 @@ define([
                 else
                 {
                     eventData.appIconClass = "hidden";
+                }
+
+                if (eventData.author_image_url) {
+                    eventData.userProfile = "hidden";
+                    eventData.userProfileClass = "";
                 }
 
                 spliceArgs.push(new getStateful(eventData));

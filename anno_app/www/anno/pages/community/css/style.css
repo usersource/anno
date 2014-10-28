@@ -238,7 +238,7 @@
 
 .hidden
 {
-    display: none;
+    display: none !important;
 }
 
 .listAppName, .listAuthor {
@@ -911,6 +911,16 @@ li.unread .listTitle {
 	color: rgb(211, 112, 17);
 }
 
+.defaultUserImage, .userProfileImage {
+	display: none;
+	width: 40px;
+	height: 40px;
+	line-height: 40px;
+	border-radius: 8px;
+	color: #FFF;
+	background: #AAA;
+}
+
 /* for plugin */
 body.plugin #tdHeadingLeft,
 body.plugin #tdBarSearchAnno,
@@ -918,15 +928,22 @@ body.plugin #tdBarSettings,
 body.plugin #tdNavBtnScreenshot,
 body.plugin #tdNavBtnTray,
 body.plugin #appNameContainer,
-body.plugin #tdTxtSearchAnno,
-body.plugin .annoListItemIcon,
-body.plugin .appIconImage {
+body.plugin #tdTxtSearchAnno {
 	display: none !important;
 }
 
-body.plugin #tdNavBtnBackFeeds,
-body.plugin .userProfileImage {
+body.plugin .annoListItemIcon,
+body.plugin .appIconImage {
+	display: none;
+}
+
+body.plugin #tdNavBtnBackFeeds {
 	display: block !important;
+}
+
+body.plugin .defaultUserImage,
+body.plugin .userProfileImage {
+	display: block;
 }
 
 body.plugin #tdBarMyStuff  {
