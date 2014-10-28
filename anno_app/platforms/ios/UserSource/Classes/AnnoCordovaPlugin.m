@@ -287,7 +287,7 @@ AnnoSingleton *annoSingleton;
 }
 
 - (void) get_user_info:(CDVInvokedUrlCommand*)command {
-    NSArray *args = [[NSArray alloc] initWithObjects:annoSingleton.email, annoSingleton.userImageURL, annoSingleton.teamKey, annoSingleton.teamSecret, nil];
+    NSArray *args = [[NSArray alloc] initWithObjects:annoSingleton.email, annoSingleton.displayName, annoSingleton.userImageURL, annoSingleton.teamKey, annoSingleton.teamSecret, nil];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:(NSString*)args];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }

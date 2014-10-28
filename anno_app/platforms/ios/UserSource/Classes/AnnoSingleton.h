@@ -14,13 +14,13 @@
     CommunityViewController *communityViewController;
     IntroViewController *introViewController;
     OptionFeedbackViewController *optionFeedbackViewController;
-    NSString *email, *userImageURL, *teamKey, * teamSecret;
+    NSString *email, *displayName, *userImageURL, *teamKey, *teamSecret;
     NSMutableArray *viewControllerList, *annoDrawViewControllerList;
 }
 
 @property (strong, retain) CommunityViewController *communityViewController;
 @property (strong, retain) AnnoCordovaPlugin *annoPlugin;
-@property (strong, retain) NSString *email, *userImageURL, *teamKey, * teamSecret;
+@property (strong, retain) NSString *email, *displayName, *userImageURL, *teamKey, *teamSecret;
 @property NSMutableArray *viewControllerList;
 @property NSMutableArray *annoDrawViewControllerList;
 
@@ -37,6 +37,7 @@
    landscapeModeValue:(BOOL)landscapeModeValue;
 
 - (void) setupWithEmail:(NSString*)email
+            displayName:(NSString*)displayName
            userImageURL:(NSString*)userImageURL
                 teamKey:(NSString*)teamKey
              teamSecret:(NSString*)teamSecret;
