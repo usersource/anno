@@ -75,7 +75,7 @@
         }
     }
 
-    - (void) ShowIntroPage {
+    - (void) showIntroPage {
         if (introViewController == nil) {
             introViewController = [[IntroViewController alloc] init];
         }
