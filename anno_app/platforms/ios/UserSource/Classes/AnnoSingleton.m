@@ -39,11 +39,13 @@
     }
 
     - (void) setupWithEmail:(NSString*)emailValue
+                displayName:(NSString*)displayNameValue
                userImageURL:(NSString*)userImageURLValue
                     teamKey:(NSString*)teamKeyValue
                  teamSecret:(NSString*)teamSecretValue {
         self.communityViewController = [[CommunityViewController alloc] init];
         self.email = emailValue;
+        self.displayName = displayNameValue;
         self.userImageURL = userImageURLValue;
         self.teamKey = teamKeyValue;
         self.teamSecret = teamSecretValue;

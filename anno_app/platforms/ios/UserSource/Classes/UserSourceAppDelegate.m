@@ -66,7 +66,7 @@
     self.window.autoresizesSubviews = YES;
     
     AnnoSingleton *annoSingleton = [AnnoSingleton sharedInstance];
-    [annoSingleton setupWithEmail:nil userImageURL:nil teamKey:nil teamSecret:nil];
+    [annoSingleton setupWithEmail:nil displayName:nil userImageURL:nil teamKey:nil teamSecret:nil];
     self.communityViewController = annoSingleton.communityViewController;
 
     // Set your app's start page by setting the <content src='foo.html' /> tag in config.xml.
