@@ -23,6 +23,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		1D021C601A00D1200009AF5B /* UserInfoViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DF97B7619FFDEF7000D957D /* UserInfoViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1D021C621A00D1A80009AF5B /* UserInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DF97B7719FFDEF7000D957D /* UserInfoViewController.m */; };
 		1D49F333198BC30D0077DE51 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1D49F332198BC30D0077DE51 /* Images.xcassets */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D613FB1190B93E90068C1B7 /* ScreenshotGestureListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D6F35C91908CDE7002051ED /* ScreenshotGestureListener.m */; };
@@ -153,8 +155,6 @@
 		0A3A51F59B2349C08F199D4F /* UserSourceAppDelegate+notification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UserSourceAppDelegate+notification.m"; path = "com.phonegap.plugins.PushPlugin/UserSourceAppDelegate+notification.m"; sourceTree = "<group>"; };
 		1D02161618EED12600E97738 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		1D02161818EED18600E97738 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
-		1D3623240D0F684500981E51 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		1D3623250D0F684500981E51 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		1D3E586C196A827A00FF9FC0 /* PushPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PushPlugin.h; path = com.phonegap.plugins.PushPlugin/PushPlugin.h; sourceTree = "<group>"; };
 		1D3E586D196A827A00FF9FC0 /* PushPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PushPlugin.m; path = com.phonegap.plugins.PushPlugin/PushPlugin.m; sourceTree = "<group>"; };
 		1D44E81B18F7FEF5007A1635 /* AnnoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnnoUtils.h; sourceTree = "<group>"; };
@@ -178,6 +178,8 @@
 		1DF46C0419023329005408CA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1DF46C0619023329005408CA /* UserSourceTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserSourceTests.m; sourceTree = "<group>"; };
 		1DF46C0819023329005408CA /* UserSourceTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UserSourceTests-Prefix.pch"; sourceTree = "<group>"; };
+		1DF97B7619FFDEF7000D957D /* UserInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInfoViewController.h; sourceTree = "<group>"; };
+		1DF97B7719FFDEF7000D957D /* UserInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserInfoViewController.m; sourceTree = "<group>"; };
 		1F766FDD13BBADB100FB74C0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
 		226A125DCF5B4C82B80DB0E7 /* CDVInAppBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVInAppBrowser.h; path = org.apache.cordova.inappbrowser/CDVInAppBrowser.h; sourceTree = "<group>"; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -314,12 +316,12 @@
 				302D95F014D2391D003F00A1 /* MainViewController.xib */,
 				5BB6D26119EFAC5500AAF4A2 /* UserSourceAppDelegate.h */,
 				5BB6D26219EFAC5500AAF4A2 /* UserSourceAppDelegate.m */,
-				1D3623240D0F684500981E51 /* AppDelegate.h */,
-				1D3623250D0F684500981E51 /* AppDelegate.m */,
 				1D6F35C81908CDE7002051ED /* ScreenshotGestureListener.h */,
 				1D6F35C91908CDE7002051ED /* ScreenshotGestureListener.m */,
 				5BB64FDC19F79C0E0017F6FE /* AnnoSingleton.h */,
 				5BB64FDD19F79C0E0017F6FE /* AnnoSingleton.m */,
+				1DF97B7619FFDEF7000D957D /* UserInfoViewController.h */,
+				1DF97B7719FFDEF7000D957D /* UserInfoViewController.m */,
 			);
 			name = Classes;
 			path = UserSource/Classes;
@@ -550,6 +552,7 @@
 				5BB6D27619EFADD000AAF4A2 /* ScreenshotGestureListener.h in Headers */,
 				1DAE4C2F19F528B200E3A1BA /* UserSourceStatic.h in Headers */,
 				5BB64FE019F7ABD10017F6FE /* AnnoSingleton.h in Headers */,
+				1D021C601A00D1200009AF5B /* UserInfoViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -817,6 +820,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1D021C621A00D1A80009AF5B /* UserInfoViewController.m in Sources */,
 				5BB64FE119F7ABE50017F6FE /* AnnoSingleton.m in Sources */,
 				5BB6D27719EFAE1A00AAF4A2 /* PushPlugin.m in Sources */,
 				5BB6D27819EFAE1A00AAF4A2 /* CDVDevice.m in Sources */,

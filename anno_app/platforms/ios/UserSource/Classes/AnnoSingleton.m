@@ -63,9 +63,15 @@
     - (void) showCommunityPage {
         CDVViewController *currentViewController = [self.viewControllerList lastObject];
         
-        if (self.email == nil || self.teamKey == nil || self.teamSecret == nil) {
-            /* Show email controller */
-            NSLog(@"Please specify email, teamKey, and teamSecret");
+        if (self.email == nil || [self.email isEqualToString:@""]) {
+            NSLog(@"Please specify email address");
+            UserInfoViewController *userInfoViewController = [[UserInfoViewController alloc] init];
+            [currentViewController presentViewController:userInfoViewController animated:YES completion:nil];
+            return;
+        }
+
+        if (self.teamKey == nil || self.teamSecret == nil) {
+            NSLog(@"teamKey and teamSecret are not specified.");
             return;
         }
         
