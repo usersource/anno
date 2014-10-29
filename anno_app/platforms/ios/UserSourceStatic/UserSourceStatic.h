@@ -7,7 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <UserSourceStatic/AnnoCordovaPlugin.h>
+#import <UserSourceStatic/AnnoSingleton.h>
+#import <UserSourceStatic/ShakeView.h>
 
 @interface UserSourceStatic : NSObject
 
