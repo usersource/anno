@@ -20,7 +20,7 @@
                                             delegate:self
                                    cancelButtonTitle:@"Cancel"
                               destructiveButtonTitle:nil
-                                   otherButtonTitles:@"Post Feedback", @"View Feedback", nil];
+                                   otherButtonTitles:@"Post Visual Feedback", @"View Feedback", nil];
     }
     
     return self;
@@ -31,9 +31,6 @@
     if ( event.subtype == UIEventSubtypeMotionShake )
     {
         // Put in code here to handle shake
-        AnnoSingleton* anno = [AnnoSingleton sharedInstance];
-        lastScreenshotPath = [anno.utils takeScreenshot];
-        // [anno showAnnoDraw:path levelValue:0 editModeValue:NO landscapeModeValue:NO];
         [sheet showInView:self.superview];
     }
     
@@ -60,6 +57,11 @@
 //        }
 //    }
 //}
+
+- (void)didPresentActionSheet:(UIActionSheet *)actionSheet {
+    AnnoSingleton* anno = [AnnoSingleton sharedInstance];
+    lastScreenshotPath = [anno.utils takeScreenshot];
+}
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
