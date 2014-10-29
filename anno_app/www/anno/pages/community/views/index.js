@@ -1136,6 +1136,7 @@ define([
                 method : "account.account.authenticate",
                 parameter : {
                     'user_email' : annoUtil.pluginUserEmail,
+                    'display_name' : annoUtil.pluginUserDisplayName,
                     'user_image_url' : annoUtil.pluginUserImageURL,
                     'team_key' : annoUtil.pluginTeamKey,
                     'team_secret' : annoUtil.pluginTeamSecret
