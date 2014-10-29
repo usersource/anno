@@ -51,12 +51,12 @@
                                                                           metrics:nil
                                                                             views:views]];
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-50-[infoLabel]-30-|"
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-30-[infoLabel]-30-|"
                                                                           options:0
                                                                           metrics:nil
                                                                             views:views]];
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[navigationBar]-30-[infoLabel]"
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[navigationBar]-50-[infoLabel]"
                                                                           options:0
                                                                           metrics:nil
                                                                             views:views]];
