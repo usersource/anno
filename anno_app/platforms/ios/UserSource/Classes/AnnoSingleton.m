@@ -9,6 +9,8 @@
 #import "AnnoSingleton.h"
 
 @implementation AnnoSingleton
+@synthesize utils;
+
     static AnnoSingleton *sharedInstance = nil;
 
     // Get the shared instance and create it if necessary.
@@ -28,6 +30,7 @@
         
         if (self) {
             // Work your initialising magic here as you normally would
+            utils = [[AnnoUtils alloc] init];
         }
         
         return self;
@@ -60,8 +63,31 @@
         self.annoDrawViewControllerList = [[NSMutableArray alloc] init];
     }
 
+    - (UIViewController*) getTopMostViewConroller {
+        UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
+        UIViewController* cvc = window.rootViewController;
+        UIViewController* last_cvc = nil;
+        
+        // 10 iteration safe loop
+        for (int max = 10; max && last_cvc != cvc; max --) {
+            last_cvc = cvc;
+            // Is there a navigation controller
+            if (cvc.navigationController) {
+                cvc = cvc.navigationController.topViewController;
+            }
+            
+            // Is another controller presented
+            if (cvc.presentedViewController) {
+                cvc = cvc.presentedViewController;
+            }
+        }
+        
+        return cvc;
+    }
+
     - (void) showCommunityPage {
-        CDVViewController *currentViewController = [self.viewControllerList lastObject];
+//        CDVViewController *currentViewController = [self.viewControllerList lastObject];
+        UIViewController* currentViewController = [self getTopMostViewConroller];
         
         if (self.email == nil || [self.email isEqualToString:@""]) {
             NSLog(@"Please specify email address");
@@ -103,7 +129,9 @@
                levelValue:(int)levelValue
             editModeValue:(BOOL)editModeValue
        landscapeModeValue:(BOOL)landscapeModeValue {
-        CDVViewController *currentViewController = [self.viewControllerList lastObject];
+//        CDVViewController *currentViewController = [self.viewControllerList lastObject];
+        UIViewController* currentViewController = [self getTopMostViewConroller];
+        
         AnnoDrawViewController *annoDrawViewController = [[AnnoDrawViewController alloc] init];
         [currentViewController presentViewController:annoDrawViewController animated:NO completion:nil];
         
@@ -128,17 +156,17 @@
         
         if ([currentViewController isKindOfClass:[CommunityViewController class]]) {
             [self.communityViewController dismissViewControllerAnimated:YES completion:nil];
-            self.communityViewController = nil;
+//            self.communityViewController = nil;
         } else if ([currentViewController isKindOfClass:[IntroViewController class]]) {
             [introViewController dismissViewControllerAnimated:YES completion:nil];
-            introViewController = nil;
+//            introViewController = nil;
         } else if ([currentViewController isKindOfClass:[OptionFeedbackViewController class]]) {
             [optionFeedbackViewController dismissViewControllerAnimated:YES completion:nil];
-            optionFeedbackViewController = nil;
+//            optionFeedbackViewController = nil;
         } else if ([currentViewController isKindOfClass:[AnnoDrawViewController class]]) {
             AnnoDrawViewController *currentAnnoDrawViewController = [self.annoDrawViewControllerList lastObject];
             [currentAnnoDrawViewController dismissViewControllerAnimated:YES completion:nil];
-            currentAnnoDrawViewController = nil;
+//            currentAnnoDrawViewController = nil;
             [self.annoDrawViewControllerList removeLastObject];
         }
         

@@ -16,10 +16,12 @@
     OptionFeedbackViewController *optionFeedbackViewController;
     NSString *email, *displayName, *userImageURL, *teamKey, *teamSecret;
     NSMutableArray *viewControllerList, *annoDrawViewControllerList;
+    AnnoUtils *utils;
 }
 
 @property (strong, retain) CommunityViewController *communityViewController;
 @property (strong, retain) AnnoCordovaPlugin *annoPlugin;
+@property (strong, retain) AnnoUtils *utils;
 @property (strong, retain) NSString *email, *displayName, *userImageURL, *teamKey, *teamSecret;
 @property NSMutableArray *viewControllerList;
 @property NSMutableArray *annoDrawViewControllerList;
