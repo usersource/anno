@@ -184,14 +184,29 @@
  @see http://stackoverflow.com/a/2203293/1364558 for more information.
  @return UIImage of screenshot
  */
-- (UIImage*) takeScreenshot {
+- (NSString*) takeScreenshot {
     UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
     UIGraphicsBeginImageContextWithOptions(window.bounds.size, YES, 0.0);
     [window.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    return image;
+    
+    NSString *appLocation = self.dataLocation;
+    NSString *screenshotDirName = self.screenshotDirName;
+    NSString *screenshotDirPath = [appLocation stringByAppendingPathComponent:screenshotDirName];
+    [self mkdirs:screenshotDirPath];
+    
+    NSString *screenshotName = [self generateScreenshotName];
+    NSString *screenshotPath = [screenshotDirPath stringByAppendingPathComponent:screenshotName];
+    [[NSFileManager defaultManager] createFileAtPath:screenshotPath
+                                            contents:UIImagePNGRepresentation(image)
+                                          attributes:nil];
+    
+    screenshotPath = [@"file://localhost" stringByAppendingString:[screenshotPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    return screenshotPath;
 }
+
+
 
 /**
  Display error message.

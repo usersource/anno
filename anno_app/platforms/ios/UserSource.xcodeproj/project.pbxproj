@@ -79,6 +79,8 @@
 		5BB6D28919EFAE5500AAF4A2 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F583DEA5C56F422C875065F3 /* AddressBook.framework */; };
 		5BB6D28B19EFAF6900AAF4A2 /* libUserSourceStatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BBAD08119E66C560060A80D /* libUserSourceStatic.a */; };
 		5BB6D28C19EFAF7A00AAF4A2 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F713FA28964CB18D9D3278 /* libsqlite3.dylib */; };
+		5BBA243B19FFB3020086AB8E /* ShakeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBA243919FFB2CB0086AB8E /* ShakeView.m */; };
+		5BBA243C19FFB3100086AB8E /* ShakeView.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBA243819FFB2CB0086AB8E /* ShakeView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BBAAB9919F004C800AAC24D /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD5266640B0344749F49768A /* AddressBookUI.framework */; };
 		F840E1F1165FE0F500CFE078 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = F840E1F0165FE0F500CFE078 /* config.xml */; };
 /* End PBXBuildFile section */
@@ -199,6 +201,8 @@
 		5BB64FDD19F79C0E0017F6FE /* AnnoSingleton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnnoSingleton.m; sourceTree = "<group>"; };
 		5BB6D26119EFAC5500AAF4A2 /* UserSourceAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserSourceAppDelegate.h; sourceTree = "<group>"; };
 		5BB6D26219EFAC5500AAF4A2 /* UserSourceAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserSourceAppDelegate.m; sourceTree = "<group>"; };
+		5BBA243819FFB2CB0086AB8E /* ShakeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShakeView.h; sourceTree = "<group>"; };
+		5BBA243919FFB2CB0086AB8E /* ShakeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShakeView.m; sourceTree = "<group>"; };
 		5BBAD08119E66C560060A80D /* libUserSourceStatic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libUserSourceStatic.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BBAD08219E66C560060A80D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5BBAD08619E66C560060A80D /* UserSourceStatic-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UserSourceStatic-Prefix.pch"; sourceTree = "<group>"; };
@@ -320,6 +324,8 @@
 				1D6F35C91908CDE7002051ED /* ScreenshotGestureListener.m */,
 				5BB64FDC19F79C0E0017F6FE /* AnnoSingleton.h */,
 				5BB64FDD19F79C0E0017F6FE /* AnnoSingleton.m */,
+				5BBA243819FFB2CB0086AB8E /* ShakeView.h */,
+				5BBA243919FFB2CB0086AB8E /* ShakeView.m */,
 			);
 			name = Classes;
 			path = UserSource/Classes;
@@ -550,6 +556,7 @@
 				5BB6D27619EFADD000AAF4A2 /* ScreenshotGestureListener.h in Headers */,
 				1DAE4C2F19F528B200E3A1BA /* UserSourceStatic.h in Headers */,
 				5BB64FE019F7ABD10017F6FE /* AnnoSingleton.h in Headers */,
+				5BBA243C19FFB3100086AB8E /* ShakeView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -817,6 +824,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BBA243B19FFB3020086AB8E /* ShakeView.m in Sources */,
 				5BB64FE119F7ABE50017F6FE /* AnnoSingleton.m in Sources */,
 				5BB6D27719EFAE1A00AAF4A2 /* PushPlugin.m in Sources */,
 				5BB6D27819EFAE1A00AAF4A2 /* CDVDevice.m in Sources */,

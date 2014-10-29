@@ -9,6 +9,8 @@
 #import "AnnoSingleton.h"
 
 @implementation AnnoSingleton
+@synthesize utils;
+
     static AnnoSingleton *sharedInstance = nil;
 
     // Get the shared instance and create it if necessary.
@@ -28,6 +30,7 @@
         
         if (self) {
             // Work your initialising magic here as you normally would
+            utils = [[AnnoUtils alloc] init];
         }
         
         return self;
