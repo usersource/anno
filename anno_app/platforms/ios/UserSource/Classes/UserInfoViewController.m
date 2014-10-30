@@ -125,8 +125,11 @@
     [self.view addSubview:emailAddressTextField];
     emailAddressTextField.placeholder = @"Email Address";
     emailAddressTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
+    emailAddressTextField.autocorrectionType = UITextAutocorrectionTypeNo;
+    emailAddressTextField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     emailAddressTextField.borderStyle = UITextBorderStyleRoundedRect;
     emailAddressTextField.keyboardType = UIKeyboardTypeEmailAddress;
+    emailAddressTextField.returnKeyType = UIReturnKeyDone;
     [emailAddressTextField addTarget:self
                               action:@selector(emailAddressTextFieldDidChange:)
                     forControlEvents:UIControlEventEditingChanged];
@@ -135,13 +138,19 @@
     [self.view addSubview:displayNameTextField];
     displayNameTextField.placeholder = @"Display Name";
     displayNameTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
+    displayNameTextField.autocorrectionType = UITextAutocorrectionTypeNo;
     displayNameTextField.borderStyle = UITextBorderStyleRoundedRect;
+    displayNameTextField.returnKeyType = UIReturnKeyDone;
     
     imageURLTextField = [[UITextField alloc] init];
     [self.view addSubview:imageURLTextField];
     imageURLTextField.placeholder = @"Image URL";
     imageURLTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
+    imageURLTextField.autocorrectionType = UITextAutocorrectionTypeNo;
+    imageURLTextField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     imageURLTextField.borderStyle = UITextBorderStyleRoundedRect;
+    imageURLTextField.keyboardType = UIKeyboardTypeURL;
+    imageURLTextField.returnKeyType = UIReturnKeyDone;
     
     [self setUIComponentsConstraints];
 }
@@ -157,10 +166,23 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     emailAddressTextField.delegate = self;
+    displayNameTextField.delegate = self;
+    imageURLTextField.delegate = self;
 }
 
 - (void) didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+}
+
+- (BOOL) textFieldShouldReturn:(UITextField *)textField {
+    [textField resignFirstResponder];
+    return YES;
+}
+
+- (void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [emailAddressTextField resignFirstResponder];
+    [displayNameTextField resignFirstResponder];
+    [imageURLTextField resignFirstResponder];
 }
 
 - (void) emailAddressTextFieldDidChange:(id)sender {
@@ -178,13 +200,10 @@
 }
 
 - (void) cancelUserInfo:(id)sender {
-    NSLog(@"cancel button clicked");
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void) continueFeedback:(id)sender {
-    NSLog(@"next button clicked");
-
     AnnoSingleton *annoSingleton = (AnnoSingleton*)[AnnoSingleton sharedInstance];
     NSString *displayName, *imageURL;
 
