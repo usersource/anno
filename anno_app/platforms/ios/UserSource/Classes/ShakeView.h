@@ -11,6 +11,7 @@
 @interface ShakeView : UIView <UIActionSheetDelegate> {
     UIActionSheet *sheet;
     NSString *lastScreenshotPath;
+    UIImage *lastScreenshotImage;
 }
 
 @end

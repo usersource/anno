@@ -180,11 +180,27 @@
 }
 
 /**
+ Simply take a screenshot of the screen
+ @return UIImage of the screenshot
+ */
+
+- (UIImage*) takeScreenshot {
+    UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
+    UIGraphicsBeginImageContextWithOptions(window.bounds.size, YES, 0.0);
+    [window.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
+
+
+/**
  Take screenshot of current screen of iOS device.
  @see http://stackoverflow.com/a/2203293/1364558 for more information.
- @return UIImage of screenshot
+ @return NSString filePath
  */
-- (NSString*) takeScreenshot {
+- (NSString*) takeScreenshotAndSaveToFile {
     UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
     UIGraphicsBeginImageContextWithOptions(window.bounds.size, YES, 0.0);
     [window.layer renderInContext:UIGraphicsGetCurrentContext()];
