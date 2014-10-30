@@ -1268,17 +1268,8 @@ require([
                 userInfo.team_secret = annoUtil.pluginTeamSecret;
 
                 AnnoDataHandler.saveUserInfo(userInfo, function() {
-                    var _callbackURL = document.location.href,
-                        joinString = "?",
-                        cbURL = "",
-                        tokenString = "token=9&newuser=0&signinmethod=anno";
-
-                    if (_callbackURL.indexOf("?") > 0 || _callbackURL.indexOf("#") > 0) {
-                        joinString = "&";
-                    }
-
-                    cbURL = _callbackURL + joinString + tokenString;
-                    window.open(cbURL, "_self");
+                    OAuthUtil.processBasicAuthToken(userInfo);
+                    setupAnnoDrawPage();
                 });
             },
             error : function() {
@@ -1290,178 +1281,153 @@ require([
         annoUtil.callGAEAPI(APIConfig);
     };
 
-    var init = function()
-    {
-        if (DBUtil.userChecked)
-        {
-            var authResult = OAuthUtil.isAuthorized();
-            if (annoUtil.hasConnection() && !authResult.authorized) {
-                if (annoUtil.isPlugin) {
-                    annoUtil.getPluginUserInfo(function() {
+    var authenticateForPlugin = function() {
+        AnnoDataHandler.getCurrentUserInfo(function(userInfo) {
+            annoUtil.getPluginUserInfo(function() {
+                if (userInfo.email && (userInfo.email !== annoUtil.pluginUserEmail)) {
+                    AnnoDataHandler.removeUser(function () {
+                        OAuthUtil.clearRefreshToken();
                         authenticatePluginSession();
                     });
                 } else {
-                    OAuthUtil.openAuthPage("annodraw");
+                    authenticatePluginSession();
                 }
-                return;
-            }
-            else
-            {
-                AnnoDataHandler.getCurrentUserInfo(function(userInfo) {
-                    annoUtil.getPluginUserInfo(function() {
-                        if (annoUtil.isPlugin && (userInfo.email !== annoUtil.pluginUserEmail)) {
-                            AnnoDataHandler.removeUser(function () {
-                                OAuthUtil.clearRefreshToken();
-                                authenticatePluginSession();
-                            });
-                        }
-                    });
+            });
+        });
+    };
 
+    var connectDomElements = function() {
+        connect.connect(surface, "onShapeRemoved", function() {
+            if (!surface.hasShapes()) {
+                lastShapePos = {
+                    x1 : Math.round((viewPoint.w - defaultShapeWidth) / 2),
+                    y1 : 100 + defaultShapeHeight,
+                    x2 : Math.round((viewPoint.w - defaultShapeWidth) / 2) + defaultShapeWidth,
+                    y2 : 100
+                };
+                domClass.add("barShare", 'barIconInactive');
+            } else {
+                checkBarShareState();
+            }
+        });
+
+        connect.connect(dom.byId("barMoreMenu"), 'click', function(e) {
+            var menusDialog = registry.byId('menusDialog');
+            if (menusDialog.domNode.style.display === "") {
+                hideMenuDialog();
+            } else {
+                showMenuDialog();
+            }
+        });
+
+        connect.connect(dom.byId("btnCancel"), "click", function() {
+            var shareDialog = registry.byId('shareDialog');
+            shareDialog.hide();
+        });
+    };
+
+    var setupAnnoDrawPage = function() {
+        initBackgroundImage();
+
+        window.setTimeout(function() {
+            viewPoint = win.getBox();
+            totalSpace = 0;
+
+            lastShapePos = {
+                x1 : Math.round((viewPoint.w - defaultShapeWidth) / 2),
+                y1 : 100 + defaultShapeHeight,
+                x2 : Math.round((viewPoint.w - defaultShapeWidth) / 2) + defaultShapeWidth,
+                y2 : 100
+            };
+
+            lastBlackRectanglePos = {
+                x1 : Math.round((viewPoint.w - defaultShapeWidth) / 2),
+                y1 : 100 + defaultShapeHeight,
+                x2 : Math.round((viewPoint.w - defaultShapeWidth) / 2) + defaultShapeWidth,
+                y2 : 100
+            };
+
+            surface = window.surface = new Surface({
+                container : dom.byId("gfxCanvasContainer"),
+                width : viewPoint.w - borderWidth * 2,
+                height : viewPoint.h - borderWidth * 2 - barHeight,
+                borderWidth : borderWidth,
+                drawMode : true
+            });
+
+            domStyle.set(surface.container, { 'borderWidth' : borderWidth + 'px' });
+
+            // set screenshot container size
+            domStyle.set('screenshotContainer', {
+                width : (viewPoint.w - borderWidth * 2) + 'px',
+                height : (viewPoint.h - borderWidth * 2 - barHeight) + 'px',
+                borderWidth : borderWidth + "px"
+            });
+
+            // reposition the menus dialog
+            var menusDialog = registry.byId('menusDialog');
+            menusDialog.top = (viewPoint.h - barHeight - 44) + 'px';
+            menusDialog.left = (viewPoint.w - 204) + 'px';
+            domStyle.set(menusDialog.domNode, "backgroundColor", "white");
+        }, 500);
+
+        annoUtil.getTopTags(100);
+    };
+
+    var authenticateForStandalone = function() {
+        if (DBUtil.userChecked) {
+            var authResult = OAuthUtil.isAuthorized();
+            if (annoUtil.hasConnection() && !authResult.authorized) {
+                OAuthUtil.openAuthPage("annodraw");
+                return;
+            } else {
+                AnnoDataHandler.getCurrentUserInfo(function(userInfo) {
                     if (authResult.newUser) {
                         annoUtil.startActivity("Intro", false);
                     }
 
-                    if (userInfo.signinMethod == OAuthUtil.signinMethod.anno ||
-                        userInfo.signinMethod == OAuthUtil.signinMethod.plugin) {
+                    if (userInfo.signinMethod == OAuthUtil.signinMethod.anno) {
                         OAuthUtil.processBasicAuthToken(userInfo);
                     }
                 });
 
-                // Analytics
-                annoUtil.setupGATracking();
-                annoUtil.screenGATracking(annoUtil.analytics.category.annodraw);
+                setupAnnoDrawPage();
 
-                initBackgroundImage();
+                // load all needed resources at startup
+                loadCommunities();
+                loadFavoriteApps();
 
-                window.setTimeout(function(){
-
-                    viewPoint = win.getBox();
-                    totalSpace = 0;
-                    // totalSpace = Math.floor(viewPoint.w * 0.02);
-                    // borderWidth = Math.round(totalSpace / 2);
-
-                    lastShapePos = {
-                        x1:Math.round((viewPoint.w-defaultShapeWidth)/2),
-                        y1:100+defaultShapeHeight,
-                        x2:Math.round((viewPoint.w-defaultShapeWidth)/2)+defaultShapeWidth,
-                        y2:100
-                    };
-
-                    lastBlackRectanglePos = {
-                        x1:Math.round((viewPoint.w-defaultShapeWidth)/2),
-                        y1:100+defaultShapeHeight,
-                        x2:Math.round((viewPoint.w-defaultShapeWidth)/2)+defaultShapeWidth,
-                        y2:100
-                    };
-
-                    surface = window.surface = new Surface({
-                        container: dom.byId("gfxCanvasContainer"),
-                        // width:viewPoint.w-totalSpace*2,
-                        width:viewPoint.w-borderWidth*2,
-                        height:viewPoint.h-borderWidth*2-barHeight,
-                        borderWidth:borderWidth,
-                        drawMode:true
-                    });
-
-                    domStyle.set(surface.container, {
-                        'borderWidth': borderWidth+'px'
-                        // 'left': borderWidth+"px"
-                    });
-
-                    connect.connect(surface, "onShapeRemoved", function()
-                    {
-                        if (!surface.hasShapes())
-                        {
-                            lastShapePos = {
-                                x1:Math.round((viewPoint.w-defaultShapeWidth)/2),
-                                y1:100+defaultShapeHeight,
-                                x2:Math.round((viewPoint.w-defaultShapeWidth)/2)+defaultShapeWidth,
-                                y2:100
-                            };
-
-                            domClass.add("barShare", 'barIconInactive');
-                        }
-                        else
-                        {
-                            checkBarShareState();
-                        }
-                    });
-
-                    // set screenshot container size
-                    domStyle.set('screenshotContainer', {
-                        // width: (viewPoint.w-totalSpace*2)+'px',
-                        width: (viewPoint.w-borderWidth*2)+'px',
-                        height: (viewPoint.h-borderWidth*2-barHeight)+'px',
-                        borderWidth:borderWidth+"px"
-                        // left: borderWidth+"px"
-                    });
-
-                    // domStyle.set('sdTitle', 'height', sdTitleHeight + 'px');
-                    // domStyle.set('sdAppList', 'height', (viewPoint.h - sdTitleHeight - sdTabBarHeight - sdBottom - shareDialogGap) + 'px');
-                    // domStyle.set('sdBottom', 'height', sdBottom + 'px');
-
-                    // reposition the menus dialog
-                    var menusDialog = registry.byId('menusDialog');
-                    menusDialog.top = (viewPoint.h-barHeight-44)+'px';
-                    menusDialog.left = (viewPoint.w-204)+'px';
-                    domStyle.set(menusDialog.domNode, "backgroundColor", "white");
-
-                    /*if (annoUtil.isPlugin)
-                    {
-                        domStyle.set('menuItemFeed', 'display', '');
-                        domStyle.set(menusDialog.domNode, 'height', '80px');
-                        menusDialog.top = (viewPoint.h-barHeight-84)+'px';
-                    }*/
-
-                    connect.connect(dom.byId("barMoreMenu"), 'click', function(e)
-                    {
-                        var menusDialog = registry.byId('menusDialog');
-                        if (menusDialog.domNode.style.display === "")
-                        {
-                            hideMenuDialog();
-                        }
-                        else
-                        {
-                            showMenuDialog();
-                        }
-                    });
-
-                    connect.connect(dom.byId("btnCancel"), "click", function(){
-                        var shareDialog = registry.byId('shareDialog');
-                        shareDialog.hide();
-                        // enable JS gesture listener, disable native gesture
-                        // annoUtil.enableJSGesture();
-                        // annoUtil.disableNativeGesture();
-                    });
-
-                }, 500);
-
-                if (!annoUtil.isPlugin) {
-                    // load all needed resources at startup
-                    loadCommunities();
-                    loadFavoriteApps();
-
-                    // show or hide tabs of picklist deponds on OS name
-                    setShareDialogUI();
-                }
-
-                annoUtil.getTopTags(100);
+                // show or hide tabs of picklist deponds on OS name
+                setShareDialogUI();
             }
-
-            // disable JS and native gesture listener
-            annoUtil.disableJSGesture();
-            annoUtil.disableNativeGesture();
-
-            // set the pick list dialog title
-            dom.byId('sdTitle').children[0].innerHTML = annoUtil.getResourceString("title_app_pick_list");
-            dom.byId('appOsName').innerHTML = annoUtil.isIOS() ? "iOS" : "Android";
-            dom.byId('appOsName').setAttribute("data-app-version", device.version);
-            dom.byId('appOsName').setAttribute("data-type", "app");
+        } else {
+            window.setTimeout(authenticateForStandalone, 20);
         }
-        else
-        {
-            window.setTimeout(init, 20);
+    };
+
+    var launchAnnoDrawPage = function() {
+        if (annoUtil.isPlugin) {
+            authenticateForPlugin();
+        } else {
+            authenticateForStandalone();
         }
+
+        // disable JS and native gesture listener
+        annoUtil.disableJSGesture();
+        annoUtil.disableNativeGesture();
+
+        // set the pick list dialog title
+        dom.byId('sdTitle').children[0].innerHTML = annoUtil.getResourceString("title_app_pick_list");
+        dom.byId('appOsName').innerHTML = annoUtil.isIOS() ? "iOS" : "Android";
+        dom.byId('appOsName').setAttribute("data-app-version", device.version);
+        dom.byId('appOsName').setAttribute("data-type", "app");
+    };
+
+    var init = function() {
+        annoUtil.setupGATracking();
+        annoUtil.screenGATracking(annoUtil.analytics.category.annodraw);
+        connectDomElements();
+        launchAnnoDrawPage();
     };
 
     document.addEventListener("backbutton", function(){

@@ -1151,17 +1151,9 @@ define([
                     userInfo.team_secret = annoUtil.pluginTeamSecret;
 
                     AnnoDataHandler.saveUserInfo(userInfo, function() {
-                        var _callbackURL = document.location.href,
-                            joinString = "?",
-                            cbURL = "",
-                            tokenString = "token=9&newuser=0&signinmethod=anno";
-
-                        if (_callbackURL.indexOf("?") > 0 || _callbackURL.indexOf("#") > 0) {
-                            joinString = "&";
-                        }
-
-                        cbURL = _callbackURL + joinString + tokenString;
-                        window.open(cbURL, "_self");
+                        annoUtil.showLoadingIndicator();
+                        OAuthUtil.processBasicAuthToken(userInfo);
+                        OAuthUtil.getAccessToken(function() { loadListData(); });
                     });
                 },
                 error : function() {
@@ -1173,35 +1165,34 @@ define([
             annoUtil.callGAEAPI(APIConfig);
         };
 
-        var launchCommunityPage = function() {
-            if (DBUtil.userChecked) {
-                var authResult = OAuthUtil.isAuthorized();
-                if (!authResult.authorized) {
-                    if (annoUtil.isPlugin) {
-                        annoUtil.getPluginUserInfo(function() {
+        var authenticateForPlugin = function() {
+            AnnoDataHandler.getCurrentUserInfo(function(userInfo) {
+                annoUtil.getPluginUserInfo(function() {
+                    if (userInfo.email && (userInfo.email !== annoUtil.pluginUserEmail)) {
+                        AnnoDataHandler.removeUser(function () {
+                            OAuthUtil.clearRefreshToken();
                             authenticatePluginSession();
                         });
                     } else {
-                        OAuthUtil.openAuthPage();
+                        authenticatePluginSession();
                     }
+                });
+            });
+        };
+
+        var authenticateForStandalone = function() {
+            if (DBUtil.userChecked) {
+                var authResult = OAuthUtil.isAuthorized();
+                if (!authResult.authorized) {
+                    OAuthUtil.openAuthPage();
                     return;
                 } else {
                     AnnoDataHandler.getCurrentUserInfo(function(userInfo) {
-                        annoUtil.getPluginUserInfo(function() {
-                            if (annoUtil.isPlugin && (userInfo.email !== annoUtil.pluginUserEmail)) {
-                                AnnoDataHandler.removeUser(function () {
-                                    OAuthUtil.clearRefreshToken();
-                                    authenticatePluginSession();
-                                });
-                            }
-                        });
-
                         if (authResult.newUser) {
                             annoUtil.startActivity("Intro", false);
                         }
 
-                        if (userInfo.signinMethod == OAuthUtil.signinMethod.anno ||
-                            userInfo.signinMethod == OAuthUtil.signinMethod.plugin) {
+                        if (userInfo.signinMethod == OAuthUtil.signinMethod.anno) {
                             OAuthUtil.processBasicAuthToken(userInfo);
                         }
 
@@ -1215,9 +1206,17 @@ define([
                     annoUtil.setVersionInfo();
                 }
             } else {
-                window.setTimeout(launchCommunityPage, 20);
+                window.setTimeout(authenticateForStandalone, 20);
             }
-        }; 
+        };
+
+        var launchCommunityPage = function() {
+            if (annoUtil.isPlugin) {
+                authenticateForPlugin();
+            } else {
+                authenticateForStandalone();
+            }
+        };
 
         var _init = function() {
             annoUtil.setupGATracking();
