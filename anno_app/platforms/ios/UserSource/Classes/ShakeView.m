@@ -41,26 +41,9 @@
 - (BOOL)canBecomeFirstResponder
 { return YES; }
 
-//- (void) didMoveToSuperview {
-//    NSLog(@"DID SUPERVIEW");
-//    [self addObserver:self.superview forKeyPath:@"presentingViewController" options:NSKeyValueObservingOptionNew context:nil];
-//}
-//
-//
-//- (void) didChangeValueForKey:(NSString *)key {
-//    NSLog(@"Observed %@, hidden: %d, firstResponder: %d", key, self.superview.isHidden, [self isFirstResponder]);
-//    if ([key isEqual:@"presentingViewController"]) {
-//        if (self.superview.isHidden == YES) {
-////            [self resignFirstResponder];
-//        } else {
-////            [self becomeFirstResponder];
-//        }
-//    }
-//}
-
 - (void)didPresentActionSheet:(UIActionSheet *)actionSheet {
     AnnoSingleton* anno = [AnnoSingleton sharedInstance];
-    lastScreenshotPath = [anno.utils takeScreenshot];
+    lastScreenshotImage = [anno.utils takeScreenshot];
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
@@ -69,6 +52,7 @@
     AnnoSingleton* anno = [AnnoSingleton sharedInstance];
     if (buttonIndex == 0) {
         // Post Feedback
+        lastScreenshotPath = [anno.utils saveImageToTemp:lastScreenshotImage];
         [anno showAnnoDraw:lastScreenshotPath levelValue:0 editModeValue:NO landscapeModeValue:NO];
     } else if (buttonIndex == 1) {
         // Show community
