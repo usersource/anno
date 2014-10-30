@@ -13,6 +13,7 @@
     UIBarButtonItem *nextButton, *cancelButton;
     UILabel *infoLabel;
     UITextField *emailAddressTextField, *displayNameTextField, *imageURLTextField;
+    NSString *currentViewController, *imageURLValue;
 }
 
 @property (strong, nonatomic) UINavigationBar *navigationBar;
@@ -22,5 +23,8 @@
 @property (strong, nonatomic) UITextField *emailAddressTextField;
 @property (strong, nonatomic) UITextField *displayNameTextField;
 @property (strong, nonatomic) UITextField *imageURLTextField;
+
+- (void) setCurrentViewController:(NSString*)currentViewControllerValue
+                         imageURL:(NSString*)imageURLValue;
 
 @end

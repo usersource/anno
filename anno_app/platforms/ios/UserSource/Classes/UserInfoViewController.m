@@ -224,8 +224,18 @@
     annoSingleton.userImageURL = imageURL;
 
     [self dismissViewControllerAnimated:YES completion:^{
-        [annoSingleton showCommunityPage];
+        if ([currentViewController isEqualToString:@"CommunityViewController"]) {
+            [annoSingleton showCommunityPage];
+        } else {
+            [annoSingleton showAnnoDraw:imageURLValue levelValue:0 editModeValue:NO landscapeModeValue:NO];
+        }
     }];
+}
+
+- (void) setCurrentViewController:(NSString *)currentViewControllerValue
+                         imageURL:(NSString *)_imageURLValue {
+    currentViewController = currentViewControllerValue;
+    imageURLValue = _imageURLValue;
 }
 
 @end
