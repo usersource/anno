@@ -1153,7 +1153,7 @@ define([
                     AnnoDataHandler.saveUserInfo(userInfo, function() {
                         annoUtil.showLoadingIndicator();
                         OAuthUtil.processBasicAuthToken(userInfo);
-                        OAuthUtil.getAccessToken(function() { loadListData(); });
+                        loadListData();
                     });
                 },
                 error : function() {
