@@ -10,7 +10,6 @@
 #import "CommunityViewController.h"
 #import "IntroViewController.h"
 #import "OptionFeedbackViewController.h"
-#import "UserInfoViewController.h"
 #import "AnnoUtils.h"
 //#import "ScreenshotGestureListener.h"
 

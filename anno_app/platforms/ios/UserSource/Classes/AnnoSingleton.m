@@ -91,10 +91,6 @@
         
         if (self.email == nil || [self.email isEqualToString:@""]) {
             NSLog(@"Please specify email address");
-            UserInfoViewController *userInfoViewController = [[UserInfoViewController alloc] init];
-            [currentViewController presentViewController:userInfoViewController animated:YES completion:nil];
-            [userInfoViewController setCurrentViewController:@"CommunityViewController"
-                                                    imageURL:nil];
             return;
         }
 
@@ -136,10 +132,6 @@
 
         if (self.email == nil || [self.email isEqualToString:@""]) {
             NSLog(@"Please specify email address");
-            UserInfoViewController *userInfoViewController = [[UserInfoViewController alloc] init];
-            [currentViewController presentViewController:userInfoViewController animated:YES completion:nil];
-            [userInfoViewController setCurrentViewController:@"AnnoDrawViewController"
-                                                    imageURL:imageURI];
             return;
         }
 
