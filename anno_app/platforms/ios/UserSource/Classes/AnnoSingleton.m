@@ -90,7 +90,7 @@
         UIViewController* currentViewController = [self getTopMostViewConroller];
         
         if (self.email == nil || [self.email isEqualToString:@""]) {
-            NSLog(@"Please specify email address");
+            NSLog(@"Email address is not specified");
             return;
         }
 
@@ -131,7 +131,7 @@
         UIViewController* currentViewController = [self getTopMostViewConroller];
 
         if (self.email == nil || [self.email isEqualToString:@""]) {
-            NSLog(@"Please specify email address");
+            NSLog(@"Email address is not specified");
             return;
         }
 
