@@ -928,7 +928,8 @@ body.plugin #tdBarSettings,
 body.plugin #tdNavBtnScreenshot,
 body.plugin #tdNavBtnTray,
 body.plugin #appNameContainer,
-body.plugin #tdTxtSearchAnno {
+body.plugin #tdTxtSearchAnno,
+body.plugin .tdListAppName {
 	display: none !important;
 }
 
