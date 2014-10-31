@@ -1268,6 +1268,9 @@ require([
                 userInfo.team_secret = annoUtil.pluginTeamSecret;
 
                 AnnoDataHandler.saveUserInfo(userInfo, function() {
+                    userInfo.signedup = 1;
+                    DBUtil.localUserInfo = userInfo;
+                    DBUtil.localUserInfo.signinmethod = userInfo.signinMethod;
                     OAuthUtil.processBasicAuthToken(userInfo);
                     setupAnnoDrawPage();
                 });
