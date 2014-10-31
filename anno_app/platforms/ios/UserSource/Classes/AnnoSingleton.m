@@ -90,9 +90,7 @@
         UIViewController* currentViewController = [self getTopMostViewConroller];
         
         if (self.email == nil || [self.email isEqualToString:@""]) {
-            NSLog(@"Please specify email address");
-            UserInfoViewController *userInfoViewController = [[UserInfoViewController alloc] init];
-            [currentViewController presentViewController:userInfoViewController animated:YES completion:nil];
+            NSLog(@"Email address is not specified");
             return;
         }
 
@@ -131,7 +129,12 @@
        landscapeModeValue:(BOOL)landscapeModeValue {
 //        CDVViewController *currentViewController = [self.viewControllerList lastObject];
         UIViewController* currentViewController = [self getTopMostViewConroller];
-        
+
+        if (self.email == nil || [self.email isEqualToString:@""]) {
+            NSLog(@"Email address is not specified");
+            return;
+        }
+
         AnnoDrawViewController *annoDrawViewController = [[AnnoDrawViewController alloc] init];
         [currentViewController presentViewController:annoDrawViewController animated:NO completion:nil];
         
