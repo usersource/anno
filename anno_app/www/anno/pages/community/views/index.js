@@ -1161,7 +1161,6 @@ define([
             };
 
             annoUtil.setDefaultServer(annoUtil.pluginServer);
-            annoUtil.showLoadingIndicator();
             annoUtil.callGAEAPI(APIConfig);
         };
 

@@ -1258,6 +1258,7 @@ require([
                 'team_key' : annoUtil.pluginTeamKey,
                 'team_secret' : annoUtil.pluginTeamSecret
             },
+            showLoadingSpinner: false,
             success : function(resp) {
                 var userInfo = {};
                 userInfo.userId = resp.result.id;
@@ -1272,7 +1273,6 @@ require([
                     DBUtil.localUserInfo = userInfo;
                     DBUtil.localUserInfo.signinmethod = userInfo.signinMethod;
                     OAuthUtil.processBasicAuthToken(userInfo);
-                    setupAnnoDrawPage();
                 });
             },
             error : function() {
@@ -1280,7 +1280,6 @@ require([
         };
 
         annoUtil.setDefaultServer(annoUtil.pluginServer);
-        annoUtil.showLoadingIndicator();
         annoUtil.callGAEAPI(APIConfig);
     };
 
@@ -1410,6 +1409,7 @@ require([
 
     var launchAnnoDrawPage = function() {
         if (annoUtil.isPlugin) {
+            setupAnnoDrawPage();
             authenticateForPlugin();
         } else {
             authenticateForStandalone();
