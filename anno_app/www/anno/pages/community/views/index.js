@@ -1234,6 +1234,10 @@ define([
 
                 if (annoUtil.isPlugin) {
                     domClass.add(document.querySelector("body"), "plugin");
+                    domClass.replace("barAddImage", "text-new", "icon-plus");
+                    dom.byId("barAddImage").innerHTML = "New";
+                    domClass.replace("barMyStuff", "text-me", "icon-stack3");
+                    dom.byId("barMyStuff").innerHTML = "Me";
                 }
             },
             afterActivate: function()

@@ -402,23 +402,20 @@
     line-height: 44px;
 }
 
-.barIcon
-{
+.barIcon {
     font-size: 30px;
+    vertical-align: middle;
 }
 
-.barIconHighlight
-{
+.barIconHighlight {
     color: #ff9900;
 }
 
-.barIconDisabled
-{
+.barIconDisabled {
     opacity: 0.5;
 }
 
-#headingDetail
-{
+#headingDetail {
     background-image: none;
     background-color: #dddddd;
     text-shadow:none;
@@ -435,7 +432,7 @@
     height: 50px;
 }
 
-.imgDetailScreenshot{
+.imgDetailScreenshot {
     /*border: 2px solid #ff9900;*/
 }
 
@@ -921,6 +918,38 @@ li.unread .listTitle {
 	background: #AAA;
 }
 
+#navBtnBackFeeds {
+	padding-left: 41px;
+	background: url('images/back.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+}
+
+#navInfo {
+	padding-left: 20px;
+	background: url('images/icon-info.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+}
+
+#annoLogoHome {
+	width: 40px;
+	height: 40px;
+	background: url('images/anno.png');
+	background-size: cover;
+	background-position: 50%;
+	margin-left: 5px;
+}
+
+#barAddImage.text-new {
+	font-size: 18px !important;
+	color: #fd9902;
+}
+
+#barMyStuff.text-me {
+	font-size: 18px
+}
+
 /* for plugin */
 body.plugin #tdHeadingLeft,
 body.plugin #tdBarSearchAnno,
@@ -938,8 +967,9 @@ body.plugin .appIconImage {
 	display: none;
 }
 
-body.plugin #tdNavBtnBackFeeds {
-	display: block !important;
+body.plugin #tdNavBtnBackFeeds,
+body.plugin #tdNavInfo {
+	display: table-cell !important;
 }
 
 body.plugin .defaultUserImage,

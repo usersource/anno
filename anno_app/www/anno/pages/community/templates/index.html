@@ -1,14 +1,14 @@
 <div class="view mblView">
     <script type="dojo/require">at: "dojox/mvc/at"</script>
     <div id="headingStart" data-dojo-type="dojox/mobile/Heading" style="padding-top: 0px;height: 48px">
-        <table id="headingStartTable" width="100%" height="100%" style="border-spacing: 0px;padding-top: 2px">
+        <table id="headingStartTable" width="100%" height="100%" style="border-spacing: 0px;">
             <tr>
                 <td id="tdHeadingLeft" width="180">
                     <table style="border-spacing: 0px">
                         <tr>
                             <td id="tdLogo">
                                 <span id="navBtnBackHome" class="icon-forward navBtnBack" style="display: none" data-dojo-props="back2:true" data-dojo-type="dojox.mobile.ToolBarButton"></span>
-                                <img id="annoLogoHome" src="css/images/anno.png" width="40px" class="headingIcon" style="float: none">
+                                <div id="annoLogoHome"></div>
                             </td>
                             <td>
                                 <span id="navLogoTextHome" class="headingTitle" style="float: none">UserSource</span>
@@ -23,7 +23,8 @@
                                 <input id="txtSearchAnno" type="search" placeholder="search usersource" class="searchInput" style="display: none">
                             </td>
                             <td id="tdNavBtnBackFeeds" style="display: none;">
-                            	<span id="navBtnBackFeeds" class="icon-forward navBtnBack" data-dojo-type="dojox.mobile.ToolBarButton"></span>
+                            	<span id="navBtnBackFeeds"></span>
+                            	<div style="display: inline-block; vertical-align: top; font-size: 18px; padding-left: 12px;">Feedback</div>
                             </td>
                             <td id="tdBarAddImage" width="60" align="center" style="padding-right: 6px;">
                                 <span id="barAddImage" class="barIcon icon-plus" style="font-size: 26px"></span>
@@ -39,6 +40,9 @@
                             </td>
                             <td id="tdBarMoreMenuHome" width="48" align="center" style="display:none;padding-top: 0px;">
                                 <div id="barMoreMenuHome" class="barMoreMenu"></div>
+                            </td>
+                            <td id="tdNavInfo" style="display: none;">
+                            	<span id="navInfo"></span>
                             </td>
                         </tr>
                     </table>
