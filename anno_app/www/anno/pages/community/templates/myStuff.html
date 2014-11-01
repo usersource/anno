@@ -30,7 +30,7 @@
 					            <td width="95%" style="padding-left: 4px;font-size: 14px;">
 					                <div class="listTitle" data-dojo-type="dojox/mvc/Output"
 										data-dojo-props="value: at('rel:#{this.index}', 'annoText')"></div>
-					                <div style="padding-top: 2px;">
+					                <div class="activityTypeAndTime" style="padding-top: 2px;">
 					                    <div class="listAppName" style="float: left;width: 50%">
 					                        <span id="annoActIndicator_#{this.index}" class="annoOrangeColor annoActIndicator" data-dojo-type="dojox/mvc/Output"
 												data-dojo-props="class: at('rel:#{this.index}', 'lastActivityClass')" ></span>
@@ -40,11 +40,20 @@
 					                    <div id="annoActWhen_#{this.index}" class="annoOrangeColor annoActWhen" style="float: left;width: 50%;text-align: right"
 											data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:#{this.index}', 'when')"></div>
 					                </div>
-					                <div>
+					                <div class="appNameAndAuthor">
 					                    <div class="listAppName" style="float: left;width: 50%" data-dojo-type="dojox/mvc/Output"
 											data-dojo-props="value: at('rel:#{this.index}', 'app')"></div>
 					                    <div class="listAuthor" style="float: left;width: 50%;text-align: right" data-dojo-type="dojox/mvc/Output"
 											data-dojo-props="value: at('rel:#{this.index}', 'author')"></div>
+					                </div>
+					                <div class="pluginInfoText" style="display: none;">
+					                	<span id="pluginAnnoActText_#{this.index}" style="text-transform: capitalize;"
+					                		data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:#{this.index}', 'lastActivityText')"></span>
+										<span> by </span>
+										<div style="display: inline-block;" class="annoOrangeColor"
+											data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:#{this.index}', 'author')"></div>
+										<div style="display: inline-block; float: right;" id="pluginAnnoActWhen_#{this.index}"
+											data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:#{this.index}', 'when')"></div>
 					                </div>
 					            </td>
 					        </tr>

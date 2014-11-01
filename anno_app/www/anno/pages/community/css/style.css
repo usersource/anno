@@ -950,6 +950,11 @@ li.unread .listTitle {
 	font-size: 18px
 }
 
+.pluginInfoText {
+	color: #AFB1B5;
+	padding-top: 2px;
+}
+
 /* for plugin */
 body.plugin #tdHeadingLeft,
 body.plugin #tdBarSearchAnno,
@@ -959,7 +964,9 @@ body.plugin #tdNavBtnTray,
 body.plugin #appNameContainer,
 body.plugin #tdTxtSearchAnno,
 body.plugin .tdListAppName,
-body.plugin #divBtnBackMyStuff {
+body.plugin #divBtnBackMyStuff,
+body.plugin .activityTypeAndTime,
+body.plugin .appNameAndAuthor {
 	display: none !important;
 }
 
@@ -973,7 +980,8 @@ body.plugin #tdNavInfo {
 	display: table-cell !important;
 }
 
-body.plugin #divBtnBackMyStuffPlugin {
+body.plugin #divBtnBackMyStuffPlugin,
+body.plugin .pluginInfoText {
 	display: block !important;
 }
 
