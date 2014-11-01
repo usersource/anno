@@ -117,16 +117,26 @@ body{
     outline: none;
 }
 
-#bottomBarContainer, #bottomBarBlackContainer
-{
+#bottomBarContainer, #bottomBarBlackContainer {
+	width: 100%;
+	height: 40px;
     position: absolute;
     bottom: 0px;
     left: 0px;
-    height: 40px;
-    width: 100%;
-    background-color: #404040;
-    color: white;
-    /*padding-top: 4px;*/
+    background-color: #FFFFFF;
+    color: #282828;
+}
+
+.bottomBarChild {
+	width: 16.66666667%;
+	display: inline-block;
+	text-align: center;
+	margin: 3px 0 4px -4px;
+}
+
+.bottomBarChild .bottonBarText {
+	font-size: 12px;
+	line-height: 7px;
 }
 
 #topBar
