@@ -918,7 +918,7 @@ li.unread .listTitle {
 	background: #AAA;
 }
 
-#navBtnBackFeeds {
+#navBtnBackFeeds, #navBtnBackMyStuffPlugin {
 	padding-left: 41px;
 	background: url('images/back.png');
 	background-repeat: no-repeat;
@@ -958,7 +958,8 @@ body.plugin #tdNavBtnScreenshot,
 body.plugin #tdNavBtnTray,
 body.plugin #appNameContainer,
 body.plugin #tdTxtSearchAnno,
-body.plugin .tdListAppName {
+body.plugin .tdListAppName,
+body.plugin #divBtnBackMyStuff {
 	display: none !important;
 }
 
@@ -970,6 +971,10 @@ body.plugin .appIconImage {
 body.plugin #tdNavBtnBackFeeds,
 body.plugin #tdNavInfo {
 	display: table-cell !important;
+}
+
+body.plugin #divBtnBackMyStuffPlugin {
+	display: block !important;
 }
 
 body.plugin .defaultUserImage,
@@ -990,4 +995,8 @@ body.plugin #tdBarAddImage {
 body.plugin #barAddImage,
 body.plugin #barMyStuff  {
 	line-height: 44px !important;
+}
+
+body.plugin #myActivityText {
+	font-weight: normal !important;
 }
