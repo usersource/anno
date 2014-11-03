@@ -10,9 +10,9 @@
 
 @implementation ShakeView
 
-- (id)init {
+- (id) init {
     self = [super init];
-    
+
     if (self) {
 //        sheet = [[UIActionSheet alloc] initWithTitle:@"Shake to Feedback!!"
 //                                            delegate:self
@@ -26,7 +26,7 @@
         [sheet setUserInteractionEnabled:YES];
         [self styleSheet];
     }
-    
+
     return self;
 }
 
@@ -120,13 +120,14 @@
             [buttonView setFrame:buttonRect];
         }];
     }
-    
-    if ( [super respondsToSelector:@selector(motionEnded:withEvent:)] )
+
+    if ([super respondsToSelector:@selector(motionEnded:withEvent:)])
         [super motionEnded:motion withEvent:event];
 }
 
-- (BOOL)canBecomeFirstResponder
-{ return YES; }
+- (BOOL) canBecomeFirstResponder {
+    return YES;
+}
 
 - (void)didPresentActionSheet:(UIActionSheet *)actionSheet {
 }
@@ -135,7 +136,6 @@
 {
     return;
     NSLog(@"Button %ld", (long)buttonIndex);
-    
     if (buttonIndex == 0) {
         // Post Feedback
         lastScreenshotPath = [anno.utils saveImageToTemp:lastScreenshotImage];

@@ -1128,6 +1128,11 @@ define([
                 dojo.stopEvent(e);
                 cordova.exec(function(result) {}, function(err) {}, "AnnoCordovaPlugin", 'exit_current_activity', []);
             }));
+
+            _connectResults.push(connect.connect(dom.byId("tdNavInfo"), 'click', function(e) {
+                dojo.stopEvent(e);
+                annoUtil.startActivity("Intro", false);
+            }));
         }; 
 
         var authenticatePluginSession = function() {
@@ -1153,7 +1158,7 @@ define([
                     AnnoDataHandler.saveUserInfo(userInfo, function() {
                         annoUtil.showLoadingIndicator();
                         OAuthUtil.processBasicAuthToken(userInfo);
-                        OAuthUtil.getAccessToken(function() { loadListData(); });
+                        loadListData();
                     });
                 },
                 error : function() {
@@ -1161,7 +1166,6 @@ define([
             };
 
             annoUtil.setDefaultServer(annoUtil.pluginServer);
-            annoUtil.showLoadingIndicator();
             annoUtil.callGAEAPI(APIConfig);
         };
 
@@ -1235,6 +1239,10 @@ define([
 
                 if (annoUtil.isPlugin) {
                     domClass.add(document.querySelector("body"), "plugin");
+                    domClass.replace("barAddImage", "text-new", "icon-plus");
+                    dom.byId("barAddImage").innerHTML = "New";
+                    domClass.replace("barMyStuff", "text-me", "icon-stack3");
+                    dom.byId("barMyStuff").innerHTML = "Me";
                 }
             },
             afterActivate: function()

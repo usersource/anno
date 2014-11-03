@@ -402,23 +402,20 @@
     line-height: 44px;
 }
 
-.barIcon
-{
+.barIcon {
     font-size: 30px;
+    vertical-align: middle;
 }
 
-.barIconHighlight
-{
+.barIconHighlight {
     color: #ff9900;
 }
 
-.barIconDisabled
-{
+.barIconDisabled {
     opacity: 0.5;
 }
 
-#headingDetail
-{
+#headingDetail {
     background-image: none;
     background-color: #dddddd;
     text-shadow:none;
@@ -435,7 +432,7 @@
     height: 50px;
 }
 
-.imgDetailScreenshot{
+.imgDetailScreenshot {
     /*border: 2px solid #ff9900;*/
 }
 
@@ -921,6 +918,43 @@ li.unread .listTitle {
 	background: #AAA;
 }
 
+#navBtnBackFeeds, #navBtnBackMyStuffPlugin {
+	padding-left: 41px;
+	background: url('images/back.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+}
+
+#navInfo {
+	padding-left: 20px;
+	background: url('images/icon-info.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+}
+
+#annoLogoHome {
+	width: 40px;
+	height: 40px;
+	background: url('images/anno.png');
+	background-size: cover;
+	background-position: 50%;
+	margin-left: 5px;
+}
+
+#barAddImage.text-new {
+	font-size: 18px !important;
+	color: #fd9902;
+}
+
+#barMyStuff.text-me {
+	font-size: 18px
+}
+
+.pluginInfoText {
+	color: #AFB1B5;
+	padding-top: 2px;
+}
+
 /* for plugin */
 body.plugin #tdHeadingLeft,
 body.plugin #tdBarSearchAnno,
@@ -928,7 +962,11 @@ body.plugin #tdBarSettings,
 body.plugin #tdNavBtnScreenshot,
 body.plugin #tdNavBtnTray,
 body.plugin #appNameContainer,
-body.plugin #tdTxtSearchAnno {
+body.plugin #tdTxtSearchAnno,
+body.plugin .tdListAppName,
+body.plugin #divBtnBackMyStuff,
+body.plugin .activityTypeAndTime,
+body.plugin .appNameAndAuthor {
 	display: none !important;
 }
 
@@ -937,7 +975,13 @@ body.plugin .appIconImage {
 	display: none;
 }
 
-body.plugin #tdNavBtnBackFeeds {
+body.plugin #tdNavBtnBackFeeds,
+body.plugin #tdNavInfo {
+	display: table-cell !important;
+}
+
+body.plugin #divBtnBackMyStuffPlugin,
+body.plugin .pluginInfoText {
 	display: block !important;
 }
 
@@ -959,4 +1003,8 @@ body.plugin #tdBarAddImage {
 body.plugin #barAddImage,
 body.plugin #barMyStuff  {
 	line-height: 44px !important;
+}
+
+body.plugin #myActivityText {
+	font-weight: normal !important;
 }

@@ -90,11 +90,7 @@
         UIViewController* currentViewController = [self getTopMostViewController];
         
         if (self.email == nil || [self.email isEqualToString:@""]) {
-            NSLog(@"Please specify email address");
-            UserInfoViewController *userInfoViewController = [[UserInfoViewController alloc] init];
-            [currentViewController presentViewController:userInfoViewController animated:YES completion:nil];
-            [userInfoViewController setCurrentViewController:@"CommunityViewController"
-                                                    imageURL:nil];
+            NSLog(@"Email address is not specified");
             return;
         }
 
@@ -135,11 +131,7 @@
         UIViewController* currentViewController = [self getTopMostViewController];
 
         if (self.email == nil || [self.email isEqualToString:@""]) {
-            NSLog(@"Please specify email address");
-            UserInfoViewController *userInfoViewController = [[UserInfoViewController alloc] init];
-            [currentViewController presentViewController:userInfoViewController animated:YES completion:nil];
-            [userInfoViewController setCurrentViewController:@"AnnoDrawViewController"
-                                                    imageURL:imageURI];
+            NSLog(@"Email address is not specified");
             return;
         }
 

@@ -1258,6 +1258,7 @@ require([
                 'team_key' : annoUtil.pluginTeamKey,
                 'team_secret' : annoUtil.pluginTeamSecret
             },
+            showLoadingSpinner: false,
             success : function(resp) {
                 var userInfo = {};
                 userInfo.userId = resp.result.id;
@@ -1268,8 +1269,10 @@ require([
                 userInfo.team_secret = annoUtil.pluginTeamSecret;
 
                 AnnoDataHandler.saveUserInfo(userInfo, function() {
+                    userInfo.signedup = 1;
+                    DBUtil.localUserInfo = userInfo;
+                    DBUtil.localUserInfo.signinmethod = userInfo.signinMethod;
                     OAuthUtil.processBasicAuthToken(userInfo);
-                    setupAnnoDrawPage();
                 });
             },
             error : function() {
@@ -1277,7 +1280,6 @@ require([
         };
 
         annoUtil.setDefaultServer(annoUtil.pluginServer);
-        annoUtil.showLoadingIndicator();
         annoUtil.callGAEAPI(APIConfig);
     };
 
@@ -1311,13 +1313,21 @@ require([
             }
         });
 
-        connect.connect(dom.byId("barMoreMenu"), 'click', function(e) {
-            var menusDialog = registry.byId('menusDialog');
-            if (menusDialog.domNode.style.display === "") {
-                hideMenuDialog();
-            } else {
-                showMenuDialog();
-            }
+        connect.connect(dom.byId("barMoreMenu"), "click", function(e) {
+            window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "cancel");
+
+            cordova.exec(
+                function(result) {},
+                function(err) {
+                    annoUtil.showErrorMessage({
+                        type : annoUtil.ERROR_TYPES.CORDOVA_API_FAILED,
+                        message : err.message
+                    });
+                },
+                "AnnoCordovaPlugin",
+                "exit_current_activity",
+                []
+            );
         });
 
         connect.connect(dom.byId("btnCancel"), "click", function() {
@@ -1407,6 +1417,7 @@ require([
 
     var launchAnnoDrawPage = function() {
         if (annoUtil.isPlugin) {
+            setupAnnoDrawPage();
             authenticateForPlugin();
         } else {
             authenticateForStandalone();

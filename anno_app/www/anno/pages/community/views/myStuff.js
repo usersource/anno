@@ -273,6 +273,11 @@ define([
                     goBack();
                 }));
 
+                _connectResults.push(connect.connect(dom.byId("divBtnBackMyStuffPlugin"), "click", function(e) {
+                    dojo.stopEvent(e);
+                    goBack();
+                }));
+
                 _connectResults.push(connect.connect(dom.byId("listContainerMyStuff"), "scroll", this, function() {
                     var listContainer = dom.byId("listContainerMyStuff");
                     if ((listContainer.clientHeight + listContainer.scrollTop) >= listContainer.scrollHeight) {
