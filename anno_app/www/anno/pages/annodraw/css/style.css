@@ -131,7 +131,8 @@ body{
 	width: 16.66666667%;
 	display: inline-block;
 	text-align: center;
-	margin: 3px 0 4px -4px;
+	margin: 4px 0 4px -4px;
+	vertical-align: top;
 }
 
 .bottomBarChild .bottonBarText {
