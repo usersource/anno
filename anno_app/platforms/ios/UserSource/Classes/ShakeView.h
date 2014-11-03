@@ -21,6 +21,7 @@
     CGRect buttonRect;
     
     AnnoSingleton *anno;
+    bool presented;
 }
 
 - (void) postNewTapped;

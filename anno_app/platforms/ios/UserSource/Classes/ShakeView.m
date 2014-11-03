@@ -33,7 +33,7 @@
 - (void) redoRects {
     int height = 140;
     CGRect screen = [UIScreen mainScreen].applicationFrame;
-    NSLog(@"Screen %@", NSStringFromCGRect(screen));
+//    NSLog (@"Screen %@", NSStringFromCGRect(screen));
     belowScreenRect = CGRectMake(0, screen.size.height+1, screen.size.width, screen.size.height);
     screenRect = CGRectMake(screen.origin.x, screen.origin.y, screen.size.width, screen.size.height);
     buttonRect = CGRectMake(0, screen.size.height - height, screen.size.width, height);
@@ -52,7 +52,7 @@
     int buttonHeight = 40;
     int buttonMargin = 4;
     
-    UIButton *postFeedbackButton = [self makeNewButtonWithTitle:@"+ New Feedback" selector:@selector(postNewTapped)];
+    UIButton *postFeedbackButton = [self makeNewButtonWithTitle:@"New Feedback" selector:@selector(postNewTapped)];
     [[postFeedbackButton titleLabel] setFont:[UIFont boldSystemFontOfSize:20]];
     [postFeedbackButton setFrame:CGRectMake(buttonX, 0, buttonWidth, buttonHeight)];
     
@@ -80,23 +80,26 @@
     [button setTitleColor:highlightedColor forState:UIControlStateHighlighted];
     button.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
     [button setBackgroundColor:buttonBackgroundColor];
+    button.layer.cornerRadius = 8;
     
     return button;
 }
 
 - (void) postNewTapped {
-    NSLog(@"Post New Tapped");
     lastScreenshotPath = [anno.utils saveImageToTemp:lastScreenshotImage];
     [anno showAnnoDraw:lastScreenshotPath levelValue:0 editModeValue:NO landscapeModeValue:NO];
 }
 
 - (void) viewFeedbackTapped {
-    NSLog(@"View FeedbackTapped");
     [anno showCommunityPage];
 }
 
 - (void) cancelTapped {
-    NSLog(@"Cancel Tapped");
+    [self removeOptionsSheet];
+}
+
+- (void) removeOptionsSheet {
+    presented = false;
     [UIView animateWithDuration:0.3f animations:^{
         [buttonView setFrame:belowScreenRect];
     } completion:^(BOOL animated) {
@@ -108,6 +111,7 @@
 {
     if ( event.subtype == UIEventSubtypeMotionShake )
     {
+        if (presented) return;
         // Put in code here to handle shake
 //        [sheet showInView:self.superview];
 //        [self.superview addSubview:sheet];
@@ -119,6 +123,7 @@
         [UIView animateWithDuration:0.3f animations:^{
             [buttonView setFrame:buttonRect];
         }];
+        presented = true;
     }
 
     if ([super respondsToSelector:@selector(motionEnded:withEvent:)])
