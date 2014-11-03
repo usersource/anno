@@ -919,7 +919,9 @@ li.unread .listTitle {
 }
 
 #navBtnBackFeeds, #navBtnBackMyStuffPlugin {
-	padding-left: 41px;
+	height: 24px;
+	display: inline-block;
+	vertical-align: text-top;
 	background: url('images/back.png');
 	background-repeat: no-repeat;
 	background-position: 50%;
@@ -930,6 +932,7 @@ li.unread .listTitle {
 	background: url('images/icon-info.png');
 	background-repeat: no-repeat;
 	background-position: 50%;
+	background-size: contain;
 }
 
 #annoLogoHome {
@@ -941,13 +944,22 @@ li.unread .listTitle {
 	margin-left: 5px;
 }
 
-#barAddImage.text-new {
-	font-size: 18px !important;
-	color: #fd9902;
+#tdBarAddImage .text-new {
+	width: 90%;
+	height: 48px;
+	background: url('images/new.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-size: contain;
 }
 
-#barMyStuff.text-me {
-	font-size: 18px
+#tdBarMyStuff .text-me {
+	width: 60%;
+	height: 48px;
+	background: url('images/me.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-size: contain;
 }
 
 .pluginInfoText {
@@ -966,7 +978,9 @@ body.plugin #tdTxtSearchAnno,
 body.plugin .tdListAppName,
 body.plugin #divBtnBackMyStuff,
 body.plugin .activityTypeAndTime,
-body.plugin .appNameAndAuthor {
+body.plugin .appNameAndAuthor,
+body.plugin #barMyStuff,
+body.plugin #barAddImage {
 	display: none !important;
 }
 
@@ -981,7 +995,9 @@ body.plugin #tdNavInfo {
 }
 
 body.plugin #divBtnBackMyStuffPlugin,
-body.plugin .pluginInfoText {
+body.plugin .pluginInfoText,
+body.plugin #tdBarMyStuff .text-me,
+body.plugin #tdBarAddImage .text-new {
 	display: block !important;
 }
 
