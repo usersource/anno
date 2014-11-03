@@ -245,7 +245,7 @@ require([
     });
 
     // home/feeds/cancel button
-    connect.connect(dom.byId("menuItemFeed"), 'click', function(e)
+    /*connect.connect(dom.byId("menuItemFeed"), 'click', function(e)
     {
         var action = "goto_anno_home";
 
@@ -264,9 +264,9 @@ require([
             action,
             []
         );
-    });
+    });*/
 
-    connect.connect(dom.byId("menuItemCancel"), 'click', function(e)
+    /*connect.connect(dom.byId("menuItemCancel"), 'click', function(e)
     {
         var action = "exit_current_activity";
         window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "cancel");
@@ -284,7 +284,7 @@ require([
             action,
             []
         );
-    });
+    });*/
 
     // app tabs
     connect.connect(dom.byId("barFavoriteApps"), 'click', function(e)
@@ -1147,7 +1147,7 @@ require([
         return dataUrl;
     };
 
-    var hideMenuDialog = function()
+    /*var hideMenuDialog = function()
     {
         var menusDialog = registry.byId('menusDialog');
         menusDialog.hide();
@@ -1166,9 +1166,9 @@ require([
         }
 
         domClass.remove("barMoreMenu", 'barMoreMenuActive');
-    };
+    };*/
 
-    var showMenuDialog = function()
+    /*var showMenuDialog = function()
     {
         var viewPoint = win.getBox();
 
@@ -1186,7 +1186,7 @@ require([
         domClass.add("barMoreMenu", 'barMoreMenuActive');
 
         surface.removeSelection();
-    };
+    };*/
 
     var checkBarShareState = function()
     {
@@ -1375,10 +1375,10 @@ require([
             });
 
             // reposition the menus dialog
-            var menusDialog = registry.byId('menusDialog');
+            /*var menusDialog = registry.byId('menusDialog');
             menusDialog.top = (viewPoint.h - barHeight - 44) + 'px';
             menusDialog.left = (viewPoint.w - 204) + 'px';
-            domStyle.set(menusDialog.domNode, "backgroundColor", "white");
+            domStyle.set(menusDialog.domNode, "backgroundColor", "white");*/
         }, 500);
 
         annoUtil.getTopTags(100);
@@ -1443,13 +1443,13 @@ require([
 
     document.addEventListener("backbutton", function(){
 
-        var menusDialog = registry.byId('menusDialog');
+        // var menusDialog = registry.byId('menusDialog');
         var shareDialog = registry.byId('shareDialog');
-        if (menusDialog.domNode.style.display === "")
+        /*if (menusDialog.domNode.style.display === "")
         {
             hideMenuDialog();
         }
-        else if (shareDialog.domNode.style.display === "")
+        else */if (shareDialog.domNode.style.display === "")
         {
             shareDialog.hide();
             // enable JS gesture listener, disable native gesture
