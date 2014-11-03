@@ -33,6 +33,8 @@
 - (void) showOptionFeedback;
 - (void) exitActivity;
 
+- (UIViewController*) getTopMostViewController;
+
 - (void) showAnnoDraw:(NSString*)imageURI
            levelValue:(int)levelValue
         editModeValue:(BOOL)editModeValue

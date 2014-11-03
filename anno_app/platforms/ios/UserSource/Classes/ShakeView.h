@@ -10,11 +10,22 @@
 #import "AnnoSingleton.h"
 
 @interface ShakeView : UIView <UIActionSheetDelegate> {
-    UIActionSheet *sheet;
+//    UIActionSheet *sheet;
+    UIView *sheet;
+    UIView *buttonView;
     NSString *lastScreenshotPath;
     UIImage *lastScreenshotImage;
-    AnnoSingleton *annoSingleton;
+    
+    CGRect screenRect;
+    CGRect belowScreenRect;
+    CGRect buttonRect;
+    
+    AnnoSingleton *anno;
 }
+
+- (void) postNewTapped;
+- (void) viewFeedbackTapped;
+- (void) styleSheet;
 
 @end
 

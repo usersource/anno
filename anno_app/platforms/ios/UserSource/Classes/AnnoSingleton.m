@@ -63,7 +63,7 @@
         self.annoDrawViewControllerList = [[NSMutableArray alloc] init];
     }
 
-    - (UIViewController*) getTopMostViewConroller {
+    - (UIViewController*) getTopMostViewController {
         UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
         UIViewController* cvc = window.rootViewController;
         UIViewController* last_cvc = nil;
@@ -87,7 +87,7 @@
 
     - (void) showCommunityPage {
 //        CDVViewController *currentViewController = [self.viewControllerList lastObject];
-        UIViewController* currentViewController = [self getTopMostViewConroller];
+        UIViewController* currentViewController = [self getTopMostViewController];
         
         if (self.email == nil || [self.email isEqualToString:@""]) {
             NSLog(@"Email address is not specified");
@@ -128,7 +128,7 @@
             editModeValue:(BOOL)editModeValue
        landscapeModeValue:(BOOL)landscapeModeValue {
 //        CDVViewController *currentViewController = [self.viewControllerList lastObject];
-        UIViewController* currentViewController = [self getTopMostViewConroller];
+        UIViewController* currentViewController = [self getTopMostViewController];
 
         if (self.email == nil || [self.email isEqualToString:@""]) {
             NSLog(@"Email address is not specified");
