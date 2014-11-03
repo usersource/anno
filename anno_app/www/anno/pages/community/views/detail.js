@@ -1314,7 +1314,7 @@ define([
                     domStyle.set('editAppNameImg', 'display', '');
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdAddCommentImg'), 'click', function ()
+                _connectResults.push(connect.connect(dom.byId('sendComment'), 'click', function ()
                 {
                     var text = domAddCommentTextBox.value.trim();
 
@@ -1374,6 +1374,7 @@ define([
                     commentTextBoxFocused = true;
                     window.setTimeout(function(){
                         domAddCommentTextBox.rows = "4";
+                        domClass.add("sendComment", "expanded");
                     }, 500);
                 }));
 
@@ -1382,6 +1383,7 @@ define([
                     commentTextBoxFocused = false;
                     window.setTimeout(function(){
                         domAddCommentTextBox.rows = "1";
+                        domClass.remove("sendComment", "expanded");
                         domStyle.set('detailSuggestedTags', 'display', 'none');
                     }, 500);
                 }));
