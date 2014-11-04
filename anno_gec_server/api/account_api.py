@@ -52,11 +52,16 @@ class AccountApi(remote.Service):
         if team_key:
             team_secret = request.team_secret
             validate_team_secret(team_secret)
+
+            display_name = request.display_name
+            image_url = request.user_image_url
+
             if not user:
-                user = User.insert_user(email=email, username=request.display_name,
-                                        account_type=team_key, image_url=request.user_image_url)
+                user = User.insert_user(email=email, username=display_name, account_type=team_key, image_url=image_url)
                 community = Community.getCommunityFromTeamKey(team_key)
                 UserRole.insert(user, community)
+            elif (display_name != user.display_name) or (image_url != user.image_url):
+                User.update_user(user=user, email=email, username=display_name, account_type=team_key, image_url=image_url)
             if not Community.authenticate(team_key, md5(team_secret)):
                 raise endpoints.UnauthorizedException("Authentication failed. Team key and secret are not matched.")
         else:
