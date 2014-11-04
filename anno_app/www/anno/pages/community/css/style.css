@@ -470,13 +470,10 @@
     font-size: 16px;
 }
 
-.textDataAreaContainer{
-    /*border: 2px solid transparent;*/
-    /*background-color: white;*/
+.textDataAreaContainer {
+	margin: 0 8px;
     left: 0;
-    /*margin-top: 2px;*/
     z-index: 2001;
-    /*padding-top: 10px;*/
 }
 
 .mblTooltipBelow .mblTooltipArrow {
@@ -507,27 +504,45 @@
     border-bottom-color: white;
 }
 
-.appNameDetail
-{
-    /*width: 100%;*/
-    height: 24px;
-    padding-bottom: 8px;
-}
-
-.appNameTitleDetail, .authorDetail, .deviceInfoDetail
-{
+.appNameTitleDetail, .authorDetail, .deviceInfoDetail {
     color: #AFB1B5;
 }
 
-.appNameTitleDetail
-{
-    padding-right: 8px;
+.deviceInfoDetail {
+	width: 91.860465116%;
+	width: calc(100% - 28px);
+	width: -webkit-calc(100% - 28px);
+	display: inline-block;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	line-height: 24px;
+}
+
+#mobileIcon {
+	width: 16px;
+	height: 24px;
+	display: inline-block;
+	background: url('images/icon-mobile.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-size: contain;
 }
 
 .annoTextDetail {
 	border: 1px solid #ff9900;
 	padding: 2px 4px;
-	margin: 0 8px;
+}
+
+#voteFlagContainer {
+	padding: 15px 0;
+	border-bottom: 1px solid #cccccc;
+}
+
+#voteFlagContainer > div {
+	width: 32%;
+	display: inline-block;
+	text-align: center;
 }
 
 .commentDetail
@@ -547,6 +562,7 @@
     background-color: #ffffff;
     position: fixed;
     bottom: 0px;
+    left: 0;
 }
 
 .commentTextbox {
