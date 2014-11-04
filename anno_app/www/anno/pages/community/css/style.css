@@ -930,6 +930,7 @@ li.unread .listTitle {
 	background: url('images/back.png');
 	background-repeat: no-repeat;
 	background-position: 50%;
+	background-size: contain;
 }
 
 #navInfo {
