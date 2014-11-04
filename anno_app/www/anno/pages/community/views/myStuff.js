@@ -132,6 +132,11 @@ define([
                             eventData.created = Util.getTimeAgoString(annoList[i].created);
                             eventData.app_icon_url = annoList[i].app_icon_url||"";
 
+                            eventData.last_activity_user = annoList[i].last_activity_user ? annoList[i].last_activity_user.display_name ||
+                                                                                            annoList[i].last_activity_user.user_email ||
+                                                                                            annoList[i].last_activity_user.user_id : "";
+                            eventData.last_activity_user_image_url = annoList[i].last_activity_user ? annoList[i].last_activity_user.image_url : "";
+
                             eventData.readStatusClass = "";
                             if ('anno_read_status' in annoList[i]) {
                                 eventData.read_status = annoList[i].anno_read_status || false;
