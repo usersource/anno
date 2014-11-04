@@ -91,7 +91,7 @@ class UserAnnoState(ndb.Model):
         last_activity = cls.query(cls.anno == anno.key).order(-cls.created).get()
 
         user_message = None
-        if last_activity.user is not None:
+        if last_activity and last_activity.user:
             user_info = last_activity.user.get()
             if user_info:
                 user_message = UserMessage(display_name=user_info.display_name, image_url=user_info.image_url)
