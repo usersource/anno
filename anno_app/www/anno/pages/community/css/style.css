@@ -552,11 +552,10 @@
     padding-right: 8px;
 }
 
-.annoTextDetail
-{
-    border: 2px solid #ff9900;
-    padding: 2px 4px;
-    margin: 0 8px;
+.annoTextDetail {
+	border: 1px solid #ff9900;
+	padding: 2px 4px;
+	margin: 0 8px;
 }
 
 .commentDetail
@@ -579,11 +578,11 @@
 }
 
 .commentTextbox {
-	width: 81.818181818%;
-	width: calc(100% - 64px);
-	width: -webkit-calc(100% - 64px);
+	width: 78.888888889%;
+	width: calc(100% - 76px);
+	width: -webkit-calc(100% - 76px);
 	margin: 0;
-	padding: 0;
+	padding: 0 4px 0 8px;
 	border: 0;
 	outline: 0;
 	resize: none;
@@ -592,6 +591,7 @@
 	color: #555;
 	font-size: 14px;
 	line-height: 22px;
+	background: #f4f4f4;
 }
 
 #sendComment {
@@ -602,6 +602,8 @@
 	text-align: center;
 	border-left: 1px solid #CCC;
 	font-size: 14px;
+	font-weight: bold;
+	color: black;
 }
 
 #sendComment.expanded {
