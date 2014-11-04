@@ -271,35 +271,6 @@
     padding-left: 10px;
 }
 
-#navBtnNext
-{
-    background-color: transparent;
-    border-width: 0px;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    margin-right: 0px;
-    width: 32px;
-    background-repeat: no-repeat;
-    padding-left: 1px;
-    padding-right: 1px;
-    outline: none;
-}
-
-#navBtnPrevious
-{
-    background-color: transparent;
-    border-width: 0px;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    margin-right: 0px;
-    width: 32px;
-    background-repeat: no-repeat;
-    padding-left: 1px;
-    padding-right: 1px;
-    float: right;
-    outline: none;
-}
-
 #navBtnBackDetail
 {
     background-color: transparent;
@@ -429,7 +400,8 @@
     background-color: #000000;
     z-index: 9000;
     color:white;
-    height: 50px;
+    height: 48px;
+    text-align: left;
 }
 
 .imgDetailScreenshot {
@@ -923,7 +895,7 @@ li.unread .listTitle {
 	background: #AAA;
 }
 
-#navBtnBackFeeds, #navBtnBackMyStuffPlugin {
+#navBtnBackFeeds, #navBtnBackMyStuffPlugin, #navBtnBackScreenshot {
 	height: 24px;
 	display: inline-block;
 	vertical-align: text-top;
@@ -931,6 +903,43 @@ li.unread .listTitle {
 	background-repeat: no-repeat;
 	background-position: 50%;
 	background-size: contain;
+}
+
+#detailPageName {
+	display: inline-block;
+	vertical-align: top;
+	font-size: 18px;
+	padding-left: 12px;
+	vertical-align: middle;
+}
+
+#navBtnPrevious {
+	width: 43px;
+	height: 24px;
+	background: url('images/icon-left.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-size: contain;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+#navBtnNext {
+	width: 50px;
+	height: 24px;
+	background: url('images/icon-right.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-size: contain;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+#navBtnScreenshot {
+	width: 36px;
+	height: 36px;
+	vertical-align: middle;
+	margin-right: 8px;
 }
 
 #navInfo {
@@ -960,7 +969,7 @@ li.unread .listTitle {
 }
 
 #tdBarMyStuff .text-me {
-	width: 60%;
+	width: 63%;
 	height: 48px;
 	background: url('images/me.png');
 	background-repeat: no-repeat;
@@ -977,8 +986,8 @@ li.unread .listTitle {
 body.plugin #tdHeadingLeft,
 body.plugin #tdBarSearchAnno,
 body.plugin #tdBarSettings,
-body.plugin #tdNavBtnScreenshot,
-body.plugin #tdNavBtnTray,
+body.plugin #navBtnScreenshot,
+body.plugin #navBtnTray,
 body.plugin #appNameContainer,
 body.plugin #tdTxtSearchAnno,
 body.plugin .tdListAppName,
