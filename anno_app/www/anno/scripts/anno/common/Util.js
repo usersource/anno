@@ -612,6 +612,7 @@
 
                 gapi.client.load(apiId, this.API.apiVersion, function(res) {
                     clearTimeout(self.timeoutSession[apiId]);
+                    delete self.timeoutSession[apiId];
 
                     if (res && res.error) {
                         console.log(apiId + " API load failed.");
@@ -638,6 +639,7 @@
                         message : "There is no network connection or it is taking too much time to load feeds."
                     });
                     self.hideLoadingIndicator();
+                    delete self.timeoutSession[apiId];
                 }, this.timeoutTime);
             } else {
                 window.setTimeout(function() {
