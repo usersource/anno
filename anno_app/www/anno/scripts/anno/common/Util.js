@@ -51,6 +51,8 @@
         pluginUserImageURL : "",
         pluginTeamKey : "",
         pluginTeamSecret : "",
+        timeoutTime: 40 * 1000,
+        timeoutSession : {},
         ERROR_TYPES:{
             "LOAD_GAE_API": 1,
             "API_RESPONSE_EMPTY": 2,
@@ -605,35 +607,40 @@
         loadAPI: function(apiId, callback, errorCallback)
         {
             var self = this;
-            if (window.gapi&&window.gapi.client)
-            {
-                console.log("loading "+apiId+" API.");
+            if (window.gapi && window.gapi.client) {
+                console.log("loading " + apiId + " API.");
+
                 gapi.client.load(apiId, this.API.apiVersion, function(res) {
+                    clearTimeout(self.timeoutSession[apiId]);
 
-                    if (res&&res.error)
-                    {
-                        console.log(apiId+" API load failed.");
+                    if (res && res.error) {
+                        console.log(apiId + " API load failed.");
 
-                        if (errorCallback)
-                        {
+                        if (errorCallback) {
                             errorCallback(res.error);
-                        }
-                        else
-                        {
-                            self.showErrorMessage({type: self.ERROR_TYPES.LOAD_GAE_API, message: 'Load '+apiId+" API failed, "+res.error.message});
+                        } else {
+                            self.showErrorMessage({
+                                type : self.ERROR_TYPES.LOAD_GAE_API,
+                                message : 'Load ' + apiId + " API failed, " + res.error.message
+                            });
                             self.hideLoadingIndicator();
                         }
-                    }
-                    else
-                    {
-                        console.log(apiId+" API loaded.");
+                    } else {
+                        console.log(apiId + " API loaded.");
                         callback();
                     }
                 }, this.getCEAPIRoot());
-            }
-            else
-            {
-                window.setTimeout(function(){
+
+                this.timeoutSession[apiId] = setTimeout(function() {
+                    self.showErrorMessage({
+                        code : self.ERROR_CODE.BAD_REQUEST,
+                        type : self.ERROR_TYPES.API_CALL_FAILED,
+                        message : "There is no network connection or it is taking too much time to load feeds."
+                    });
+                    self.hideLoadingIndicator();
+                }, this.timeoutTime);
+            } else {
+                window.setTimeout(function() {
                     self.loadAPI(apiId, callback, errorCallback);
                 }, 50)
             }
