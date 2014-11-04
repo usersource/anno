@@ -83,12 +83,14 @@ class Anno(BaseModel):
                 from model.userannostate import UserAnnoState
                 anno_read_status = UserAnnoState.is_read(user, self)
 
+            last_activity_user = UserAnnoState.last_activity_user(self)
+
             anno_message = AnnoResponseMessage(id=self.key.id(), anno_text=self.anno_text,
                                                anno_type=self.anno_type, app_name=app_name,
                                                app_icon_url=app_icon_url, created=self.created,
                                                creator=user_message, last_update_time=self.last_update_time,
                                                last_activity=self.last_activity, last_update_type=self.last_update_type,
-                                               anno_read_status=anno_read_status
+                                               anno_read_status=anno_read_status, last_activity_user=last_activity_user
                                             )
         else:
             anno_message = AnnoResponseMessage(id=self.key.id(),

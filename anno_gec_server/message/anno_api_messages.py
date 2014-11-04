@@ -109,6 +109,7 @@ class AnnoResponseMessage(messages.Message):
     community = messages.MessageField(CommunityMessage, 33)  #:
     app_icon_url = messages.StringField(34)
     anno_read_status = messages.BooleanField(35)
+    last_activity_user = messages.MessageField(UserMessage, 36)
 
 class AnnoListMessage(messages.Message):
     """
