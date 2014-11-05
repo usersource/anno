@@ -15,6 +15,7 @@
     BOOL landscapeMode;
     int level;
     NSString *screenshotPath;
+    UIView *splashView;
 }
 
 @property (nonatomic) BOOL isPractice;

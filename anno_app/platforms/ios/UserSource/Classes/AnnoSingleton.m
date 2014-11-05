@@ -136,7 +136,7 @@
         }
 
         AnnoDrawViewController *annoDrawViewController = [[AnnoDrawViewController alloc] init];
-        [currentViewController presentViewController:annoDrawViewController animated:NO completion:nil];
+        [currentViewController presentViewController:annoDrawViewController animated:YES completion:nil];
         
         // Adding back lastObject of viewControllerList beacause it gets deleted after calling
         // presentViewController on lastObject of viewControllerList with annoDrawViewController
