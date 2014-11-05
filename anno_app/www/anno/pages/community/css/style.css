@@ -535,7 +535,7 @@
 	padding: 2px 4px;
 }
 
-#authorImage {
+#authorImage, .commenterImage {
 	width: 24px;
 	height: 24px;
 	border-radius: 4px;
@@ -552,15 +552,8 @@
 	text-align: center;
 }
 
-.commentDetail
-{
-    width: 100%;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    padding-left: 36px;
-    padding-right: 4px;
-    box-sizing: border-box;
-    /*    overflow-x: hidden;*/
+.commentDetail {
+    padding: 0 4px 0 28px;
 }
 
 #addCommentContainer {

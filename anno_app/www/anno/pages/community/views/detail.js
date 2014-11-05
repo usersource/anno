@@ -676,13 +676,22 @@ define([
                     {
                         for (var j=0;j<returnAnno.followup_list.length;j++)
                         {
-                            returnAnno.followup_list[j].user_id = returnAnno.followup_list[j].creator.display_name||returnAnno.followup_list[j].creator.user_email||returnAnno.followup_list[j].creator.id;
+                            returnAnno.followup_list[j].user_id = returnAnno.followup_list[j].creator.display_name || returnAnno.followup_list[j].creator.user_email || returnAnno.followup_list[j].creator.id;
+                            returnAnno.followup_list[j].user_image = returnAnno.followup_list[j].creator.image_url || "";
                             returnAnno.followup_list[j].timestamp = annoUtil.getTimeAgoString(returnAnno.followup_list[j].created);
+                            returnAnno.followup_list[j].default_commenter_image = "";
+                            returnAnno.followup_list[j].commenter_image = "hidden";
+
+                            if ((returnAnno.followup_list[j].user_image !== "") && (annoUtil.isPlugin)) {
+                                returnAnno.followup_list[j].default_commenter_image = "hidden";
+                                returnAnno.followup_list[j].commenter_image = "";
+                            }
+
                             processFollowupHashTagsOrURLs(returnAnno.followup_list[j]);
                         }
                     }
 
-                    currentAnno.set('comments',new getStateful(returnAnno.followup_list||[]));
+                    currentAnno.set('comments', new getStateful(returnAnno.followup_list || []));
 
                     device_model = annoUtil.parseDeviceModel(returnAnno.device_model) || ' ';
                     os_name = returnAnno.os_name || ' ';

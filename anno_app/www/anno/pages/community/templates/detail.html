@@ -79,14 +79,15 @@
 	                    <div id="annoCommentsSet" class="fieldset"
 	                         data-dojo-type="dojox/mvc/Repeat"
 	                         data-dojo-props="exprchar: '*', children: at('rel:', 'comments')"
-	                         style="padding-top: 4px;">
-	                        <div style="padding: 4px;">
+	                         style="padding-top: 15px;">
+	                        <div style="padding-bottom: 8px;">
 		                        <div>
-		                        	<span class="icon-user personImg"></span>
-		                        	<span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:*{this.index}', 'user_id')" style="padding-left: 4px;"></span>
-		                        	<span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:*{this.index}', 'timestamp')"></span>
+		                        	<span class="icon-user personImg" data-dojo-type="dojox/mvc/Output" data-dojo-props="class: at('rel:*{this.index}', 'default_commenter_image')"></span>
+		                        	<img class="commenterImage" data-dojo-type="dojox/mvc/Output" data-dojo-props="src: at('rel:*{this.index}', 'user_image'), class: at('rel:*{this.index}', 'commenter_image')" />
+		                        	<span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:*{this.index}', 'user_id')" style="vertical-align: top;line-height: 24px;"></span>
+		                        	<span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:*{this.index}', 'timestamp')" style="vertical-align: top;line-height: 24px;float: right;"></span>
 		                        </div>
-		                        <div class="commentDetail">
+		                        <div class="commentDetail" style="font-size: 14px;">
 		                            <div data-dojo-type="dojox/mvc/Output" style="width: 100%" data-dojo-props="value: at('rel:*{this.index}', 'modifiedComment')"></div>
 		                        </div>
 	                        </div>
