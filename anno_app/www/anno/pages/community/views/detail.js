@@ -812,8 +812,8 @@ define([
                         domClass.add('imgThumbsUp', 'icoImgActive');
                         // sync voted-up activity, TODO: should sync un-vote activity
                         eventsModel.cursor.lastActivityChangedClass = "icon-thumbs-up";
-                        eventsModel.cursor.lastActivityText = "voted-up";
-                        eventsModel.cursor.when = new Date().getTime();
+                        eventsModel.cursor.lastActivityText = "upvoted";
+                        eventsModel.cursor.when = annoUtil.getTimeAgoString(Date.now());
                     }
 
                     savingVote = false;
@@ -862,7 +862,7 @@ define([
                         // sync flagged activity, TODO: should sync un-flag activity
                         eventsModel.cursor.lastActivityChangedClass = "icon-flag";
                         eventsModel.cursor.lastActivityText = "flagged";
-                        eventsModel.cursor.when = new Date().getTime();
+                        eventsModel.cursor.when = annoUtil.getTimeAgoString(Date.now());
                     }
                     savingFlag = false;
                 },

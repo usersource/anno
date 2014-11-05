@@ -180,35 +180,25 @@ define([
             });
         };
 
-        var handleAnnoActivityInfo = function(anno, annoData)
-        {
+        var handleAnnoActivityInfo = function(anno, annoData) {
             var lastActivity = annoData.last_activity;
-            if (lastActivity == "UserSource" || lastActivity == "create")
-            {
+
+            if (lastActivity == "UserSource" || lastActivity == "create") {
                 anno.lastActivityClass = "icon-plus";
                 anno.lastActivityText = "created";
-            }
-            else if (lastActivity == "vote")
-            {
+            } else if (lastActivity == "vote") {
                 anno.lastActivityClass = "icon-thumbs-up";
-                anno.lastActivityText = "voted-up";
-            }
-            else if (lastActivity == "flag")
-            {
+                anno.lastActivityText = "upvoted";
+            } else if (lastActivity == "flag") {
                 anno.lastActivityClass = "icon-flag";
                 anno.lastActivityText = "flagged";
-            }
-            else if (lastActivity == "follwup")
-            {
+            } else if (lastActivity == "follwup") {
                 anno.lastActivityClass = "icon-comment";
                 anno.lastActivityText = "commented";
-            }
-            else if (lastActivity == "anno")
-            {
+            } else if (lastActivity == "anno") {
                 anno.lastActivityClass = "icon-pencil";
                 anno.lastActivityText = "edited";
             }
-
 
             anno.when = Util.getTimeAgoString(annoData.last_update_time);
         };

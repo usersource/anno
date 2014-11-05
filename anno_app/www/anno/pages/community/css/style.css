@@ -1047,7 +1047,3 @@ body.plugin #barAddImage,
 body.plugin #barMyStuff  {
 	line-height: 44px !important;
 }
-
-body.plugin #myActivityText {
-	font-weight: normal !important;
-}
