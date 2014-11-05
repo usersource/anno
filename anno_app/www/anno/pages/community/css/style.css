@@ -408,11 +408,14 @@
     /*border: 2px solid #ff9900;*/
 }
 
-.gfxCanvasContainer
-{
+.gfxCanvasContainer {
     position: absolute;
     top: 0px;
     left: 0px;
+}
+
+.gfxCanvasContainer body {
+	background: initial !important;
 }
 
 .screenshotContainerDetail{
