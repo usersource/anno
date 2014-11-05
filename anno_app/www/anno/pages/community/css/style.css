@@ -517,6 +517,7 @@
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	line-height: 24px;
+	vertical-align: top;
 }
 
 #mobileIcon {
@@ -532,6 +533,12 @@
 .annoTextDetail {
 	border: 1px solid #ff9900;
 	padding: 2px 4px;
+}
+
+#authorImage {
+	width: 28px;
+	height: 28px;
+	border-radius: 4px;
 }
 
 #voteFlagContainer {

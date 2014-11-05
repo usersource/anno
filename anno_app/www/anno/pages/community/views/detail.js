@@ -324,6 +324,13 @@ define([
                 {
                     domClass.remove('imgFlag', 'icoImgActive');
                 }
+
+                if (("author_image_url" in eventsModel.cursor) &&
+                    (eventsModel.cursor.author_image_url !== "") &&
+                    (annoUtil.isPlugin)) {
+                    domStyle.set('defaultAuthorImage', 'display', 'none');
+                    domStyle.set('authorImage', 'display', 'inline-block');
+                }
             }
 
 
