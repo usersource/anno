@@ -752,7 +752,20 @@ define([
                     currentAnno.lastActivityText = "commented";
                     currentAnno.when = new Date().getTime();
 
-                    var commentObject = {user_id:author, comment:comment};
+                    default_commenter_image = "";
+                    commenter_image = "hidden";
+                    if ((annoUtil.pluginUserImageURL !== "") && (annoUtil.isPlugin)) {
+                        default_commenter_image = "hidden";
+                        commenter_image = "";
+                    }
+
+                    var commentObject = {
+                        user_id : author,
+                        comment : comment,
+                        user_image : annoUtil.pluginUserImageURL,
+                        default_commenter_image : default_commenter_image,
+                        commenter_image : commenter_image
+                    };
                     processFollowupHashTagsOrURLs(commentObject);
                     // currentAnno.comments.splice(0, 0, new getStateful(commentObject));
                     currentAnno.comments.push(new getStateful(commentObject));
