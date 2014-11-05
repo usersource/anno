@@ -420,3 +420,14 @@ body#container {
 	border-width: 1px;
 	font-size: 16px;
 }
+
+#dlg_common_confirm_message {
+	color: #000000;
+    background-color: white;
+    background-image: none !important;
+    border-radius: 6px;
+    text-align:center;
+    border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}

@@ -1314,20 +1314,19 @@ require([
         });
 
         connect.connect(dom.byId("barMoreMenu"), "click", function(e) {
-            window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "cancel");
+            annoUtil.showConfirmMessageDialog("Are you sure that you want to close it?", function(ret) {
+                if (ret) {
+                    window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "cancel");
 
-            cordova.exec(
-                function(result) {},
-                function(err) {
-                    annoUtil.showErrorMessage({
-                        type : annoUtil.ERROR_TYPES.CORDOVA_API_FAILED,
-                        message : err.message
-                    });
-                },
-                "AnnoCordovaPlugin",
-                "exit_current_activity",
-                []
-            );
+                    cordova.exec(function(result) {
+                    }, function(err) {
+                        annoUtil.showErrorMessage({
+                            type : annoUtil.ERROR_TYPES.CORDOVA_API_FAILED,
+                            message : err.message
+                        });
+                    }, "AnnoCordovaPlugin", "exit_current_activity", []);
+                }
+            });
         });
 
         connect.connect(dom.byId("btnCancel"), "click", function() {
