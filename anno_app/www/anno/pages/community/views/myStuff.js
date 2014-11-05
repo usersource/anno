@@ -153,7 +153,7 @@ define([
                                 eventData.appIconClass = "hidden";
                             }
 
-                            if (eventData.author_image_url) {
+                            if (eventData.last_activity_user_image_url) {
                                 eventData.userProfile = "hidden";
                                 eventData.userProfileClass = "";
                             }
