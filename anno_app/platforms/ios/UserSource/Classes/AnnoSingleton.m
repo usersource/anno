@@ -9,6 +9,7 @@
 #import "AnnoSingleton.h"
 
 @implementation AnnoSingleton
+
 @synthesize utils;
 
     static AnnoSingleton *sharedInstance = nil;
@@ -31,6 +32,7 @@
         if (self) {
             // Work your initialising magic here as you normally would
             utils = [[AnnoUtils alloc] init];
+            self.isPlugin = (![utils isAnno:[[NSBundle mainBundle] bundleIdentifier]]);
         }
         
         return self;
@@ -130,7 +132,7 @@
 //        CDVViewController *currentViewController = [self.viewControllerList lastObject];
         UIViewController* currentViewController = [self getTopMostViewController];
 
-        if (self.email == nil || [self.email isEqualToString:@""]) {
+        if ((self.isPlugin) && (self.email == nil || [self.email isEqualToString:@""])) {
             NSLog(@"Email address is not specified");
             return;
         }
