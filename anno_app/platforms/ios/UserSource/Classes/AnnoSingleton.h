@@ -17,6 +17,7 @@
     NSString *email, *displayName, *userImageURL, *teamKey, *teamSecret;
     NSMutableArray *viewControllerList, *annoDrawViewControllerList;
     AnnoUtils *utils;
+    BOOL isPlugin;
 }
 
 @property (strong, retain) CommunityViewController *communityViewController;
@@ -25,6 +26,7 @@
 @property (strong, retain) NSString *email, *displayName, *userImageURL, *teamKey, *teamSecret;
 @property NSMutableArray *viewControllerList;
 @property NSMutableArray *annoDrawViewControllerList;
+@property BOOL isPlugin;
 
 + (id) sharedInstance;
 
