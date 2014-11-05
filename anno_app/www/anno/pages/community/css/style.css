@@ -271,35 +271,6 @@
     padding-left: 10px;
 }
 
-#navBtnNext
-{
-    background-color: transparent;
-    border-width: 0px;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    margin-right: 0px;
-    width: 32px;
-    background-repeat: no-repeat;
-    padding-left: 1px;
-    padding-right: 1px;
-    outline: none;
-}
-
-#navBtnPrevious
-{
-    background-color: transparent;
-    border-width: 0px;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    margin-right: 0px;
-    width: 32px;
-    background-repeat: no-repeat;
-    padding-left: 1px;
-    padding-right: 1px;
-    float: right;
-    outline: none;
-}
-
 #navBtnBackDetail
 {
     background-color: transparent;
@@ -429,7 +400,8 @@
     background-color: #000000;
     z-index: 9000;
     color:white;
-    height: 50px;
+    height: 48px;
+    text-align: left;
 }
 
 .imgDetailScreenshot {
@@ -498,13 +470,10 @@
     font-size: 16px;
 }
 
-.textDataAreaContainer{
-    /*border: 2px solid transparent;*/
-    /*background-color: white;*/
+.textDataAreaContainer {
+	margin: 0 8px;
     left: 0;
-    /*margin-top: 2px;*/
     z-index: 2001;
-    /*padding-top: 10px;*/
 }
 
 .mblTooltipBelow .mblTooltipArrow {
@@ -535,28 +504,45 @@
     border-bottom-color: white;
 }
 
-.appNameDetail
-{
-    /*width: 100%;*/
-    height: 24px;
-    padding-bottom: 8px;
-}
-
-.appNameTitleDetail, .authorDetail, .deviceInfoDetail
-{
+.appNameTitleDetail, .authorDetail, .deviceInfoDetail {
     color: #AFB1B5;
 }
 
-.appNameTitleDetail
-{
-    padding-right: 8px;
+.deviceInfoDetail {
+	width: 91.860465116%;
+	width: calc(100% - 28px);
+	width: -webkit-calc(100% - 28px);
+	display: inline-block;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	line-height: 24px;
 }
 
-.annoTextDetail
-{
-    border: 2px solid #ff9900;
-    padding: 2px 4px;
-    margin: 0 8px;
+#mobileIcon {
+	width: 16px;
+	height: 24px;
+	display: inline-block;
+	background: url('images/icon-mobile.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-size: contain;
+}
+
+.annoTextDetail {
+	border: 1px solid #ff9900;
+	padding: 2px 4px;
+}
+
+#voteFlagContainer {
+	padding: 15px 0;
+	border-bottom: 1px solid #cccccc;
+}
+
+#voteFlagContainer > div {
+	width: 32%;
+	display: inline-block;
+	text-align: center;
 }
 
 .commentDetail
@@ -576,14 +562,15 @@
     background-color: #ffffff;
     position: fixed;
     bottom: 0px;
+    left: 0;
 }
 
 .commentTextbox {
-	width: 81.818181818%;
-	width: calc(100% - 64px);
-	width: -webkit-calc(100% - 64px);
+	width: 78.888888889%;
+	width: calc(100% - 76px);
+	width: -webkit-calc(100% - 76px);
 	margin: 0;
-	padding: 0;
+	padding: 0 4px 0 8px;
 	border: 0;
 	outline: 0;
 	resize: none;
@@ -592,6 +579,7 @@
 	color: #555;
 	font-size: 14px;
 	line-height: 22px;
+	background: #f4f4f4;
 }
 
 #sendComment {
@@ -602,6 +590,8 @@
 	text-align: center;
 	border-left: 1px solid #CCC;
 	font-size: 14px;
+	font-weight: bold;
+	color: black;
 }
 
 #sendComment.expanded {
@@ -795,7 +785,6 @@
     -webkit-tap-highlight-color: rgba(0,0,0,0);
     -webkit-user-select: none;
     -webkit-touch-callout: none;
-    background-color: white !important;
 }
 
 .hashTag, .commentURL
@@ -922,13 +911,51 @@ li.unread .listTitle {
 	background: #AAA;
 }
 
-#navBtnBackFeeds, #navBtnBackMyStuffPlugin {
+#navBtnBackFeeds, #navBtnBackMyStuffPlugin, #navBtnBackScreenshot {
 	height: 24px;
 	display: inline-block;
 	vertical-align: text-top;
 	background: url('images/back.png');
 	background-repeat: no-repeat;
 	background-position: 50%;
+	background-size: contain;
+}
+
+#detailPageName {
+	display: inline-block;
+	vertical-align: top;
+	font-size: 18px;
+	padding-left: 12px;
+	vertical-align: middle;
+}
+
+#navBtnPrevious {
+	width: 43px;
+	height: 24px;
+	background: url('images/icon-left.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-size: contain;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+#navBtnNext {
+	width: 50px;
+	height: 24px;
+	background: url('images/icon-right.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-size: contain;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+#navBtnScreenshot {
+	width: 36px;
+	height: 36px;
+	vertical-align: middle;
+	margin-right: 8px;
 }
 
 #navInfo {
@@ -958,7 +985,7 @@ li.unread .listTitle {
 }
 
 #tdBarMyStuff .text-me {
-	width: 60%;
+	width: 63%;
 	height: 48px;
 	background: url('images/me.png');
 	background-repeat: no-repeat;
@@ -975,8 +1002,8 @@ li.unread .listTitle {
 body.plugin #tdHeadingLeft,
 body.plugin #tdBarSearchAnno,
 body.plugin #tdBarSettings,
-body.plugin #tdNavBtnScreenshot,
-body.plugin #tdNavBtnTray,
+body.plugin #navBtnScreenshot,
+body.plugin #navBtnTray,
 body.plugin #appNameContainer,
 body.plugin #tdTxtSearchAnno,
 body.plugin .tdListAppName,

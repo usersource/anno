@@ -1270,7 +1270,7 @@ define([
                     resetDetailPage();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnNext'), 'click', function ()
+                _connectResults.push(connect.connect(dom.byId('navBtnNext'), 'click', function ()
                 {
                     // Analytics
                     annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'header next arrow');
@@ -1278,17 +1278,17 @@ define([
                     goNextRecord();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnTray'), 'click', function ()
+                _connectResults.push(connect.connect(dom.byId('navBtnTray'), 'click', function ()
                 {
                     scrollToTalkArea();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnScreenshot'), 'click', function ()
+                _connectResults.push(connect.connect(dom.byId('navBtnScreenshot'), 'click', function ()
                 {
                     scrollToScreenshot();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnPrevious'), 'click', function ()
+                _connectResults.push(connect.connect(dom.byId('navBtnPrevious'), 'click', function ()
                 {
                     // Analytics
                     annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'header prev arrow');
@@ -1615,7 +1615,7 @@ define([
                 adjustSize();
 
                 domStyle.set("headingDetail", "display", '');
-                domClass.add("navBtnScreenshot", "barIconHighlight");
+                // domClass.add("navBtnScreenshot", "barIconHighlight");
                 domClass.remove("navBtnTray", "barIconHighlight");
                 domClass.add("navBtnTray", "barIconDisabled");
 

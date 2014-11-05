@@ -55,6 +55,18 @@ class User(ndb.Model):
         return user
 
     @classmethod
+    def update_user(cls, user=None, email=None, username=None, image_url=None, account_type=None):
+        if not user and email:
+            user = cls.find_user_by_email(email, account_type)
+
+        if user:
+            user.display_name = username or user.display_name
+            user.image_url = image_url or user.image_url
+            user.put()
+
+        return user
+
+    @classmethod
     def authenticate(cls, email, password):
         query = User.query().filter(cls.user_email == email).filter(cls.password == password)
         return query.get() is not None
