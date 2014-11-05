@@ -617,16 +617,12 @@
     height: 100%;
 }
 
-.icoImgDeactive
-{
+.icoImgDeactive {
     color: #c0c0c0;
-    font-size: 30px;
 }
 
-.icoImgActive
-{
+.icoImgActive {
     color: #ff9900;
-    font-size: 30px;
 }
 
 .personImg
