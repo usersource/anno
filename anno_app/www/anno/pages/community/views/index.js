@@ -1124,7 +1124,7 @@ define([
             }));
             // pull to refresh end
 
-            _connectResults.push(connect.connect(dom.byId("tdNavBtnBackFeeds"), 'click', function(e) {
+            _connectResults.push(connect.connect(dom.byId("navBtnBackFeeds"), 'click', function(e) {
                 dojo.stopEvent(e);
                 cordova.exec(function(result) {}, function(err) {}, "AnnoCordovaPlugin", 'exit_current_activity', []);
             }));
