@@ -1047,9 +1047,9 @@ define([
                 loadListData(true, null, searchOrder, true);
             }));
     
-            _connectResults.push(connect.connect(dom.byId('listContainerStart'), "scroll", this, function() {
+            _connectResults.push(connect.connect(dom.byId('listContainerStart_middle'), "scroll", this, function() {
                 var toEnd = false;
-                var listContainer = dom.byId('listContainerStart');
+                var listContainer = dom.byId('listContainerStart_middle');
                 if ((listContainer.clientHeight + listContainer.scrollTop) >= listContainer.scrollHeight)
                     toEnd = true;
     
@@ -1060,9 +1060,9 @@ define([
             }));
     
             // pull to refresh
-            _connectResults.push(connect.connect(dom.byId('listContainerStart'), "touchmove", this, function(e) {
+            _connectResults.push(connect.connect(dom.byId('listContainerStart_middle'), "touchmove", this, function(e) {
                 if (!loadingData && firstListLoaded && !inSearchMode) {
-                    var listContainer = dom.byId('listContainerStart');
+                    var listContainer = dom.byId('listContainerStart_middle');
     
                     if (startPull) {
                         e.preventDefault();
@@ -1079,7 +1079,7 @@ define([
                 }
             }));
     
-            _connectResults.push(connect.connect(dom.byId('listContainerStart'), "touchstart", this, function(e) {
+            _connectResults.push(connect.connect(dom.byId('listContainerStart_middle'), "touchstart", this, function(e) {
                 startPull = false;
                 pullStartY = 0;
                 touchStartY = e.touches[0].pageY;
@@ -1093,7 +1093,7 @@ define([
                 doRefresh();
             }));
     
-            _connectResults.push(connect.connect(dom.byId('listContainerStart'), "touchend", this, function(e) {
+            _connectResults.push(connect.connect(dom.byId('listContainerStart_middle'), "touchend", this, function(e) {
                 if (!loadingData) {
                     var progressBar = registry.byId('progressBar');
     
@@ -1108,7 +1108,7 @@ define([
                 }
             }));
     
-            _connectResults.push(connect.connect(dom.byId('listContainerStart'), "touchcancel", this, function(e) {
+            _connectResults.push(connect.connect(dom.byId('listContainerStart_middle'), "touchcancel", this, function(e) {
                 if (!loadingData) {
                     var progressBar = registry.byId('progressBar');
     

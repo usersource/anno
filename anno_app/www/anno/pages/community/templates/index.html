@@ -77,59 +77,47 @@
     <div id="noSearchResultContainer" style="display:none;text-align: center;margin-top: 20px;color: #D37011">
         <div>No items matched your search.</div>
     </div>
-    <div id="listContainerStart" style="width: 100%;overflow: auto">
-        <ul data-dojo-type="dojox/mobile/EdgeToEdgeList">
-            <div class="fieldset"
-                 data-dojo-type="dojox/mvc/Repeat"
-                 data-dojo-props="exprchar: '#', children: this.loadedModels.events.model">
-                <li id="event#{this.index}" class="row #{this.ref[this.index].readStatusClass}"
-                    data-dojo-type="dojox/mobile/ListItem"
-                    data-dojo-props="transition:'slide',variableHeight:true,clickable:true,noArrow:true,transitionOptions:{target:'detail',url:'#detail',params:{cursor:'#{this.index}'}},onClick:annoRead"
-                    style="padding: 6px;">
-                    <div class="infoContainer">
-                        <table style="width: 100%;table-layout: fixed;">
-                            <tr>
-                                <td width="40" align="center">
-                                    <span data-dojo-props="class: at('rel:#{this.index}', 'annoIcon')" data-dojo-type="dojox/mvc/Output" class="annoListItemIcon"></span>
-                                    <img class="appIconImage" data-dojo-type="dojox/mvc/Output" style="width: 40px;height: 40px;border-radius: 8px;" data-dojo-props="src: at('rel:#{this.index}', 'app_icon_url'), class: at('rel:#{this.index}', 'appIconClass')" />
-                                    <span data-dojo-props="class: at('rel:#{this.index}', 'userProfile')" data-dojo-type="dojox/mvc/Output" class="icon-user defaultUserImage"></span>
-                                    <img class="userProfileImage" data-dojo-type="dojox/mvc/Output" data-dojo-props="src: at('rel:#{this.index}', 'author_image_url'), class: at('rel:#{this.index}', 'userProfileClass')" />
-                                </td>
-                                <td width="95%">
-                                    <table style="width: 100%;table-layout: fixed;">
-                                        <tr>
-                                            <td style="width: 100%;">
-                                                <div class="listTitle" data-dojo-type="dojox/mvc/Output"
-                                                     data-dojo-props="value: at('rel:#{this.index}', 'annoText')"></div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <table style="width: 100%;table-layout: fixed;font-size: 14px;">
-                                        <tr>
-                                            <td class="tdListAppName" style="width: 42%;">
-                                                <div class="listAppName" data-dojo-type="dojox/mvc/Output"
-                                                     data-dojo-props="value: at('rel:#{this.index}', 'app')"></div>
-                                            </td>
-                                            <td style="width: 42%;">
-                                                <div class="listAuthor" data-dojo-type="dojox/mvc/Output"
-                                                     data-dojo-props="value: at('rel:#{this.index}', 'author')"></div>
-                                            </td>
-                                            <td style="width: 16%;text-align: right;">
-                                                <div class="listAuthor" data-dojo-type="dojox/mvc/Output"
-                                                     data-dojo-props="value: at('rel:#{this.index}', 'created')"></div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-
-                    </div>
-                </li>
-            </div>
-
-        </ul>
-    </div>
+	<div id="listContainerStart" style="width: 100%;overflow: auto" class="smooth_scroll">
+		<div id="listContainerStart_middle" style="width: 100%;height: 100%;overflow: scroll;" class="smooth_scroll">
+			<div id="listContainerStart_inner">
+				<ul data-dojo-type="dojox/mobile/EdgeToEdgeList">
+					<div class="fieldset"
+					data-dojo-type="dojox/mvc/Repeat"
+					data-dojo-props="exprchar: '#', children: this.loadedModels.events.model">
+						<li id="event#{this.index}" class="row #{this.ref[this.index].readStatusClass}"
+						data-dojo-type="dojox/mobile/ListItem"
+						data-dojo-props="transition:'slide',variableHeight:true,clickable:true,noArrow:true,transitionOptions:{target:'detail',url:'#detail',params:{cursor:'#{this.index}'}},onClick:annoRead"
+						style="padding: 6px;">
+							<div class="infoContainer">
+								<table style="width: 100%;table-layout: fixed;">
+									<tr>
+										<td width="40" align="center"><span data-dojo-props="class: at('rel:#{this.index}', 'annoIcon')" data-dojo-type="dojox/mvc/Output" class="annoListItemIcon"></span><img class="appIconImage" data-dojo-type="dojox/mvc/Output" style="width: 40px;height: 40px;border-radius: 8px;" data-dojo-props="src: at('rel:#{this.index}', 'app_icon_url'), class: at('rel:#{this.index}', 'appIconClass')" /><span data-dojo-props="class: at('rel:#{this.index}', 'userProfile')" data-dojo-type="dojox/mvc/Output" class="icon-user defaultUserImage"></span><img class="userProfileImage" data-dojo-type="dojox/mvc/Output" data-dojo-props="src: at('rel:#{this.index}', 'author_image_url'), class: at('rel:#{this.index}', 'userProfileClass')" /></td>
+										<td width="95%">
+										<table style="width: 100%;table-layout: fixed;">
+											<tr>
+												<td style="width: 100%;"><div class="listTitle" data-dojo-type="dojox/mvc/Output"
+												data-dojo-props="value: at('rel:#{this.index}', 'annoText')"></div></td>
+											</tr>
+										</table>
+										<table style="width: 100%;table-layout: fixed;font-size: 14px;">
+											<tr>
+												<td class="tdListAppName" style="width: 42%;"><div class="listAppName" data-dojo-type="dojox/mvc/Output"
+												data-dojo-props="value: at('rel:#{this.index}', 'app')"></div></td>
+												<td style="width: 42%;"><div class="listAuthor" data-dojo-type="dojox/mvc/Output"
+												data-dojo-props="value: at('rel:#{this.index}', 'author')"></div></td>
+												<td style="width: 16%;text-align: right;"><div class="listAuthor" data-dojo-type="dojox/mvc/Output"
+												data-dojo-props="value: at('rel:#{this.index}', 'created')"></div></td>
+											</tr>
+										</table></td>
+									</tr>
+								</table>
+							</div>
+						</li>
+					</div>
+				</ul>
+			</div>
+		</div>
+	</div>
     <div id="menusDialog" data-dojo-type="dojox/mobile/SimpleDialog" style="display: none;width: 200px;height: 116px;padding: 0px;border:2px solid black;border-top-color:black ">
         <div id="menuItemIntro" class="menuItem">Intro</div>
         <div id="menuItemFeedback" class="menuItem">Feedback</div>

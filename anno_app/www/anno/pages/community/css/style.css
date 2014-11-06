@@ -997,6 +997,10 @@ li.unread .listTitle {
 	padding-top: 2px;
 }
 
+.smooth_scroll {
+	-webkit-overflow-scrolling: touch;
+}
+
 /* for plugin */
 body.plugin #tdHeadingLeft,
 body.plugin #tdBarSearchAnno,
