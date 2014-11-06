@@ -451,27 +451,27 @@ define([
 
         var scrollToScreenshot = function()
         {
-            var detailContentContainer = dom.byId('detailContentContainer');
+            var detailContentContainer = dom.byId('detailContentContainer_middle');
 
             if (scrollAnimateHandle)
             {
                 connect.disconnect(scrollAnimateHandle);
             }
 
-            if (detailContentContainer.parentNode.scrollTop <=0)
+            if (detailContentContainer.scrollTop <=0)
             {
                 return;
             }
 
             detailContentContainer.style.webkitTransition = "all 0ms ease";
-            var st = detailContentContainer.parentNode.scrollTop;
-            detailContentContainer.parentNode.scrollTop = 0;
+            var st = detailContentContainer.scrollTop;
+            detailContentContainer.scrollTop = 0;
             detailContentContainer.style.WebkitTransform = "translateY(-"+st+"px)";
 
             window.setTimeout(function(){
                 scrollAnimateHandle = connect.connect(detailContentContainer, "webkitTransitionEnd", function ()
                 {
-                    detailContentContainer.parentNode.scrollTop = 0;
+                    detailContentContainer.scrollTop = 0;
                     detailContentContainer.style.webkitTransition = "none";
                     detailContentContainer.style.WebkitTransform = "none";
 
@@ -487,7 +487,7 @@ define([
 
         var scrollToTalkArea = function()
         {
-            var detailContentContainer = dom.byId('detailContentContainer');
+            var detailContentContainer = dom.byId('detailContentContainer_middle');
 
             if (scrollAnimateHandle)
             {
@@ -496,7 +496,7 @@ define([
 
             scrollAnimateHandle = connect.connect(detailContentContainer, "webkitTransitionEnd", function ()
             {
-                detailContentContainer.parentNode.scrollTop = imageHeight+44;
+                detailContentContainer.scrollTop = imageHeight+44;
                 detailContentContainer.style.webkitTransition = "all 0ms ease";
                 detailContentContainer.style.WebkitTransform = "none";
 
@@ -505,8 +505,8 @@ define([
 
             domStyle.set('addCommentContainer', 'display', 'none');
             detailContentContainer.style.webkitTransition = "all 600ms ease";
-            var st = imageHeight+44-detailContentContainer.parentNode.scrollTop;
-            var max = detailContentContainer.parentNode.scrollHeight-detailContentContainer.parentNode.clientHeight-detailContentContainer.parentNode.scrollTop;
+            var st = imageHeight+44-detailContentContainer.scrollTop;
+            var max = detailContentContainer.scrollHeight-detailContentContainer.clientHeight-detailContentContainer.scrollTop;
             if (st > max) st = max;
 
             detailContentContainer.style.WebkitTransform = "translateY(-"+(st)+"px)";
@@ -1465,14 +1465,9 @@ define([
                     showAppNameTextBox();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('modelApp_detail'), "scroll", function (e)
+                _connectResults.push(connect.connect(dom.byId('detailContentContainer_middle'), "scroll", function (e)
                 {
                     dojo.stopEvent(e);
-                    var zoomData = dom.byId('zoomScreenshotContainerDetail');
-                    if (zoomData && (zoomData.style.display == '' || zoomData.style.display == 'block')) {
-                        return;
-                    }
-
                     setScreenshotTalkAreaState();
 
                     if (!commentTextBoxFocused)
@@ -1637,7 +1632,7 @@ define([
                 domClass.remove("navBtnTray", "barIconHighlight");
                 domClass.add("navBtnTray", "barIconDisabled");
 
-                dom.byId('detailContentContainer').parentNode.scrollTop = 0;
+                dom.byId('detailContentContainer_middle').scrollTop = 0;
                 document.addEventListener("backbutton", handleBackButton, false);
 
                 domStyle.set("AnnoScreenshotLoading", "display", "");

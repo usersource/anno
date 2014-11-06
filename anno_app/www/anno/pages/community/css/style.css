@@ -1001,6 +1001,12 @@ li.unread .listTitle {
 	-webkit-overflow-scrolling: touch;
 }
 
+#detailContentContainer {
+	height: 89.565217391%;
+	height: calc(100% - 48px);
+	height: -webkit-calc(100% - 48px);
+}
+
 /* for plugin */
 body.plugin #tdHeadingLeft,
 body.plugin #tdBarSearchAnno,
