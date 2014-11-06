@@ -273,8 +273,8 @@ define([
                     goBack();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId("listContainerMyStuff"), "scroll", this, function() {
-                    var listContainer = dom.byId("listContainerMyStuff");
+                _connectResults.push(connect.connect(dom.byId("listContainerMyStuff_middle"), "scroll", this, function() {
+                    var listContainer = dom.byId("listContainerMyStuff_middle");
                     if ((listContainer.clientHeight + listContainer.scrollTop) >= listContainer.scrollHeight) {
                         loadMoreData();
                     }
