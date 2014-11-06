@@ -910,7 +910,7 @@ li.unread .listTitle {
 	background: #AAA;
 }
 
-#navBtnBackFeeds, #navBtnBackMyStuffPlugin, #navBtnBackScreenshot {
+#navBtnBackFeeds, #navBtnBackMyStuffPlugin, #navBtnBackScreenshotPlugin {
 	height: 24px;
 	display: inline-block;
 	vertical-align: text-top;
@@ -1007,6 +1007,7 @@ body.plugin #appNameContainer,
 body.plugin #tdTxtSearchAnno,
 body.plugin .tdListAppName,
 body.plugin #divBtnBackMyStuff,
+body.plugin #navBtnBackScreenshot,
 body.plugin .activityTypeAndTime,
 body.plugin .appNameAndAuthor,
 body.plugin #barMyStuff,
@@ -1029,6 +1030,10 @@ body.plugin .pluginInfoText,
 body.plugin #tdBarMyStuff .text-me,
 body.plugin #tdBarAddImage .text-new {
 	display: block !important;
+}
+
+body.plugin #navBtnBackScreenshotPlugin {
+	display: inline-block !important;
 }
 
 body.plugin .defaultUserImage,
