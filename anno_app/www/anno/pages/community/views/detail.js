@@ -77,11 +77,9 @@ define([
             domStyle.set("lightCover", { "width" : (viewPoint.w) + "px", "height" : (viewPoint.h) + 'px' });
         };
 
-        var screenshotImageOnload = function()
-        {
+        var screenshotImageOnload = function() {
             console.log("screenshot loaded.");
-            if (!loadingDetailData)
-            {
+            if (!loadingDetailData) {
                 annoUtil.hideLoadingIndicator();
             }
 
@@ -110,32 +108,23 @@ define([
                 adjustNavBarZIndex();
                 setControlsState();
 
-                if (goingNextRecord != null)
-                {
-                    if (goingNextRecord)
-                    {
+                if (goingNextRecord != null) {
+                    if (goingNextRecord) {
                         transit(null, domScreenshotContainerDetail, {
-                            transition:"slide",
-                            duration:600
-                        }).then(redrawShapes);
-                    }
-                    else
-                    {
+                            transition : "slide",
+                            duration : 600
+                        });
+                    } else {
                         transit(null, domScreenshotContainerDetail, {
-                            transition:"slide",
-                            duration:600,
-                            reverse: true
-                        }).then(redrawShapes);
+                            transition : "slide",
+                            duration : 600,
+                            reverse : true
+                        });
                     }
-                }
-                else
-                {
-                    redrawShapes();
                 }
 
                 domStyle.set("AnnoScreenshotLoading", "display", "none");
                 domStyle.set("AnnoScreenshot", "display", "");
-
             }, 10);
         };
 
