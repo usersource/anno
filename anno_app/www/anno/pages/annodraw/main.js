@@ -1314,7 +1314,7 @@ require([
         });
 
         connect.connect(dom.byId("barMoreMenu"), "click", function(e) {
-            annoUtil.showConfirmMessageDialog("Are you sure that you want to close it?", function(ret) {
+            annoUtil.showConfirmMessageDialog("Cancel Feedback?", function(ret) {
                 if (ret) {
                     window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "cancel");
 
