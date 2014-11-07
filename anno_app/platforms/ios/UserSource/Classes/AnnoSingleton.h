@@ -18,6 +18,7 @@
     NSMutableArray *viewControllerList, *annoDrawViewControllerList;
     AnnoUtils *utils;
     BOOL isPlugin;
+    Class infoViewControllerClass;
 }
 
 @property (strong, retain) CommunityViewController *communityViewController;
@@ -27,6 +28,7 @@
 @property NSMutableArray *viewControllerList;
 @property NSMutableArray *annoDrawViewControllerList;
 @property BOOL isPlugin;
+@property (assign) Class infoViewControllerClass;
 
 + (id) sharedInstance;
 

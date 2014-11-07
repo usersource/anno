@@ -10,7 +10,7 @@
 
 @implementation AnnoSingleton
 
-@synthesize utils;
+@synthesize utils, infoViewControllerClass;
 
     static AnnoSingleton *sharedInstance = nil;
 
@@ -33,6 +33,7 @@
             // Work your initialising magic here as you normally would
             utils = [[AnnoUtils alloc] init];
             self.isPlugin = (![utils isAnno:[[NSBundle mainBundle] bundleIdentifier]]);
+            infoViewControllerClass = nil;
         }
         
         return self;
@@ -107,7 +108,19 @@
         }
     }
 
+    - (void) showCustomIntroPage {
+        UIViewController *infoViewController = [[infoViewControllerClass alloc] init];
+        NSLog(@"custom intro view: %@", infoViewController);
+        [[self.viewControllerList lastObject] presentViewController:infoViewController animated:YES completion:nil];
+    }
+
     - (void) showIntroPage {
+        if (self.isPlugin && (infoViewControllerClass != nil)) {
+            NSLog(@"Showing custom intro page");
+            [self showCustomIntroPage];
+            return;
+        }
+
         if (introViewController == nil) {
             introViewController = [[IntroViewController alloc] init];
         }
