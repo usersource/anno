@@ -179,6 +179,13 @@ indexes:
   properties:
   - name: anno
   - name: notify
+  - name: created
+    direction: desc
+
+- kind: UserAnnoState
+  properties:
+  - name: anno
+  - name: notify
   - name: last_read
   - name: user
 
