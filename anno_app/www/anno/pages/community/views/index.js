@@ -71,6 +71,10 @@ define([
         var viewPoint, initialized = false;
         var startPull = false, pullStartY= 0, touchStartY = 0, doRefreshing = false;
 
+        var reloadListData = window.reloadListData = function() {
+            loadListData(null, null, null, true);
+        };
+
         var loadListData = function (search, poffset, order, clearData)
         {
             loadingData = true;
