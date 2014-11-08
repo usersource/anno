@@ -16,7 +16,8 @@
 					<div class="fieldset"
 		                 data-dojo-type="dojox/mvc/Repeat"
 		                 data-dojo-props="exprchar: '#', children: this.loadedModels.mystuff.model">
-		                <li class="row #{this.ref[this.index].readStatusClass}"
+		                <li id="myActivityAnno_#{this.index}"
+		                	class="row #{this.ref[this.index].readStatusClass}"
 		                    data-dojo-type="dojox/mobile/ListItem"
 		                    data-dojo-props="transition:'slide',variableHeight:true,clickable:true,noArrow:true,_index:'#{this.index}',transitionOptions:{target:'detail',url:'#detail',params:{cursor:'#{this.index}', source:'mystuff'}},onClick:annoMyStuffRead"
 		                    style="padding: 6px;">
