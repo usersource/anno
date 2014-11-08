@@ -802,7 +802,7 @@ define([
                         // sync voted-up activity, TODO: should sync un-vote activity
                         eventsModel.cursor.lastActivityChangedClass = "icon-thumbs-up";
                         eventsModel.cursor.lastActivityText = "upvoted";
-                        eventsModel.cursor.when = annoUtil.getTimeAgoString(Date.now());
+                        eventsModel.cursor.when = Date.now();
                     }
 
                     savingVote = false;
@@ -851,7 +851,7 @@ define([
                         // sync flagged activity, TODO: should sync un-flag activity
                         eventsModel.cursor.lastActivityChangedClass = "icon-flag";
                         eventsModel.cursor.lastActivityText = "flagged";
-                        eventsModel.cursor.when = annoUtil.getTimeAgoString(Date.now());
+                        eventsModel.cursor.when = Date.now();
                     }
                     savingFlag = false;
                 },

@@ -287,20 +287,22 @@ define([
                 
                 adjustSize();
 
-                if (!needRefresh)
-                {
+                if (!needRefresh) {
                     // update opened anno activity info
-                    var activityIndicator = dom.byId("annoActIndicator_"+lastOpenAnnoId);
+                    var activityIndicator = dom.byId("annoActIndicator_" + lastOpenAnnoId);
 
                     var currentAnno = eventsModel.cursor;
-                    if (activityIndicator&&currentAnno.lastActivityChangedClass)
-                    {
+                    if (activityIndicator && currentAnno.lastActivityChangedClass) {
                         domClass.remove(activityIndicator);
                         domClass.add(activityIndicator, "annoOrangeColor");
                         domClass.add(activityIndicator, currentAnno.lastActivityChangedClass);
 
-                        dom.byId("annoActText_"+lastOpenAnnoId).innerHTML = currentAnno.lastActivityText;
-                        dom.byId("annoActWhen_"+lastOpenAnnoId).innerHTML = Util.getTimeAgoString(new Date().getTime(), new Date(currentAnno.when));
+                        dom.byId("annoActText_" + lastOpenAnnoId).innerHTML = currentAnno.lastActivityText;
+                        dom.byId("annoActWhen_" + lastOpenAnnoId).innerHTML = Util.getTimeAgoString(currentAnno.when);
+
+                        dom.byId("pluginAnnoActText_" + lastOpenAnnoId).innerHTML = currentAnno.lastActivityText;
+                        dom.byId("pluginAnnoActWhen_" + lastOpenAnnoId).innerHTML = Util.getTimeAgoString(currentAnno.when);
+                        dom.byId("pluginAnnoActUser_" + lastOpenAnnoId).innerHTML = Util.pluginUserDisplayName;
 
                         currentAnno.lastActivityChangedClass = "";
                     }
