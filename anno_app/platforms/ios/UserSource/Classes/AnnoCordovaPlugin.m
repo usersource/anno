@@ -170,6 +170,7 @@ AnnoSingleton *annoSingleton;
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                                           messageAsString:(NSString*)jsonData];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        annoSingleton.newAnnoCreated = TRUE;
     }];
 }
 

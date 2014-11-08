@@ -34,6 +34,7 @@
             utils = [[AnnoUtils alloc] init];
             self.isPlugin = (![utils isAnno:[[NSBundle mainBundle] bundleIdentifier]]);
             infoViewControllerClass = nil;
+            self.newAnnoCreated = FALSE;
         }
         
         return self;
@@ -174,18 +175,19 @@
         
         if ([currentViewController isKindOfClass:[CommunityViewController class]]) {
             [self.communityViewController dismissViewControllerAnimated:YES completion:nil];
-//            self.communityViewController = nil;
         } else if ([currentViewController isKindOfClass:[IntroViewController class]]) {
             [introViewController dismissViewControllerAnimated:YES completion:nil];
-//            introViewController = nil;
         } else if ([currentViewController isKindOfClass:[OptionFeedbackViewController class]]) {
             [optionFeedbackViewController dismissViewControllerAnimated:YES completion:nil];
-//            optionFeedbackViewController = nil;
         } else if ([currentViewController isKindOfClass:[AnnoDrawViewController class]]) {
             AnnoDrawViewController *currentAnnoDrawViewController = [self.annoDrawViewControllerList lastObject];
             [currentAnnoDrawViewController dismissViewControllerAnimated:YES completion:nil];
-//            currentAnnoDrawViewController = nil;
             [self.annoDrawViewControllerList removeLastObject];
+
+            if (self.newAnnoCreated) {
+                [self.communityViewController.webView stringByEvaluatingJavaScriptFromString:@"reloadListData()"];
+                self.newAnnoCreated = FALSE;
+            }
         }
         
         [self.viewControllerList removeLastObject];

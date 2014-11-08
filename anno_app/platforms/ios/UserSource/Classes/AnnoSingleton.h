@@ -17,7 +17,7 @@
     NSString *email, *displayName, *userImageURL, *teamKey, *teamSecret;
     NSMutableArray *viewControllerList, *annoDrawViewControllerList;
     AnnoUtils *utils;
-    BOOL isPlugin;
+    BOOL isPlugin, newAnnoCreated;
     Class infoViewControllerClass;
 }
 
@@ -27,7 +27,7 @@
 @property (strong, retain) NSString *email, *displayName, *userImageURL, *teamKey, *teamSecret;
 @property NSMutableArray *viewControllerList;
 @property NSMutableArray *annoDrawViewControllerList;
-@property BOOL isPlugin;
+@property BOOL isPlugin, newAnnoCreated;
 @property (assign) Class infoViewControllerClass;
 
 + (id) sharedInstance;
