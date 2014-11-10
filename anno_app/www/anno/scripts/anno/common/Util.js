@@ -1069,7 +1069,7 @@
             });
         },
         _callGAEAPI: function(config, retryCnt) {
-            if (config.name in gapi.client) {
+            if ((typeof gapi !== "undefined") && ("client" in gapi) && (config.name in gapi.client)) {
                 this._callGAEClient(config, retryCnt);
             } else {
                 var start_ts = Date.now(), self = this;
