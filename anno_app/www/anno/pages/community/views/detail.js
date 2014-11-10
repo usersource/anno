@@ -47,6 +47,7 @@ define([
             borderWidth = 4,
             zoomBorderWidth = 4;
         var zoomSurface, oldSurface, zoomAnnoID;
+        var shapeRedraw = false;
 
         var viewPoint = win.getBox(),
             deviceRatio = parseFloat((viewPoint.w / viewPoint.h).toFixed(2));
@@ -113,14 +114,16 @@ define([
                         transit(null, domScreenshotContainerDetail, {
                             transition : "slide",
                             duration : 600
-                        });
+                        }).then(redrawShapes);
                     } else {
                         transit(null, domScreenshotContainerDetail, {
                             transition : "slide",
                             duration : 600,
                             reverse : true
-                        });
+                        }).then(redrawShapes);
                     }
+                } else {
+                    redrawShapes();
                 }
 
                 domStyle.set("AnnoScreenshotLoading", "display", "none");
@@ -148,6 +151,9 @@ define([
 
         	// don't draw annotations when imgDetailScreenshot's src is tiniestImageData
             if (domImgDetailScreenshot.src === tiniestImageData) return;
+
+            if (shapeRedraw) return;
+            shapeRedraw = true;
 
         	var drawElements = eventsModel.cursor.draw_elements;
             var lineStrokeStyle = {
@@ -405,6 +411,7 @@ define([
             if ((currentIndex + 1) < eventsModel.model.length) {
                 resetDetailPage();
                 window.setTimeout(function() {
+                    shapeRedraw = false;
                     loadDetailData(currentIndex + 1);
                     goingNextRecord = true;
                 }, 50);
@@ -418,6 +425,7 @@ define([
             if ((currentIndex - 1) >= 0) {
                 resetDetailPage();
                 window.setTimeout(function() {
+                    shapeRedraw = false;
                     loadDetailData(currentIndex - 1);
                     goingNextRecord = false;
                 }, 50);
@@ -1565,6 +1573,7 @@ define([
                 goingNextRecord = null;
                 loadingDetailData = false;
                 loadingImage = false;
+                shapeRedraw = false;
 
                 var cursor = this.params["cursor"];
                 
