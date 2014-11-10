@@ -71,8 +71,13 @@ define([
         var viewPoint, initialized = false;
         var startPull = false, pullStartY= 0, touchStartY = 0, doRefreshing = false;
 
+        /**
+         * This function is used by native webview to reload list data after
+         * creating a new anno
+         */
         var reloadListData = window.reloadListData = function() {
             loadListData(null, null, null, true);
+            if (typeof loadMyAnnos !== "undefined") loadMyAnnos(false, true);
         };
 
         var loadListData = function (search, poffset, order, clearData)

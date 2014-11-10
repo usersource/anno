@@ -39,12 +39,12 @@ define([
             }]
         };
 
-        var loadMyAnnos = function()
-        {
+        var loadMyAnnos = window.loadMyAnnos = function(showLoadingSpinner, clearData) {
             loadingData = true;
+            clearData = clearData == null ? false : clearData;
             var arg = { limit : limit };
 
-            if (offset) {
+            if (offset && !clearData) {
                 arg.cursor = offset;
             }
 
@@ -55,16 +55,16 @@ define([
                     method: "anno.anno.mystuff",
                     parameter: arg,
                     needAuth: true,
+                    showLoadingSpinner: showLoadingSpinner,
                     success: function(data)
                     {
                         var annoList = [];
 
-                        if (data&&data.result)
-                        {
+                        if (data && data.result) {
                             annoList = data.result.anno_list||[];
                         }
 
-                        var spliceArgs = [eventsModel.model.length, 0],
+                        var spliceArgs = clearData ? [0, eventsModel.model.length] : [eventsModel.model.length, 0],
                             userInfo = Util.getCurrentUserInfo(),
                             userName = userInfo.nickname,
                             eventData;
