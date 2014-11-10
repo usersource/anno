@@ -76,11 +76,11 @@ define([
          * creating a new anno
          */
         var reloadListData = window.reloadListData = function() {
-            loadListData(null, null, null, true);
+            loadListData(null, null, null, true, false);
             if (typeof loadMyAnnos !== "undefined") loadMyAnnos(false, true);
         };
 
-        var loadListData = function (search, poffset, order, clearData)
+        var loadListData = function (search, poffset, order, clearData, showLoadingSpinner)
         {
             loadingData = true;
             search = search == null ? false : search;
@@ -126,6 +126,7 @@ define([
                 name: annoUtil.API.anno,
                 method: search?"anno.anno.search":"anno.anno.list",
                 parameter: arg,
+                showLoadingSpinner: showLoadingSpinner,
                 success: function(data)
                 {
                     drawAnnoList(data, search, order, clearData);
