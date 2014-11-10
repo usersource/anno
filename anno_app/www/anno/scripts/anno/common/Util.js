@@ -971,135 +971,136 @@
                 util._callGAEAPI(config, retryCnt);
             }
         },
-        _callGAEAPI: function(config, retryCnt)
-        {
-            var start_ts = Date.now();
-            util.loadAPI(config.name, function ()
-            {
-                var load_ms = Date.now() - start_ts;
-                console.log("GAPI Load API: " + config.name + " " + load_ms);
-                if (load_ms > 400) { // more than 400 ms to load API
-                    util.timingGATracking("GAPI Load API", config.name, load_ms);
+        _callGAEClient: function(config, retryCnt) {
+            try {
+                var method = eval("gapi.client."+config.method)(config.parameter);
+            } catch(e) {
+                util.showErrorMessage({
+                    type : util.ERROR_TYPES.LOAD_GAE_API,
+                    message : 'Load Client ' + config.method + " API failed"
+                }, true);
+                if (config.error) {
+                    config.error({
+                        type : util.ERROR_TYPES.LOAD_GAE_API,
+                        message : 'Load Client ' + config.method + " API failed"
+                    });
                 }
-                // API Loaded, make API call.
+                return;
+            }
+
+            var start_ts = Date.now();
+            method.execute(function(response) {
+                var time_ms = Date.now() - start_ts;
                 try {
-                    var method = eval("gapi.client."+config.method)(config.parameter);
+                    util.timingGATracking(config.method, JSON.stringify(config.parameter), time_ms, "Response length: " + ( response ? JSON.stringify(response).length : 0));
                 } catch(e) {
-                    util.showErrorMessage({type: util.ERROR_TYPES.LOAD_GAE_API ,message:'Load Client '+config.method+" API failed"}, true);
+                    console.error("Exception while trying xhr timing analytics");
+                    console.error(e);
+                }
+                if (!response) {
+                    if (!config.keepLoadingSpinnerShown)
+                        util.hideLoadingIndicator();
+
+                    if (config.showErrorMessage) {
+                        util.showErrorMessage({
+                            type : util.ERROR_TYPES.API_RESPONSE_EMPTY,
+                            message : "API response is empty."
+                        }, true);
+                    }
+
+                    console.log("API response is empty.");
+
                     if (config.error) {
-                        config.error({type: util.ERROR_TYPES.LOAD_GAE_API ,message:'Load Client '+config.method+" API failed"});
+                        config.error({
+                            type : util.ERROR_TYPES.API_RESPONSE_EMPTY,
+                            message : "API response is empty."
+                        }, response);
                     }
                     return;
-                }
-                start_ts = Date.now();
-                method.execute(function(response)
-                {
-                    var time_ms = Date.now() - start_ts;
-                    try {
-                        util.timingGATracking(config.method, JSON.stringify(config.parameter), time_ms, "Response length: " + (response? JSON.stringify(response).length: 0));
-                    } catch(e) {
-                        console.error("Exception while trying xhr timing analytics");
-                        console.error(e);
-                    }
-                    if (!response)
-                    {
-                        if (!config.keepLoadingSpinnerShown) util.hideLoadingIndicator();
+                } else if (response.error) {
+                    if (!config.keepLoadingSpinnerShown)
+                        util.hideLoadingIndicator();
 
-                        if (config.showErrorMessage)
-                        {
-                            util.showErrorMessage({type: util.ERROR_TYPES.API_RESPONSE_EMPTY, message:"API response is empty."}, true);
-                        }
-
-                        console.log("API response is empty.");
-
-                        if (config.error)
-                        {
-                            config.error({type: util.ERROR_TYPES.API_RESPONSE_EMPTY, message:"API response is empty."}, response);
-                        }
-
-                        return;
-                    }
-                    else if (response.error)
-                    {
-                        if (!config.keepLoadingSpinnerShown) util.hideLoadingIndicator();
-
-                        if (response.error.code == 401)
-                        {
-                            if (retryCnt < util.API_RETRY_TIMES)
-                            {
-                                // retry API call
-                                retryCnt++;
-                                util.callGAEAPI(config, retryCnt);
-                            }
-                            else
-                            {
-                                if (config.showErrorMessage)
-                                {
-                                    response.error.type = util.ERROR_TYPES.API_RETRY_FAILED;
-                                    util.showErrorMessage(response.error);
-                                }
-
-                                console.error("API retry for "+config.method+" failed");
-
-                                if (config.error)
-                                {
-                                    response.error.type = util.ERROR_TYPES.API_RETRY_FAILED;;
-                                    config.error(response.error, response);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (config.showErrorMessage)
-                            {
-                                if (dojo.isFunction(config.showErrorMessage))
-                                {
-                                    if (config.showErrorMessage(response.error))
-                                    {
-                                        response.error.type = util.ERROR_TYPES.API_CALL_FAILED;
-                                        util.showErrorMessage(response.error);
-                                    }
-                                }
-                                else
-                                {
-                                    response.error.type = util.ERROR_TYPES.API_CALL_FAILED;
-                                    util.showErrorMessage(response.error);
-                                }
+                    if (response.error.code == 401) {
+                        if (retryCnt < util.API_RETRY_TIMES) {
+                            // retry API call
+                            retryCnt++;
+                            util.callGAEAPI(config, retryCnt);
+                        } else {
+                            if (config.showErrorMessage) {
+                                response.error.type = util.ERROR_TYPES.API_RETRY_FAILED;
+                                util.showErrorMessage(response.error);
                             }
 
-                            console.error("An error occurred when calling "+config.method+" api: "+response.error.message);
+                            console.error("API retry for " + config.method + " failed");
 
-                            if (config.error)
-                            {
-                                response.error.type = util.ERROR_TYPES.API_CALL_FAILED;
+                            if (config.error) {
+                                response.error.type = util.ERROR_TYPES.API_RETRY_FAILED;
                                 config.error(response.error, response);
                             }
                         }
+                    } else {
+                        if (config.showErrorMessage) {
+                            if (dojo.isFunction(config.showErrorMessage)) {
+                                if (config.showErrorMessage(response.error)) {
+                                    response.error.type = util.ERROR_TYPES.API_CALL_FAILED;
+                                    util.showErrorMessage(response.error);
+                                }
+                            } else {
+                                response.error.type = util.ERROR_TYPES.API_CALL_FAILED;
+                                util.showErrorMessage(response.error);
+                            }
+                        }
 
-                        return;
+                        console.error("An error occurred when calling " + config.method + " api: " + response.error.message);
+
+                        if (config.error) {
+                            response.error.type = util.ERROR_TYPES.API_CALL_FAILED;
+                            config.error(response.error, response);
+                        }
                     }
-                    else
-                    {
-                        if (!config.keepLoadingSpinnerShown) util.hideLoadingIndicator();
-                        config.success(response);
-                    }
-                });
 
-            }, function (error)
-            {
-                // TODO: Loading API failed, do we need retry?
-                util.showErrorMessage({type: util.ERROR_TYPES.LOAD_GAE_API ,message:'Load '+config.name+" API failed, "+error.message});
-                console.error("Load " + config.name + " API failed, " + error.message);
-                if (!config.keepLoadingSpinnerShown)
-                {
-                    util.hideLoadingIndicator();
-                }
-
-                if (config.error)
-                {
-                    config.error({type: util.ERROR_TYPES.LOAD_GAE_API ,message:'Load '+config.name+" API failed, "+error.message});
+                    return;
+                } else {
+                    if (!config.keepLoadingSpinnerShown)
+                        util.hideLoadingIndicator();
+                    config.success(response);
                 }
             });
+        },
+        _callGAEAPI: function(config, retryCnt) {
+            if (config.name in gapi.client) {
+                this._callGAEClient(config, retryCnt);
+            } else {
+                var start_ts = Date.now(), self = this;
+                util.loadAPI(config.name, function() {
+                    var load_ms = Date.now() - start_ts;
+                    console.log("GAPI Load API: " + config.name + " " + load_ms);
+                    if (load_ms > 400) {// more than 400 ms to load API
+                        util.timingGATracking("GAPI Load API", config.name, load_ms);
+                    }
+                    self._callGAEClient(config, retryCnt);
+                }, function(error) {
+                    // TODO: Loading API failed, do we need retry?
+                    util.showErrorMessage({
+                        type : util.ERROR_TYPES.LOAD_GAE_API,
+                        message : 'Load ' + config.name + " API failed, " + error.message
+                    });
+
+                    console.error("Load " + config.name + " API failed, " + error.message);
+
+                    if (!config.keepLoadingSpinnerShown) {
+                        util.hideLoadingIndicator();
+                    }
+
+                    if (config.error) {
+                        config.error({
+                            type : util.ERROR_TYPES.LOAD_GAE_API,
+                            message : 'Load ' + config.name + " API failed, " + error.message
+                        });
+                    }
+                });
+            }
         },
         getTopTags: function(limit) {
             var APIConfig = {
