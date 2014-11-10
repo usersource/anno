@@ -977,7 +977,7 @@
             util.loadAPI(config.name, function ()
             {
                 var load_ms = Date.now() - start_ts;
-                console.log("GAPI Load API: " + config.method + " " + load_ms);
+                console.log("GAPI Load API: " + config.name + " " + load_ms);
                 if (load_ms > 400) { // more than 400 ms to load API
                     util.timingGATracking("GAPI Load API", config.name, load_ms);
                 }
