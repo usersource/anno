@@ -1,5 +1,3 @@
-__author__ = 'topcircler'
-
 import re
 import httplib
 import json
@@ -18,12 +16,14 @@ from model.community import Community
 from model.userrole import UserRole
 from helper.utils_enum import UserRoleType
 from helper.utils_enum import SearchIndexName
+from helper.utils_enum import SignInMethod
 from helper.settings import SUPPORT_EMAIL_ID
 from message.appinfo_message import AppInfoMessage
 
 
 APP_NAME = "UserSource"
 OPEN_COMMUNITY = "__open__"
+FIRST_CIRCLE = "community"
 
 
 def get_endpoints_current_user(raise_unauthorized=True):
@@ -50,16 +50,16 @@ def handle_user(creator_id):
         if creator_id is not None:
             user = User.find_user_by_email(creator_id + "@gmail.com")
             if user is None:
-                user = User.insert_user(creator_id + "@gmail.com")
+                user = User.insert_user(email=creator_id + "@gmail.com")
         else:
             email = 'anonymous@usersource.com'
             user = User.find_user_by_email(email)
             if user is None:
-                user = User.insert_user(email)
+                user = User.insert_user(email=email)
     else:
         user = User.find_user_by_email(current_user.email())
         if user is None:
-            user = User.insert_user(current_user.email())
+            user = User.insert_user(email=current_user.email())
     return user
 
 def auth_user(headers):
@@ -68,10 +68,22 @@ def auth_user(headers):
 
     if current_user is None:
         credential_pair = get_credential(headers)
-        email = credential_pair[0]
+
+        if len(credential_pair) == 2:
+            email, password = credential_pair
+            signinMethod = SignInMethod.ANNO
+            team_key = None
+        else:
+            signinMethod, email, password, team_key, team_secret = credential_pair
+
         validate_email(email)
-        User.authenticate(credential_pair[0], md5(credential_pair[1]))
-        user = User.find_user_by_email(email)
+
+        if signinMethod == SignInMethod.ANNO:
+            User.authenticate(email, md5(password))
+        elif signinMethod == SignInMethod.PLUGIN:
+            Community.authenticate(team_key, md5(team_secret))
+
+        user = User.find_user_by_email(email, team_key)
     else:
         user = User.find_user_by_email(current_user.email())
 
@@ -126,6 +138,11 @@ def validate_password(password):
         raise endpoints.BadRequestException("User password can't be empty.")
 
 
+def validate_team_secret(team_secret):
+    if team_secret is None or team_secret == '':
+        raise endpoints.BadRequestException("Team Secret can't be empty.")
+
+
 def md5(content):
     import hashlib
 
@@ -151,7 +168,8 @@ def get_credential(headers):
         logging.exception("Exception in get_credential")
         credential_pair = []
 
-    if len(credential_pair) != 2:
+    # length of credential_pair for old JS is 2 while for new is 5
+    if not (len(credential_pair) == 2 or len(credential_pair) == 5):
         raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
 
     return credential_pair
@@ -216,8 +234,20 @@ def getCommunityApps(community_id, app_count=None):
     community = Community.get_by_id(community_id)
     return community.apps[0:app_count] if app_count else community.apps
 
+def getAppInfo(community_id):
+    community_apps = getCommunityApps(community_id, app_count=1)
+    if len(community_apps):
+        appinfo = AppInfo.get_by_id(community_apps[0].id())
+    else:
+        raise endpoints.NotFoundException("Selected community doesn't have any app associated with it. Please select another option.")
+    return appinfo
+
 def getAppAndCommunity(message, user):
-    if message.app_name:
+    if message.team_key:
+        community = Community.getCommunityFromTeamKey(team_key=message.team_key)
+        appinfo = getAppInfo(community.key.id())
+
+    elif message.app_name:
         appinfo = AppInfo.get(name=message.app_name, platform=message.platform_type)
         community = None
 
@@ -233,12 +263,7 @@ def getAppAndCommunity(message, user):
     elif message.community_name:
         community_id = Community.getCommunity(community_name=message.community_name).id
         community = Community.get_by_id(community_id)
-        community_apps = getCommunityApps(community_id, app_count=1)
-
-        if len(community_apps):
-            appinfo = AppInfo.get_by_id(community_apps[0].id())
-        else:
-            raise endpoints.NotFoundException("Selected community doesn't have any app associated with it. Please select another option.")
+        appinfo = getAppInfo(community_id)
 
     else:
         raise endpoints.BadRequestException("Please specify a community or app")
@@ -247,11 +272,11 @@ def getAppAndCommunity(message, user):
 
 def user_community(user):
     userroles = UserRole.query().filter(UserRole.user == user.key)\
-                                .fetch(projection=[UserRole.community, UserRole.role])
+                                .fetch(projection=[UserRole.community, UserRole.role, UserRole.circle_level])
 
     results = []
     for userrole in userroles:
-        results.append(dict(community=userrole.community, role=userrole.role))
+        results.append(dict(community=userrole.community, role=userrole.role, circle_level=userrole.circle_level))
 
     return results
 
@@ -269,19 +294,45 @@ def isMember(community, user, include_manager=True):
     results = query.get()
     return True if results else False
 
-def filter_anno_by_user(query, user):
+def filter_anno_by_user(query, user, is_plugin=False):
     from model.anno import Anno
-    user_community_list = [ userrole.get("community") for userrole in user_community(user) ]
-    user_community_list.append(None)
-    query = query.filter(Anno.community.IN(user_community_list))
-    return query.order(Anno._key)
+    user_communities = user_community(user)
 
-def get_user_from_request(user_id=None, user_email=None):
+    if len(user_communities):
+        user_community_dict = { userrole.get("community") : userrole.get("circle_level") for userrole in user_communities }
+
+        filter_strings = []
+        for community, circle_level in user_community_dict.iteritems():
+            circle_level_list = [None]
+
+            if circle_level > 0:
+                community_circles = community.get().circles
+                if community_circles:
+                    for circle_level_value, circle_level_name in community_circles.iteritems():
+                        if int(circle_level_value) <= circle_level:
+                            circle_level_list.append(int(circle_level_value))
+            else:
+                circle_level_list.append(circle_level)
+
+            filter_strings.append("ndb.AND(Anno.community == " + str(community) +
+                                  ", Anno.circle_level.IN(" + str(circle_level_list) +
+                                  "))")
+
+        from google.appengine.ext.ndb import Key
+        if not is_plugin:
+            filter_strings.append("Anno.community == " + str(None))
+
+        query = eval("query.filter(ndb.OR(%s))" % ", ".join(filter_strings))
+        query = query.order(Anno._key)
+
+    return query
+
+def get_user_from_request(user_id=None, user_email=None, team_key=None):
     user = None
     if user_id:
         user = User.get_by_id(user_id)
     elif user_email:
-        user = User.find_user_by_email(user_email)
+        user = User.find_user_by_email(user_email, team_key)
     return user
 
 def reset_password(user, email):

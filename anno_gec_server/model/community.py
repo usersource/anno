@@ -1,5 +1,3 @@
-__author__ = "rekenerd"
-
 import logging
 
 from google.appengine.ext import ndb
@@ -15,6 +13,9 @@ class Community(ndb.Model):
     type = ndb.StringProperty(choices=[CommunityType.PRIVATE, CommunityType.PUBLIC], required=True)
     apps = ndb.KeyProperty(kind=AppInfo, repeated=True)
     created = ndb.DateTimeProperty(auto_now_add=True)
+    team_key = ndb.StringProperty()
+    team_secret = ndb.StringProperty()
+    circles = ndb.JsonProperty()
 
     def to_response_message(self):
         return CommunityMessage(id=self.key.id(),
@@ -24,6 +25,11 @@ class Community(ndb.Model):
                                 type=self.type,
                                 created=self.created
                             )
+
+    @classmethod
+    def authenticate(cls, team_key, team_secret):
+        query = cls.query().filter(ndb.AND(cls.team_key == team_key, cls.team_secret == team_secret))
+        return query.get() is not None
 
     @classmethod
     def getCommunity(cls, community_id=None, community_name=None):
@@ -37,8 +43,14 @@ class Community(ndb.Model):
         return community.to_response_message() if community else None
 
     @classmethod
+    def getCommunityFromTeamKey(cls, team_key):
+        return cls.query(cls.team_key == team_key).get()
+
+    @classmethod
     def insert(cls, message):
         try:
+            from helper.utils import get_user_from_request, FIRST_CIRCLE
+
             if message.name is None:
                 return "Community name is required"
 
@@ -55,16 +67,19 @@ class Community(ndb.Model):
                 message.type = CommunityType.PRIVATE
 
             community = cls(name=message.name, description=message.description,
-                            welcome_msg=message.welcome_msg, type=message.type)
+                            welcome_msg=message.welcome_msg, type=message.type,
+                            team_key=message.team_key, team_secret=message.team_secret)
+            community.circles = { 0 : FIRST_CIRCLE }
             community.put()
             respData = "Community created."
 
-            from helper.utils import get_user_from_request
-            user = get_user_from_request(user_id=message.user.id, user_email=message.user.user_email)
+            user = get_user_from_request(user_id=message.user.id, user_email=message.user.user_email,
+                                         team_key=message.team_key)
             userrole = None
+            userrole_type = UserRoleType.ADMIN if message.team_key else UserRoleType.MANAGER
             if user:
                 from model.userrole import UserRole
-                userrole = UserRole.insert(user, community, UserRoleType.MANAGER)
+                userrole = UserRole.insert(user, community, userrole_type)
 
             if userrole is None:
                 community.key.delete()
@@ -92,4 +107,19 @@ class Community(ndb.Model):
             if not app.key in community.apps:
                 community.apps.append(app.key)
                 entity = community.put()
+        return entity
+
+    @classmethod
+    def addCircle(cls, request):
+        entity = None
+        community_id = request.id
+        community = cls.get_by_id(community_id) if community_id else None
+
+        circle_name = request.circle_name
+        circle_value = request.circle_value
+
+        if community and circle_name and circle_value:
+            community.circles[circle_value] = circle_name
+            entity = community.put()
+            print community.circles
         return entity

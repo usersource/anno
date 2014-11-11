@@ -10,6 +10,7 @@ class UserMessage(messages.Message):
     auth_source = messages.StringField(5)
     device_id = messages.StringField(6)
     device_type = messages.StringField(7)
+    image_url = messages.StringField(8)
 
 class UserCommunityMessage(messages.Message):
     from message.community_message import CommunityMessage

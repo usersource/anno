@@ -1,7 +1,7 @@
 define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DBUtil, annoUtil, OAuthUtil){
 
-    var insert_anno_draw_sql = "insert into feedback_comment(x,y,direction,is_moved,draw_elements,draw_is_anonymized,created,last_update,comment,screenshot_key,app_version,os_version,level,app_name,model,source,os_name,anno_type,synched)"+
-        " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    var insert_anno_draw_sql = "insert into feedback_comment(x,y,direction,is_moved,draw_elements,draw_is_anonymized,created,last_update,comment,screenshot_key,app_version,os_version,level,app_name,model,source,os_name,anno_type,synched,team_key)"+
+        " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     var update_anno_synched_by_created_sql = "update feedback_comment set synched=1,object_key=? where created=?";
     var update_anno_synched_by_id_sql = "update feedback_comment set synched=1,object_key=? where _id=?";
     var update_anno_synched_by_object_key_sql = "update feedback_comment set synched=1 where object_key=?";
@@ -9,13 +9,13 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
     var select_anno_by_objectKey_sql = "select _id as id from feedback_comment where object_key=?";
     // synched state: 0--non synched inserted anno, -1--non synched updated anno without image changed, -2--non synched updated anno with image changed
     var select_anno_sync_sql = "select * from feedback_comment where synched IN (0,-1,-2)";
-    var save_userInfo_sql = "insert into app_users(userid,email,signinmethod,nickname,password,signedup) values (?,?,?,?,?,?)";
+    var save_userInfo_sql = "insert into app_users(userid,email,signinmethod,nickname,password,signedup,teamkey,teamsecret) values (?,?,?,?,?,?,?,?)";
     var select_userInfo_sql = "select * from app_users";
     var delete_userInfo_sql = "delete from app_users";
-    var insert_anno_unsynched_sql = "insert into feedback_comment(x,y,direction,is_moved,object_key,draw_elements,draw_is_anonymized,last_update,comment,screenshot_key,level,app_name,app_version,anno_type,synched)"+
-        " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-    var update_anno_unsynched_sql = "update feedback_comment set draw_elements=?,comment=?,app_name=?,app_version=?,draw_is_anonymized=?,synched=? where _id=?";
-    var update_anno_unsynched_including_image_sql = "update feedback_comment set screenshot_key=?,draw_elements=?,comment=?,app_name=?,app_version=?,draw_is_anonymized=?,synched=? where _id=?";
+    var insert_anno_unsynched_sql = "insert into feedback_comment(x,y,direction,is_moved,object_key,draw_elements,draw_is_anonymized,last_update,comment,screenshot_key,level,app_name,app_version,anno_type,synched,team_key)"+
+        " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    var update_anno_unsynched_sql = "update feedback_comment set draw_elements=?,comment=?,app_name=?,app_version=?,draw_is_anonymized=?,synched=?,team_key=? where _id=?";
+    var update_anno_unsynched_including_image_sql = "update feedback_comment set screenshot_key=?,draw_elements=?,comment=?,app_name=?,app_version=?,draw_is_anonymized=?,synched=?,team_key=? where _id=?";
 
     var annoDataHandler = {
         duplicateMsgPrefix:"Duplicate anno",
@@ -54,7 +54,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                     source,
                     anno.os_name,
                     anno.anno_type,
-                    0];
+                    0, anno.team_key];
 
                 DBUtil.executeUpdateSql(insert_anno_draw_sql,params, function(res){
                     self.localAnnoSaved = true;
@@ -276,7 +276,8 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                             anno.app_name,
                             anno.app_version,
                             anno.anno_type,
-                            anno.image?-2:-1
+                            anno.image?-2:-1,
+                            anno.team_key
                         ];
 
                         DBUtil.executeUpdateSql(insert_anno_unsynched_sql,params, function(res){
@@ -296,6 +297,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                             anno.app_version,
                             anno.screenshot_is_anonymized?1:0,
                             anno.image?-2:-1,
+                            anno.team_key,
                             res.rows.item(0).id
                         ];
 
@@ -653,12 +655,20 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
         saveUserInfo: function(userInfo, callback)
         {
             console.log("saveUserInfo invoked.");
-            this.removeUser(function(){
-                DBUtil.executeUpdateSql(save_userInfo_sql,[userInfo.userId, userInfo.email, userInfo.signinMethod, userInfo.nickname, userInfo.password||'', userInfo.signedup==null?1:userInfo.signedup], function(res){
+            this.removeUser(function() {
+                var userInfoList = [userInfo.userId,
+                                    userInfo.email,
+                                    userInfo.signinMethod,
+                                    userInfo.nickname,
+                                    userInfo.password || '',
+                                    userInfo.signedup == null ? 1 : userInfo.signedup,
+                                    userInfo.team_key,
+                                    userInfo.team_secret];
+
+                DBUtil.executeUpdateSql(save_userInfo_sql, userInfoList, function(res) {
                     if (!res) return;
                     console.log("save userInfo end:" + JSON.stringify(res));
-                    if (callback)
-                    {
+                    if (callback) {
                         console.log("saveUserInfo callback invoked.");
                         callback();
                     }
@@ -684,6 +694,8 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                     userInfo.signinMethod = data.signinmethod;
                     userInfo.nickname = data.nickname;
                     userInfo.signedup = data.signedup;
+                    userInfo.team_key = data.teamkey;
+                    userInfo.team_secret = data.teamsecret;
                 }
 
                 window.currentUserInfo = userInfo;

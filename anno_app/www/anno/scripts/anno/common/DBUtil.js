@@ -102,6 +102,11 @@ define([
 
                         // console.error("doUpgrade "+JSON.stringify(tempObj));
 
+                        if (!tempObj["teamkey"] && !tempObj["teamsecret"]) {
+                            self.annoDB.executeSql("alter table app_users add column teamkey text");
+                            self.annoDB.executeSql("alter table app_users add column teamsecret text");
+                        }
+
                         if (!tempObj["signedup"])
                         {
                             self.annoDB.executeSql("alter table app_users add column signedup integer default 0", [], function(pures){
@@ -167,6 +172,7 @@ define([
                     {name:'created', type:'VARCHAR(30)', 'default':"'0'"},
                     {name:'draw_elements', type:'text'},
                     {name:'draw_is_anonymized', type:'integer', 'default':0},
+                    {name:'team_key', type:'text'}
                     // {name:'column_is_anonymized', type:'integer', 'default':0}
                 ];
 

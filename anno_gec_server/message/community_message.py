@@ -1,5 +1,3 @@
-__author__ = "rekenerd"
-
 '''
 ProtoRPC message class definitions for Community API.
 '''
@@ -19,6 +17,8 @@ class CommunityMessage(messages.Message):
     apps = messages.MessageField(AppInfoMessage, 6)
     created = message_types.DateTimeField(7)
     user = messages.MessageField(UserMessage, 8)
+    team_key = messages.StringField(9)
+    team_secret = messages.StringField(10)
     
 class CommunityAppInfoMessage(messages.Message):
     community = messages.MessageField(CommunityMessage, 1)

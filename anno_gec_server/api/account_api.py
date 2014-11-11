@@ -1,5 +1,3 @@
-__author__ = 'topcircler'
-
 import endpoints
 from protorpc import message_types
 from protorpc import remote
@@ -7,11 +5,14 @@ from protorpc import remote
 from helper.settings import anno_js_client_id
 from helper.utils import validate_email
 from helper.utils import validate_password
+from helper.utils import validate_team_secret
 from helper.utils import md5
 from helper.utils import get_endpoints_current_user
 from helper.utils import reset_password
 from helper.utils_enum import AuthSourceType
 from model.user import User
+from model.community import Community
+from model.userrole import UserRole
 from message.account_message import AccountMessage
 from message.user_message import UserMessage
 
@@ -37,21 +38,40 @@ class AccountApi(remote.Service):
         if user is not None:
             raise endpoints.BadRequestException("Display name(" + display_name + ") already exists.")
 
-        user = User.insert_normal_user(email, display_name, md5(password))
+        user = User.insert_user(email=email, username=display_name, password=md5(password))
         return UserMessage(id=user.key.id())
 
-    @endpoints.method(AccountMessage, UserMessage, path='account/authenticate', http_method='POST',
-                      name='account.authenticate')
+    @endpoints.method(AccountMessage, UserMessage, path='account/authenticate',
+                      http_method='POST', name='account.authenticate')
     def authenticate(self, request):
         email = request.user_email
         validate_email(email)
-        password = request.password
-        validate_password(password)
-        user = User.find_user_by_email(email)
-        if not user:
-            raise endpoints.NotFoundException("Authentication failed. User account " + email + " doesn't exist.")
-        if not User.authenticate(email, md5(password)):
-            raise endpoints.UnauthorizedException("Authentication failed. Email and password are not matched.")
+        team_key = request.team_key
+        user = User.find_user_by_email(email, team_key)
+
+        if team_key:
+            team_secret = request.team_secret
+            validate_team_secret(team_secret)
+
+            display_name = request.display_name
+            image_url = request.user_image_url
+
+            if not user:
+                user = User.insert_user(email=email, username=display_name, account_type=team_key, image_url=image_url)
+                community = Community.getCommunityFromTeamKey(team_key)
+                UserRole.insert(user, community)
+            elif (display_name != user.display_name) or (image_url != user.image_url):
+                User.update_user(user=user, email=email, username=display_name, account_type=team_key, image_url=image_url)
+            if not Community.authenticate(team_key, md5(team_secret)):
+                raise endpoints.UnauthorizedException("Authentication failed. Team key and secret are not matched.")
+        else:
+            password = request.password
+            validate_password(password)
+            if not user:
+                raise endpoints.NotFoundException("Authentication failed. User account " + email + " doesn't exist.")
+            if not User.authenticate(email, md5(password)):
+                raise endpoints.UnauthorizedException("Authentication failed. Email and password are not matched.")
+
         return UserMessage(id=user.key.id(), display_name=user.display_name)
 
     @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/forgot_detail',
@@ -84,5 +104,5 @@ class AccountApi(remote.Service):
             user.display_name = request.display_name
             user.put()
         else:
-            User.insert_user(current_user.email(), request.display_name, auth_source)
+            User.insert_user(email=current_user.email(), username=request.display_name)
         return message_types.VoidMessage()

@@ -17,7 +17,8 @@ define([
         },
         signinMethod:{
             google:'google',
-            anno:'anno'
+            anno:'anno',
+            plugin:'plugin'
         },
         authUrl: "https://accounts.google.com/o/oauth2/auth",
         tokenUrl: "https://accounts.google.com/o/oauth2/token",
@@ -163,7 +164,8 @@ define([
         getAccessToken:function(callback, errorCallback)
         {
             var userInfo = annoUtil.getCurrentUserInfo();
-            if (userInfo.signinmethod == this.signinMethod.anno)
+            if (userInfo.signinmethod == this.signinMethod.anno ||
+                userInfo.signinmethod == this.signinMethod.plugin)
             {
                 callback();
                 return;
@@ -205,43 +207,41 @@ define([
         },
         isAuthorized:function()
         {
+            function setAuthTrue() {
+                ret = {
+                    authorized : true,
+                    newUser : newUser == '1',
+                    signinMethod : signinMethod,
+                    token : token
+                };
+            }
+
             var params = annoUtil.parseUrlParams(document.location.search);
             console.log("got params: " + JSON.stringify(params));
             var token = params['token'];
             var newUser = params['newuser'];
             var signinMethod = params['signinmethod'];
-            var ret = {authorized:false};
+            var ret = { authorized : false };
 
-            if (DBUtil.hasUserInLocalDB)
-            {
-                if (DBUtil.localUserInfo.signinmethod == this.signinMethod.google)
-                {
-                    var refreshToken = this.getRefreshToken();
-                    if (refreshToken&&refreshToken!= 'undefined')
-                    {
-                        ret = {
-                            authorized:true,
-                            newUser:newUser=='1',
-                            signinMethod:signinMethod,
-                            token:token
-                        };
-                    }
-                }
-                else
-                {
-                    ret = {
-                        authorized:true,
-                        newUser:newUser=='1',
-                        signinMethod:signinMethod,
-                        token:token
-                    };
+            if (DBUtil.hasUserInLocalDB) {
+                switch(DBUtil.localUserInfo.signinmethod) {
+                    case this.signinMethod.google:
+                        var refreshToken = this.getRefreshToken();
+                        if (refreshToken && refreshToken != 'undefined') {
+                            setAuthTrue();
+                        }
+                        break;
+                    case this.signinMethod.anno:
+                    case this.signinMethod.plugin:
+                        setAuthTrue();
+                        break;
                 }
             }
 
-            if (token)
-            {
+            if (token) {
                 this.setAccessToken(JSON.parse(token));
             }
+
             console.log('isAuthorized :' + JSON.stringify(ret));
             return ret;
         },
@@ -308,11 +308,11 @@ define([
         },
         processBasicAuthToken: function(userInfo)
         {
-            var token = {'token_type':'Basic'};
+            var token = { 'token_type' : 'Basic' },
+                userInfoData = [userInfo.signinMethod, userInfo.email, userInfo.password, userInfo.team_key, userInfo.team_secret];
 
-            token.expires_in = 3600*24;
-            token.access_token = annoUtil.encodeBase64(userInfo.email+":"+userInfo.password);
-
+            token.expires_in = 3600 * 24;
+            token.access_token = annoUtil.encodeBase64(userInfoData.join(":"));
             this.setBasicAuthToken(token);
             return token;
         },

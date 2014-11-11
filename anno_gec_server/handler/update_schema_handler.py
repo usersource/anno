@@ -1,5 +1,3 @@
-__author__ = "rekenerd"
-
 import logging
 import webapp2
 
@@ -61,6 +59,11 @@ def update_anno_schema(cursor=None):
 
     anno_update_list = []
     for anno in anno_list:
+        # updating anno schema for plugin
+        if not anno.circle_level:
+            anno.circle_level = 0
+            anno_update_list.append(anno)
+
         # updating app for anno schema
 #         if not anno.app:
 #             appinfo = AppInfo.get(name=anno.app_name)
@@ -78,9 +81,9 @@ def update_anno_schema(cursor=None):
 #             anno_update_list.append(anno)
 
         # updating anno schema for anno_id
-        if not anno.anno_id:
-            anno.anno_id = anno.key.id()
-            anno_update_list.append(anno)
+#         if not anno.anno_id:
+#             anno.anno_id = anno.key.id()
+#             anno_update_list.append(anno)
 
         # updating userannostate from anno
 #         update_userannostate_schema_from_anno(anno)

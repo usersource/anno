@@ -20,5 +20,6 @@ create table if not exists feedback_comment
     synched integer default 0,
     created VARCHAR(30) default '0',
     draw_elements text,
-    draw_is_anonymized integer default 0
+    draw_is_anonymized integer default 0,
+	team_key text
 )

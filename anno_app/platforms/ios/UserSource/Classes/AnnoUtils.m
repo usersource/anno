@@ -180,17 +180,49 @@
 }
 
 /**
- Take screenshot of current screen of iOS device.
- @see http://stackoverflow.com/a/2203293/1364558 for more information.
- @return UIImage of screenshot
+ Simply take a screenshot of the screen
+ @return UIImage of the screenshot
  */
+
 - (UIImage*) takeScreenshot {
-    UIGraphicsBeginImageContextWithOptions(appDelegate.window.bounds.size, YES, 0.0);
-    [appDelegate.window.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
+    UIGraphicsBeginImageContextWithOptions(window.bounds.size, YES, 0.0);
+    [window.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
+    
     return image;
 }
+
+
+/**
+ Take screenshot of current screen of iOS device.
+ @see http://stackoverflow.com/a/2203293/1364558 for more information.
+ @return NSString filePath
+ */
+- (NSString*) takeScreenshotAndSaveToFile {
+    UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
+    UIGraphicsBeginImageContextWithOptions(window.bounds.size, YES, 0.0);
+    [window.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    NSString *appLocation = self.dataLocation;
+    NSString *screenshotDirName = self.screenshotDirName;
+    NSString *screenshotDirPath = [appLocation stringByAppendingPathComponent:screenshotDirName];
+    [self mkdirs:screenshotDirPath];
+    
+    NSString *screenshotName = [self generateScreenshotName];
+    NSString *screenshotPath = [screenshotDirPath stringByAppendingPathComponent:screenshotName];
+    [[NSFileManager defaultManager] createFileAtPath:screenshotPath
+                                            contents:UIImagePNGRepresentation(image)
+                                          attributes:nil];
+    
+    screenshotPath = [@"file://localhost" stringByAppendingString:[screenshotPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    return screenshotPath;
+}
+
+
 
 /**
  Display error message.
@@ -232,16 +264,16 @@
         return;
     }
 
-    @try {
-        NSString *screenshotPath = [screenshotGestureListener takeScreenshot];
-        [screenshotGestureListener launchAnnoPlugin:viewController screenshotPath:screenshotPath];
-    }
-    @catch (NSException *exception) {
-        if (annoUtils.debugEnabled) {
-            NSLog(@"Exception in triggerCreateAnno: %@", exception);
-        }
-        [annoUtils displayError:screenshotGestureListener.TAKE_SCREENSHOT_FAIL_MESSAGE];
-    }
+//    @try {
+//        NSString *screenshotPath = [screenshotGestureListener takeScreenshot];
+//        [screenshotGestureListener launchAnnoPlugin:viewController screenshotPath:screenshotPath];
+//    }
+//    @catch (NSException *exception) {
+//        if (annoUtils.debugEnabled) {
+//            NSLog(@"Exception in triggerCreateAnno: %@", exception);
+//        }
+//        [annoUtils displayError:screenshotGestureListener.TAKE_SCREENSHOT_FAIL_MESSAGE];
+//    }
 }
 
 - (NSString*) generateUniqueImageKey {

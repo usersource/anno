@@ -39,12 +39,12 @@ define([
             }]
         };
 
-        var loadMyAnnos = function()
-        {
+        var loadMyAnnos = window.loadMyAnnos = function(showLoadingSpinner, clearData) {
             loadingData = true;
+            clearData = clearData == null ? false : clearData;
             var arg = { limit : limit };
 
-            if (offset) {
+            if (offset && !clearData) {
                 arg.cursor = offset;
             }
 
@@ -55,16 +55,16 @@ define([
                     method: "anno.anno.mystuff",
                     parameter: arg,
                     needAuth: true,
+                    showLoadingSpinner: showLoadingSpinner,
                     success: function(data)
                     {
                         var annoList = [];
 
-                        if (data&&data.result)
-                        {
+                        if (data && data.result) {
                             annoList = data.result.anno_list||[];
                         }
 
-                        var spliceArgs = [eventsModel.model.length, 0],
+                        var spliceArgs = clearData ? [0, eventsModel.model.length] : [eventsModel.model.length, 0],
                             userInfo = Util.getCurrentUserInfo(),
                             userName = userInfo.nickname,
                             eventData;
@@ -118,7 +118,10 @@ define([
                             eventData.annoType = annoList[i].anno_type;
                             eventData.annoIcon = annoList[i].anno_type == Util.annoType.SimpleComment?"icon-simplecomment":"icon-shapes";
                             eventData.app = annoList[i].app_name;
-                            eventData.author = annoList[i].creator?annoList[i].creator.display_name||annoList[i].creator.user_email||annoList[i].creator.user_id:"";
+                            eventData.author = annoList[i].creator ? annoList[i].creator.display_name || annoList[i].creator.user_email || annoList[i].creator.user_id : "";
+                            eventData.author_image_url = annoList[i].creator ? annoList[i].creator.image_url : "";
+                            eventData.userProfile = "";
+                            eventData.userProfileClass = "hidden";
                             eventData.id = annoList[i].id;
                             // eventData.circleX = parseInt(annoList[i].simple_x, 10);
                             // eventData.circleY = parseInt(annoList[i].simple_y, 10);
@@ -128,6 +131,11 @@ define([
                             eventData.simple_circle_on_top = false;
                             eventData.created = Util.getTimeAgoString(annoList[i].created);
                             eventData.app_icon_url = annoList[i].app_icon_url||"";
+
+                            eventData.last_activity_user = annoList[i].last_activity_user ? annoList[i].last_activity_user.display_name ||
+                                                                                            annoList[i].last_activity_user.user_email ||
+                                                                                            annoList[i].last_activity_user.user_id : "";
+                            eventData.last_activity_user_image_url = annoList[i].last_activity_user ? annoList[i].last_activity_user.image_url : "";
 
                             eventData.readStatusClass = "";
                             if ('anno_read_status' in annoList[i]) {
@@ -143,6 +151,11 @@ define([
                             else
                             {
                                 eventData.appIconClass = "hidden";
+                            }
+
+                            if (eventData.last_activity_user_image_url) {
+                                eventData.userProfile = "hidden";
+                                eventData.userProfileClass = "";
                             }
 
                             handleAnnoActivityInfo(eventData, annoList[i]);
@@ -167,35 +180,25 @@ define([
             });
         };
 
-        var handleAnnoActivityInfo = function(anno, annoData)
-        {
+        var handleAnnoActivityInfo = function(anno, annoData) {
             var lastActivity = annoData.last_activity;
-            if (lastActivity == "UserSource" || lastActivity == "create")
-            {
+
+            if (lastActivity == "UserSource" || lastActivity == "create") {
                 anno.lastActivityClass = "icon-plus";
                 anno.lastActivityText = "created";
-            }
-            else if (lastActivity == "vote")
-            {
+            } else if (lastActivity == "vote") {
                 anno.lastActivityClass = "icon-thumbs-up";
-                anno.lastActivityText = "voted-up";
-            }
-            else if (lastActivity == "flag")
-            {
+                anno.lastActivityText = "upvoted";
+            } else if (lastActivity == "flag") {
                 anno.lastActivityClass = "icon-flag";
                 anno.lastActivityText = "flagged";
-            }
-            else if (lastActivity == "follwup")
-            {
+            } else if (lastActivity == "follwup") {
                 anno.lastActivityClass = "icon-comment";
                 anno.lastActivityText = "commented";
-            }
-            else if (lastActivity == "anno")
-            {
+            } else if (lastActivity == "anno") {
                 anno.lastActivityClass = "icon-pencil";
                 anno.lastActivityText = "edited";
             }
-
 
             anno.when = Util.getTimeAgoString(annoData.last_update_time);
         };
@@ -265,8 +268,13 @@ define([
                     goBack();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId("listContainerMyStuff"), "scroll", this, function() {
-                    var listContainer = dom.byId("listContainerMyStuff");
+                _connectResults.push(connect.connect(dom.byId("divBtnBackMyStuffPlugin"), "click", function(e) {
+                    dojo.stopEvent(e);
+                    goBack();
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("listContainerMyStuff_middle"), "scroll", this, function() {
+                    var listContainer = dom.byId("listContainerMyStuff_middle");
                     if ((listContainer.clientHeight + listContainer.scrollTop) >= listContainer.scrollHeight) {
                         loadMoreData();
                     }
@@ -279,20 +287,28 @@ define([
                 
                 adjustSize();
 
-                if (!needRefresh)
-                {
+                if (!needRefresh) {
                     // update opened anno activity info
-                    var activityIndicator = dom.byId("annoActIndicator_"+lastOpenAnnoId);
+                    var activityIndicator = dom.byId("annoActIndicator_" + lastOpenAnnoId);
 
                     var currentAnno = eventsModel.cursor;
-                    if (activityIndicator&&currentAnno.lastActivityChangedClass)
-                    {
+                    if (activityIndicator && currentAnno.lastActivityChangedClass) {
                         domClass.remove(activityIndicator);
                         domClass.add(activityIndicator, "annoOrangeColor");
                         domClass.add(activityIndicator, currentAnno.lastActivityChangedClass);
 
-                        dom.byId("annoActText_"+lastOpenAnnoId).innerHTML = currentAnno.lastActivityText;
-                        dom.byId("annoActWhen_"+lastOpenAnnoId).innerHTML = Util.getTimeAgoString(new Date().getTime(), new Date(currentAnno.when));
+                        dom.byId("annoActText_" + lastOpenAnnoId).innerHTML = currentAnno.lastActivityText;
+                        dom.byId("annoActWhen_" + lastOpenAnnoId).innerHTML = Util.getTimeAgoString(currentAnno.when);
+
+                        dom.byId("pluginAnnoActText_" + lastOpenAnnoId).innerHTML = currentAnno.lastActivityText;
+                        dom.byId("pluginAnnoActWhen_" + lastOpenAnnoId).innerHTML = Util.getTimeAgoString(currentAnno.when);
+                        dom.byId("pluginAnnoActUser_" + lastOpenAnnoId).innerHTML = Util.pluginUserDisplayName;
+
+                        // move latest updated anno to top
+                        var firstAnno = dom.byId("annoListMyStuff").firstElementChild.firstElementChild,
+                            latestUpdatedAnno = dom.byId("myActivityAnno_" + lastOpenAnnoId);
+
+                        latestUpdatedAnno.parentNode.insertBefore(latestUpdatedAnno, firstAnno);
 
                         currentAnno.lastActivityChangedClass = "";
                     }

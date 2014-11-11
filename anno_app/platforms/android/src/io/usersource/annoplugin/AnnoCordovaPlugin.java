@@ -62,6 +62,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin
   public static final String START_ANNO_DRAW = "start_anno_draw";
   public static final String START_EDIT_ANNO_DRAW = "start_edit_anno_draw";
   public static final String GET_APP_VERSION = "get_app_version";
+  public static final String IS_PLUGIN = "is_plugin";
 
   // activity names
   public static final String ACTIVITY_INTRO = "Intro";
@@ -288,6 +289,12 @@ public class AnnoCordovaPlugin extends CordovaPlugin
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
+    } else if (IS_PLUGIN.equals(action)) {
+    	Activity activity = this.cordova.getActivity();
+    	JSONArray returnData = new JSONArray();
+    	returnData.put(!(AnnoUtils.isAnno(activity.getPackageName())));
+    	callbackContext.success(returnData);
+    	return true;
     }
 
     return false;

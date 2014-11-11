@@ -45,6 +45,7 @@ require([
 
         document.addEventListener("deviceready", function() {
             window.setTimeout(function() {
+                annoUtil.checkIfPlugin();
                 DBUtil.initDB(function() {
                     console.log("[community:main.js] DB is ready.");
                     annoUtil.readSettings(function() { Application(config); });

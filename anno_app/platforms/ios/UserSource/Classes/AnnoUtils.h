@@ -19,6 +19,7 @@
 - (NSString*) getAppVersion;
 - (NSString*) generateScreenshotName;
 - (UIImage*) takeScreenshot;
+- (NSString*) takeScreenshotAndSaveToFile;
 - (void) displayError:(NSString*)message;
 - (void) triggerCreateAnno:(UIViewController*)viewController;
 - (NSString*) generateUniqueImageKey;

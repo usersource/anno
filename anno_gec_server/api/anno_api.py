@@ -67,6 +67,7 @@ from model.follow_up import FollowUp
 from model.userannostate import UserAnnoState
 from model.tags import Tag
 from model.appinfo import AppInfo
+from model.user import User
 from helper.settings import anno_js_client_id
 from helper.utils import auth_user
 from helper.utils import put_search_document
@@ -95,7 +96,8 @@ class AnnoApi(remote.Service):
         select=messages.StringField(4),
         app=messages.StringField(5),
         query_type=messages.StringField(6),
-        community=messages.IntegerField(7)
+        community=messages.IntegerField(7),
+        is_plugin=messages.BooleanField(8)
     )
 
     anno_update_resource_container = endpoints.ResourceContainer(
@@ -167,6 +169,8 @@ class AnnoApi(remote.Service):
         if request.limit is not None:
             limit = request.limit
 
+        is_plugin = request.is_plugin or False
+
         curs = None
         if request.cursor is not None:
             try:
@@ -197,7 +201,7 @@ class AnnoApi(remote.Service):
             app = AppInfo.get(request.app)
             return Anno.query_by_app(app, limit, select_projection, curs, user)
         else:
-            return Anno.query_by_page(limit, select_projection, curs, user)
+            return Anno.query_by_page(limit, select_projection, curs, user, is_plugin)
 
 
     @endpoints.method(AnnoMessage, AnnoResponseMessage, path='anno', 

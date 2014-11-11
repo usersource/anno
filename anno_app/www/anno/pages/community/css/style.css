@@ -238,7 +238,7 @@
 
 .hidden
 {
-    display: none;
+    display: none !important;
 }
 
 .listAppName, .listAuthor {
@@ -246,6 +246,12 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.annoActWhen {
+    float: left;
+    width: 50%;
+    text-align: right
 }
 
 .listTitle{
@@ -263,35 +269,6 @@
 .headingIcon{
     float: left;
     padding-left: 10px;
-}
-
-#navBtnNext
-{
-    background-color: transparent;
-    border-width: 0px;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    margin-right: 0px;
-    width: 32px;
-    background-repeat: no-repeat;
-    padding-left: 1px;
-    padding-right: 1px;
-    outline: none;
-}
-
-#navBtnPrevious
-{
-    background-color: transparent;
-    border-width: 0px;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    margin-right: 0px;
-    width: 32px;
-    background-repeat: no-repeat;
-    padding-left: 1px;
-    padding-right: 1px;
-    float: right;
-    outline: none;
 }
 
 #navBtnBackDetail
@@ -396,40 +373,49 @@
     line-height: 44px;
 }
 
-.barIcon
-{
+.barIcon {
     font-size: 30px;
+    vertical-align: middle;
 }
 
-.barIconHighlight
-{
+.barIconHighlight {
     color: #ff9900;
 }
 
-.barIconDisabled
-{
+.barIconDisabled {
     opacity: 0.5;
 }
 
-#headingDetail
-{
+#headingDetail {
     background-image: none;
     background-color: #dddddd;
     text-shadow:none;
     color: #333333;
     border-bottom: none;
     border-top: none;
+
+    position:fixed;
+    top:0px;
+    left:0px;
+    background-color: #000000;
+    z-index: 9000;
+    color:white;
+    height: 48px;
+    text-align: left;
 }
 
-.imgDetailScreenshot{
+.imgDetailScreenshot {
     /*border: 2px solid #ff9900;*/
 }
 
-.gfxCanvasContainer
-{
+.gfxCanvasContainer {
     position: absolute;
     top: 0px;
     left: 0px;
+}
+
+.gfxCanvasContainer body {
+	background: initial !important;
 }
 
 .screenshotContainerDetail{
@@ -487,13 +473,10 @@
     font-size: 16px;
 }
 
-.textDataAreaContainer{
-    /*border: 2px solid transparent;*/
-    /*background-color: white;*/
+.textDataAreaContainer {
+	margin: 0 8px;
     left: 0;
-    /*margin-top: 2px;*/
     z-index: 2001;
-    /*padding-top: 10px;*/
 }
 
 .mblTooltipBelow .mblTooltipArrow {
@@ -524,65 +507,99 @@
     border-bottom-color: white;
 }
 
-.appNameDetail
-{
-    /*width: 100%;*/
-    height: 24px;
-    padding-bottom: 8px;
-}
-
-.appNameTitleDetail, .authorDetail, .deviceInfoDetail
-{
+.appNameTitleDetail, .authorDetail, .deviceInfoDetail {
     color: #AFB1B5;
 }
 
-.appNameTitleDetail
-{
-    padding-right: 8px;
+.deviceInfoDetail {
+	width: 91.860465116%;
+	width: calc(100% - 28px);
+	width: -webkit-calc(100% - 28px);
+	display: inline-block;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	line-height: 24px;
+	vertical-align: top;
 }
 
-.annoTextDetail
-{
-    border: 2px solid #ff9900;
-    padding: 2px 4px;
-    margin: 0 8px;
+#mobileIcon {
+	width: 16px;
+	height: 24px;
+	display: inline-block;
+	background: url('images/icon-mobile.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-size: contain;
 }
 
-.commentDetail
-{
+.annoTextDetail {
+	border: 1px solid #ff9900;
+	padding: 2px 4px;
+}
+
+#authorImage, .commenterImage {
+	width: 24px;
+	height: 24px;
+	border-radius: 4px;
+}
+
+#voteFlagContainer {
+	padding: 15px;
+	border-bottom: 1px solid #cccccc;
+}
+
+#voteFlagContainer > div {
+	width: 32%;
+	display: inline-block;
+	text-align: center;
+}
+
+.commentDetail {
+    padding: 0 4px 0 28px;
+}
+
+#addCommentContainer {
+    border-top: 1px solid #CCCCCC;
     width: 100%;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    padding-left: 36px;
-    padding-right: 4px;
-    box-sizing: border-box;
-    /*    overflow-x: hidden;*/
+    background-color: #ffffff;
+    position: fixed;
+    bottom: 0px;
+    left: 0;
 }
 
-.commentTextbox{
-    margin-left: 0;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    display: inline-block;
-
-    /*height: 22px;
-    line-height: 22px;*/
-    font-size: 13pt;
-    color: #555555;
-    background-color: #ffffff;
-    border: 1px solid #cccccc;
-    width: 180px;
-
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: normal;
-    vertical-align: middle;
-    z-index: 4000;
-    padding-left: 2px;
-    padding-right: 0px;
-    border-radius: 0;
-    -webkit-appearance: none;
+.commentTextbox {
+	width: 78.888888889%;
+	width: calc(100% - 76px);
+	width: -webkit-calc(100% - 76px);
+	margin: 0;
+	padding: 0 4px 0 8px;
+	border: 0;
+	outline: 0;
 	resize: none;
+	font-family: Helvetica, Arial;
+	z-index: 4000;
+	color: #555;
+	font-size: 14px;
+	line-height: 22px;
+	background: #f4f4f4;
+}
+
+#sendComment {
+	display: inline-block;
+	line-height: 22px;
+	float: right;
+	width: 59px;
+	text-align: center;
+	border-left: 1px solid #CCC;
+	font-size: 14px;
+	font-weight: bold;
+	color: black;
+}
+
+#sendComment.expanded {
+	height: 88px;
+	line-height: 88px;
 }
 
 .lightCover {
@@ -603,16 +620,12 @@
     height: 100%;
 }
 
-.icoImgDeactive
-{
+.icoImgDeactive {
     color: #c0c0c0;
-    font-size: 30px;
 }
 
-.icoImgActive
-{
+.icoImgActive {
     color: #ff9900;
-    font-size: 30px;
 }
 
 .personImg
@@ -771,7 +784,6 @@
     -webkit-tap-highlight-color: rgba(0,0,0,0);
     -webkit-user-select: none;
     -webkit-touch-callout: none;
-    background-color: white !important;
 }
 
 .hashTag, .commentURL
@@ -886,4 +898,170 @@ li.unread .listTitle {
 	height: -webkit-calc(100% - 48px);
 	text-align: center;
 	color: rgb(211, 112, 17);
+}
+
+.defaultUserImage, .userProfileImage {
+	display: none;
+	width: 40px;
+	height: 40px;
+	line-height: 40px;
+	border-radius: 8px;
+	color: #FFF;
+	background: #AAA;
+}
+
+#navBtnBackFeeds, #navBtnBackMyStuffPlugin, #navBtnBackScreenshotPlugin {
+	height: 24px;
+	display: inline-block;
+	vertical-align: text-top;
+	background: url('images/back.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-size: contain;
+}
+
+#detailPageName {
+	display: inline-block;
+	vertical-align: top;
+	font-size: 18px;
+	padding-left: 12px;
+	vertical-align: middle;
+}
+
+#navBtnPrevious {
+	width: 43px;
+	height: 24px;
+	background: url('images/icon-left.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-size: contain;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+#navBtnNext {
+	width: 50px;
+	height: 24px;
+	background: url('images/icon-right.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-size: contain;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+#navBtnScreenshot {
+	width: 36px;
+	height: 36px;
+	vertical-align: middle;
+	margin-right: 8px;
+}
+
+#navInfo {
+	padding-left: 20px;
+	background: url('images/icon-info.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-size: contain;
+}
+
+#annoLogoHome {
+	width: 40px;
+	height: 40px;
+	background: url('images/anno.png');
+	background-size: cover;
+	background-position: 50%;
+	margin-left: 5px;
+}
+
+#tdBarAddImage .text-new {
+	width: 90%;
+	height: 48px;
+	background: url('images/new.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-size: contain;
+}
+
+#tdBarMyStuff .text-me {
+	width: 63%;
+	height: 48px;
+	background: url('images/me.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-size: contain;
+}
+
+.pluginInfoText {
+	color: #AFB1B5;
+	padding-top: 2px;
+}
+
+.smooth_scroll {
+	-webkit-overflow-scrolling: touch;
+}
+
+#detailContentContainer {
+	height: 89.565217391%;
+	height: calc(100% - 48px);
+	height: -webkit-calc(100% - 48px);
+}
+
+/* for plugin */
+body.plugin #tdHeadingLeft,
+body.plugin #tdBarSearchAnno,
+body.plugin #tdBarSettings,
+body.plugin #navBtnScreenshot,
+body.plugin #navBtnTray,
+body.plugin #appNameContainer,
+body.plugin #tdTxtSearchAnno,
+body.plugin .tdListAppName,
+body.plugin #divBtnBackMyStuff,
+body.plugin #navBtnBackScreenshot,
+body.plugin .activityTypeAndTime,
+body.plugin .appNameAndAuthor,
+body.plugin #barMyStuff,
+body.plugin #barAddImage {
+	display: none !important;
+}
+
+body.plugin .annoListItemIcon,
+body.plugin .appIconImage {
+	display: none;
+}
+
+body.plugin #tdNavBtnBackFeeds,
+body.plugin #tdNavInfo {
+	display: table-cell !important;
+}
+
+body.plugin #divBtnBackMyStuffPlugin,
+body.plugin .pluginInfoText,
+body.plugin #tdBarMyStuff .text-me,
+body.plugin #tdBarAddImage .text-new {
+	display: block !important;
+}
+
+body.plugin #navBtnBackScreenshotPlugin {
+	display: inline-block !important;
+}
+
+body.plugin .defaultUserImage,
+body.plugin .userProfileImage {
+	display: block;
+}
+
+body.plugin #tdBarMyStuff  {
+	width: 45px !important;
+	padding-right: 6px !important;
+}
+
+body.plugin #tdBarAddImage {
+	width: 45px !important;
+	padding-right: 0 !important;
+}
+
+body.plugin #barAddImage,
+body.plugin #barMyStuff  {
+	line-height: 44px !important;
 }

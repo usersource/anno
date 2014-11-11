@@ -1,5 +1,3 @@
-__author__ = "rekenerd"
-
 '''
 UserRole data store model definition.
 '''
@@ -14,17 +12,19 @@ class UserRole(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     user = ndb.KeyProperty(kind=User, required=True)
     community = ndb.KeyProperty(kind=Community, required=True)
-    role = ndb.StringProperty(choices=[UserRoleType.MEMBER, UserRoleType.MANAGER], required=True)
+    role = ndb.StringProperty(choices=[UserRoleType.MEMBER,
+                                       UserRoleType.MANAGER,
+                                       UserRoleType.ADMIN],
+                              required=True)
+    circle_level = ndb.IntegerProperty(required=True, default=0)
     
     @classmethod
-    def insert(cls, user, community, role=None):
+    def insert(cls, user, community, role=None, circle_level=0):
         entity = None
-
-        if role is None:
-            role = UserRoleType.MEMBER
+        role = role or UserRoleType.MEMBER
 
         if user and community:
-            entity = cls(user=user.key, community=community.key, role=role)
+            entity = cls(user=user.key, community=community.key, role=role, circle_level=circle_level)
             entity.put()
 
         return entity
@@ -55,3 +55,8 @@ class UserRole(ndb.Model):
 
         users = query.fetch()
         return users
+
+    @classmethod
+    def getCircleLevel(cls, user, community):
+        entity = cls.query(ndb.AND(cls.user == user.key, cls.community == community.key)).get()
+        return entity.circle_level

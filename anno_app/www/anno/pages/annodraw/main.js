@@ -245,7 +245,7 @@ require([
     });
 
     // home/feeds/cancel button
-    connect.connect(dom.byId("menuItemFeed"), 'click', function(e)
+    /*connect.connect(dom.byId("menuItemFeed"), 'click', function(e)
     {
         var action = "goto_anno_home";
 
@@ -264,9 +264,9 @@ require([
             action,
             []
         );
-    });
+    });*/
 
-    connect.connect(dom.byId("menuItemCancel"), 'click', function(e)
+    /*connect.connect(dom.byId("menuItemCancel"), 'click', function(e)
     {
         var action = "exit_current_activity";
         window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "cancel");
@@ -284,7 +284,7 @@ require([
             action,
             []
         );
-    });
+    });*/
 
     // app tabs
     connect.connect(dom.byId("barFavoriteApps"), 'click', function(e)
@@ -974,7 +974,8 @@ require([
                     "os_version":deviceInfo.osVersion,
                     "draw_elements":dojoJson.stringify(surface.toJSON()),
                     "screenshot_is_anonymized":isScreenshotAnonymized,
-                    "anno_type":"draw comment"
+                    "anno_type":"draw comment",
+                    "team_key":annoUtil.pluginTeamKey||""
                 };
 
                 if (selectedType == "app") {
@@ -1055,7 +1056,8 @@ require([
                         "draw_elements":dojoJson.stringify(shapesJson),
                         "screenshot_is_anonymized":isScreenshotAnonymized,
                         "anno_type":"draw comment",
-                        "level":level
+                        "level":level,
+                        "team_key":annoUtil.pluginTeamKey||""
                     };
 
                     if (selectedType == "app") {
@@ -1095,7 +1097,8 @@ require([
                 "draw_elements":dojoJson.stringify(shapesJson),
                 "screenshot_is_anonymized":isScreenshotAnonymized,
                 "anno_type":"draw comment",
-                "level":level
+                "level":level,
+                "team_key":annoUtil.pluginTeamKey||""
             };
 
             if (selectedType == "app") {
@@ -1144,7 +1147,7 @@ require([
         return dataUrl;
     };
 
-    var hideMenuDialog = function()
+    /*var hideMenuDialog = function()
     {
         var menusDialog = registry.byId('menusDialog');
         menusDialog.hide();
@@ -1163,9 +1166,9 @@ require([
         }
 
         domClass.remove("barMoreMenu", 'barMoreMenuActive');
-    };
+    };*/
 
-    var showMenuDialog = function()
+    /*var showMenuDialog = function()
     {
         var viewPoint = win.getBox();
 
@@ -1183,7 +1186,7 @@ require([
         domClass.add("barMoreMenu", 'barMoreMenuActive');
 
         surface.removeSelection();
-    };
+    };*/
 
     var checkBarShareState = function()
     {
@@ -1244,174 +1247,208 @@ require([
         }
     };
 
-    var init = function()
-    {
-        if (DBUtil.userChecked)
-        {
+    var authenticatePluginSession = function() {
+        var APIConfig = {
+            name : annoUtil.API.account,
+            method : "account.account.authenticate",
+            parameter : {
+                'user_email' : annoUtil.pluginUserEmail,
+                'display_name' : annoUtil.pluginUserDisplayName,
+                'user_image_url' : annoUtil.pluginUserImageURL,
+                'team_key' : annoUtil.pluginTeamKey,
+                'team_secret' : annoUtil.pluginTeamSecret
+            },
+            showLoadingSpinner: false,
+            success : function(resp) {
+                var userInfo = {};
+                userInfo.userId = resp.result.id;
+                userInfo.email = annoUtil.pluginUserEmail;
+                userInfo.signinMethod = "plugin";
+                userInfo.nickname = resp.result.display_name;
+                userInfo.team_key = annoUtil.pluginTeamKey;
+                userInfo.team_secret = annoUtil.pluginTeamSecret;
+
+                AnnoDataHandler.saveUserInfo(userInfo, function() {
+                    userInfo.signedup = 1;
+                    DBUtil.localUserInfo = userInfo;
+                    DBUtil.localUserInfo.signinmethod = userInfo.signinMethod;
+                    OAuthUtil.processBasicAuthToken(userInfo);
+                });
+            },
+            error : function() {
+            }
+        };
+
+        annoUtil.setDefaultServer(annoUtil.pluginServer);
+        annoUtil.callGAEAPI(APIConfig);
+    };
+
+    var authenticateForPlugin = function() {
+        AnnoDataHandler.getCurrentUserInfo(function(userInfo) {
+            annoUtil.getPluginUserInfo(function() {
+                if (userInfo.email && (userInfo.email !== annoUtil.pluginUserEmail)) {
+                    AnnoDataHandler.removeUser(function () {
+                        OAuthUtil.clearRefreshToken();
+                        authenticatePluginSession();
+                    });
+                } else {
+                    authenticatePluginSession();
+                }
+            });
+        });
+    };
+
+    var connectDomElements = function() {
+        connect.connect(surface, "onShapeRemoved", function() {
+            if (!surface.hasShapes()) {
+                lastShapePos = {
+                    x1 : Math.round((viewPoint.w - defaultShapeWidth) / 2),
+                    y1 : 100 + defaultShapeHeight,
+                    x2 : Math.round((viewPoint.w - defaultShapeWidth) / 2) + defaultShapeWidth,
+                    y2 : 100
+                };
+                domClass.add("barShare", 'barIconInactive');
+            } else {
+                checkBarShareState();
+            }
+        });
+
+        connect.connect(dom.byId("barMoreMenu"), "click", function(e) {
+            annoUtil.showConfirmMessageDialog("Cancel Feedback?", function(ret) {
+                if (ret) {
+                    window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "cancel");
+
+                    cordova.exec(function(result) {
+                    }, function(err) {
+                        annoUtil.showErrorMessage({
+                            type : annoUtil.ERROR_TYPES.CORDOVA_API_FAILED,
+                            message : err.message
+                        });
+                    }, "AnnoCordovaPlugin", "exit_current_activity", []);
+                }
+            });
+        });
+
+        connect.connect(dom.byId("btnCancel"), "click", function() {
+            var shareDialog = registry.byId('shareDialog');
+            shareDialog.hide();
+        });
+    };
+
+    var setupAnnoDrawPage = function() {
+        initBackgroundImage();
+
+        window.setTimeout(function() {
+            viewPoint = win.getBox();
+            totalSpace = 0;
+
+            lastShapePos = {
+                x1 : Math.round((viewPoint.w - defaultShapeWidth) / 2),
+                y1 : 100 + defaultShapeHeight,
+                x2 : Math.round((viewPoint.w - defaultShapeWidth) / 2) + defaultShapeWidth,
+                y2 : 100
+            };
+
+            lastBlackRectanglePos = {
+                x1 : Math.round((viewPoint.w - defaultShapeWidth) / 2),
+                y1 : 100 + defaultShapeHeight,
+                x2 : Math.round((viewPoint.w - defaultShapeWidth) / 2) + defaultShapeWidth,
+                y2 : 100
+            };
+
+            surface = window.surface = new Surface({
+                container : dom.byId("gfxCanvasContainer"),
+                width : viewPoint.w - borderWidth * 2,
+                height : viewPoint.h - borderWidth * 2 - barHeight,
+                borderWidth : borderWidth,
+                drawMode : true
+            });
+
+            domStyle.set(surface.container, { 'borderWidth' : borderWidth + 'px' });
+
+            // set screenshot container size
+            domStyle.set('screenshotContainer', {
+                width : (viewPoint.w - borderWidth * 2) + 'px',
+                height : (viewPoint.h - borderWidth * 2 - barHeight) + 'px',
+                borderWidth : borderWidth + "px"
+            });
+
+            // reposition the menus dialog
+            /*var menusDialog = registry.byId('menusDialog');
+            menusDialog.top = (viewPoint.h - barHeight - 44) + 'px';
+            menusDialog.left = (viewPoint.w - 204) + 'px';
+            domStyle.set(menusDialog.domNode, "backgroundColor", "white");*/
+        }, 500);
+
+        annoUtil.getTopTags(100);
+    };
+
+    var authenticateForStandalone = function() {
+        if (DBUtil.userChecked) {
             var authResult = OAuthUtil.isAuthorized();
-            if (annoUtil.hasConnection()&&!annoUtil.isRunningAsPlugin()&&!authResult.authorized)
-            {
+            if (annoUtil.hasConnection() && !authResult.authorized) {
                 OAuthUtil.openAuthPage("annodraw");
                 return;
-            }
-            else
-            {
-                AnnoDataHandler.getCurrentUserInfo(function(userInfo){
-
-                    if (authResult.newUser)
-                    {
+            } else {
+                AnnoDataHandler.getCurrentUserInfo(function(userInfo) {
+                    if (authResult.newUser) {
                         annoUtil.startActivity("Intro", false);
                     }
 
-                    if (userInfo.signinMethod == OAuthUtil.signinMethod.anno)
-                    {
+                    if (userInfo.signinMethod == OAuthUtil.signinMethod.anno) {
                         OAuthUtil.processBasicAuthToken(userInfo);
                     }
                 });
 
-                // Analytics
-                annoUtil.setupGATracking();
-                annoUtil.screenGATracking(annoUtil.analytics.category.annodraw);
-
-                initBackgroundImage();
-
-                window.setTimeout(function(){
-
-                    viewPoint = win.getBox();
-                    totalSpace = 0;
-                    // totalSpace = Math.floor(viewPoint.w * 0.02);
-                    // borderWidth = Math.round(totalSpace / 2);
-
-                    lastShapePos = {
-                        x1:Math.round((viewPoint.w-defaultShapeWidth)/2),
-                        y1:100+defaultShapeHeight,
-                        x2:Math.round((viewPoint.w-defaultShapeWidth)/2)+defaultShapeWidth,
-                        y2:100
-                    };
-
-                    lastBlackRectanglePos = {
-                        x1:Math.round((viewPoint.w-defaultShapeWidth)/2),
-                        y1:100+defaultShapeHeight,
-                        x2:Math.round((viewPoint.w-defaultShapeWidth)/2)+defaultShapeWidth,
-                        y2:100
-                    };
-
-                    surface = window.surface = new Surface({
-                        container: dom.byId("gfxCanvasContainer"),
-                        // width:viewPoint.w-totalSpace*2,
-                        width:viewPoint.w-borderWidth*2,
-                        height:viewPoint.h-borderWidth*2-barHeight,
-                        borderWidth:borderWidth,
-                        drawMode:true
-                    });
-
-                    domStyle.set(surface.container, {
-                        'borderWidth': borderWidth+'px'
-                        // 'left': borderWidth+"px"
-                    });
-
-                    connect.connect(surface, "onShapeRemoved", function()
-                    {
-                        if (!surface.hasShapes())
-                        {
-                            lastShapePos = {
-                                x1:Math.round((viewPoint.w-defaultShapeWidth)/2),
-                                y1:100+defaultShapeHeight,
-                                x2:Math.round((viewPoint.w-defaultShapeWidth)/2)+defaultShapeWidth,
-                                y2:100
-                            };
-
-                            domClass.add("barShare", 'barIconInactive');
-                        }
-                        else
-                        {
-                            checkBarShareState();
-                        }
-                    });
-
-                    // set screenshot container size
-                    domStyle.set('screenshotContainer', {
-                        // width: (viewPoint.w-totalSpace*2)+'px',
-                        width: (viewPoint.w-borderWidth*2)+'px',
-                        height: (viewPoint.h-borderWidth*2-barHeight)+'px',
-                        borderWidth:borderWidth+"px"
-                        // left: borderWidth+"px"
-                    });
-
-                    // domStyle.set('sdTitle', 'height', sdTitleHeight + 'px');
-                    // domStyle.set('sdAppList', 'height', (viewPoint.h - sdTitleHeight - sdTabBarHeight - sdBottom - shareDialogGap) + 'px');
-                    // domStyle.set('sdBottom', 'height', sdBottom + 'px');
-
-                    // reposition the menus dialog
-                    var menusDialog = registry.byId('menusDialog');
-                    menusDialog.top = (viewPoint.h-barHeight-44)+'px';
-                    menusDialog.left = (viewPoint.w-204)+'px';
-                    domStyle.set(menusDialog.domNode, "backgroundColor", "white");
-
-                    if (annoUtil.isRunningAsPlugin())
-                    {
-                        domStyle.set('menuItemFeed', 'display', '');
-                        domStyle.set(menusDialog.domNode, 'height', '80px');
-                        menusDialog.top = (viewPoint.h-barHeight-84)+'px';
-                    }
-
-                    connect.connect(dom.byId("barMoreMenu"), 'click', function(e)
-                    {
-                        var menusDialog = registry.byId('menusDialog');
-                        if (menusDialog.domNode.style.display === "")
-                        {
-                            hideMenuDialog();
-                        }
-                        else
-                        {
-                            showMenuDialog();
-                        }
-                    });
-
-                    connect.connect(dom.byId("btnCancel"), "click", function(){
-                        var shareDialog = registry.byId('shareDialog');
-                        shareDialog.hide();
-                        // enable JS gesture listener, disable native gesture
-                        // annoUtil.enableJSGesture();
-                        // annoUtil.disableNativeGesture();
-                    });
-
-                }, 500);
+                setupAnnoDrawPage();
 
                 // load all needed resources at startup
                 loadCommunities();
                 loadFavoriteApps();
-                annoUtil.getTopTags(100);
 
                 // show or hide tabs of picklist deponds on OS name
                 setShareDialogUI();
             }
-
-            // disable JS and native gesture listener
-            annoUtil.disableJSGesture();
-            annoUtil.disableNativeGesture();
-
-            // set the pick list dialog title
-            dom.byId('sdTitle').children[0].innerHTML = annoUtil.getResourceString("title_app_pick_list");
-            dom.byId('appOsName').innerHTML = annoUtil.isIOS() ? "iOS" : "Android";
-            dom.byId('appOsName').setAttribute("data-app-version", device.version);
-            dom.byId('appOsName').setAttribute("data-type", "app");
+        } else {
+            window.setTimeout(authenticateForStandalone, 20);
         }
-        else
-        {
-            window.setTimeout(init, 20);
+    };
+
+    var launchAnnoDrawPage = function() {
+        if (annoUtil.isPlugin) {
+            setupAnnoDrawPage();
+            authenticateForPlugin();
+        } else {
+            authenticateForStandalone();
         }
+
+        // disable JS and native gesture listener
+        annoUtil.disableJSGesture();
+        annoUtil.disableNativeGesture();
+
+        // set the pick list dialog title
+        dom.byId('sdTitle').children[0].innerHTML = annoUtil.getResourceString("title_app_pick_list");
+        dom.byId('appOsName').innerHTML = annoUtil.isIOS() ? "iOS" : "Android";
+        dom.byId('appOsName').setAttribute("data-app-version", device.version);
+        dom.byId('appOsName').setAttribute("data-type", "app");
+    };
+
+    var init = function() {
+        annoUtil.setupGATracking();
+        annoUtil.screenGATracking(annoUtil.analytics.category.annodraw);
+        connectDomElements();
+        launchAnnoDrawPage();
     };
 
     document.addEventListener("backbutton", function(){
 
-        var menusDialog = registry.byId('menusDialog');
+        // var menusDialog = registry.byId('menusDialog');
         var shareDialog = registry.byId('shareDialog');
-        if (menusDialog.domNode.style.display === "")
+        /*if (menusDialog.domNode.style.display === "")
         {
             hideMenuDialog();
         }
-        else if (shareDialog.domNode.style.display === "")
+        else */if (shareDialog.domNode.style.display === "")
         {
             shareDialog.hide();
             // enable JS gesture listener, disable native gesture
@@ -1426,12 +1463,13 @@ require([
         }
     }, false);
 
-    document.addEventListener("deviceready", function(){
-        DBUtil.initDB(function(){
-            console.log("DB is readay!");
-            annoUtil.readSettings(function(){
-                init();
+    document.addEventListener("deviceready", function() {
+        window.setTimeout(function() {
+            annoUtil.checkIfPlugin();
+            DBUtil.initDB(function() {
+                console.log("[annodraw:main.js] DB is readay!");
+                annoUtil.readSettings(function() { init(); });
             });
-        });
+        }, 0);
     }, false);
 });

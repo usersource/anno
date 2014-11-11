@@ -6,19 +6,21 @@
 //
 
 #import <Cordova/CDV.h>
-#import "AppDelegate.h"
 #import "AnnoDrawViewController.h"
 #import "CommunityViewController.h"
 #import "IntroViewController.h"
 #import "OptionFeedbackViewController.h"
 #import "AnnoUtils.h"
-#import "ScreenshotGestureListener.h"
+//#import "ScreenshotGestureListener.h"
 
-@interface AnnoCordovaPlugin : CDVPlugin {}
+@interface AnnoCordovaPlugin : CDVPlugin {
+    CommunityViewController *communityViewController;
+}
+
+@property CommunityViewController *communityViewController;
 
 extern AnnoUtils *annoUtils;
-extern ScreenshotGestureListener *screenshotGestureListener;
-extern AppDelegate *appDelegate;
+//extern ScreenshotGestureListener *screenshotGestureListener;
 
 - (void) exit_current_activity:(CDVInvokedUrlCommand*)command;
 - (void) show_toast:(CDVInvokedUrlCommand*)command;
@@ -37,13 +39,7 @@ extern AppDelegate *appDelegate;
 - (void) enable_native_gesture_listener:(CDVInvokedUrlCommand*)command;
 - (void) trigger_create_anno:(CDVInvokedUrlCommand*)command;
 - (void) get_app_version:(CDVInvokedUrlCommand*)command;
-
-- (void) showCommunityPage;
-- (void) ShowIntroPage;
-- (void) showOptionFeedback;
-+ (void) showAnnoDraw:(NSString*)imageURI
-           levelValue:(int)levelValue
-        editModeValue:(BOOL)editModeValue
-   landscapeModeValue:(BOOL)landscapeModeValue;
+- (void) is_plugin:(CDVInvokedUrlCommand*)command;
+- (void) get_user_info:(CDVInvokedUrlCommand*)command;
 
 @end
