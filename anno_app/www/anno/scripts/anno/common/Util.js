@@ -991,6 +991,7 @@
             var start_ts = Date.now();
             method.execute(function(response) {
                 var time_ms = Date.now() - start_ts;
+                console.log(config.method + " load time:", time_ms);
                 try {
                     util.timingGATracking(config.method, JSON.stringify(config.parameter), time_ms, "Response length: " + ( response ? JSON.stringify(response).length : 0));
                 } catch(e) {
@@ -1075,7 +1076,7 @@
                 var start_ts = Date.now(), self = this;
                 util.loadAPI(config.name, function() {
                     var load_ms = Date.now() - start_ts;
-                    console.log("GAPI Load API: " + config.name + " " + load_ms);
+                    console.log("GAPI Load API - " + config.name + ":", load_ms);
                     if (load_ms > 400) {// more than 400 ms to load API
                         util.timingGATracking("GAPI Load API", config.name, load_ms);
                     }
