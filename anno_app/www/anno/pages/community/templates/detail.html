@@ -14,166 +14,118 @@
 		</table>
 	</div>
     <div id="headingDetail" style="" data-dojo-type="dojox/mobile/Heading">
-        <table width="100%" height="100%">
-            <tr>
-                <td width="15%" id="navBtnTdBackScreenshot" align="left">
-                    <span id="navBtnBackScreenshot" class="icon-forward navBtnBack" data-dojo-type="dojox.mobile.ToolBarButton"></span>
-                    <span id="detailPageName">Explore</span>
-                </td>
-                <td align="right" width="75%">
-                    <table style="table-layout: fixed;">
-                        <tr>
-                            <td id="tdNavBtnPrevious" width="25%" align="center">
-                                <span id="navBtnPrevious" class="icon-arrow-left navBtnDisabled" style="width: 100%;height: 32px;float: left;font-size: 25px;"></span>
-                            </td>
-                            <td id="tdNavBtnScreenshot" width="25%" align="center">
-                                <img id="navBtnScreenshot" src="css/images/anno.png" width="80%">
-                            </td>
-                            <td id="tdNavBtnTray" width="25%" align="center">
-                                <span id="navBtnTray" class="icon-bubbles barIconDisabled" style="width: 83.33%;height: 32px;padding-top: 10px;font-size: 28px;"></span>
-                            </td>
-                            <td id="tdNavBtnNext" width="25%" align="center">
-                                <span id="navBtnNext" class="icon-arrow-right" style="width: 100%;height: 30px;float: right;font-size: 25px;"></span>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
-
+    	<div id="navBtnTdBackScreenshot" style="display: inline-block;">
+    		<span id="navBtnBackScreenshot" class="icon-forward navBtnBack" data-dojo-type="dojox.mobile.ToolBarButton"></span>
+    		<div id="navBtnBackScreenshotPlugin" style="display: none;width: 37px; vertical-align: middle;"></div>
+            <div id="detailPageName">Explore</div>
+    	</div>
+    	<div style="display: inline-block;float: right;">
+    		<div id="navBtnPrevious"></div>
+    		<img id="navBtnScreenshot" src="css/images/anno.png">
+    		<span id="navBtnTray" class="icon-bubbles barIconDisabled" style="width: 83.33%;height: 32px;font-size: 28px;vertical-align: middle;"></span>
+    		<div id="navBtnNext"></div>
+    	</div>
     </div>
-    <div id="detailContentContainer" style="margin-top: 50px;-webkit-transition: all 500ms ease;">
-        <div id="mvcGroupDetail" data-dojo-type="dojox/mvc/Group"
-             data-dojo-props="target: at(this.loadedModels.events, 'cursor')">
-             <div id="AnnoScreenshot">
-	            <!-- <div style="height: 6px"></div> -->
-	            <div id="screenshotContainerDetail" style="margin-left: auto;margin-right: auto;position: relative;">
-	                <img id="imgDetailScreenshot" class="imgDetailScreenshot" style="background-color: #c5ccd3;width: 100%;height: 100%;" />
-	                <div id="gfxCanvasContainer" class="gfxCanvasContainer" style="width: 500px; height: 500px;display: none;top: 50px"></div>
-	            </div>
-	            <div style="padding: 0 20px">
-	                <table id="tbl_screenshotControls" width="100%" height="50">
-	                    <tr>
-	                        <td id="td_shtCtrl_hideAnnotations">
-	                            <div class="clickableDiv">Hide Annotations</div>
-	                        </td>
-	                        <td id="td_shtCtrl_edit" width="70" align="right" style="display: none;">
-	                            <span class="icon-pencil" style="width: 60px;height: 32px;padding-left: 10px;font-size: 25px;"></span>
-	                        </td>
-	                        <td id="td_shtCtrl_remove" width="70" align="right" style="display: none;">
-	                            <span class="icon-remove" style="width: 60px;height: 32px;padding-left: 10px;font-size: 25px;"></span>
-	                        </td>
-	                    </tr>
-	                </table>
-	            </div>
+    <div id="detailContentContainer" style="margin-top: 48px;" class="smooth_scroll">
+    	<div id="detailContentContainer_middle" style="width: 100%;height: 100%;overflow: scroll;-webkit-transition: all 500ms ease;" class="smooth_scroll">
+	        <div id="mvcGroupDetail" data-dojo-type="dojox/mvc/Group"
+	             data-dojo-props="target: at(this.loadedModels.events, 'cursor')">
+	             <div id="AnnoScreenshot">
+		            <!-- <div style="height: 6px"></div> -->
+		            <div id="screenshotContainerDetail" style="margin-left: auto;margin-right: auto;position: relative;">
+		                <img id="imgDetailScreenshot" class="imgDetailScreenshot" style="background-color: #c5ccd3;width: 100%;height: 100%;" />
+		                <div id="gfxCanvasContainer" class="gfxCanvasContainer" style="width: 500px; height: 500px;display: none;top: 50px"></div>
+		            </div>
+		            <div style="padding: 0 20px">
+		                <table id="tbl_screenshotControls" width="100%" height="50">
+		                    <tr>
+		                        <td id="td_shtCtrl_hideAnnotations">
+		                            <div class="clickableDiv">Hide Annotations</div>
+		                        </td>
+		                        <td id="td_shtCtrl_edit" width="70" align="right" style="display: none;">
+		                            <span class="icon-pencil" style="width: 60px;height: 32px;padding-left: 10px;font-size: 25px;"></span>
+		                        </td>
+		                        <td id="td_shtCtrl_remove" width="70" align="right" style="display: none;">
+		                            <span class="icon-remove" style="width: 60px;height: 32px;padding-left: 10px;font-size: 25px;"></span>
+		                        </td>
+		                    </tr>
+		                </table>
+		            </div>
+		        </div>
+	            <div id="AnnoDetails">
+					<div id="AnnoScreenshotLoading" style="padding: 5px 0 10px 0;text-align: center;">Loading Image...</div>
+		            <div id="textDataAreaContainer" style="-webkit-transition: all 500ms ease;" class="textDataAreaContainer">
+		                <div id="appNameContainer" class="appNameDetail" style="padding-bottom: 15px;">
+		                	<span class="appNameTitleDetail">About:</span>
+		                	<span id="appNameSpanDetail" class="clickableDiv" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'app')"></span>
+		                	<span data-dojo-type="dojox/mvc/Output" style="padding-left: 2px" data-dojo-props="value: at('rel:', 'appVersion')"></span>
+		                	<img id="editAppNameImg" style="display: none" src="css/images/content_edit.png" width="24">
+		                </div>
+		                <div id="annoCommentsContainer" style="width: 100%;overflow-y: auto;overflow-x:hidden; ">
+		                    <div id="deviceInfoContainer" style="padding-bottom: 15px">
+		                    	<div id="mobileIcon"></div>
+		                    	<div class="deviceInfoDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'deviceInfo')" style="display: inline-block;"></div>
+		                    </div>
+		                    <div style="padding-bottom: 15px">
+		                    	<div id="defaultAuthorImage" class="icon-user personImg" style="display: inline-block;"></div>
+		                    	<img id="authorImage" data-dojo-type="dojox/mvc/Output" data-dojo-props="src: at('rel:', 'author_image_url')" style="display: none;" />
+		                    	<div class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'author')" style="display: inline-block;vertical-align: top;line-height: 24px;"></div>
+		                    	<div class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'created')" style="float: right;display: inline-block;vertical-align: top;line-height: 24px;"></div>
+		                    </div>
+		                    <div id="annoTextDetail" class="annoTextDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'hashTaggedAnnoText')"></div>
+		                    <div id="voteFlagContainer">
+		                    	<div id="imgThumbsUp" class="icoImgDeactive">
+		                    		<div class="icon-thumbs-up" style="font-size: 30px;"></div>
+		                    		<div style="padding-top: 5px; font-size: 14px;">Upvote</div>
+		                    	</div>
+		                    	<div id="imgFlag" class="icoImgDeactive">
+		                    		<div class="icon-flag" style="font-size: 30px;"></div>
+		                    		<div style="padding-top: 5px; font-size: 14px;">Inappropriate</div>
+		                    	</div>
+		                    	<div id="imgSocialSharing" class="icoImgDeactive">
+		                    		<div class="icon-share" style="font-size: 30px;"></div>
+		                    		<div style="padding-top: 5px; font-size: 14px;">Share</div>
+		                    	</div>
+		                    </div>
+		                    <div id="annoCommentsSet" class="fieldset"
+		                         data-dojo-type="dojox/mvc/Repeat"
+		                         data-dojo-props="exprchar: '*', children: at('rel:', 'comments')"
+		                         style="padding-top: 15px;">
+		                        <div style="padding-bottom: 8px;">
+			                        <div>
+			                        	<span class="icon-user personImg" data-dojo-type="dojox/mvc/Output" data-dojo-props="class: at('rel:*{this.index}', 'default_commenter_image')"></span>
+			                        	<img class="commenterImage" data-dojo-type="dojox/mvc/Output" data-dojo-props="src: at('rel:*{this.index}', 'user_image'), class: at('rel:*{this.index}', 'commenter_image')" />
+			                        	<span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:*{this.index}', 'user_id')" style="vertical-align: top;line-height: 24px;"></span>
+			                        	<span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:*{this.index}', 'timestamp')" style="vertical-align: top;line-height: 24px;float: right;"></span>
+			                        </div>
+			                        <div class="commentDetail" style="font-size: 14px;">
+			                            <div data-dojo-type="dojox/mvc/Output" style="width: 100%" data-dojo-props="value: at('rel:*{this.index}', 'modifiedComment')"></div>
+			                        </div>
+		                        </div>
+		                    </div>
+		                </div>
+		                <div id="trayPlaceHolder" style="width: 100%;height: 0px;background-color: #ffffff"></div>
+		                <div id="trayBottomBar" style="height: 29px;background-color: #333333;display: none">
+		                    <table width="100%">
+		                        <tr>
+		                            <td align="center" valign="middle" height="30">
+		                                <div id="trayBottomBarSpin" style="width: 98%;height: 3px;background-color: gray"></div>
+		                            </td>
+		                        </tr>
+		                    </table>
+		                </div>
+		            </div>
+		            <div id="detailBottomPlaceholder" style="height: 100px;"></div>
+		    	</div>
 	        </div>
-            <div id="AnnoDetails" style="padding-top: 5px;">
-				<div id="AnnoScreenshotLoading" style="padding: 5px 0 10px 0;text-align: center;">Loading Image...</div>
-	            <div id="textDataAreaContainer" style="-webkit-transition: all 500ms ease;" class="textDataAreaContainer">
-	                <div id="appNameContainer" class="appNameDetail" style="padding-left: 10px;">
-	                    <table cellpadding="0" cellspacing="0" width="100%">
-	                        <tr>
-	                            <td valign="middle" width="60"><span class="appNameTitleDetail">About:</span></td>
-	                            <td valign="middle">
-	                                <span id="appNameSpanDetail" class="clickableDiv" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'app')"></span>
-	                                <span data-dojo-type="dojox/mvc/Output" style="padding-left: 2px" data-dojo-props="value: at('rel:', 'appVersion')"></span>
-	                            </td>
-	                            <td valign="middle"><img id="editAppNameImg" style="display: none" src="css/images/content_edit.png" width="24"></td>
-	                        </tr>
-	                    </table>
-	                </div>
-	                <div id="annoCommentsContainer" style="width: 100%;overflow-y: auto;overflow-x:hidden; ">
-	                    <div id="deviceInfoContainer" style="padding-bottom: 8px">
-	                        <table width="100%" cellpadding="0" cellspacing="0">
-	                            <tr>
-	                                <td width="38" align="center">
-	                                    <span class="icon-mobile personImg"></span>
-	                                </td>
-	                                <td valign="middle">
-	                                    <div class="deviceInfoDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'deviceInfo')"></div>
-	                                </td>
-	                            </tr>
-	                        </table>
-	                    </div>
-	                    <div style="padding-bottom: 4px">
-	                        <table width="100%" cellpadding="0" cellspacing="0">
-	                            <tr>
-	                                <td height="32" width="40" align="center">
-	                                    <span class="icon-user personImg"></span>
-	                                </td>
-	                                <td align="left"><span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'author')"></span></td>
-	                                <td align="right" style="padding-right: 8px;"><span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'created')"></span></td>
-	                            </tr>
-	                        </table>
-	                    </div>
-	                    <div id="annoTextDetail" class="annoTextDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'hashTaggedAnnoText')"></div>
-	                    <div id="voteFlagContainer" style="padding: 4px 0;margin: 0 8px;border-bottom: 1px solid #cccccc">
-	                        <table width="100%"  cellpadding="0" cellspacing="0" style="padding-top: 4px;">
-	                            <tr>
-	                                <td width="33%" align="center">
-	                                    <span id="imgThumbsUp" class="icon-thumbs-up icoImgDeactive"></span>
-	                                </td>
-	                                <td width="33%" align="center">
-	                                    <span id="imgFlag" class="icon-flag icoImgDeactive"></span>
-	                                </td>
-	                                <td width="33%" align="center">
-	                                    <span id="imgSocialSharing" class="icon-share" style="font-weight: bold;color: #000000;font-size: 30px;"></span>
-	                                </td>
-	                            </tr>
-	                        </table>
-	                    </div>
-	                    <div id="annoCommentsSet" class="fieldset"
-	                         data-dojo-type="dojox/mvc/Repeat"
-	                         data-dojo-props="exprchar: '*', children: at('rel:', 'comments')"
-	                         style="padding-top: 4px;">
-	                        <div style="padding: 4px;">
-		                        <div>
-		                            <table width="100%" cellpadding="0" cellspacing="0">
-		                                <tr>
-		                                    <td height="24" width="32" align="center">
-		                                        <span class="icon-user personImg"></span>
-		                                    </td>
-		                                    <td align="left">
-		                                        <span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:*{this.index}', 'user_id')" style="padding-left: 4px;"></span>
-		                                    </td>
-		                                    <td align="right" style="padding-right: 4px">
-		                                        <span class="authorDetail" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:*{this.index}', 'timestamp')"></span>
-		                                    </td>
-		                                </tr>
-		                            </table>
-		                        </div>
-		                        <div class="commentDetail">
-		                            <div data-dojo-type="dojox/mvc/Output" style="width: 100%" data-dojo-props="value: at('rel:*{this.index}', 'modifiedComment')"></div>
-		                        </div>
-	                        </div>
-	                    </div>
-	                </div>
-	                <div id="trayPlaceHolder" style="width: 100%;height: 0px;background-color: #ffffff"></div>
-	                <div id="trayBottomBar" style="height: 29px;background-color: #333333;display: none">
-	                    <table width="100%">
-	                        <tr>
-	                            <td align="center" valign="middle" height="30">
-	                                <div id="trayBottomBarSpin" style="width: 98%;height: 3px;background-color: gray"></div>
-	                            </td>
-	                        </tr>
-	                    </table>
-	                </div>
-	            </div>
-	            <div id="detailBottomPlaceholder" style="height: 100px;"></div>
-	            <div id="addCommentContainer" style="display: none;">
-	            	<div id="detailSuggestedTags" style="display: none;"></div>
-	                <table width="100%" cellpadding="0" cellspacing="0">
-	                    <tr>
-	                        <td>
-	                            <div class="noJump"></div>
-	                            <textarea type="text" id="addCommentTextBox" class="commentTextbox" rows="1" style="width: 100%" placeholder="Add a comment"></textarea>
-	                        </td>
-	                        <td id="tdAddCommentImg" width="40"><img id="addCommentImg" width="40" src="css/images/addcomment.png" style="vertical-align: middle;"></td>
-	                    </tr>
-	                </table>
-	            </div>
-	    	</div>
-        </div>
+		</div>
+    </div>
+    <div id="addCommentContainer" style="display: none;">
+    	<div id="detailSuggestedTags" style="display: none;"></div>
+    	<div id="childCommentContainer" style="padding: 8px 0 4px 0;background: #f4f4f4;">
+    		<textarea type="text" id="addCommentTextBox" class="commentTextbox" rows="1" placeholder="Add a comment"></textarea>
+    		<div id="sendComment">Send</div>
+    	</div>
     </div>
     <canvas id="backgroundCanvas" style="display: none"></canvas>
 </div>

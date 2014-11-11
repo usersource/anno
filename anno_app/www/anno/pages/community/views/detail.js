@@ -47,6 +47,7 @@ define([
             borderWidth = 4,
             zoomBorderWidth = 4;
         var zoomSurface, oldSurface, zoomAnnoID;
+        var shapeRedraw = false;
 
         var viewPoint = win.getBox(),
             deviceRatio = parseFloat((viewPoint.w / viewPoint.h).toFixed(2));
@@ -113,14 +114,16 @@ define([
                         transit(null, domScreenshotContainerDetail, {
                             transition : "slide",
                             duration : 600
-                        });
+                        }).then(redrawShapes);
                     } else {
                         transit(null, domScreenshotContainerDetail, {
                             transition : "slide",
                             duration : 600,
                             reverse : true
-                        });
+                        }).then(redrawShapes);
                     }
+                } else {
+                    redrawShapes();
                 }
 
                 domStyle.set("AnnoScreenshotLoading", "display", "none");
@@ -148,6 +151,9 @@ define([
 
         	// don't draw annotations when imgDetailScreenshot's src is tiniestImageData
             if (domImgDetailScreenshot.src === tiniestImageData) return;
+
+            if (shapeRedraw) return;
+            shapeRedraw = true;
 
         	var drawElements = eventsModel.cursor.draw_elements;
             var lineStrokeStyle = {
@@ -313,6 +319,13 @@ define([
                 {
                     domClass.remove('imgFlag', 'icoImgActive');
                 }
+
+                if (("author_image_url" in eventsModel.cursor) &&
+                    (eventsModel.cursor.author_image_url !== "") &&
+                    (annoUtil.isPlugin)) {
+                    domStyle.set('defaultAuthorImage', 'display', 'none');
+                    domStyle.set('authorImage', 'display', 'inline-block');
+                }
             }
 
 
@@ -398,6 +411,7 @@ define([
             if ((currentIndex + 1) < eventsModel.model.length) {
                 resetDetailPage();
                 window.setTimeout(function() {
+                    shapeRedraw = false;
                     loadDetailData(currentIndex + 1);
                     goingNextRecord = true;
                 }, 50);
@@ -411,6 +425,7 @@ define([
             if ((currentIndex - 1) >= 0) {
                 resetDetailPage();
                 window.setTimeout(function() {
+                    shapeRedraw = false;
                     loadDetailData(currentIndex - 1);
                     goingNextRecord = false;
                 }, 50);
@@ -444,27 +459,27 @@ define([
 
         var scrollToScreenshot = function()
         {
-            var detailContentContainer = dom.byId('detailContentContainer');
+            var detailContentContainer = dom.byId('detailContentContainer_middle');
 
             if (scrollAnimateHandle)
             {
                 connect.disconnect(scrollAnimateHandle);
             }
 
-            if (detailContentContainer.parentNode.scrollTop <=0)
+            if (detailContentContainer.scrollTop <=0)
             {
                 return;
             }
 
             detailContentContainer.style.webkitTransition = "all 0ms ease";
-            var st = detailContentContainer.parentNode.scrollTop;
-            detailContentContainer.parentNode.scrollTop = 0;
+            var st = detailContentContainer.scrollTop;
+            detailContentContainer.scrollTop = 0;
             detailContentContainer.style.WebkitTransform = "translateY(-"+st+"px)";
 
             window.setTimeout(function(){
                 scrollAnimateHandle = connect.connect(detailContentContainer, "webkitTransitionEnd", function ()
                 {
-                    detailContentContainer.parentNode.scrollTop = 0;
+                    detailContentContainer.scrollTop = 0;
                     detailContentContainer.style.webkitTransition = "none";
                     detailContentContainer.style.WebkitTransform = "none";
 
@@ -480,7 +495,7 @@ define([
 
         var scrollToTalkArea = function()
         {
-            var detailContentContainer = dom.byId('detailContentContainer');
+            var detailContentContainer = dom.byId('detailContentContainer_middle');
 
             if (scrollAnimateHandle)
             {
@@ -489,7 +504,7 @@ define([
 
             scrollAnimateHandle = connect.connect(detailContentContainer, "webkitTransitionEnd", function ()
             {
-                detailContentContainer.parentNode.scrollTop = imageHeight+44;
+                detailContentContainer.scrollTop = imageHeight+44;
                 detailContentContainer.style.webkitTransition = "all 0ms ease";
                 detailContentContainer.style.WebkitTransform = "none";
 
@@ -498,8 +513,8 @@ define([
 
             domStyle.set('addCommentContainer', 'display', 'none');
             detailContentContainer.style.webkitTransition = "all 600ms ease";
-            var st = imageHeight+44-detailContentContainer.parentNode.scrollTop;
-            var max = detailContentContainer.parentNode.scrollHeight-detailContentContainer.parentNode.clientHeight-detailContentContainer.parentNode.scrollTop;
+            var st = imageHeight+44-detailContentContainer.scrollTop;
+            var max = detailContentContainer.scrollHeight-detailContentContainer.clientHeight-detailContentContainer.scrollTop;
             if (st > max) st = max;
 
             detailContentContainer.style.WebkitTransform = "translateY(-"+(st)+"px)";
@@ -658,13 +673,22 @@ define([
                     {
                         for (var j=0;j<returnAnno.followup_list.length;j++)
                         {
-                            returnAnno.followup_list[j].user_id = returnAnno.followup_list[j].creator.display_name||returnAnno.followup_list[j].creator.user_email||returnAnno.followup_list[j].creator.id;
+                            returnAnno.followup_list[j].user_id = returnAnno.followup_list[j].creator.display_name || returnAnno.followup_list[j].creator.user_email || returnAnno.followup_list[j].creator.id;
+                            returnAnno.followup_list[j].user_image = returnAnno.followup_list[j].creator.image_url || "";
                             returnAnno.followup_list[j].timestamp = annoUtil.getTimeAgoString(returnAnno.followup_list[j].created);
+                            returnAnno.followup_list[j].default_commenter_image = "";
+                            returnAnno.followup_list[j].commenter_image = "hidden";
+
+                            if ((returnAnno.followup_list[j].user_image !== "") && (annoUtil.isPlugin)) {
+                                returnAnno.followup_list[j].default_commenter_image = "hidden";
+                                returnAnno.followup_list[j].commenter_image = "";
+                            }
+
                             processFollowupHashTagsOrURLs(returnAnno.followup_list[j]);
                         }
                     }
 
-                    currentAnno.set('comments',new getStateful(returnAnno.followup_list||[]));
+                    currentAnno.set('comments', new getStateful(returnAnno.followup_list || []));
 
                     device_model = annoUtil.parseDeviceModel(returnAnno.device_model) || ' ';
                     os_name = returnAnno.os_name || ' ';
@@ -725,7 +749,20 @@ define([
                     currentAnno.lastActivityText = "commented";
                     currentAnno.when = new Date().getTime();
 
-                    var commentObject = {user_id:author, comment:comment};
+                    default_commenter_image = "";
+                    commenter_image = "hidden";
+                    if ((annoUtil.pluginUserImageURL !== "") && (annoUtil.isPlugin)) {
+                        default_commenter_image = "hidden";
+                        commenter_image = "";
+                    }
+
+                    var commentObject = {
+                        user_id : author,
+                        comment : comment,
+                        user_image : annoUtil.pluginUserImageURL,
+                        default_commenter_image : default_commenter_image,
+                        commenter_image : commenter_image
+                    };
                     processFollowupHashTagsOrURLs(commentObject);
                     // currentAnno.comments.splice(0, 0, new getStateful(commentObject));
                     currentAnno.comments.push(new getStateful(commentObject));
@@ -772,8 +809,8 @@ define([
                         domClass.add('imgThumbsUp', 'icoImgActive');
                         // sync voted-up activity, TODO: should sync un-vote activity
                         eventsModel.cursor.lastActivityChangedClass = "icon-thumbs-up";
-                        eventsModel.cursor.lastActivityText = "voted-up";
-                        eventsModel.cursor.when = new Date().getTime();
+                        eventsModel.cursor.lastActivityText = "upvoted";
+                        eventsModel.cursor.when = Date.now();
                     }
 
                     savingVote = false;
@@ -822,7 +859,7 @@ define([
                         // sync flagged activity, TODO: should sync un-flag activity
                         eventsModel.cursor.lastActivityChangedClass = "icon-flag";
                         eventsModel.cursor.lastActivityText = "flagged";
-                        eventsModel.cursor.when = new Date().getTime();
+                        eventsModel.cursor.when = Date.now();
                     }
                     savingFlag = false;
                 },
@@ -1137,6 +1174,7 @@ define([
 
         // search anno items by hash tag
         var searchAnnoByHashTag = window.searchAnnoByHashTag = function(tag) {
+            if (annoUtil.isPlugin) return;
             goingTagSearch = true;
             app.transitionToView(document.getElementById('modelApp_detail'), {
                 target : 'searchAnno',
@@ -1258,7 +1296,7 @@ define([
                     resetDetailPage();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnNext'), 'click', function ()
+                _connectResults.push(connect.connect(dom.byId('navBtnNext'), 'click', function ()
                 {
                     // Analytics
                     annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'header next arrow');
@@ -1266,17 +1304,17 @@ define([
                     goNextRecord();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnTray'), 'click', function ()
+                _connectResults.push(connect.connect(dom.byId('navBtnTray'), 'click', function ()
                 {
                     scrollToTalkArea();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnScreenshot'), 'click', function ()
+                _connectResults.push(connect.connect(dom.byId('navBtnScreenshot'), 'click', function ()
                 {
                     scrollToScreenshot();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdNavBtnPrevious'), 'click', function ()
+                _connectResults.push(connect.connect(dom.byId('navBtnPrevious'), 'click', function ()
                 {
                     // Analytics
                     annoUtil.actionGATracking(annoUtil.analytics.category.detail, 'header prev arrow');
@@ -1302,7 +1340,7 @@ define([
                     domStyle.set('editAppNameImg', 'display', '');
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('tdAddCommentImg'), 'click', function ()
+                _connectResults.push(connect.connect(dom.byId('sendComment'), 'click', function ()
                 {
                     var text = domAddCommentTextBox.value.trim();
 
@@ -1362,6 +1400,7 @@ define([
                     commentTextBoxFocused = true;
                     window.setTimeout(function(){
                         domAddCommentTextBox.rows = "4";
+                        domClass.add("sendComment", "expanded");
                     }, 500);
                 }));
 
@@ -1370,6 +1409,7 @@ define([
                     commentTextBoxFocused = false;
                     window.setTimeout(function(){
                         domAddCommentTextBox.rows = "1";
+                        domClass.remove("sendComment", "expanded");
                         domStyle.set('detailSuggestedTags', 'display', 'none');
                     }, 500);
                 }));
@@ -1433,14 +1473,9 @@ define([
                     showAppNameTextBox();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('modelApp_detail'), "scroll", function (e)
+                _connectResults.push(connect.connect(dom.byId('detailContentContainer_middle'), "scroll", function (e)
                 {
                     dojo.stopEvent(e);
-                    var zoomData = dom.byId('zoomScreenshotContainerDetail');
-                    if (zoomData && (zoomData.style.display == '' || zoomData.style.display == 'block')) {
-                        return;
-                    }
-
                     setScreenshotTalkAreaState();
 
                     if (!commentTextBoxFocused)
@@ -1538,6 +1573,7 @@ define([
                 goingNextRecord = null;
                 loadingDetailData = false;
                 loadingImage = false;
+                shapeRedraw = false;
 
                 var cursor = this.params["cursor"];
                 
@@ -1601,11 +1637,11 @@ define([
                 adjustSize();
 
                 domStyle.set("headingDetail", "display", '');
-                domClass.add("navBtnScreenshot", "barIconHighlight");
+                // domClass.add("navBtnScreenshot", "barIconHighlight");
                 domClass.remove("navBtnTray", "barIconHighlight");
                 domClass.add("navBtnTray", "barIconDisabled");
 
-                dom.byId('detailContentContainer').parentNode.scrollTop = 0;
+                dom.byId('detailContentContainer_middle').scrollTop = 0;
                 document.addEventListener("backbutton", handleBackButton, false);
 
                 domStyle.set("AnnoScreenshotLoading", "display", "");

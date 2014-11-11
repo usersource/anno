@@ -1,123 +1,126 @@
 <!DOCTYPE HTML>
 <html>
-<head>
-    <meta name="viewport"
-          content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <title>UserSource Draw</title>
-    <script type="text/javascript">
-        var dojoConfig = {
-            parseOnLoad: true,
-            mblHideAddressBar: false,
-            mblAndroidWorkaround: false,
-            mblAlwaysHideAddressBar: false,
-            async: 1,
-            mblUserAgent: 'iPhone',
-            forceGfxRenderer2:'canvas',
-            packages:[
-                {
-                    name:'anno',
-                    location:'../anno'
-                }
-            ]
-        };
-    </script>
-    <script type="text/javascript" src="../../scripts/dojo/dojo.js"></script>
-    <script type="text/javascript">
-        require(["dojo/parser","dojox/mobile/deviceTheme", "dojox/mobile/SimpleDialog"]);
-    </script>
-    <script type="text/javascript" src="main.js"></script>
-    <script type="text/javascript" src="../../../cordova.js"></script>
-    <script type="text/javascript" src="../community/heartcode-canvasloader-min.js"></script>
-    <link type="text/css" href="./css/style.css" rel="stylesheet" />
-    <link type="text/css" href="../../custom/draw.css" rel="stylesheet" />
-</head>
-<body id="container" style="background-color: #404040">
-<div id="screenshotContainer" class="screenshotContainer">
-    <img id="imageScreenshot" src="" width="100%" height="100%">
-</div>
-<div id="gfxCanvasContainer" style="width: 500px; height: 500px;">
-	<div id="annoDrawSuggestedTags" style="display: none;"></div>
-</div>
-<div id="bottomBarContainer">
-    <table width="100%" style="border-spacing: 0;">
-        <tr>
-            <td width="20%" align="center">
-                <span id="barComment" class="barIcon icon-chat" style="font-size: 32px;"></span>
-            </td>
-            <td width="20%" align="center">
-                <span id="barArrow" class="barIcon icon-arrow-up-right"></span>
-            </td>
-            <td width="20%" align="center">
-                <div id="barBlackRectangle" class="barBlackRectangle barBlackActive"></div>
-            </td>
-            <td width="20%" align="center">
-                <div id="barRectangle" class="barRectangle barBlackActive"></div>
-            </td>
-            <td width="20%" align="center">
-                <span id="barShare" class="barIconInactive" style="font-size: 26px;font-weight: bold;">Share</span>
-            </td>
-            <td width="48" align="center">
-                <div id="barMoreMenu" class="barMoreMenu"></div>
-            </td>
-        </tr>
-    </table>
-</div>
-<div id="shareDialog" data-dojo-type="dojox/mobile/SimpleDialog" style="display: none">
-    <div id="sdTitle">
-        <div style="text-align:center;padding: 10px 0;"></div>
-    </div>
-    <div id="tabContainer" class="tabContainer">
-        <table width="100%" height="100%" style="border-spacing: 4px;table-layout: fixed;">
-            <tr>
-                <td width="33.3%" align="center" class="active">
-                    <div id="barFavoriteApps" style="text-overflow: ellipsis;overflow: hidden;">Favorites</div>
-                </td>
-                <td width="33.3%" align="center">
-                    <div id="barRecentApps" style="text-overflow: ellipsis;overflow: hidden;">My Apps</div>
-                </td>
-                <td width="33.3%" align="center">
-                    <div id="barElseApps" style="text-overflow: ellipsis;overflow: hidden;">Other</div>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div id="sdAppList" style="height: 74.194%;height: calc(100% - 126px);height: -webkit-calc(100% - 126px);">
-        <div id="sdFavoriteAppsListContent" style="overflow-y:auto;height: 100%">
-            <!-- <div style="margin-left: 10px;margin-right: 10px;padding-top: 4px;"></div> -->
-        </div>
-        <div id="sdRecentAppsListContent" style="overflow-y:auto;height: 100%;display: none">
-            <!-- <div style="margin-left: 10px;margin-right: 10px;padding-top: 4px;"></div> -->
-        </div>
-        <div id="sdElseAppListContent" style="display: none;overflow-y:auto;height: 100%">
-            <div class="appNameItem">
-                <div id="appOsName" class="appNameValue"></div>
-            </div>
-            <div class="appNameItem">
-                <input type="text" id="txtAppName" data-type="app" placeholder="something else" class="appNameValue signin-input"
-                       style="background-color: black;color: white;font-size: 16px;outline-color: white;height: auto;padding: 2px 10px;">
-            </div>
-        </div>
-    </div>
-    <div id="sdBottom">
-        <div id="sdShareBtn" style="text-align: center;padding: 8px 0;">
-            <button class="newbtn" id="btnCancel" type="button" style="display: none">Cancel</button>
-            <button class="newbtn disabledBtn" disabled id="btnShare" type="button">Done</button>
-        </div>
-    </div>
-</div>
-<div id="menusDialog" data-dojo-type="dojox/mobile/SimpleDialog" style="display: none;width: 200px;height: 40px;padding: 0px;border:2px solid black;border-top-color:black ">
-    <div id="menuItemFeed" class="menuItem" style="border: none;display: none">Feed</div>
-    <div id="menuItemCancel" class="menuItem" style="border: none">Cancel</div>
-</div>
-<button id="hiddenBtn" style="position: absolute;left:-2000px;top: -2000px;">a</button>
-<canvas id="hiddenCanvas" style="position: absolute;display: none"></canvas>
-<script type="text/javascript">
-    (function() {
-        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-        po.src = 'https://apis.google.com/js/client.js?onload=gce_init';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-    })();
-</script>
-</body>
+	<head>
+		<meta name="viewport"
+		content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<title>UserSource Draw</title>
+		<script type="text/javascript">
+            var dojoConfig = {
+                parseOnLoad : true,
+                mblHideAddressBar : false,
+                mblAndroidWorkaround : false,
+                mblAlwaysHideAddressBar : false,
+                async : 1,
+                mblUserAgent : 'iPhone',
+                forceGfxRenderer2 : 'canvas',
+                packages : [{
+                    name : 'anno',
+                    location : '../anno'
+                }]
+            };
+		</script>
+		<script type="text/javascript" src="../../scripts/dojo/dojo.js"></script>
+		<script type="text/javascript">
+            require(["dojo/parser", "dojox/mobile/deviceTheme", "dojox/mobile/SimpleDialog"]);
+		</script>
+		<script type="text/javascript" src="main.js"></script>
+		<script type="text/javascript" src="../../../cordova.js"></script>
+		<script type="text/javascript" src="../community/heartcode-canvasloader-min.js"></script>
+		<link type="text/css" href="./css/style.css" rel="stylesheet" />
+		<link type="text/css" href="../../custom/draw.css" rel="stylesheet" />
+	</head>
+	<body id="container">
+		<div id="screenshotContainer" class="screenshotContainer">
+			<img id="imageScreenshot" src="" width="100%" height="100%">
+		</div>
+		<div id="gfxCanvasContainer" style="width: 500px; height: 500px;">
+			<div id="annoDrawSuggestedTags" style="display: none;"></div>
+		</div>
+		<div id="bottomBarContainer">
+			<div id="barComment" class="bottomBarChild">
+				<img src="css/images/icon_comment.png" style="width: 37%;" />
+				<div class="bottonBarText">Callout</div>
+			</div>
+			<div id="barArrow" class="bottomBarChild">
+				<img src="css/images/icon_arrow.png" style="width: 31%;" />
+				<div class="bottonBarText">Arrow</div>
+			</div>
+			<div id="barBlackRectangle" class="bottomBarChild">
+				<img src="css/images/icon_cover.png" style="width: 46%;" />
+				<div class="bottonBarText">Hide</div>
+			</div>
+			<div id="barRectangle" class="bottomBarChild">
+				<img src="css/images/icon_highlight.png" style="width: 43%;" />
+				<div class="bottonBarText">Highlight</div>
+			</div>
+			<div id="barShare" class="bottomBarChild barIconInactive">
+				<img src="css/images/icon_share.png" style="width: 44%;" />
+				<div class="bottonBarText">Post</div>
+			</div>
+			<div id="barMoreMenu" class="bottomBarChild">
+				<img src="css/images/icon_cancel.png" style="width: 32%;" />
+				<div class="bottonBarText">Cancel</div>
+			</div>
+		</div>
+		<div id="shareDialog" data-dojo-type="dojox/mobile/SimpleDialog" style="display: none">
+			<div id="sdTitle">
+				<div style="text-align:center;padding: 10px 0;"></div>
+			</div>
+			<div id="tabContainer" class="tabContainer">
+				<table width="100%" height="100%" style="border-spacing: 4px;table-layout: fixed;">
+					<tr>
+						<td width="33.3%" align="center" class="active">
+							<div id="barFavoriteApps" style="text-overflow: ellipsis;overflow: hidden;">Favorites</div>
+						</td>
+						<td width="33.3%" align="center">
+							<div id="barRecentApps" style="text-overflow: ellipsis;overflow: hidden;">My Apps</div>
+						</td>
+						<td width="33.3%" align="center">
+							<div id="barElseApps" style="text-overflow: ellipsis;overflow: hidden;">Other</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div id="sdAppList" style="height: 74.194%;height: calc(100% - 126px);height: -webkit-calc(100% - 126px);">
+				<div id="sdFavoriteAppsListContent" style="overflow-y:auto;height: 100%">
+					<!-- <div style="margin-left: 10px;margin-right: 10px;padding-top: 4px;"></div> -->
+				</div>
+				<div id="sdRecentAppsListContent" style="overflow-y:auto;height: 100%;display: none">
+					<!-- <div style="margin-left: 10px;margin-right: 10px;padding-top: 4px;"></div> -->
+				</div>
+				<div id="sdElseAppListContent" style="display: none;overflow-y:auto;height: 100%">
+					<div class="appNameItem">
+						<div id="appOsName" class="appNameValue"></div>
+					</div>
+					<div class="appNameItem">
+						<input type="text" id="txtAppName" data-type="app" placeholder="something else" class="appNameValue signin-input"
+						style="background-color: black;color: white;font-size: 16px;outline-color: white;height: auto;padding: 2px 10px;">
+					</div>
+				</div>
+			</div>
+			<div id="sdBottom">
+				<div id="sdShareBtn" style="text-align: center;padding: 8px 0;">
+					<button class="newbtn" id="btnCancel" type="button" style="display: none">Cancel</button>
+					<button class="newbtn disabledBtn" disabled id="btnShare" type="button">Done</button>
+				</div>
+			</div>
+		</div>
+		<!-- <div id="menusDialog" data-dojo-type="dojox/mobile/SimpleDialog" style="display: none;width: 200px;height: 40px;padding: 0px;border:2px solid black;border-top-color:black ">
+			<div id="menuItemFeed" class="menuItem" style="border: none;display: none">Feed</div>
+			<div id="menuItemCancel" class="menuItem" style="border: none">Cancel</div>
+		</div> -->
+		<button id="hiddenBtn" style="position: absolute;left:-2000px;top: -2000px;">a</button>
+		<canvas id="hiddenCanvas" style="position: absolute;display: none"></canvas>
+		<script type="text/javascript">
+            (function() {
+                var po = document.createElement('script');
+                po.type = 'text/javascript';
+                po.async = true;
+                po.src = 'https://apis.google.com/js/client.js?onload=gce_init';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(po, s);
+            })();
+		</script>
+	</body>
 </html>

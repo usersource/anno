@@ -117,6 +117,20 @@ indexes:
 
 - kind: Anno
   properties:
+  - name: circle_level
+  - name: community
+  - name: created
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: community
+  - name: circle_level
+  - name: created
+    direction: desc
+
+- kind: Anno
+  properties:
   - name: community
   - name: created
     direction: desc
@@ -153,6 +167,24 @@ indexes:
 - kind: UserAnnoState
   properties:
   - name: anno
+  - name: created
+
+- kind: UserAnnoState
+  properties:
+  - name: anno
+  - name: created
+    direction: desc
+
+- kind: UserAnnoState
+  properties:
+  - name: anno
+  - name: notify
+  - name: created
+    direction: desc
+
+- kind: UserAnnoState
+  properties:
+  - name: anno
   - name: notify
   - name: last_read
   - name: user
@@ -169,6 +201,13 @@ indexes:
   - name: community
   - name: role
   - name: user
+
+- kind: UserRole
+  properties:
+  - name: user
+  - name: circle_level
+  - name: community
+  - name: role
 
 - kind: UserRole
   properties:

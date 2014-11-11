@@ -27,6 +27,7 @@
 
 #import "UserSourceAppDelegate.h"
 #import "CommunityViewController.h"
+#import "AnnoSingleton.h"
 #import <UserSourceStatic/UserSourceStatic.h>
 
 #import <Cordova/CDVPlugin.h>
@@ -63,8 +64,10 @@
 
     self.window = [[UIWindow alloc] initWithFrame:screenBounds];
     self.window.autoresizesSubviews = YES;
-
-    self.communityViewController = [[CommunityViewController alloc] init];
+    
+    AnnoSingleton *annoSingleton = [AnnoSingleton sharedInstance];
+    [annoSingleton setupWithEmail:nil displayName:nil userImageURL:nil teamKey:nil teamSecret:nil];
+    self.communityViewController = annoSingleton.communityViewController;
 
     // Set your app's start page by setting the <content src='foo.html' /> tag in config.xml.
     // If necessary, uncomment the line below to override it.

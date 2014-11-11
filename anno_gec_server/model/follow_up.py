@@ -6,6 +6,7 @@ from google.appengine.ext import ndb
 from model.anno import Anno
 from model.base_model import BaseModel
 from message.followup_message import FollowupMessage
+from message.user_message import UserMessage
 
 
 class FollowUp(BaseModel):
@@ -26,7 +27,8 @@ class FollowUp(BaseModel):
         message.comment = self.comment
         message.created = self.created
         if self.creator is not None:
-            message.creator = self.creator.get().to_message()
+            user_info = self.creator.get()
+            message.creator = UserMessage(display_name=user_info.display_name, image_url=user_info.image_url)
         return message
 
 

@@ -9,7 +9,9 @@
 #import <Cordova/CDVCommandDelegateImpl.h>
 #import <Cordova/CDVCommandQueue.h>
 
-@interface CommunityViewController : CDVViewController
+@interface CommunityViewController : CDVViewController {
+    UIView *splashView;
+}
 
 - (int) getLevel;
 - (void) setLevel:(int)levelValue;

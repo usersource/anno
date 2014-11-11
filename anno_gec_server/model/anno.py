@@ -1,5 +1,3 @@
-__author__ = 'topcircler'
-
 """
 Anno data store model definition.
 """
@@ -16,6 +14,7 @@ from message.user_message import UserMessage
 from model.base_model import BaseModel
 from model.community import Community
 from model.appinfo import AppInfo
+from model.userrole import UserRole
 from helper.utils import *
 from helper.utils_enum import SearchIndexName
 
@@ -55,6 +54,7 @@ class Anno(BaseModel):
     latitude = ndb.FloatProperty()
     longitude = ndb.FloatProperty()
     country = ndb.StringProperty()
+    circle_level = ndb.IntegerProperty(default=0)
 
     def __eq__(self, other):
         return self.key.id() == other.key.id()
@@ -69,7 +69,8 @@ class Anno(BaseModel):
         user_message = None
         if self.creator is not None:
             user_info = self.creator.get()
-            user_message = UserMessage(display_name=user_info.display_name)
+            user_message = UserMessage(display_name=user_info.display_name,
+                                       image_url=user_info.image_url)
 
         app = self.app.get() if self.app else None
         app_name = app.name if app else self.app_name
@@ -82,12 +83,14 @@ class Anno(BaseModel):
                 from model.userannostate import UserAnnoState
                 anno_read_status = UserAnnoState.is_read(user, self)
 
+            last_activity_user = UserAnnoState.last_activity_user(self)
+
             anno_message = AnnoResponseMessage(id=self.key.id(), anno_text=self.anno_text,
                                                anno_type=self.anno_type, app_name=app_name,
                                                app_icon_url=app_icon_url, created=self.created,
                                                creator=user_message, last_update_time=self.last_update_time,
                                                last_activity=self.last_activity, last_update_type=self.last_update_type,
-                                               anno_read_status=anno_read_status
+                                               anno_read_status=anno_read_status, last_activity_user=last_activity_user
                                             )
         else:
             anno_message = AnnoResponseMessage(id=self.key.id(),
@@ -133,6 +136,11 @@ class Anno(BaseModel):
         """
         appinfo, community = getAppAndCommunity(message, user)
 
+        circle_level = 0
+        if community:
+            userrole_circle_level = UserRole.getCircleLevel(user, community)
+            circle_level = message.circle_level if (message.circle_level <= userrole_circle_level) else userrole_circle_level
+
         entity = cls(anno_text=message.anno_text, anno_type=message.anno_type,
                      level=message.level, device_model=message.device_model, 
                      os_name=message.os_name, os_version=message.os_version, 
@@ -144,6 +152,7 @@ class Anno(BaseModel):
         # set appinfo and community
         entity.app = appinfo.key
         entity.community = community.key if community else None
+        entity.circle_level = circle_level
 
         # set created time if provided in the message.
         if message.created is not None:
@@ -335,10 +344,10 @@ class Anno(BaseModel):
         return AnnoListMessage(anno_list=anno_list)
 
     @classmethod
-    def query_by_page(cls, limit, projection, curs, user):
+    def query_by_page(cls, limit, projection, curs, user, is_plugin=False):
         query = cls.query()
         query = query.order(-cls.created)
-        query = filter_anno_by_user(query, user)
+        query = filter_anno_by_user(query, user, is_plugin)
 
         if (curs is not None) and (projection is not None):
             annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)

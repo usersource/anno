@@ -35,12 +35,15 @@
 		1DAA390C19025A9000FCE403 /* IntroViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDCA4E818F41A2B006E63FE /* IntroViewController.m */; };
 		1DAA390D19025A9000FCE403 /* OptionFeedbackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDCA4EA18F41A2B006E63FE /* OptionFeedbackViewController.m */; };
 		1DAA390E19025A9A00FCE403 /* AnnoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D44E81C18F7FEF5007A1635 /* AnnoUtils.m */; };
+		1DAE4C2F19F528B200E3A1BA /* UserSourceStatic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBAD08719E66C560060A80D /* UserSourceStatic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1DF46C0519023329005408CA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1DF46C0319023329005408CA /* InfoPlist.strings */; };
 		1DF9C52A18FBBD54004077BE /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */; };
 		1F766FE113BBADB100FB74C0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1F766FDC13BBADB100FB74C0 /* Localizable.strings */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		302D95F214D2391D003F00A1 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 302D95F014D2391D003F00A1 /* MainViewController.xib */; };
 		305D5FD1115AB8F900A74A75 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 305D5FD0115AB8F900A74A75 /* MobileCoreServices.framework */; };
+		5BB64FE019F7ABD10017F6FE /* AnnoSingleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BB64FDC19F79C0E0017F6FE /* AnnoSingleton.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5BB64FE119F7ABE50017F6FE /* AnnoSingleton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB64FDD19F79C0E0017F6FE /* AnnoSingleton.m */; };
 		5BB6D26719EFADAD00AAF4A2 /* AnnoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D44E81C18F7FEF5007A1635 /* AnnoUtils.m */; };
 		5BB6D26819EFADAD00AAF4A2 /* AnnoDrawViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDCA4E418F41A2B006E63FE /* AnnoDrawViewController.m */; };
 		5BB6D26919EFADAD00AAF4A2 /* CommunityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDCA4E618F41A2B006E63FE /* CommunityViewController.m */; };
@@ -76,6 +79,8 @@
 		5BB6D28919EFAE5500AAF4A2 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F583DEA5C56F422C875065F3 /* AddressBook.framework */; };
 		5BB6D28B19EFAF6900AAF4A2 /* libUserSourceStatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BBAD08119E66C560060A80D /* libUserSourceStatic.a */; };
 		5BB6D28C19EFAF7A00AAF4A2 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F713FA28964CB18D9D3278 /* libsqlite3.dylib */; };
+		5BBA243B19FFB3020086AB8E /* ShakeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBA243919FFB2CB0086AB8E /* ShakeView.m */; };
+		5BBA243C19FFB3100086AB8E /* ShakeView.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBA243819FFB2CB0086AB8E /* ShakeView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BBAAB9919F004C800AAC24D /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD5266640B0344749F49768A /* AddressBookUI.framework */; };
 		F840E1F1165FE0F500CFE078 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = F840E1F0165FE0F500CFE078 /* config.xml */; };
 /* End PBXBuildFile section */
@@ -150,8 +155,6 @@
 		0A3A51F59B2349C08F199D4F /* UserSourceAppDelegate+notification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UserSourceAppDelegate+notification.m"; path = "com.phonegap.plugins.PushPlugin/UserSourceAppDelegate+notification.m"; sourceTree = "<group>"; };
 		1D02161618EED12600E97738 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		1D02161818EED18600E97738 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
-		1D3623240D0F684500981E51 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		1D3623250D0F684500981E51 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		1D3E586C196A827A00FF9FC0 /* PushPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PushPlugin.h; path = com.phonegap.plugins.PushPlugin/PushPlugin.h; sourceTree = "<group>"; };
 		1D3E586D196A827A00FF9FC0 /* PushPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PushPlugin.m; path = com.phonegap.plugins.PushPlugin/PushPlugin.m; sourceTree = "<group>"; };
 		1D44E81B18F7FEF5007A1635 /* AnnoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnnoUtils.h; sourceTree = "<group>"; };
@@ -192,8 +195,12 @@
 		5491A59902AB44CA90766B19 /* SocialSharing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SocialSharing.h; path = "nl.x-services.plugins.socialsharing/SocialSharing.h"; sourceTree = "<group>"; };
 		5AEE5B34173C68D80009041E /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		5BB64FDC19F79C0E0017F6FE /* AnnoSingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnnoSingleton.h; sourceTree = "<group>"; };
+		5BB64FDD19F79C0E0017F6FE /* AnnoSingleton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnnoSingleton.m; sourceTree = "<group>"; };
 		5BB6D26119EFAC5500AAF4A2 /* UserSourceAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserSourceAppDelegate.h; sourceTree = "<group>"; };
 		5BB6D26219EFAC5500AAF4A2 /* UserSourceAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserSourceAppDelegate.m; sourceTree = "<group>"; };
+		5BBA243819FFB2CB0086AB8E /* ShakeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShakeView.h; sourceTree = "<group>"; };
+		5BBA243919FFB2CB0086AB8E /* ShakeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShakeView.m; sourceTree = "<group>"; };
 		5BBAD08119E66C560060A80D /* libUserSourceStatic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libUserSourceStatic.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BBAD08219E66C560060A80D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5BBAD08619E66C560060A80D /* UserSourceStatic-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UserSourceStatic-Prefix.pch"; sourceTree = "<group>"; };
@@ -309,10 +316,12 @@
 				302D95F014D2391D003F00A1 /* MainViewController.xib */,
 				5BB6D26119EFAC5500AAF4A2 /* UserSourceAppDelegate.h */,
 				5BB6D26219EFAC5500AAF4A2 /* UserSourceAppDelegate.m */,
-				1D3623240D0F684500981E51 /* AppDelegate.h */,
-				1D3623250D0F684500981E51 /* AppDelegate.m */,
 				1D6F35C81908CDE7002051ED /* ScreenshotGestureListener.h */,
 				1D6F35C91908CDE7002051ED /* ScreenshotGestureListener.m */,
+				5BB64FDC19F79C0E0017F6FE /* AnnoSingleton.h */,
+				5BB64FDD19F79C0E0017F6FE /* AnnoSingleton.m */,
+				5BBA243819FFB2CB0086AB8E /* ShakeView.h */,
+				5BBA243919FFB2CB0086AB8E /* ShakeView.m */,
 			);
 			name = Classes;
 			path = UserSource/Classes;
@@ -541,6 +550,9 @@
 				5BB6D27419EFADD000AAF4A2 /* AnnoCordovaPlugin.h in Headers */,
 				5BB6D27519EFADD000AAF4A2 /* UserSourceAppDelegate.h in Headers */,
 				5BB6D27619EFADD000AAF4A2 /* ScreenshotGestureListener.h in Headers */,
+				1DAE4C2F19F528B200E3A1BA /* UserSourceStatic.h in Headers */,
+				5BB64FE019F7ABD10017F6FE /* AnnoSingleton.h in Headers */,
+				5BBA243C19FFB3100086AB8E /* ShakeView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -645,7 +657,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 510;
+				LastUpgradeCheck = 0600;
 				TargetAttributes = {
 					1D6058900D05DD3D006BFB54 = {
 						DevelopmentTeam = G7Y3KRBLX8;
@@ -808,6 +820,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BBA243B19FFB3020086AB8E /* ShakeView.m in Sources */,
+				5BB64FE119F7ABE50017F6FE /* AnnoSingleton.m in Sources */,
 				5BB6D27719EFAE1A00AAF4A2 /* PushPlugin.m in Sources */,
 				5BB6D27819EFAE1A00AAF4A2 /* CDVDevice.m in Sources */,
 				5BB6D27919EFAE1A00AAF4A2 /* CDVInAppBrowser.m in Sources */,
@@ -924,7 +938,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_LOADER = "";
@@ -977,7 +990,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_LOADER = "";
@@ -1096,7 +1108,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -1118,7 +1129,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1133,7 +1144,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -1149,7 +1159,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(PROJECT_NAME)StaticHeaders";
@@ -1311,7 +1321,6 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -1358,7 +1367,6 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;

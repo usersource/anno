@@ -6,7 +6,7 @@
 //
 
 #import "ScreenshotGestureListener.h"
-#import "AnnoCordovaPlugin.h"
+//#import "AnnoCordovaPlugin.h"
 
 @implementation ScreenshotGestureListener
 
@@ -48,7 +48,8 @@
         level = 1;
     }
     
-    [AnnoCordovaPlugin showAnnoDraw:screenshotPath levelValue:level editModeValue:FALSE landscapeModeValue:NO];
+    AnnoSingleton *annoSingleton = [AnnoSingleton sharedInstance];
+    [annoSingleton showAnnoDraw:screenshotPath levelValue:level editModeValue:FALSE landscapeModeValue:NO];
 }
 
 @end

@@ -1,5 +1,3 @@
-__author__ = 'topcircler'
-
 """
 ProtoRPC message class definitions for Anno API.
 """
@@ -41,6 +39,9 @@ class AnnoMessage(messages.Message):
     longitude = messages.FloatField(21) #:
     community_name = messages.StringField(22) #:
     platform_type = messages.StringField(23) #:
+    team_key = messages.StringField(24) #:
+    user_email = messages.StringField(25) #:
+    circle_level = messages.IntegerField(26) #:
  
 
 class AnnoMergeMessage(messages.Message):
@@ -65,6 +66,7 @@ class AnnoMergeMessage(messages.Message):
     draw_elements = messages.StringField(16) #:
     screenshot_is_anonymized = messages.BooleanField(17) #:
     geo_position = messages.StringField(18) #:
+    team_key = messages.StringField(19) #:
 
 
 class AnnoResponseMessage(messages.Message):
@@ -107,6 +109,7 @@ class AnnoResponseMessage(messages.Message):
     community = messages.MessageField(CommunityMessage, 33)  #:
     app_icon_url = messages.StringField(34)
     anno_read_status = messages.BooleanField(35)
+    last_activity_user = messages.MessageField(UserMessage, 36)
 
 class AnnoListMessage(messages.Message):
     """

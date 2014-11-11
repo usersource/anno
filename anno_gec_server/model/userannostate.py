@@ -6,6 +6,7 @@ from google.appengine.ext import ndb
 
 from model.user import User
 from model.anno import Anno
+from message.user_message import UserMessage
 
 class UserAnnoState(ndb.Model):
     user = ndb.KeyProperty(kind=User, required=True)
@@ -84,3 +85,15 @@ class UserAnnoState(ndb.Model):
             is_read = True
 
         return is_read
+
+    @classmethod
+    def last_activity_user(cls, anno):
+        last_activity = cls.query(ndb.AND(cls.anno == anno.key, cls.notify == True)).order(-cls.created).get()
+
+        user_message = None
+        if last_activity and last_activity.user:
+            user_info = last_activity.user.get()
+            if user_info:
+                user_message = UserMessage(display_name=user_info.display_name, image_url=user_info.image_url)
+
+        return user_message
