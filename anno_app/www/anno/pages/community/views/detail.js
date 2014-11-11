@@ -47,7 +47,9 @@ define([
             borderWidth = 4,
             zoomBorderWidth = 4;
         var zoomSurface, oldSurface, zoomAnnoID;
-        var shapeRedraw = false;
+        var imageLoaded = false,
+            detailLoaded = false,
+            shapeRedraw = false;
 
         var viewPoint = win.getBox(),
             deviceRatio = parseFloat((viewPoint.w / viewPoint.h).toFixed(2));
@@ -85,6 +87,7 @@ define([
             }
 
             loadingImage = false;
+            imageLoaded = true;
             annoTooltipY = null;
 
             window.setTimeout(function() {
@@ -152,7 +155,7 @@ define([
         	// don't draw annotations when imgDetailScreenshot's src is tiniestImageData
             if (domImgDetailScreenshot.src === tiniestImageData) return;
 
-            if (shapeRedraw) return;
+            if (!imageLoaded && !detailLoaded && shapeRedraw) return;
             shapeRedraw = true;
 
         	var drawElements = eventsModel.cursor.draw_elements;
@@ -405,13 +408,15 @@ define([
             domStyle.set('addCommentContainer', 'display', 'none');
             domAddCommentTextBox.blur();
             domAddCommentTextBox.value = '';
+            imageLoaded = false;
+            detailLoaded = false;
+            shapeRedraw = false;
         };
 
         var goNextRecord = function() {
             if ((currentIndex + 1) < eventsModel.model.length) {
                 resetDetailPage();
                 window.setTimeout(function() {
-                    shapeRedraw = false;
                     loadDetailData(currentIndex + 1);
                     goingNextRecord = true;
                 }, 50);
@@ -425,7 +430,6 @@ define([
             if ((currentIndex - 1) >= 0) {
                 resetDetailPage();
                 window.setTimeout(function() {
-                    shapeRedraw = false;
                     loadDetailData(currentIndex - 1);
                     goingNextRecord = false;
                 }, 50);
@@ -702,6 +706,7 @@ define([
                     currentAnno.set('draw_elements', returnAnno.draw_elements||"");
 
                     loadingDetailData = false;
+                    detailLoaded = true;
 
                     if (!loadingImage)
                     {
@@ -1573,6 +1578,8 @@ define([
                 goingNextRecord = null;
                 loadingDetailData = false;
                 loadingImage = false;
+                imageLoaded = false;
+                detailLoaded = false;
                 shapeRedraw = false;
 
                 var cursor = this.params["cursor"];
