@@ -45,7 +45,7 @@
         annoPermaLinkBaseUrl:"http://anno-webapp.appspot.com/usersource/pages/permalink/index.html#/anno/",
         startBackgroundSyncTimer: null,
         isPlugin: false,
-        pluginServer: "3",
+        pluginServer: "1",
         pluginUserEmail : "",
         pluginUserDisplayName : "",
         pluginUserImageURL : "",
