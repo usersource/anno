@@ -138,8 +138,9 @@ class Anno(BaseModel):
 
         circle_level = 0
         if community:
-            userrole_circle_level = UserRole.getCircleLevel(user, community)
-            circle_level = message.circle_level if (message.circle_level <= userrole_circle_level) else userrole_circle_level
+            circle_level = UserRole.getCircleLevel(user, community)
+            if message.circle_level and (message.circle_level <= circle_level):
+                circle_level = message.circle_level
 
         entity = cls(anno_text=message.anno_text, anno_type=message.anno_type,
                      level=message.level, device_model=message.device_model, 
