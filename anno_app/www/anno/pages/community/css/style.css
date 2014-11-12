@@ -254,11 +254,10 @@
     text-align: right
 }
 
-.listTitle{
+.listTitle {
+	max-height: 40px;
 	font-size: 16px;
-    white-space: nowrap;
     overflow: hidden;
-    text-overflow:ellipsis;
 }
 
 .headingTitle{
