@@ -37,7 +37,7 @@
         self.IMAGE_ORIENTATION_PORTRAIT = @"portrait";
         self.IMAGE_ORIENTATION_LANDSCAPE = @"landscape";
 
-        self.PROJECT_NAME = @"UserSource";
+        self.PROJECT_NAME = @"Feedback";
     }
 
     return self;
