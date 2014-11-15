@@ -76,7 +76,8 @@ int level;
     
     splashView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     [splashView setBackgroundColor:[UIColor blackColor]];
-    [self.view addSubview:splashView];
+//    [self.view addSubview:splashView];
+    [self.view setBackgroundColor:[UIColor blackColor]];
 
     NSArray *versionCompatibility = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
     NSInteger iOSVersion = [[versionCompatibility objectAtIndex:0] intValue];
@@ -86,6 +87,9 @@ int level;
         CGFloat viewHeight = self.view.frame.size.height;
         [self.webView setFrame:CGRectMake(0, 20, viewWidth, viewHeight - 20)];
     }
+    [self.webView setAlpha:0];
+    [self.webView setBackgroundColor:[UIColor blackColor]];
+    [self.webView setOpaque:NO];
 }
 
 - (void)viewDidUnload
@@ -112,16 +116,19 @@ int level;
 
 #pragma mark UIWebDelegate implementation
 
+- (void)webViewDidStartLoad:(UIWebView *)webView {
+    [webView setBackgroundColor:[UIColor blackColor]];
+    [webView setOpaque:NO];
+    [UIView animateWithDuration:0.5f animations:^{
+        [webView setAlpha:1];
+    } completion:^(BOOL animated){
+    }];
+    
+    return [super webViewDidStartLoad:webView];
+}
+
 - (void)webViewDidFinishLoad:(UIWebView*)theWebView
 {
-    // Black base color for background matches the native apps
-    theWebView.backgroundColor = [UIColor blackColor];
-    [UIView animateWithDuration:0.5f animations:^{
-        [splashView setAlpha:0];
-    } completion:^(BOOL animated){
-        [splashView removeFromSuperview];
-    }];
-
     return [super webViewDidFinishLoad:theWebView];
 }
 
