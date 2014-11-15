@@ -23,14 +23,14 @@ class User(ndb.Model):
 
     @classmethod
     def find_user_by_email(cls, email, team_key=None):
-        auth_source = AuthSourceType.ANNO
         query = cls.query().filter(cls.user_email == email)
 
         if team_key:
             query = query.filter(cls.account_type == team_key)
-            auth_source = AuthSourceType.PLUGIN
+            query = query.filter(cls.auth_source == AuthSourceType.PLUGIN)
+        else:
+            query = query.filter(cls.auth_source != AuthSourceType.PLUGIN)
 
-        query = query.filter(cls.auth_source == auth_source)
         return query.get()
 
     @classmethod

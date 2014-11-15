@@ -164,6 +164,11 @@ indexes:
   - name: created
     direction: desc
 
+- kind: User
+  properties:
+  - name: user_email
+  - name: auth_source
+
 - kind: UserAnnoState
   properties:
   - name: anno
