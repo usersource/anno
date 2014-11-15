@@ -314,6 +314,7 @@ define([
             token.expires_in = 3600 * 24;
             token.access_token = annoUtil.encodeBase64(userInfoData.join(":"));
             this.setBasicAuthToken(token);
+            annoUtil.basicAccessToken = token;
             return token;
         },
         setBasicAuthToken: function(token)

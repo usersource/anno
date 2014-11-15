@@ -53,6 +53,7 @@
         pluginTeamSecret : "",
         timeoutTime: 40 * 1000,
         timeoutSession : {},
+        basicAccessToken: {},
         ERROR_TYPES:{
             "LOAD_GAE_API": 1,
             "API_RESPONSE_EMPTY": 2,
@@ -138,6 +139,11 @@
                 annodraw: 'annoDraw',
                 auth: 'auth'
             }
+        },
+        APIURL : {
+            "account.account.authenticate" : { "url" : "/account/1.0/account/authenticate", "method" : "POST" },
+            "anno.anno.list" : { "url" : "/anno/1.0/anno", "method" : "GET" },
+            "tag.tag.popular" : { "url" : "/tag/1.0/tag_popular", "method" : "GET" }
         },
         hasConnection: function()
         {
@@ -913,7 +919,32 @@
             // These are not fatal errors
             this.exceptionGATracking(["<ShowErrorMessage> code:", error.code, "type:", error.type, "msg:", error.message].join(" "), false);
         },
-        callGAEAPI: function(config, retryCnt)
+        callGAEAPI: function(config) {
+            var root_url = serverURLConfig[Number(this.pluginServer)]["apiRoot"],
+                endpoint_info = this.APIURL[config.method],
+                endpoint_url = root_url + endpoint_info.url,
+                endpoint_method = endpoint_info.method;
+
+            var encoded_params = Object.keys(config.parameter).map(function(k) {
+                return encodeURIComponent(k) + '=' + encodeURIComponent(config.parameter[k]);
+            }).join('&');
+            endpoint_url = endpoint_url + "?" + encoded_params;
+
+            var url_data = {
+                method : endpoint_info.method,
+                handleAs : 'json',
+                headers : { 'Authorization' : 'Basic ' + this.basicAccessToken.access_token }
+            };
+
+            xhr(endpoint_url, url_data).then(function(resp) {
+                resp['result'] = resp;
+                config.success(resp);
+            }, function(e) {
+                console.error("Error while calling " + config.method + ":", e);
+                config.error();
+            });
+        },
+        callGAEAPIWithGAPI: function(config, retryCnt)
         {
             // common method that responsible for calling GAE API
             /**
