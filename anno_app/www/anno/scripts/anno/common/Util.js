@@ -461,7 +461,7 @@
                     id: "dlg_common_confirm_message",
                     content: '' +
                         '<div id="div_cancel_confirm_message_message" class="mblSimpleDialogText">' + message + '</div>' +
-                        '<div style="text-align: center"><button id="btn_ok_confirm_message" class="btn">OK</button><button id="btn_cancel_confirm_message" class="btn">Cancel</button></div>'
+                        '<div style="text-align: center"><button id="btn_ok_confirm_message" class="btn">Yes</button><button id="btn_cancel_confirm_message" class="btn">No</button></div>'
                 });
                 dlg.startup();
 
