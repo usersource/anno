@@ -88,7 +88,8 @@ class UserAnnoState(ndb.Model):
 
     @classmethod
     def last_activity_user(cls, anno):
-        last_activity = cls.query(ndb.AND(cls.anno == anno.key, cls.notify == True)).order(-cls.created).get()
+        query = cls.query(ndb.AND(cls.anno == anno.key, cls.modified != None))
+        last_activity = query.order(-cls.modified).get()
 
         user_message = None
         if last_activity and last_activity.user:
