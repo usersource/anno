@@ -1247,6 +1247,24 @@ require([
         }
     };
 
+    var onPluginAuthSuccess = function(data) {
+        var userInfo = {};
+        userInfo.userId = typeof data !== "undefined" ? data.result.id : "123456";
+        userInfo.email = annoUtil.pluginUserEmail;
+        userInfo.signinMethod = "plugin";
+        userInfo.nickname = annoUtil.pluginUserDisplayName;
+        userInfo.image_url = annoUtil.pluginUserImageURL;
+        userInfo.team_key = annoUtil.pluginTeamKey;
+        userInfo.team_secret = annoUtil.pluginTeamSecret;
+
+        AnnoDataHandler.saveUserInfo(userInfo, function() {
+            userInfo.signedup = 1;
+            DBUtil.localUserInfo = userInfo;
+            DBUtil.localUserInfo.signinmethod = userInfo.signinMethod;
+            OAuthUtil.processBasicAuthToken(userInfo);
+        });
+    };
+
     var authenticatePluginSession = function() {
         var APIConfig = {
             name : annoUtil.API.account,
@@ -1260,20 +1278,7 @@ require([
             },
             showLoadingSpinner: false,
             success : function(resp) {
-                var userInfo = {};
-                userInfo.userId = resp.result.id;
-                userInfo.email = annoUtil.pluginUserEmail;
-                userInfo.signinMethod = "plugin";
-                userInfo.nickname = resp.result.display_name;
-                userInfo.team_key = annoUtil.pluginTeamKey;
-                userInfo.team_secret = annoUtil.pluginTeamSecret;
-
-                AnnoDataHandler.saveUserInfo(userInfo, function() {
-                    userInfo.signedup = 1;
-                    DBUtil.localUserInfo = userInfo;
-                    DBUtil.localUserInfo.signinmethod = userInfo.signinMethod;
-                    OAuthUtil.processBasicAuthToken(userInfo);
-                });
+                onPluginAuthSuccess(resp);
             },
             error : function() {
             }
@@ -1289,10 +1294,10 @@ require([
                 if (userInfo.email && (userInfo.email !== annoUtil.pluginUserEmail)) {
                     AnnoDataHandler.removeUser(function () {
                         OAuthUtil.clearRefreshToken();
-                        authenticatePluginSession();
+                        onPluginAuthSuccess();
                     });
                 } else {
-                    authenticatePluginSession();
+                    onPluginAuthSuccess();
                 }
             });
         });

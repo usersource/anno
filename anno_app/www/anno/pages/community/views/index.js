@@ -1182,7 +1182,7 @@ define([
         var onPluginAuthSuccess = function(data) {
             auth_time = Date.now();
             var userInfo = {};
-            userInfo.userId = typeof data !== "undefined" ? resp.result.id : "123456";
+            userInfo.userId = typeof data !== "undefined" ? data.result.id : "123456";
             userInfo.email = annoUtil.pluginUserEmail;
             userInfo.signinMethod = "plugin";
             userInfo.nickname = annoUtil.pluginUserDisplayName;

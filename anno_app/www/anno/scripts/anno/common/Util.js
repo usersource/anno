@@ -929,9 +929,9 @@
             this.exceptionGATracking(["<ShowErrorMessage> code:", error.code, "type:", error.type, "msg:", error.message].join(" "), false);
         },
         callGAEAPI: function(config) {
-            annoUtil.setDefaultServer(annoUtil.pluginServer);
+            this.setDefaultServer(this.pluginServer);
 
-            var root_url = annoUtil.getCEAPIConfig().apiRoot,
+            var root_url = this.getCEAPIConfig().apiRoot,
                 endpoint_info = this.APIURL[config.method],
                 endpoint_url = root_url + endpoint_info.url,
                 endpoint_method = endpoint_info.method;
@@ -943,14 +943,9 @@
                 }
             }
 
-            var encoded_params = Object.keys(config.parameter).map(function(k) {
-                return encodeURIComponent(k) + '=' + encodeURIComponent(config.parameter[k]);
-            }).join('&');
-
-            endpoint_url = endpoint_url + "?" + encoded_params;
-
             var url_data = {
-                method : endpoint_info.method,
+                method : endpoint_method,
+                data : JSON.stringify(config.parameter),
                 handleAs : 'json',
                 headers : { 'Authorization' : 'Basic ' + this.basicAccessToken.access_token }
             };
