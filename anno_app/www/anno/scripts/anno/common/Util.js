@@ -929,7 +929,9 @@
             this.exceptionGATracking(["<ShowErrorMessage> code:", error.code, "type:", error.type, "msg:", error.message].join(" "), false);
         },
         callGAEAPI: function(config) {
-            var root_url = serverURLConfig[Number(this.pluginServer)]["apiRoot"],
+            annoUtil.setDefaultServer(annoUtil.pluginServer);
+
+            var root_url = annoUtil.getCEAPIConfig().apiRoot,
                 endpoint_info = this.APIURL[config.method],
                 endpoint_url = root_url + endpoint_info.url,
                 endpoint_method = endpoint_info.method;
