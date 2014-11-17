@@ -259,7 +259,7 @@
     if (filePath) {
         dict = [self readJSONFromFile:filePath];
         serverConfig = [dict copy];
-        cloudHost = [[serverConfig valueForKey:@"4"] valueForKey:@"apiRoot"];
+        cloudHost = [[serverConfig valueForKey:@"1"] valueForKey:@"apiRoot"];
     }
     
     return dict;
