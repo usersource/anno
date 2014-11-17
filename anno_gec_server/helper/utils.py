@@ -73,6 +73,8 @@ def auth_user(headers):
             email, password = credential_pair
             signinMethod = SignInMethod.ANNO
             team_key = None
+        elif len(credential_pair) == 5:
+            signinMethod, email, password, team_key, team_secret = credential_pair
         else:
             signinMethod, email, password, team_key, team_secret, display_name, image_url = credential_pair
 
@@ -169,13 +171,16 @@ def get_credential(headers):
     try:
         credential = base64.b64decode(basic_auth_string[1])
         credential_pair = credential.split('_$_')
+        # ":" was used before to split
+        if len(credential_pair) == 1:
+            credential_pair = credential.split(':')
     except Exception as e:
         logging.info("basic auth string: %s", basic_auth_string)
         logging.exception("Exception in get_credential")
         credential_pair = []
 
-    # length of credential_pair for old JS is 2 while for new is 7
-    if not (len(credential_pair) == 2 or len(credential_pair) == 7):
+    # length of credential_pair for old JS is 2 and 5 while for new is 7
+    if len(credential_pair) not in [2, 5, 7]:
         raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
 
     return credential_pair
