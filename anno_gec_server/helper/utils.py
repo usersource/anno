@@ -74,16 +74,22 @@ def auth_user(headers):
             signinMethod = SignInMethod.ANNO
             team_key = None
         else:
-            signinMethod, email, password, team_key, team_secret = credential_pair
+            signinMethod, email, password, team_key, team_secret, display_name, image_url = credential_pair
 
         validate_email(email)
+        user = User.find_user_by_email(email, team_key)
 
         if signinMethod == SignInMethod.ANNO:
             User.authenticate(email, md5(password))
         elif signinMethod == SignInMethod.PLUGIN:
-            Community.authenticate(team_key, md5(team_secret))
+            if not user:
+                user = User.insert_user(email=email, username=display_name, account_type=team_key, image_url=image_url)
+                community = Community.getCommunityFromTeamKey(team_key)
+                UserRole.insert(user, community)
+            elif (display_name != user.display_name) or (image_url != user.image_url):
+                User.update_user(user=user, email=email, username=display_name, account_type=team_key, image_url=image_url)
 
-        user = User.find_user_by_email(email, team_key)
+            Community.authenticate(team_key, md5(team_secret))
     else:
         user = User.find_user_by_email(current_user.email())
 
@@ -162,14 +168,14 @@ def get_credential(headers):
 
     try:
         credential = base64.b64decode(basic_auth_string[1])
-        credential_pair = credential.split(':')
+        credential_pair = credential.split('_$_')
     except Exception as e:
         logging.info("basic auth string: %s", basic_auth_string)
         logging.exception("Exception in get_credential")
         credential_pair = []
 
-    # length of credential_pair for old JS is 2 while for new is 5
-    if not (len(credential_pair) == 2 or len(credential_pair) == 5):
+    # length of credential_pair for old JS is 2 while for new is 7
+    if not (len(credential_pair) == 2 or len(credential_pair) == 7):
         raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
 
     return credential_pair
