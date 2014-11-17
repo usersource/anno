@@ -143,7 +143,16 @@
         APIURL : {
             "account.account.authenticate" : { "url" : "/account/1.0/account/authenticate", "method" : "POST" },
             "anno.anno.list" : { "url" : "/anno/1.0/anno", "method" : "GET" },
-            "tag.tag.popular" : { "url" : "/tag/1.0/tag_popular", "method" : "GET" }
+            "tag.tag.popular" : { "url" : "/tag/1.0/tag_popular", "method" : "GET" },
+            "anno.anno.insert" : { "url" : "/anno/1.0/anno", "method" : "POST" },
+            "anno.anno.delete" : { "url" : "/anno/1.0/anno", "method" : "DELETE", "url_fields" : ["id"] },
+            "anno.anno.get" : { "url" : "/anno/1.0/anno", "method" : "GET", "url_fields" : ["id"] },
+            "followup.followup.insert" : { "url" : "/followup/1.0/followup", "method" : "POST" },
+            "vote.vote.insert" : { "url" : "/vote/1.0/vote", "method" : "POST" },
+            "vote.vote.delete" : { "url" : "/vote/1.0/vote", "method" : "DELETE" },
+            "flag.flag.insert" : { "url" : "/flag/1.0/flag", "method" : "POST" },
+            "flag.flag.delete" : { "url" : "/flag/1.0/flag", "method" : "DELETE" },
+            "anno.anno.mystuff" : { "url" : "/anno/1.0/anno", "method" : "GET" }
         },
         hasConnection: function()
         {
@@ -925,9 +934,17 @@
                 endpoint_url = root_url + endpoint_info.url,
                 endpoint_method = endpoint_info.method;
 
+            if ("url_fields" in endpoint_info && endpoint_info["url_fields"].length > 0) {
+                for (field in endpoint_info["url_fields"]) {
+                    endpoint_url = endpoint_url + "/" + config.parameter[field];
+                    delete config.parameter[field];
+                }
+            }
+
             var encoded_params = Object.keys(config.parameter).map(function(k) {
                 return encodeURIComponent(k) + '=' + encodeURIComponent(config.parameter[k]);
             }).join('&');
+
             endpoint_url = endpoint_url + "?" + encoded_params;
 
             var url_data = {
