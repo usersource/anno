@@ -36,6 +36,8 @@
 - (void) showIntroPage;
 - (void) showOptionFeedback;
 - (void) exitActivity;
+- (void) notificationsForTarget:(id)target performSelector:(SEL)selector;
+- (NSDictionary*) readServerConfiguration;
 
 - (UIViewController*) getTopMostViewController;
 

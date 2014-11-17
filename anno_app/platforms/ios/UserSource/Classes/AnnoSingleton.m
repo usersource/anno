@@ -8,7 +8,12 @@
 
 #import "AnnoSingleton.h"
 
-@implementation AnnoSingleton
+#define UNREAD_URL @"/anno/1.0/user/unread"
+
+@implementation AnnoSingleton {
+    NSDictionary *serverConfig;
+    NSString *cloudHost;
+}
 
 @synthesize utils, infoViewControllerClass;
 
@@ -35,6 +40,10 @@
             self.isPlugin = (![utils isAnno:[[NSBundle mainBundle] bundleIdentifier]]);
             infoViewControllerClass = nil;
             self.newAnnoCreated = FALSE;
+            cloudHost = @"http://usersource-anno.appspot.com";
+            
+            [self performSelectorInBackground:@selector(readServerConfiguration) withObject:nil];
+            
         }
         
         return self;
@@ -104,8 +113,16 @@
         }
         
         if (currentViewController != self.communityViewController) {
-            [currentViewController presentViewController:self.communityViewController animated:YES completion:nil];
-            [self.viewControllerList addObject:self.communityViewController];
+            if (self.communityViewController.presentingViewController == nil) {
+                [currentViewController presentViewController:self.communityViewController animated:YES completion:nil];
+                [self.viewControllerList addObject:self.communityViewController];
+            } else {
+                [self.communityViewController dismissViewControllerAnimated:NO completion:^{
+                    UIViewController *vc = [self getTopMostViewController];
+                    [vc presentViewController:self.communityViewController animated:YES completion:nil];
+                    [self.viewControllerList addObject:self.communityViewController];
+                }];
+            }
         }
     }
 
@@ -193,4 +210,77 @@
         [self.viewControllerList removeLastObject];
     }
 
+/**
+ * Make a request and the number of unread notifications for a user, after setupWithEmail
+ */
+- (void) notificationsForTarget:(id)target performSelector:(SEL)selector {
+    if (!self.email) {
+        NSLog(@"No Email setup yet, call this method after (setupWithEmail:)");
+        return;
+    }
+    
+    NSString *url = [cloudHost stringByAppendingString:UNREAD_URL];
+    url = [url stringByAppendingFormat:@"?user_email=%@", self.email];
+    NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+    NSOperationQueue *q = [[NSOperationQueue alloc] init];
+    [NSURLConnection sendAsynchronousRequest:req
+                                       queue:q
+                           completionHandler:^(NSURLResponse *resp, NSData *data, NSError* error) {
+                               NSNumber *count = 0;
+                               if (error != nil) {
+                                   NSLog(@"Error requesting unread notifications %@", error);
+                                   return;
+                               }
+                               NSDictionary *json = [self parseJSONData:data];
+                               if (json != nil) {
+                                   count = (NSNumber*)[json valueForKey:@"unread_count"];
+                               }
+                               if ([target respondsToSelector:selector]) {
+                                   [target performSelectorOnMainThread:selector withObject:count waitUntilDone:NO];
+                               }
+                           }];
+}
+
+- (NSDictionary*) readJSONFromFile:(NSString*)filePath {
+    NSDictionary *json = nil;
+    NSError *err = nil;
+    NSData *data = [NSData dataWithContentsOfFile:filePath options:NSDataReadingMappedIfSafe error:&err];
+    if (err == nil) {
+        json = [self parseJSONData:data];
+    } else {
+        NSLog(@"Error reading file %@ %@", filePath, err);
+    }
+    return json;
+}
+
+- (NSDictionary*) readServerConfiguration {
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"server-url" ofType:@"json" inDirectory:@"/www/anno/scripts"];
+    NSDictionary *dict = nil;
+    if (filePath) {
+        dict = [self readJSONFromFile:filePath];
+        serverConfig = [dict copy];
+        cloudHost = [[serverConfig valueForKey:@"1"] valueForKey:@"apiRoot"];
+    }
+    
+    return dict;
+}
+
+- (NSDictionary*) parseJSONData:(NSData*) data {
+    NSDictionary *json = nil;
+    NSError *error = nil;
+    @try {
+        json = [NSJSONSerialization JSONObjectWithData:data
+                                               options:kNilOptions error:&error];
+        if (error) {
+            NSLog(@"Error Parsing JSON %@", error);
+        }
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Unable to process JSON data %@ %@", data, exception);
+    }
+    @finally {
+    }
+    
+    return json;
+}
 @end

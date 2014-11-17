@@ -70,6 +70,7 @@ define([
             sdBottom = 90;
         var viewPoint, initialized = false;
         var startPull = false, pullStartY= 0, touchStartY = 0, doRefreshing = false;
+        var init_time, time_before_auth, auth_time, anno_time, total_time;
 
         /**
          * This function is used by native webview to reload list data after
@@ -129,6 +130,7 @@ define([
                 showLoadingSpinner: showLoadingSpinner,
                 success: function(data)
                 {
+                    anno_time = Date.now();
                     drawAnnoList(data, search, order, clearData);
                     if (firstLaunch) {
                         window.setTimeout(function() {
@@ -143,9 +145,11 @@ define([
                                         acceptInvitation(inviteList[i]);
                                     }
                                 }, true);
+                            } else {
+                                sendTimesToServer();
                             }
                             firstLaunch = false;
-                        }, 5 * 1000);
+                        }, 500);
                     }
                 },
                 error: function()
@@ -166,6 +170,36 @@ define([
             }
 
             annoUtil.callGAEAPI(APIConfig);
+        };
+
+        var sendTimesToServer = function() {
+            var device_ready_time = Number(localStorage.getItem("deviceready"));
+            var db_init_done_time = Number(localStorage.getItem("DBinit"));
+            var build_app_time = Number(localStorage.getItem("buildApp"));
+
+            var timeData = {
+                "date" : String(new Date()),
+                "testname" : "test_" + Date.now(),
+                "email" : annoUtil.pluginUserEmail,
+                "deviceReady" : device_ready_time - start_time,
+                "DBInitDone" : db_init_done_time - device_ready_time,
+                "buildApp" : build_app_time - db_init_done_time,
+                "indexInit" : init_time - build_app_time,
+                "beforeAuth" : time_before_auth - init_time,
+                "AuthDone" : auth_time - time_before_auth,
+                "AnnoDone" : anno_time - auth_time,
+                "totaltime" : anno_time - start_time
+            };
+
+            require(["dojo/request/xhr"], function(xhr) {
+                xhr("http://datacollector.ignitesol.com/collector/update", {
+                    method : 'POST',
+                    data : timeData
+                }).then(function(resp) {
+                    console.log("Send data to server");
+                }, function(e) {
+                });
+            });
         };
 
         var drawAnnoList = function(data, search, order, clearData)
@@ -1145,6 +1179,24 @@ define([
             }));
         }; 
 
+        var onPluginAuthSuccess = function(data) {
+            auth_time = Date.now();
+            var userInfo = {};
+            userInfo.userId = typeof data !== "undefined" ? data.result.id : "123456";
+            userInfo.email = annoUtil.pluginUserEmail;
+            userInfo.signinMethod = "plugin";
+            userInfo.nickname = annoUtil.pluginUserDisplayName;
+            userInfo.image_url = annoUtil.pluginUserImageURL;
+            userInfo.team_key = annoUtil.pluginTeamKey;
+            userInfo.team_secret = annoUtil.pluginTeamSecret;
+
+            AnnoDataHandler.saveUserInfo(userInfo, function() {
+                annoUtil.showLoadingIndicator();
+                OAuthUtil.processBasicAuthToken(userInfo);
+                loadListData();
+            });
+        };
+
         var authenticatePluginSession = function() {
             var APIConfig = {
                 name : annoUtil.API.account,
@@ -1157,19 +1209,7 @@ define([
                     'team_secret' : annoUtil.pluginTeamSecret
                 },
                 success : function(resp) {
-                    var userInfo = {};
-                    userInfo.userId = resp.result.id;
-                    userInfo.email = annoUtil.pluginUserEmail;
-                    userInfo.signinMethod = "plugin";
-                    userInfo.nickname = resp.result.display_name;
-                    userInfo.team_key = annoUtil.pluginTeamKey;
-                    userInfo.team_secret = annoUtil.pluginTeamSecret;
-
-                    AnnoDataHandler.saveUserInfo(userInfo, function() {
-                        annoUtil.showLoadingIndicator();
-                        OAuthUtil.processBasicAuthToken(userInfo);
-                        loadListData();
-                    });
+                    onPluginAuthSuccess(resp);
                 },
                 error : function() {
                 }
@@ -1185,10 +1225,12 @@ define([
                     if (userInfo.email && (userInfo.email !== annoUtil.pluginUserEmail)) {
                         AnnoDataHandler.removeUser(function () {
                             OAuthUtil.clearRefreshToken();
-                            authenticatePluginSession();
+                            time_before_auth = Date.now();
+                            onPluginAuthSuccess();
                         });
                     } else {
-                        authenticatePluginSession();
+                        time_before_auth = Date.now();
+                        onPluginAuthSuccess();
                     }
                 });
             });
@@ -1242,6 +1284,7 @@ define([
             // simple view init
             init:function ()
             {
+                init_time = Date.now();
                 eventsModel = this.loadedModels.events;
                 app = this.app;
                 app.inSearchMode = function() { return inSearchMode; };

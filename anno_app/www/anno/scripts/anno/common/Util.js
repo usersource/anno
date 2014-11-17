@@ -1,4 +1,5 @@
 ﻿define([
+    "dojo/_base/lang",
     "dojo/_base/declare",
     "dojo/_base/connect",
     "dojo/dom",
@@ -11,9 +12,10 @@
     "dijit/registry",
     "dojo/text!../../server-url.json",
     "dojo/text!../../strings.json",
+    "dojo/text!../../device_list.json",
     "anno/common/DBUtil",
     "anno/common/GestureHandler"
-], function(declare, connect, dom, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, stringsRes, DBUtil, GestureHandler){
+], function(lang, declare, connect, dom, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, stringsRes, deviceList, DBUtil, GestureHandler){
 
     String.prototype.replaceAt = function(startIndex, replaceCount, character) {
         return this.substr(0, startIndex) + character + this.substr(startIndex + replaceCount);
@@ -21,6 +23,7 @@
 
     serverURLConfig = dojoJson.parse(serverURLConfig);
     stringsRes = dojoJson.parse(stringsRes);
+    deviceList = dojoJson.parse(deviceList);
     // console.log("using server Url config:" + JSON.stringify(serverURLConfig));
     var popularTags = [];
     var suggestTags = false, countToSuggestTags = 0, tagStringArray = [];
@@ -53,6 +56,7 @@
         pluginTeamSecret : "",
         timeoutTime: 40 * 1000,
         timeoutSession : {},
+        basicAccessToken: {},
         ERROR_TYPES:{
             "LOAD_GAE_API": 1,
             "API_RESPONSE_EMPTY": 2,
@@ -108,23 +112,6 @@
             deviceId: "annoDeviceId"
         },
         userCommunities: null, // all communities for current user
-        deviceList: {
-            "iPhone1,1" : "iPhone",
-            "iPhone1,2" : "iPhone3G",
-            "iPhone2,1" : "iPhone3GS",
-            "iPhone3,1" : "iPhone4",
-            "iPhone3,2" : "iPhone4",
-            "iPhone3,3" : "iPhone4",
-            "iPhone4,1" : "iPhone4S",
-            "iPhone5,1" : "iPhone5GSM",
-            "iPhone5,2" : "iPhone5CDMA",
-            "iPhone5,3" : "iPhone5C",
-            "iPhone5,4" : "iPhone5C",
-            "iPhone6,1" : "iPhone5S",
-            "iPhone6,2" : "iPhone5S",
-            "iPhone7,1" : "iPhone6Plus",
-            "iPhone7,2" : "iPhone6"
-        },
         versionInfo: { "version" : "", "build" : "" },
         analytics: {
             category: {
@@ -138,6 +125,20 @@
                 annodraw: 'annoDraw',
                 auth: 'auth'
             }
+        },
+        APIURL : {
+            "account.account.authenticate" : { "url" : "/account/1.0/account/authenticate", "method" : "POST" },
+            "anno.anno.list" : { "url" : "/anno/1.0/anno", "method" : "GET" },
+            "tag.tag.popular" : { "url" : "/tag/1.0/tag_popular", "method" : "GET" },
+            "anno.anno.insert" : { "url" : "/anno/1.0/anno", "method" : "POST" },
+            "anno.anno.delete" : { "url" : "/anno/1.0/anno", "method" : "DELETE", "url_fields" : ["id"] },
+            "anno.anno.get" : { "url" : "/anno/1.0/anno", "method" : "GET", "url_fields" : ["id"] },
+            "followup.followup.insert" : { "url" : "/followup/1.0/followup", "method" : "POST" },
+            "vote.vote.insert" : { "url" : "/vote/1.0/vote", "method" : "POST" },
+            "vote.vote.delete" : { "url" : "/vote/1.0/vote", "method" : "DELETE" },
+            "flag.flag.insert" : { "url" : "/flag/1.0/flag", "method" : "POST" },
+            "flag.flag.delete" : { "url" : "/flag/1.0/flag", "method" : "DELETE" },
+            "anno.anno.mystuff" : { "url" : "/anno/1.0/anno_my_stuff", "method" : "GET" }
         },
         hasConnection: function()
         {
@@ -913,7 +914,46 @@
             // These are not fatal errors
             this.exceptionGATracking(["<ShowErrorMessage> code:", error.code, "type:", error.type, "msg:", error.message].join(" "), false);
         },
-        callGAEAPI: function(config, retryCnt)
+        callGAEAPI: function(config) {
+            this.setDefaultServer(this.pluginServer);
+
+            var root_url = this.getCEAPIConfig().apiRoot,
+                endpoint_info = this.APIURL[config.method],
+                endpoint_url = root_url + endpoint_info.url,
+                endpoint_method = endpoint_info.method;
+
+            if ("url_fields" in endpoint_info && endpoint_info["url_fields"].length > 0) {
+                for (field in endpoint_info["url_fields"]) {
+                    endpoint_url = endpoint_url + "/" + config.parameter[field];
+                    delete config.parameter[field];
+                }
+            }
+
+            var url_data = {
+                method : endpoint_method,
+                handleAs : 'json',
+                headers : { 'Authorization' : 'Basic ' + this.basicAccessToken.access_token }
+            };
+
+            if (endpoint_method === "GET") {
+                var encoded_params = Object.keys(config.parameter).map(function(k) {
+                    return encodeURIComponent(k) + '=' + encodeURIComponent(config.parameter[k]);
+                }).join('&');
+
+                endpoint_url = endpoint_url + "?" + encoded_params;
+            } else {
+                url_data["data"] = JSON.stringify(config.parameter);
+            }
+
+            xhr(endpoint_url, url_data).then(function(resp) {
+                resp['result'] = lang.clone(resp);
+                config.success(resp);
+            }, function(e) {
+                console.error("Error while calling " + config.method + ":", e);
+                config.error();
+            });
+        },
+        callGAEAPIWithGAPI: function(config, retryCnt)
         {
             // common method that responsible for calling GAE API
             /**
@@ -1216,7 +1256,7 @@
             }
         },
         parseDeviceModel: function(deviceModel) {
-            return (( deviceModel in this.deviceList) ? this.deviceList[deviceModel] : deviceModel);
+            return ((deviceModel in deviceList) ? deviceList[deviceModel] : deviceModel);
         },
         getVersionInfo: function() {
             return this.versionInfo;

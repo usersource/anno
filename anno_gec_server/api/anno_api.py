@@ -59,6 +59,7 @@ from message.anno_api_messages import AnnoMessage
 from message.anno_api_messages import AnnoMergeMessage
 from message.anno_api_messages import AnnoListMessage
 from message.anno_api_messages import AnnoResponseMessage
+from message.anno_api_messages import UserUnreadMessage
 from model.anno import Anno
 from model.vote import Vote
 from model.flag import Flag
@@ -116,6 +117,11 @@ class AnnoApi(remote.Service):
         limit=messages.IntegerField(5),
         offset=messages.IntegerField(6),
         only_my_apps=messages.BooleanField(7)
+    )
+
+    anno_user_email_resource_container =endpoints.ResourceContainer(
+        user_email=messages.StringField(1),
+        team_key=messages.StringField(2)
     )
 
     @endpoints.method(anno_with_id_resource_container, AnnoResponseMessage, path='anno/{id}',
@@ -353,3 +359,16 @@ class AnnoApi(remote.Service):
             return Anno.query_by_active(request.limit, request.offset, request.search_string, request.app_name, app_set, user)
         else:
             return Anno.query_by_recent(request.limit, request.offset, request.search_string, request.app_name, app_set, user)
+
+    @endpoints.method(anno_user_email_resource_container, UserUnreadMessage,
+                      path="user/unread", http_method="GET", name="user.unread")
+    def get_unread_count(self, request):
+        user = User.find_user_by_email(request.user_email, team_key=request.team_key)
+        unread_count = 0
+        if (user is not None):
+            activity_list = Anno.query_my_anno(20, None, user)
+            for anno in activity_list.anno_list:
+                if (not anno.anno_read_status):
+                    unread_count += 1
+
+        return UserUnreadMessage(unread_count=unread_count)

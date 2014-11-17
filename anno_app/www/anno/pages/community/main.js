@@ -44,11 +44,16 @@ require([
         });
 
         document.addEventListener("deviceready", function() {
+            localStorage.setItem("deviceready", Date.now());
             window.setTimeout(function() {
                 annoUtil.checkIfPlugin();
                 DBUtil.initDB(function() {
+                    localStorage.setItem("DBinit", Date.now());
                     console.log("[community:main.js] DB is ready.");
-                    annoUtil.readSettings(function() { Application(config); });
+                    annoUtil.readSettings(function() {
+                        localStorage.setItem("buildApp", Date.now());
+                        Application(config);
+                    });
                 });
             }, 0);
         }, false);

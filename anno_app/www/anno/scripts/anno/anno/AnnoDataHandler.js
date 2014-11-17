@@ -699,6 +699,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                 }
 
                 window.currentUserInfo = userInfo;
+                DBUtil.localUserInfo = userInfo;
                 if (callback) callback(userInfo);
             }, onSQLError);
         },
