@@ -598,7 +598,7 @@ define([
         var showStartRefreshMessage = function()
         {
             domStyle.set('headingStartTable', 'display', 'none');
-            dom.byId('pullToRefreshMsg').innerHTML = "Refreshing UserSource feed";
+            dom.byId('pullToRefreshMsg').innerHTML = "Refreshing feeds";
             domStyle.set('pullToRefreshMsg', 'display', '');
         };
 
