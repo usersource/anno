@@ -149,7 +149,7 @@ define([
                                 sendTimesToServer();
                             }
                             firstLaunch = false;
-                        }, 5 * 1000);
+                        }, 500);
                     }
                 },
                 error: function()
