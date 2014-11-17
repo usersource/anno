@@ -697,7 +697,7 @@ define([
                     device_model = annoUtil.parseDeviceModel(returnAnno.device_model) || ' ';
                     os_name = returnAnno.os_name || ' ';
                     os_version = returnAnno.os_version || ' ';
-                    deviceInfo = device_model + ' ' + os_name + os_version;
+                    deviceInfo = device_model + ' / ' + os_name + ' ' + os_version;
                     currentAnno.set('deviceInfo', deviceInfo);
 
                     currentAnno.set('vote', returnAnno.is_my_vote);
