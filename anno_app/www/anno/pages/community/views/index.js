@@ -1179,8 +1179,25 @@ define([
             }));
         }; 
 
+        var onPluginAuthSuccess = function(data) {
+            auth_time = Date.now();
+            var userInfo = {};
+            userInfo.userId = typeof data !== "undefined" ? resp.result.id : "123456";
+            userInfo.email = annoUtil.pluginUserEmail;
+            userInfo.signinMethod = "plugin";
+            userInfo.nickname = annoUtil.pluginUserDisplayName;
+            userInfo.image_url = annoUtil.pluginUserImageURL;
+            userInfo.team_key = annoUtil.pluginTeamKey;
+            userInfo.team_secret = annoUtil.pluginTeamSecret;
+
+            AnnoDataHandler.saveUserInfo(userInfo, function() {
+                annoUtil.showLoadingIndicator();
+                OAuthUtil.processBasicAuthToken(userInfo);
+                loadListData();
+            });
+        };
+
         var authenticatePluginSession = function() {
-            time_before_auth = Date.now();
             var APIConfig = {
                 name : annoUtil.API.account,
                 method : "account.account.authenticate",
@@ -1192,20 +1209,7 @@ define([
                     'team_secret' : annoUtil.pluginTeamSecret
                 },
                 success : function(resp) {
-                    auth_time = Date.now();
-                    var userInfo = {};
-                    userInfo.userId = resp.result.id;
-                    userInfo.email = annoUtil.pluginUserEmail;
-                    userInfo.signinMethod = "plugin";
-                    userInfo.nickname = resp.result.display_name;
-                    userInfo.team_key = annoUtil.pluginTeamKey;
-                    userInfo.team_secret = annoUtil.pluginTeamSecret;
-
-                    AnnoDataHandler.saveUserInfo(userInfo, function() {
-                        annoUtil.showLoadingIndicator();
-                        OAuthUtil.processBasicAuthToken(userInfo);
-                        loadListData();
-                    });
+                    onPluginAuthSuccess(resp);
                 },
                 error : function() {
                 }
@@ -1221,10 +1225,12 @@ define([
                     if (userInfo.email && (userInfo.email !== annoUtil.pluginUserEmail)) {
                         AnnoDataHandler.removeUser(function () {
                             OAuthUtil.clearRefreshToken();
-                            authenticatePluginSession();
+                            time_before_auth = Date.now();
+                            onPluginAuthSuccess();
                         });
                     } else {
-                        authenticatePluginSession();
+                        time_before_auth = Date.now();
+                        onPluginAuthSuccess();
                     }
                 });
             });
