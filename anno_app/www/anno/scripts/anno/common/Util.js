@@ -1286,7 +1286,7 @@
                 var settings = this.getSettings();
                 var config = serverURLConfig[settings.ServerURL];
                 if (config) {
-                    propertyID = config.GAPropertyID;
+                    propertyID = this.isPlugin ? config.pluginGAPropertyID : config.GAPropertyID;
                 }
                 if (!propertyID) return false;
             }
