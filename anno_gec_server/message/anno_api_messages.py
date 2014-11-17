@@ -119,3 +119,6 @@ class AnnoListMessage(messages.Message):
     cursor = messages.StringField(2) #:
     has_more = messages.BooleanField(3) #:
     offset = messages.IntegerField(4) #:
+
+class UserUnreadMessage(messages.Message):
+    unread_count = messages.IntegerField(1)
