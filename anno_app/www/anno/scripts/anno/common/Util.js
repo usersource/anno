@@ -951,7 +951,8 @@
             };
 
             xhr(endpoint_url, url_data).then(function(resp) {
-                resp['result'] = resp;
+                var clone_resp = JSON.parse(JSON.stringify(resp));
+                resp['result'] = clone_resp;
                 config.success(resp);
             }, function(e) {
                 console.error("Error while calling " + config.method + ":", e);
