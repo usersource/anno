@@ -1,4 +1,5 @@
 ﻿define([
+    "dojo/_base/lang",
     "dojo/_base/declare",
     "dojo/_base/connect",
     "dojo/dom",
@@ -13,7 +14,7 @@
     "dojo/text!../../strings.json",
     "anno/common/DBUtil",
     "anno/common/GestureHandler"
-], function(declare, connect, dom, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, stringsRes, DBUtil, GestureHandler){
+], function(lang, declare, connect, dom, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, stringsRes, DBUtil, GestureHandler){
 
     String.prototype.replaceAt = function(startIndex, replaceCount, character) {
         return this.substr(0, startIndex) + character + this.substr(startIndex + replaceCount);
@@ -152,7 +153,7 @@
             "vote.vote.delete" : { "url" : "/vote/1.0/vote", "method" : "DELETE" },
             "flag.flag.insert" : { "url" : "/flag/1.0/flag", "method" : "POST" },
             "flag.flag.delete" : { "url" : "/flag/1.0/flag", "method" : "DELETE" },
-            "anno.anno.mystuff" : { "url" : "/anno/1.0/anno", "method" : "GET" }
+            "anno.anno.mystuff" : { "url" : "/anno/1.0/anno_my_stuff", "method" : "GET" }
         },
         hasConnection: function()
         {
@@ -945,14 +946,22 @@
 
             var url_data = {
                 method : endpoint_method,
-                data : JSON.stringify(config.parameter),
                 handleAs : 'json',
                 headers : { 'Authorization' : 'Basic ' + this.basicAccessToken.access_token }
             };
 
+            if (endpoint_method === "GET") {
+                var encoded_params = Object.keys(config.parameter).map(function(k) {
+                    return encodeURIComponent(k) + '=' + encodeURIComponent(config.parameter[k]);
+                }).join('&');
+
+                endpoint_url = endpoint_url + "?" + encoded_params;
+            } else {
+                url_data["data"] = JSON.stringify(config.parameter);
+            }
+
             xhr(endpoint_url, url_data).then(function(resp) {
-                var clone_resp = JSON.parse(JSON.stringify(resp));
-                resp['result'] = clone_resp;
+                resp['result'] = lang.clone(resp);
                 config.success(resp);
             }, function(e) {
                 console.error("Error while calling " + config.method + ":", e);
