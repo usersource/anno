@@ -1,0 +1,22 @@
+{
+	"iPhone1,1": "iPhone",
+	"iPhone1,2": "iPhone3G",
+	"iPhone2,1": "iPhone3GS",
+	"iPhone3,1": "iPhone4",
+	"iPhone3,2": "iPhone4",
+	"iPhone3,3": "iPhone4",
+	"iPhone4,1": "iPhone4S",
+	"iPhone5,1": "iPhone5GSM",
+	"iPhone5,2": "iPhone5CDMA",
+	"iPhone5,3": "iPhone5C",
+	"iPhone5,4": "iPhone5C",
+	"iPhone6,1": "iPhone5S",
+	"iPhone6,2": "iPhone5S",
+	"iPhone7,1": "iPhone6Plus",
+	"iPhone7,2": "iPhone6",
+	"iPod1,1": "iPod 1st generation",
+	"iPod2,1": "iPod 2nd generation",
+	"iPod3,1": "iPod 3rd generation",
+	"iPod4,1": "iPod 4th generation",
+	"iPod5,1": "iPod 5th generation"
+}

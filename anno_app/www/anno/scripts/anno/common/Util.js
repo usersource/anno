@@ -12,9 +12,10 @@
     "dijit/registry",
     "dojo/text!../../server-url.json",
     "dojo/text!../../strings.json",
+    "dojo/text!../../device_list.json",
     "anno/common/DBUtil",
     "anno/common/GestureHandler"
-], function(lang, declare, connect, dom, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, stringsRes, DBUtil, GestureHandler){
+], function(lang, declare, connect, dom, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, stringsRes, deviceList, DBUtil, GestureHandler){
 
     String.prototype.replaceAt = function(startIndex, replaceCount, character) {
         return this.substr(0, startIndex) + character + this.substr(startIndex + replaceCount);
@@ -22,6 +23,7 @@
 
     serverURLConfig = dojoJson.parse(serverURLConfig);
     stringsRes = dojoJson.parse(stringsRes);
+    deviceList = dojoJson.parse(deviceList);
     // console.log("using server Url config:" + JSON.stringify(serverURLConfig));
     var popularTags = [];
     var suggestTags = false, countToSuggestTags = 0, tagStringArray = [];
@@ -110,23 +112,6 @@
             deviceId: "annoDeviceId"
         },
         userCommunities: null, // all communities for current user
-        deviceList: {
-            "iPhone1,1" : "iPhone",
-            "iPhone1,2" : "iPhone3G",
-            "iPhone2,1" : "iPhone3GS",
-            "iPhone3,1" : "iPhone4",
-            "iPhone3,2" : "iPhone4",
-            "iPhone3,3" : "iPhone4",
-            "iPhone4,1" : "iPhone4S",
-            "iPhone5,1" : "iPhone5GSM",
-            "iPhone5,2" : "iPhone5CDMA",
-            "iPhone5,3" : "iPhone5C",
-            "iPhone5,4" : "iPhone5C",
-            "iPhone6,1" : "iPhone5S",
-            "iPhone6,2" : "iPhone5S",
-            "iPhone7,1" : "iPhone6Plus",
-            "iPhone7,2" : "iPhone6"
-        },
         versionInfo: { "version" : "", "build" : "" },
         analytics: {
             category: {
@@ -1271,7 +1256,7 @@
             }
         },
         parseDeviceModel: function(deviceModel) {
-            return (( deviceModel in this.deviceList) ? this.deviceList[deviceModel] : deviceModel);
+            return ((deviceModel in deviceList) ? deviceList[deviceModel] : deviceModel);
         },
         getVersionInfo: function() {
             return this.versionInfo;
