@@ -40,7 +40,7 @@
             self.isPlugin = (![utils isAnno:[[NSBundle mainBundle] bundleIdentifier]]);
             infoViewControllerClass = nil;
             self.newAnnoCreated = FALSE;
-            cloudHost = @"http://localhost:8081";
+            cloudHost = @"http://usersource-anno.appspot.com";
             
             [self performSelectorInBackground:@selector(readServerConfiguration) withObject:nil];
             
