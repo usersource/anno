@@ -183,6 +183,12 @@ indexes:
 - kind: UserAnnoState
   properties:
   - name: anno
+  - name: modified
+    direction: desc
+
+- kind: UserAnnoState
+  properties:
+  - name: anno
   - name: notify
   - name: created
     direction: desc
