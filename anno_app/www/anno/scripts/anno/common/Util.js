@@ -923,16 +923,20 @@
                 endpoint_method = endpoint_info.method;
 
             if ("url_fields" in endpoint_info && endpoint_info["url_fields"].length > 0) {
-                for (field in endpoint_info["url_fields"]) {
-                    endpoint_url = endpoint_url + "/" + config.parameter[field];
-                    delete config.parameter[field];
+                for (field_index in endpoint_info["url_fields"]) {
+                    var field_value = endpoint_info["url_fields"][field_index];
+                    endpoint_url = endpoint_url + "/" + field_value;
+                    delete config.parameter[field_value];
                 }
             }
 
             var url_data = {
                 method : endpoint_method,
                 handleAs : 'json',
-                headers : { 'Authorization' : 'Basic ' + this.basicAccessToken.access_token }
+                headers : {
+                    'Authorization' : 'Basic ' + this.basicAccessToken.access_token,
+                    'Content-Type' : 'application/json'
+                }
             };
 
             if (endpoint_method === "GET") {
