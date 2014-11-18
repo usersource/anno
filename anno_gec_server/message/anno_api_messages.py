@@ -110,6 +110,7 @@ class AnnoResponseMessage(messages.Message):
     app_icon_url = messages.StringField(34)
     anno_read_status = messages.BooleanField(35)
     last_activity_user = messages.MessageField(UserMessage, 36)
+    circle_level_value = messages.StringField(37)
 
 class AnnoListMessage(messages.Message):
     """

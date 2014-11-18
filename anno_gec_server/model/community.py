@@ -123,3 +123,7 @@ class Community(ndb.Model):
             entity = community.put()
             print community.circles
         return entity
+
+    @classmethod
+    def getCircleLevelValue(cls, community=None, circle_level=0):
+        return community.get().circles.get(str(circle_level))
