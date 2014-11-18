@@ -85,6 +85,7 @@ class Anno(BaseModel):
 
             last_activity_user = UserAnnoState.last_activity_user(self)
 
+            circle_level_value = None
             if (self.community and self.circle_level > 0):
                 circle_level_value = Community.getCircleLevelValue(self.community, self.circle_level)
 
