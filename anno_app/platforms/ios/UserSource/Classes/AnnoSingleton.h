@@ -19,6 +19,7 @@
     AnnoUtils *utils;
     BOOL isPlugin, newAnnoCreated;
     Class infoViewControllerClass;
+    int unreadCount;
 }
 
 @property (strong, retain) CommunityViewController *communityViewController;
@@ -29,6 +30,7 @@
 @property NSMutableArray *annoDrawViewControllerList;
 @property BOOL isPlugin, newAnnoCreated;
 @property (assign) Class infoViewControllerClass;
+@property int unreadCount;
 
 + (id) sharedInstance;
 

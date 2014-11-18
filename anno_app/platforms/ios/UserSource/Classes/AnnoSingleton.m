@@ -15,7 +15,7 @@
     NSString *cloudHost;
 }
 
-@synthesize utils, infoViewControllerClass;
+@synthesize utils, infoViewControllerClass, unreadCount;
 
     static AnnoSingleton *sharedInstance = nil;
 
@@ -41,6 +41,7 @@
             infoViewControllerClass = nil;
             self.newAnnoCreated = FALSE;
             cloudHost = @"http://usersource-anno.appspot.com";
+            unreadCount = 0;
             
             [self performSelectorInBackground:@selector(readServerConfiguration) withObject:nil];
             
@@ -234,6 +235,7 @@
                                NSDictionary *json = [self parseJSONData:data];
                                if (json != nil) {
                                    count = (NSNumber*)[json valueForKey:@"unread_count"];
+                                   unreadCount = [count intValue];
                                }
                                if ([target respondsToSelector:selector]) {
                                    [target performSelectorOnMainThread:selector withObject:count waitUntilDone:NO];

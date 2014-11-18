@@ -8,7 +8,9 @@
 
 #import "ShakeView.h"
 
-@implementation ShakeView
+@implementation ShakeView {
+    UIView *unreadView;
+}
 
 - (id) init {
     self = [super init];
@@ -61,6 +63,11 @@
     UIButton *viewFeedButton = [self makeNewButtonWithTitle:@"View Feedback" selector:@selector(viewFeedbackTapped)];
     [viewFeedButton setFrame:CGRectMake(buttonX, (buttonHeight + buttonMargin), buttonWidth, buttonHeight)];
     [buttonView addSubview:viewFeedButton];
+    unreadView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 12, 12)];
+    [unreadView setCenter:CGPointMake(16, buttonHeight/2)];
+    [unreadView setBackgroundColor:[UIColor clearColor]];
+    unreadView.layer.cornerRadius = 6;
+    [viewFeedButton addSubview:unreadView];
     
     UIButton *cancelButton = [self makeNewButtonWithTitle:@"Cancel" selector:@selector(cancelTapped)];
     [cancelButton setFrame:CGRectMake(buttonX, (buttonHeight + buttonMargin)*2, buttonWidth, buttonHeight)];
@@ -123,6 +130,12 @@
         [UIView animateWithDuration:0.3f animations:^{
             [buttonView setFrame:buttonRect];
         }];
+        int unreadCount = [[AnnoSingleton sharedInstance] unreadCount];
+        NSLog(@"Unread Count %d", unreadCount);
+        if (unreadCount > 0) {
+            [unreadView setBackgroundColor:[UIColor orangeColor]];
+        }
+        
         presented = true;
     }
 
