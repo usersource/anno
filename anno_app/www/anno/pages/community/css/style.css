@@ -1041,7 +1041,8 @@ body.plugin #tdBarAddImage .text-new {
 	display: block !important;
 }
 
-body.plugin #navBtnBackScreenshotPlugin {
+body.plugin #navBtnBackScreenshotPlugin,
+body.plugin .circleLevelName {
 	display: inline-block !important;
 }
 

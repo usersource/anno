@@ -233,6 +233,11 @@ define([
                 eventData.created = annoUtil.getTimeAgoString(annoList[i].created);
                 eventData.app_icon_url = annoList[i].app_icon_url||"";
 
+                var circle_level_value = "circle_level_value" in annoList[i] ? annoList[i].circle_level_value : "";
+                if (circle_level_value !== "") {
+                    eventData.circle_level_value = " (" + circle_level_value + ")";
+                }
+
                 eventData.readStatusClass = "";
                 if ('anno_read_status' in annoList[i]) {
                     eventData.read_status = annoList[i].anno_read_status || false;
