@@ -119,9 +119,10 @@ require([
         checkBarShareState();
     });
 
-    connect.connect(dom.byId("barShare"), touch.release, function()
+    connect.connect(dom.byId("barShare"), "click", function()
     {
         if (domClass.contains(dom.byId("barShare"), 'barIconInactive')) return;
+        domClass.add(dom.byId("barShare"), 'barIconInactive');
 
         if (editMode)
         {
