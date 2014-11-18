@@ -173,6 +173,8 @@ define([
         };
 
         var sendTimesToServer = function() {
+            if (annoUtil.settings.ServerURL !== "1") return;
+
             var device_ready_time = Number(localStorage.getItem("deviceready"));
             var db_init_done_time = Number(localStorage.getItem("DBinit"));
             var build_app_time = Number(localStorage.getItem("buildApp"));
