@@ -255,7 +255,7 @@
 }
 
 .listTitle {
-	max-height: 40px;
+	max-height: 43px;
 	font-size: 16px;
     overflow: hidden;
 }
@@ -1077,4 +1077,8 @@ body.plugin #tdBarAddImage {
 body.plugin #barAddImage,
 body.plugin #barMyStuff  {
 	line-height: 44px !important;
+}
+
+body.plugin .tdListAuthor {
+    width: 82% !important;
 }
