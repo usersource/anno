@@ -220,7 +220,7 @@
     }
     
     NSString *url = [cloudHost stringByAppendingString:UNREAD_URL];
-    url = [url stringByAppendingFormat:@"?user_email=%@", self.email];
+    url = [url stringByAppendingFormat:@"?user_email=%@&team_key=%@", self.email, self.teamKey];
     NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
     NSOperationQueue *q = [[NSOperationQueue alloc] init];
     [NSURLConnection sendAsynchronousRequest:req
