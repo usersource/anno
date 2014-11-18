@@ -136,6 +136,8 @@ define([
                         window.setTimeout(function() {
                             AnnoDataHandler.startBackgroundSync();
                             annoUtil.getTopTags(100);
+                            getMyActivityCount();
+                            sendTimesToServer();
 
                             if (!annoUtil.isPlugin) {
                                 initPushService();
@@ -145,8 +147,6 @@ define([
                                         acceptInvitation(inviteList[i]);
                                     }
                                 }, true);
-                            } else {
-                                sendTimesToServer();
                             }
                             firstLaunch = false;
                         }, 500);
@@ -172,6 +172,30 @@ define([
             annoUtil.callGAEAPI(APIConfig);
         };
 
+        var getMyActivityCount = function() {
+            var APIConfig = {
+                name : annoUtil.API.anno,
+                method : "anno.user.unread",
+                parameter : {
+                    "user_email" : DBUtil.localUserInfo.email,
+                    "team_key" : annoUtil.pluginTeamKey
+                },
+                showLoadingSpinner : false,
+                success : function(data) {
+                    var unread_count = Number(data.unread_count);
+                    var unread_count_text = unread_count > 9 ? "9+" : unread_count;
+                    if (unread_count > 0) {
+                        domStyle.set("unread_count", "display", "block");
+                        dom.byId("unread_count").innerHTML = unread_count_text;
+                    }
+                },
+                error : function() {
+                }
+            };
+
+            annoUtil.callGAEAPI(APIConfig);
+        };
+
         var sendTimesToServer = function() {
             if (annoUtil.settings.ServerURL !== "1") return;
 
@@ -182,7 +206,7 @@ define([
             var timeData = {
                 "date" : String(new Date()),
                 "testname" : "test_" + Date.now(),
-                "email" : annoUtil.pluginUserEmail,
+                "email" : DBUtil.localUserInfo.email,
                 "deviceReady" : device_ready_time - start_time,
                 "DBInitDone" : db_init_done_time - device_ready_time,
                 "buildApp" : build_app_time - db_init_done_time,
@@ -857,6 +881,7 @@ define([
             _connectResults.push(connect.connect(dom.byId("tdBarMyStuff"), 'click', function(e) {
                 dojo.stopEvent(e);
                 hideMenuDialog();
+                domStyle.set("unread_count", "display", "none");
     
                 annoUtil.actionGATracking(annoUtil.analytics.category.feed, "nav to activity", "homescreen");
                 app.transitionToView(document.getElementById('modelApp_home'), {

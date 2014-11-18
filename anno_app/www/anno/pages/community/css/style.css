@@ -989,6 +989,19 @@ li.unread .listTitle {
 	background-repeat: no-repeat;
 	background-position: 50%;
 	background-size: contain;
+	position: relative;
+}
+
+#unread_count {
+	position: absolute;
+	top: 2px;
+	right: -9px;
+	width: 18px;
+	height: 18px;
+	border-radius: 9px;
+	background-color: #F00;
+	line-height: 18px;
+	font-size: 14px;
 }
 
 .pluginInfoText {
