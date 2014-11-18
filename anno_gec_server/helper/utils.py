@@ -9,6 +9,7 @@ import endpoints
 from google.appengine.api import search
 from google.appengine.api import mail
 from google.appengine.ext import ndb
+from google.appengine.ext.ndb import Key
 
 from model.user import User
 from model.appinfo import AppInfo
@@ -308,13 +309,13 @@ def isMember(community, user, include_manager=True):
 def filter_anno_by_user(query, user, is_plugin=False):
     from model.anno import Anno
     user_communities = user_community(user)
+    filter_strings = []
 
     if len(user_communities):
         user_community_dict = { userrole.get("community") : userrole.get("circle_level") for userrole in user_communities }
 
-        filter_strings = []
         for community, circle_level in user_community_dict.iteritems():
-            circle_level_list = [None]
+            circle_level_list = []
 
             if circle_level > 0:
                 community_circles = community.get().circles
@@ -329,12 +330,11 @@ def filter_anno_by_user(query, user, is_plugin=False):
                                   ", Anno.circle_level.IN(" + str(circle_level_list) +
                                   "))")
 
-        from google.appengine.ext.ndb import Key
-        if not is_plugin:
-            filter_strings.append("Anno.community == " + str(None))
+    if not is_plugin:
+        filter_strings.append("Anno.community == " + str(None))
 
-        query = eval("query.filter(ndb.OR(%s))" % ", ".join(filter_strings))
-        query = query.order(Anno._key)
+    query = eval("query.filter(ndb.OR(%s))" % ", ".join(filter_strings))
+    query = query.order(Anno._key)
 
     return query
 
