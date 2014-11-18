@@ -918,6 +918,12 @@
         callGAEAPI: function(config) {
             this.setDefaultServer(this.pluginServer);
 
+            config.showLoadingSpinner = config.showLoadingSpinner == null ? true : config.showLoadingSpinner;
+
+            if (config.showLoadingSpinner) {
+                util.showLoadingIndicator();
+            }
+
             var root_url = this.getCEAPIConfig().apiRoot,
                 endpoint_info = this.APIURL[config.method],
                 endpoint_url = root_url + endpoint_info.url,
@@ -953,6 +959,10 @@
             }
 
             xhr(endpoint_url, url_data).then(function(resp) {
+                if (!config.keepLoadingSpinnerShown) {
+                    util.hideLoadingIndicator();
+                }
+
                 resp['result'] = lang.clone(resp);
                 config.success(resp);
             }, function(e) {
