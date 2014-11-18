@@ -131,6 +131,7 @@
             "anno.anno.list" : { "url" : "/anno/1.0/anno", "method" : "GET" },
             "tag.tag.popular" : { "url" : "/tag/1.0/tag_popular", "method" : "GET" },
             "anno.anno.insert" : { "url" : "/anno/1.0/anno", "method" : "POST" },
+            "anno.anno.merge" : { "url" : "/anno/1.0/anno", "method" : "POST", "url_fields" : ["id"] },
             "anno.anno.delete" : { "url" : "/anno/1.0/anno", "method" : "DELETE", "url_fields" : ["id"] },
             "anno.anno.get" : { "url" : "/anno/1.0/anno", "method" : "GET", "url_fields" : ["id"] },
             "followup.followup.insert" : { "url" : "/followup/1.0/followup", "method" : "POST" },
@@ -925,7 +926,7 @@
             if ("url_fields" in endpoint_info && endpoint_info["url_fields"].length > 0) {
                 for (field_index in endpoint_info["url_fields"]) {
                     var field_value = endpoint_info["url_fields"][field_index];
-                    endpoint_url = endpoint_url + "/" + field_value;
+                    endpoint_url = endpoint_url + "/" + config.parameter[field_value];
                     delete config.parameter[field_value];
                 }
             }
@@ -939,14 +940,16 @@
                 }
             };
 
-            if (endpoint_method === "GET") {
-                var encoded_params = Object.keys(config.parameter).map(function(k) {
-                    return encodeURIComponent(k) + '=' + encodeURIComponent(config.parameter[k]);
-                }).join('&');
+            if (Object.keys(config.parameter).length > 0) {
+                if (endpoint_method === "POST") {
+                    url_data["data"] = JSON.stringify(config.parameter);
+                } else {
+                    var encoded_params = Object.keys(config.parameter).map(function(k) {
+                        return encodeURIComponent(k) + '=' + encodeURIComponent(config.parameter[k]);
+                    }).join('&');
 
-                endpoint_url = endpoint_url + "?" + encoded_params;
-            } else {
-                url_data["data"] = JSON.stringify(config.parameter);
+                    endpoint_url = endpoint_url + "?" + encoded_params;
+                }
             }
 
             xhr(endpoint_url, url_data).then(function(resp) {
