@@ -139,7 +139,8 @@
             "vote.vote.delete" : { "url" : "/vote/1.0/vote", "method" : "DELETE" },
             "flag.flag.insert" : { "url" : "/flag/1.0/flag", "method" : "POST" },
             "flag.flag.delete" : { "url" : "/flag/1.0/flag", "method" : "DELETE" },
-            "anno.anno.mystuff" : { "url" : "/anno/1.0/anno_my_stuff", "method" : "GET" }
+            "anno.anno.mystuff" : { "url" : "/anno/1.0/anno_my_stuff", "method" : "GET" },
+            "anno.user.unread" : { "url" : "/anno/1.0/user/unread", "method" : "GET" }
         },
         hasConnection: function()
         {
