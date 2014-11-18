@@ -993,15 +993,14 @@ li.unread .listTitle {
 }
 
 #unread_count {
-	position: absolute;
-	top: 2px;
-	right: -9px;
-	width: 18px;
-	height: 18px;
-	border-radius: 9px;
-	background-color: #F00;
-	line-height: 18px;
-	font-size: 14px;
+    position: absolute;
+    top: 13px;
+    right: -6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 6px;
+    background-color: #F00;
+    border: 1px solid #1c262f;
 }
 
 .pluginInfoText {

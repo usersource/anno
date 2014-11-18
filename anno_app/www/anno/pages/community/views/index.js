@@ -183,10 +183,10 @@ define([
                 showLoadingSpinner : false,
                 success : function(data) {
                     var unread_count = Number(data.unread_count);
-                    var unread_count_text = unread_count > 9 ? "9+" : unread_count;
+                    // var unread_count_text = unread_count > 9 ? "9+" : unread_count;
                     if (unread_count > 0) {
                         domStyle.set("unread_count", "display", "block");
-                        dom.byId("unread_count").innerHTML = unread_count_text;
+                        // dom.byId("unread_count").innerHTML = unread_count_text;
                     }
                 },
                 error : function() {
