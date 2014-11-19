@@ -973,25 +973,6 @@ li.unread .listTitle {
 	margin-left: 5px;
 }
 
-#tdBarAddImage .text-new {
-	width: 90%;
-	height: 48px;
-	background: url('images/new.png');
-	background-repeat: no-repeat;
-	background-position: 50%;
-	background-size: contain;
-}
-
-#tdBarMyStuff .text-me {
-	width: 63%;
-	height: 48px;
-	background: url('images/me.png');
-	background-repeat: no-repeat;
-	background-position: 50%;
-	background-size: contain;
-	position: relative;
-}
-
 #unread_count {
     position: absolute;
     top: 13px;
