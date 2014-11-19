@@ -130,11 +130,11 @@
         [UIView animateWithDuration:0.3f animations:^{
             [buttonView setFrame:buttonRect];
         }];
-        int unreadCount = [[AnnoSingleton sharedInstance] unreadCount];
-        NSLog(@"Unread Count %d", unreadCount);
-        if (unreadCount > 0) {
-            [unreadView setBackgroundColor:[UIColor orangeColor]];
-        }
+//        int unreadCount = [[AnnoSingleton sharedInstance] unreadCount];
+//        NSLog(@"Unread Count %d", unreadCount);
+//        if (unreadCount > 0) {
+//            [unreadView setBackgroundColor:[UIColor orangeColor]];
+//        }
         
         presented = true;
     }
