@@ -975,8 +975,8 @@ li.unread .listTitle {
 
 #unreadCount {
     position: absolute;
-    top: 13px;
-    right: -6px;
+    top: 11px;
+    right: 2px;
     width: 10px;
     height: 10px;
     border-radius: 6px;
