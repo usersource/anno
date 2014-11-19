@@ -1289,6 +1289,8 @@ define([
                 localScreenshotPath = annoUtil.getAnnoScreenshotPath();
                 _init();
 
+                domStyle.set("annoTextDetail", "border-color", annoUtil.level1Color);
+
                 _connectResults.push(connect.connect(window, has("ios") ? "orientationchange" : "resize", this, function (e)
                 {
                     //adjustSize();
