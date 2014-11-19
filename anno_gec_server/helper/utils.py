@@ -70,10 +70,14 @@ def auth_user(headers):
     if current_user is None:
         credential_pair = get_credential(headers)
 
+        signinMethod = SignInMethod.ANNO
+        team_key = None
+        team_secret = None
+        display_name = None
+        image_url = None
+
         if len(credential_pair) == 2:
             email, password = credential_pair
-            signinMethod = SignInMethod.ANNO
-            team_key = None
         elif len(credential_pair) == 5:
             signinMethod, email, password, team_key, team_secret = credential_pair
         else:
@@ -89,7 +93,7 @@ def auth_user(headers):
                 user = User.insert_user(email=email, username=display_name, account_type=team_key, image_url=image_url)
                 community = Community.getCommunityFromTeamKey(team_key)
                 UserRole.insert(user, community)
-            elif (display_name != user.display_name) or (image_url != user.image_url):
+            elif (display_name and display_name != user.display_name) or (image_url and image_url != user.image_url):
                 User.update_user(user=user, email=email, username=display_name, account_type=team_key, image_url=image_url)
 
             Community.authenticate(team_key, md5(team_secret))
