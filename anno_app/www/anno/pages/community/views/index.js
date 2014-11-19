@@ -185,7 +185,7 @@ define([
                     var unread_count = Number(data.unread_count);
                     // var unread_count_text = unread_count > 9 ? "9+" : unread_count;
                     if (unread_count > 0) {
-                        domStyle.set("unread_count", "display", "block");
+                        domStyle.set("unreadCount", "display", "block");
                         // dom.byId("unread_count").innerHTML = unread_count_text;
                     }
                 },
@@ -881,7 +881,7 @@ define([
             _connectResults.push(connect.connect(dom.byId("tdBarMyStuff"), 'click', function(e) {
                 dojo.stopEvent(e);
                 hideMenuDialog();
-                domStyle.set("unread_count", "display", "none");
+                domStyle.set("unreadCount", "display", "none");
     
                 annoUtil.actionGATracking(annoUtil.analytics.category.feed, "nav to activity", "homescreen");
                 app.transitionToView(document.getElementById('modelApp_home'), {

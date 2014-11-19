@@ -973,7 +973,7 @@ li.unread .listTitle {
 	margin-left: 5px;
 }
 
-#unread_count {
+#unreadCount {
     position: absolute;
     top: 13px;
     right: -6px;
@@ -1030,7 +1030,7 @@ body.plugin #tdNavInfo {
 body.plugin #divBtnBackMyStuffPlugin,
 body.plugin .pluginInfoText,
 body.plugin #tdBarMyStuff .text-me,
-body.plugin #tdBarAddImage .text-new {
+body.plugin #tdBarAddImage #textNew {
 	display: block !important;
 }
 
