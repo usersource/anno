@@ -34,8 +34,6 @@ require([
     var defaultCommentBox;
 
     var selectedAppName, screenShotPath, selectedAppVersionName, selectedType = "app";
-    var level1Color = annoUtil.level1Color,
-        level2Color = annoUtil.level2Color;
     var level = 1;
     var isAnno = false, appNameListFetched = false;
     var editMode = false, editAppName = "", editAppVersionName = "",
@@ -52,11 +50,11 @@ require([
         if (domClass.contains(dom.byId("barArrow"), 'barIconInactive')) return;
 
         var lineStrokeStyle = {
-            color : level == 1 ? level1Color : level2Color,
+            color : level == 1 ? annoUtil.level1Color : annoUtil.level2Color,
             width : annoUtil.annotationWidth
         };
 
-        var arrowHeadFillStyle = level == 1 ? level1Color : level2Color;
+        var arrowHeadFillStyle = level == 1 ? annoUtil.level1Color : annoUtil.level2Color;
 
         var arrowLine = surface.createArrowLine({
             x1 : lastShapePos.x1,
@@ -76,7 +74,7 @@ require([
         if (domClass.contains(dom.byId("barRectangle"), 'barIconInactive')) return;
 
         var lineStrokeStyle = {
-            color : level == 1 ? level1Color : level2Color,
+            color : level == 1 ? annoUtil.level1Color : annoUtil.level2Color,
             width : annoUtil.annotationWidth
         };
 
@@ -97,7 +95,7 @@ require([
         if (domClass.contains(dom.byId("barComment"), 'barIconInactive')) return;
 
         var lineStrokeStyle = {
-            color : level == 1 ? level1Color : level2Color,
+            color : level == 1 ? annoUtil.level1Color : annoUtil.level2Color,
             width : annoUtil.annotationWidth
         };
 
@@ -592,10 +590,10 @@ require([
     {
         drawMode = true;
         var lineStrokeStyle = {
-            color : level == 1 ? level1Color : level2Color,
+            color : level == 1 ? annoUtil.level1Color : annoUtil.level2Color,
             width : annoUtil.annotationWidth
         };
-        var arrowHeadFillStyle = level == 1 ? level1Color : level2Color;
+        var arrowHeadFillStyle = level == 1 ? annoUtil.level1Color : annoUtil.level2Color;
         var drawElements, drawItem, commentBox;
 
         if (editMode)
@@ -755,11 +753,11 @@ require([
 
                         if (level == 1)
                         {
-                            domStyle.set('screenshotContainer', 'borderColor', level1Color);
+                            domStyle.set('screenshotContainer', 'borderColor', annoUtil.level1Color);
                         }
                         else
                         {
-                            domStyle.set('screenshotContainer', 'borderColor', level2Color);
+                            domStyle.set('screenshotContainer', 'borderColor', annoUtil.level2Color);
                         }
 
                         window.setTimeout(function()
@@ -1442,6 +1440,7 @@ require([
     var init = function() {
         annoUtil.setupGATracking();
         annoUtil.screenGATracking(annoUtil.analytics.category.annodraw);
+        annoUtil.setPluginConfig();
         connectDomElements();
         launchAnnoDrawPage();
     };

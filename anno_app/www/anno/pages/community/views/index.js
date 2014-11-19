@@ -1321,6 +1321,7 @@ define([
                 app = this.app;
                 app.inSearchMode = function() { return inSearchMode; };
                 checkInternetConnection(_init);
+                annoUtil.setPluginConfig();
 
                 if (annoUtil.isPlugin) {
                     domClass.add(document.querySelector("body"), "plugin");

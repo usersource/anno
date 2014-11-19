@@ -10,12 +10,13 @@
     "dojox/mobile/SimpleDialog",
     "dojox/mobile/_ContentPaneMixin",
     "dijit/registry",
+    "dojo/text!../../plugin_settings/pluginConfig.json",
     "dojo/text!../../server-url.json",
     "dojo/text!../../strings.json",
     "dojo/text!../../device_list.json",
     "anno/common/DBUtil",
     "anno/common/GestureHandler"
-], function(lang, declare, connect, dom, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, stringsRes, deviceList, DBUtil, GestureHandler){
+], function(lang, declare, connect, dom, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, pluginConfig, serverURLConfig, stringsRes, deviceList, DBUtil, GestureHandler){
 
     String.prototype.replaceAt = function(startIndex, replaceCount, character) {
         return this.substr(0, startIndex) + character + this.substr(startIndex + replaceCount);
@@ -24,6 +25,7 @@
     serverURLConfig = dojoJson.parse(serverURLConfig);
     stringsRes = dojoJson.parse(stringsRes);
     deviceList = dojoJson.parse(deviceList);
+    pluginConfig = dojoJson.parse(pluginConfig);
     // console.log("using server Url config:" + JSON.stringify(serverURLConfig));
     var popularTags = [];
     var suggestTags = false, countToSuggestTags = 0, tagStringArray = [];
@@ -141,6 +143,10 @@
             "flag.flag.delete" : { "url" : "/flag/1.0/flag", "method" : "DELETE" },
             "anno.anno.mystuff" : { "url" : "/anno/1.0/anno_my_stuff", "method" : "GET" },
             "anno.user.unread" : { "url" : "/anno/1.0/user/unread", "method" : "GET" }
+        },
+        setPluginConfig: function() {
+            this.level1Color = pluginConfig.highlightColorHEX || this.level1Color;
+            this.level1ColorRGB = pluginConfig.highlightColorRGB || this.level1ColorRGB;
         },
         hasConnection: function()
         {

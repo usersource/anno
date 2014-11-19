@@ -48,6 +48,7 @@ define([
             {
                 this.createCommentBox(args);
                 this.checkLevelColor(this.level);
+                this.checkIfPlugin();
 
                 if (this.selectable)
                 {
@@ -1231,14 +1232,21 @@ define([
 
                 }, 50);
             },
+            setDefaultColors: function(levelColor) {
+                this.endpointStrokeStyle = "rgba(" + levelColor + ", 1)";
+                this.endpointFillStyle = "rgba(" + levelColor + ", 0.5)";
+                this.endpointHiddenStrokeStyle = "rgba(" + levelColor + ", 0)";
+                this.endpointHiddenFillStyle = "rgba(" + levelColor + ", 0)";
+                this.xColor = "rgba(" + levelColor + ", 1)";
+            },
             checkLevelColor: function(level) {
                 if (level == 2) {
-                    var levelColor = annoUtil.level2ColorRGB;
-                    this.endpointStrokeStyle = "rgba(" + levelColor + ", 1)";
-                    this.endpointFillStyle = "rgba(" + levelColor + ", 0.5)";
-                    this.endpointHiddenStrokeStyle = "rgba(" + levelColor + ", 0)";
-                    this.endpointHiddenFillStyle = "rgba(" + levelColor + ", 0)";
-                    this.xColor = "rgba(" + levelColor + ", 1)";
+                    this.setDefaultColors(annoUtil.level2ColorRGB);
+                }
+            },
+            checkIfPlugin: function() {
+                if (annoUtil.isPlugin) {
+                    this.setDefaultColors(annoUtil.level1ColorRGB);
                 }
             }
         });
