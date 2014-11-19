@@ -93,7 +93,7 @@ define([
 
                 this.inputNode = domConstruct.create('div', {
                     style: "background-color:transparent;display:none;position:absolute;top:"+(textNodeTop)+"px;left:"+(this.pathPoints[0].x+3)+"px;width:"+(this.pathPoints[4].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
-                    innerHTML:"<textarea id='input_"+this.id+"' placeholder='Enter suggestion here' style='font-family: helvetica, arial;font-size: 13pt;font-weight: normal;background-color:transparent;width:100%;border-color:transparent;outline: none;overflow-x: auto; box-sizing2: border-box; height: 24px;'></textarea>"
+                    innerHTML:"<textarea id='input_"+this.id+"' placeholder='Enter suggestion here' style='font-size: 13pt;font-weight: normal;background-color:transparent;width:100%;border-color:transparent;outline: none;overflow-x: auto; box-sizing2: border-box; height: 24px;'></textarea>"
                 }, this.surface.container, 'last');
                 this.inputElement = dom.byId("input_"+this.id);
 
