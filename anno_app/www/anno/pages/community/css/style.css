@@ -999,6 +999,10 @@ li.unread .listTitle {
 	height: -webkit-calc(100% - 48px);
 }
 
+#childCommentContainer {
+	background: #f4f4f4;
+}
+
 /* for plugin */
 body.plugin #tdHeadingLeft,
 body.plugin #tdBarSearchAnno,

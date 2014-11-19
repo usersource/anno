@@ -462,12 +462,13 @@
         },
         showConfirmMessageDialog: function (message, callback)
         {
-            var dlg = registry.byId('dlg_common_confirm_message');
+            var confirmBoxId = "confirmBox";
+            var dlg = registry.byId(confirmBoxId);
 
             if (!dlg)
             {
                 dlg = new (declare([SimpleDialog, _ContentPaneMixin]))({
-                    id: "dlg_common_confirm_message",
+                    id: confirmBoxId,
                     content: '' +
                         '<div id="div_cancel_confirm_message_message" class="mblSimpleDialogText">' + message + '</div>' +
                         '<div style="text-align: center"><button id="btn_ok_confirm_message" class="btn">Yes</button><button id="btn_cancel_confirm_message" class="btn">No</button></div>'
@@ -476,7 +477,7 @@
 
                 connect.connect(document.getElementById('btn_cancel_confirm_message'), 'click', function ()
                 {
-                    registry.byId('dlg_common_confirm_message').hide();
+                    registry.byId(confirmBoxId).hide();
 
                     if (dlg._callback)
                     {
@@ -486,7 +487,7 @@
 
                 connect.connect(document.getElementById('btn_ok_confirm_message'), 'click', function ()
                 {
-                    registry.byId('dlg_common_confirm_message').hide();
+                    registry.byId(confirmBoxId).hide();
 
                     if (dlg._callback)
                     {

@@ -422,7 +422,7 @@ body#container {
 	font-size: 16px;
 }
 
-#dlg_common_confirm_message {
+#confirmBox {
 	color: #000000;
     background-color: white;
     background-image: none !important;
