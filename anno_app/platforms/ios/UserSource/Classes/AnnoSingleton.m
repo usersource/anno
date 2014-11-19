@@ -118,10 +118,12 @@
                 [currentViewController presentViewController:self.communityViewController animated:YES completion:nil];
                 [self.viewControllerList addObject:self.communityViewController];
             } else {
+                // Do not attempt to show already shown page
+                // Remove page and then re show
                 [self.communityViewController dismissViewControllerAnimated:NO completion:^{
-                    UIViewController *vc = [self getTopMostViewController];
-                    [vc presentViewController:self.communityViewController animated:YES completion:nil];
-                    [self.viewControllerList addObject:self.communityViewController];
+                    [NSTimer scheduledTimerWithTimeInterval:0.5 target:self
+                                                   selector:@selector(showCommunityPage) userInfo:nil
+                                                    repeats:NO];
                 }];
             }
         }
