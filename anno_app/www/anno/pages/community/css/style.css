@@ -1003,6 +1003,13 @@ li.unread .listTitle {
 	background: #f4f4f4;
 }
 
+#detail_loading {
+	position: absolute;
+	left: -webkit-calc(50% - 25px);
+	top: -webkit-calc(50% - 25px);
+	z-index: 4000;
+}
+
 /* for plugin */
 body.plugin #tdHeadingLeft,
 body.plugin #tdBarSearchAnno,

@@ -44,6 +44,7 @@
         level1ColorRGB:"255, 153, 0",
         level2Color:"#ff0000",
         level2ColorRGB:"255, 0, 0",
+        loadingIndicatorColor: "#302730",
         myIPIsServiceUrl:"http://178.18.16.111/myipis",
         annoScreenshotPath:null,
         API_RETRY_TIMES: 0,
@@ -147,6 +148,7 @@
         setPluginConfig: function() {
             this.level1Color = pluginConfig.highlightColorHEX || this.level1Color;
             this.level1ColorRGB = pluginConfig.highlightColorRGB || this.level1ColorRGB;
+            this.loadingIndicatorColor = pluginConfig.loadingIndicatorColorHEX || this.loadingIndicatorColor;
         },
         hasConnection: function()
         {
@@ -224,27 +226,15 @@
                     self.showErrorMessage({type: self.ERROR_TYPES.CORDOVA_API_FAILED, message: JSON.stringify(e)});
                 });}
         },
-        showLoadingIndicator: function ()
-        {
+        showLoadingIndicator: function () {
             var cl = this.loadingIndicator;
 
-            if (!cl)
-            {
-                cl = this.loadingIndicator = new CanvasLoader('', {
-                    id: "detail_loading"
-                });
-                cl.setColor('#302730');
+            if (!cl) {
+                cl = this.loadingIndicator = new CanvasLoader('', { id : "detail_loading" });
+                cl.setColor(this.loadingIndicatorColor);
                 cl.setDiameter(50);
                 cl.setRange(0.9);
             }
-
-            var viewPoint = win.getBox();
-            domStyle.set("detail_loading", {
-                position: 'absolute',
-                left: ((viewPoint.w - 50) / 2) + 'px',
-                top: ((viewPoint.h - 50) / 2) + 'px',
-                zIndex: 4000
-            });
 
             cl.show();
         },
