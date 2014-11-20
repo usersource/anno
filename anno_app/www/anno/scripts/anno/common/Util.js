@@ -146,9 +146,15 @@
             "anno.user.unread" : { "url" : "/anno/1.0/user/unread", "method" : "GET" }
         },
         setPluginConfig: function() {
-            this.level1Color = pluginConfig.highlightColorHEX || this.level1Color;
-            this.level1ColorRGB = pluginConfig.highlightColorRGB || this.level1ColorRGB;
-            this.loadingIndicatorColor = pluginConfig.loadingIndicatorColorHEX || this.loadingIndicatorColor;
+            if (("highlightColorHEX" in pluginConfig) && (pluginConfig.highlightColorHEX !== "")) {
+                this.level1Color = pluginConfig.highlightColorHEX;
+            }
+            if (("highlightColorRGB" in pluginConfig) && (pluginConfig.highlightColorRGB !== "")) {
+                this.level1ColorRGB = pluginConfig.highlightColorRGB;
+            }
+            if (("loadingIndicatorColorHEX" in pluginConfig) && (pluginConfig.loadingIndicatorColorHEX !== "")) {
+                this.loadingIndicatorColor = pluginConfig.loadingIndicatorColorHEX;
+            }
         },
         hasConnection: function()
         {
