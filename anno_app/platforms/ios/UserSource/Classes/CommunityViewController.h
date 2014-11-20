@@ -11,6 +11,7 @@
 
 @interface CommunityViewController : CDVViewController {
     UIView *splashView;
+    UILabel *titleLabel, *poweredLabel;
 }
 
 - (int) getLevel;

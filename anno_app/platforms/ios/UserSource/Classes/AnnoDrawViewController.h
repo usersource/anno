@@ -16,6 +16,7 @@
     int level;
     NSString *screenshotPath;
     UIView *splashView;
+    UILabel *titleLabel, *poweredLabel;
 }
 
 @property (nonatomic) BOOL isPractice;
