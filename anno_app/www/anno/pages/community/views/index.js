@@ -260,8 +260,11 @@ define([
                 eventData.app_icon_url = annoList[i].app_icon_url||"";
 
                 var circle_level_value = "circle_level_value" in annoList[i] ? annoList[i].circle_level_value : "";
+                eventData.circle_level_sep = "hidden";
+                eventData.circle_level_sep_value = " in ";
                 if (circle_level_value !== "") {
-                    eventData.circle_level_value = " (" + circle_level_value + ")";
+                    eventData.circle_level_value = circle_level_value;
+                    eventData.circle_level_sep = "";
                 }
 
                 eventData.readStatusClass = "";
