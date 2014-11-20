@@ -1397,10 +1397,10 @@ define([
                     }
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('imgSocialSharing'), 'click', function ()
+                /*_connectResults.push(connect.connect(dom.byId('imgSocialSharing'), 'click', function ()
                 {
                     doSocialShare();
-                }));
+                }));*/
 
                 _connectResults.push(connect.connect(domAddCommentTextBox, "focus", function ()
                 {
