@@ -186,12 +186,12 @@
                                                                        metrics:nil
                                                                          views:views]];
     
-    [splashView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[poweredLabel]-10-[imageView]"
+    [splashView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[poweredLabel]-15-|"
                                                                        options:0
                                                                        metrics:nil
                                                                          views:views]];
     
-    [splashView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[poweredLabel(33)]-15-|"
+    [splashView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[poweredLabel]-15-|"
                                                                        options:0
                                                                        metrics:nil
                                                                          views:views]];
@@ -216,6 +216,7 @@
     [splashView addSubview:poweredLabel];
     
     imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"usersource_logo"]];
+    imageView.hidden = YES;
     [splashView addSubview:imageView];
     
     [self setUIConstraint];

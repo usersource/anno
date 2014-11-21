@@ -36,7 +36,7 @@
 		1DAA390D19025A9000FCE403 /* OptionFeedbackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDCA4EA18F41A2B006E63FE /* OptionFeedbackViewController.m */; };
 		1DAA390E19025A9A00FCE403 /* AnnoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D44E81C18F7FEF5007A1635 /* AnnoUtils.m */; };
 		1DAE4C2F19F528B200E3A1BA /* UserSourceStatic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBAD08719E66C560060A80D /* UserSourceStatic.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1DB34AD11A1F49790061F604 /* usersource_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 1DB34AD01A1F49790061F604 /* usersource_logo.png */; };
+		1DB34AD41A1F4EF80061F604 /* usersource_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 1DB34AD31A1F4EF80061F604 /* usersource_logo.png */; };
 		1DF46C0519023329005408CA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1DF46C0319023329005408CA /* InfoPlist.strings */; };
 		1DF9C52A18FBBD54004077BE /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */; };
 		1F766FE113BBADB100FB74C0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1F766FDC13BBADB100FB74C0 /* Localizable.strings */; };
@@ -166,7 +166,7 @@
 		1D6F35C91908CDE7002051ED /* ScreenshotGestureListener.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScreenshotGestureListener.m; sourceTree = "<group>"; };
 		1D933EB818F26F6400C82F37 /* AnnoCordovaPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnnoCordovaPlugin.h; sourceTree = "<group>"; };
 		1D933EB918F26F6400C82F37 /* AnnoCordovaPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnnoCordovaPlugin.m; sourceTree = "<group>"; };
-		1DB34AD01A1F49790061F604 /* usersource_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = usersource_logo.png; path = ../../../../../Documents/usersource_logo.png; sourceTree = "<group>"; };
+		1DB34AD31A1F4EF80061F604 /* usersource_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = usersource_logo.png; path = UserSource/usersource_logo.png; sourceTree = "<group>"; };
 		1DDCA4E318F41A2B006E63FE /* AnnoDrawViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnnoDrawViewController.h; sourceTree = "<group>"; };
 		1DDCA4E418F41A2B006E63FE /* AnnoDrawViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnnoDrawViewController.m; sourceTree = "<group>"; };
 		1DDCA4E518F41A2B006E63FE /* CommunityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityViewController.h; sourceTree = "<group>"; };
@@ -371,7 +371,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				1DB34AD01A1F49790061F604 /* usersource_logo.png */,
+				1DB34AD31A1F4EF80061F604 /* usersource_logo.png */,
 				F840E1F0165FE0F500CFE078 /* config.xml */,
 				301BF56E109A69640062928A /* www */,
 				301BF52D109A57CC0062928A /* CordovaLib.xcodeproj */,
@@ -720,7 +720,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F840E1F1165FE0F500CFE078 /* config.xml in Resources */,
-				1DB34AD11A1F49790061F604 /* usersource_logo.png in Resources */,
+				1DB34AD41A1F4EF80061F604 /* usersource_logo.png in Resources */,
 				1D49F333198BC30D0077DE51 /* Images.xcassets in Resources */,
 				1F766FE113BBADB100FB74C0 /* Localizable.strings in Resources */,
 				302D95F214D2391D003F00A1 /* MainViewController.xib in Resources */,
