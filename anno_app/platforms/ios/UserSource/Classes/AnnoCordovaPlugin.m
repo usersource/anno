@@ -47,7 +47,7 @@ AnnoSingleton *annoSingleton;
     [[[UIAlertView alloc] initWithTitle:title
                                 message:message
                                delegate:nil
-                      cancelButtonTitle:@"Ok"
+                      cancelButtonTitle:@"OK"
                       otherButtonTitles:nil] show];
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
