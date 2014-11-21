@@ -261,7 +261,8 @@ define([
 
                 var circle_level_value = "circle_level_value" in annoList[i] ? annoList[i].circle_level_value : "";
                 if (circle_level_value !== "") {
-                    eventData.circle_level_value = " (" + circle_level_value + ")";
+                    eventData.circle_level_value = circle_level_value;
+                    eventData.circle_level_sep_value = " in ";
                 }
 
                 eventData.readStatusClass = "";
