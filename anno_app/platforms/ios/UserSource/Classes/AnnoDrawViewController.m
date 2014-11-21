@@ -158,35 +158,48 @@
 #pragma mark View lifecycle
 
 - (void) setUIConstraint {
-    [titleLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [poweredLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
+    titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    poweredLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    imageView.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    NSDictionary *views  = NSDictionaryOfVariableBindings(titleLabel, poweredLabel, imageView);
     
     [splashView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[titleLabel]-0-|"
                                                                        options:0
                                                                        metrics:nil
-                                                                         views:NSDictionaryOfVariableBindings(titleLabel)]];
+                                                                         views:views]];
     
     int verticalSpace = (self.view.frame.size.height - 50) / 2;
     NSString *verticalConstraint = [NSString stringWithFormat:@"V:|-%d-[titleLabel(50)]-%d-|", verticalSpace, verticalSpace];
     [splashView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:verticalConstraint
                                                                        options:0
                                                                        metrics:nil
-                                                                         views:NSDictionaryOfVariableBindings(titleLabel)]];
+                                                                         views:views]];
+    
+    [splashView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[imageView]-15-|"
+                                                                       options:0
+                                                                       metrics:nil
+                                                                         views:views]];
+    
+    [splashView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[imageView]-15-|"
+                                                                       options:0
+                                                                       metrics:nil
+                                                                         views:views]];
     
     [splashView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[poweredLabel]-15-|"
                                                                        options:0
                                                                        metrics:nil
-                                                                         views:NSDictionaryOfVariableBindings(poweredLabel)]];
+                                                                         views:views]];
     
     [splashView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[poweredLabel]-15-|"
                                                                        options:0
                                                                        metrics:nil
-                                                                         views:NSDictionaryOfVariableBindings(poweredLabel)]];
+                                                                         views:views]];
 }
 
 - (void) setSplashScreen {
     splashView = [[UIView alloc] initWithFrame:self.view.frame];
-    [splashView setBackgroundColor:[UIColor colorWithRed:15/255.0 green:17/255.0 blue:22/255.0 alpha:1.0]];
+    splashView.backgroundColor = [UIColor colorWithRed:15/255.0 green:17/255.0 blue:22/255.0 alpha:1.0];
     [self.view addSubview:splashView];
     
     titleLabel = [[UILabel alloc] init];
@@ -201,6 +214,10 @@
     poweredLabel.textColor = [UIColor whiteColor];
     poweredLabel.font = [UIFont systemFontOfSize:14.0];
     [splashView addSubview:poweredLabel];
+    
+    imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"usersource_logo"]];
+    imageView.hidden = YES;
+    [splashView addSubview:imageView];
     
     [self setUIConstraint];
 }
