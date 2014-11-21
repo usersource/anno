@@ -95,10 +95,12 @@
 - (void) postNewTapped {
     lastScreenshotPath = [anno.utils saveImageToTemp:lastScreenshotImage];
     [anno showAnnoDraw:lastScreenshotPath levelValue:0 editModeValue:NO landscapeModeValue:NO];
+    [self removeOptionsSheet];
 }
 
 - (void) viewFeedbackTapped {
     [anno showCommunityPage];
+    [self removeOptionsSheet];
 }
 
 - (void) cancelTapped {
@@ -146,22 +148,4 @@
 - (BOOL) canBecomeFirstResponder {
     return YES;
 }
-
-- (void)didPresentActionSheet:(UIActionSheet *)actionSheet {
-}
-
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    return;
-    NSLog(@"Button %ld", (long)buttonIndex);
-    if (buttonIndex == 0) {
-        // Post Feedback
-        lastScreenshotPath = [anno.utils saveImageToTemp:lastScreenshotImage];
-        [anno showAnnoDraw:lastScreenshotPath levelValue:0 editModeValue:NO landscapeModeValue:NO];
-    } else if (buttonIndex == 1) {
-        // Show community
-        [anno showCommunityPage];
-    }
-}
-
 @end

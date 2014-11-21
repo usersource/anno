@@ -157,6 +157,54 @@
 
 #pragma mark View lifecycle
 
+- (void) setUIConstraint {
+    [titleLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [poweredLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
+    
+    [splashView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[titleLabel]-0-|"
+                                                                       options:0
+                                                                       metrics:nil
+                                                                         views:NSDictionaryOfVariableBindings(titleLabel)]];
+    
+    int verticalSpace = (self.view.frame.size.height - 50) / 2;
+    NSString *verticalConstraint = [NSString stringWithFormat:@"V:|-%d-[titleLabel(50)]-%d-|", verticalSpace, verticalSpace];
+    [splashView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:verticalConstraint
+                                                                       options:0
+                                                                       metrics:nil
+                                                                         views:NSDictionaryOfVariableBindings(titleLabel)]];
+    
+    [splashView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[poweredLabel]-15-|"
+                                                                       options:0
+                                                                       metrics:nil
+                                                                         views:NSDictionaryOfVariableBindings(poweredLabel)]];
+    
+    [splashView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[poweredLabel]-15-|"
+                                                                       options:0
+                                                                       metrics:nil
+                                                                         views:NSDictionaryOfVariableBindings(poweredLabel)]];
+}
+
+- (void) setSplashScreen {
+    splashView = [[UIView alloc] initWithFrame:self.view.frame];
+    [splashView setBackgroundColor:[UIColor colorWithRed:15/255.0 green:17/255.0 blue:22/255.0 alpha:1.0]];
+    [self.view addSubview:splashView];
+    
+    titleLabel = [[UILabel alloc] init];
+    titleLabel.text = @"In-App Feedback";
+    titleLabel.textColor = [UIColor whiteColor];
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+    titleLabel.font = [UIFont systemFontOfSize:24.0];
+    [splashView addSubview:titleLabel];
+    
+    poweredLabel = [[UILabel alloc] init];
+    poweredLabel.text = @"Powered by UserSource.io";
+    poweredLabel.textColor = [UIColor whiteColor];
+    poweredLabel.font = [UIFont systemFontOfSize:14.0];
+    [splashView addSubview:poweredLabel];
+    
+    [self setUIConstraint];
+}
+
 - (void) viewWillAppear:(BOOL)animated {
     // View defaults to full size.  If you want to customize the view's size, or its subviews (e.g. webView),
     // you can do so here.
@@ -165,10 +213,7 @@
 
 - (void) viewDidLoad {
     [super viewDidLoad];
-    
-    splashView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    [splashView setBackgroundColor:[UIColor blackColor]];
-    [self.view addSubview:splashView];
+    [self setSplashScreen];
 
     NSArray *versionCompatibility = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
     NSInteger iOSVersion = [[versionCompatibility objectAtIndex:0] intValue];
@@ -218,14 +263,14 @@
 
 - (void)webViewDidFinishLoad:(UIWebView*)theWebView
 {
-    // Black base color for background matches the native apps
-    theWebView.backgroundColor = [UIColor blackColor];
-    [UIView animateWithDuration:0.5f animations:^{
-        [splashView setAlpha:0];
-    } completion:^(BOOL animated){
-       [splashView removeFromSuperview];
-    }];
-
+    dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 1);
+    dispatch_after(delay, dispatch_get_main_queue(), ^(void){
+        [UIView animateWithDuration:2.0f animations:^{
+            [splashView setAlpha:0.0f];
+        } completion:^(BOOL finished){
+            splashView.hidden = YES;
+        }];
+    });
     return [super webViewDidFinishLoad:theWebView];
 }
 
