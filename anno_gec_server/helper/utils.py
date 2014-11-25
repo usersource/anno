@@ -89,6 +89,7 @@ def auth_user(headers):
         if signinMethod == SignInMethod.ANNO:
             User.authenticate(email, md5(password))
         elif signinMethod == SignInMethod.PLUGIN:
+            display_name = unicode(display_name, "utf-8", "ignore")
             if not user:
                 user = User.insert_user(email=email, username=display_name, account_type=team_key, image_url=image_url)
                 community = Community.getCommunityFromTeamKey(team_key)
