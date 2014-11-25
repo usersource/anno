@@ -89,6 +89,7 @@ def auth_user(headers):
         if signinMethod == SignInMethod.ANNO:
             User.authenticate(email, md5(password))
         elif signinMethod == SignInMethod.PLUGIN:
+            display_name = unicode(display_name, "utf-8", "ignore")
             if not user:
                 user = User.insert_user(email=email, username=display_name, account_type=team_key, image_url=image_url)
                 community = Community.getCommunityFromTeamKey(team_key)
@@ -311,32 +312,23 @@ def isMember(community, user, include_manager=True):
     return True if results else False
 
 def filter_anno_by_user(query, user, is_plugin=False):
-    from model.anno import Anno
-    user_communities = user_community(user)
     filter_strings = []
 
-    if len(user_communities):
-        user_community_dict = { userrole.get("community") : userrole.get("circle_level") for userrole in user_communities }
+    user_community_dict = { role.get("community") : role.get("circle_level") for role in user_community(user) }
+    for community, circle_level in user_community_dict.iteritems():
+        if circle_level > 0:
+            circle_level_list = [ int(level) for level in community.get().circles.keys() if int(level) <= circle_level ]
+        else:
+            circle_level_list = [ circle_level ]
 
-        for community, circle_level in user_community_dict.iteritems():
-            circle_level_list = []
-
-            if circle_level > 0:
-                community_circles = community.get().circles
-                if community_circles:
-                    for circle_level_value, circle_level_name in community_circles.iteritems():
-                        if int(circle_level_value) <= circle_level:
-                            circle_level_list.append(int(circle_level_value))
-            else:
-                circle_level_list.append(circle_level)
-
-            filter_strings.append("ndb.AND(Anno.community == " + str(community) +
-                                  ", Anno.circle_level.IN(" + str(circle_level_list) +
-                                  "))")
+        filter_strings.append("ndb.AND(Anno.community == " + str(community) +
+                              ", Anno.circle_level.IN(" + str(circle_level_list) +
+                              "))")
 
     if not is_plugin:
         filter_strings.append("Anno.community == " + str(None))
 
+    from model.anno import Anno
     query = eval("query.filter(ndb.OR(%s))" % ", ".join(filter_strings))
     query = query.order(Anno._key)
 

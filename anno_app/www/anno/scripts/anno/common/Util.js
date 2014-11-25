@@ -145,6 +145,19 @@
             "anno.anno.mystuff" : { "url" : "/anno/1.0/anno_my_stuff", "method" : "GET" },
             "anno.user.unread" : { "url" : "/anno/1.0/user/unread", "method" : "GET" }
         },
+        dataCollectorURL : {
+            "main_page" : "http://datacollector.ignitesol.com/collector/update"
+        },
+        sendTimesToServer: function(type, timesData) {
+            xhr(this.dataCollectorURL[type], {
+                method : 'POST',
+                data : timesData
+            }).then(function(resp) {
+                console.log("Sent data to server for", type);
+            }, function(e) {
+                console.error("Sending data failed for", type);
+            });
+        },
         setPluginConfig: function() {
             if (("highlightColorHEX" in pluginConfig) && (pluginConfig.highlightColorHEX !== "")) {
                 this.level1Color = pluginConfig.highlightColorHEX;

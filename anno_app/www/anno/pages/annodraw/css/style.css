@@ -431,3 +431,10 @@ body#container {
     box-shadow: none;
     -webkit-box-shadow: none;
 }
+
+#detail_loading {
+	position: absolute;
+	left: -webkit-calc(50% - 25px);
+	top: -webkit-calc(50% - 25px);
+	z-index: 4000;
+}

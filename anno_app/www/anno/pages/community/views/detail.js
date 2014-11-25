@@ -419,6 +419,7 @@ define([
                 window.setTimeout(function() {
                     loadDetailData(currentIndex + 1);
                     goingNextRecord = true;
+                    annoRead(currentIndex + 1);
                 }, 50);
                 return true;
             }
@@ -432,6 +433,7 @@ define([
                 window.setTimeout(function() {
                     loadDetailData(currentIndex - 1);
                     goingNextRecord = false;
+                    annoRead(currentIndex - 1);
                 }, 50);
                 return true;
             }

@@ -1010,6 +1010,14 @@ li.unread .listTitle {
 	z-index: 4000;
 }
 
+#textNew {
+	height: 17px;
+	background: url('images/icon_plus.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-size: contain;
+}
+
 /* for plugin */
 body.plugin #tdHeadingLeft,
 body.plugin #tdBarSearchAnno,

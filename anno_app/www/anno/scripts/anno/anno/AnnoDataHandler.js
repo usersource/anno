@@ -453,12 +453,12 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                 name: annoUtil.API.anno,
                 method: "anno.anno.merge",
                 parameter: anno,
-                showLoadingSpinner: false,
+                showLoadingSpinner: true,
                 needAuth: true,
                 showErrorMessage: !background,
                 success: function(data)
                 {
-                    self.updateAnnoSynchedStateByObjectKey(anno.id);
+                    self.updateAnnoSynchedStateByObjectKey(data.id);
                     console.log("update anno succeeded.");
 
                     if (!background)
