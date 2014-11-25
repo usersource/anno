@@ -46,7 +46,6 @@ static AnnoSingleton *sharedInstance = nil;
         self.shakeSensitivityValues = @[@"1 Shake", @"2 Shakes", @"3 Shakes"];
         
         [self performSelectorInBackground:@selector(readServerConfiguration) withObject:nil];
-        [self getShakeSettings];
     }
     
     return self;
@@ -59,7 +58,7 @@ static AnnoSingleton *sharedInstance = nil;
     self.shakeSettingsData = [[NSUserDefaults standardUserDefaults] objectForKey:@"shakeSettings"];
 
     if (self.shakeSettingsData != nil) {
-        self.shakeSettingsData = [shakeSettingsData objectForKey:self.email];
+        self.shakeSettingsData = [self.shakeSettingsData objectForKey:self.email];
         self.shakeSettingsData = [[NSMutableDictionary alloc] initWithDictionary:self.shakeSettingsData];
     } else {
         self.shakeSettingsData = [[NSMutableDictionary alloc] initWithDictionary:@{ @"allowShake" : @1, @"shakeValue" : @0 }];
@@ -83,7 +82,8 @@ static AnnoSingleton *sharedInstance = nil;
     [self.shakeSettingsData setValue:[NSNumber numberWithBool:self.allowShake] forKey:@"allowShake"];
     [self.shakeSettingsData setValue:[NSNumber numberWithInteger:self.shakeValue] forKey:@"shakeValue"];
 
-    NSDictionary *userData = @{ self.email : self.shakeSettingsData };
+    NSMutableDictionary *userData = [[NSUserDefaults standardUserDefaults] objectForKey:@"shakeSettings"];
+    userData[self.email] = self.shakeSettingsData;
     [[NSUserDefaults standardUserDefaults] setObject:userData forKey:@"shakeSettings"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
@@ -113,6 +113,7 @@ static AnnoSingleton *sharedInstance = nil;
     }
     self.viewControllerList = [[NSMutableArray alloc] initWithObjects:window.rootViewController, nil];
     self.annoDrawViewControllerList = [[NSMutableArray alloc] init];
+    [self getShakeSettings];
 }
 
 - (UIViewController*) getTopMostViewController {
