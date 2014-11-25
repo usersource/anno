@@ -120,6 +120,7 @@
 {
     if ( event.subtype == UIEventSubtypeMotionShake )
     {
+        if (!anno.allowShake) return;
         if (presented) return;
         // Put in code here to handle shake
 //        [sheet showInView:self.superview];
