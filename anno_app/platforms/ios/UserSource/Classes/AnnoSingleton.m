@@ -82,7 +82,8 @@ static AnnoSingleton *sharedInstance = nil;
     [self.shakeSettingsData setValue:[NSNumber numberWithBool:self.allowShake] forKey:@"allowShake"];
     [self.shakeSettingsData setValue:[NSNumber numberWithInteger:self.shakeValue] forKey:@"shakeValue"];
 
-    NSMutableDictionary *userData = [[NSUserDefaults standardUserDefaults] objectForKey:@"shakeSettings"];
+    NSDictionary *userDefaults = [[NSUserDefaults standardUserDefaults] objectForKey:@"shakeSettings"];
+    NSMutableDictionary *userData = [[NSMutableDictionary alloc] initWithDictionary:userDefaults];
     userData[self.email] = self.shakeSettingsData;
     [[NSUserDefaults standardUserDefaults] setObject:userData forKey:@"shakeSettings"];
     [[NSUserDefaults standardUserDefaults] synchronize];
