@@ -65,8 +65,8 @@ static AnnoSingleton *sharedInstance = nil;
         self.shakeSettingsData = [[NSMutableDictionary alloc] initWithDictionary:@{ @"allowShake" : @1, @"shakeValue" : @0 }];
     }
 
-    self.allowShake = [[shakeSettingsData objectForKey:@"allowShake"] boolValue];
-    self.shakeValue = [[shakeSettingsData objectForKey:@"shakeValue"] integerValue];
+    self.allowShake = [[self.shakeSettingsData objectForKey:@"allowShake"] boolValue];
+    self.shakeValue = [[self.shakeSettingsData objectForKey:@"shakeValue"] integerValue];
 }
 
 - (void) saveAllowShake:(BOOL)allowShakeValue {
@@ -80,8 +80,8 @@ static AnnoSingleton *sharedInstance = nil;
 }
 
 - (void) saveShakeSettings {
-    [self.shakeSettingsData setValue:[NSNumber numberWithBool:allowShake] forKey:@"allowShake"];
-    [self.shakeSettingsData setValue:[NSNumber numberWithInteger:shakeValue] forKey:@"shakeValue"];
+    [self.shakeSettingsData setValue:[NSNumber numberWithBool:self.allowShake] forKey:@"allowShake"];
+    [self.shakeSettingsData setValue:[NSNumber numberWithInteger:self.shakeValue] forKey:@"shakeValue"];
 
     NSDictionary *userData = @{ self.email : self.shakeSettingsData };
     [[NSUserDefaults standardUserDefaults] setObject:userData forKey:@"shakeSettings"];

@@ -169,7 +169,9 @@
                                                                        metrics:nil
                                                                          views:views]];
 
-    [splashView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[titleLabel(50)]-0-|"
+    int verticalSpace = (self.view.frame.size.height - 50) / 2;
+    NSString *verticalConstraint = [NSString stringWithFormat:@"V:|-%d-[titleLabel(50)]-%d-|", verticalSpace, verticalSpace];
+    [splashView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:verticalConstraint
                                                                        options:0
                                                                        metrics:nil
                                                                          views:views]];
@@ -204,7 +206,6 @@
     titleLabel.text = @"In-App Feedback";
     titleLabel.textColor = [UIColor whiteColor];
     titleLabel.textAlignment = NSTextAlignmentCenter;
-    titleLabel.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
     titleLabel.font = [UIFont systemFontOfSize:24.0];
     [splashView addSubview:titleLabel];
     

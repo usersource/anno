@@ -27,6 +27,8 @@
         sheet = [[UIView alloc] initWithFrame:screenRect];
         [sheet setUserInteractionEnabled:YES];
         [self styleSheet];
+        shakeValue = 0;
+        lastShakeTime = nil;
     }
 
     return self;
@@ -122,6 +124,21 @@
     {
         if (!anno.allowShake) return;
         if (presented) return;
+
+        if (lastShakeTime != nil) {
+            NSTimeInterval timeDiff = [lastShakeTime timeIntervalSinceNow];
+            NSLog(@"time diff in shakes: %f", timeDiff);
+            if (timeDiff < -1) {
+                shakeValue = 0;
+                lastShakeTime = nil;
+                return;
+            }
+        }
+
+        lastShakeTime = [NSDate date];
+        shakeValue += 1;
+        if (shakeValue != (anno.shakeValue + 1)) return;
+
         // Put in code here to handle shake
 //        [sheet showInView:self.superview];
 //        [self.superview addSubview:sheet];
@@ -140,6 +157,8 @@
 //        }
         
         presented = true;
+        lastShakeTime = nil;
+        shakeValue = 0;
     }
 
     if ([super respondsToSelector:@selector(motionEnded:withEvent:)])
