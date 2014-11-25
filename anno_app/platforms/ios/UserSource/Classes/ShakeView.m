@@ -128,7 +128,7 @@
         if (lastShakeTime != nil) {
             NSTimeInterval timeDiff = [lastShakeTime timeIntervalSinceNow];
             NSLog(@"time diff in shakes: %f", timeDiff);
-            if (timeDiff < -1) {
+            if (timeDiff < -10) {
                 shakeValue = 0;
                 lastShakeTime = nil;
                 return;
