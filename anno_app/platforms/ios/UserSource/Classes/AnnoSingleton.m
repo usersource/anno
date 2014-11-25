@@ -17,201 +17,239 @@
 
 @synthesize utils, infoViewControllerClass, unreadCount;
 
-    static AnnoSingleton *sharedInstance = nil;
+static AnnoSingleton *sharedInstance = nil;
 
-    // Get the shared instance and create it if necessary.
-    + (AnnoSingleton *)sharedInstance {
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            sharedInstance = [[AnnoSingleton alloc] init];
-            // Do any other initialisation stuff here
-        });
-        return sharedInstance;
+// Get the shared instance and create it if necessary.
++ (AnnoSingleton *) sharedInstance {
+    static dispatch_once_t onceToken;
+
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[AnnoSingleton alloc] init];
+        // Do any other initialisation stuff here
+    });
+
+    return sharedInstance;
+}
+
+// We can still have a regular init method, that will get called the first time the Singleton is used.
+- (id) init {
+    self = [super init];
+    
+    if (self) {
+        // Work your initialising magic here as you normally would
+        utils = [[AnnoUtils alloc] init];
+        self.isPlugin = (![utils isAnno:[[NSBundle mainBundle] bundleIdentifier]]);
+        infoViewControllerClass = nil;
+        self.newAnnoCreated = FALSE;
+        cloudHost = @"http://usersource-anno.appspot.com";
+        unreadCount = 0;
+        self.shakeSensitivityValues = @[@"1 Shake", @"2 Shakes", @"3 Shakes"];
+        
+        [self performSelectorInBackground:@selector(readServerConfiguration) withObject:nil];
+        [self getShakeSettings];
+    }
+    
+    return self;
+}
+
+- (void) getShakeSettings {
+    // data sturcture for shake settings
+    // { "shakeSettings" : { "<user_email>" : { "allowShake" : BOOL, "shakeValue" : int }}}
+
+    self.shakeSettingsData = [[NSUserDefaults standardUserDefaults] objectForKey:@"shakeSettings"];
+
+    if (self.shakeSettingsData != nil) {
+        self.shakeSettingsData = [shakeSettingsData objectForKey:self.email];
+        self.shakeSettingsData = [[NSMutableDictionary alloc] initWithDictionary:self.shakeSettingsData];
+    } else {
+        self.shakeSettingsData = [[NSMutableDictionary alloc] initWithDictionary:@{ @"allowShake" : @1, @"shakeValue" : @0 }];
     }
 
-    // We can still have a regular init method, that will get called the first time the Singleton is used.
-    - (id)init
-    {
-        self = [super init];
+    self.allowShake = [[shakeSettingsData objectForKey:@"allowShake"] boolValue];
+    self.shakeValue = [[shakeSettingsData objectForKey:@"shakeValue"] integerValue];
+}
+
+- (void) saveAllowShake:(BOOL)allowShakeValue {
+    self.allowShake = allowShakeValue;
+    [self saveShakeSettings];
+}
+
+- (void) saveShakeValue:(NSInteger)shakeValueNumber {
+    self.shakeValue = shakeValueNumber;
+    [self saveShakeSettings];
+}
+
+- (void) saveShakeSettings {
+    [self.shakeSettingsData setValue:[NSNumber numberWithBool:allowShake] forKey:@"allowShake"];
+    [self.shakeSettingsData setValue:[NSNumber numberWithInteger:shakeValue] forKey:@"shakeValue"];
+
+    NSDictionary *userData = @{ self.email : self.shakeSettingsData };
+    [[NSUserDefaults standardUserDefaults] setObject:userData forKey:@"shakeSettings"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+// Equally, we don't want to generate multiple copies of the singleton.
+- (id)copyWithZone:(NSZone *)zone {
+    return self;
+}
+
+- (void) setupWithEmail:(NSString*)emailValue
+            displayName:(NSString*)displayNameValue
+           userImageURL:(NSString*)userImageURLValue
+                teamKey:(NSString*)teamKeyValue
+             teamSecret:(NSString*)teamSecretValue {
+    self.communityViewController = [[CommunityViewController alloc] init];
+    self.email = emailValue;
+    self.displayName = displayNameValue;
+    self.userImageURL = userImageURLValue;
+    self.teamKey = teamKeyValue;
+    self.teamSecret = teamSecretValue;
+    
+    
+    UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
+    if (window.rootViewController == nil) {
+        NSLog(@"WARNING! CommunityViewController being set as rootViewController");
+        window.rootViewController = self.communityViewController;
+    }
+    self.viewControllerList = [[NSMutableArray alloc] initWithObjects:window.rootViewController, nil];
+    self.annoDrawViewControllerList = [[NSMutableArray alloc] init];
+}
+
+- (UIViewController*) getTopMostViewController {
+    UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
+    UIViewController* cvc = window.rootViewController;
+    UIViewController* last_cvc = nil;
+    
+    // 10 iteration safe loop
+    for (int max = 10; max && last_cvc != cvc; max --) {
+        last_cvc = cvc;
+        // Is there a navigation controller
+        if (cvc.navigationController) {
+            cvc = cvc.navigationController.topViewController;
+        }
         
-        if (self) {
-            // Work your initialising magic here as you normally would
-            utils = [[AnnoUtils alloc] init];
-            self.isPlugin = (![utils isAnno:[[NSBundle mainBundle] bundleIdentifier]]);
-            infoViewControllerClass = nil;
+        // Is another controller presented
+        if (cvc.presentedViewController) {
+            cvc = cvc.presentedViewController;
+        }
+    }
+    
+    return cvc;
+}
+
+- (void) showCommunityPage {
+//        CDVViewController *currentViewController = [self.viewControllerList lastObject];
+    UIViewController* currentViewController = [self getTopMostViewController];
+    
+    if (self.email == nil || [self.email isEqualToString:@""]) {
+        NSLog(@"Email address is not specified");
+        return;
+    }
+
+    if (self.teamKey == nil || self.teamSecret == nil) {
+        NSLog(@"teamKey and teamSecret are not specified.");
+        return;
+    }
+    
+    if (currentViewController != self.communityViewController) {
+        if (self.communityViewController.presentingViewController == nil) {
+            [currentViewController presentViewController:self.communityViewController animated:YES completion:nil];
+            [self.viewControllerList addObject:self.communityViewController];
+        } else {
+            // Do not attempt to show already shown page
+            // Remove page and then re show
+            [self.communityViewController dismissViewControllerAnimated:NO completion:^{
+                [NSTimer scheduledTimerWithTimeInterval:0.5 target:self
+                                               selector:@selector(showCommunityPage) userInfo:nil
+                                                repeats:NO];
+            }];
+        }
+    }
+}
+
+- (void) showCustomIntroPage {
+    UIViewController *infoViewController = [[infoViewControllerClass alloc] init];
+    NSLog(@"custom intro view: %@", infoViewController);
+    [[self.viewControllerList lastObject] presentViewController:infoViewController animated:YES completion:nil];
+}
+
+- (void) showIntroPage {
+    if (self.isPlugin && (infoViewControllerClass != nil)) {
+        NSLog(@"Showing custom intro page");
+        [self showCustomIntroPage];
+        return;
+    }
+
+    if (introViewController == nil) {
+        introViewController = [[IntroViewController alloc] init];
+    }
+    
+    [[self.viewControllerList lastObject] presentViewController:introViewController animated:YES completion:nil];
+    [self.viewControllerList addObject:introViewController];
+}
+
+- (void) showOptionFeedback {
+    if (optionFeedbackViewController == nil) {
+        optionFeedbackViewController = [[OptionFeedbackViewController alloc] init];
+    }
+    
+    [[self.viewControllerList lastObject] presentViewController:optionFeedbackViewController animated:YES completion:nil];
+    [self.viewControllerList addObject:optionFeedbackViewController];
+}
+
+- (void) showAnnoDraw:(NSString*)imageURI
+           levelValue:(int)levelValue
+        editModeValue:(BOOL)editModeValue
+   landscapeModeValue:(BOOL)landscapeModeValue {
+//        CDVViewController *currentViewController = [self.viewControllerList lastObject];
+    UIViewController* currentViewController = [self getTopMostViewController];
+
+    if ((self.isPlugin) && (self.email == nil || [self.email isEqualToString:@""])) {
+        NSLog(@"Email address is not specified");
+        return;
+    }
+
+    AnnoDrawViewController *annoDrawViewController = [[AnnoDrawViewController alloc] init];
+    [currentViewController presentViewController:annoDrawViewController animated:YES completion:nil];
+    
+    // Adding back lastObject of viewControllerList beacause it gets deleted after calling
+    // presentViewController on lastObject of viewControllerList with annoDrawViewController
+    if ([currentViewController isKindOfClass:[AnnoDrawViewController class]]) {
+        [self.viewControllerList addObject:currentViewController];
+        [self.annoDrawViewControllerList addObject:currentViewController];
+    }
+    
+    [self.viewControllerList addObject:annoDrawViewController];
+    [self.annoDrawViewControllerList addObject:annoDrawViewController];
+    [annoDrawViewController handleFromShareImage:imageURI
+                                      levelValue:levelValue
+                                 isPracticeValue:false
+                                   editModeValue:editModeValue
+                              landscapeModeValue:landscapeModeValue];
+}
+
+- (void) exitActivity {
+    CDVViewController *currentViewController = [self.viewControllerList lastObject];
+    
+    if ([currentViewController isKindOfClass:[CommunityViewController class]]) {
+        [self.communityViewController dismissViewControllerAnimated:YES completion:nil];
+    } else if ([currentViewController isKindOfClass:[IntroViewController class]]) {
+        [introViewController dismissViewControllerAnimated:YES completion:nil];
+    } else if ([currentViewController isKindOfClass:[OptionFeedbackViewController class]]) {
+        [optionFeedbackViewController dismissViewControllerAnimated:YES completion:nil];
+    } else if ([currentViewController isKindOfClass:[AnnoDrawViewController class]]) {
+        AnnoDrawViewController *currentAnnoDrawViewController = [self.annoDrawViewControllerList lastObject];
+        [currentAnnoDrawViewController dismissViewControllerAnimated:YES completion:nil];
+        [self.annoDrawViewControllerList removeLastObject];
+
+        if (self.newAnnoCreated) {
+            [self.communityViewController.webView stringByEvaluatingJavaScriptFromString:@"reloadListData()"];
             self.newAnnoCreated = FALSE;
-            cloudHost = @"http://usersource-anno.appspot.com";
-            unreadCount = 0;
-            
-            [self performSelectorInBackground:@selector(readServerConfiguration) withObject:nil];
-            
-        }
-        
-        return self;
-    }
-
-    // Equally, we don't want to generate multiple copies of the singleton.
-    - (id)copyWithZone:(NSZone *)zone {
-        return self;
-    }
-
-    - (void) setupWithEmail:(NSString*)emailValue
-                displayName:(NSString*)displayNameValue
-               userImageURL:(NSString*)userImageURLValue
-                    teamKey:(NSString*)teamKeyValue
-                 teamSecret:(NSString*)teamSecretValue {
-        self.communityViewController = [[CommunityViewController alloc] init];
-        self.email = emailValue;
-        self.displayName = displayNameValue;
-        self.userImageURL = userImageURLValue;
-        self.teamKey = teamKeyValue;
-        self.teamSecret = teamSecretValue;
-        
-        
-        UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
-        if (window.rootViewController == nil) {
-            NSLog(@"WARNING! CommunityViewController being set as rootViewController");
-            window.rootViewController = self.communityViewController;
-        }
-        self.viewControllerList = [[NSMutableArray alloc] initWithObjects:window.rootViewController, nil];
-        self.annoDrawViewControllerList = [[NSMutableArray alloc] init];
-    }
-
-    - (UIViewController*) getTopMostViewController {
-        UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
-        UIViewController* cvc = window.rootViewController;
-        UIViewController* last_cvc = nil;
-        
-        // 10 iteration safe loop
-        for (int max = 10; max && last_cvc != cvc; max --) {
-            last_cvc = cvc;
-            // Is there a navigation controller
-            if (cvc.navigationController) {
-                cvc = cvc.navigationController.topViewController;
-            }
-            
-            // Is another controller presented
-            if (cvc.presentedViewController) {
-                cvc = cvc.presentedViewController;
-            }
-        }
-        
-        return cvc;
-    }
-
-    - (void) showCommunityPage {
-//        CDVViewController *currentViewController = [self.viewControllerList lastObject];
-        UIViewController* currentViewController = [self getTopMostViewController];
-        
-        if (self.email == nil || [self.email isEqualToString:@""]) {
-            NSLog(@"Email address is not specified");
-            return;
-        }
-
-        if (self.teamKey == nil || self.teamSecret == nil) {
-            NSLog(@"teamKey and teamSecret are not specified.");
-            return;
-        }
-        
-        if (currentViewController != self.communityViewController) {
-            if (self.communityViewController.presentingViewController == nil) {
-                [currentViewController presentViewController:self.communityViewController animated:YES completion:nil];
-                [self.viewControllerList addObject:self.communityViewController];
-            } else {
-                // Do not attempt to show already shown page
-                // Remove page and then re show
-                [self.communityViewController dismissViewControllerAnimated:NO completion:^{
-                    [NSTimer scheduledTimerWithTimeInterval:0.5 target:self
-                                                   selector:@selector(showCommunityPage) userInfo:nil
-                                                    repeats:NO];
-                }];
-            }
         }
     }
-
-    - (void) showCustomIntroPage {
-        UIViewController *infoViewController = [[infoViewControllerClass alloc] init];
-        NSLog(@"custom intro view: %@", infoViewController);
-        [[self.viewControllerList lastObject] presentViewController:infoViewController animated:YES completion:nil];
-    }
-
-    - (void) showIntroPage {
-        if (self.isPlugin && (infoViewControllerClass != nil)) {
-            NSLog(@"Showing custom intro page");
-            [self showCustomIntroPage];
-            return;
-        }
-
-        if (introViewController == nil) {
-            introViewController = [[IntroViewController alloc] init];
-        }
-        
-        [[self.viewControllerList lastObject] presentViewController:introViewController animated:YES completion:nil];
-        [self.viewControllerList addObject:introViewController];
-    }
-
-    - (void) showOptionFeedback {
-        if (optionFeedbackViewController == nil) {
-            optionFeedbackViewController = [[OptionFeedbackViewController alloc] init];
-        }
-        
-        [[self.viewControllerList lastObject] presentViewController:optionFeedbackViewController animated:YES completion:nil];
-        [self.viewControllerList addObject:optionFeedbackViewController];
-    }
-
-    - (void) showAnnoDraw:(NSString*)imageURI
-               levelValue:(int)levelValue
-            editModeValue:(BOOL)editModeValue
-       landscapeModeValue:(BOOL)landscapeModeValue {
-//        CDVViewController *currentViewController = [self.viewControllerList lastObject];
-        UIViewController* currentViewController = [self getTopMostViewController];
-
-        if ((self.isPlugin) && (self.email == nil || [self.email isEqualToString:@""])) {
-            NSLog(@"Email address is not specified");
-            return;
-        }
-
-        AnnoDrawViewController *annoDrawViewController = [[AnnoDrawViewController alloc] init];
-        [currentViewController presentViewController:annoDrawViewController animated:YES completion:nil];
-        
-        // Adding back lastObject of viewControllerList beacause it gets deleted after calling
-        // presentViewController on lastObject of viewControllerList with annoDrawViewController
-        if ([currentViewController isKindOfClass:[AnnoDrawViewController class]]) {
-            [self.viewControllerList addObject:currentViewController];
-            [self.annoDrawViewControllerList addObject:currentViewController];
-        }
-        
-        [self.viewControllerList addObject:annoDrawViewController];
-        [self.annoDrawViewControllerList addObject:annoDrawViewController];
-        [annoDrawViewController handleFromShareImage:imageURI
-                                          levelValue:levelValue
-                                     isPracticeValue:false
-                                       editModeValue:editModeValue
-                                  landscapeModeValue:landscapeModeValue];
-    }
-
-    - (void) exitActivity {
-        CDVViewController *currentViewController = [self.viewControllerList lastObject];
-        
-        if ([currentViewController isKindOfClass:[CommunityViewController class]]) {
-            [self.communityViewController dismissViewControllerAnimated:YES completion:nil];
-        } else if ([currentViewController isKindOfClass:[IntroViewController class]]) {
-            [introViewController dismissViewControllerAnimated:YES completion:nil];
-        } else if ([currentViewController isKindOfClass:[OptionFeedbackViewController class]]) {
-            [optionFeedbackViewController dismissViewControllerAnimated:YES completion:nil];
-        } else if ([currentViewController isKindOfClass:[AnnoDrawViewController class]]) {
-            AnnoDrawViewController *currentAnnoDrawViewController = [self.annoDrawViewControllerList lastObject];
-            [currentAnnoDrawViewController dismissViewControllerAnimated:YES completion:nil];
-            [self.annoDrawViewControllerList removeLastObject];
-
-            if (self.newAnnoCreated) {
-                [self.communityViewController.webView stringByEvaluatingJavaScriptFromString:@"reloadListData()"];
-                self.newAnnoCreated = FALSE;
-            }
-        }
-        
-        [self.viewControllerList removeLastObject];
-    }
+    
+    [self.viewControllerList removeLastObject];
+}
 
 /**
  * Make a request and the number of unread notifications for a user, after setupWithEmail
@@ -249,6 +287,7 @@
     NSDictionary *json = nil;
     NSError *err = nil;
     NSData *data = [NSData dataWithContentsOfFile:filePath options:NSDataReadingMappedIfSafe error:&err];
+
     if (err == nil) {
         json = [self parseJSONData:data];
     } else {
@@ -258,8 +297,11 @@
 }
 
 - (NSDictionary*) readServerConfiguration {
-    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"server-url" ofType:@"json" inDirectory:@"/www/anno/scripts"];
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"server-url"
+                                                         ofType:@"json"
+                                                    inDirectory:@"/www/anno/scripts"];
     NSDictionary *dict = nil;
+
     if (filePath) {
         dict = [self readJSONFromFile:filePath];
         serverConfig = [dict copy];
@@ -272,19 +314,20 @@
 - (NSDictionary*) parseJSONData:(NSData*) data {
     NSDictionary *json = nil;
     NSError *error = nil;
+
     @try {
         json = [NSJSONSerialization JSONObjectWithData:data
-                                               options:kNilOptions error:&error];
+                                               options:kNilOptions
+                                                 error:&error];
         if (error) {
             NSLog(@"Error Parsing JSON %@", error);
         }
-    }
-    @catch (NSException *exception) {
+    } @catch (NSException *exception) {
         NSLog(@"Unable to process JSON data %@ %@", data, exception);
-    }
-    @finally {
+    } @finally {
     }
     
     return json;
 }
+
 @end

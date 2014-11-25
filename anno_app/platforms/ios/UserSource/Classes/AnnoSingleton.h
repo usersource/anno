@@ -20,6 +20,10 @@
     BOOL isPlugin, newAnnoCreated;
     Class infoViewControllerClass;
     int unreadCount;
+    NSArray *shakeSensitivityValues;
+    BOOL allowShake;
+    NSInteger shakeValue;
+    NSMutableDictionary *shakeSettingsData;
 }
 
 @property (strong, retain) CommunityViewController *communityViewController;
@@ -31,6 +35,10 @@
 @property BOOL isPlugin, newAnnoCreated;
 @property (assign) Class infoViewControllerClass;
 @property int unreadCount;
+@property NSArray *shakeSensitivityValues;
+@property BOOL allowShake;
+@property NSInteger shakeValue;
+@property NSMutableDictionary *shakeSettingsData;
 
 + (id) sharedInstance;
 
@@ -53,5 +61,8 @@
            userImageURL:(NSString*)userImageURL
                 teamKey:(NSString*)teamKey
              teamSecret:(NSString*)teamSecret;
+
+- (void) saveAllowShake:(BOOL)allowShakeValue;
+- (void) saveShakeValue:(NSInteger)shakeValueNumber;
 
 @end
