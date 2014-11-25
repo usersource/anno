@@ -217,15 +217,7 @@ define([
                 "totaltime" : anno_time - start_time
             };
 
-            require(["dojo/request/xhr"], function(xhr) {
-                xhr("http://datacollector.ignitesol.com/collector/update", {
-                    method : 'POST',
-                    data : timeData
-                }).then(function(resp) {
-                    console.log("Send data to server");
-                }, function(e) {
-                });
-            });
+            annoUtil.sendTimesToServer("main_page", timeData);
         };
 
         var drawAnnoList = function(data, search, order, clearData)
