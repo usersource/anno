@@ -612,9 +612,11 @@ define([
             }
         };
 
-        var annoRead = window.annoRead = function() {
-            if (domClass.contains(this.domNode, "unread")) {
-                domClass.replace(this.domNode, "read", "unread");
+        var annoRead = window.annoRead = function(annoNodeIndex) {
+            var annoNode = typeof annoNodeIndex === "number" ? dom.byId("event" + annoNodeIndex) : this.domNode;
+            eventsModel.model[Number(annoNode.id[annoNode.id.length - 1])].read_status = true;
+            if (domClass.contains(annoNode, "unread")) {
+                domClass.replace(annoNode, "read", "unread");
             }
         };
 
