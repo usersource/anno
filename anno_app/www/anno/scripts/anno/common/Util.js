@@ -27,7 +27,7 @@
     deviceList = dojoJson.parse(deviceList);
     pluginConfig = dojoJson.parse(pluginConfig);
     // console.log("using server Url config:" + JSON.stringify(serverURLConfig));
-    var popularTags = [];
+    var popularTags = [], userMentions = [];
     var suggestTags = false, countToSuggestTags = 0, tagStringArray = [];
     var previousTagDiv = "", inputValueLength = 0;
     var MIN_CHAR_TO_SUGGEST_TAGS = 2;
@@ -143,7 +143,8 @@
             "flag.flag.insert" : { "url" : "/flag/1.0/flag", "method" : "POST" },
             "flag.flag.delete" : { "url" : "/flag/1.0/flag", "method" : "DELETE" },
             "anno.anno.mystuff" : { "url" : "/anno/1.0/anno_my_stuff", "method" : "GET" },
-            "anno.user.unread" : { "url" : "/anno/1.0/user/unread", "method" : "GET" }
+            "anno.user.unread" : { "url" : "/anno/1.0/user/unread", "method" : "GET" },
+            "user.community.users" : { "url" : "/user/1.0/user/community/users", "method" : "GET" }
         },
         dataCollectorURL : {
             "main_page" : "http://datacollector.ignitesol.com/collector/update"
@@ -1190,6 +1191,21 @@
                             popularTags.push(tagData.text);
                         });
                     }
+                },
+                error : function() {
+                }
+            };
+
+            this.callGAEAPI(APIConfig);
+        },
+        getCommunityUserForMention: function() {
+            var APIConfig = {
+                name : this.API.user,
+                method : "user.community.users",
+                parameter : {},
+                showLoadingSpinner : false,
+                success : function(data) {
+                    userMentions = data.user_list;
                 },
                 error : function() {
                 }
