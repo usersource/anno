@@ -30,7 +30,7 @@
     var popularTags = [], userMentions = [];
     var suggestTags = false, countToSuggestTags = 0, tagStringArray = [];
     var previousTagDiv = "", inputValueLength = 0;
-    var MIN_CHAR_TO_SUGGEST_TAGS = 2;
+    var MIN_CHAR_TO_SUGGEST_TAGS = 0;
     var timings = [{label: 'start', t: Date.now()}];
     var util = {
         loadingIndicator:null,
@@ -1252,6 +1252,7 @@
                 suggestTags = true;
                 countToSuggestTags = 0;
                 tagStringArray = [];
+                this.getTagStrings(tagDiv, inputDiv);
             } else if (suggestTags) {
                 if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90)) {
                     countToSuggestTags += 1;
@@ -1263,7 +1264,7 @@
                     this.resetTagSuggestion(tagDiv);
                 }
 
-                if (countToSuggestTags >= MIN_CHAR_TO_SUGGEST_TAGS) {
+                if ((countToSuggestTags >= MIN_CHAR_TO_SUGGEST_TAGS) && suggestTags) {
                     this.getTagStrings(tagDiv, inputDiv);
                 } else {
                     this.hideTagDiv(tagDiv);
