@@ -29,6 +29,7 @@
     // console.log("using server Url config:" + JSON.stringify(serverURLConfig));
     var popularTags = [], userMentions = [];
     var suggestTags = false, countToSuggestTags = 0, tagStringArray = [];
+    var hashtagSuggestion = false;
     var previousTagDiv = "", inputValueLength = 0;
     var MIN_CHAR_TO_SUGGEST_TAGS = 0;
     var timings = [{label: 'start', t: Date.now()}];
@@ -1248,10 +1249,11 @@
                 keyCode = inputValue.toUpperCase().charCodeAt(inputDom.selectionStart - 1);
             }
 
-            if (keyCode === 35 && keyCodeNull === true) {
+            if ((keyCode === 35 || keyCode === 64) && keyCodeNull === true) {
                 suggestTags = true;
                 countToSuggestTags = 0;
                 tagStringArray = [];
+                hashtagSuggestion = (keyCode === 35) ? true : false;
                 this.getTagStrings(tagDiv, inputDiv);
             } else if (suggestTags) {
                 if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90)) {
@@ -1272,25 +1274,28 @@
             }
         },
         getTagStrings: function(tagDiv, inputDiv) {
-            var annoUtil = this, tagString = tagStringArray.join("");
+            var self = this, tagString = tagStringArray.join("");
+            var superSetArray = hashtagSuggestion ? popularTags : userMentions;
 
-            var suggestedTagsArray = popularTags.filter(function(string) {
-                return string.toLowerCase().indexOf(tagString.toLowerCase()) == 0;
+            var suggestedTagsArray = superSetArray.filter(function(string) {
+                string = hashtagSuggestion ? string : string.display_name;
+                return (string.toLowerCase().indexOf(tagString.toLowerCase()) == 0) && (string !== "");
             });
 
             dom.byId(tagDiv).innerHTML = "";
             suggestedTagsArray.forEach(function(tag) {
                 var innerTagDiv = document.createElement("div");
                 innerTagDiv.className = "tag";
-                innerTagDiv.innerText = "#" + tag;
+                tag = hashtagSuggestion ? "#" + tag : tag.display_name;
+                innerTagDiv.innerText = tag;
                 dom.byId(tagDiv).appendChild(innerTagDiv);
 
                 connect.connect(innerTagDiv, "click", function(e) {
                     dojo.stopEvent(e);
                     var input = dom.byId(inputDiv),
                         replaceIndex = input.selectionStart - tagString.length;
-                    input.value = input.value.replaceAt(replaceIndex, tagString.length, tag + " ");
-                    annoUtil.resetTagSuggestion(tagDiv);
+                    input.value = input.value.replaceAt(replaceIndex - 1, tagString.length + 1, tag + " ");
+                    self.resetTagSuggestion(tagDiv);
 
                     setTimeout(function() {
                         // input.focus();
