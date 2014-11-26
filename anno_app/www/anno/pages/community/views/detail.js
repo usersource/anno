@@ -1441,7 +1441,7 @@ define([
 
                 _connectResults.push(connect.connect(domAddCommentTextBox, "input", function(e) {
                     window.setTimeout(function() {
-                        annoUtil.showSuggestedTags(e, "detailSuggestedTags", "addCommentTextBox");
+                        annoUtil.showTextSuggestion(e, "detailSuggestedTags", "addCommentTextBox");
                     }, 0);
                 }));
 

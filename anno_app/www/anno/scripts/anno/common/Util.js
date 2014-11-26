@@ -1206,7 +1206,7 @@
                 parameter : {},
                 showLoadingSpinner : false,
                 success : function(data) {
-                    userMentions = data.user_list;
+                    userMentions = data.user_list || [];
                 },
                 error : function() {
                 }
@@ -1222,7 +1222,7 @@
             domStyle.set(tagDiv, "display", "none");
             this.enableNativeGesture();
         },
-        resetTagSuggestion: function(tagDiv) {
+        resetTextSuggestion: function(tagDiv) {
             suggestTags = false;
             countToSuggestTags = 0;
             tagStringArray = [];
@@ -1230,7 +1230,7 @@
             previousTagDiv = "";
             inputValueLength = 0;
         },
-        showSuggestedTags: function(e, tagDiv, inputDiv) {
+        showTextSuggestion: function(e, tagDiv, inputDiv) {
             var inputDom = dom.byId(inputDiv),
                 inputValue = inputDom.value,
                 keyCodeNull = false,
@@ -1263,7 +1263,7 @@
                     countToSuggestTags -= 1;
                     tagStringArray.pop();
                 } else {
-                    this.resetTagSuggestion(tagDiv);
+                    this.resetTextSuggestion(tagDiv);
                 }
 
                 if ((countToSuggestTags >= MIN_CHAR_TO_SUGGEST_TAGS) && suggestTags) {
@@ -1295,7 +1295,7 @@
                     var input = dom.byId(inputDiv),
                         replaceIndex = input.selectionStart - tagString.length;
                     input.value = input.value.replaceAt(replaceIndex - 1, tagString.length + 1, tag + " ");
-                    self.resetTagSuggestion(tagDiv);
+                    self.resetTextSuggestion(tagDiv);
 
                     setTimeout(function() {
                         // input.focus();
