@@ -210,8 +210,19 @@ indexes:
 - kind: UserRole
   properties:
   - name: community
+  - name: circle_level
+  - name: user
+
+- kind: UserRole
+  properties:
+  - name: community
   - name: role
   - name: user
+
+- kind: UserRole
+  properties:
+  - name: user
+  - name: circle_level
 
 - kind: UserRole
   properties:
