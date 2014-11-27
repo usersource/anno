@@ -1245,6 +1245,7 @@
             this.hideTagDiv(tagDiv);
             previousTagDiv = "";
             inputValueLength = 0;
+            dom.byId(tagDiv).scrollLeft = 0;
         },
         showTextSuggestion: function(e, tagDiv, inputDiv) {
             var inputDom = dom.byId(inputDiv),
@@ -1294,12 +1295,14 @@
             var superSetArray = popularTags;
 
             if (!hashtagSuggestion) {
-                superSetArray = teamUsers;
+                superSetArray = lang.clone(teamUsers);
                 annoEngagedUsers.forEach(function(user) {
                     superSetArray.push(user);
                 });
             }
 
+            // filter based on tagString
+            // this will remove duplicate and empty data
             var filteredSuggestedTagsArrays = [];
             var suggestedTagsArray = superSetArray.filter(function(string) {
                 string = hashtagSuggestion ? string : string.display_name;
