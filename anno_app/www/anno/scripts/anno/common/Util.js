@@ -27,7 +27,7 @@
     deviceList = dojoJson.parse(deviceList);
     pluginConfig = dojoJson.parse(pluginConfig);
     // console.log("using server Url config:" + JSON.stringify(serverURLConfig));
-    var popularTags = [], userMentions = [];
+    var popularTags = [], teamUsers = [], annoEngagedUsers = [];
     var suggestTags = false, countToSuggestTags = 0, tagStringArray = [];
     var hashtagSuggestion = false;
     var previousTagDiv = "", inputValueLength = 0;
@@ -138,6 +138,7 @@
             "anno.anno.merge" : { "url" : "/anno/1.0/anno", "method" : "POST", "url_fields" : ["id"] },
             "anno.anno.delete" : { "url" : "/anno/1.0/anno", "method" : "DELETE", "url_fields" : ["id"] },
             "anno.anno.get" : { "url" : "/anno/1.0/anno", "method" : "GET", "url_fields" : ["id"] },
+            "anno.anno.users" : { "url" : "/anno/1.0/anno/users", "method" : "GET", "url_fields" : ["id"] },
             "followup.followup.insert" : { "url" : "/followup/1.0/followup", "method" : "POST" },
             "vote.vote.insert" : { "url" : "/vote/1.0/vote", "method" : "POST" },
             "vote.vote.delete" : { "url" : "/vote/1.0/vote", "method" : "DELETE" },
@@ -1206,7 +1207,22 @@
                 parameter : {},
                 showLoadingSpinner : false,
                 success : function(data) {
-                    userMentions = data.user_list || [];
+                    teamUsers = data.user_list || [];
+                },
+                error : function() {
+                }
+            };
+
+            this.callGAEAPI(APIConfig);
+        },
+        getEngagedUsersForAnno: function(anno_id) {
+            var APIConfig = {
+                name : this.API.anno,
+                method : "anno.anno.users",
+                parameter : { "id" : anno_id },
+                showLoadingSpinner : false,
+                success : function(data) {
+                    annoEngagedUsers = data.user_list || [];
                 },
                 error : function() {
                 }
@@ -1275,11 +1291,35 @@
         },
         getTagStrings: function(tagDiv, inputDiv) {
             var self = this, tagString = tagStringArray.join("");
-            var superSetArray = hashtagSuggestion ? popularTags : userMentions;
+            var superSetArray = popularTags;
 
+            if (!hashtagSuggestion) {
+                superSetArray = teamUsers;
+                annoEngagedUsers.forEach(function(user) {
+                    superSetArray.push(user);
+                });
+            }
+
+            var filteredSuggestedTagsArrays = [];
             var suggestedTagsArray = superSetArray.filter(function(string) {
                 string = hashtagSuggestion ? string : string.display_name;
-                return (string.toLowerCase().indexOf(tagString.toLowerCase()) == 0) && (string !== "");
+                var returnValue = false;
+
+                if (string !== "") {
+                    if (filteredSuggestedTagsArrays.indexOf(string) == -1) {
+                        filteredSuggestedTagsArrays.push(string);
+                        returnValue = true;
+                    }
+                    if (tagString !== "") {
+                        if ((string.toLowerCase().indexOf(tagString.toLowerCase()) == 0)) {
+                            returnValue = true;
+                        } else {
+                            returnValue = false;
+                        }
+                    }
+                }
+
+                return returnValue;
             });
 
             dom.byId(tagDiv).innerHTML = "";

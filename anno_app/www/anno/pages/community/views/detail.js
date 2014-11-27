@@ -718,6 +718,7 @@ define([
 
                     setDetailsContext(cursor);
                     domStyle.set("AnnoDetails", "display", "");
+                    annoUtil.getEngagedUsersForAnno(id);
                 },
                 error: function()
                 {
