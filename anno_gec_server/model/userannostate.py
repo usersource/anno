@@ -35,11 +35,21 @@ class UserAnnoState(ndb.Model):
         entity.put()
         return entity
 
+
     @classmethod
-    def list_by_anno(cls, anno_id):
-        anno = Anno.get_by_id(anno_id)
-        query = cls.query(ndb.AND(cls.anno == anno.key, cls.notify == True))
-        return query.fetch(projection=[cls.user, cls.last_read])
+    def list_users_by_anno(cls, anno_id=None, anno_key=None, notification=True, projection=[]):
+        if not anno_key:
+            anno = Anno.get_by_id(anno_id)
+            anno_key = anno.key if anno else None
+
+        users = []
+        if anno_key:
+            query = cls.query().filter(cls.anno == anno_key)
+            query = query.filter(cls.notify == True) if notification else query.filter(cls.notify != None)
+            users = query.fetch(projection=projection)
+
+        return users
+
 
     @classmethod
     def list_by_user(cls, user_key, limit=None):

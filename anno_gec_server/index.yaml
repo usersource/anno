@@ -202,6 +202,12 @@ indexes:
 
 - kind: UserAnnoState
   properties:
+  - name: anno
+  - name: notify
+  - name: user
+
+- kind: UserAnnoState
+  properties:
   - name: user
   - name: modified
     direction: desc
