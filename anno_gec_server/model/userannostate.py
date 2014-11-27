@@ -37,15 +37,14 @@ class UserAnnoState(ndb.Model):
 
 
     @classmethod
-    def list_users_by_anno(cls, anno_id=None, anno_key=None, notification=True, projection=[]):
+    def list_users_by_anno(cls, anno_id=None, anno_key=None, projection=[]):
         if not anno_key:
             anno = Anno.get_by_id(anno_id)
             anno_key = anno.key if anno else None
 
         users = []
         if anno_key:
-            query = cls.query().filter(cls.anno == anno_key)
-            query = query.filter(cls.notify == True) if notification else query.filter(cls.notify != None)
+            query = cls.query().filter(ndb.AND(cls.anno == anno_key), (cls.notify == True))
             users = query.fetch(projection=projection)
 
         return users

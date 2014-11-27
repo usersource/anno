@@ -378,8 +378,7 @@ class AnnoApi(remote.Service):
     @endpoints.method(anno_with_id_resource_container, UserListMessage,
                       path="anno/users/{id}", http_method="GET", name="anno.anno.users")
     def getEngagedUsers(self, request):
-        userannostates = UserAnnoState.list_users_by_anno(anno_id=request.id, notification=False,
-                                                          projection=[UserAnnoState.user])
+        userannostates = UserAnnoState.list_users_by_anno(anno_id=request.id, projection=[UserAnnoState.user])
 
         users = []
         for userannostate in userannostates:
