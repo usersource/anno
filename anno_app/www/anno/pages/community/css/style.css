@@ -818,7 +818,7 @@
 	margin-left: 9px;
 }
 
-#detailSuggestedTags {
+#detailSuggestedTags, #detailSuggestionTool {
 	width: 100%;
 	height: 40px;
 	position: fixed;

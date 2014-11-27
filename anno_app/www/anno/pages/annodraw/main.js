@@ -667,7 +667,7 @@ require([
     var onCommentBoxInput = function(commentBox, event) {
         checkBarShareState();
         window.setTimeout(function() {
-            annoUtil.showTextSuggestion(event, "annoDrawSuggestedTags", commentBox.inputElement.id);
+            annoUtil.showTextSuggestion("annoDrawSuggestedTags", commentBox.inputElement.id);
         }, 0);
     };
 

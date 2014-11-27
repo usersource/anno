@@ -1230,6 +1230,33 @@
 
             this.callGAEAPI(APIConfig);
         },
+        showSuggestionTools: function(mainContainer, toolDiv) {
+            return;
+            if (popularTags.length || teamUsers.length || annoEngagedUsers.length) {
+                domStyle.set(mainContainer, "bottom", "40px");
+                domStyle.set(toolDiv, "display", "");
+            } else {
+                this.hideSuggestionTools(mainContainer, toolDiv);
+            }
+
+            if (popularTags.length) {
+                domStyle.set("suggestionToolTags", "display", "");
+            } else {
+                domStyle.set("suggestionToolTags", "display", "none");
+            }
+
+            if (teamUsers.length || annoEngagedUsers.length) {
+                domStyle.set("suggestionToolUsers", "display", "");
+            } else {
+                domStyle.set("suggestionToolUsers", "display", "none");
+            }
+        },
+        hideSuggestionTools: function(mainContainer, toolDiv) {
+            domStyle.set(mainContainer, "bottom", "0px");
+            domStyle.set(toolDiv, "display", "none");
+            domStyle.set("suggestionToolTags", "display", "none");
+            domStyle.set("suggestionToolUsers", "display", "none");
+        },
         showTagDiv: function(tagDiv) {
             domStyle.set(tagDiv, "display", "");
             this.disableNativeGesture();
@@ -1247,11 +1274,11 @@
             inputValueLength = 0;
             dom.byId(tagDiv).scrollLeft = 0;
         },
-        showTextSuggestion: function(e, tagDiv, inputDiv) {
+        showTextSuggestion: function(tagDiv, inputDiv, keyCode) {
             var inputDom = dom.byId(inputDiv),
                 inputValue = inputDom.value,
                 keyCodeNull = false,
-                keyCode = 0,
+                keyCode = keyCode || 0,
                 charDeleted = false;
 
             if (previousTagDiv && (previousTagDiv === tagDiv) && (inputValueLength > 0) && (inputValueLength > inputValue.length)) {
@@ -1261,7 +1288,7 @@
             previousTagDiv = tagDiv;
             inputValueLength = inputValue.length;
 
-            if (!charDeleted) {
+            if (!charDeleted && (keyCode == 0)) {
                 keyCodeNull = true;
                 keyCode = inputValue.toUpperCase().charCodeAt(inputDom.selectionStart - 1);
             }

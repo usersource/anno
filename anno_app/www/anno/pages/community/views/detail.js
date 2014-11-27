@@ -1405,22 +1405,21 @@ define([
                     doSocialShare();
                 }));*/
 
-                _connectResults.push(connect.connect(domAddCommentTextBox, "focus", function ()
-                {
+                _connectResults.push(connect.connect(domAddCommentTextBox, "focus", function() {
                     commentTextBoxFocused = true;
-                    window.setTimeout(function(){
+                    window.setTimeout(function() {
                         domAddCommentTextBox.rows = "4";
                         domClass.add("sendComment", "expanded");
+                        annoUtil.showSuggestionTools("addCommentContainer", "detailSuggestionTool");
                     }, 500);
                 }));
 
-                _connectResults.push(connect.connect(domAddCommentTextBox, "blur", function ()
-                {
+                _connectResults.push(connect.connect(domAddCommentTextBox, "blur", function() {
                     commentTextBoxFocused = false;
-                    window.setTimeout(function(){
+                    window.setTimeout(function() {
                         domAddCommentTextBox.rows = "1";
                         domClass.remove("sendComment", "expanded");
-                        domStyle.set('detailSuggestedTags', 'display', 'none');
+                        annoUtil.hideSuggestionTools("addCommentContainer", "detailSuggestionTool");
                     }, 500);
                 }));
 
@@ -1440,9 +1439,19 @@ define([
                     }
                 }));
 
+                _connectResults.push(connect.connect(dom.byId("suggestionToolUsers"), "click", function(e) {
+                    dojo.stopEvent(e);
+                    annoUtil.showTextSuggestion("detailSuggestedTags", "addCommentTextBox", 64);
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("suggestionToolTags"), "click", function(e) {
+                    dojo.stopEvent(e);
+                    annoUtil.showTextSuggestion("detailSuggestedTags", "addCommentTextBox", 35);
+                }));
+
                 _connectResults.push(connect.connect(domAddCommentTextBox, "input", function(e) {
                     window.setTimeout(function() {
-                        annoUtil.showTextSuggestion(e, "detailSuggestedTags", "addCommentTextBox");
+                        annoUtil.showTextSuggestion("detailSuggestedTags", "addCommentTextBox");
                     }, 0);
                 }));
 
