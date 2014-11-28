@@ -385,7 +385,8 @@ class AnnoApi(remote.Service):
             current_user = userannostate.user.get()
             users.append(UserMessage(id=current_user.key.id(),
                                      user_email=current_user.user_email,
-                                     display_name=current_user.display_name))
+                                     display_name=current_user.display_name,
+                                     image_url=current_user.image_url))
 
         # removing auth_user
         user = auth_user(self.request_state.headers)

@@ -216,7 +216,8 @@ class UserApi(remote.Service):
             current_user = community_userrole.user.get()
             users.append(UserMessage(id=current_user.key.id(),
                                      user_email=current_user.user_email,
-                                     display_name=current_user.display_name))
+                                     display_name=current_user.display_name,
+                                     image_url=current_user.image_url))
 
         # removing auth_user
         [ users.remove(user_info) for user_info in users if user_info.user_email == user.user_email ]
