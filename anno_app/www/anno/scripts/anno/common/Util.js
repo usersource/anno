@@ -1354,17 +1354,46 @@
 
             dom.byId(tagDiv).innerHTML = "";
             suggestedTagsArray.forEach(function(tag) {
-                var innerTagDiv = document.createElement("div");
-                innerTagDiv.className = "tag";
-                tag = hashtagSuggestion ? "#" + tag : tag.display_name;
-                innerTagDiv.innerText = tag;
-                dom.byId(tagDiv).appendChild(innerTagDiv);
+                var suggestedText = hashtagSuggestion ? "#" + tag : tag.display_name;
+                var innerSuggestionDiv = document.createElement("div");
 
-                connect.connect(innerTagDiv, "click", function(e) {
+                if (hashtagSuggestion) {
+                    innerSuggestionDiv.className = "tag";
+                    innerSuggestionDiv.innerText = suggestedText;
+                } else {
+                    innerSuggestionDiv.className = "userSuggestion";
+
+                    var imageDiv = document.createElement("div");
+                    imageDiv.className = "userSuggestionImage";
+                    if (tag.image_url === "") {
+                        imageDiv.className += " icon-user";
+                    } else {
+                        imageDiv.style.background = "url('" + tag.image_url + "')";
+                    }
+                    innerSuggestionDiv.appendChild(imageDiv);
+
+                    var infoDiv = document.createElement("div");
+                    infoDiv.className = "userSuggestionInfo";
+                    innerSuggestionDiv.appendChild(infoDiv);
+
+                    var nameDiv = document.createElement("div");
+                    nameDiv.className = "userSuggestionName";
+                    nameDiv.innerText = tag.display_name;
+                    infoDiv.appendChild(nameDiv);
+
+                    var emailDiv = document.createElement("div");
+                    emailDiv.className = "userSuggestionEmail";
+                    emailDiv.innerText = tag.user_email;
+                    infoDiv.appendChild(emailDiv);
+                }
+
+                dom.byId(tagDiv).appendChild(innerSuggestionDiv);
+
+                connect.connect(innerSuggestionDiv, "click", function(e) {
                     dojo.stopEvent(e);
                     var input = dom.byId(inputDiv),
                         replaceIndex = input.selectionStart - tagString.length;
-                    input.value = input.value.replaceAt(replaceIndex - 1, tagString.length + 1, tag + " ");
+                    input.value = input.value.replaceAt(replaceIndex - 1, tagString.length + 1, suggestedText + " ");
                     self.resetTextSuggestion(tagDiv);
 
                     setTimeout(function() {
