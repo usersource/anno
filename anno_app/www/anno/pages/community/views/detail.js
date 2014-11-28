@@ -1419,6 +1419,7 @@ define([
                     window.setTimeout(function() {
                         domAddCommentTextBox.rows = "1";
                         domClass.remove("sendComment", "expanded");
+                        domStyle.set('detailSuggestedTags', 'display', 'none');
                         annoUtil.hideSuggestionTools("addCommentContainer", "detailSuggestionTool");
                     }, 500);
                 }));
