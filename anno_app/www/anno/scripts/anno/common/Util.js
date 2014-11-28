@@ -58,7 +58,7 @@
         pluginUserImageURL : "",
         pluginTeamKey : "",
         pluginTeamSecret : "",
-        timeoutTime: 40 * 1000,
+        timeoutTime: 10 * 1000,
         timeoutSession : {},
         basicAccessToken: {},
         ERROR_TYPES:{
