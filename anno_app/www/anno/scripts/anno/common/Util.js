@@ -1317,6 +1317,35 @@
                 }
             }
         },
+        createUserSuggestionView: function(tag) {
+            var innerSuggestionDiv = document.createElement("div");
+            innerSuggestionDiv.className = "userSuggestion";
+
+            var imageDiv = document.createElement("div");
+            imageDiv.className = "userSuggestionImage";
+            if (tag.image_url === "") {
+                imageDiv.className += " icon-user";
+            } else {
+                imageDiv.style.background = "url('" + tag.image_url + "')";
+            }
+            innerSuggestionDiv.appendChild(imageDiv);
+
+            var infoDiv = document.createElement("div");
+            infoDiv.className = "userSuggestionInfo";
+            innerSuggestionDiv.appendChild(infoDiv);
+
+            var nameDiv = document.createElement("div");
+            nameDiv.className = "userSuggestionName";
+            nameDiv.innerText = tag.display_name;
+            infoDiv.appendChild(nameDiv);
+
+            var emailDiv = document.createElement("div");
+            emailDiv.className = "userSuggestionEmail";
+            emailDiv.innerText = tag.user_email;
+            infoDiv.appendChild(emailDiv);
+
+            return innerSuggestionDiv;
+        },
         getTagStrings: function(tagDiv, inputDiv) {
             var self = this, tagString = tagStringArray.join("");
             var superSetArray = popularTags;
@@ -1361,30 +1390,7 @@
                     innerSuggestionDiv.className = "tag";
                     innerSuggestionDiv.innerText = suggestedText;
                 } else {
-                    innerSuggestionDiv.className = "userSuggestion";
-
-                    var imageDiv = document.createElement("div");
-                    imageDiv.className = "userSuggestionImage";
-                    if (tag.image_url === "") {
-                        imageDiv.className += " icon-user";
-                    } else {
-                        imageDiv.style.background = "url('" + tag.image_url + "')";
-                    }
-                    innerSuggestionDiv.appendChild(imageDiv);
-
-                    var infoDiv = document.createElement("div");
-                    infoDiv.className = "userSuggestionInfo";
-                    innerSuggestionDiv.appendChild(infoDiv);
-
-                    var nameDiv = document.createElement("div");
-                    nameDiv.className = "userSuggestionName";
-                    nameDiv.innerText = tag.display_name;
-                    infoDiv.appendChild(nameDiv);
-
-                    var emailDiv = document.createElement("div");
-                    emailDiv.className = "userSuggestionEmail";
-                    emailDiv.innerText = tag.user_email;
-                    infoDiv.appendChild(emailDiv);
+                    innerSuggestionDiv = self.createUserSuggestionView(tag);
                 }
 
                 dom.byId(tagDiv).appendChild(innerSuggestionDiv);
