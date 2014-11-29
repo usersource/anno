@@ -58,6 +58,7 @@
         pluginUserImageURL : "",
         pluginTeamKey : "",
         pluginTeamSecret : "",
+        mentionedUsers : [],
         timeoutTime: 10 * 1000,
         timeoutSession : {},
         basicAccessToken: {},
@@ -1274,23 +1275,44 @@
             inputValueLength = 0;
             dom.byId(tagDiv).scrollLeft = 0;
         },
+        updateMentionedUsers: function(charDeleted, inputSelectionStart, charLength) {
+            var self = this;
+            this.mentionedUsers.forEach(function(taggedUser, index) {
+                if (charDeleted) {
+                    if ((inputSelectionStart > taggedUser.startIndex) &&
+                        (inputSelectionStart < (taggedUser.startIndex + taggedUser.length))) {
+                        delete self.mentionedUsers[index];
+                    } else if (inputSelectionStart <= taggedUser.startIndex) {
+                        self.mentionedUsers[index]["startIndex"] -= charLength;
+                    }
+                } else if (inputSelectionStart <= (taggedUser.startIndex + charLength)) {
+                    self.mentionedUsers[index]["startIndex"] += charLength;
+                }
+            });
+        },
         showTextSuggestion: function(tagDiv, inputDiv, keyCode) {
             var inputDom = dom.byId(inputDiv),
                 inputValue = inputDom.value,
+                inputSelectionStart = inputDom.selectionStart,
                 keyCodeNull = false,
                 keyCode = keyCode || 0,
                 charDeleted = false;
 
-            if (previousTagDiv && (previousTagDiv === tagDiv) && (inputValueLength > 0) && (inputValueLength > inputValue.length)) {
+            if (previousTagDiv &&
+                (previousTagDiv === tagDiv) &&
+                (inputValueLength > 0) &&
+                (inputValueLength > inputValue.length)) {
                 charDeleted = true;
             }
+
+            this.updateMentionedUsers(charDeleted, inputSelectionStart, 1);
 
             previousTagDiv = tagDiv;
             inputValueLength = inputValue.length;
 
             if (!charDeleted && (keyCode == 0)) {
                 keyCodeNull = true;
-                keyCode = inputValue.toUpperCase().charCodeAt(inputDom.selectionStart - 1);
+                keyCode = inputValue.toUpperCase().charCodeAt(inputSelectionStart - 1);
             }
 
             if ((keyCode === 35 || keyCode === 64) && keyCodeNull === true) {
@@ -1399,6 +1421,14 @@
                     dojo.stopEvent(e);
                     var input = dom.byId(inputDiv),
                         replaceIndex = input.selectionStart - tagString.length;
+
+                    self.mentionedUsers.push({
+                        "startIndex" : input.selectionStart - 1,
+                        "length" : tag.display_name.length,
+                        "email" : tag.user_email
+                    });
+
+                    self.updateMentionedUsers(false, input.selectionStart - 1, tagString.length);
                     input.value = input.value.replaceAt(replaceIndex - 1, tagString.length + 1, suggestedText + " ");
                     self.resetTextSuggestion(tagDiv);
 

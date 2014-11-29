@@ -750,6 +750,8 @@ define([
                 success: function(data)
                 {
                     console.log(JSON.stringify(data.result));
+                    console.log(annoUtil.mentionedUsers);
+                    annoUtil.mentionedUsers = [];
 
                     var currentAnno = eventsModel.cursor||eventsModel.model[0];
                     // sync commented activity
@@ -1426,7 +1428,7 @@ define([
 
                 _connectResults.push(connect.connect(domAddCommentTextBox, "keydown", function(e) {
                     if (e.keyCode == 13) {
-                        var text = domAddCommentTextBox.value.trim();
+                        var text = domAddCommentTextBox.value;
 
                         if (!text) {
                             annoUtil.showMessageDialog('Please enter comment.');
@@ -1674,6 +1676,7 @@ define([
             {
                 domStyle.set("imgDetailScreenshot", "opacity", '1');
                 annoUtil.hideLoadingIndicator();
+                annoUtil.mentionedUsers = [];
 
                 // calling setDetailScreenshotNull after 300ms so that imgDetailScreenshot will
                 // not clear out before going back to community page
