@@ -1,5 +1,3 @@
-__author__ = "rekenerd"
-
 import datetime
 
 from google.appengine.ext import ndb
@@ -44,7 +42,7 @@ class UserAnnoState(ndb.Model):
 
         users = []
         if anno_key:
-            query = cls.query().filter(ndb.AND(cls.anno == anno_key), (cls.notify == True))
+            query = cls.query().filter(ndb.AND(cls.anno == anno_key, cls.notify == True))
             users = query.fetch(projection=projection)
 
         return users
