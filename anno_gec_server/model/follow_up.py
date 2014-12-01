@@ -4,6 +4,7 @@ from google.appengine.api import search
 from google.appengine.ext import ndb
 
 from model.anno import Anno
+from model.user import User
 from model.base_model import BaseModel
 from message.followup_message import FollowupMessage
 from message.user_message import UserMessage
@@ -18,7 +19,7 @@ class FollowUp(BaseModel):
     last_modified = ndb.DateTimeProperty(auto_now_add=True)
     tagged_users = ndb.StringProperty(repeated=True)
 
-    def to_message(self):
+    def to_message(self, team_key=None):
         """
         Convert FollowUp data model to follow up message.
         """
@@ -27,10 +28,16 @@ class FollowUp(BaseModel):
         message.anno_id = self.anno_key.id()
         message.comment = self.comment
         message.created = self.created
-        message.tagged_users = self.tagged_users
+
+        message.tagged_users_detail = []
+        for user in self.tagged_users:
+            user_info = User.find_user_by_email(user, team_key)
+            message.tagged_users_detail.append(UserMessage(display_name=user_info.display_name, user_email=user_info.user_email))
+
         if self.creator is not None:
             user_info = self.creator.get()
             message.creator = UserMessage(display_name=user_info.display_name, image_url=user_info.image_url)
+
         return message
 
 

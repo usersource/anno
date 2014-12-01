@@ -89,7 +89,8 @@ class AnnoApi(remote.Service):
 
     anno_with_id_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
-        id=messages.IntegerField(2, required=True)
+        id=messages.IntegerField(2, required=True),
+        team_key=messages.StringField(3)
     )
 
     anno_list_resource_container = endpoints.ResourceContainer(
@@ -150,7 +151,7 @@ class AnnoApi(remote.Service):
 
         # set anno association with followups
         followups = FollowUp.find_by_anno(anno)
-        followup_messages = [ entity.to_message() for entity in followups ]
+        followup_messages = [ entity.to_message(team_key=request.team_key) for entity in followups ]
         anno_resp_message.followup_list = followup_messages
 
         # set anno association with votes/flags
