@@ -663,7 +663,7 @@ define([
             var APIConfig = {
                 name: annoUtil.API.anno,
                 method: "anno.anno.get",
-                parameter: {id:id},
+                parameter: { id:id, team_key:annoUtil.pluginTeamKey },
                 needAuth: true,
                 success: function(data)
                 {
