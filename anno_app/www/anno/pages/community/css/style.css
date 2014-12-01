@@ -1074,6 +1074,13 @@ li.unread .listTitle {
 	text-overflow: ellipsis;
 }
 
+.taggedUser {
+	padding: 1px 4px;
+	background: #CCC;
+	color: #FFF;
+	border-radius: 4px;
+}
+
 /* for plugin */
 body.plugin #tdHeadingLeft,
 body.plugin #tdBarSearchAnno,
