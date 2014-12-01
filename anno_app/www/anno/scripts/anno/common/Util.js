@@ -1434,13 +1434,14 @@
             var superSetArray = popularTags;
 
             if (!hashtagSuggestion) {
-                superSetArray = lang.clone(teamUsers);
+                superSetArray = teamUsers.slice(0);
                 annoEngagedUsers.forEach(function(user) {
                     superSetArray.push(user);
                 });
             }
 
             var suggestedTagsArray = this.filteredUsers = superSetArray.filter(function(string) {
+                if (string === undefined) return false;
                 tempTagString = tagString.toLowerCase();
                 if (hashtagSuggestion) {
                     return (string.indexOf(tempTagString) === 0);

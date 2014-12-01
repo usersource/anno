@@ -830,6 +830,7 @@
 	z-index: 10000;
 	white-space: nowrap;
 	overflow-x: auto;
+	overflow-y: hidden;
 }
 
 .tag {
@@ -1024,6 +1025,7 @@ li.unread .listTitle {
 }
 
 .userSuggestion {
+	height: 30px;
 	padding: 5px 5px;
 	display: inline-block;
 	max-width: 150px;
