@@ -865,6 +865,7 @@
         replaceEmailWithName: function(s, tagged_users) {
             var self = this;
             var matchedEmailList = s.match(/(^|\W)(__[a-z\d][\w-._@]*)/ig) || [];
+            tagged_users = tagged_users || [];
 
             matchedEmailList.forEach(function(email) {
                 email = email.trim();
