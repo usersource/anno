@@ -62,6 +62,7 @@
         timeoutSession : {},
         basicAccessToken: {},
         filteredUsers: [],
+        taggedUserEmails: [],
         ERROR_TYPES:{
             "LOAD_GAE_API": 1,
             "API_RESPONSE_EMPTY": 2,
@@ -845,6 +846,7 @@
         replaceUniqueUserNameWithEmail: function(s) {
             var self = this;
             var taggedUniqueName = s.match(/(^|\W)(@[a-z\d][\w-._@]*)/ig) || [];
+            this.taggedUserEmails = [];
 
             taggedUniqueName.forEach(function(name) {
                 name = name.trim();
@@ -852,7 +854,9 @@
                     return user.unique_name === name.split("@")[1];
                 });
                 if (filteredUser.length) {
-                    s = s.replace(name, "__" + filteredUser[0]["user_email"] + "__");
+                    var userEmail = filteredUser[0]["user_email"];
+                    s = s.replace(name, "__" + userEmail + "__");
+                    self.taggedUserEmails.push(userEmail);
                 }
             });
 
