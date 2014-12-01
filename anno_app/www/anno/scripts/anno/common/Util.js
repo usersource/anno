@@ -1244,7 +1244,7 @@
             var APIConfig = {
                 name : this.API.user,
                 method : "user.community.users",
-                parameter : {},
+                parameter : { account_type : this.pluginTeamKey },
                 showLoadingSpinner : false,
                 success : function(data) {
                     teamUsers = self.getUniqueName(data.user_list, false) || [];
@@ -1396,6 +1396,7 @@
         },
         getUniqueName: function(mentionUsersArray, annoDetail) {
             var uniqueNames = [], uniqueUserName;
+            mentionUsersArray = mentionUsersArray || [];
 
             function isUnique(userName) {
                 var isUniqueName = uniqueNames.indexOf(userName) !== -1;

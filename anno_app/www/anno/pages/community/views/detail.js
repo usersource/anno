@@ -748,7 +748,8 @@ define([
                 parameter: {
                     anno_id : id,
                     comment : annoUtil.replaceUniqueUserNameWithEmail(comment),
-                    tagged_users : annoUtil.taggedUserEmails
+                    tagged_users : annoUtil.taggedUserEmails,
+                    team_key : annoUtil.pluginTeamKey
                 },
                 needAuth: true,
                 success: function(data)

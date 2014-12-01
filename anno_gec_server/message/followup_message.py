@@ -17,6 +17,7 @@ class FollowupMessage(messages.Message):
     comment = messages.StringField(5)
     tagged_users = messages.StringField(6, repeated=True)
     tagged_users_detail = messages.MessageField(UserMessage, 7, repeated=True)
+    team_key = messages.StringField(8)
 
 
 class FollowupListMessage(messages.Message):

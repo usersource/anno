@@ -15,6 +15,7 @@ from helper.utils import get_user_from_request
 from model.user import User
 from model.invite import Invite
 from model.userrole import UserRole
+from model.community import Community
 from message.user_message import UserMessage
 from message.user_message import UserCommunityMessage
 from message.user_message import UserCommunityListMessage
@@ -203,11 +204,9 @@ class UserApi(remote.Service):
         community_userroles = []
 
         if user:
-            userrole = UserRole.query().filter(ndb.AND(UserRole.user == user.key,
-                                                       UserRole.circle_level > 0)
-                                               ).get()
-            if userrole:
-                community_userroles = UserRole.query().filter(ndb.AND(UserRole.community == userrole.community,
+            community = Community.getCommunityFromTeamKey(request.account_type)
+            if community:
+                community_userroles = UserRole.query().filter(ndb.AND(UserRole.community == community.key,
                                                                       UserRole.circle_level > 0)
                                                               ).fetch(projection=[UserRole.user])
 

@@ -73,7 +73,7 @@ class FollowupApi(remote.Service):
         ActivityPushNotifications.send_push_notification(first_user=user, anno=anno, action_type=AnnoActionType.COMMENTED,
                                                          comment=request.comment)
 
-        return followup.to_message()
+        return followup.to_message(request.team_key)
 
     followup_with_id_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
