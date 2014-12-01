@@ -862,6 +862,23 @@
 
             return s;
         },
+        replaceEmailWithName: function(s, tagged_users) {
+            var self = this;
+            var matchedEmailList = s.match(/(^|\W)(__[a-z\d][\w-._@]*)/ig) || [];
+
+            matchedEmailList.forEach(function(email) {
+                email = email.trim();
+                var filteredUser = tagged_users.filter(function(user) {
+                    return user.user_email === email.split("__")[1];
+                });
+                if (filteredUser.length) {
+                    var userDisplayName = filteredUser[0]["display_name"];
+                    s = s.replace(email, "<span class='taggedUser'>" + userDisplayName + "</span>");
+                }
+            });
+
+            return s;
+        },
         loadUserCommunities: function(includeInvite, callback, keepSpinnerShown)
         {
             if (this.userCommunities)

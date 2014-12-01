@@ -1181,6 +1181,7 @@ define([
         		followup.modifiedComment = followup.comment;
         		followup.modifiedComment = annoUtil.replaceHashTagWithLink(followup.modifiedComment, hashTagTemplate);
         		followup.modifiedComment = annoUtil.replaceURLWithLink(followup.modifiedComment, commentURLTemplate);
+                followup.modifiedComment = annoUtil.replaceEmailWithName(followup.modifiedComment, followup.tagged_users_detail);
         	}
         };
 
