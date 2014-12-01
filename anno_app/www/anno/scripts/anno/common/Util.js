@@ -1329,6 +1329,7 @@
 
             var imageDiv = document.createElement("div");
             imageDiv.className = "userSuggestionImage";
+            tag.image_url = tag.image_url || "";
             if (tag.image_url === "") {
                 imageDiv.className += " icon-user";
             } else {
@@ -1398,8 +1399,13 @@
             }
 
             var suggestedTagsArray = superSetArray.filter(function(string) {
-                string = hashtagSuggestion ? string : string.display_name;
-                return (tagString === "" || (string.toLowerCase().indexOf(tagString.toLowerCase()) === 0));
+                tempTagString = tagString.toLowerCase();
+                if (hashtagSuggestion) {
+                    return (string.indexOf(tempTagString) === 0);
+                } else {
+                    return ((string.display_name.toLowerCase().indexOf(tempTagString) === 0) ||
+                            (string.user_email.indexOf(tempTagString) === 0));
+                }
             });
 
             dom.byId(tagDiv).innerHTML = "";
