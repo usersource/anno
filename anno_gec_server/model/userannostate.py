@@ -1,3 +1,9 @@
+'''
+When notify is not None, user is either created or commented on that anno.
+When modified is not None, user is interacted with anno.
+When notify and modified are None, user is mentioned in that anno.
+'''
+
 import datetime
 
 from google.appengine.ext import ndb
