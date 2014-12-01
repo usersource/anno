@@ -16,6 +16,7 @@ class FollowUp(BaseModel):
     comment = ndb.StringProperty()
     anno_key = ndb.KeyProperty(kind=Anno)
     last_modified = ndb.DateTimeProperty(auto_now_add=True)
+    tagged_users = ndb.StringProperty(repeated=True)
 
     def to_message(self):
         """
@@ -26,6 +27,7 @@ class FollowUp(BaseModel):
         message.anno_id = self.anno_key.id()
         message.comment = self.comment
         message.created = self.created
+        message.tagged_users = self.tagged_users
         if self.creator is not None:
             user_info = self.creator.get()
             message.creator = UserMessage(display_name=user_info.display_name, image_url=user_info.image_url)

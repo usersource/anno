@@ -15,6 +15,7 @@ class FollowupMessage(messages.Message):
     creator = messages.MessageField(UserMessage, 3)
     created = message_types.DateTimeField(4)
     comment = messages.StringField(5)
+    tagged_users = messages.StringField(6, repeated=True)
 
 
 class FollowupListMessage(messages.Message):
