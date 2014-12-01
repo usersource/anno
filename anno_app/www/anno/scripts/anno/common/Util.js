@@ -1304,6 +1304,7 @@
                 countToSuggestTags = 0;
                 tagStringArray = [];
                 hashtagSuggestion = (keyCode === 35) ? true : false;
+                this.showTagDiv(tagDiv);
                 this.getTagStrings(tagDiv, inputDiv);
             } else if (suggestTags) {
                 if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90)) {
@@ -1317,6 +1318,7 @@
                 }
 
                 if ((countToSuggestTags >= MIN_CHAR_TO_SUGGEST_TAGS) && suggestTags) {
+                    this.showTagDiv(tagDiv);
                     this.getTagStrings(tagDiv, inputDiv);
                 } else {
                     this.hideTagDiv(tagDiv);
