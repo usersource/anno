@@ -61,6 +61,7 @@
         timeoutTime: 10 * 1000,
         timeoutSession : {},
         basicAccessToken: {},
+        filteredUsers: [],
         ERROR_TYPES:{
             "LOAD_GAE_API": 1,
             "API_RESPONSE_EMPTY": 2,
@@ -841,6 +842,22 @@
             s = s.replace(/(^|\W)\b((www\d{0,3}[.])(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, "$1http://$2");
             return s.replace(/(^|\W)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, linkScript);
         },
+        replaceUniqueUserNameWithEmail: function(s) {
+            var self = this;
+            var taggedUniqueName = s.match(/(^|\W)(@[a-z\d][\w-._@]*)/ig) || [];
+
+            taggedUniqueName.forEach(function(name) {
+                name = name.trim();
+                var filteredUser = self.filteredUsers.filter(function(user) {
+                    return user.unique_name === name.split("@")[1];
+                });
+                if (filteredUser.length) {
+                    s = s.replace(name, "__" + filteredUser[0]["user_email"] + "__");
+                }
+            });
+
+            return s;
+        },
         loadUserCommunities: function(includeInvite, callback, keepSpinnerShown)
         {
             if (this.userCommunities)
@@ -1400,7 +1417,7 @@
                 });
             }
 
-            var suggestedTagsArray = superSetArray.filter(function(string) {
+            var suggestedTagsArray = this.filteredUsers = superSetArray.filter(function(string) {
                 tempTagString = tagString.toLowerCase();
                 if (hashtagSuggestion) {
                     return (string.indexOf(tempTagString) === 0);

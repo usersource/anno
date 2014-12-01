@@ -745,7 +745,7 @@ define([
             var APIConfig = {
                 name: annoUtil.API.followUp,
                 method: "followup.followup.insert",
-                parameter: {anno_id:id, comment:comment},
+                parameter: { anno_id:id, comment:annoUtil.replaceUniqueUserNameWithEmail(comment) },
                 needAuth: true,
                 success: function(data)
                 {
