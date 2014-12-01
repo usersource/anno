@@ -58,7 +58,6 @@
         pluginUserImageURL : "",
         pluginTeamKey : "",
         pluginTeamSecret : "",
-        mentionedUsers : [],
         timeoutTime: 10 * 1000,
         timeoutSession : {},
         basicAccessToken: {},
@@ -1202,13 +1201,14 @@
             this.callGAEAPI(APIConfig);
         },
         getCommunityUserForMention: function() {
+            var self = this;
             var APIConfig = {
                 name : this.API.user,
                 method : "user.community.users",
                 parameter : {},
                 showLoadingSpinner : false,
                 success : function(data) {
-                    teamUsers = data.user_list || [];
+                    teamUsers = self.getUniqueName(data.user_list, false) || [];
                 },
                 error : function() {
                 }
@@ -1217,13 +1217,14 @@
             this.callGAEAPI(APIConfig);
         },
         getEngagedUsersForAnno: function(anno_id) {
+            var self = this;
             var APIConfig = {
                 name : this.API.anno,
                 method : "anno.anno.users",
                 parameter : { "id" : anno_id },
                 showLoadingSpinner : false,
                 success : function(data) {
-                    annoEngagedUsers = data.user_list || [];
+                    annoEngagedUsers = self.getUniqueName(data.user_list, true) || [];
                 },
                 error : function() {
                 }
@@ -1275,21 +1276,6 @@
             inputValueLength = 0;
             dom.byId(tagDiv).scrollLeft = 0;
         },
-        updateMentionedUsers: function(charDeleted, inputSelectionStart, charLength) {
-            var self = this;
-            this.mentionedUsers.forEach(function(taggedUser, index) {
-                if (charDeleted) {
-                    if ((inputSelectionStart > taggedUser.startIndex) &&
-                        (inputSelectionStart < (taggedUser.startIndex + taggedUser.length))) {
-                        delete self.mentionedUsers[index];
-                    } else if (inputSelectionStart <= taggedUser.startIndex) {
-                        self.mentionedUsers[index]["startIndex"] -= charLength;
-                    }
-                } else if (inputSelectionStart <= (taggedUser.startIndex + charLength)) {
-                    self.mentionedUsers[index]["startIndex"] += charLength;
-                }
-            });
-        },
         showTextSuggestion: function(tagDiv, inputDiv, keyCode) {
             var inputDom = dom.byId(inputDiv),
                 inputValue = inputDom.value,
@@ -1304,8 +1290,6 @@
                 (inputValueLength > inputValue.length)) {
                 charDeleted = true;
             }
-
-            this.updateMentionedUsers(charDeleted, inputSelectionStart, 1);
 
             previousTagDiv = tagDiv;
             inputValueLength = inputValue.length;
@@ -1368,6 +1352,40 @@
 
             return innerSuggestionDiv;
         },
+        getUniqueName: function(mentionUsersArray, annoDetail) {
+            var uniqueNames = [], uniqueUserName;
+
+            function isUnique(userName) {
+                var isUniqueName = uniqueNames.indexOf(userName) !== -1;
+                if (!annoDetail) {
+                    return isUniqueName;
+                } else {
+                    return isUniqueName && teamUsers.some(function(user) { return user.unique_name == userName });
+                }
+            }
+
+            mentionUsersArray.forEach(function(mentionedUser, index) {
+                if ((mentionedUser["display_name"] === "") ||
+                    (teamUsers.some(function(user) { return user["user_email"] === mentionedUser["user_email"] }) &&
+                    annoDetail)) {
+                    delete mentionUsersArray[index];
+                } else  if (!("unique_name" in mentionedUser)) {
+                    var trimDisplayName = mentionedUser["display_name"].split(" ").join("");
+                    uniqueUserName = trimDisplayName;
+                    if (isUnique(uniqueUserName)) {
+                        var trimUserEmail = mentionedUser["user_email"].split("@")[0];
+                        uniqueUserName = trimDisplayName + trimUserEmail;
+                        if (isUnique(uniqueUserName)) {
+                            uniqueUserName = trimDisplayName + mentionedUser["user_email"];
+                        }
+                    }
+                    mentionedUser["unique_name"] = uniqueUserName;
+                    uniqueNames.push(uniqueUserName);
+                }
+            });
+
+            return mentionUsersArray;
+        },
         getTagStrings: function(tagDiv, inputDiv) {
             var self = this, tagString = tagStringArray.join("");
             var superSetArray = popularTags;
@@ -1379,33 +1397,14 @@
                 });
             }
 
-            // filter based on tagString
-            // this will remove duplicate and empty data
-            var filteredSuggestedTagsArrays = [];
             var suggestedTagsArray = superSetArray.filter(function(string) {
                 string = hashtagSuggestion ? string : string.display_name;
-                var returnValue = false;
-
-                if (string !== "") {
-                    if (filteredSuggestedTagsArrays.indexOf(string) == -1) {
-                        filteredSuggestedTagsArrays.push(string);
-                        returnValue = true;
-                    }
-                    if (tagString !== "") {
-                        if ((string.toLowerCase().indexOf(tagString.toLowerCase()) == 0)) {
-                            returnValue = true;
-                        } else {
-                            returnValue = false;
-                        }
-                    }
-                }
-
-                return returnValue;
+                return (tagString === "" || (string.toLowerCase().indexOf(tagString.toLowerCase()) === 0));
             });
 
             dom.byId(tagDiv).innerHTML = "";
             suggestedTagsArray.forEach(function(tag) {
-                var suggestedText = hashtagSuggestion ? "#" + tag : tag.display_name;
+                var suggestedText = hashtagSuggestion ? "#" + tag : "@" + tag.unique_name;
                 var innerSuggestionDiv = document.createElement("div");
 
                 if (hashtagSuggestion) {
@@ -1422,13 +1421,6 @@
                     var input = dom.byId(inputDiv),
                         replaceIndex = input.selectionStart - tagString.length;
 
-                    self.mentionedUsers.push({
-                        "startIndex" : input.selectionStart - 1,
-                        "length" : tag.display_name.length,
-                        "email" : tag.user_email
-                    });
-
-                    self.updateMentionedUsers(false, input.selectionStart - 1, tagString.length);
                     input.value = input.value.replaceAt(replaceIndex - 1, tagString.length + 1, suggestedText + " ");
                     self.resetTextSuggestion(tagDiv);
 
