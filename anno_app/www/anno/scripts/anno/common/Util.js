@@ -62,7 +62,7 @@
         timeoutSession : {},
         basicAccessToken: {},
         filteredUsers: [],
-        taggedUserEmails: [],
+        taggedUserIDs: [],
         ERROR_TYPES:{
             "LOAD_GAE_API": 1,
             "API_RESPONSE_EMPTY": 2,
@@ -843,10 +843,10 @@
             s = s.replace(/(^|\W)\b((www\d{0,3}[.])(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, "$1http://$2");
             return s.replace(/(^|\W)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, linkScript);
         },
-        replaceUniqueUserNameWithEmail: function(s) {
+        replaceUniqueUserNameWithID: function(s) {
             var self = this;
             var taggedUniqueName = s.match(/(^|\W)(@[a-z\d][\w-._@]*)/ig) || [];
-            this.taggedUserEmails = [];
+            this.taggedUserIDs = [];
 
             taggedUniqueName.forEach(function(name) {
                 name = name.trim();
@@ -854,9 +854,9 @@
                     return user.unique_name === name.split("@")[1];
                 });
                 if (filteredUser.length) {
-                    var userEmail = filteredUser[0]["user_email"];
-                    s = s.replace(name, "__" + userEmail + "__");
-                    self.taggedUserEmails.push(userEmail);
+                    var userID = filteredUser[0]["id"];
+                    s = s.replace(name, "__" + userID + "__");
+                    self.taggedUserIDs.push(userID);
                 }
             });
 
@@ -867,14 +867,14 @@
             var matchedEmailList = s.match(/(^|\W)(__[a-z\d][\w-._@]*)/ig) || [];
             tagged_users = tagged_users || [];
 
-            matchedEmailList.forEach(function(email) {
-                email = email.trim();
+            matchedEmailList.forEach(function(id) {
+                id = id.trim();
                 var filteredUser = tagged_users.filter(function(user) {
-                    return user.user_email === email.split("__")[1];
+                    return user.id === id.split("__")[1];
                 });
                 if (filteredUser.length) {
                     var userDisplayName = filteredUser[0]["display_name"];
-                    s = s.replace(email, "<span class='taggedUser'>" + userDisplayName + "</span>");
+                    s = s.replace(id, "<span class='taggedUser'>" + userDisplayName + "</span>");
                 }
             });
 

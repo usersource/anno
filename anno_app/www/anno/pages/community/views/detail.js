@@ -747,8 +747,8 @@ define([
                 method: "followup.followup.insert",
                 parameter: {
                     anno_id : id,
-                    comment : annoUtil.replaceUniqueUserNameWithEmail(comment),
-                    tagged_users : annoUtil.taggedUserEmails,
+                    comment : annoUtil.replaceUniqueUserNameWithID(comment),
+                    tagged_users : annoUtil.taggedUserIDs,
                     team_key : annoUtil.pluginTeamKey
                 },
                 needAuth: true,
