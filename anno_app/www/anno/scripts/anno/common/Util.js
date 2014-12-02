@@ -1375,6 +1375,9 @@
                 imageDiv.className += " icon-user";
             } else {
                 imageDiv.style.background = "url('" + tag.image_url + "')";
+                imageDiv.style.backgroundSize = "cover";
+                imageDiv.style.backgroundRepeat =  "no-repeat";
+                imageDiv.style.backgroundPosition =  "50%";
             }
             innerSuggestionDiv.appendChild(imageDiv);
 
