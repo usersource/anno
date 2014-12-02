@@ -15,6 +15,7 @@ from model.anno import Anno
 from model.follow_up import FollowUp
 from model.userannostate import UserAnnoState
 from model.tags import Tag
+from model.user import User
 from message.followup_message import FollowupMessage
 from message.followup_message import FollowupListMessage
 from helper.utils import put_search_document
@@ -57,7 +58,12 @@ class FollowupApi(remote.Service):
         anno.put()
 
         # update user anno state
-        UserAnnoState.insert(user=user, anno=anno)
+        UserAnnoState.insert(user=user, anno=anno, type=AnnoActionType.COMMENTED)
+
+        for tagged_user_email in followup.tagged_users:
+            tagged_user = User.find_user_by_email(tagged_user_email, request.team_key)
+            if tagged_user:
+                UserAnnoState.insert(user=tagged_user, anno=anno, type=AnnoActionType.TAGGEDUSER)
 
         # update search document
         put_search_document(anno.generate_search_document(), SearchIndexName.ANNO)

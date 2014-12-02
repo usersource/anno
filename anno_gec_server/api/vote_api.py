@@ -15,6 +15,7 @@ from helper.settings import anno_js_client_id
 from helper.utils import auth_user
 from helper.utils import put_search_document
 from helper.utils_enum import SearchIndexName
+from helper.utils_enum import AnnoActionType
 from model.anno import Anno
 from model.vote import Vote
 from model.userannostate import UserAnnoState
@@ -51,7 +52,7 @@ class VoteApi(remote.Service):
         anno.put()
 
         # update user anno state
-        UserAnnoState.insert(user=user, anno=anno)
+        UserAnnoState.insert(user=user, anno=anno, type=AnnoActionType.UPVOTED)
 
         # update vote in search document
         put_search_document(anno.generate_search_document(), SearchIndexName.ANNO)

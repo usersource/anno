@@ -17,6 +17,7 @@ from model.appinfo import AppInfo
 from model.userrole import UserRole
 from helper.utils import *
 from helper.utils_enum import SearchIndexName
+from helper.utils_enum import AnnoActionType
 
 
 class Anno(BaseModel):
@@ -179,7 +180,7 @@ class Anno(BaseModel):
 
         # update user anno state
         from model.userannostate import UserAnnoState
-        UserAnnoState.insert(user=user, anno=entity)
+        UserAnnoState.insert(user=user, anno=entity, type=AnnoActionType.CREATED)
 
         return entity
 

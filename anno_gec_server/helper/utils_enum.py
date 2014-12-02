@@ -16,6 +16,9 @@ class AnnoActionType(object):
     EDITED = "edited"
     DELETED = "deleted"
     COMMENTED = "commented"
+    UPVOTED = "upvoted"
+    FLAGGED = "flagged"
+    TAGGEDUSER = "tagged_user"
 
 class AnnoPushNotificationMessage(object):
     CREATED = "{user_name} created an anno for {app_name}: '{anno_text}'"

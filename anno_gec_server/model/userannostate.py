@@ -2,6 +2,7 @@
 When notify is not None, user is either created or commented on that anno.
 When modified is not None, user is interacted with anno.
 When notify and modified are None, user is mentioned in that anno.
+last_read is used to find if user read it
 '''
 
 import datetime
@@ -10,6 +11,7 @@ from google.appengine.ext import ndb
 
 from model.user import User
 from model.anno import Anno
+from helper.utils_enum import AnnoActionType
 from message.user_message import UserMessage
 
 class UserAnnoState(ndb.Model):
@@ -25,17 +27,17 @@ class UserAnnoState(ndb.Model):
         return cls.query(ndb.AND(cls.user == user.key, cls.anno == anno.key)).get()
 
     @classmethod
-    def insert(cls, user, anno, modified=None):
+    def insert(cls, user, anno, type):
         entity = cls.get(user=user, anno=anno)
-
-        if entity:
-            if entity.modified is None:
-                entity.notify = True
-        else:
+        if not entity:
             entity = cls(user=user.key, anno=anno.key)
 
         entity.last_read = datetime.datetime.now()
-        entity.modified = modified or entity.last_read
+        entity.modified = entity.last_read
+
+        if (type in [AnnoActionType.CREATED, AnnoActionType.COMMENTED]) and (entity.notify is None):
+            entity.notify = True
+
         entity.put()
         return entity
 
