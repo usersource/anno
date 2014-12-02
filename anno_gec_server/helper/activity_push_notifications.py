@@ -118,7 +118,8 @@ class ActivityPushNotifications():
 
         # get all interested users for anno if action_type is other than "created"
         if action_type != AnnoActionType.CREATED:
-            interested_user_list = UserAnnoState.list_by_anno(anno.key.id())
+            interested_user_list = UserAnnoState.list_users_by_anno(anno_key=anno.key,
+                                                                    projection=[UserAnnoState.user, UserAnnoState.last_read])
             interested_user_deviceids = cls.list_deviceid(interested_user_list)
 
         # anno is in community-scope then send notification to all managers of that community

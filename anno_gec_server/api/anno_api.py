@@ -60,6 +60,8 @@ from message.anno_api_messages import AnnoMergeMessage
 from message.anno_api_messages import AnnoListMessage
 from message.anno_api_messages import AnnoResponseMessage
 from message.anno_api_messages import UserUnreadMessage
+from message.user_message import UserMessage
+from message.user_message import UserListMessage
 from model.anno import Anno
 from model.vote import Vote
 from model.flag import Flag
@@ -87,7 +89,8 @@ class AnnoApi(remote.Service):
 
     anno_with_id_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
-        id=messages.IntegerField(2, required=True)
+        id=messages.IntegerField(2, required=True),
+        team_key=messages.StringField(3)
     )
 
     anno_list_resource_container = endpoints.ResourceContainer(
@@ -148,7 +151,7 @@ class AnnoApi(remote.Service):
 
         # set anno association with followups
         followups = FollowUp.find_by_anno(anno)
-        followup_messages = [ entity.to_message() for entity in followups ]
+        followup_messages = [ entity.to_message(team_key=request.team_key) for entity in followups ]
         anno_resp_message.followup_list = followup_messages
 
         # set anno association with votes/flags
@@ -372,3 +375,26 @@ class AnnoApi(remote.Service):
                     unread_count += 1
 
         return UserUnreadMessage(unread_count=unread_count)
+
+    @endpoints.method(anno_with_id_resource_container, UserListMessage,
+                      path="anno/users/{id}", http_method="GET", name="anno.anno.users")
+    def getEngagedUsers(self, request):
+        userannostates = UserAnnoState.list_users_by_anno(anno_id=request.id, projection=[UserAnnoState.user])
+
+        users = []
+        for userannostate in userannostates:
+            current_user = userannostate.user.get()
+            users.append(UserMessage(id=current_user.key.id(),
+                                     user_email=current_user.user_email,
+                                     display_name=current_user.display_name,
+                                     image_url=current_user.image_url))
+
+        # removing auth_user
+        user = auth_user(self.request_state.headers)
+        if user:
+            [ users.remove(user_info) for user_info in users if user_info.user_email == user.user_email ]
+
+        # sorting users alphabetically
+        users = sorted(users, key=lambda user_info: user_info.display_name.lower())
+
+        return UserListMessage(user_list=users)

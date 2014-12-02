@@ -147,6 +147,8 @@ define([
                                         acceptInvitation(inviteList[i]);
                                     }
                                 }, true);
+                            } else {
+                                annoUtil.getCommunityUserForMention();
                             }
                             firstLaunch = false;
                         }, 500);

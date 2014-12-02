@@ -1,5 +1,6 @@
 import logging
 
+from google.appengine.ext import ndb
 import endpoints
 from protorpc import message_types
 from protorpc import remote
@@ -13,12 +14,15 @@ from helper.utils import user_community
 from helper.utils import get_user_from_request
 from model.user import User
 from model.invite import Invite
+from model.userrole import UserRole
+from model.community import Community
 from message.user_message import UserMessage
 from message.user_message import UserCommunityMessage
 from message.user_message import UserCommunityListMessage
 from message.user_message import UserInviteMessage
 from message.user_message import UserInviteListMessage
 from message.user_message import UserInviteAcceptMessage
+from message.user_message import UserListMessage
 from message.community_message import CommunityMessage
 from message.common_message import ResponseMessage
 from message.appinfo_message import UserFavoriteAppList
@@ -191,3 +195,33 @@ class UserApi(remote.Service):
         user.account_type = request.account_type
         user.put()
         return message_types.VoidMessage()
+
+
+    @endpoints.method(user_email_resource_container, UserListMessage,
+                      path="user/community/users", http_method="GET", name="user.community.users")
+    def community_users(self, request):
+        user = auth_user(self.request_state.headers)
+        community_userroles = []
+
+        if user:
+            community = Community.getCommunityFromTeamKey(request.account_type)
+            if community:
+                community_userroles = UserRole.query().filter(ndb.AND(UserRole.community == community.key,
+                                                                      UserRole.circle_level > 0)
+                                                              ).fetch(projection=[UserRole.user])
+
+        users = []
+        for community_userrole in community_userroles:
+            current_user = community_userrole.user.get()
+            users.append(UserMessage(id=current_user.key.id(),
+                                     user_email=current_user.user_email,
+                                     display_name=current_user.display_name,
+                                     image_url=current_user.image_url))
+
+        # removing auth_user
+        [ users.remove(user_info) for user_info in users if user_info.user_email == user.user_email ]
+
+        # sorting users alphabetically
+        users = sorted(users, key=lambda user_info: user_info.display_name.lower())
+
+        return UserListMessage(user_list=users)

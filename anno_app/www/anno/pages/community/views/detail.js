@@ -663,7 +663,7 @@ define([
             var APIConfig = {
                 name: annoUtil.API.anno,
                 method: "anno.anno.get",
-                parameter: {id:id},
+                parameter: { id:id, team_key:annoUtil.pluginTeamKey },
                 needAuth: true,
                 success: function(data)
                 {
@@ -718,6 +718,7 @@ define([
 
                     setDetailsContext(cursor);
                     domStyle.set("AnnoDetails", "display", "");
+                    annoUtil.getEngagedUsersForAnno(id);
                 },
                 error: function()
                 {
@@ -744,12 +745,15 @@ define([
             var APIConfig = {
                 name: annoUtil.API.followUp,
                 method: "followup.followup.insert",
-                parameter: {anno_id:id, comment:comment},
+                parameter: {
+                    anno_id : id,
+                    comment : annoUtil.replaceUniqueUserNameWithID(comment),
+                    tagged_users : annoUtil.taggedUserIDs,
+                    team_key : annoUtil.pluginTeamKey
+                },
                 needAuth: true,
                 success: function(data)
                 {
-                    console.log(JSON.stringify(data.result));
-
                     var currentAnno = eventsModel.cursor||eventsModel.model[0];
                     // sync commented activity
                     currentAnno.lastActivityChangedClass = "icon-comment";
@@ -764,11 +768,12 @@ define([
                     }
 
                     var commentObject = {
-                        user_id : author,
-                        comment : comment,
-                        user_image : annoUtil.pluginUserImageURL,
+                        user_id : data.creator.display_name,
+                        comment : data.comment,
+                        user_image : data.creator.image_url,
                         default_commenter_image : default_commenter_image,
-                        commenter_image : commenter_image
+                        commenter_image : commenter_image,
+                        tagged_users_detail : data.tagged_users_detail
                     };
                     processFollowupHashTagsOrURLs(commentObject);
                     // currentAnno.comments.splice(0, 0, new getStateful(commentObject));
@@ -1176,6 +1181,7 @@ define([
         		followup.modifiedComment = followup.comment;
         		followup.modifiedComment = annoUtil.replaceHashTagWithLink(followup.modifiedComment, hashTagTemplate);
         		followup.modifiedComment = annoUtil.replaceURLWithLink(followup.modifiedComment, commentURLTemplate);
+                followup.modifiedComment = annoUtil.replaceEmailWithName(followup.modifiedComment, followup.tagged_users_detail);
         	}
         };
 
@@ -1404,22 +1410,22 @@ define([
                     doSocialShare();
                 }));*/
 
-                _connectResults.push(connect.connect(domAddCommentTextBox, "focus", function ()
-                {
+                _connectResults.push(connect.connect(domAddCommentTextBox, "focus", function() {
                     commentTextBoxFocused = true;
-                    window.setTimeout(function(){
+                    window.setTimeout(function() {
                         domAddCommentTextBox.rows = "4";
                         domClass.add("sendComment", "expanded");
+                        annoUtil.showSuggestionTools("addCommentContainer", "detailSuggestionTool");
                     }, 500);
                 }));
 
-                _connectResults.push(connect.connect(domAddCommentTextBox, "blur", function ()
-                {
+                _connectResults.push(connect.connect(domAddCommentTextBox, "blur", function() {
                     commentTextBoxFocused = false;
-                    window.setTimeout(function(){
+                    window.setTimeout(function() {
                         domAddCommentTextBox.rows = "1";
                         domClass.remove("sendComment", "expanded");
                         domStyle.set('detailSuggestedTags', 'display', 'none');
+                        annoUtil.hideSuggestionTools("addCommentContainer", "detailSuggestionTool");
                     }, 500);
                 }));
 
@@ -1439,9 +1445,19 @@ define([
                     }
                 }));
 
+                _connectResults.push(connect.connect(dom.byId("suggestionToolUsers"), "click", function(e) {
+                    dojo.stopEvent(e);
+                    annoUtil.showTextSuggestion("detailSuggestedTags", "addCommentTextBox", 64);
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("suggestionToolTags"), "click", function(e) {
+                    dojo.stopEvent(e);
+                    annoUtil.showTextSuggestion("detailSuggestedTags", "addCommentTextBox", 35);
+                }));
+
                 _connectResults.push(connect.connect(domAddCommentTextBox, "input", function(e) {
                     window.setTimeout(function() {
-                        annoUtil.showSuggestedTags(e, "detailSuggestedTags", "addCommentTextBox");
+                        annoUtil.showTextSuggestion("detailSuggestedTags", "addCommentTextBox");
                     }, 0);
                 }));
 

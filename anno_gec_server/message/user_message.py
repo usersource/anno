@@ -34,3 +34,6 @@ class UserInviteAcceptMessage(messages.Message):
 class UserCommunityListMessage(messages.Message):
     community_list = messages.MessageField(UserCommunityMessage, 1, repeated=True)
     invite_list = messages.MessageField(UserInviteMessage, 2, repeated=True)
+
+class UserListMessage(messages.Message):
+    user_list = messages.MessageField(UserMessage, 1, repeated=True)

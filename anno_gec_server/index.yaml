@@ -202,6 +202,20 @@ indexes:
 
 - kind: UserAnnoState
   properties:
+  - name: anno
+  - name: notify
+  - name: user
+
+- kind: UserAnnoState
+  properties:
+  - name: last_read
+  - name: user
+  - name: modified
+    direction: desc
+  - name: anno
+
+- kind: UserAnnoState
+  properties:
   - name: user
   - name: modified
     direction: desc
@@ -210,8 +224,19 @@ indexes:
 - kind: UserRole
   properties:
   - name: community
+  - name: circle_level
+  - name: user
+
+- kind: UserRole
+  properties:
+  - name: community
   - name: role
   - name: user
+
+- kind: UserRole
+  properties:
+  - name: user
+  - name: circle_level
 
 - kind: UserRole
   properties:

@@ -27,10 +27,11 @@
     deviceList = dojoJson.parse(deviceList);
     pluginConfig = dojoJson.parse(pluginConfig);
     // console.log("using server Url config:" + JSON.stringify(serverURLConfig));
-    var popularTags = [];
+    var popularTags = [], teamUsers = [], annoEngagedUsers = [];
     var suggestTags = false, countToSuggestTags = 0, tagStringArray = [];
+    var hashtagSuggestion = false;
     var previousTagDiv = "", inputValueLength = 0;
-    var MIN_CHAR_TO_SUGGEST_TAGS = 2;
+    var MIN_CHAR_TO_SUGGEST_TAGS = 0;
     var timings = [{label: 'start', t: Date.now()}];
     var util = {
         loadingIndicator:null,
@@ -60,6 +61,8 @@
         timeoutTime: 10 * 1000,
         timeoutSession : {},
         basicAccessToken: {},
+        filteredUsers: [],
+        taggedUserIDs: [],
         ERROR_TYPES:{
             "LOAD_GAE_API": 1,
             "API_RESPONSE_EMPTY": 2,
@@ -137,13 +140,15 @@
             "anno.anno.merge" : { "url" : "/anno/1.0/anno", "method" : "POST", "url_fields" : ["id"] },
             "anno.anno.delete" : { "url" : "/anno/1.0/anno", "method" : "DELETE", "url_fields" : ["id"] },
             "anno.anno.get" : { "url" : "/anno/1.0/anno", "method" : "GET", "url_fields" : ["id"] },
+            "anno.anno.users" : { "url" : "/anno/1.0/anno/users", "method" : "GET", "url_fields" : ["id"] },
             "followup.followup.insert" : { "url" : "/followup/1.0/followup", "method" : "POST" },
             "vote.vote.insert" : { "url" : "/vote/1.0/vote", "method" : "POST" },
             "vote.vote.delete" : { "url" : "/vote/1.0/vote", "method" : "DELETE" },
             "flag.flag.insert" : { "url" : "/flag/1.0/flag", "method" : "POST" },
             "flag.flag.delete" : { "url" : "/flag/1.0/flag", "method" : "DELETE" },
             "anno.anno.mystuff" : { "url" : "/anno/1.0/anno_my_stuff", "method" : "GET" },
-            "anno.user.unread" : { "url" : "/anno/1.0/user/unread", "method" : "GET" }
+            "anno.user.unread" : { "url" : "/anno/1.0/user/unread", "method" : "GET" },
+            "user.community.users" : { "url" : "/user/1.0/user/community/users", "method" : "GET" }
         },
         dataCollectorURL : {
             "main_page" : "http://datacollector.ignitesol.com/collector/update"
@@ -838,6 +843,43 @@
             s = s.replace(/(^|\W)\b((www\d{0,3}[.])(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, "$1http://$2");
             return s.replace(/(^|\W)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, linkScript);
         },
+        replaceUniqueUserNameWithID: function(s) {
+            var self = this;
+            var taggedUniqueName = s.match(/(^|\W)(@[a-z\d][\w-._@]*)/ig) || [];
+            this.taggedUserIDs = [];
+
+            taggedUniqueName.forEach(function(name) {
+                name = name.trim();
+                var filteredUser = self.filteredUsers.filter(function(user) {
+                    return user.unique_name === name.split("@")[1];
+                });
+                if (filteredUser.length) {
+                    var userID = filteredUser[0]["id"];
+                    s = s.replace(name, "__" + userID + "__");
+                    self.taggedUserIDs.push(userID);
+                }
+            });
+
+            return s;
+        },
+        replaceEmailWithName: function(s, tagged_users) {
+            var self = this;
+            var matchedEmailList = s.match(/(^|\W)(__[a-z\d][\w-._@]*)/ig) || [];
+            tagged_users = tagged_users || [];
+
+            matchedEmailList.forEach(function(id) {
+                id = id.trim();
+                var filteredUser = tagged_users.filter(function(user) {
+                    return user.id === id.split("__")[1];
+                });
+                if (filteredUser.length) {
+                    var userDisplayName = filteredUser[0]["display_name"];
+                    s = s.replace(id, "<span class='taggedUser'>" + userDisplayName + "</span>");
+                }
+            });
+
+            return s;
+        },
         loadUserCommunities: function(includeInvite, callback, keepSpinnerShown)
         {
             if (this.userCommunities)
@@ -1197,6 +1239,65 @@
 
             this.callGAEAPI(APIConfig);
         },
+        getCommunityUserForMention: function() {
+            var self = this;
+            var APIConfig = {
+                name : this.API.user,
+                method : "user.community.users",
+                parameter : { account_type : this.pluginTeamKey },
+                showLoadingSpinner : false,
+                success : function(data) {
+                    teamUsers = self.getUniqueName(data.user_list, false) || [];
+                },
+                error : function() {
+                }
+            };
+
+            this.callGAEAPI(APIConfig);
+        },
+        getEngagedUsersForAnno: function(anno_id) {
+            var self = this;
+            var APIConfig = {
+                name : this.API.anno,
+                method : "anno.anno.users",
+                parameter : { "id" : anno_id },
+                showLoadingSpinner : false,
+                success : function(data) {
+                    annoEngagedUsers = self.getUniqueName(data.user_list, true) || [];
+                },
+                error : function() {
+                }
+            };
+
+            this.callGAEAPI(APIConfig);
+        },
+        showSuggestionTools: function(mainContainer, toolDiv) {
+            return;
+            if (popularTags.length || teamUsers.length || annoEngagedUsers.length) {
+                domStyle.set(mainContainer, "bottom", "40px");
+                domStyle.set(toolDiv, "display", "");
+            } else {
+                this.hideSuggestionTools(mainContainer, toolDiv);
+            }
+
+            if (popularTags.length) {
+                domStyle.set("suggestionToolTags", "display", "");
+            } else {
+                domStyle.set("suggestionToolTags", "display", "none");
+            }
+
+            if (teamUsers.length || annoEngagedUsers.length) {
+                domStyle.set("suggestionToolUsers", "display", "");
+            } else {
+                domStyle.set("suggestionToolUsers", "display", "none");
+            }
+        },
+        hideSuggestionTools: function(mainContainer, toolDiv) {
+            domStyle.set(mainContainer, "bottom", "0px");
+            domStyle.set(toolDiv, "display", "none");
+            domStyle.set("suggestionToolTags", "display", "none");
+            domStyle.set("suggestionToolUsers", "display", "none");
+        },
         showTagDiv: function(tagDiv) {
             domStyle.set(tagDiv, "display", "");
             this.disableNativeGesture();
@@ -1205,37 +1306,45 @@
             domStyle.set(tagDiv, "display", "none");
             this.enableNativeGesture();
         },
-        resetTagSuggestion: function(tagDiv) {
+        resetTextSuggestion: function(tagDiv) {
             suggestTags = false;
             countToSuggestTags = 0;
             tagStringArray = [];
             this.hideTagDiv(tagDiv);
             previousTagDiv = "";
             inputValueLength = 0;
+            dom.byId(tagDiv).scrollLeft = 0;
         },
-        showSuggestedTags: function(e, tagDiv, inputDiv) {
+        showTextSuggestion: function(tagDiv, inputDiv, keyCode) {
             var inputDom = dom.byId(inputDiv),
                 inputValue = inputDom.value,
+                inputSelectionStart = inputDom.selectionStart,
                 keyCodeNull = false,
-                keyCode = 0,
+                keyCode = keyCode || 0,
                 charDeleted = false;
 
-            if (previousTagDiv && (previousTagDiv === tagDiv) && (inputValueLength > 0) && (inputValueLength > inputValue.length)) {
+            if (previousTagDiv &&
+                (previousTagDiv === tagDiv) &&
+                (inputValueLength > 0) &&
+                (inputValueLength > inputValue.length)) {
                 charDeleted = true;
             }
 
             previousTagDiv = tagDiv;
             inputValueLength = inputValue.length;
 
-            if (!charDeleted) {
+            if (!charDeleted && (keyCode == 0)) {
                 keyCodeNull = true;
-                keyCode = inputValue.toUpperCase().charCodeAt(inputDom.selectionStart - 1);
+                keyCode = inputValue.toUpperCase().charCodeAt(inputSelectionStart - 1);
             }
 
-            if (keyCode === 35 && keyCodeNull === true) {
+            if ((keyCode === 35 || keyCode === 64) && keyCodeNull === true) {
                 suggestTags = true;
                 countToSuggestTags = 0;
                 tagStringArray = [];
+                hashtagSuggestion = (keyCode === 35) ? true : false;
+                this.showTagDiv(tagDiv);
+                this.getTagStrings(tagDiv, inputDiv);
             } else if (suggestTags) {
                 if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90)) {
                     countToSuggestTags += 1;
@@ -1244,36 +1353,125 @@
                     countToSuggestTags -= 1;
                     tagStringArray.pop();
                 } else {
-                    this.resetTagSuggestion(tagDiv);
+                    this.resetTextSuggestion(tagDiv);
                 }
 
-                if (countToSuggestTags >= MIN_CHAR_TO_SUGGEST_TAGS) {
+                if ((countToSuggestTags >= MIN_CHAR_TO_SUGGEST_TAGS) && suggestTags) {
+                    this.showTagDiv(tagDiv);
                     this.getTagStrings(tagDiv, inputDiv);
                 } else {
                     this.hideTagDiv(tagDiv);
                 }
             }
         },
-        getTagStrings: function(tagDiv, inputDiv) {
-            var annoUtil = this, tagString = tagStringArray.join("");
+        createUserSuggestionView: function(tag) {
+            var innerSuggestionDiv = document.createElement("div");
+            innerSuggestionDiv.className = "userSuggestion";
 
-            var suggestedTagsArray = popularTags.filter(function(string) {
-                return string.toLowerCase().indexOf(tagString.toLowerCase()) == 0;
+            var imageDiv = document.createElement("div");
+            imageDiv.className = "userSuggestionImage";
+            tag.image_url = tag.image_url || "";
+            if (tag.image_url === "") {
+                imageDiv.className += " icon-user";
+            } else {
+                imageDiv.style.background = "url('" + tag.image_url + "')";
+            }
+            innerSuggestionDiv.appendChild(imageDiv);
+
+            var infoDiv = document.createElement("div");
+            infoDiv.className = "userSuggestionInfo";
+            innerSuggestionDiv.appendChild(infoDiv);
+
+            var nameDiv = document.createElement("div");
+            nameDiv.className = "userSuggestionName";
+            nameDiv.innerText = tag.display_name;
+            infoDiv.appendChild(nameDiv);
+
+            var emailDiv = document.createElement("div");
+            emailDiv.className = "userSuggestionEmail";
+            emailDiv.innerText = tag.user_email;
+            infoDiv.appendChild(emailDiv);
+
+            return innerSuggestionDiv;
+        },
+        getUniqueName: function(mentionUsersArray, annoDetail) {
+            var uniqueNames = [], uniqueUserName;
+            mentionUsersArray = mentionUsersArray || [];
+
+            function isUnique(userName) {
+                var isUniqueName = uniqueNames.indexOf(userName) !== -1;
+                if (!annoDetail) {
+                    return isUniqueName;
+                } else {
+                    return isUniqueName && teamUsers.some(function(user) { return user.unique_name == userName });
+                }
+            }
+
+            mentionUsersArray.forEach(function(mentionedUser, index) {
+                if ((mentionedUser["display_name"] === "") ||
+                    (teamUsers.some(function(user) { return user["user_email"] === mentionedUser["user_email"] }) &&
+                    annoDetail)) {
+                    delete mentionUsersArray[index];
+                } else  if (!("unique_name" in mentionedUser)) {
+                    var trimDisplayName = mentionedUser["display_name"].split(" ").join("");
+                    uniqueUserName = trimDisplayName;
+                    if (isUnique(uniqueUserName)) {
+                        var trimUserEmail = mentionedUser["user_email"].split("@")[0];
+                        uniqueUserName = trimDisplayName + trimUserEmail;
+                        if (isUnique(uniqueUserName)) {
+                            uniqueUserName = trimDisplayName + mentionedUser["user_email"];
+                        }
+                    }
+                    mentionedUser["unique_name"] = uniqueUserName;
+                    uniqueNames.push(uniqueUserName);
+                }
+            });
+
+            return mentionUsersArray;
+        },
+        getTagStrings: function(tagDiv, inputDiv) {
+            var self = this, tagString = tagStringArray.join("");
+            var superSetArray = popularTags;
+
+            if (!hashtagSuggestion) {
+                superSetArray = teamUsers.slice(0);
+                annoEngagedUsers.forEach(function(user) {
+                    superSetArray.push(user);
+                });
+            }
+
+            var suggestedTagsArray = this.filteredUsers = superSetArray.filter(function(string) {
+                if (string === undefined) return false;
+                tempTagString = tagString.toLowerCase();
+                if (hashtagSuggestion) {
+                    return (string.indexOf(tempTagString) === 0);
+                } else {
+                    return ((string.display_name.toLowerCase().indexOf(tempTagString) === 0) ||
+                            (string.user_email.indexOf(tempTagString) === 0));
+                }
             });
 
             dom.byId(tagDiv).innerHTML = "";
             suggestedTagsArray.forEach(function(tag) {
-                var innerTagDiv = document.createElement("div");
-                innerTagDiv.className = "tag";
-                innerTagDiv.innerText = "#" + tag;
-                dom.byId(tagDiv).appendChild(innerTagDiv);
+                var suggestedText = hashtagSuggestion ? "#" + tag : "@" + tag.unique_name;
+                var innerSuggestionDiv = document.createElement("div");
 
-                connect.connect(innerTagDiv, "click", function(e) {
+                if (hashtagSuggestion) {
+                    innerSuggestionDiv.className = "tag";
+                    innerSuggestionDiv.innerText = suggestedText;
+                } else {
+                    innerSuggestionDiv = self.createUserSuggestionView(tag);
+                }
+
+                dom.byId(tagDiv).appendChild(innerSuggestionDiv);
+
+                connect.connect(innerSuggestionDiv, "click", function(e) {
                     dojo.stopEvent(e);
                     var input = dom.byId(inputDiv),
                         replaceIndex = input.selectionStart - tagString.length;
-                    input.value = input.value.replaceAt(replaceIndex, tagString.length, tag + " ");
-                    annoUtil.resetTagSuggestion(tagDiv);
+
+                    input.value = input.value.replaceAt(replaceIndex - 1, tagString.length + 1, suggestedText + " ");
+                    self.resetTextSuggestion(tagDiv);
 
                     setTimeout(function() {
                         // input.focus();
