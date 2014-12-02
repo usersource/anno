@@ -35,8 +35,13 @@ class UserAnnoState(ndb.Model):
         entity.last_read = datetime.datetime.now()
         entity.modified = entity.last_read
 
-        if (type in [AnnoActionType.CREATED, AnnoActionType.COMMENTED]) and (entity.notify is None):
-            entity.notify = True
+        if type in [AnnoActionType.CREATED, AnnoActionType.COMMENTED]:
+            entity.last_read = datetime.datetime.now()
+            entity.modified = entity.last_read
+            entity.notify = True if entity.notify is None else entity.notify
+        elif type in [AnnoActionType.UPVOTED, AnnoActionType.FLAGGED]:
+            entity.last_read = datetime.datetime.now()
+            entity.modified = entity.last_read
 
         entity.put()
         return entity
@@ -58,7 +63,8 @@ class UserAnnoState(ndb.Model):
 
     @classmethod
     def list_by_user(cls, user_key, limit=None):
-        query = cls.query(ndb.AND(cls.user == user_key, cls.modified != None))
+        query = cls.query().filter(cls.user == user_key)
+        query = query.filter(ndb.OR(cls.last_read == None, cls.modified != None))
         query = query.order(-cls.modified)
 
         if limit:

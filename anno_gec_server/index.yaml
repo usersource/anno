@@ -208,6 +208,14 @@ indexes:
 
 - kind: UserAnnoState
   properties:
+  - name: last_read
+  - name: user
+  - name: modified
+    direction: desc
+  - name: anno
+
+- kind: UserAnnoState
+  properties:
   - name: user
   - name: modified
     direction: desc
