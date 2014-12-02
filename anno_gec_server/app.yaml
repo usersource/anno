@@ -7,6 +7,9 @@ threadsafe: yes
 builtins:
 - remote_api: on
 
+inbound_services:
+- warmup
+
 handlers:
 - url: /_ah/spi/.*
   script: services.APPLICATION
