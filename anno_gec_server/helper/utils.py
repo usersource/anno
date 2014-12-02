@@ -9,6 +9,7 @@ import endpoints
 from google.appengine.api import search
 from google.appengine.api import mail
 from google.appengine.ext import ndb
+from google.appengine.ext.ndb import Key
 
 from model.user import User
 from model.appinfo import AppInfo
@@ -69,21 +70,34 @@ def auth_user(headers):
     if current_user is None:
         credential_pair = get_credential(headers)
 
+        signinMethod = SignInMethod.ANNO
+        team_key = None
+        team_secret = None
+        display_name = None
+        image_url = None
+
         if len(credential_pair) == 2:
             email, password = credential_pair
-            signinMethod = SignInMethod.ANNO
-            team_key = None
-        else:
+        elif len(credential_pair) == 5:
             signinMethod, email, password, team_key, team_secret = credential_pair
+        else:
+            signinMethod, email, password, team_key, team_secret, display_name, image_url = credential_pair
 
         validate_email(email)
+        user = User.find_user_by_email(email, team_key)
 
         if signinMethod == SignInMethod.ANNO:
             User.authenticate(email, md5(password))
         elif signinMethod == SignInMethod.PLUGIN:
-            Community.authenticate(team_key, md5(team_secret))
+            display_name = unicode(display_name, "utf-8", "ignore")
+            if not user:
+                user = User.insert_user(email=email, username=display_name, account_type=team_key, image_url=image_url)
+                community = Community.getCommunityFromTeamKey(team_key)
+                UserRole.insert(user, community)
+            elif (display_name and display_name != user.display_name) or (image_url and image_url != user.image_url):
+                User.update_user(user=user, email=email, username=display_name, account_type=team_key, image_url=image_url)
 
-        user = User.find_user_by_email(email, team_key)
+            Community.authenticate(team_key, md5(team_secret))
     else:
         user = User.find_user_by_email(current_user.email())
 
@@ -162,14 +176,17 @@ def get_credential(headers):
 
     try:
         credential = base64.b64decode(basic_auth_string[1])
-        credential_pair = credential.split(':')
+        credential_pair = credential.split('_$_')
+        # ":" was used before to split
+        if len(credential_pair) == 1:
+            credential_pair = credential.split(':')
     except Exception as e:
         logging.info("basic auth string: %s", basic_auth_string)
         logging.exception("Exception in get_credential")
         credential_pair = []
 
-    # length of credential_pair for old JS is 2 while for new is 5
-    if not (len(credential_pair) == 2 or len(credential_pair) == 5):
+    # length of credential_pair for old JS is 2 and 5 while for new is 7
+    if len(credential_pair) not in [2, 5, 7]:
         raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
 
     return credential_pair
@@ -295,35 +312,25 @@ def isMember(community, user, include_manager=True):
     return True if results else False
 
 def filter_anno_by_user(query, user, is_plugin=False):
+    filter_strings = []
+
+    user_community_dict = { role.get("community") : role.get("circle_level") for role in user_community(user) }
+    for community, circle_level in user_community_dict.iteritems():
+        if circle_level > 0:
+            circle_level_list = [ int(level) for level in community.get().circles.keys() if int(level) <= circle_level ]
+        else:
+            circle_level_list = [ circle_level ]
+
+        filter_strings.append("ndb.AND(Anno.community == " + str(community) +
+                              ", Anno.circle_level.IN(" + str(circle_level_list) +
+                              "))")
+
+    if not is_plugin:
+        filter_strings.append("Anno.community == " + str(None))
+
     from model.anno import Anno
-    user_communities = user_community(user)
-
-    if len(user_communities):
-        user_community_dict = { userrole.get("community") : userrole.get("circle_level") for userrole in user_communities }
-
-        filter_strings = []
-        for community, circle_level in user_community_dict.iteritems():
-            circle_level_list = [None]
-
-            if circle_level > 0:
-                community_circles = community.get().circles
-                if community_circles:
-                    for circle_level_value, circle_level_name in community_circles.iteritems():
-                        if int(circle_level_value) <= circle_level:
-                            circle_level_list.append(int(circle_level_value))
-            else:
-                circle_level_list.append(circle_level)
-
-            filter_strings.append("ndb.AND(Anno.community == " + str(community) +
-                                  ", Anno.circle_level.IN(" + str(circle_level_list) +
-                                  "))")
-
-        from google.appengine.ext.ndb import Key
-        if not is_plugin:
-            filter_strings.append("Anno.community == " + str(None))
-
-        query = eval("query.filter(ndb.OR(%s))" % ", ".join(filter_strings))
-        query = query.order(Anno._key)
+    query = eval("query.filter(ndb.OR(%s))" % ", ".join(filter_strings))
+    query = query.order(Anno._key)
 
     return query
 

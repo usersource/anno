@@ -1,4 +1,5 @@
 ﻿define([
+    "dojo/_base/lang",
     "dojo/_base/declare",
     "dojo/_base/connect",
     "dojo/dom",
@@ -9,11 +10,13 @@
     "dojox/mobile/SimpleDialog",
     "dojox/mobile/_ContentPaneMixin",
     "dijit/registry",
+    "dojo/text!../../plugin_settings/pluginConfig.json",
     "dojo/text!../../server-url.json",
     "dojo/text!../../strings.json",
+    "dojo/text!../../device_list.json",
     "anno/common/DBUtil",
     "anno/common/GestureHandler"
-], function(declare, connect, dom, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, serverURLConfig, stringsRes, DBUtil, GestureHandler){
+], function(lang, declare, connect, dom, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, pluginConfig, serverURLConfig, stringsRes, deviceList, DBUtil, GestureHandler){
 
     String.prototype.replaceAt = function(startIndex, replaceCount, character) {
         return this.substr(0, startIndex) + character + this.substr(startIndex + replaceCount);
@@ -21,11 +24,14 @@
 
     serverURLConfig = dojoJson.parse(serverURLConfig);
     stringsRes = dojoJson.parse(stringsRes);
+    deviceList = dojoJson.parse(deviceList);
+    pluginConfig = dojoJson.parse(pluginConfig);
     // console.log("using server Url config:" + JSON.stringify(serverURLConfig));
-    var popularTags = [];
+    var popularTags = [], teamUsers = [], annoEngagedUsers = [];
     var suggestTags = false, countToSuggestTags = 0, tagStringArray = [];
+    var hashtagSuggestion = false;
     var previousTagDiv = "", inputValueLength = 0;
-    var MIN_CHAR_TO_SUGGEST_TAGS = 2;
+    var MIN_CHAR_TO_SUGGEST_TAGS = 0;
     var timings = [{label: 'start', t: Date.now()}];
     var util = {
         loadingIndicator:null,
@@ -39,6 +45,7 @@
         level1ColorRGB:"255, 153, 0",
         level2Color:"#ff0000",
         level2ColorRGB:"255, 0, 0",
+        loadingIndicatorColor: "#302730",
         myIPIsServiceUrl:"http://178.18.16.111/myipis",
         annoScreenshotPath:null,
         API_RETRY_TIMES: 0,
@@ -51,8 +58,11 @@
         pluginUserImageURL : "",
         pluginTeamKey : "",
         pluginTeamSecret : "",
-        timeoutTime: 40 * 1000,
+        timeoutTime: 10 * 1000,
         timeoutSession : {},
+        basicAccessToken: {},
+        filteredUsers: [],
+        taggedUserIDs: [],
         ERROR_TYPES:{
             "LOAD_GAE_API": 1,
             "API_RESPONSE_EMPTY": 2,
@@ -108,23 +118,6 @@
             deviceId: "annoDeviceId"
         },
         userCommunities: null, // all communities for current user
-        deviceList: {
-            "iPhone1,1" : "iPhone",
-            "iPhone1,2" : "iPhone3G",
-            "iPhone2,1" : "iPhone3GS",
-            "iPhone3,1" : "iPhone4",
-            "iPhone3,2" : "iPhone4",
-            "iPhone3,3" : "iPhone4",
-            "iPhone4,1" : "iPhone4S",
-            "iPhone5,1" : "iPhone5GSM",
-            "iPhone5,2" : "iPhone5CDMA",
-            "iPhone5,3" : "iPhone5C",
-            "iPhone5,4" : "iPhone5C",
-            "iPhone6,1" : "iPhone5S",
-            "iPhone6,2" : "iPhone5S",
-            "iPhone7,1" : "iPhone6Plus",
-            "iPhone7,2" : "iPhone6"
-        },
         versionInfo: { "version" : "", "build" : "" },
         analytics: {
             category: {
@@ -137,6 +130,48 @@
                 signin: 'signin',
                 annodraw: 'annoDraw',
                 auth: 'auth'
+            }
+        },
+        APIURL : {
+            "account.account.authenticate" : { "url" : "/account/1.0/account/authenticate", "method" : "POST" },
+            "anno.anno.list" : { "url" : "/anno/1.0/anno", "method" : "GET" },
+            "tag.tag.popular" : { "url" : "/tag/1.0/tag_popular", "method" : "GET" },
+            "anno.anno.insert" : { "url" : "/anno/1.0/anno", "method" : "POST" },
+            "anno.anno.merge" : { "url" : "/anno/1.0/anno", "method" : "POST", "url_fields" : ["id"] },
+            "anno.anno.delete" : { "url" : "/anno/1.0/anno", "method" : "DELETE", "url_fields" : ["id"] },
+            "anno.anno.get" : { "url" : "/anno/1.0/anno", "method" : "GET", "url_fields" : ["id"] },
+            "anno.anno.users" : { "url" : "/anno/1.0/anno/users", "method" : "GET", "url_fields" : ["id"] },
+            "followup.followup.insert" : { "url" : "/followup/1.0/followup", "method" : "POST" },
+            "vote.vote.insert" : { "url" : "/vote/1.0/vote", "method" : "POST" },
+            "vote.vote.delete" : { "url" : "/vote/1.0/vote", "method" : "DELETE" },
+            "flag.flag.insert" : { "url" : "/flag/1.0/flag", "method" : "POST" },
+            "flag.flag.delete" : { "url" : "/flag/1.0/flag", "method" : "DELETE" },
+            "anno.anno.mystuff" : { "url" : "/anno/1.0/anno_my_stuff", "method" : "GET" },
+            "anno.user.unread" : { "url" : "/anno/1.0/user/unread", "method" : "GET" },
+            "user.community.users" : { "url" : "/user/1.0/user/community/users", "method" : "GET" }
+        },
+        dataCollectorURL : {
+            "main_page" : "http://datacollector.ignitesol.com/collector/update"
+        },
+        sendTimesToServer: function(type, timesData) {
+            xhr(this.dataCollectorURL[type], {
+                method : 'POST',
+                data : timesData
+            }).then(function(resp) {
+                console.log("Sent data to server for", type);
+            }, function(e) {
+                console.error("Sending data failed for", type);
+            });
+        },
+        setPluginConfig: function() {
+            if (("highlightColorHEX" in pluginConfig) && (pluginConfig.highlightColorHEX !== "")) {
+                this.level1Color = pluginConfig.highlightColorHEX;
+            }
+            if (("highlightColorRGB" in pluginConfig) && (pluginConfig.highlightColorRGB !== "")) {
+                this.level1ColorRGB = pluginConfig.highlightColorRGB;
+            }
+            if (("loadingIndicatorColorHEX" in pluginConfig) && (pluginConfig.loadingIndicatorColorHEX !== "")) {
+                this.loadingIndicatorColor = pluginConfig.loadingIndicatorColorHEX;
             }
         },
         hasConnection: function()
@@ -215,27 +250,15 @@
                     self.showErrorMessage({type: self.ERROR_TYPES.CORDOVA_API_FAILED, message: JSON.stringify(e)});
                 });}
         },
-        showLoadingIndicator: function ()
-        {
+        showLoadingIndicator: function () {
             var cl = this.loadingIndicator;
 
-            if (!cl)
-            {
-                cl = this.loadingIndicator = new CanvasLoader('', {
-                    id: "detail_loading"
-                });
-                cl.setColor('#302730');
+            if (!cl) {
+                cl = this.loadingIndicator = new CanvasLoader('', { id : "detail_loading" });
+                cl.setColor(this.loadingIndicatorColor);
                 cl.setDiameter(50);
                 cl.setRange(0.9);
             }
-
-            var viewPoint = win.getBox();
-            domStyle.set("detail_loading", {
-                position: 'absolute',
-                left: ((viewPoint.w - 50) / 2) + 'px',
-                top: ((viewPoint.h - 50) / 2) + 'px',
-                zIndex: 4000
-            });
 
             cl.show();
         },
@@ -453,21 +476,22 @@
         },
         showConfirmMessageDialog: function (message, callback)
         {
-            var dlg = registry.byId('dlg_common_confirm_message');
+            var confirmBoxId = "confirmBox";
+            var dlg = registry.byId(confirmBoxId);
 
             if (!dlg)
             {
                 dlg = new (declare([SimpleDialog, _ContentPaneMixin]))({
-                    id: "dlg_common_confirm_message",
+                    id: confirmBoxId,
                     content: '' +
                         '<div id="div_cancel_confirm_message_message" class="mblSimpleDialogText">' + message + '</div>' +
-                        '<div style="text-align: center"><button id="btn_ok_confirm_message" class="btn">OK</button><button id="btn_cancel_confirm_message" class="btn">Cancel</button></div>'
+                        '<div style="text-align: center"><button id="btn_ok_confirm_message" class="btn">Yes</button><button id="btn_cancel_confirm_message" class="btn">No</button></div>'
                 });
                 dlg.startup();
 
                 connect.connect(document.getElementById('btn_cancel_confirm_message'), 'click', function ()
                 {
-                    registry.byId('dlg_common_confirm_message').hide();
+                    registry.byId(confirmBoxId).hide();
 
                     if (dlg._callback)
                     {
@@ -477,7 +501,7 @@
 
                 connect.connect(document.getElementById('btn_ok_confirm_message'), 'click', function ()
                 {
-                    registry.byId('dlg_common_confirm_message').hide();
+                    registry.byId(confirmBoxId).hide();
 
                     if (dlg._callback)
                     {
@@ -819,6 +843,43 @@
             s = s.replace(/(^|\W)\b((www\d{0,3}[.])(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, "$1http://$2");
             return s.replace(/(^|\W)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, linkScript);
         },
+        replaceUniqueUserNameWithID: function(s) {
+            var self = this;
+            var taggedUniqueName = s.match(/(^|\W)(@[a-z\d][\w-._@]*)/ig) || [];
+            this.taggedUserIDs = [];
+
+            taggedUniqueName.forEach(function(name) {
+                name = name.trim();
+                var filteredUser = self.filteredUsers.filter(function(user) {
+                    return user.unique_name === name.split("@")[1];
+                });
+                if (filteredUser.length) {
+                    var userID = filteredUser[0]["id"];
+                    s = s.replace(name, "__" + userID + "__");
+                    self.taggedUserIDs.push(userID);
+                }
+            });
+
+            return s;
+        },
+        replaceEmailWithName: function(s, tagged_users) {
+            var self = this;
+            var matchedEmailList = s.match(/(^|\W)(__[a-z\d][\w-._@]*)/ig) || [];
+            tagged_users = tagged_users || [];
+
+            matchedEmailList.forEach(function(id) {
+                id = id.trim();
+                var filteredUser = tagged_users.filter(function(user) {
+                    return user.id === id.split("__")[1];
+                });
+                if (filteredUser.length) {
+                    var userDisplayName = filteredUser[0]["display_name"];
+                    s = s.replace(id, "<span class='taggedUser'>" + userDisplayName + "</span>");
+                }
+            });
+
+            return s;
+        },
         loadUserCommunities: function(includeInvite, callback, keepSpinnerShown)
         {
             if (this.userCommunities)
@@ -913,7 +974,62 @@
             // These are not fatal errors
             this.exceptionGATracking(["<ShowErrorMessage> code:", error.code, "type:", error.type, "msg:", error.message].join(" "), false);
         },
-        callGAEAPI: function(config, retryCnt)
+        callGAEAPI: function(config) {
+            this.setDefaultServer(this.pluginServer);
+
+            config.showLoadingSpinner = config.showLoadingSpinner == null ? true : config.showLoadingSpinner;
+
+            if (config.showLoadingSpinner) {
+                util.showLoadingIndicator();
+            }
+
+            var root_url = this.getCEAPIConfig().apiRoot,
+                endpoint_info = this.APIURL[config.method],
+                endpoint_url = root_url + endpoint_info.url,
+                endpoint_method = endpoint_info.method;
+
+            if ("url_fields" in endpoint_info && endpoint_info["url_fields"].length > 0) {
+                for (field_index in endpoint_info["url_fields"]) {
+                    var field_value = endpoint_info["url_fields"][field_index];
+                    endpoint_url = endpoint_url + "/" + config.parameter[field_value];
+                    delete config.parameter[field_value];
+                }
+            }
+
+            var url_data = {
+                method : endpoint_method,
+                handleAs : 'json',
+                headers : {
+                    'Authorization' : 'Basic ' + this.basicAccessToken.access_token,
+                    'Content-Type' : 'application/json'
+                }
+            };
+
+            if (Object.keys(config.parameter).length > 0) {
+                if (endpoint_method === "POST") {
+                    url_data["data"] = JSON.stringify(config.parameter);
+                } else {
+                    var encoded_params = Object.keys(config.parameter).map(function(k) {
+                        return encodeURIComponent(k) + '=' + encodeURIComponent(config.parameter[k]);
+                    }).join('&');
+
+                    endpoint_url = endpoint_url + "?" + encoded_params;
+                }
+            }
+
+            xhr(endpoint_url, url_data).then(function(resp) {
+                if (!config.keepLoadingSpinnerShown) {
+                    util.hideLoadingIndicator();
+                }
+
+                resp['result'] = lang.clone(resp);
+                config.success(resp);
+            }, function(e) {
+                console.error("Error while calling " + config.method + ":", e);
+                config.error();
+            });
+        },
+        callGAEAPIWithGAPI: function(config, retryCnt)
         {
             // common method that responsible for calling GAE API
             /**
@@ -1123,6 +1239,65 @@
 
             this.callGAEAPI(APIConfig);
         },
+        getCommunityUserForMention: function() {
+            var self = this;
+            var APIConfig = {
+                name : this.API.user,
+                method : "user.community.users",
+                parameter : { account_type : this.pluginTeamKey },
+                showLoadingSpinner : false,
+                success : function(data) {
+                    teamUsers = self.getUniqueName(data.user_list, false) || [];
+                },
+                error : function() {
+                }
+            };
+
+            this.callGAEAPI(APIConfig);
+        },
+        getEngagedUsersForAnno: function(anno_id) {
+            var self = this;
+            var APIConfig = {
+                name : this.API.anno,
+                method : "anno.anno.users",
+                parameter : { "id" : anno_id },
+                showLoadingSpinner : false,
+                success : function(data) {
+                    annoEngagedUsers = self.getUniqueName(data.user_list, true) || [];
+                },
+                error : function() {
+                }
+            };
+
+            this.callGAEAPI(APIConfig);
+        },
+        showSuggestionTools: function(mainContainer, toolDiv) {
+            return;
+            if (popularTags.length || teamUsers.length || annoEngagedUsers.length) {
+                domStyle.set(mainContainer, "bottom", "40px");
+                domStyle.set(toolDiv, "display", "");
+            } else {
+                this.hideSuggestionTools(mainContainer, toolDiv);
+            }
+
+            if (popularTags.length) {
+                domStyle.set("suggestionToolTags", "display", "");
+            } else {
+                domStyle.set("suggestionToolTags", "display", "none");
+            }
+
+            if (teamUsers.length || annoEngagedUsers.length) {
+                domStyle.set("suggestionToolUsers", "display", "");
+            } else {
+                domStyle.set("suggestionToolUsers", "display", "none");
+            }
+        },
+        hideSuggestionTools: function(mainContainer, toolDiv) {
+            domStyle.set(mainContainer, "bottom", "0px");
+            domStyle.set(toolDiv, "display", "none");
+            domStyle.set("suggestionToolTags", "display", "none");
+            domStyle.set("suggestionToolUsers", "display", "none");
+        },
         showTagDiv: function(tagDiv) {
             domStyle.set(tagDiv, "display", "");
             this.disableNativeGesture();
@@ -1131,37 +1306,45 @@
             domStyle.set(tagDiv, "display", "none");
             this.enableNativeGesture();
         },
-        resetTagSuggestion: function(tagDiv) {
+        resetTextSuggestion: function(tagDiv) {
             suggestTags = false;
             countToSuggestTags = 0;
             tagStringArray = [];
             this.hideTagDiv(tagDiv);
             previousTagDiv = "";
             inputValueLength = 0;
+            dom.byId(tagDiv).scrollLeft = 0;
         },
-        showSuggestedTags: function(e, tagDiv, inputDiv) {
+        showTextSuggestion: function(tagDiv, inputDiv, keyCode) {
             var inputDom = dom.byId(inputDiv),
                 inputValue = inputDom.value,
+                inputSelectionStart = inputDom.selectionStart,
                 keyCodeNull = false,
-                keyCode = 0,
+                keyCode = keyCode || 0,
                 charDeleted = false;
 
-            if (previousTagDiv && (previousTagDiv === tagDiv) && (inputValueLength > 0) && (inputValueLength > inputValue.length)) {
+            if (previousTagDiv &&
+                (previousTagDiv === tagDiv) &&
+                (inputValueLength > 0) &&
+                (inputValueLength > inputValue.length)) {
                 charDeleted = true;
             }
 
             previousTagDiv = tagDiv;
             inputValueLength = inputValue.length;
 
-            if (!charDeleted) {
+            if (!charDeleted && (keyCode == 0)) {
                 keyCodeNull = true;
-                keyCode = inputValue.toUpperCase().charCodeAt(inputDom.selectionStart - 1);
+                keyCode = inputValue.toUpperCase().charCodeAt(inputSelectionStart - 1);
             }
 
-            if (keyCode === 35 && keyCodeNull === true) {
+            if ((keyCode === 35 || keyCode === 64) && keyCodeNull === true) {
                 suggestTags = true;
                 countToSuggestTags = 0;
                 tagStringArray = [];
+                hashtagSuggestion = (keyCode === 35) ? true : false;
+                this.showTagDiv(tagDiv);
+                this.getTagStrings(tagDiv, inputDiv);
             } else if (suggestTags) {
                 if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90)) {
                     countToSuggestTags += 1;
@@ -1170,36 +1353,125 @@
                     countToSuggestTags -= 1;
                     tagStringArray.pop();
                 } else {
-                    this.resetTagSuggestion(tagDiv);
+                    this.resetTextSuggestion(tagDiv);
                 }
 
-                if (countToSuggestTags >= MIN_CHAR_TO_SUGGEST_TAGS) {
+                if ((countToSuggestTags >= MIN_CHAR_TO_SUGGEST_TAGS) && suggestTags) {
+                    this.showTagDiv(tagDiv);
                     this.getTagStrings(tagDiv, inputDiv);
                 } else {
                     this.hideTagDiv(tagDiv);
                 }
             }
         },
-        getTagStrings: function(tagDiv, inputDiv) {
-            var annoUtil = this, tagString = tagStringArray.join("");
+        createUserSuggestionView: function(tag) {
+            var innerSuggestionDiv = document.createElement("div");
+            innerSuggestionDiv.className = "userSuggestion";
 
-            var suggestedTagsArray = popularTags.filter(function(string) {
-                return string.toLowerCase().indexOf(tagString.toLowerCase()) == 0;
+            var imageDiv = document.createElement("div");
+            imageDiv.className = "userSuggestionImage";
+            tag.image_url = tag.image_url || "";
+            if (tag.image_url === "") {
+                imageDiv.className += " icon-user";
+            } else {
+                imageDiv.style.background = "url('" + tag.image_url + "')";
+            }
+            innerSuggestionDiv.appendChild(imageDiv);
+
+            var infoDiv = document.createElement("div");
+            infoDiv.className = "userSuggestionInfo";
+            innerSuggestionDiv.appendChild(infoDiv);
+
+            var nameDiv = document.createElement("div");
+            nameDiv.className = "userSuggestionName";
+            nameDiv.innerText = tag.display_name;
+            infoDiv.appendChild(nameDiv);
+
+            var emailDiv = document.createElement("div");
+            emailDiv.className = "userSuggestionEmail";
+            emailDiv.innerText = tag.user_email;
+            infoDiv.appendChild(emailDiv);
+
+            return innerSuggestionDiv;
+        },
+        getUniqueName: function(mentionUsersArray, annoDetail) {
+            var uniqueNames = [], uniqueUserName;
+            mentionUsersArray = mentionUsersArray || [];
+
+            function isUnique(userName) {
+                var isUniqueName = uniqueNames.indexOf(userName) !== -1;
+                if (!annoDetail) {
+                    return isUniqueName;
+                } else {
+                    return isUniqueName && teamUsers.some(function(user) { return user.unique_name == userName });
+                }
+            }
+
+            mentionUsersArray.forEach(function(mentionedUser, index) {
+                if ((mentionedUser["display_name"] === "") ||
+                    (teamUsers.some(function(user) { return user["user_email"] === mentionedUser["user_email"] }) &&
+                    annoDetail)) {
+                    delete mentionUsersArray[index];
+                } else  if (!("unique_name" in mentionedUser)) {
+                    var trimDisplayName = mentionedUser["display_name"].split(" ").join("");
+                    uniqueUserName = trimDisplayName;
+                    if (isUnique(uniqueUserName)) {
+                        var trimUserEmail = mentionedUser["user_email"].split("@")[0];
+                        uniqueUserName = trimDisplayName + trimUserEmail;
+                        if (isUnique(uniqueUserName)) {
+                            uniqueUserName = trimDisplayName + mentionedUser["user_email"];
+                        }
+                    }
+                    mentionedUser["unique_name"] = uniqueUserName;
+                    uniqueNames.push(uniqueUserName);
+                }
+            });
+
+            return mentionUsersArray;
+        },
+        getTagStrings: function(tagDiv, inputDiv) {
+            var self = this, tagString = tagStringArray.join("");
+            var superSetArray = popularTags;
+
+            if (!hashtagSuggestion) {
+                superSetArray = teamUsers.slice(0);
+                annoEngagedUsers.forEach(function(user) {
+                    superSetArray.push(user);
+                });
+            }
+
+            var suggestedTagsArray = this.filteredUsers = superSetArray.filter(function(string) {
+                if (string === undefined) return false;
+                tempTagString = tagString.toLowerCase();
+                if (hashtagSuggestion) {
+                    return (string.indexOf(tempTagString) === 0);
+                } else {
+                    return ((string.display_name.toLowerCase().indexOf(tempTagString) === 0) ||
+                            (string.user_email.indexOf(tempTagString) === 0));
+                }
             });
 
             dom.byId(tagDiv).innerHTML = "";
             suggestedTagsArray.forEach(function(tag) {
-                var innerTagDiv = document.createElement("div");
-                innerTagDiv.className = "tag";
-                innerTagDiv.innerText = "#" + tag;
-                dom.byId(tagDiv).appendChild(innerTagDiv);
+                var suggestedText = hashtagSuggestion ? "#" + tag : "@" + tag.unique_name;
+                var innerSuggestionDiv = document.createElement("div");
 
-                connect.connect(innerTagDiv, "click", function(e) {
+                if (hashtagSuggestion) {
+                    innerSuggestionDiv.className = "tag";
+                    innerSuggestionDiv.innerText = suggestedText;
+                } else {
+                    innerSuggestionDiv = self.createUserSuggestionView(tag);
+                }
+
+                dom.byId(tagDiv).appendChild(innerSuggestionDiv);
+
+                connect.connect(innerSuggestionDiv, "click", function(e) {
                     dojo.stopEvent(e);
                     var input = dom.byId(inputDiv),
                         replaceIndex = input.selectionStart - tagString.length;
-                    input.value = input.value.replaceAt(replaceIndex, tagString.length, tag + " ");
-                    annoUtil.resetTagSuggestion(tagDiv);
+
+                    input.value = input.value.replaceAt(replaceIndex - 1, tagString.length + 1, suggestedText + " ");
+                    self.resetTextSuggestion(tagDiv);
 
                     setTimeout(function() {
                         // input.focus();
@@ -1216,7 +1488,7 @@
             }
         },
         parseDeviceModel: function(deviceModel) {
-            return (( deviceModel in this.deviceList) ? this.deviceList[deviceModel] : deviceModel);
+            return ((deviceModel in deviceList) ? deviceList[deviceModel] : deviceModel);
         },
         getVersionInfo: function() {
             return this.versionInfo;
@@ -1246,7 +1518,7 @@
                 var settings = this.getSettings();
                 var config = serverURLConfig[settings.ServerURL];
                 if (config) {
-                    propertyID = config.GAPropertyID;
+                    propertyID = this.isPlugin ? config.pluginGAPropertyID : config.GAPropertyID;
                 }
                 if (!propertyID) return false;
             }

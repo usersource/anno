@@ -127,8 +127,7 @@ body#container {
     position: absolute;
     bottom: 0px;
     left: 0px;
-    background-color: #FFFFFF;
-    color: #282828;
+    color: #FFFFFF;
 }
 
 .bottomBarChild {
@@ -162,7 +161,8 @@ body#container {
     top: 0px;
     left: 0px;
     width: 100%;
-    border-color: #ff9900;
+    /*border-color: #ff9900;*/
+   	border-width: 0;
     border-style: solid;
 }
 
@@ -398,6 +398,7 @@ body#container {
 }
 #annoDrawSuggestedTags {
 	width: 100%;
+	height: 40px;
 	position: fixed;
 	left: 0;
 	bottom: 0;
@@ -412,6 +413,10 @@ body#container {
 	display: inline-block;
 	padding: 10px;
 	color: blue;
+	max-width: 150px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 #shareDialog {
@@ -421,7 +426,7 @@ body#container {
 	font-size: 16px;
 }
 
-#dlg_common_confirm_message {
+#confirmBox {
 	color: #000000;
     background-color: white;
     background-image: none !important;
@@ -430,4 +435,11 @@ body#container {
     border: none;
     box-shadow: none;
     -webkit-box-shadow: none;
+}
+
+#detail_loading {
+	position: absolute;
+	left: -webkit-calc(50% - 25px);
+	top: -webkit-calc(50% - 25px);
+	z-index: 4000;
 }

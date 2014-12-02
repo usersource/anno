@@ -8,7 +8,9 @@
 
 #import "ShakeView.h"
 
-@implementation ShakeView
+@implementation ShakeView {
+    UIView *unreadView;
+}
 
 - (id) init {
     self = [super init];
@@ -25,6 +27,8 @@
         sheet = [[UIView alloc] initWithFrame:screenRect];
         [sheet setUserInteractionEnabled:YES];
         [self styleSheet];
+        shakeValue = 0;
+        lastShakeTime = nil;
     }
 
     return self;
@@ -61,6 +65,11 @@
     UIButton *viewFeedButton = [self makeNewButtonWithTitle:@"View Feedback" selector:@selector(viewFeedbackTapped)];
     [viewFeedButton setFrame:CGRectMake(buttonX, (buttonHeight + buttonMargin), buttonWidth, buttonHeight)];
     [buttonView addSubview:viewFeedButton];
+    unreadView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 12, 12)];
+    [unreadView setCenter:CGPointMake(16, buttonHeight/2)];
+    [unreadView setBackgroundColor:[UIColor clearColor]];
+    unreadView.layer.cornerRadius = 6;
+    [viewFeedButton addSubview:unreadView];
     
     UIButton *cancelButton = [self makeNewButtonWithTitle:@"Cancel" selector:@selector(cancelTapped)];
     [cancelButton setFrame:CGRectMake(buttonX, (buttonHeight + buttonMargin)*2, buttonWidth, buttonHeight)];
@@ -88,10 +97,12 @@
 - (void) postNewTapped {
     lastScreenshotPath = [anno.utils saveImageToTemp:lastScreenshotImage];
     [anno showAnnoDraw:lastScreenshotPath levelValue:0 editModeValue:NO landscapeModeValue:NO];
+    [self removeOptionsSheet];
 }
 
 - (void) viewFeedbackTapped {
     [anno showCommunityPage];
+    [self removeOptionsSheet];
 }
 
 - (void) cancelTapped {
@@ -111,7 +122,23 @@
 {
     if ( event.subtype == UIEventSubtypeMotionShake )
     {
+        if (!anno.allowShake) return;
         if (presented) return;
+
+        if (lastShakeTime != nil) {
+            NSTimeInterval timeDiff = [lastShakeTime timeIntervalSinceNow];
+            NSLog(@"time diff in shakes: %f", timeDiff);
+            if (timeDiff < -10) {
+                shakeValue = 0;
+                lastShakeTime = nil;
+                return;
+            }
+        }
+
+        lastShakeTime = [NSDate date];
+        shakeValue += 1;
+        if (shakeValue != (anno.shakeValue + 1)) return;
+
         // Put in code here to handle shake
 //        [sheet showInView:self.superview];
 //        [self.superview addSubview:sheet];
@@ -123,7 +150,15 @@
         [UIView animateWithDuration:0.3f animations:^{
             [buttonView setFrame:buttonRect];
         }];
+//        int unreadCount = [[AnnoSingleton sharedInstance] unreadCount];
+//        NSLog(@"Unread Count %d", unreadCount);
+//        if (unreadCount > 0) {
+//            [unreadView setBackgroundColor:[UIColor orangeColor]];
+//        }
+        
         presented = true;
+        lastShakeTime = nil;
+        shakeValue = 0;
     }
 
     if ([super respondsToSelector:@selector(motionEnded:withEvent:)])
@@ -133,22 +168,4 @@
 - (BOOL) canBecomeFirstResponder {
     return YES;
 }
-
-- (void)didPresentActionSheet:(UIActionSheet *)actionSheet {
-}
-
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    return;
-    NSLog(@"Button %ld", (long)buttonIndex);
-    if (buttonIndex == 0) {
-        // Post Feedback
-        lastScreenshotPath = [anno.utils saveImageToTemp:lastScreenshotImage];
-        [anno showAnnoDraw:lastScreenshotPath levelValue:0 editModeValue:NO landscapeModeValue:NO];
-    } else if (buttonIndex == 1) {
-        // Show community
-        [anno showCommunityPage];
-    }
-}
-
 @end

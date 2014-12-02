@@ -15,6 +15,7 @@ from model.anno import Anno
 from model.follow_up import FollowUp
 from model.userannostate import UserAnnoState
 from model.tags import Tag
+from model.user import User
 from message.followup_message import FollowupMessage
 from message.followup_message import FollowupListMessage
 from helper.utils import put_search_document
@@ -45,6 +46,7 @@ class FollowupApi(remote.Service):
         followup.anno_key = anno.key
         followup.creator = user.key
         followup.comment = request.comment
+        followup.tagged_users = request.tagged_users
         if request.created is not None:
             followup.created = request.created
         followup.put()
@@ -56,7 +58,12 @@ class FollowupApi(remote.Service):
         anno.put()
 
         # update user anno state
-        UserAnnoState.insert(user=user, anno=anno)
+        UserAnnoState.insert(user=user, anno=anno, type=AnnoActionType.COMMENTED)
+
+        for tagged_user_id in followup.tagged_users:
+            tagged_user = User.get_by_id(int(tagged_user_id))
+            if tagged_user:
+                UserAnnoState.insert(user=tagged_user, anno=anno, type=AnnoActionType.TAGGEDUSER)
 
         # update search document
         put_search_document(anno.generate_search_document(), SearchIndexName.ANNO)
@@ -72,7 +79,7 @@ class FollowupApi(remote.Service):
         ActivityPushNotifications.send_push_notification(first_user=user, anno=anno, action_type=AnnoActionType.COMMENTED,
                                                          comment=request.comment)
 
-        return followup.to_message()
+        return followup.to_message(request.team_key)
 
     followup_with_id_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,

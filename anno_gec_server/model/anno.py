@@ -17,6 +17,7 @@ from model.appinfo import AppInfo
 from model.userrole import UserRole
 from helper.utils import *
 from helper.utils_enum import SearchIndexName
+from helper.utils_enum import AnnoActionType
 
 
 class Anno(BaseModel):
@@ -85,12 +86,17 @@ class Anno(BaseModel):
 
             last_activity_user = UserAnnoState.last_activity_user(self)
 
+            circle_level_value = None
+            if (self.community and self.circle_level > 0):
+                circle_level_value = Community.getCircleLevelValue(self.community, self.circle_level)
+
             anno_message = AnnoResponseMessage(id=self.key.id(), anno_text=self.anno_text,
                                                anno_type=self.anno_type, app_name=app_name,
                                                app_icon_url=app_icon_url, created=self.created,
                                                creator=user_message, last_update_time=self.last_update_time,
                                                last_activity=self.last_activity, last_update_type=self.last_update_type,
-                                               anno_read_status=anno_read_status, last_activity_user=last_activity_user
+                                               anno_read_status=anno_read_status, last_activity_user=last_activity_user,
+                                               circle_level_value=circle_level_value
                                             )
         else:
             anno_message = AnnoResponseMessage(id=self.key.id(),
@@ -174,7 +180,7 @@ class Anno(BaseModel):
 
         # update user anno state
         from model.userannostate import UserAnnoState
-        UserAnnoState.insert(user=user, anno=entity)
+        UserAnnoState.insert(user=user, anno=entity, type=AnnoActionType.CREATED)
 
         return entity
 

@@ -309,11 +309,14 @@ define([
         processBasicAuthToken: function(userInfo)
         {
             var token = { 'token_type' : 'Basic' },
-                userInfoData = [userInfo.signinMethod, userInfo.email, userInfo.password, userInfo.team_key, userInfo.team_secret];
+                userInfoData = [userInfo.signinMethod, userInfo.email, userInfo.password,
+                                userInfo.team_key, userInfo.team_secret,
+                                userInfo.nickname, userInfo.image_url];
 
             token.expires_in = 3600 * 24;
-            token.access_token = annoUtil.encodeBase64(userInfoData.join(":"));
+            token.access_token = annoUtil.encodeBase64(userInfoData.join("_$_"));
             this.setBasicAuthToken(token);
+            annoUtil.basicAccessToken = token;
             return token;
         },
         setBasicAuthToken: function(token)

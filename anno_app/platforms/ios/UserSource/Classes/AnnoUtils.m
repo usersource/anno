@@ -233,7 +233,7 @@
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:annoUtils.ERROR_TITLE
                                                         message:message
                                                        delegate:nil
-                                              cancelButtonTitle:@"Ok"
+                                              cancelButtonTitle:@"OK"
                                               otherButtonTitles:nil];
 
     [alertView show];

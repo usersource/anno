@@ -18,6 +18,7 @@ from helper.settings import anno_js_client_id
 from helper.utils import auth_user
 from helper.utils import put_search_document
 from helper.utils_enum import SearchIndexName
+from helper.utils_enum import AnnoActionType
 
 @endpoints.api(name='flag', version='1.0', description='Flag API',
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
@@ -51,7 +52,7 @@ class FlagApi(remote.Service):
         anno.put()
 
         # update user anno state
-        UserAnnoState.insert(user=user, anno=anno)
+        UserAnnoState.insert(user=user, anno=anno, type=AnnoActionType.FLAGGED)
 
         # update flag in search document
         put_search_document(anno.generate_search_document(), SearchIndexName.ANNO)

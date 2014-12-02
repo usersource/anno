@@ -22,6 +22,8 @@
     
     AnnoSingleton *anno;
     bool presented;
+    int shakeValue;
+    NSDate *lastShakeTime;
 }
 
 - (void) postNewTapped;

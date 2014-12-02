@@ -19,6 +19,11 @@
     AnnoUtils *utils;
     BOOL isPlugin, newAnnoCreated;
     Class infoViewControllerClass;
+    int unreadCount;
+    NSArray *shakeSensitivityValues;
+    BOOL allowShake;
+    NSInteger shakeValue;
+    NSMutableDictionary *shakeSettingsData;
 }
 
 @property (strong, retain) CommunityViewController *communityViewController;
@@ -29,6 +34,11 @@
 @property NSMutableArray *annoDrawViewControllerList;
 @property BOOL isPlugin, newAnnoCreated;
 @property (assign) Class infoViewControllerClass;
+@property int unreadCount;
+@property NSArray *shakeSensitivityValues;
+@property BOOL allowShake;
+@property NSInteger shakeValue;
+@property NSMutableDictionary *shakeSettingsData;
 
 + (id) sharedInstance;
 
@@ -36,6 +46,8 @@
 - (void) showIntroPage;
 - (void) showOptionFeedback;
 - (void) exitActivity;
+- (void) notificationsForTarget:(id)target performSelector:(SEL)selector;
+- (NSDictionary*) readServerConfiguration;
 
 - (UIViewController*) getTopMostViewController;
 
@@ -49,5 +61,8 @@
            userImageURL:(NSString*)userImageURL
                 teamKey:(NSString*)teamKey
              teamSecret:(NSString*)teamSecret;
+
+- (void) saveAllowShake:(BOOL)allowShakeValue;
+- (void) saveShakeValue:(NSInteger)shakeValueNumber;
 
 @end

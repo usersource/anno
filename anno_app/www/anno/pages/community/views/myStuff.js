@@ -143,6 +143,12 @@ define([
                                 eventData.readStatusClass = (eventData.read_status == true) ? "read" : "unread";
                             }
 
+                            var circle_level_value = "circle_level_value" in annoList[i] ? annoList[i].circle_level_value : "";
+                            if (circle_level_value !== "") {
+                                eventData.circle_level_value = circle_level_value;
+                                eventData.circle_level_sep_value = " in ";
+                            }
+
                             if (eventData.app_icon_url)
                             {
                                 eventData.annoIcon = "hidden";

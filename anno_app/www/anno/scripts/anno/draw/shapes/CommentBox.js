@@ -48,6 +48,7 @@ define([
             {
                 this.createCommentBox(args);
                 this.checkLevelColor(this.level);
+                this.checkIfPlugin();
 
                 if (this.selectable)
                 {
@@ -105,8 +106,8 @@ define([
                 //this.txtNode.children[0].gfxTarget = {isSelectTarget:true, sid:this.id};
 
                 this.inputNode = domConstruct.create('div', {
-                    style: "background-color:transparent;display:none;position:absolute;top:"+(this.pathPoints[0].y+3)+"px;left:"+(this.pathPoints[0].x+3)+"px;width:"+(this.pathPoints[5].x-this.pathPoints[0].x-6)+"px;height:"+(this.pathPoints[5].y-this.pathPoints[0].y-6)+"px",
-                    innerHTML:"<textarea id='input_"+this.id+"' placeholder='Enter suggestion here' style='font-family: helvetica, arial;font-size: 13pt;font-weight: normal;background-color:transparent;width:100%;height:100%;border-color:transparent;outline: none;box-sizing: border-box;'></textarea>"
+                    style : "background-color:transparent;display:none;position:absolute;top:" + (this.pathPoints[0].y + 3) + "px;left:" + (this.pathPoints[0].x + 3) + "px;width:" + (this.pathPoints[5].x - this.pathPoints[0].x - 6) + "px;height:" + (this.pathPoints[5].y - this.pathPoints[0].y - 6) + "px",
+                    innerHTML : "<textarea id='input_" + this.id + "' placeholder='" + this.placeholder + "' style='font-size: 13pt;font-weight: normal;background-color:transparent;width:100%;height:100%;border-color:transparent;outline: none;box-sizing: border-box;'></textarea>"
                 }, this.surface.container, 'last');
                 this.inputElement = dom.byId("input_"+this.id);
 
@@ -1231,14 +1232,21 @@ define([
 
                 }, 50);
             },
+            setDefaultColors: function(levelColor) {
+                this.endpointStrokeStyle = "rgba(" + levelColor + ", 1)";
+                this.endpointFillStyle = "rgba(" + levelColor + ", 0.5)";
+                this.endpointHiddenStrokeStyle = "rgba(" + levelColor + ", 0)";
+                this.endpointHiddenFillStyle = "rgba(" + levelColor + ", 0)";
+                this.xColor = "rgba(" + levelColor + ", 1)";
+            },
             checkLevelColor: function(level) {
                 if (level == 2) {
-                    var levelColor = annoUtil.level2ColorRGB;
-                    this.endpointStrokeStyle = "rgba(" + levelColor + ", 1)";
-                    this.endpointFillStyle = "rgba(" + levelColor + ", 0.5)";
-                    this.endpointHiddenStrokeStyle = "rgba(" + levelColor + ", 0)";
-                    this.endpointHiddenFillStyle = "rgba(" + levelColor + ", 0)";
-                    this.xColor = "rgba(" + levelColor + ", 1)";
+                    this.setDefaultColors(annoUtil.level2ColorRGB);
+                }
+            },
+            checkIfPlugin: function() {
+                if (annoUtil.isPlugin) {
+                    this.setDefaultColors(annoUtil.level1ColorRGB);
                 }
             }
         });

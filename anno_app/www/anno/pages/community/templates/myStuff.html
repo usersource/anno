@@ -1,4 +1,4 @@
-<div class="view mblView" style="background-color: white">
+<div class="view mblView">
     <div id="headingMyStuff" data-dojo-type="dojox/mobile/Heading" class="topHeading" style="text-align: center">
     	<div id="divBtnBackMyStuff" style="position: absolute;">
     		<span id="navBtnBackMyStuff" class="icon-forward navBtnBack" data-dojo-type="dojox.mobile.ToolBarButton"></span>
@@ -50,11 +50,15 @@
 													data-dojo-props="value: at('rel:#{this.index}', 'author')"></div>
 							                </div>
 							                <div class="pluginInfoText" style="display: none;">
-							                	<span id="pluginAnnoActText_#{this.index}" style="text-transform: capitalize;"
-							                		data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:#{this.index}', 'lastActivityText')"></span>
+							                	<span id="pluginAnnoActIndicator_#{this.index}" class="annoActIndicator" data-dojo-type="dojox/mvc/Output"
+														data-dojo-props="class: at('rel:#{this.index}', 'lastActivityClass')" ></span>
 												<span> by </span>
-												<div id="pluginAnnoActUser_#{this.index}" style="display: inline-block;" class="annoOrangeColor"
+												<div id="pluginAnnoActUser_#{this.index}" style="display: inline-block;"
 													data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:#{this.index}', 'last_activity_user')"></div>
+												<div class="circleLevelSep" data-dojo-type="dojox/mvc/Output" 
+													data-dojo-props="value: at('rel:#{this.index}', 'circle_level_sep_value')"
+													style="display: none;vertical-align: top;"></div>
+												<div class="circleLevelName" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:#{this.index}', 'circle_level_value')" style="display: none;vertical-align: top;"></div>
 												<div style="display: inline-block; float: right;" id="pluginAnnoActWhen_#{this.index}"
 													data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:#{this.index}', 'when')"></div>
 							                </div>

@@ -70,6 +70,7 @@ define([
             sdBottom = 90;
         var viewPoint, initialized = false;
         var startPull = false, pullStartY= 0, touchStartY = 0, doRefreshing = false;
+        var init_time, time_before_auth, auth_time, anno_time, total_time;
 
         /**
          * This function is used by native webview to reload list data after
@@ -129,11 +130,14 @@ define([
                 showLoadingSpinner: showLoadingSpinner,
                 success: function(data)
                 {
+                    anno_time = Date.now();
                     drawAnnoList(data, search, order, clearData);
                     if (firstLaunch) {
                         window.setTimeout(function() {
                             AnnoDataHandler.startBackgroundSync();
                             annoUtil.getTopTags(100);
+                            getMyActivityCount();
+                            sendTimesToServer();
 
                             if (!annoUtil.isPlugin) {
                                 initPushService();
@@ -143,9 +147,11 @@ define([
                                         acceptInvitation(inviteList[i]);
                                     }
                                 }, true);
+                            } else {
+                                annoUtil.getCommunityUserForMention();
                             }
                             firstLaunch = false;
-                        }, 5 * 1000);
+                        }, 500);
                     }
                 },
                 error: function()
@@ -166,6 +172,54 @@ define([
             }
 
             annoUtil.callGAEAPI(APIConfig);
+        };
+
+        var getMyActivityCount = function() {
+            var APIConfig = {
+                name : annoUtil.API.anno,
+                method : "anno.user.unread",
+                parameter : {
+                    "user_email" : DBUtil.localUserInfo.email,
+                    "team_key" : annoUtil.pluginTeamKey
+                },
+                showLoadingSpinner : false,
+                success : function(data) {
+                    var unread_count = Number(data.unread_count);
+                    // var unread_count_text = unread_count > 9 ? "9+" : unread_count;
+                    if (unread_count > 0) {
+                        domStyle.set("unreadCount", "display", "block");
+                        // dom.byId("unread_count").innerHTML = unread_count_text;
+                    }
+                },
+                error : function() {
+                }
+            };
+
+            annoUtil.callGAEAPI(APIConfig);
+        };
+
+        var sendTimesToServer = function() {
+            if (annoUtil.settings.ServerURL !== "1") return;
+
+            var device_ready_time = Number(localStorage.getItem("deviceready"));
+            var db_init_done_time = Number(localStorage.getItem("DBinit"));
+            var build_app_time = Number(localStorage.getItem("buildApp"));
+
+            var timeData = {
+                "date" : String(new Date()),
+                "testname" : "test_" + Date.now(),
+                "email" : DBUtil.localUserInfo.email,
+                "deviceReady" : device_ready_time - start_time,
+                "DBInitDone" : db_init_done_time - device_ready_time,
+                "buildApp" : build_app_time - db_init_done_time,
+                "indexInit" : init_time - build_app_time,
+                "beforeAuth" : time_before_auth - init_time,
+                "AuthDone" : auth_time - time_before_auth,
+                "AnnoDone" : anno_time - auth_time,
+                "totaltime" : anno_time - start_time
+            };
+
+            annoUtil.sendTimesToServer("main_page", timeData);
         };
 
         var drawAnnoList = function(data, search, order, clearData)
@@ -198,6 +252,12 @@ define([
                 eventData.deviceInfo = annoList[i].device_model;
                 eventData.created = annoUtil.getTimeAgoString(annoList[i].created);
                 eventData.app_icon_url = annoList[i].app_icon_url||"";
+
+                var circle_level_value = "circle_level_value" in annoList[i] ? annoList[i].circle_level_value : "";
+                if (circle_level_value !== "") {
+                    eventData.circle_level_value = circle_level_value;
+                    eventData.circle_level_sep_value = " in ";
+                }
 
                 eventData.readStatusClass = "";
                 if ('anno_read_status' in annoList[i]) {
@@ -546,9 +606,11 @@ define([
             }
         };
 
-        var annoRead = window.annoRead = function() {
-            if (domClass.contains(this.domNode, "unread")) {
-                domClass.replace(this.domNode, "read", "unread");
+        var annoRead = window.annoRead = function(annoNodeIndex) {
+            var annoNode = typeof annoNodeIndex === "number" ? dom.byId("event" + annoNodeIndex) : this.domNode;
+            eventsModel.model[Number(annoNode.id[annoNode.id.length - 1])].read_status = true;
+            if (domClass.contains(annoNode, "unread")) {
+                domClass.replace(annoNode, "read", "unread");
             }
         };
 
@@ -557,14 +619,14 @@ define([
         var showPullToRefreshMessage = function()
         {
             domStyle.set('headingStartTable', 'display', 'none');
-            dom.byId('pullToRefreshMsg').innerHTML = "Pull down to refresh";
+            dom.byId('pullToRefreshMsg').innerHTML = "Pull Down to Refresh";
             domStyle.set('pullToRefreshMsg', 'display', '');
         };
 
         var showStartRefreshMessage = function()
         {
             domStyle.set('headingStartTable', 'display', 'none');
-            dom.byId('pullToRefreshMsg').innerHTML = "Refreshing UserSource feed";
+            dom.byId('pullToRefreshMsg').innerHTML = "Refreshing Feedback";
             domStyle.set('pullToRefreshMsg', 'display', '');
         };
 
@@ -816,7 +878,8 @@ define([
             _connectResults.push(connect.connect(dom.byId("tdBarMyStuff"), 'click', function(e) {
                 dojo.stopEvent(e);
                 hideMenuDialog();
-    
+                domStyle.set("unreadCount", "display", "none");
+
                 annoUtil.actionGATracking(annoUtil.analytics.category.feed, "nav to activity", "homescreen");
                 app.transitionToView(document.getElementById('modelApp_home'), {
                     target : 'myStuff',
@@ -846,7 +909,7 @@ define([
                         cordova.exec(function(result) {
                         }, function(err) {
                         }, "AnnoCordovaPlugin", 'show_toast', ["UserSource support local images files only."]);
-    
+
                         return;
                     }
 
@@ -892,7 +955,7 @@ define([
 
                 annoUtil.actionGATracking(annoUtil.analytics.category.feed, 'header button to search', 'homescreen');
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId("tdBarSettings"), 'click', function(e) {
                 app.transitionToView(document.getElementById('modelApp_home'), {
                     target : 'settings',
@@ -900,7 +963,7 @@ define([
                 });
                 annoUtil.actionGATracking(annoUtil.analytics.category.feed, 'header button to settings', 'homescreen');
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId("barMoreMenuHome"), 'click', function(e) {
                 if (inSearchMode) {
                     window.setTimeout(function() { showAppNameDialog(); }, 500);
@@ -913,70 +976,70 @@ define([
                     }
                 }
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId("tdLogo"), 'click', function(e) {
                 cancelSearch();
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId('btnLoadListData'), "click", function() {
                 loadListData();
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId('navBtnBackStart'), "click", function() {
                 goBackActivity();
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId('searchSortsBarRecent'), "click", function() {
                 if (domClass.contains(dom.byId('searchSortsBarRecent').parentNode, 'searchSortItemActive')) {
                     return;
                 }
-    
+
                 searchOrder = SEARCH_ORDER.RECENT;
                 loadListData(true, null, SEARCH_ORDER.RECENT, true);
-    
+
                 annoUtil.actionGATracking(annoUtil.analytics.category.search, 'select recent', 'homescreen');
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId('searchSortsBarActive'), "click", function() {
                 if (domClass.contains(dom.byId('searchSortsBarActive').parentNode, 'searchSortItemActive')) {
                     return;
                 }
-    
+
                 searchOrder = SEARCH_ORDER.ACTIVE;
                 loadListData(true, null, SEARCH_ORDER.ACTIVE, true);
-    
+
                 annoUtil.actionGATracking(annoUtil.analytics.category.search, 'select active', 'homescreen');
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId('searchSortsBarPopular'), "click", function() {
                 if (domClass.contains(dom.byId('searchSortsBarPopular').parentNode, 'searchSortItemActive')) {
                     return;
                 }
-    
+
                 searchOrder = SEARCH_ORDER.POPULAR;
                 loadListData(true, null, SEARCH_ORDER.POPULAR, true);
-    
+
                 annoUtil.actionGATracking(annoUtil.analytics.category.search, 'select popular', 'homescreen');
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId('txtSearchAnno'), "keydown", function(e) {
                 if (e.keyCode == 13) {
                     dom.byId("hiddenBtn").focus();
                     loadListData(true, null, searchOrder, true);
                 }
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId('btnAppNameDialogCancel'), "click", function() {
                 hideAppNameDialog();
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId('txtSearchAppName'), "keydown", function(e) {
                 if (e.keyCode == 13) {
                     dom.byId("hiddenBtn").focus();
                     doFilterAppName();
                 }
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId('txtSearchAppName'), "input", function(e) {
                 if (dom.byId('txtSearchAppName').value.trim().length > 0) {
                     dom.byId('btnAppNameDialogDone').disabled = false;
@@ -986,44 +1049,44 @@ define([
                     domClass.add('btnAppNameDialogDone', "disabledBtn");
                 }
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId('icoSearchAppName'), "click", function() {
                 dom.byId("hiddenBtn").focus();
                 doFilterAppName();
             }));
-    
+
             // handle app name list click event
             _connectResults.push(connect.connect(dom.byId("sdAppListContent"), 'click', function(e) {
                 var itemNode = e.target;
-    
+
                 if (domClass.contains(itemNode, 'appNameValue')) {
                     itemNode = itemNode.parentNode;
                 }
-    
+
                 if (!domClass.contains(itemNode, 'appNameItem')) {
                     return;
                 }
-    
+
                 var allItems = query('.appNameItem', dom.byId("sdAppList"));
-    
+
                 for (var i = 0; i < allItems.length; i++) {
                     domClass.remove(allItems[i], 'appNameItem-active');
                 }
-    
+
                 domClass.add(itemNode, 'appNameItem-active');
-    
+
                 selectedAppName = itemNode.children[0].innerHTML;
                 dom.byId('btnAppNameDialogDone').disabled = false;
                 domClass.remove('btnAppNameDialogDone', "disabledBtn");
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId('btnAppNameDialogDone'), "click", function() {
                 if (domClass.contains('btnAppNameDialogDone', 'disabledBtn')) {
                     return;
                 }
-    
+
                 var appName = selectedAppName;
-    
+
                 if (!appName) {
                     if (dom.byId('txtSearchAppName').value.trim().length > 0) {
                         appName = dom.byId('txtSearchAppName').value.trim();
@@ -1033,9 +1096,9 @@ define([
                         return;
                     }
                 }
-    
+
                 hideAppNameDialog();
-    
+
                 if (appName) {
                     domStyle.set('searchAppNameContainer', 'display', '');
                     dom.byId('searchAppName').innerHTML = appName;
@@ -1043,37 +1106,37 @@ define([
                     domStyle.set('searchAppNameContainer', 'display', 'none');
                     dom.byId('searchAppName').innerHTML = "";
                 }
-    
+
                 domStyle.set("listContainerStart", "height", (viewPoint.h - topBarHeight - searchSortsBarHeight - searchAppNameContainerHeight) + "px");
                 loadListData(true, null, searchOrder, true);
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId('closeSearchAppName'), "click", function() {
                 domStyle.set('searchAppNameContainer', 'display', 'none');
                 dom.byId('searchAppName').innerHTML = "";
                 selectedAppName = "";
-    
+
                 domStyle.set("listContainerStart", "height", (viewPoint.h - topBarHeight - searchSortsBarHeight) + "px");
                 loadListData(true, null, searchOrder, true);
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId('listContainerStart_middle'), "scroll", this, function() {
                 var toEnd = false;
                 var listContainer = dom.byId('listContainerStart_middle');
                 if ((listContainer.clientHeight + listContainer.scrollTop) >= listContainer.scrollHeight)
                     toEnd = true;
-    
+
                 if (toEnd) {
                     annoUtil.actionGATracking(annoUtil.analytics.category.feed, 'scroll', 'homescreen');
                     loadMoreData();
                 }
             }));
-    
+
             // pull to refresh
             _connectResults.push(connect.connect(dom.byId('listContainerStart_middle'), "touchmove", this, function(e) {
                 if (!loadingData && firstListLoaded && !inSearchMode) {
                     var listContainer = dom.byId('listContainerStart_middle');
-    
+
                     if (startPull) {
                         e.preventDefault();
                         var delta = e.touches[0].pageY - pullStartY;
@@ -1088,13 +1151,13 @@ define([
                     }
                 }
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId('listContainerStart_middle'), "touchstart", this, function(e) {
                 startPull = false;
                 pullStartY = 0;
                 touchStartY = e.touches[0].pageY;
             }));
-    
+
             _connectResults.push(connect.connect(registry.byId('progressBar'), "onSmoothProgressComplete", this, function() {
                 // now we can start refreshing anno feeds
                 hidePullToRefreshMessage();
@@ -1102,31 +1165,31 @@ define([
                 registry.byId('progressBar').showIndeterminateProgress();
                 doRefresh();
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId('listContainerStart_middle'), "touchend", this, function(e) {
                 if (!loadingData) {
                     var progressBar = registry.byId('progressBar');
-    
+
                     if (startPull && !progressBar.showingIndeterminateProgress) {
                         registry.byId('progressBar').showSmoothProgress(0);
                         hidePullToRefreshMessage();
                     }
-    
+
                     startPull = false;
                     pullStartY = 0;
                     touchStartY = 0;
                 }
             }));
-    
+
             _connectResults.push(connect.connect(dom.byId('listContainerStart_middle'), "touchcancel", this, function(e) {
                 if (!loadingData) {
                     var progressBar = registry.byId('progressBar');
-    
+
                     if (startPull && !progressBar.showingIndeterminateProgress) {
                         registry.byId('progressBar').showSmoothProgress(0);
                         hidePullToRefreshMessage();
                     }
-    
+
                     startPull = false;
                     pullStartY = 0;
                     touchStartY = 0;
@@ -1143,7 +1206,25 @@ define([
                 dojo.stopEvent(e);
                 annoUtil.startActivity("Intro", false);
             }));
-        }; 
+        };
+
+        var onPluginAuthSuccess = function(data) {
+            auth_time = Date.now();
+            var userInfo = {};
+            userInfo.userId = typeof data !== "undefined" ? data.result.id : "123456";
+            userInfo.email = annoUtil.pluginUserEmail;
+            userInfo.signinMethod = "plugin";
+            userInfo.nickname = annoUtil.pluginUserDisplayName;
+            userInfo.image_url = annoUtil.pluginUserImageURL;
+            userInfo.team_key = annoUtil.pluginTeamKey;
+            userInfo.team_secret = annoUtil.pluginTeamSecret;
+
+            AnnoDataHandler.saveUserInfo(userInfo, function() {
+                annoUtil.showLoadingIndicator();
+                OAuthUtil.processBasicAuthToken(userInfo);
+                loadListData();
+            });
+        };
 
         var authenticatePluginSession = function() {
             var APIConfig = {
@@ -1157,19 +1238,7 @@ define([
                     'team_secret' : annoUtil.pluginTeamSecret
                 },
                 success : function(resp) {
-                    var userInfo = {};
-                    userInfo.userId = resp.result.id;
-                    userInfo.email = annoUtil.pluginUserEmail;
-                    userInfo.signinMethod = "plugin";
-                    userInfo.nickname = resp.result.display_name;
-                    userInfo.team_key = annoUtil.pluginTeamKey;
-                    userInfo.team_secret = annoUtil.pluginTeamSecret;
-
-                    AnnoDataHandler.saveUserInfo(userInfo, function() {
-                        annoUtil.showLoadingIndicator();
-                        OAuthUtil.processBasicAuthToken(userInfo);
-                        loadListData();
-                    });
+                    onPluginAuthSuccess(resp);
                 },
                 error : function() {
                 }
@@ -1185,10 +1254,12 @@ define([
                     if (userInfo.email && (userInfo.email !== annoUtil.pluginUserEmail)) {
                         AnnoDataHandler.removeUser(function () {
                             OAuthUtil.clearRefreshToken();
-                            authenticatePluginSession();
+                            time_before_auth = Date.now();
+                            onPluginAuthSuccess();
                         });
                     } else {
-                        authenticatePluginSession();
+                        time_before_auth = Date.now();
+                        onPluginAuthSuccess();
                     }
                 });
             });
@@ -1242,10 +1313,12 @@ define([
             // simple view init
             init:function ()
             {
+                init_time = Date.now();
                 eventsModel = this.loadedModels.events;
                 app = this.app;
                 app.inSearchMode = function() { return inSearchMode; };
                 checkInternetConnection(_init);
+                annoUtil.setPluginConfig();
 
                 if (annoUtil.isPlugin) {
                     domClass.add(document.querySelector("body"), "plugin");
@@ -1255,7 +1328,7 @@ define([
             {
                 // Analytics
                 annoUtil.screenGATracking(annoUtil.analytics.category.feed);
-                        
+
                 adjustSize();
                 var listContainer = dom.byId('listContainerStart');
                 listContainer.scrollTop = listScrollTop;

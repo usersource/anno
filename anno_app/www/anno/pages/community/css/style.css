@@ -255,7 +255,7 @@
 }
 
 .listTitle {
-	max-height: 40px;
+	max-height: 43px;
 	font-size: 16px;
     overflow: hidden;
 }
@@ -549,7 +549,7 @@
 }
 
 #voteFlagContainer > div {
-	width: 32%;
+	width: 49%;
 	display: inline-block;
 	text-align: center;
 }
@@ -818,8 +818,9 @@
 	margin-left: 9px;
 }
 
-#detailSuggestedTags {
+#detailSuggestedTags, #detailSuggestionTool {
 	width: 100%;
+	height: 40px;
 	position: fixed;
 	left: 0;
 	bottom: 0;
@@ -829,12 +830,17 @@
 	z-index: 10000;
 	white-space: nowrap;
 	overflow-x: auto;
+	overflow-y: hidden;
 }
 
 .tag {
 	display: inline-block;
 	padding: 10px;
 	color: blue;
+	max-width: 150px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .mblListItem {
@@ -973,22 +979,15 @@ li.unread .listTitle {
 	margin-left: 5px;
 }
 
-#tdBarAddImage .text-new {
-	width: 90%;
-	height: 48px;
-	background: url('images/new.png');
-	background-repeat: no-repeat;
-	background-position: 50%;
-	background-size: contain;
-}
-
-#tdBarMyStuff .text-me {
-	width: 63%;
-	height: 48px;
-	background: url('images/me.png');
-	background-repeat: no-repeat;
-	background-position: 50%;
-	background-size: contain;
+#unreadCount {
+    position: absolute;
+    top: 11px;
+    right: 2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 6px;
+    background-color: #F00;
+    border: 1px solid #1c262f;
 }
 
 .pluginInfoText {
@@ -1004,6 +1003,84 @@ li.unread .listTitle {
 	height: 89.565217391%;
 	height: calc(100% - 48px);
 	height: -webkit-calc(100% - 48px);
+}
+
+#childCommentContainer {
+	background: #f4f4f4;
+}
+
+#detail_loading {
+	position: absolute;
+	left: -webkit-calc(50% - 25px);
+	top: -webkit-calc(50% - 25px);
+	z-index: 4000;
+}
+
+#textNew {
+	height: 17px;
+	background: url('images/icon_plus.png');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-size: contain;
+}
+
+.userSuggestion {
+	height: 30px;
+	padding: 5px 5px;
+	display: inline-block;
+	max-width: 150px;
+	vertical-align: top;
+}
+
+.userSuggestion .userSuggestionImage {
+	width: 30px;
+	height: 30px;
+	display: inline-block;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: 50%;
+	border-radius: 4px;
+}
+
+.userSuggestion .userSuggestionImage.icon-user {
+	background: #808080;
+	color: #FFF;
+	line-height: 30px;
+	text-align: center;
+}
+
+.userSuggestion .userSuggestionInfo {
+	width: 80%;
+	width: calc(100% - 30px);
+	width: -webkit-calc(100% - 30px);
+	display: inline-block;
+	padding-left: 5px;
+	vertical-align: top;
+	line-height: 15px;
+}
+
+.userSuggestion .userSuggestionInfo .userSuggestionName {
+	width: 100%;
+	font-size: 14px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.userSuggestion .userSuggestionInfo .userSuggestionEmail {
+	width: 100%;
+	font-size: 12px;
+	color: #808080;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.taggedUser {
+	padding: 1px 4px;
+	background: #CCC;
+	color: #FFF;
+	border-radius: 4px;
 }
 
 /* for plugin */
@@ -1037,11 +1114,13 @@ body.plugin #tdNavInfo {
 body.plugin #divBtnBackMyStuffPlugin,
 body.plugin .pluginInfoText,
 body.plugin #tdBarMyStuff .text-me,
-body.plugin #tdBarAddImage .text-new {
+body.plugin #tdBarAddImage #textNew {
 	display: block !important;
 }
 
-body.plugin #navBtnBackScreenshotPlugin {
+body.plugin #navBtnBackScreenshotPlugin,
+body.plugin .circleLevelName,
+body.plugin .circleLevelSep {
 	display: inline-block !important;
 }
 
@@ -1063,4 +1142,8 @@ body.plugin #tdBarAddImage {
 body.plugin #barAddImage,
 body.plugin #barMyStuff  {
 	line-height: 44px !important;
+}
+
+body.plugin .tdListAuthor {
+    width: 82% !important;
 }
