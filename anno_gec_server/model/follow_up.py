@@ -31,8 +31,10 @@ class FollowUp(BaseModel):
 
         message.tagged_users_detail = []
         for user in self.tagged_users:
-            user_info = User.find_user_by_email(user, team_key)
-            message.tagged_users_detail.append(UserMessage(display_name=user_info.display_name, user_email=user_info.user_email))
+            user_info = User.get_by_id(int(user))
+            message.tagged_users_detail.append(UserMessage(id=user_info.key.id(),
+                                                           display_name=user_info.display_name,
+                                                           user_email=user_info.user_email))
 
         if self.creator is not None:
             user_info = self.creator.get()

@@ -60,8 +60,8 @@ class FollowupApi(remote.Service):
         # update user anno state
         UserAnnoState.insert(user=user, anno=anno, type=AnnoActionType.COMMENTED)
 
-        for tagged_user_email in followup.tagged_users:
-            tagged_user = User.find_user_by_email(tagged_user_email, request.team_key)
+        for tagged_user_id in followup.tagged_users:
+            tagged_user = User.get_by_id(int(tagged_user_id))
             if tagged_user:
                 UserAnnoState.insert(user=tagged_user, anno=anno, type=AnnoActionType.TAGGEDUSER)
 
