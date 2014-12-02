@@ -32,9 +32,6 @@ class UserAnnoState(ndb.Model):
         if not entity:
             entity = cls(user=user.key, anno=anno.key)
 
-        entity.last_read = datetime.datetime.now()
-        entity.modified = entity.last_read
-
         if type in [AnnoActionType.CREATED, AnnoActionType.COMMENTED]:
             entity.last_read = datetime.datetime.now()
             entity.modified = entity.last_read
