@@ -754,8 +754,6 @@ define([
                 needAuth: true,
                 success: function(data)
                 {
-                    console.log(JSON.stringify(data.result));
-
                     var currentAnno = eventsModel.cursor||eventsModel.model[0];
                     // sync commented activity
                     currentAnno.lastActivityChangedClass = "icon-comment";
@@ -770,11 +768,12 @@ define([
                     }
 
                     var commentObject = {
-                        user_id : author,
-                        comment : comment,
-                        user_image : annoUtil.pluginUserImageURL,
+                        user_id : data.creator.display_name,
+                        comment : data.comment,
+                        user_image : data.creator.image_url,
                         default_commenter_image : default_commenter_image,
-                        commenter_image : commenter_image
+                        commenter_image : commenter_image,
+                        tagged_users_detail : data.tagged_users_detail
                     };
                     processFollowupHashTagsOrURLs(commentObject);
                     // currentAnno.comments.splice(0, 0, new getStateful(commentObject));
