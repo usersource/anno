@@ -163,12 +163,24 @@
                 console.error("Sending data failed for", type);
             });
         },
+        hexToRgb: function(hex) {
+            var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+            hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+                return r + r + g + g + b + b;
+            });
+
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            var rgbValue = "";
+            if (result.length) {
+                rgbValue = parseInt(result[1], 16) + ", " + parseInt(result[2], 16) + ", " + parseInt(result[3], 16);
+            }
+
+            return rgbValue;
+        },
         setPluginConfig: function() {
             if (("highlightColorHEX" in pluginConfig) && (pluginConfig.highlightColorHEX !== "")) {
                 this.level1Color = pluginConfig.highlightColorHEX;
-            }
-            if (("highlightColorRGB" in pluginConfig) && (pluginConfig.highlightColorRGB !== "")) {
-                this.level1ColorRGB = pluginConfig.highlightColorRGB;
+                this.level1ColorRGB = this.hexToRgb(pluginConfig.highlightColorHEX);
             }
             if (("loadingIndicatorColorHEX" in pluginConfig) && (pluginConfig.loadingIndicatorColorHEX !== "")) {
                 this.loadingIndicatorColor = pluginConfig.loadingIndicatorColorHEX;
