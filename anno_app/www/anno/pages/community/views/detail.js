@@ -44,8 +44,8 @@ define([
             trayBarHeight = 30,
             navBarHeight,
             screenshotControlsHeight,
-            borderWidth = 4,
-            zoomBorderWidth = 4;
+            borderWidth = annoUtil.annotationWidth,
+            zoomBorderWidth = annoUtil.annotationWidth;
         var zoomSurface, oldSurface, zoomAnnoID;
         var imageLoaded = false,
             detailLoaded = false,
