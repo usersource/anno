@@ -230,7 +230,7 @@
         error message which is to be displayed
  */
 - (void) displayError:(NSString*)message {
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:annoUtils.ERROR_TITLE
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:self.ERROR_TITLE
                                                         message:message
                                                        delegate:nil
                                               cancelButtonTitle:@"OK"

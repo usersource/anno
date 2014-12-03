@@ -10,6 +10,7 @@
 
 @implementation AnnoDrawViewController
 
+extern AnnoUtils* annoUtils;
 @synthesize isPractice, editMode, level, screenshotPath, landscapeMode;
 
 - (id)initWithNibName:(NSString*)nibNameOrNil bundle:(NSBundle*)nibBundleOrNil
