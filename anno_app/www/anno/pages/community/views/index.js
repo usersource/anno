@@ -208,7 +208,7 @@ define([
             var timeData = {
                 "date" : String(new Date()),
                 "testname" : "test_" + Date.now(),
-                "email" : DBUtil.localUserInfo.email,
+                "email" : DBUtil.localUserInfo.email || annoUtil.pluginUserEmail,
                 "deviceReady" : device_ready_time - start_time,
                 "DBInitDone" : db_init_done_time - device_ready_time,
                 "buildApp" : build_app_time - db_init_done_time,
