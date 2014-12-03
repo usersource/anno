@@ -173,6 +173,9 @@
             if (("loadingIndicatorColorHEX" in pluginConfig) && (pluginConfig.loadingIndicatorColorHEX !== "")) {
                 this.loadingIndicatorColor = pluginConfig.loadingIndicatorColorHEX;
             }
+            if (("annotationWidth" in pluginConfig) && (pluginConfig.annotationWidth > 0)) {
+                this.annotationWidth = pluginConfig.annotationWidth;
+            }
         },
         hasConnection: function()
         {

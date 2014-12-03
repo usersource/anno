@@ -1,5 +1,6 @@
 {
 	"highlightColorHEX": "",
 	"highlightColorRGB": "",
-	"loadingIndicatorColorHEX": ""
+	"loadingIndicatorColorHEX": "",
+	"annotationWidth": 2
 }

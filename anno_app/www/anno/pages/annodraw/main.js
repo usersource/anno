@@ -22,7 +22,7 @@ require([
         defaultShapeWidth = 160,
         defaultShapeHeight = 80,
         shareDialogGap = 40,
-        borderWidth = 4;
+        borderWidth;
 
     var sdTitleHeight = 60, sdTabBarHeight = 30,
         sdBottom = 50, barHeight = dom.byId('bottomBarContainer').clientHeight, totalSpace = 0;
@@ -1341,6 +1341,7 @@ require([
 
     var setupAnnoDrawPage = function() {
         initBackgroundImage();
+        borderWidth = annoUtil.annotationWidth;
 
         window.setTimeout(function() {
             viewPoint = win.getBox();
