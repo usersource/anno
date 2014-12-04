@@ -13,10 +13,6 @@
 #import <AssetsLibrary/ALAsset.h>
 #import <AssetsLibrary/ALAssetRepresentation.h>
 
-#define EMAIL @"david.kennan@gmail.com"
-#define NAME @"David Kennan"
-#define IMAGEURL @"http://lh4.ggpht.com/0L3HSgl41440aC-U_N7hLaYSZjQtItLdiTKlCZJEThCckvwZKkNRkL9eMm55hHn5oN6l6xQf3bj-SXlqyjPhh_1iShO-qvZg"
-
 @interface ViewController () {
     NSMutableArray *assetGroups;
     NSMutableArray *assetUrls;
@@ -63,12 +59,23 @@
 }
 
 - (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user {
-    AnnoSingleton *anno = [AnnoSingleton sharedInstance];
-    [anno setupWithEmail:EMAIL
-             displayName:user.name
-            userImageURL:IMAGEURL
-                 teamKey:@"io.usersource.demo"
-              teamSecret:@"usersource"];
+    [FBRequestConnection startWithGraphPath:@"me"
+                                 parameters:@{@"fields": @"picture.type(normal)"}
+                                 HTTPMethod:@"GET"
+                          completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                              if (!error) {
+                                  NSString *pictureURL = [[[result objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+                                  AnnoSingleton *anno = [AnnoSingleton sharedInstance];
+                                  [anno setupWithEmail:[user objectForKey:@"email"]
+                                           displayName:[user objectForKey:@"name"]
+                                          userImageURL:pictureURL
+                                               teamKey:@"io.usersource.demo"
+                                            teamSecret:@"usersource"];
+                              }
+                              else{
+                                  NSLog(@"%@", [error localizedDescription]);
+                              }
+                          }];
 }
 
 - (void) loginViewShowingLoggedOutUser:(FBLoginView *)loginView {
