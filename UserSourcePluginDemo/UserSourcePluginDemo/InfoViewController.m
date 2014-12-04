@@ -237,7 +237,12 @@
     [self.view addSubview:navigationBar];
     navigationBar.items = [NSArray arrayWithObjects: navItem, nil];
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"info-overlay.png"] forBarMetrics:UIBarMetricsDefault];
-    
+
+    NSDictionary *textAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [UIColor whiteColor], NSForegroundColorAttributeName, nil];
+
+    navigationBar.titleTextAttributes = textAttributes;
+
     UIImage *backImage = [UIImage imageNamed:@"icon_arrow-left.png"];
     UIButton *backButton = [UIButton buttonWithType:UIButtonTypeCustom];
     backButton.bounds = CGRectMake( 6, 0, backImage.size.width, backImage.size.height);
@@ -323,7 +328,7 @@
 
     viewFeedback = [[UIButton alloc] init];
     [viewFeedback setTitle:@"View Feedback" forState:UIControlStateNormal];
-    [viewFeedback setTitleColor:UIColorFromRGB(0x4cc0ff) forState:UIControlStateNormal];
+    [viewFeedback setTitleColor:UIColorFromRGB(0x66bffb) forState:UIControlStateNormal];
     viewFeedback.titleLabel.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
     viewFeedback.titleLabel.textAlignment = NSTextAlignmentCenter;
     viewFeedback.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Regular" size:14.0];
