@@ -41,7 +41,7 @@
     
     [assetsFlowLayout setItemSize:CGSizeMake(100, 100)];
     [assetsFlowLayout setMinimumInteritemSpacing:0];
-    [assetsFlowLayout setMinimumLineSpacing:0];
+    [assetsFlowLayout setMinimumLineSpacing:10];
     [assetsFlowLayout setHeaderReferenceSize:CGSizeMake(100, 24)];
     
     UIPanGestureRecognizer *gestureRecognizer = [[UIPanGestureRecognizer alloc]
@@ -85,9 +85,9 @@
     CGRect bounds = scrollView.bounds;
     CGRect screen = [UIScreen mainScreen].bounds;
     float wRatio = (bounds.origin.x/screen.size.width);
-    float hRatio = (bounds.origin.y/screen.size.height);
+//    float hRatio = (bounds.origin.y/screen.size.height);
     float wFraction = wRatio - floor(wRatio);
-    float hFraction = hRatio - floor(hRatio);
+//    float hFraction = hRatio - floor(hRatio);
     
     if (velocity.x > 0 && wFraction < 0.9) {
         bounds.origin.x = screen.size.width * floor(wRatio);
