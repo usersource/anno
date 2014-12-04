@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "ShakeViewController.h"
 #import "InfoViewController.h"
+#import <FacebookSDK/FacebookSDK.h>
 
-@interface ViewController : ShakeViewController<UICollectionViewDataSource, UICollectionViewDelegate>
+@interface ViewController : ShakeViewController<UICollectionViewDataSource, UICollectionViewDelegate, FBLoginViewDelegate>
 
 - (IBAction) openTouchUpInside:(id)sender;
 - (IBAction) showInfoPage:(id)sender;

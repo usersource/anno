@@ -12,7 +12,6 @@
 #import <AssetsLibrary/ALAssetsGroup.h>
 #import <AssetsLibrary/ALAsset.h>
 #import <AssetsLibrary/ALAssetRepresentation.h>
-#import <FacebookSDK/FacebookSDK.h>
 
 #define EMAIL @"david.kennan@gmail.com"
 #define NAME @"David Kennan"
@@ -30,40 +29,50 @@
 
 @synthesize assetsCollectionView, scrollView, assetsFlowLayout;
 
-- (void)viewDidLoad
-{
+- (void) viewDidLoad {
     [super viewDidLoad];
 
-    self.loginView.hidden = NO;
+    self.loginView.hidden = YES;
 
-    FBLoginView *fbLoginView = [[FBLoginView alloc] init];
+    NSArray *permissions = @[@"public_profile", @"email"];
+    FBLoginView *fbLoginView = [[FBLoginView alloc] initWithReadPermissions:permissions];
+    fbLoginView.delegate = self;
     fbLoginView.center = self.loginView.center;
     [self.loginView addSubview:fbLoginView];
+}
 
-	// Do any additional setup after loading the view, typically from a nib.
+- (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView {
+    self.loginView.hidden = YES;
+
     assetGroups = [[NSMutableArray alloc] init];
     assetUrls = [[NSMutableArray alloc] init];
     library = [[ALAssetsLibrary alloc] init];
-    
+
     [assetsCollectionView registerNib:[UINib nibWithNibName:@"assetsCollectionCell" bundle:nil] forCellWithReuseIdentifier:@"assetGroup"];
-    
+
     [assetsFlowLayout setItemSize:CGSizeMake(100, 100)];
     [assetsFlowLayout setMinimumInteritemSpacing:0];
     [assetsFlowLayout setMinimumLineSpacing:10];
     [assetsFlowLayout setHeaderReferenceSize:CGSizeMake(100, 24)];
-    
+
     UIPanGestureRecognizer *gestureRecognizer = [[UIPanGestureRecognizer alloc]
                                                  initWithTarget:self action:@selector(handlePanGesture:)];
     [scrollView addGestureRecognizer:gestureRecognizer];
-    
+
+    [self enumerateAlbums];
+}
+
+- (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user {
     AnnoSingleton *anno = [AnnoSingleton sharedInstance];
     [anno setupWithEmail:EMAIL
-             displayName:NAME
+             displayName:user.name
             userImageURL:IMAGEURL
                  teamKey:@"io.usersource.demo"
               teamSecret:@"usersource"];
-    
-    [self enumerateAlbums];
+}
+
+- (void) loginViewShowingLoggedOutUser:(FBLoginView *)loginView {
+    self.loginView.hidden = NO;
 }
 
 -(void) handlePanGesture:(UIPanGestureRecognizer*)pan {
