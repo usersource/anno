@@ -14,7 +14,6 @@
 
 - (IBAction) openTouchUpInside:(id)sender;
 - (IBAction) showInfoPage:(id)sender;
-- (IBAction) signInWithFacebook:(id)sender;
 
 @property (strong, nonatomic) IBOutlet UIView *loginView;
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;

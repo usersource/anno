@@ -12,6 +12,7 @@
 #import <AssetsLibrary/ALAssetsGroup.h>
 #import <AssetsLibrary/ALAsset.h>
 #import <AssetsLibrary/ALAssetRepresentation.h>
+#import <FacebookSDK/FacebookSDK.h>
 
 #define EMAIL @"david.kennan@gmail.com"
 #define NAME @"David Kennan"
@@ -33,7 +34,11 @@
 {
     [super viewDidLoad];
 
-    self.loginView.hidden = YES;
+    self.loginView.hidden = NO;
+
+    FBLoginView *fbLoginView = [[FBLoginView alloc] init];
+    fbLoginView.center = self.loginView.center;
+    [self.loginView addSubview:fbLoginView];
 
 	// Do any additional setup after loading the view, typically from a nib.
     assetGroups = [[NSMutableArray alloc] init];
@@ -136,9 +141,6 @@
 - (IBAction) showInfoPage:(id)sender {
     InfoViewController *infoViewController = [[InfoViewController alloc] init];
     [self presentViewController:infoViewController animated:YES completion:nil];
-}
-
-- (IBAction) signInWithFacebook:(id)sender {
 }
 
 #pragma mark CollectionViewDelegate

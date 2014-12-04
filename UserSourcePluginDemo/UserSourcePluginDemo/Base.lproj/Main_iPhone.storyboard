@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
-        <deployment defaultVersion="1808" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
     </dependencies>
     <scenes>
@@ -65,21 +64,9 @@
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h3F-Qe-gJE">
-                                        <rect key="frame" x="83" y="362" width="154" height="30"/>
-                                        <state key="normal" title="Sign In with Facebook">
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="signInWithFacebook:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="AV5-7w-ASl"/>
-                                        </connections>
-                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstItem="HQ2-46-g9C" firstAttribute="centerX" secondItem="h3F-Qe-gJE" secondAttribute="centerX" id="1Zx-Qv-1B1"/>
-                                    <constraint firstItem="h3F-Qe-gJE" firstAttribute="leading" secondItem="g9S-oc-zd8" secondAttribute="leading" constant="83" id="HVL-bo-rQe"/>
-                                    <constraint firstAttribute="bottom" secondItem="h3F-Qe-gJE" secondAttribute="bottom" constant="176" id="NtZ-Yg-baE"/>
                                     <constraint firstItem="HQ2-46-g9C" firstAttribute="leading" secondItem="g9S-oc-zd8" secondAttribute="leading" constant="87" id="XvU-s7-tfu"/>
                                     <constraint firstItem="HQ2-46-g9C" firstAttribute="top" secondItem="g9S-oc-zd8" secondAttribute="top" constant="84" id="rne-Cc-Ipi"/>
                                     <constraint firstItem="HQ2-46-g9C" firstAttribute="centerX" secondItem="g9S-oc-zd8" secondAttribute="centerX" id="xC7-mh-HwQ"/>
