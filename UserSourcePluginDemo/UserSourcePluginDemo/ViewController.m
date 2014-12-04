@@ -17,6 +17,7 @@
     NSMutableArray *assetGroups;
     NSMutableArray *assetUrls;
     ALAssetsLibrary* library;
+    BOOL userInfoFetch;
 }
 
 @end
@@ -59,23 +60,26 @@
 }
 
 - (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user {
-    [FBRequestConnection startWithGraphPath:@"me"
-                                 parameters:@{@"fields": @"picture.type(normal)"}
-                                 HTTPMethod:@"GET"
-                          completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                              if (!error) {
-                                  NSString *pictureURL = [[[result objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
-                                  AnnoSingleton *anno = [AnnoSingleton sharedInstance];
-                                  [anno setupWithEmail:[user objectForKey:@"email"]
-                                           displayName:[user objectForKey:@"name"]
-                                          userImageURL:pictureURL
-                                               teamKey:@"io.usersource.demo"
-                                            teamSecret:@"usersource"];
-                              }
-                              else{
-                                  NSLog(@"%@", [error localizedDescription]);
-                              }
-                          }];
+    if (!userInfoFetch) {
+        userInfoFetch = YES;
+        [FBRequestConnection startWithGraphPath:@"me"
+                                     parameters:@{@"fields": @"picture.type(normal)"}
+                                     HTTPMethod:@"GET"
+                              completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                                  if (!error) {
+                                      NSString *pictureURL = [[[result objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+                                      AnnoSingleton *anno = [AnnoSingleton sharedInstance];
+                                      [anno setupWithEmail:[user objectForKey:@"email"]
+                                               displayName:[user objectForKey:@"name"]
+                                              userImageURL:pictureURL
+                                                   teamKey:@"io.usersource.demo"
+                                                teamSecret:@"usersource"];
+                                  }
+                                  else{
+                                      NSLog(@"%@", [error localizedDescription]);
+                                  }
+                              }];
+    }
 }
 
 - (void) loginViewShowingLoggedOutUser:(FBLoginView *)loginView {
