@@ -243,15 +243,12 @@
 
     navigationBar.titleTextAttributes = textAttributes;
 
-    UIImage *backImage = [UIImage imageNamed:@"icon_arrow-left.png"];
-    UIButton *backButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    backButton.bounds = CGRectMake( 6, 0, backImage.size.width, backImage.size.height);
-    [backButton setImage:backImage forState:UIControlStateNormal];
-    backButton.imageView.contentMode = UIViewContentModeCenter;
-    [backButton addTarget:self action:@selector(closeInfo:) forControlEvents:UIControlEventTouchUpInside];
-    cancelButton = [[UIBarButtonItem alloc] initWithCustomView:backButton];
-
+    cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Close"
+                                                    style:UIBarButtonItemStyleDone
+                                                   target:self
+                                                   action:@selector(closeInfo:)];
     navItem.leftBarButtonItem = cancelButton;
+    navItem.leftBarButtonItem.tintColor = UIColorFromRGB(0x66bffb);
 
     titleLabel = [[UILabel alloc] init];
     [self.view addSubview:titleLabel];
@@ -404,21 +401,17 @@
     shakeSensitivityPicker.hidden = NO;
     navItem.title = @"Shake Sensitivity";
 
-    UIImage *backImage = [UIImage imageNamed:@"Close_icon"];
-    UIButton *backButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    backButton.bounds = CGRectMake(6, 0, backImage.size.width, backImage.size.height);
-    [backButton setImage:backImage forState:UIControlStateNormal];
-    backButton.imageView.contentMode = UIViewContentModeCenter;
-    [backButton addTarget:self action:@selector(closeShakePicker:) forControlEvents:UIControlEventTouchUpInside];
-    navItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+    navItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
+                                                                 style:UIBarButtonItemStyleDone
+                                                                target:self
+                                                                action:@selector(closeShakePicker:)];
+    navItem.leftBarButtonItem.tintColor = UIColorFromRGB(0x66bffb);
 
-    backImage = [UIImage imageNamed:@"Icon_done"];
-    backButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    backButton.bounds = CGRectMake(backImage.size.width - 6, 0, backImage.size.width, backImage.size.height);
-    [backButton setImage:backImage forState:UIControlStateNormal];
-    backButton.imageView.contentMode = UIViewContentModeCenter;
-    [backButton addTarget:self action:@selector(saveShakeSensitivity:) forControlEvents:UIControlEventTouchUpInside];
-    navItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+    navItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Done"
+                                                                  style:UIBarButtonItemStyleDone
+                                                                 target:self
+                                                                 action:@selector(saveShakeSensitivity:)];
+    navItem.rightBarButtonItem.tintColor = UIColorFromRGB(0x66bffb);
 }
 
 - (void) closeShakePicker:(id)sender {
