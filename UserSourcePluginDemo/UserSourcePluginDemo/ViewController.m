@@ -17,6 +17,8 @@
 #define NAME @"David Kennan"
 #define IMAGEURL @"http://lh4.ggpht.com/0L3HSgl41440aC-U_N7hLaYSZjQtItLdiTKlCZJEThCckvwZKkNRkL9eMm55hHn5oN6l6xQf3bj-SXlqyjPhh_1iShO-qvZg"
 
+#define LOOKAHEAD 3
+
 @interface ViewController () {
     NSMutableArray *assetGroups;
     NSMutableArray *assetUrls;
@@ -102,6 +104,18 @@
     [UIView animateWithDuration:0.3 animations:^{
         scrollView.bounds = bounds;
     }];
+    
+    float target = (float)ceil(wRatio);
+    if (0 <= (target - LOOKAHEAD + 1) &&  (target - LOOKAHEAD + 1) < [assetUrls count]) {
+        NSURL* url = [assetUrls objectAtIndex:(target - LOOKAHEAD + 1)];
+        [self insertImageAtPosition:target - LOOKAHEAD + 1 url:url];
+    }
+    if (target + LOOKAHEAD < [assetUrls count]) {
+        NSURL* url = [assetUrls objectAtIndex:target + LOOKAHEAD];
+        [self insertImageAtPosition:target + LOOKAHEAD url:url];
+    }
+    [self removeImageAtPosition:target - LOOKAHEAD];
+    [self removeImageAtPosition:target + LOOKAHEAD + 1];
 }
 
 - (void) enumerateAlbums {
@@ -182,12 +196,30 @@
     
     int i = 0;
     for (NSURL* url in assetUrls) {
+        if (i > LOOKAHEAD) break; // First 5 only
+        [self insertImageAtPosition:i url:url];
+        i ++;
+    }
+}
+
+-(void) removeImageAtPosition:(int)position {
+    if ([scrollView viewWithTag:100 + position] == nil)
+        return;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[scrollView viewWithTag:100 + position] removeFromSuperview];
+    });
+}
+
+-(void) insertImageAtPosition:(int)position url:(NSURL*)url {
+    if ([scrollView viewWithTag:100 + position] != nil)
+        return;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
         UIImageView *imgView = [[UIImageView alloc] init];
         [scrollView addSubview:imgView];
-        [imgView setFrame:CGRectMake([UIScreen mainScreen].bounds.size.width*i, 0,
-                                     [UIScreen mainScreen].bounds.size.width,
-                                     [UIScreen mainScreen].bounds.size.height)];
-        
+        [imgView setFrame:[self frameForImageAtPosition:position]];
+        [imgView setTag:100 + position];
         [imgView setContentMode:UIViewContentModeScaleAspectFit];
         [library assetForURL:url resultBlock:^(ALAsset *asset) {
             if (asset && imgView && [imgView isDescendantOfView:scrollView]) {
@@ -198,10 +230,20 @@
         } failureBlock:^(NSError *error) {
             
         }];
-        i ++;
-    }
-    
-    [scrollView setContentSize:CGSizeMake([UIScreen mainScreen].bounds.size.width*i, [UIScreen mainScreen].bounds.size.height)];
+        
+        int maxTag = 0;
+        for (UIView *v in [scrollView subviews]) {
+            maxTag = MAX(v.tag - 100, maxTag);
+        }
+        [scrollView setContentSize:CGSizeMake([UIScreen mainScreen].bounds.size.width*maxTag,
+                                              [UIScreen mainScreen].bounds.size.height)];
+    });
+}
+
+-(CGRect) frameForImageAtPosition:(int)position {
+    return CGRectMake([UIScreen mainScreen].bounds.size.width*position, 0,
+                      [UIScreen mainScreen].bounds.size.width,
+                      [UIScreen mainScreen].bounds.size.height);
 }
 
 @end
