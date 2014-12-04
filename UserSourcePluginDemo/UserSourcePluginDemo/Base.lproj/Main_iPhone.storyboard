@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -18,11 +18,9 @@
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" scrollEnabled="NO" pagingEnabled="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o8n-3R-MEt">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </scrollView>
-                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5zJ-TS-wh0">
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5zJ-TS-wh0">
                                 <rect key="frame" x="250" y="533" width="70" height="35"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Gallery">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -30,9 +28,20 @@
                                     <action selector="openTouchUpInside:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="Sex-Qn-rk4"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GEa-qp-yfy">
+                                <rect key="frame" x="140" y="533" width="100" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="oX1-n7-RD6"/>
+                                </constraints>
+                                <state key="normal" title="Settings">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="showInfoPage:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="3Jr-bF-XoX"/>
+                                </connections>
+                            </button>
                             <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="1hn-2w-rgJ">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Kks-8g-mh2">
                                     <size key="itemSize" width="50" height="50"/>
@@ -50,8 +59,12 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="o8n-3R-MEt" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="-20" id="3wo-OA-Byo"/>
+                            <constraint firstItem="GEa-qp-yfy" firstAttribute="top" secondItem="5zJ-TS-wh0" secondAttribute="top" id="E5h-Oj-aBP"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="GEa-qp-yfy" secondAttribute="bottom" constant="5" id="ECH-jY-MQd"/>
+                            <constraint firstAttribute="trailing" secondItem="GEa-qp-yfy" secondAttribute="trailing" constant="80" id="Jjh-7d-Jex"/>
                             <constraint firstItem="o8n-3R-MEt" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="-20" id="Nb1-it-24d"/>
                             <constraint firstItem="o8n-3R-MEt" firstAttribute="width" secondItem="kh9-bI-dsS" secondAttribute="width" id="Nda-lk-mgB"/>
+                            <constraint firstItem="5zJ-TS-wh0" firstAttribute="leading" secondItem="GEa-qp-yfy" secondAttribute="trailing" constant="10" id="OYv-8j-qp5"/>
                             <constraint firstAttribute="trailing" secondItem="o8n-3R-MEt" secondAttribute="trailing" id="bPf-mY-Q3z"/>
                             <constraint firstAttribute="centerX" secondItem="o8n-3R-MEt" secondAttribute="centerX" id="kB7-hn-Muy"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="5zJ-TS-wh0" secondAttribute="bottom" id="oPm-E4-biO"/>
@@ -66,7 +79,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="50" y="39"/>
+            <point key="canvasLocation" x="-165" y="-87"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

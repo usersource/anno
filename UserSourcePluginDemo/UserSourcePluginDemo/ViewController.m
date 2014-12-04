@@ -126,8 +126,13 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)openTouchUpInside:(id)sender {
+- (IBAction) openTouchUpInside:(id)sender {
     [self enumerateAlbums];
+}
+
+- (IBAction) showInfoPage:(id)sender {
+    InfoViewController *infoViewController = [[InfoViewController alloc] init];
+    [self presentViewController:infoViewController animated:YES completion:nil];
 }
 
 #pragma mark CollectionViewDelegate
