@@ -34,7 +34,9 @@
     NSArray *permissions = @[@"public_profile", @"email"];
     FBLoginView *fbLoginView = [[FBLoginView alloc] initWithReadPermissions:permissions];
     fbLoginView.delegate = self;
-    fbLoginView.center = self.loginView.center;
+    fbLoginView.frame = CGRectOffset(fbLoginView.frame,
+                                     (self.loginView.center.x - (fbLoginView.frame.size.width / 2)),
+                                     ((self.loginView.center.y * 1.5) - (fbLoginView.frame.size.height / 2)));
     [self.loginView addSubview:fbLoginView];
 }
 
