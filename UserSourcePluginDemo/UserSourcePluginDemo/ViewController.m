@@ -31,7 +31,7 @@
 
     self.loginView.hidden = YES;
 
-    NSArray *permissions = @[@"public_profile", @"email"];
+    NSArray *permissions = @[@"email"];
     FBLoginView *fbLoginView = [[FBLoginView alloc] initWithReadPermissions:permissions];
     fbLoginView.delegate = self;
     fbLoginView.frame = CGRectOffset(fbLoginView.frame,
@@ -86,6 +86,32 @@
 
 - (void) loginViewShowingLoggedOutUser:(FBLoginView *)loginView {
     self.loginView.hidden = NO;
+}
+
+- (void) loginView:(FBLoginView *)loginView handleError:(NSError *)error {
+    NSString *alertMessage, *alertTitle;
+
+    if ([FBErrorUtility shouldNotifyUserForError:error]) {
+        alertTitle = @"Facebook error";
+        alertMessage = [FBErrorUtility userMessageForError:error];
+    } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryAuthenticationReopenSession) {
+        alertTitle = @"Session Error";
+        alertMessage = @"Your current session is no longer valid. Please log in again.";
+    } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryUserCancelled) {
+        NSLog(@"user cancelled login");
+    } else {
+        alertTitle  = @"Something went wrong";
+        alertMessage = @"Please try again later.";
+        NSLog(@"Unexpected error:%@", error);
+    }
+
+    if (alertMessage) {
+        [[[UIAlertView alloc] initWithTitle:alertTitle
+                                    message:alertMessage
+                                   delegate:nil
+                          cancelButtonTitle:@"OK"
+                          otherButtonTitles:nil] show];
+    }
 }
 
 -(void) handlePanGesture:(UIPanGestureRecognizer*)pan {
