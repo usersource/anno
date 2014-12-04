@@ -236,7 +236,7 @@
     navItem.title = @"Feedback";
     [self.view addSubview:navigationBar];
     navigationBar.items = [NSArray arrayWithObjects: navItem, nil];
-    [navigationBar setBackgroundImage:[UIImage imageNamed:@"info-overlay@2x.png"] forBarMetrics:UIBarMetricsDefault];
+    [navigationBar setBackgroundImage:[UIImage imageNamed:@"info-overlay.png"] forBarMetrics:UIBarMetricsDefault];
     
     UIImage *backImage = [UIImage imageNamed:@"icon_arrow-left.png"];
     UIButton *backButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -346,7 +346,7 @@
     self.view = [[UIView alloc] initWithFrame:applicationFrame];
 
     UIImageView *backgroudImageView = [[UIImageView alloc] initWithFrame:applicationFrame];
-    backgroudImageView.image = [UIImage imageNamed:@"info-overlay@2x.png"];
+    backgroudImageView.image = [UIImage imageNamed:@"info-overlay"];
     [self.view addSubview:backgroudImageView];
     [self.view sendSubviewToBack:backgroudImageView];
 
