@@ -292,7 +292,7 @@
     [shakeDetectionSwitch addTarget:self action:@selector(changeShakeDetection:) forControlEvents:UIControlEventTouchUpInside];
     [shakeDetection addSubview:shakeDetectionSwitch];
     
-    [shakeSensitivity = [UIView alloc] init];
+    shakeSensitivity = [[UIView alloc] init];
     [shakeSettingsBody addSubview:shakeSensitivity];
 
     shakeSensitivityLabel = [[UILabel alloc] init];

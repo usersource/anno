@@ -25,8 +25,8 @@
 
     AnnoSingleton *anno;
     NSArray *shakeSensitivityData;
-    BOOL *allowShake;
-    NSInteger *shakeValue;
+    BOOL allowShake;
+    NSInteger shakeValue;
 }
 
 @end
