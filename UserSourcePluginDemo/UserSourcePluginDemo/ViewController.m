@@ -237,7 +237,9 @@
     }
     
     int i = 0;
-    for (NSURL* url in assetUrls) {
+    NSArray *reversedAssetUrls = [[assetUrls reverseObjectEnumerator] allObjects];
+    for (NSURL* url in reversedAssetUrls) {
+        if (i >= 10) break;
         UIImageView *imgView = [[UIImageView alloc] init];
         [scrollView addSubview:imgView];
         [imgView setFrame:CGRectMake([UIScreen mainScreen].bounds.size.width*i, 0,
