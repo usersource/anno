@@ -32,6 +32,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
+    self.loginView.hidden = YES;
+
 	// Do any additional setup after loading the view, typically from a nib.
     assetGroups = [[NSMutableArray alloc] init];
     assetUrls = [[NSMutableArray alloc] init];
@@ -133,6 +136,9 @@
 - (IBAction) showInfoPage:(id)sender {
     InfoViewController *infoViewController = [[InfoViewController alloc] init];
     [self presentViewController:infoViewController animated:YES completion:nil];
+}
+
+- (IBAction) signInWithFacebook:(id)sender {
 }
 
 #pragma mark CollectionViewDelegate

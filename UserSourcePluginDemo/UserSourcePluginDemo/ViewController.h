@@ -14,8 +14,9 @@
 
 - (IBAction) openTouchUpInside:(id)sender;
 - (IBAction) showInfoPage:(id)sender;
+- (IBAction) signInWithFacebook:(id)sender;
 
-@property (strong, nonatomic) IBOutlet UIView *galleryView;
+@property (strong, nonatomic) IBOutlet UIView *loginView;
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (strong, nonatomic) IBOutlet UICollectionView *assetsCollectionView;
 @property (strong, nonatomic) IBOutlet UICollectionViewFlowLayout *assetsFlowLayout;
