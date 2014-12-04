@@ -16,7 +16,7 @@ NSString *ACTIVITY_INTRO = @"Intro";
 NSString *ACTIVITY_FEEDBACK = @"Feedback";
 float COMPRESSION_QUALITY = 0.7;
 
-AnnoUtils *annoUtils;
+//AnnoUtils *annoUtils;
 //ScreenshotGestureListener *screenshotGestureListener;
 AnnoSingleton *annoSingleton;
 

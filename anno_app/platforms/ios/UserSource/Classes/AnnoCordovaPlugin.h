@@ -13,13 +13,13 @@
 #import "AnnoUtils.h"
 //#import "ScreenshotGestureListener.h"
 
+AnnoUtils *annoUtils;
+
 @interface AnnoCordovaPlugin : CDVPlugin {
     CommunityViewController *communityViewController;
 }
 
 @property CommunityViewController *communityViewController;
-
-extern AnnoUtils *annoUtils;
 //extern ScreenshotGestureListener *screenshotGestureListener;
 
 - (void) exit_current_activity:(CDVInvokedUrlCommand*)command;
