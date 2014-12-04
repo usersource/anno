@@ -13,16 +13,13 @@
 #import <AssetsLibrary/ALAsset.h>
 #import <AssetsLibrary/ALAssetRepresentation.h>
 
-#define EMAIL @"david.kennan@gmail.com"
-#define NAME @"David Kennan"
-#define IMAGEURL @"http://lh4.ggpht.com/0L3HSgl41440aC-U_N7hLaYSZjQtItLdiTKlCZJEThCckvwZKkNRkL9eMm55hHn5oN6l6xQf3bj-SXlqyjPhh_1iShO-qvZg"
-
 #define LOOKAHEAD 3
 
 @interface ViewController () {
     NSMutableArray *assetGroups;
     NSMutableArray *assetUrls;
     ALAssetsLibrary* library;
+    BOOL userInfoFetch;
 }
 
 @end
@@ -31,33 +28,92 @@
 
 @synthesize assetsCollectionView, scrollView, assetsFlowLayout;
 
-- (void)viewDidLoad
-{
+- (void) viewDidLoad {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+
+    self.loginView.hidden = YES;
+
+    NSArray *permissions = @[@"email"];
+    FBLoginView *fbLoginView = [[FBLoginView alloc] initWithReadPermissions:permissions];
+    fbLoginView.delegate = self;
+    fbLoginView.frame = CGRectOffset(fbLoginView.frame,
+                                     (self.loginView.center.x - (fbLoginView.frame.size.width / 2)),
+                                     ((self.loginView.center.y * 1.5) - (fbLoginView.frame.size.height / 2)));
+    [self.loginView addSubview:fbLoginView];
+}
+
+- (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView {
+    self.loginView.hidden = YES;
+
     assetGroups = [[NSMutableArray alloc] init];
     assetUrls = [[NSMutableArray alloc] init];
     library = [[ALAssetsLibrary alloc] init];
-    
+
     [assetsCollectionView registerNib:[UINib nibWithNibName:@"assetsCollectionCell" bundle:nil] forCellWithReuseIdentifier:@"assetGroup"];
-    
+
     [assetsFlowLayout setItemSize:CGSizeMake(100, 100)];
     [assetsFlowLayout setMinimumInteritemSpacing:0];
     [assetsFlowLayout setMinimumLineSpacing:10];
     [assetsFlowLayout setHeaderReferenceSize:CGSizeMake(100, 24)];
-    
+
     UIPanGestureRecognizer *gestureRecognizer = [[UIPanGestureRecognizer alloc]
                                                  initWithTarget:self action:@selector(handlePanGesture:)];
     [scrollView addGestureRecognizer:gestureRecognizer];
-    
-    AnnoSingleton *anno = [AnnoSingleton sharedInstance];
-    [anno setupWithEmail:EMAIL
-             displayName:NAME
-            userImageURL:IMAGEURL
-                 teamKey:@"io.usersource.demo"
-              teamSecret:@"usersource"];
-    
+
     [self enumerateAlbums];
+}
+
+- (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user {
+    if (!userInfoFetch) {
+        userInfoFetch = YES;
+        [FBRequestConnection startWithGraphPath:@"me"
+                                     parameters:@{@"fields": @"picture.type(normal)"}
+                                     HTTPMethod:@"GET"
+                              completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                                  if (!error) {
+                                      NSString *pictureURL = [[[result objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+                                      AnnoSingleton *anno = [AnnoSingleton sharedInstance];
+                                      [anno setupWithEmail:[user objectForKey:@"email"]
+                                               displayName:[user objectForKey:@"name"]
+                                              userImageURL:pictureURL
+                                                   teamKey:@"io.usersource.demo"
+                                                teamSecret:@"usersource"];
+                                  }
+                                  else{
+                                      NSLog(@"%@", [error localizedDescription]);
+                                  }
+                              }];
+    }
+}
+
+- (void) loginViewShowingLoggedOutUser:(FBLoginView *)loginView {
+    self.loginView.hidden = NO;
+}
+
+- (void) loginView:(FBLoginView *)loginView handleError:(NSError *)error {
+    NSString *alertMessage, *alertTitle;
+
+    if ([FBErrorUtility shouldNotifyUserForError:error]) {
+        alertTitle = @"Facebook error";
+        alertMessage = [FBErrorUtility userMessageForError:error];
+    } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryAuthenticationReopenSession) {
+        alertTitle = @"Session Error";
+        alertMessage = @"Your current session is no longer valid. Please log in again.";
+    } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryUserCancelled) {
+        NSLog(@"user cancelled login");
+    } else {
+        alertTitle  = @"Something went wrong";
+        alertMessage = @"Please try again later.";
+        NSLog(@"Unexpected error:%@", error);
+    }
+
+    if (alertMessage) {
+        [[[UIAlertView alloc] initWithTitle:alertTitle
+                                    message:alertMessage
+                                   delegate:nil
+                          cancelButtonTitle:@"OK"
+                          otherButtonTitles:nil] show];
+    }
 }
 
 -(void) handlePanGesture:(UIPanGestureRecognizer*)pan {
@@ -101,7 +157,7 @@
         bounds.origin.x = screen.size.width * ceil(wRatio);
     }
     
-    [UIView animateWithDuration:0.3 animations:^{
+    [UIView animateWithDuration:0.1 animations:^{
         scrollView.bounds = bounds;
     }];
     

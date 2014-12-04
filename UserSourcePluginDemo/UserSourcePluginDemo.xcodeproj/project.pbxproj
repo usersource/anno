@@ -12,6 +12,7 @@
 		1D0803141A3048DF00875AF3 /* info-overlay@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1D0803131A3048DF00875AF3 /* info-overlay@2x.png */; };
 		1D0803171A30496200875AF3 /* Line.png in Resources */ = {isa = PBXBuildFile; fileRef = 1D0803151A30496200875AF3 /* Line.png */; };
 		1D0803181A30496200875AF3 /* Line@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1D0803161A30496200875AF3 /* Line@2x.png */; };
+		1D0803291A30714700875AF3 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D0803281A30714700875AF3 /* FacebookSDK.framework */; };
 		5BB4A76A1A2ED9EC00A6D6DF /* Cordova.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB4A7681A2ED9EC00A6D6DF /* Cordova.framework */; };
 		5BB4A76D1A2ED9F600A6D6DF /* www in Resources */ = {isa = PBXBuildFile; fileRef = 5BB4A76C1A2ED9F600A6D6DF /* www */; };
 		5BB4A76F1A2ED9FD00A6D6DF /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 5BB4A76E1A2ED9FD00A6D6DF /* config.xml */; };
@@ -57,6 +58,7 @@
 		1D0803131A3048DF00875AF3 /* info-overlay@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "info-overlay@2x.png"; sourceTree = "<group>"; };
 		1D0803151A30496200875AF3 /* Line.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Line.png; sourceTree = "<group>"; };
 		1D0803161A30496200875AF3 /* Line@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Line@2x.png"; sourceTree = "<group>"; };
+		1D0803281A30714700875AF3 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
 		5BB4A7681A2ED9EC00A6D6DF /* Cordova.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cordova.framework; path = UserSourcePluginDemo/Cordova.framework; sourceTree = "<group>"; };
 		5BB4A7691A2ED9EC00A6D6DF /* UserSourceStatic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserSourceStatic.framework; path = UserSourcePluginDemo/UserSourceStatic.framework; sourceTree = "<group>"; };
 		5BB4A76C1A2ED9F600A6D6DF /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1D0803291A30714700875AF3 /* FacebookSDK.framework in Frameworks */,
 				5BB4A7861A2EE78400A6D6DF /* AddressBookUI.framework in Frameworks */,
 				5BB62D4C1A2DD72D009355B0 /* Foundation.framework in Frameworks */,
 				5BB4A7761A2EDC2700A6D6DF /* MobileCoreServices.framework in Frameworks */,
@@ -158,6 +161,7 @@
 		5BB62D4A1A2DD72D009355B0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1D0803281A30714700875AF3 /* FacebookSDK.framework */,
 				5BB4A7831A2EE45B00A6D6DF /* libsqlite3.dylib */,
 				5BB4A7771A2EDD1700A6D6DF /* AddressBookUI.framework */,
 				5BB4A7751A2EDC2700A6D6DF /* MobileCoreServices.framework */,
@@ -495,6 +499,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/UserSourcePluginDemo",
+					/Users/imran/Documents/FacebookSDK,
+					/Users/rishi/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UserSourcePluginDemo/UserSourcePluginDemo-Prefix.pch";
@@ -517,6 +523,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/UserSourcePluginDemo",
+					/Users/imran/Documents/FacebookSDK,
+					/Users/rishi/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UserSourcePluginDemo/UserSourcePluginDemo-Prefix.pch";
