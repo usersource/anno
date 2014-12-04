@@ -33,6 +33,13 @@
 
     self.loginView.hidden = YES;
 
+    UILabel *appName = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 150, 20)];
+    appName.text = @"UserSource Demo";
+    appName.frame = CGRectOffset(appName.frame,
+                                 (self.loginView.center.x - (appName.frame.size.width / 2)),
+                                 ((self.loginView.center.y * 0.5) - (appName.frame.size.height / 2)));
+    [self.loginView addSubview:appName];
+
     NSArray *permissions = @[@"email"];
     FBLoginView *fbLoginView = [[FBLoginView alloc] initWithReadPermissions:permissions];
     fbLoginView.delegate = self;

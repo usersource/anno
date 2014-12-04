@@ -57,20 +57,7 @@
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="g9S-oc-zd8">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UserSource Demo" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HQ2-46-g9C">
-                                        <rect key="frame" x="87" y="84" width="147" height="21"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstItem="HQ2-46-g9C" firstAttribute="leading" secondItem="g9S-oc-zd8" secondAttribute="leading" constant="87" id="XvU-s7-tfu"/>
-                                    <constraint firstItem="HQ2-46-g9C" firstAttribute="top" secondItem="g9S-oc-zd8" secondAttribute="top" constant="84" id="rne-Cc-Ipi"/>
-                                    <constraint firstItem="HQ2-46-g9C" firstAttribute="centerX" secondItem="g9S-oc-zd8" secondAttribute="centerX" id="xC7-mh-HwQ"/>
-                                </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
