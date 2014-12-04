@@ -355,6 +355,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self setNeedsStatusBarAppearanceUpdate];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -453,6 +454,10 @@
     label.text = [shakeSensitivityData objectAtIndex:row];
     label.textAlignment = NSTextAlignmentCenter;
     return label;
+}
+
+- (UIStatusBarStyle) preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
 }
 
 @end
