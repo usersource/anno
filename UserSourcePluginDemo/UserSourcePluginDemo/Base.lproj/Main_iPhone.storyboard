@@ -17,10 +17,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" scrollEnabled="NO" pagingEnabled="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o8n-3R-MEt">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" pagingEnabled="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o8n-3R-MEt">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                             </scrollView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5zJ-TS-wh0">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5zJ-TS-wh0">
                                 <rect key="frame" x="250" y="533" width="70" height="35"/>
                                 <state key="normal" title="Gallery">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -29,7 +29,7 @@
                                     <action selector="openTouchUpInside:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="Sex-Qn-rk4"/>
                                 </connections>
                             </button>
-                            <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="1hn-2w-rgJ">
+                            <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="1hn-2w-rgJ">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Kks-8g-mh2">
@@ -60,21 +60,28 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="o8n-3R-MEt" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="-20" id="3wo-OA-Byo"/>
+                            <constraint firstItem="o8n-3R-MEt" firstAttribute="bottom" secondItem="1hn-2w-rgJ" secondAttribute="bottom" id="CFf-YK-AbB"/>
                             <constraint firstItem="GEa-qp-yfy" firstAttribute="top" secondItem="5zJ-TS-wh0" secondAttribute="top" constant="2" id="E5h-Oj-aBP"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="GEa-qp-yfy" secondAttribute="bottom" constant="3" id="ECH-jY-MQd"/>
+                            <constraint firstItem="o8n-3R-MEt" firstAttribute="bottom" secondItem="2fi-mo-0CV" secondAttribute="top" id="GN6-Rh-u6B"/>
                             <constraint firstAttribute="trailing" secondItem="GEa-qp-yfy" secondAttribute="trailing" constant="225" id="Jjh-7d-Jex"/>
                             <constraint firstItem="o8n-3R-MEt" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="-20" id="Nb1-it-24d"/>
                             <constraint firstItem="o8n-3R-MEt" firstAttribute="width" secondItem="kh9-bI-dsS" secondAttribute="width" id="Nda-lk-mgB"/>
                             <constraint firstItem="5zJ-TS-wh0" firstAttribute="leading" secondItem="GEa-qp-yfy" secondAttribute="trailing" constant="155" id="OYv-8j-qp5"/>
+                            <constraint firstItem="o8n-3R-MEt" firstAttribute="leading" secondItem="1hn-2w-rgJ" secondAttribute="leading" id="Yrk-dR-3l8"/>
                             <constraint firstAttribute="trailing" secondItem="o8n-3R-MEt" secondAttribute="trailing" id="bPf-mY-Q3z"/>
+                            <constraint firstItem="o8n-3R-MEt" firstAttribute="top" secondItem="1hn-2w-rgJ" secondAttribute="top" id="jKy-F0-C7W"/>
                             <constraint firstAttribute="centerX" secondItem="o8n-3R-MEt" secondAttribute="centerX" id="kB7-hn-Muy"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="5zJ-TS-wh0" secondAttribute="bottom" id="oPm-E4-biO"/>
+                            <constraint firstItem="o8n-3R-MEt" firstAttribute="trailing" secondItem="5zJ-TS-wh0" secondAttribute="trailing" id="p9X-60-0WE"/>
                             <constraint firstItem="o8n-3R-MEt" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="sHT-Tk-sC5"/>
+                            <constraint firstItem="o8n-3R-MEt" firstAttribute="trailing" secondItem="1hn-2w-rgJ" secondAttribute="trailing" id="zJJ-PF-SvZ"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="assetsCollectionView" destination="1hn-2w-rgJ" id="zs6-dB-JCJ"/>
                         <outlet property="assetsFlowLayout" destination="Kks-8g-mh2" id="20M-Y9-zQh"/>
+                        <outlet property="galleryView" destination="kh9-bI-dsS" id="Xlk-4o-cUy"/>
                         <outlet property="scrollView" destination="o8n-3R-MEt" id="WkU-PM-Xqc"/>
                     </connections>
                 </viewController>

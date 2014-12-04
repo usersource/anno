@@ -15,8 +15,9 @@
 - (IBAction) openTouchUpInside:(id)sender;
 - (IBAction) showInfoPage:(id)sender;
 
-@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
-@property (weak, nonatomic) IBOutlet UICollectionView *assetsCollectionView;
-@property (weak, nonatomic) IBOutlet UICollectionViewFlowLayout *assetsFlowLayout;
+@property (strong, nonatomic) IBOutlet UIView *galleryView;
+@property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (strong, nonatomic) IBOutlet UICollectionView *assetsCollectionView;
+@property (strong, nonatomic) IBOutlet UICollectionViewFlowLayout *assetsFlowLayout;
 
 @end
