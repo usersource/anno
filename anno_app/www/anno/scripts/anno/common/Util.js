@@ -195,22 +195,22 @@
                 this.annotationWidth = pluginConfig.annotationWidth;
             }
             if (("AnnoDrawCommentIcon" in pluginConfig) && (pluginConfig.AnnoDrawCommentIcon !== "")) {
-                this.AnnoDrawCommentIcon = pluginConfig.AnnoDrawCommentIcon;
+                this.AnnoDrawCommentIcon = "../../custom/" + pluginConfig.AnnoDrawCommentIcon;
             }
             if (("AnnoDrawArrowIcon" in pluginConfig) && (pluginConfig.AnnoDrawArrowIcon !== "")) {
-                this.AnnoDrawArrowIcon = pluginConfig.AnnoDrawArrowIcon;
+                this.AnnoDrawArrowIcon = "../../custom/" + pluginConfig.AnnoDrawArrowIcon;
             }
             if (("AnnoDrawBlackRectangleIcon" in pluginConfig) && (pluginConfig.AnnoDrawBlackRectangleIcon !== "")) {
-                this.AnnoDrawBlackRectangleIcon = pluginConfig.AnnoDrawBlackRectangleIcon;
+                this.AnnoDrawBlackRectangleIcon = "../../custom/" + pluginConfig.AnnoDrawBlackRectangleIcon;
             }
             if (("AnnoDrawRectangleIcon" in pluginConfig) && (pluginConfig.AnnoDrawRectangleIcon !== "")) {
-                this.AnnoDrawRectangleIcon = pluginConfig.AnnoDrawRectangleIcon;
+                this.AnnoDrawRectangleIcon = "../../custom/" + pluginConfig.AnnoDrawRectangleIcon;
             }
             if (("AnnoDrawShareIcon" in pluginConfig) && (pluginConfig.AnnoDrawShareIcon !== "")) {
-                this.AnnoDrawShareIcon = pluginConfig.AnnoDrawShareIcon;
+                this.AnnoDrawShareIcon = "../../custom/" + pluginConfig.AnnoDrawShareIcon;
             }
             if (("AnnoDrawCancelIcon" in pluginConfig) && (pluginConfig.AnnoDrawCancelIcon !== "")) {
-                this.AnnoDrawCancelIcon = pluginConfig.AnnoDrawCancelIcon;
+                this.AnnoDrawCancelIcon = "../../custom/" + pluginConfig.AnnoDrawCancelIcon;
             }
         },
         hasConnection: function()
