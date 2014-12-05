@@ -30,7 +30,9 @@
 
 - (void) viewDidLoad {
     [super viewDidLoad];
-
+    
+    self.loginView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    [self.view addSubview:self.loginView];
     self.loginView.hidden = YES;
     
     [bottomView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.6]];
@@ -90,6 +92,7 @@
                                               userImageURL:pictureURL
                                                    teamKey:@"io.usersource.demo"
                                                 teamSecret:@"usersource"];
+                                      [anno notificationsForTarget:self performSelector:@selector(notificationsCount:)];
                                       [anno setInfoViewControllerClass:[InfoViewController class]];
                                   }
                                   else{
@@ -311,7 +314,7 @@
         for (UIView *v in [scrollView subviews]) {
             maxTag = (int)MAX(v.tag - 100, maxTag);
         }
-        [scrollView setContentSize:CGSizeMake([UIScreen mainScreen].bounds.size.width*maxTag,
+        [scrollView setContentSize:CGSizeMake([UIScreen mainScreen].bounds.size.width*(maxTag+1),
                                               [UIScreen mainScreen].bounds.size.height)];
     });
 }
@@ -320,6 +323,22 @@
     return CGRectMake([UIScreen mainScreen].bounds.size.width*position, 0,
                       [UIScreen mainScreen].bounds.size.width,
                       [UIScreen mainScreen].bounds.size.height);
+}
+
+-(void) notificationsCount:(NSNumber*)count {
+    if (count > 0) {
+        [[[UIAlertView alloc] initWithTitle:@"Your Feedback"
+                                    message:[NSString stringWithFormat:@"New Activity on %@ item%s", count, [count integerValue]>1?"s":""]
+                                   delegate:self
+                          cancelButtonTitle:@"Later"
+                          otherButtonTitles:@"Show Me", nil] show];
+    }
+}
+
+-(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 1) {
+        [[AnnoSingleton sharedInstance] showCommunityPage];
+    }
 }
 
 @end

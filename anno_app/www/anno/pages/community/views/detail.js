@@ -779,6 +779,7 @@ define([
                     // currentAnno.comments.splice(0, 0, new getStateful(commentObject));
                     currentAnno.comments.push(new getStateful(commentObject));
                     adjustAnnoCommentSize();
+                    annoUtil.resetTextSuggestion("detailSuggestedTags");
                 },
                 error: function(){
                 }
