@@ -90,6 +90,7 @@
                                               userImageURL:pictureURL
                                                    teamKey:@"io.usersource.demo"
                                                 teamSecret:@"usersource"];
+                                      [anno setInfoViewControllerClass:[InfoViewController class]];
                                   }
                                   else{
                                       NSLog(@"%@", [error localizedDescription]);
