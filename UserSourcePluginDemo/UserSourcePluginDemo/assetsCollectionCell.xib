@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment defaultVersion="1808" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
+        <deployment defaultVersion="1792" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="eg4-pX-hpN" customClass="assetsCollectionViewCell">
-            <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+            <rect key="frame" x="0.0" y="0.0" width="100" height="147"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+                <rect key="frame" x="0.0" y="0.0" width="100" height="147"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="L6J-Fk-UEz">
-                        <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="L6J-Fk-UEz">
+                        <rect key="frame" x="0.0" y="0.0" width="100" height="127"/>
                     </imageView>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ped-pp-i1b">
-                        <rect key="frame" x="0.0" y="79" width="100" height="21"/>
-                        <color key="backgroundColor" red="0.1108429013" green="0.66666666669999997" blue="0.61663059669999998" alpha="1" colorSpace="calibratedRGB"/>
+                        <rect key="frame" x="0.0" y="126" width="100" height="21"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
@@ -31,21 +32,16 @@
                 <constraint firstItem="L6J-Fk-UEz" firstAttribute="leading" secondItem="eg4-pX-hpN" secondAttribute="leading" id="2sz-6p-Ih8"/>
                 <constraint firstItem="Ped-pp-i1b" firstAttribute="leading" secondItem="L6J-Fk-UEz" secondAttribute="leading" id="FYD-s4-x5S"/>
                 <constraint firstItem="L6J-Fk-UEz" firstAttribute="trailing" secondItem="Ped-pp-i1b" secondAttribute="trailing" id="Fnn-N8-zZR"/>
-                <constraint firstAttribute="bottom" secondItem="L6J-Fk-UEz" secondAttribute="bottom" id="H6o-WJ-HEH"/>
-                <constraint firstItem="Ped-pp-i1b" firstAttribute="bottom" secondItem="L6J-Fk-UEz" secondAttribute="bottom" id="dBu-U4-1aV"/>
+                <constraint firstAttribute="bottom" secondItem="L6J-Fk-UEz" secondAttribute="bottom" constant="20" id="H6o-WJ-HEH"/>
+                <constraint firstItem="Ped-pp-i1b" firstAttribute="bottom" secondItem="L6J-Fk-UEz" secondAttribute="bottom" constant="20" id="dBu-U4-1aV"/>
                 <constraint firstItem="L6J-Fk-UEz" firstAttribute="top" secondItem="eg4-pX-hpN" secondAttribute="top" id="oBv-Vl-HD5"/>
                 <constraint firstAttribute="trailing" secondItem="L6J-Fk-UEz" secondAttribute="trailing" id="wPw-8d-8mk"/>
             </constraints>
-            <size key="customSize" width="110" height="110"/>
+            <size key="customSize" width="110" height="157"/>
             <connections>
                 <outlet property="assetImageView" destination="L6J-Fk-UEz" id="fqM-Zk-0F5"/>
                 <outlet property="assetLabel" destination="Ped-pp-i1b" id="ICj-I2-tQk"/>
             </connections>
         </collectionViewCell>
     </objects>
-    <simulatedMetricsContainer key="defaultSimulatedMetrics">
-        <simulatedStatusBarMetrics key="statusBar"/>
-        <simulatedOrientationMetrics key="orientation"/>
-        <simulatedScreenMetrics key="destination" type="retina4"/>
-    </simulatedMetricsContainer>
 </document>

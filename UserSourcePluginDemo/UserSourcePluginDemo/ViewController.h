@@ -20,5 +20,6 @@
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (strong, nonatomic) IBOutlet UICollectionView *assetsCollectionView;
 @property (strong, nonatomic) IBOutlet UICollectionViewFlowLayout *assetsFlowLayout;
+@property (weak, nonatomic) IBOutlet UIView *bottomView;
 
 @end

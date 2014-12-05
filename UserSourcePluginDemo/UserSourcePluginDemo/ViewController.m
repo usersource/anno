@@ -26,12 +26,14 @@
 
 @implementation ViewController
 
-@synthesize assetsCollectionView, scrollView, assetsFlowLayout;
+@synthesize assetsCollectionView, scrollView, assetsFlowLayout, bottomView;
 
 - (void) viewDidLoad {
     [super viewDidLoad];
 
     self.loginView.hidden = YES;
+    
+    [bottomView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.6]];
 
     UILabel *appName = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 150, 20)];
     appName.text = @"UserSource Demo";
@@ -66,6 +68,9 @@
     UIPanGestureRecognizer *gestureRecognizer = [[UIPanGestureRecognizer alloc]
                                                  initWithTarget:self action:@selector(handlePanGesture:)];
     [scrollView addGestureRecognizer:gestureRecognizer];
+    
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
+    [scrollView addGestureRecognizer:tapGesture];
 
     [self enumerateAlbums];
 }
@@ -123,6 +128,12 @@
     }
 }
 
+-(void) handleTapGesture:(UITapGestureRecognizer*)tap {
+    if (tap.state == UIGestureRecognizerStateEnded) {
+        [bottomView setHidden:!bottomView.hidden];
+    }
+}
+
 -(void) handlePanGesture:(UIPanGestureRecognizer*)pan {
     CGPoint translation = [pan translationInView:scrollView];
     CGRect bounds = scrollView.bounds;
@@ -164,9 +175,9 @@
         bounds.origin.x = screen.size.width * ceil(wRatio);
     }
     
-    [UIView animateWithDuration:0.1 animations:^{
+    [UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
         scrollView.bounds = bounds;
-    }];
+    } completion:nil];
     
     float target = (float)ceil(wRatio);
     if (0 <= (target - LOOKAHEAD + 1) &&  (target - LOOKAHEAD + 1) < [assetUrls count]) {
@@ -223,6 +234,7 @@
     
     [cell.assetImageView setImage:[UIImage imageWithCGImage:group.posterImage]];
     [cell.assetLabel setText:(NSString*)[group valueForProperty:ALAssetsGroupPropertyName]];
+    [cell.assetLabel setAdjustsFontSizeToFitWidth:YES];
     [cell setBackgroundColor:[UIColor redColor]];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tappedGroupCell:)];
@@ -296,7 +308,7 @@
         
         int maxTag = 0;
         for (UIView *v in [scrollView subviews]) {
-            maxTag = MAX(v.tag - 100, maxTag);
+            maxTag = (int)MAX(v.tag - 100, maxTag);
         }
         [scrollView setContentSize:CGSizeMake([UIScreen mainScreen].bounds.size.width*maxTag,
                                               [UIScreen mainScreen].bounds.size.height)];
