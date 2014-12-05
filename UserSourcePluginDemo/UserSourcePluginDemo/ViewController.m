@@ -326,7 +326,7 @@
 }
 
 -(void) notificationsCount:(NSNumber*)count {
-    if (count > 0) {
+    if ([count integerValue] > 0) {
         [[[UIAlertView alloc] initWithTitle:@"Your Feedback"
                                     message:[NSString stringWithFormat:@"New Activity on %@ item%s", count, [count integerValue]>1?"s":""]
                                    delegate:self
