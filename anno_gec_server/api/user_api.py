@@ -205,7 +205,7 @@ class UserApi(remote.Service):
 
         if user:
             community = Community.getCommunityFromTeamKey(request.account_type)
-            if community:
+            if community and (UserRole.getCircleLevel(user, community) > 0):
                 community_userroles = UserRole.query().filter(ndb.AND(UserRole.community == community.key,
                                                                       UserRole.circle_level > 0)
                                                               ).fetch(projection=[UserRole.user])

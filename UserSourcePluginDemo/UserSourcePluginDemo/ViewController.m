@@ -93,6 +93,7 @@
                                                    teamKey:@"io.usersource.demo"
                                                 teamSecret:@"usersource"];
                                       [anno notificationsForTarget:self performSelector:@selector(notificationsCount:)];
+                                      [anno setInfoViewControllerClass:[InfoViewController class]];
                                   }
                                   else{
                                       NSLog(@"%@", [error localizedDescription]);
