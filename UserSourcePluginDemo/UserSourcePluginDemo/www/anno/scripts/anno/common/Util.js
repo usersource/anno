@@ -1456,9 +1456,10 @@
                 annoEngagedUsers.forEach(function(user) {
                     superSetArray.push(user);
                 });
+                this.filteredUsers = superSetArray;
             }
 
-            var suggestedTagsArray = this.filteredUsers = superSetArray.filter(function(string) {
+            var suggestedTagsArray = superSetArray.filter(function(string) {
                 if (string === undefined) return false;
                 tempTagString = tagString.toLowerCase();
                 if (hashtagSuggestion) {
