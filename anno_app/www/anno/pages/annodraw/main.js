@@ -1438,11 +1438,21 @@ require([
         dom.byId('appOsName').setAttribute("data-type", "app");
     };
 
+    var setupAnnoDrawIcons = function() {
+        dom.byId("barCommentImage").src = annoUtil.AnnoDrawCommentIcon;
+        dom.byId("barArrowImage").src = annoUtil.AnnoDrawArrowIcon;
+        dom.byId("barBlackRectangleImage").src = annoUtil.AnnoDrawBlackRectangleIcon;
+        dom.byId("barRectangleImage").src = annoUtil.AnnoDrawRectangleIcon;
+        dom.byId("barShareImage").src = annoUtil.AnnoDrawShareIcon;
+        dom.byId("barMoreMenuImage").src = annoUtil.AnnoDrawCancelIcon;
+    };
+
     var init = function() {
         annoUtil.setupGATracking();
         annoUtil.screenGATracking(annoUtil.analytics.category.annodraw);
         annoUtil.setPluginConfig();
         connectDomElements();
+        setupAnnoDrawIcons();
         launchAnnoDrawPage();
     };
 
