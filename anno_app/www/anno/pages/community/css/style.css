@@ -1102,7 +1102,8 @@ body.plugin #barAddImage {
 }
 
 body.plugin .annoListItemIcon,
-body.plugin .appIconImage {
+body.plugin .appIconImage,
+body.plugin #btnLearnHow {
 	display: none;
 }
 
