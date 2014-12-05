@@ -33,9 +33,9 @@ class UserAnnoState(ndb.Model):
             entity = cls(user=user.key, anno=anno.key)
 
         if type in [AnnoActionType.CREATED, AnnoActionType.COMMENTED]:
+            entity.notify = True if entity.modified is None else entity.notify
             entity.last_read = datetime.datetime.now()
             entity.modified = entity.last_read
-            entity.notify = True if entity.notify is None else entity.notify
         elif type in [AnnoActionType.UPVOTED, AnnoActionType.FLAGGED]:
             entity.last_read = datetime.datetime.now()
             entity.modified = entity.last_read
