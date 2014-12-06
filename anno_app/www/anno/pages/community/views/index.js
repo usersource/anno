@@ -175,27 +175,42 @@ define([
         };
 
         var getMyActivityCount = function() {
-            var APIConfig = {
-                name : annoUtil.API.anno,
-                method : "anno.user.unread",
-                parameter : {
-                    "user_email" : DBUtil.localUserInfo.email,
-                    "team_key" : annoUtil.pluginTeamKey
-                },
-                showLoadingSpinner : false,
-                success : function(data) {
-                    var unread_count = Number(data.unread_count);
-                    // var unread_count_text = unread_count > 9 ? "9+" : unread_count;
-                    if (unread_count > 0) {
-                        domStyle.set("unreadCount", "display", "block");
-                        // dom.byId("unread_count").innerHTML = unread_count_text;
+            cordova.exec(
+                function (result) {
+                    if (result.unread_count_present) {
+                        if (result.unread_count > 0) {
+                            domStyle.set("unreadCount", "display", "block");
+                        }
+                    } else {
+                        var APIConfig = {
+                            name : annoUtil.API.anno,
+                            method : "anno.user.unread",
+                            parameter : {
+                                "user_email" : DBUtil.localUserInfo.email || annoUtil.pluginUserEmail,
+                                "team_key" : annoUtil.pluginTeamKey
+                            },
+                            showLoadingSpinner : false,
+                            success : function(data) {
+                                var unread_count = Number(data.unread_count);
+                                // var unread_count_text = unread_count > 9 ? "9+" : unread_count;
+                                if (unread_count > 0) {
+                                    domStyle.set("unreadCount", "display", "block");
+                                    // dom.byId("unread_count").innerHTML = unread_count_text;
+                                }
+                            },
+                            error : function() {
+                            }
+                        };
+
+                        annoUtil.callGAEAPI(APIConfig);
                     }
                 },
-                error : function() {
-                }
-            };
-
-            annoUtil.callGAEAPI(APIConfig);
+                function (err) {
+                    self.showErrorMessage({type: self.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
+                },
+                "AnnoCordovaPlugin", "get_unread_count",
+                []
+            );
         };
 
         var sendTimesToServer = function() {
