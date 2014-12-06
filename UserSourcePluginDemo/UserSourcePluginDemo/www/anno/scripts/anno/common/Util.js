@@ -45,6 +45,12 @@
         level1ColorRGB:"255, 153, 0",
         level2Color:"#ff0000",
         level2ColorRGB:"255, 0, 0",
+        AnnoDrawCommentIcon: "css/images/icon_comment.png",
+        AnnoDrawArrowIcon: "css/images/icon_arrow.png",
+        AnnoDrawBlackRectangleIcon: "css/images/icon_cover.png",
+        AnnoDrawRectangleIcon: "css/images/icon_highlight.png",
+        AnnoDrawShareIcon: "css/images/icon_share.png",
+        AnnoDrawCancelIcon: "css/images/icon_cancel.png",
         loadingIndicatorColor: "#302730",
         myIPIsServiceUrl:"http://178.18.16.111/myipis",
         annoScreenshotPath:null,
@@ -187,6 +193,24 @@
             }
             if (("annotationWidth" in pluginConfig) && (pluginConfig.annotationWidth > 0)) {
                 this.annotationWidth = pluginConfig.annotationWidth;
+            }
+            if (("AnnoDrawCommentIcon" in pluginConfig) && (pluginConfig.AnnoDrawCommentIcon !== "")) {
+                this.AnnoDrawCommentIcon = "../../custom/" + pluginConfig.AnnoDrawCommentIcon;
+            }
+            if (("AnnoDrawArrowIcon" in pluginConfig) && (pluginConfig.AnnoDrawArrowIcon !== "")) {
+                this.AnnoDrawArrowIcon = "../../custom/" + pluginConfig.AnnoDrawArrowIcon;
+            }
+            if (("AnnoDrawBlackRectangleIcon" in pluginConfig) && (pluginConfig.AnnoDrawBlackRectangleIcon !== "")) {
+                this.AnnoDrawBlackRectangleIcon = "../../custom/" + pluginConfig.AnnoDrawBlackRectangleIcon;
+            }
+            if (("AnnoDrawRectangleIcon" in pluginConfig) && (pluginConfig.AnnoDrawRectangleIcon !== "")) {
+                this.AnnoDrawRectangleIcon = "../../custom/" + pluginConfig.AnnoDrawRectangleIcon;
+            }
+            if (("AnnoDrawShareIcon" in pluginConfig) && (pluginConfig.AnnoDrawShareIcon !== "")) {
+                this.AnnoDrawShareIcon = "../../custom/" + pluginConfig.AnnoDrawShareIcon;
+            }
+            if (("AnnoDrawCancelIcon" in pluginConfig) && (pluginConfig.AnnoDrawCancelIcon !== "")) {
+                this.AnnoDrawCancelIcon = "../../custom/" + pluginConfig.AnnoDrawCancelIcon;
             }
         },
         hasConnection: function()

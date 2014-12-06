@@ -25,3 +25,7 @@ body#container {
     color: white;
     background-color: #151a20;
 }
+
+#barShareText {
+    color: #66bffb;
+}

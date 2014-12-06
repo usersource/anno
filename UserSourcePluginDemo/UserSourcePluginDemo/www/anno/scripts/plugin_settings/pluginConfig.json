@@ -1,5 +1,11 @@
 {
-	"highlightColorHEX": "#66bffb",
-	"loadingIndicatorColorHEX": "#cecece",
-	"annotationWidth": 4
+    "highlightColorHEX": "#66bffb",
+    "loadingIndicatorColorHEX": "#cecece",
+    "annotationWidth": 4,
+    "AnnoDrawCommentIcon": "",
+    "AnnoDrawArrowIcon": "",
+    "AnnoDrawBlackRectangleIcon": "",
+    "AnnoDrawRectangleIcon": "",
+    "AnnoDrawShareIcon": "images/icon_share.png",
+    "AnnoDrawCancelIcon": ""
 }
