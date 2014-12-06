@@ -41,5 +41,6 @@ AnnoUtils *annoUtils;
 - (void) get_app_version:(CDVInvokedUrlCommand*)command;
 - (void) is_plugin:(CDVInvokedUrlCommand*)command;
 - (void) get_user_info:(CDVInvokedUrlCommand*)command;
+- (void) get_unread_count:(CDVInvokedUrlCommand*)command;
 
 @end
