@@ -1441,11 +1441,16 @@
             mentionUsersArray = mentionUsersArray || [];
 
             function isUnique(userName) {
-                var isUniqueName = uniqueNames.indexOf(userName) !== -1;
+                var uniqueNameCount = (uniqueNames.filter(function(user) {
+                        return user == userName;
+                    })).length;
                 if (!annoDetail) {
-                    return isUniqueName;
+                    return uniqueNameCount;
                 } else {
-                    return isUniqueName && teamUsers.some(function(user) { return user.unique_name == userName });
+                    var teamUserUniqueCount = (teamUsers.filter(function(user) {
+                            return user.unique_name == userName;
+                        })).length;
+                    return uniqueNameCount + teamUserUniqueCount;
                 }
             }
 
@@ -1457,12 +1462,9 @@
                 } else  if (!("unique_name" in mentionedUser)) {
                     var trimDisplayName = mentionedUser["display_name"].split(" ").join("");
                     uniqueUserName = trimDisplayName;
-                    if (isUnique(uniqueUserName)) {
-                        var trimUserEmail = mentionedUser["user_email"].split("@")[0];
-                        uniqueUserName = trimDisplayName + trimUserEmail;
-                        if (isUnique(uniqueUserName)) {
-                            uniqueUserName = trimDisplayName + mentionedUser["user_email"];
-                        }
+                    var uniqueNameCount = isUnique(uniqueUserName);
+                    if (uniqueNameCount !== 0) {
+                        uniqueUserName = trimDisplayName + String(uniqueNameCount);
                     }
                     mentionedUser["unique_name"] = uniqueUserName;
                     uniqueNames.push(uniqueUserName);

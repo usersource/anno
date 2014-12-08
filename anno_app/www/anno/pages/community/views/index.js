@@ -206,7 +206,10 @@ define([
                     }
                 },
                 function (err) {
-                    self.showErrorMessage({type: self.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
+                    annoUtil.showErrorMessage({
+                        type : annoUtil.ERROR_TYPES.CORDOVA_API_FAILED,
+                        message : err.message
+                    });
                 },
                 "AnnoCordovaPlugin", "get_unread_count",
                 []
