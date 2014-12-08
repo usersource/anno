@@ -366,15 +366,7 @@ class AnnoApi(remote.Service):
     @endpoints.method(anno_user_email_resource_container, UserUnreadMessage,
                       path="user/unread", http_method="GET", name="user.unread")
     def get_unread_count(self, request):
-        user = User.find_user_by_email(request.user_email, team_key=request.team_key)
-        unread_count = 0
-        if (user is not None):
-            activity_list = Anno.query_my_anno(20, None, user)
-            for anno in activity_list.anno_list:
-                if (not anno.anno_read_status):
-                    unread_count += 1
-
-        return UserUnreadMessage(unread_count=unread_count)
+        return UserUnreadMessage(unread_count=UserAnnoState.get_unread_count(request))
 
     @endpoints.method(anno_with_id_resource_container, UserListMessage,
                       path="anno/users/{id}", http_method="GET", name="anno.anno.users")

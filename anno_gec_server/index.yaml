@@ -218,6 +218,11 @@ indexes:
   properties:
   - name: user
   - name: modified
+
+- kind: UserAnnoState
+  properties:
+  - name: user
+  - name: modified
     direction: desc
   - name: anno
 

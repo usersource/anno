@@ -116,3 +116,21 @@ class UserAnnoState(ndb.Model):
                 user_message = UserMessage(display_name=user_info.display_name, image_url=user_info.image_url)
 
         return user_message
+
+    @classmethod
+    def get_unread_count(cls, message):
+        user = User.find_user_by_email(message.user_email, team_key=message.team_key)
+        unread_count = 0
+        limit = 20
+
+        if user is not None:
+            query = cls.query().filter(cls.user == user.key)
+            query = query.filter(ndb.OR(cls.last_read == None, cls.modified != None))
+            activity_list = query.fetch()
+
+            for activity in activity_list[0:limit]:
+                anno = activity.anno.get()
+                if activity.last_read and anno and anno.last_update_time and (activity.last_read < anno.last_update_time):
+                    unread_count += 1
+
+        return unread_count
