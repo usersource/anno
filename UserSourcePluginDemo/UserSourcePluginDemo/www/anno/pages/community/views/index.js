@@ -28,6 +28,7 @@ define([
         var listScrollTop = 0;
         var loadingData = false, firstListLoaded = false,
             offset = 0, limit=15, searchOffset = 0;
+        var currentDetailNode = null;
         var hasMoreData = false,
             hasMoreSearchData = false,
             inSearchMode = false,
@@ -171,6 +172,7 @@ define([
                 APIConfig.showLoadingSpinner = false;
             }
 
+            auth_time = Date.now();
             annoUtil.callGAEAPI(APIConfig);
         };
 
@@ -206,7 +208,10 @@ define([
                     }
                 },
                 function (err) {
-                    self.showErrorMessage({type: self.ERROR_TYPES.CORDOVA_API_FAILED, message: err.message});
+                    annoUtil.showErrorMessage({
+                        type : annoUtil.ERROR_TYPES.CORDOVA_API_FAILED,
+                        message : err.message
+                    });
                 },
                 "AnnoCordovaPlugin", "get_unread_count",
                 []
@@ -231,7 +236,9 @@ define([
                 "beforeAuth" : time_before_auth - init_time,
                 "AuthDone" : auth_time - time_before_auth,
                 "AnnoDone" : anno_time - auth_time,
-                "totaltime" : anno_time - start_time
+                "totaltime" : anno_time - start_time,
+                "teamKey" : annoUtil.pluginTeamKey,
+                "networkType" : navigator.connection.type
             };
 
             annoUtil.sendTimesToServer("main_page", timeData);
@@ -621,11 +628,24 @@ define([
             }
         };
 
-        var annoRead = window.annoRead = function(annoNodeIndex) {
-            var annoNode = typeof annoNodeIndex === "number" ? dom.byId("event" + annoNodeIndex) : this.domNode;
-            eventsModel.model[Number(annoNode.id[annoNode.id.length - 1])].read_status = true;
-            if (domClass.contains(annoNode, "unread")) {
-                domClass.replace(annoNode, "read", "unread");
+        var annoRead = window.annoRead = function(event, annoNode, detail, next) {
+            if ((typeof annoNode === "undefined") || (annoNode === null)) {
+                annoNode = this.domNode;
+                if (detail && (currentDetailNode !== null)) {
+                    if (next) {
+                        annoNode = currentDetailNode.nextElementSibling
+                    } else {
+                        annoNode = currentDetailNode.previousElementSibling
+                    }
+                }
+            }
+
+            currentDetailNode = annoNode;
+            if (annoNode !== null) {
+                eventsModel.model[Number(annoNode.id[annoNode.id.length - 1])].read_status = true;
+                if (domClass.contains(annoNode, "unread")) {
+                    domClass.replace(annoNode, "read", "unread");
+                }
             }
         };
 
@@ -1224,7 +1244,6 @@ define([
         };
 
         var onPluginAuthSuccess = function(data) {
-            auth_time = Date.now();
             var userInfo = {};
             userInfo.userId = typeof data !== "undefined" ? data.result.id : "123456";
             userInfo.email = annoUtil.pluginUserEmail;
