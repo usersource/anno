@@ -171,6 +171,7 @@ define([
                 APIConfig.showLoadingSpinner = false;
             }
 
+            auth_time = Date.now();
             annoUtil.callGAEAPI(APIConfig);
         };
 
@@ -234,7 +235,9 @@ define([
                 "beforeAuth" : time_before_auth - init_time,
                 "AuthDone" : auth_time - time_before_auth,
                 "AnnoDone" : anno_time - auth_time,
-                "totaltime" : anno_time - start_time
+                "totaltime" : anno_time - start_time,
+                "teamKey" : annoUtil.pluginTeamKey,
+                "networkType" : navigator.connection.type
             };
 
             annoUtil.sendTimesToServer("main_page", timeData);
@@ -1227,7 +1230,6 @@ define([
         };
 
         var onPluginAuthSuccess = function(data) {
-            auth_time = Date.now();
             var userInfo = {};
             userInfo.userId = typeof data !== "undefined" ? data.result.id : "123456";
             userInfo.email = annoUtil.pluginUserEmail;
