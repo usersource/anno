@@ -237,12 +237,10 @@ define([
             history.back();
         };
 
-        var annoMyStuffRead = window.annoMyStuffRead = function() {
+        var annoMyStuffRead = window.annoMyStuffRead = function(event) {
             needRefresh = false;
             lastOpenAnnoId = this._index;
-            if (domClass.contains(this.domNode, "unread")) {
-                domClass.replace(this.domNode, "read", "unread");
-            }
+            annoRead(event, this.domNode);
         };
 
         var loadMoreData = function() {

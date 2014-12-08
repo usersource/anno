@@ -28,6 +28,7 @@ define([
         var listScrollTop = 0;
         var loadingData = false, firstListLoaded = false,
             offset = 0, limit=15, searchOffset = 0;
+        var currentDetailNode = null;
         var hasMoreData = false,
             hasMoreSearchData = false,
             inSearchMode = false,
@@ -627,11 +628,24 @@ define([
             }
         };
 
-        var annoRead = window.annoRead = function(annoNodeIndex) {
-            var annoNode = typeof annoNodeIndex === "number" ? dom.byId("event" + annoNodeIndex) : this.domNode;
-            eventsModel.model[Number(annoNode.id[annoNode.id.length - 1])].read_status = true;
-            if (domClass.contains(annoNode, "unread")) {
-                domClass.replace(annoNode, "read", "unread");
+        var annoRead = window.annoRead = function(event, annoNode, detail, next) {
+            if ((typeof annoNode === "undefined") || (annoNode === null)) {
+                annoNode = this.domNode;
+                if (detail && (currentDetailNode !== null)) {
+                    if (next) {
+                        annoNode = currentDetailNode.nextElementSibling
+                    } else {
+                        annoNode = currentDetailNode.previousElementSibling
+                    }
+                }
+            }
+
+            currentDetailNode = annoNode;
+            if (annoNode !== null) {
+                eventsModel.model[Number(annoNode.id[annoNode.id.length - 1])].read_status = true;
+                if (domClass.contains(annoNode, "unread")) {
+                    domClass.replace(annoNode, "read", "unread");
+                }
             }
         };
 
