@@ -13,6 +13,7 @@
 @implementation AnnoSingleton {
     NSDictionary *serverConfig;
     NSString *cloudHost;
+    BOOL unreadCountReceived;
 }
 
 @synthesize utils, infoViewControllerClass, unreadCount;
@@ -44,6 +45,7 @@ static AnnoSingleton *sharedInstance = nil;
         cloudHost = @"http://usersource-anno.appspot.com";
         unreadCount = 0;
         self.shakeSensitivityValues = @[@"1 Shake", @"2 Shakes", @"3 Shakes"];
+        unreadCountReceived = NO;
         
         [self performSelectorInBackground:@selector(readServerConfiguration) withObject:nil];
     }
@@ -278,6 +280,7 @@ static AnnoSingleton *sharedInstance = nil;
                                if (json != nil) {
                                    count = (NSNumber*)[json valueForKey:@"unread_count"];
                                    unreadCount = [count intValue];
+                                   unreadCountReceived = YES;
                                }
                                if ([target respondsToSelector:selector]) {
                                    [target performSelectorOnMainThread:selector withObject:count waitUntilDone:NO];
@@ -330,6 +333,16 @@ static AnnoSingleton *sharedInstance = nil;
     }
     
     return json;
+}
+
+- (NSDictionary *) getUnreadData {
+    NSNumber *unread_count = unreadCountReceived ? [NSNumber numberWithInt:unreadCount] : 0;
+    NSDictionary *unreadData = @{
+        @"unread_count_present" : [NSNumber numberWithBool:unreadCountReceived],
+        @"unread_count" : unread_count
+    };
+
+    return unreadData;
 }
 
 @end

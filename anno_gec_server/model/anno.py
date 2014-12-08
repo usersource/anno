@@ -149,9 +149,9 @@ class Anno(BaseModel):
                 circle_level = message.circle_level
 
         entity = cls(anno_text=message.anno_text, anno_type=message.anno_type,
-                     level=message.level, device_model=message.device_model, 
-                     os_name=message.os_name, os_version=message.os_version, 
-                     creator=user.key, draw_elements=message.draw_elements, 
+                     level=message.level, device_model=message.device_model,
+                     os_name=message.os_name, os_version=message.os_version,
+                     creator=user.key, draw_elements=message.draw_elements,
                      image=message.image, screenshot_is_anonymized=message.screenshot_is_anonymized,
                      geo_position=message.geo_position, flag_count=0, vote_count=0,
                      followup_count=0, latitude=message.latitude, longitude=message.longitude)
@@ -379,7 +379,7 @@ class Anno(BaseModel):
         if community:
             query = cls.query(cls.community == community.key)
             query = query.order(-cls.created)
-    
+
             if (curs is not None) and (projection is not None):
                 annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)
             elif (curs is not None) and (projection is None):
@@ -392,7 +392,7 @@ class Anno(BaseModel):
                 items = [entity.to_response_message_by_projection(projection) for entity in annos]
             else:
                 items = [entity.to_response_message(user) for entity in annos]
-    
+
             if more:
                 return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
             else:

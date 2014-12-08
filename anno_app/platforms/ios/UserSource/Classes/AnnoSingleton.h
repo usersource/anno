@@ -64,5 +64,6 @@
 
 - (void) saveAllowShake:(BOOL)allowShakeValue;
 - (void) saveShakeValue:(NSInteger)shakeValueNumber;
+- (NSDictionary *) getUnreadData;
 
 @end

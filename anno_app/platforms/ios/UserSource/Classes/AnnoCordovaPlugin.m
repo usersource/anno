@@ -291,4 +291,10 @@ AnnoSingleton *annoSingleton;
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void) get_unread_count:(CDVInvokedUrlCommand*)command {
+    NSDictionary *unreadData = [annoSingleton getUnreadData];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:(NSString*)unreadData];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 @end
