@@ -399,7 +399,8 @@ define([
 
                 var boxWidth = vp.w - this.shapePadding*2;
                 var leftX = this.shapePadding, rightX = vp.w - this.shapePadding;
-                var leftY1  = this.startY + this.earHeight, leftY2 = this.startY + this.earHeight+this.boxHeight;
+                var leftY1 = this.startY + this.earHeight,
+                    leftY2 = this.startY + this.earHeight + (this.boxHeight * 2.5);
 
                 var x2 = leftX + Math.round(boxWidth/2)-this.earDistance/2;
                 var x3 = leftX + Math.round(boxWidth/2);
