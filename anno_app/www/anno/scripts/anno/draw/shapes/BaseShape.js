@@ -117,9 +117,16 @@ define([
 
                 this.surface.removeShape(this);
             },
-            createX: function(x, y, xColor)
-            {
-                this.x = this.surface.surface.createText({x: x, y: y, text: "x", align: "middle"}).setFont(this.xFont).setStroke(xColor).setFill(xColor);
+            createX: function(x, y, xColor) {
+                this.x = this.surface.surface.createText({
+                    x : x,
+                    y : y,
+                    text : "X",
+                    align : "middle"
+                });
+                this.x.setFont(this.xFont);
+                this.x.setStroke(xColor);
+                this.x.setFill(xColor);
             },
             isEndpointOutScreen: function(endpoint, dx, dy)
             {
