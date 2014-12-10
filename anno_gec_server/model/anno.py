@@ -56,6 +56,7 @@ class Anno(BaseModel):
     longitude = ndb.FloatProperty()
     country = ndb.StringProperty()
     circle_level = ndb.IntegerProperty(default=0)
+    screen_info = ndb.StringProperty()
 
     def __eq__(self, other):
         return self.key.id() == other.key.id()
@@ -154,7 +155,8 @@ class Anno(BaseModel):
                      creator=user.key, draw_elements=message.draw_elements,
                      image=message.image, screenshot_is_anonymized=message.screenshot_is_anonymized,
                      geo_position=message.geo_position, flag_count=0, vote_count=0,
-                     followup_count=0, latitude=message.latitude, longitude=message.longitude)
+                     followup_count=0, latitude=message.latitude, longitude=message.longitude,
+                     screen_info=message.screen_info)
 
         # set appinfo and community
         entity.app = appinfo.key
