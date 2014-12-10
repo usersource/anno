@@ -30,6 +30,7 @@
 @property (strong, retain) AnnoCordovaPlugin *annoPlugin;
 @property (strong, retain) AnnoUtils *utils;
 @property (strong, retain) NSString *email, *displayName, *userImageURL, *teamKey, *teamSecret;
+@property (strong, retain) NSString *viewControllerString;
 @property NSMutableArray *viewControllerList;
 @property NSMutableArray *annoDrawViewControllerList;
 @property BOOL isPlugin, newAnnoCreated;
@@ -50,6 +51,7 @@
 - (NSDictionary*) readServerConfiguration;
 
 - (UIViewController*) getTopMostViewController;
+- (UIViewController*) topMostViewController;
 
 - (void) showAnnoDraw:(NSString*)imageURI
            levelValue:(int)levelValue

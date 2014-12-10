@@ -42,6 +42,7 @@ class AnnoMessage(messages.Message):
     team_key = messages.StringField(24) #:
     user_email = messages.StringField(25) #:
     circle_level = messages.IntegerField(26) #:
+    screen_info = messages.StringField(27) #:
  
 
 class AnnoMergeMessage(messages.Message):

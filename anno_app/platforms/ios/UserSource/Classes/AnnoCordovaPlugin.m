@@ -164,6 +164,7 @@ AnnoSingleton *annoSingleton;
         NSDictionary *jsonData = @{
             @"imageAttrs" : imageAttrs,
             @"appInfo" : appInfo,
+            @"screenInfo" : annoSingleton.viewControllerString,
             @"success" : @true
         };
 

@@ -146,6 +146,7 @@
         [sheet setFrame:screenRect];
         lastScreenshotImage = [anno.utils takeScreenshot];
         UIViewController* top = [anno getTopMostViewController];
+        anno.viewControllerString = NSStringFromClass([[anno topMostViewController] class]);
         [top.view addSubview:sheet];
         [UIView animateWithDuration:0.3f animations:^{
             [buttonView setFrame:buttonRect];

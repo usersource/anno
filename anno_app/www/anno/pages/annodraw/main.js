@@ -883,6 +883,7 @@ require([
                 var imageKey = result.imageAttrs.imageKey;
                 var screenshotDirPath = result.imageAttrs.screenshotPath;
                 var appInfo = result.appInfo;
+                var screenInfo = result.screenInfo;
 
                 var earPoint = defaultCommentBox.getRelativeEarPoint();
 
@@ -900,7 +901,8 @@ require([
                     "os_name":deviceInfo.osName,
                     "os_version":deviceInfo.osVersion,
                     "anno_type":"simple comment",
-                    "screenshot_is_anonymized":isScreenshotAnonymized
+                    "screenshot_is_anonymized":isScreenshotAnonymized,
+                    "screenInfo":screenInfo
                 };
 
                 AnnoDataHandler.insertAnno(annoItem, appInfo.source, screenshotDirPath);
@@ -959,6 +961,7 @@ require([
                 var imageKey = result.imageAttrs.imageKey;
                 var screenshotDirPath = result.imageAttrs.screenshotPath;
                 var appInfo = result.appInfo;
+                var screenInfo = result.screenInfo;
 
                 var annoItem = {
                     "anno_text":surface.getConcatenatedComment(),
@@ -974,7 +977,8 @@ require([
                     "draw_elements":dojoJson.stringify(surface.toJSON()),
                     "screenshot_is_anonymized":isScreenshotAnonymized,
                     "anno_type":"draw comment",
-                    "team_key":annoUtil.pluginTeamKey||""
+                    "team_key":annoUtil.pluginTeamKey||"",
+                    "screen_info":screenInfo
                 };
 
                 if (selectedType == "app") {
@@ -1048,6 +1052,7 @@ require([
                 {
                     var imageKey = result.imageAttrs.imageKey;
                     var screenshotDirPath = result.imageAttrs.screenshotPath;
+                    var screenInfo = result.screenInfo;
 
                     annoItem = {
                         "anno_text":surface.getConcatenatedComment(),
@@ -1056,7 +1061,8 @@ require([
                         "screenshot_is_anonymized":isScreenshotAnonymized,
                         "anno_type":"draw comment",
                         "level":level,
-                        "team_key":annoUtil.pluginTeamKey||""
+                        "team_key":annoUtil.pluginTeamKey||"",
+                        "screen_info":screenInfo
                     };
 
                     if (selectedType == "app") {
