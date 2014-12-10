@@ -64,6 +64,9 @@
                 teamKey:(NSString*)teamKey
              teamSecret:(NSString*)teamSecret;
 
+- (void) setupAnonymousUserWithteamKey:(NSString*)teamKeyValue
+                            teamSecret:(NSString*)teamSecretValue;
+
 - (void) saveAllowShake:(BOOL)allowShakeValue;
 - (void) saveShakeValue:(NSInteger)shakeValueNumber;
 - (NSDictionary *) getUnreadData;

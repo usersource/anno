@@ -9,6 +9,8 @@
 #import "AnnoSingleton.h"
 
 #define UNREAD_URL @"/anno/1.0/user/unread"
+#define ANONYMOUS_USER_EMAIL @"dev%@@devnull.usersource.io"
+#define ANONYMOUS_USER_DISPLAY_NAME @"Anonymous"
 
 @implementation AnnoSingleton {
     NSDictionary *serverConfig;
@@ -117,6 +119,19 @@ static AnnoSingleton *sharedInstance = nil;
     self.viewControllerList = [[NSMutableArray alloc] initWithObjects:window.rootViewController, nil];
     self.annoDrawViewControllerList = [[NSMutableArray alloc] init];
     [self getShakeSettings];
+}
+
+- (void) setupAnonymousUserWithteamKey:(NSString*)teamKeyValue
+                            teamSecret:(NSString*)teamSecretValue {
+    NSInteger nowInt = [[NSDate date] timeIntervalSince1970];
+    NSString *additionalString = [NSString stringWithFormat:@"%ld%d", (long)nowInt, arc4random_uniform(99)];
+    NSString *emailValue = [NSString stringWithFormat:ANONYMOUS_USER_EMAIL, additionalString];
+    NSString *displayNameValue = ANONYMOUS_USER_DISPLAY_NAME;
+    [self setupWithEmail:emailValue
+             displayName:displayNameValue
+            userImageURL:@""
+                 teamKey:teamKeyValue
+              teamSecret:teamSecretValue];
 }
 
 - (UIViewController*) getTopMostViewController {
