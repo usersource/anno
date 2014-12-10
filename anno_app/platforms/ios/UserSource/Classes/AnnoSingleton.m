@@ -265,7 +265,6 @@ static AnnoSingleton *sharedInstance = nil;
         AnnoDrawViewController *currentAnnoDrawViewController = [self.annoDrawViewControllerList lastObject];
         [currentAnnoDrawViewController dismissViewControllerAnimated:YES completion:nil];
         [self.annoDrawViewControllerList removeLastObject];
-        self.viewControllerString = @"";
 
         if (self.newAnnoCreated) {
             [self.communityViewController.webView stringByEvaluatingJavaScriptFromString:@"reloadListData()"];

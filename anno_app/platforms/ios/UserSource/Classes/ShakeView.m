@@ -102,6 +102,7 @@
 
 - (void) viewFeedbackTapped {
     [anno showCommunityPage];
+    anno.viewControllerString = @"";
     [self removeOptionsSheet];
 }
 
