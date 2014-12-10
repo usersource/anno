@@ -1,7 +1,7 @@
 define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DBUtil, annoUtil, OAuthUtil){
 
-    var insert_anno_draw_sql = "insert into feedback_comment(x,y,direction,is_moved,draw_elements,draw_is_anonymized,created,last_update,comment,screenshot_key,app_version,os_version,level,app_name,model,source,os_name,anno_type,synched,team_key)"+
-        " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    var insert_anno_draw_sql = "insert into feedback_comment(x,y,direction,is_moved,draw_elements,draw_is_anonymized,created,last_update,comment,screenshot_key,app_version,os_version,level,app_name,model,source,os_name,anno_type,synched,team_key,screen_info)"+
+        " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     var update_anno_synched_by_created_sql = "update feedback_comment set synched=1,object_key=? where created=?";
     var update_anno_synched_by_id_sql = "update feedback_comment set synched=1,object_key=? where _id=?";
     var update_anno_synched_by_object_key_sql = "update feedback_comment set synched=1 where object_key=?";
@@ -12,8 +12,8 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
     var save_userInfo_sql = "insert into app_users(userid,email,signinmethod,nickname,password,signedup,teamkey,teamsecret) values (?,?,?,?,?,?,?,?)";
     var select_userInfo_sql = "select * from app_users";
     var delete_userInfo_sql = "delete from app_users";
-    var insert_anno_unsynched_sql = "insert into feedback_comment(x,y,direction,is_moved,object_key,draw_elements,draw_is_anonymized,last_update,comment,screenshot_key,level,app_name,app_version,anno_type,synched,team_key)"+
-        " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    var insert_anno_unsynched_sql = "insert into feedback_comment(x,y,direction,is_moved,object_key,draw_elements,draw_is_anonymized,last_update,comment,screenshot_key,level,app_name,app_version,anno_type,synched,team_key,screen_info)"+
+        " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     var update_anno_unsynched_sql = "update feedback_comment set draw_elements=?,comment=?,app_name=?,app_version=?,draw_is_anonymized=?,synched=?,team_key=? where _id=?";
     var update_anno_unsynched_including_image_sql = "update feedback_comment set screenshot_key=?,draw_elements=?,comment=?,app_name=?,app_version=?,draw_is_anonymized=?,synched=?,team_key=? where _id=?";
 
