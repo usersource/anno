@@ -102,6 +102,7 @@
 
 - (void) viewFeedbackTapped {
     [anno showCommunityPage];
+    [unreadView setBackgroundColor:[UIColor clearColor]];
     [self removeOptionsSheet];
 }
 
@@ -152,8 +153,7 @@
             [buttonView setFrame:buttonRect];
         }];
 
-        int unreadCount = [anno unreadCount];
-        if (unreadCount > 0) {
+        if ([anno unreadCount] > 0) {
             NSString *highlightColorHEX = [anno.pluginConfig valueForKey:@"highlightColorHEX"];
             [unreadView setBackgroundColor:[anno colorFromHexString:highlightColorHEX]];
         }
