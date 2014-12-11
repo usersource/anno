@@ -406,4 +406,9 @@ static AnnoSingleton *sharedInstance = nil;
                            alpha:1.0];
 }
 
+- (void) resetPluginState {
+    self.viewControllerString = @"";
+    unreadCount = 0;
+}
+
 @end

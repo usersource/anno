@@ -102,7 +102,7 @@
 
 - (void) viewFeedbackTapped {
     [anno showCommunityPage];
-    anno.viewControllerString = @"";
+    [anno resetPluginState];
     [self removeOptionsSheet];
 }
 

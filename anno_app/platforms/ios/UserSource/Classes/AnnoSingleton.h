@@ -75,5 +75,6 @@
 - (NSDictionary *) getUnreadData;
 
 - (UIColor *) colorFromHexString:(NSString *)hexString;
+- (void) resetPluginState;
 
 @end
