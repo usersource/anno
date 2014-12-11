@@ -104,6 +104,8 @@
 
 - (void) loginViewShowingLoggedOutUser:(FBLoginView *)loginView {
     self.loginView.hidden = NO;
+    AnnoSingleton *anno = [AnnoSingleton sharedInstance];
+    [anno setupAnonymousUserWithteamKey:@"com.koobe.kaklic" teamSecret:@"kaklic"];
 }
 
 - (void) loginView:(FBLoginView *)loginView handleError:(NSError *)error {
