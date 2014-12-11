@@ -192,6 +192,7 @@ static AnnoSingleton *sharedInstance = nil;
     }
     
     if (currentViewController != self.communityViewController) {
+        [self resetPluginState];
         if (self.communityViewController.presentingViewController == nil) {
             [currentViewController presentViewController:self.communityViewController animated:YES completion:nil];
             [self.viewControllerList addObject:self.communityViewController];

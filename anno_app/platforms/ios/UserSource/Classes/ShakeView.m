@@ -102,7 +102,6 @@
 
 - (void) viewFeedbackTapped {
     [anno showCommunityPage];
-    [anno resetPluginState];
     [self removeOptionsSheet];
 }
 
