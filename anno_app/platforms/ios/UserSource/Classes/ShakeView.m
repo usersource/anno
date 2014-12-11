@@ -153,8 +153,8 @@
         }];
 
         int unreadCount = [anno unreadCount];
-        NSString *highlightColorHEX = [anno.pluginConfig valueForKey:@"highlightColorHEX"];
         if (unreadCount > 0) {
+            NSString *highlightColorHEX = [anno.pluginConfig valueForKey:@"highlightColorHEX"];
             [unreadView setBackgroundColor:[anno colorFromHexString:highlightColorHEX]];
         }
         
