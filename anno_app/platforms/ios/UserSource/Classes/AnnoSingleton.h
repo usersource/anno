@@ -24,6 +24,7 @@
     BOOL allowShake;
     NSInteger shakeValue;
     NSMutableDictionary *shakeSettingsData;
+    NSDictionary *pluginConfig;
 }
 
 @property (strong, retain) CommunityViewController *communityViewController;
@@ -40,6 +41,7 @@
 @property BOOL allowShake;
 @property NSInteger shakeValue;
 @property NSMutableDictionary *shakeSettingsData;
+@property NSDictionary *pluginConfig;
 
 + (id) sharedInstance;
 
@@ -49,6 +51,7 @@
 - (void) exitActivity;
 - (void) notificationsForTarget:(id)target performSelector:(SEL)selector;
 - (NSDictionary*) readServerConfiguration;
+- (NSDictionary*) readPluginConfiguration;
 
 - (UIViewController*) getTopMostViewController;
 - (UIViewController*) topMostViewController;
@@ -70,5 +73,7 @@
 - (void) saveAllowShake:(BOOL)allowShakeValue;
 - (void) saveShakeValue:(NSInteger)shakeValueNumber;
 - (NSDictionary *) getUnreadData;
+
+- (UIColor *) colorFromHexString:(NSString *)hexString;
 
 @end

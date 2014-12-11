@@ -152,11 +152,12 @@
         [UIView animateWithDuration:0.3f animations:^{
             [buttonView setFrame:buttonRect];
         }];
-//        int unreadCount = [[AnnoSingleton sharedInstance] unreadCount];
-//        NSLog(@"Unread Count %d", unreadCount);
-//        if (unreadCount > 0) {
-//            [unreadView setBackgroundColor:[UIColor orangeColor]];
-//        }
+
+        int unreadCount = [anno unreadCount];
+        NSString *highlightColorHEX = [anno.pluginConfig valueForKey:@"highlightColorHEX"];
+        if (unreadCount > 0) {
+            [unreadView setBackgroundColor:[anno colorFromHexString:highlightColorHEX]];
+        }
         
         presented = true;
         lastShakeTime = nil;
