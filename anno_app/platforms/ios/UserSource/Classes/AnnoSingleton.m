@@ -50,6 +50,7 @@ static AnnoSingleton *sharedInstance = nil;
         unreadCountReceived = NO;
         
         [self performSelectorInBackground:@selector(readServerConfiguration) withObject:nil];
+        [self performSelectorInBackground:@selector(readPluginConfiguration) withObject:nil];
     }
     
     return self;
@@ -191,6 +192,7 @@ static AnnoSingleton *sharedInstance = nil;
     }
     
     if (currentViewController != self.communityViewController) {
+        [self resetPluginState];
         if (self.communityViewController.presentingViewController == nil) {
             [currentViewController presentViewController:self.communityViewController animated:YES completion:nil];
             [self.viewControllerList addObject:self.communityViewController];
@@ -336,6 +338,20 @@ static AnnoSingleton *sharedInstance = nil;
     return json;
 }
 
+- (NSDictionary*) readPluginConfiguration {
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"pluginConfig"
+                                                         ofType:@"json"
+                                                    inDirectory:@"/www/anno/scripts/plugin_settings"];
+    NSDictionary *dict = nil;
+
+    if (filePath) {
+        dict = [self readJSONFromFile:filePath];
+        self.pluginConfig = [dict copy];
+    }
+
+    return dict;
+}
+
 - (NSDictionary*) readServerConfiguration {
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"server-url"
                                                          ofType:@"json"
@@ -378,6 +394,22 @@ static AnnoSingleton *sharedInstance = nil;
     };
 
     return unreadData;
+}
+
+- (UIColor *) colorFromHexString:(NSString *)hexString {
+    unsigned rgbValue = 0;
+    NSScanner *scanner = [NSScanner scannerWithString:hexString];
+    [scanner setScanLocation:1]; // bypass '#' character
+    [scanner scanHexInt:&rgbValue];
+    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0
+                           green:((rgbValue & 0xFF00) >> 8)/255.0
+                            blue:(rgbValue & 0xFF)/255.0
+                           alpha:1.0];
+}
+
+- (void) resetPluginState {
+    self.viewControllerString = @"";
+    unreadCount = 0;
 }
 
 @end

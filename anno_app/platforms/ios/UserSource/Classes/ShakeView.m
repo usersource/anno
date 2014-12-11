@@ -102,7 +102,7 @@
 
 - (void) viewFeedbackTapped {
     [anno showCommunityPage];
-    anno.viewControllerString = @"";
+    [unreadView setBackgroundColor:[UIColor clearColor]];
     [self removeOptionsSheet];
 }
 
@@ -152,11 +152,11 @@
         [UIView animateWithDuration:0.3f animations:^{
             [buttonView setFrame:buttonRect];
         }];
-//        int unreadCount = [[AnnoSingleton sharedInstance] unreadCount];
-//        NSLog(@"Unread Count %d", unreadCount);
-//        if (unreadCount > 0) {
-//            [unreadView setBackgroundColor:[UIColor orangeColor]];
-//        }
+
+        if ([anno unreadCount] > 0) {
+            NSString *highlightColorHEX = [anno.pluginConfig valueForKey:@"highlightColorHEX"];
+            [unreadView setBackgroundColor:[anno colorFromHexString:highlightColorHEX]];
+        }
         
         presented = true;
         lastShakeTime = nil;
