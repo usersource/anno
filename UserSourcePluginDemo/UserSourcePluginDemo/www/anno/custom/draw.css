@@ -17,8 +17,8 @@ body#container {
 }
 
 .btn {
-    background-color: #66bffb;
-    border-color: #66bffb;
+    background-color: #ff9900;
+    border-color: #ff9900;
 }
 
 #confirmBox {
@@ -27,5 +27,5 @@ body#container {
 }
 
 #barShareText {
-    color: #66bffb;
+    color: #ff9900;
 }
