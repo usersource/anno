@@ -145,7 +145,11 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 
 			Intent intent = null;
 			if (activityName.equalsIgnoreCase(ACTIVITY_INTRO)) {
-				intent = new Intent(activity, IntroActivity.class);
+				if (annoSingleton.customInfoActivity == null) {
+					intent = new Intent(activity, IntroActivity.class);
+				} else {
+					intent = new Intent(activity, annoSingleton.customInfoActivity);
+				}
 			} else if (activityName.equalsIgnoreCase(ACTIVITY_FEEDBACK)) {
 				intent = new Intent(activity, OptionFeedbackActivity.class);
 			}
