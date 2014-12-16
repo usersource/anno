@@ -37,7 +37,7 @@
 }
 
 #listContainerStart li.unread .listTitle {
-    color: #66bffb;
+    color: #ff9900;
     font-weight: normal;
 }
 
@@ -77,7 +77,7 @@
 
 #listContainerMyStuff li.row.unread .listTitle {
     font-weight: normal;
-    color: #66bffb;
+    color: #ff9900;
 }
 
 #learnHowContainer {
@@ -86,7 +86,7 @@
 }
 
 .btn {
-    background-color: #66bffb;
+    background-color: #ff9900;
 }
 
 /* Time */
@@ -122,11 +122,11 @@
 }
 
 #unreadCount {
-    background-color: #66bffb;
+    background-color: #ff9900;
 }
 
 #textNew {
-    color: #66bffb;
+    color: #ff9900;
 }
 
 /* The Container */
@@ -153,11 +153,11 @@
 }
 
 #sendComment {
-    color: #66bffb;
+    color: #ff9900;
 }
 
 .icoImgActive {
-    color: #66bffb;
+    color: #ff9900;
 }
 
 #detailSuggestedTags {
@@ -174,5 +174,5 @@ span.taggedUser, span.hashTag, span.commentURL {
     background: none;
     padding: 0;
     font-weight: bold;
-    color: #66bffb;
+    color: #ff9900;
 }
