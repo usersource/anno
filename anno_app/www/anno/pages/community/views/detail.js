@@ -359,15 +359,16 @@ define([
             }
         };
 
-        var creatorIsMe = function()
-        {
+        var creatorIsMe = function() {
             if (!eventsModel.cursor) return false;
 
             var creator = eventsModel.cursor.author;
             var currentUserInfo = annoUtil.getCurrentUserInfo();
 
-            if (creator ==currentUserInfo.userid||creator ==currentUserInfo.email||creator ==currentUserInfo.nickname)
-            {
+            if (creator == currentUserInfo.userid ||
+                creator == currentUserInfo.email ||
+                creator == currentUserInfo.nickname ||
+                creator == annoUtil.pluginUserEmail) {
                 return true;
             }
 
