@@ -14,7 +14,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -25,7 +24,6 @@ import io.usersource.anno.OptionFeedbackActivity;
 import io.usersource.annoplugin.utils.*;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,7 +33,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Anno Cordova Plugin, provide series functions that can't be done in
@@ -115,13 +112,9 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 			callbackContext.success(jo);
 			return true;
 		} else if (GET_ANNO_SCREENSHOT_PATH.equals(action)) {
-			Activity activity = this.cordova.getActivity();
-
 			String appLocation = AnnoUtils.getDataLocation();
 			String screenshotDirName = AnnoUtils.getScreenshotDirName();
-			String screenshotDirPath = new File(appLocation, screenshotDirName)
-					.getAbsolutePath();
-
+			String screenshotDirPath = new File(appLocation, screenshotDirName).getAbsolutePath();
 			callbackContext.success(screenshotDirPath);
 			return true;
 		} else if (SHOW_TOAST.equals(action)) {
