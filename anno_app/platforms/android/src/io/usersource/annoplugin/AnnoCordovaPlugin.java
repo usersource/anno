@@ -75,6 +75,12 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 	private static final int COMPRESS_QUALITY = 70;
 
 	PackageInfo pInfo;
+	AnnoSingleton annoSingleton;
+
+	protected void pluginInitialize() {
+		super.pluginInitialize();
+		annoSingleton = AnnoSingleton.getInstance();
+    }
 
 	@Override
 	public boolean execute(String action, JSONArray args,
@@ -124,7 +130,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 		} else if (GOTO_ANNO_HOME.equals(action)) {
 			Activity activity = this.cordova.getActivity();
 			activity.finish();
-			AnnoSingleton.getInstance().showCommunityPage(activity);
+			annoSingleton.showCommunityPage(activity);
 			callbackContext.success();
 			return true;
 		} else if (START_ACTIVITY.equals(action)) {
@@ -224,7 +230,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 		} else if (START_ANNO_DRAW.equals(action)) {
 			String imageURI = args.getString(0);
 			Activity activity = this.cordova.getActivity();
-			AnnoSingleton.getInstance().showAnnoDrawPage(activity, imageURI);
+			annoSingleton.showAnnoDrawPage(activity, imageURI);
 			return true;
 		} else if (START_EDIT_ANNO_DRAW.equals(action)) {
 			boolean landscapeMode = args.getBoolean(0);
@@ -265,7 +271,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 			callbackContext.success(returnData);
 			return true;
 		} else if (GET_USER_INFO.equals(action)) {
-			JSONArray returnData = AnnoSingleton.getInstance().getUserInfo();
+			JSONArray returnData = annoSingleton.getUserInfo();
 			callbackContext.success(returnData);
 			return true;
 		} else if (GET_UNREAD_COUNT.equals(action)) {

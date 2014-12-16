@@ -17,6 +17,7 @@ public class AnnoSingleton {
 	String ANONYMOUS_USER_DISPLAY_NAME = "Anonymous";
 
 	String email, displayName, userImageURL, teamKey, teamSecret;
+	Class<?> customInfoActivity = null;
 
 	protected AnnoSingleton() {
 		// Exists only to defeat instantiation.
@@ -39,15 +40,16 @@ public class AnnoSingleton {
 		this.teamSecret = teamSecretValue;
 	}
 
-	public void setupAnonymousUserWithTeamCredentials(String teamKeyValue,
-			String teamSecretValue) {
+	public void setupAnonymousUserWithTeamCredentials(String teamKeyValue, String teamSecretValue) {
 		String secs = String.format("%d", System.currentTimeMillis() / 1000);
 		String randomNum = String.format("%d", (new Random()).nextInt(100) + 0);
 		String additionalString = String.format("%s%s", secs, randomNum);
-		String emailValue = String.format(ANONYMOUS_USER_EMAIL,
-				additionalString);
-		this.setupWithUserInfo(emailValue, "", "", teamKeyValue,
-				teamSecretValue);
+		String emailValue = String.format(ANONYMOUS_USER_EMAIL, additionalString);
+		this.setupWithUserInfo(emailValue, "", "", teamKeyValue, teamSecretValue);
+	}
+
+	public void setCustomInfoActivity(Class<?> customInfo) {
+		this.customInfoActivity = customInfo;
 	}
 
 	public void showCommunityPage(Activity activity) {
