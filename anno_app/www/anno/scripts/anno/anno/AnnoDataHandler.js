@@ -668,6 +668,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
                 DBUtil.executeUpdateSql(save_userInfo_sql, userInfoList, function(res) {
                     if (!res) return;
                     console.log("save userInfo end:" + JSON.stringify(res));
+                    DBUtil.localUserInfo = userInfo;
                     if (callback) {
                         console.log("saveUserInfo callback invoked.");
                         callback();
