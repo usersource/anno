@@ -22,7 +22,13 @@ public class AnnoSingleton {
 	String ANONYMOUS_USER_EMAIL = "dev%s@devnull.usersource.io";
 	String ANONYMOUS_USER_DISPLAY_NAME = "Anonymous";
 
+	String serverConfigFilePath = "www/anno/scripts/server-url.json";
+	String pluginConfigFilePath = "www/anno/scripts/plugin_settings/pluginConfig.json";
+
 	String email, displayName, userImageURL, teamKey, teamSecret;
+	JSONObject serverConfig, pluginConfig;
+	String cloudHost;
+
 	Class<?> customInfoActivity = null;
 	static Context appContext = null;
 
@@ -95,7 +101,6 @@ public class AnnoSingleton {
 
 		try {
 			InputStream is = appContext.getAssets().open(filePath);
-//			InputStream is = context.getApplicationContext().getAssets().open(filePath);
 		    int size = is.available();
 		    byte[] buffer = new byte[size];
 		    is.read(buffer);
@@ -112,10 +117,18 @@ public class AnnoSingleton {
 
 	public void readServerConfiguration() {
 		try {
-			Log.e("AnnoSingleton", readJSONFromFile("www/anno/scripts/server-url.json").toString());
+			serverConfig = readJSONFromFile(serverConfigFilePath);
+			cloudHost = serverConfig.getJSONObject("1").getString("apiRoot");
 		} catch (JSONException e) {
 			e.printStackTrace();
-			Log.e("AnnoSingleton", "problem in getting server config");
+		}
+	}
+
+	public void readPluginConfiguration() {
+		try {
+			pluginConfig = readJSONFromFile(pluginConfigFilePath);
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 	}
 }
