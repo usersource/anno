@@ -1,14 +1,20 @@
 package io.usersource.annoplugin;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import io.usersource.anno.CommunityActivity;
 import io.usersource.annoplugin.utils.AnnoUtils;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 
 public class AnnoSingleton {
 	private static AnnoSingleton instance = null;
@@ -18,14 +24,18 @@ public class AnnoSingleton {
 
 	String email, displayName, userImageURL, teamKey, teamSecret;
 	Class<?> customInfoActivity = null;
+	static Context appContext = null;
 
 	protected AnnoSingleton() {
 		// Exists only to defeat instantiation.
 	}
 
-	public static AnnoSingleton getInstance() {
+	public static AnnoSingleton getInstance(Context context) {
 		if (instance == null) {
 			instance = new AnnoSingleton();
+			if ((appContext == null) && (context != null)) {
+				appContext = context.getApplicationContext();
+			}
 		}
 		return instance;
 	}
@@ -77,5 +87,35 @@ public class AnnoSingleton {
 		returnData.put(this.teamKey);
 		returnData.put(this.teamSecret);
 		return returnData;
+	}
+
+	private JSONObject readJSONFromFile(String filePath) throws JSONException {
+		String json = null;
+		JSONObject jsonData;
+
+		try {
+			InputStream is = appContext.getAssets().open(filePath);
+//			InputStream is = context.getApplicationContext().getAssets().open(filePath);
+		    int size = is.available();
+		    byte[] buffer = new byte[size];
+		    is.read(buffer);
+		    is.close();
+		    json = new String(buffer, "UTF-8");
+		    jsonData = new JSONObject(json);
+		} catch (IOException ex) {
+		    ex.printStackTrace();
+		    return null;
+		}
+
+		return jsonData;
+	}
+
+	public void readServerConfiguration() {
+		try {
+			Log.e("AnnoSingleton", readJSONFromFile("www/anno/scripts/server-url.json").toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+			Log.e("AnnoSingleton", "problem in getting server config");
+		}
 	}
 }

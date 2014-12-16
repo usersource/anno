@@ -79,7 +79,8 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 
 	protected void pluginInitialize() {
 		super.pluginInitialize();
-		annoSingleton = AnnoSingleton.getInstance();
+		annoSingleton = AnnoSingleton.getInstance(null);
+		annoSingleton.readServerConfiguration();
     }
 
 	@Override
