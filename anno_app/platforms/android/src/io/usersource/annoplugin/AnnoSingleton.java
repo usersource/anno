@@ -45,7 +45,8 @@ public class AnnoSingleton {
 		String randomNum = String.format("%d", (new Random()).nextInt(100) + 0);
 		String additionalString = String.format("%s%s", secs, randomNum);
 		String emailValue = String.format(ANONYMOUS_USER_EMAIL, additionalString);
-		this.setupWithUserInfo(emailValue, "", "", teamKeyValue, teamSecretValue);
+		String displayNameValue = ANONYMOUS_USER_DISPLAY_NAME;
+		this.setupWithUserInfo(emailValue, displayNameValue, "", teamKeyValue, teamSecretValue);
 	}
 
 	public void setCustomInfoActivity(Class<?> customInfo) {
