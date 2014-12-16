@@ -21,6 +21,8 @@ public class AnnoSingleton {
 
 	String ANONYMOUS_USER_EMAIL = "dev%s@devnull.usersource.io";
 	String ANONYMOUS_USER_DISPLAY_NAME = "Anonymous";
+	String UNREAD_URL = "/anno/1.0/user/unread";
+	String TAG = "UserSource";
 
 	String serverConfigFilePath = "www/anno/scripts/server-url.json";
 	String pluginConfigFilePath = "www/anno/scripts/plugin_settings/pluginConfig.json";
@@ -29,11 +31,13 @@ public class AnnoSingleton {
 	JSONObject serverConfig, pluginConfig;
 	String cloudHost;
 
+	Boolean unreadCountPresent = false;
+	Integer unreadCount = 0;
+
 	Class<?> customInfoActivity = null;
 	static Context appContext = null;
 
 	protected AnnoSingleton() {
-		// Exists only to defeat instantiation.
 	}
 
 	public static AnnoSingleton getInstance(Context context) {
@@ -70,11 +74,29 @@ public class AnnoSingleton {
 	}
 
 	public void showCommunityPage(Activity activity) {
+		if (this.email == null || this.email == "") {
+			Log.d(TAG, "Email address is not specified.");
+			return;
+		}
+
+		if (this.teamKey == null || this.teamKey == "" ||
+			this.teamSecret == null || this.teamSecret == "") {
+			Log.d(TAG, "TeamKey and TeamSecret are not specified.");
+			return;
+		}
+
 		Intent intent = new Intent(activity, CommunityActivity.class);
 		activity.startActivity(intent);
 	}
 
 	public void showAnnoDrawPage(Activity activity, String imageURI) {
+		Boolean isPlugin = !(AnnoUtils.isAnno(activity.getPackageName()));
+
+		if (isPlugin && (this.email == null || this.email == "")) {
+			Log.d(TAG, "Email address is not specified.");
+			return;
+		}
+
 		String packageName = activity.getPackageName();
 		Intent intent = new Intent(Intent.ACTION_SEND);
 		intent.setClassName(packageName, "io.usersource.anno.AnnoDrawActivity");
@@ -121,6 +143,8 @@ public class AnnoSingleton {
 			cloudHost = serverConfig.getJSONObject("1").getString("apiRoot");
 		} catch (JSONException e) {
 			e.printStackTrace();
+			serverConfig = null;
+			cloudHost = "";
 		}
 	}
 
@@ -129,6 +153,7 @@ public class AnnoSingleton {
 			pluginConfig = readJSONFromFile(pluginConfigFilePath);
 		} catch (JSONException e) {
 			e.printStackTrace();
+			pluginConfig = null;
 		}
 	}
 }

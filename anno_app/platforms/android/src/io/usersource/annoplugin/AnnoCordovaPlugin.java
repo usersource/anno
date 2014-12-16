@@ -275,8 +275,8 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 			return true;
 		} else if (GET_UNREAD_COUNT.equals(action)) {
 			JSONObject jsonObject = new JSONObject();
-			jsonObject.put("unread_count_present", false);
-			jsonObject.put("unread_count", 0);
+			jsonObject.put("unread_count_present", annoSingleton.unreadCountPresent);
+			jsonObject.put("unread_count", annoSingleton.unreadCount);
 			callbackContext.success(jsonObject);
 			return true;
 		}
