@@ -123,8 +123,7 @@ public class AnnoSingleton {
 
 		try {
 			InputStream is = appContext.getAssets().open(filePath);
-		    int size = is.available();
-		    byte[] buffer = new byte[size];
+		    byte[] buffer = new byte[is.available()];
 		    is.read(buffer);
 		    is.close();
 		    json = new String(buffer, "UTF-8");

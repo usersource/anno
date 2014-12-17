@@ -100,16 +100,12 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 			getInstalledAppList(args, callbackContext);
 			return true;
 		} else if (GET_SCREENSHOT_PATH.equals(action)) {
-			AnnoDrawActivity annoDrawActivity = (AnnoDrawActivity) this.cordova
-					.getActivity();
+			AnnoDrawActivity annoDrawActivity = (AnnoDrawActivity) this.cordova.getActivity();
 			JSONObject jo = new JSONObject();
-
 			jo.put("screenshotPath", annoDrawActivity.getScreenshotPath());
 			jo.put("level", annoDrawActivity.getLevel());
-			jo.put("isAnno",
-					AnnoUtils.isAnno(annoDrawActivity.getPackageName()));
+			jo.put("isAnno", AnnoUtils.isAnno(annoDrawActivity.getPackageName()));
 			jo.put("editMode", annoDrawActivity.isEditMode());
-
 			callbackContext.success(jo);
 			return true;
 		} else if (GET_ANNO_SCREENSHOT_PATH.equals(action)) {
@@ -131,7 +127,6 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 		} else if (START_ACTIVITY.equals(action)) {
 			String activityName = args.getString(0);
 			boolean closeCurrentActivity = args.getBoolean(1);
-
 			Activity activity = this.cordova.getActivity();
 
 			if (closeCurrentActivity) {
@@ -151,19 +146,12 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 
 			activity.startActivity(intent);
 			callbackContext.success();
-
 			return true;
 		} else if (CLOSE_SOFTKEYBOARD.equals(action)) {
-
-			AnnoDrawActivity activity = (AnnoDrawActivity) this.cordova
-					.getActivity();
-			InputMethodManager imm = (InputMethodManager) activity
-					.getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(activity.getAppView().getWindowToken(),
-					0);
-
+			AnnoDrawActivity activity = (AnnoDrawActivity) this.cordova.getActivity();
+			InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(activity.getAppView().getWindowToken(), 0);
 			callbackContext.success();
-
 			return true;
 		} else if (SHOW_SOFTKEYBOARD.equals(action)) {
 			String activityName = ACTIVITY_COMMUNITY;
@@ -172,19 +160,15 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 			}
 
 			Activity activity = this.cordova.getActivity();
-			InputMethodManager imm = (InputMethodManager) activity
-					.getSystemService(Context.INPUT_METHOD_SERVICE);
+			InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
 
 			if (activityName.equalsIgnoreCase(ACTIVITY_COMMUNITY)) {
-				imm.showSoftInput(((CommunityActivity) activity).getAppView(),
-						InputMethodManager.SHOW_FORCED);
+				imm.showSoftInput(((CommunityActivity) activity).getAppView(), InputMethodManager.SHOW_FORCED);
 			} else if (activityName.equalsIgnoreCase(ACTIVITY_ANNODRAW)) {
-				imm.showSoftInput(((AnnoDrawActivity) activity).getAppView(),
-						InputMethodManager.SHOW_FORCED);
+				imm.showSoftInput(((AnnoDrawActivity) activity).getAppView(), InputMethodManager.SHOW_FORCED);
 			}
 
 			callbackContext.success();
-
 			return true;
 		} else if (ENABLE_NATIVE_GESTURE_LISTENER.equals(action)) {
 			final Activity activity = this.cordova.getActivity();
@@ -196,23 +180,14 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 					View contentView = AnnoUtils.getContentView(activity);
 					if (enable) {
 						if (contentView instanceof android.gesture.GestureOverlayView) {
-							AnnoUtils
-									.setEnableGesture(
-											activity,
-											(android.gesture.GestureOverlayView) contentView,
-											true);
+							AnnoUtils.setEnableGesture(activity, (android.gesture.GestureOverlayView) contentView, true);
 						} else {
-							android.gesture.GestureOverlayView gView = AnnoUtils
-									.addGestureViewToActivity(activity);
+							android.gesture.GestureOverlayView gView = AnnoUtils.addGestureViewToActivity(activity);
 							AnnoUtils.setEnableGesture(activity, gView, true);
 						}
 					} else {
 						if (contentView instanceof android.gesture.GestureOverlayView) {
-							AnnoUtils
-									.setEnableGesture(
-											activity,
-											(android.gesture.GestureOverlayView) contentView,
-											false);
+							AnnoUtils.setEnableGesture(activity, (android.gesture.GestureOverlayView) contentView, false);
 						}
 					}
 				}
@@ -224,7 +199,6 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 			Activity activity = this.cordova.getActivity();
 			AnnoUtils.triggerCreateAnno(activity);
 			callbackContext.success();
-
 			return true;
 		} else if (START_ANNO_DRAW.equals(action)) {
 			String imageURI = args.getString(0);
@@ -234,30 +208,21 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 		} else if (START_EDIT_ANNO_DRAW.equals(action)) {
 			boolean landscapeMode = args.getBoolean(0);
 			Activity activity = this.cordova.getActivity();
-
 			String packageName = activity.getPackageName();
-
 			Intent intent = new Intent(Intent.ACTION_SEND);
-			intent.setClassName(packageName,
-					"io.usersource.anno.AnnoDrawActivity");
+			intent.setClassName(packageName, "io.usersource.anno.AnnoDrawActivity");
 			intent.setType("image/*");
 			intent.putExtra(AnnoUtils.EDIT_ANNO_MODE, true);
 			intent.putExtra(AnnoUtils.LANDSCAPE_MODE, landscapeMode);
-
 			activity.startActivity(intent);
-
 			return true;
 		} else if (GET_APP_VERSION.equals(action)) {
 			try {
 				Activity activity = this.cordova.getActivity();
-				pInfo = activity.getPackageManager().getPackageInfo(
-						activity.getPackageName(), 0);
-				String version = pInfo.versionName;
-				int build = pInfo.versionCode;
-
+				pInfo = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0);
 				JSONArray returnData = new JSONArray();
-				returnData.put(version);
-				returnData.put(build);
+				returnData.put(pInfo.versionName);
+				returnData.put(pInfo.versionCode);
 				callbackContext.success(returnData);
 				return true;
 			} catch (NameNotFoundException e) {
@@ -290,8 +255,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 	 * @param args
 	 * @param callbackContext
 	 */
-	private void exitCurrentActivity(JSONArray args,
-			CallbackContext callbackContext) {
+	private void exitCurrentActivity(JSONArray args, CallbackContext callbackContext) {
 		this.cordova.getActivity().finish();
 	}
 
@@ -306,7 +270,6 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 		activity.finish();
 
 		String packageName = activity.getPackageName();
-
 		Intent intent = new Intent(Intent.ACTION_SEND);
 		intent.setClassName(packageName, "io.usersource.anno.AnnoDrawActivity");
 		intent.setType("image/*");
@@ -317,26 +280,18 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 		String filePath = "";
 
 		try {
-			File screenshotDir = new File(
-					Environment
-							.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-					"Screenshots");
+			File screenshotDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Screenshots");
 			if (!screenshotDir.exists()) {
 				if (!screenshotDir.mkdirs()) {
-					throw new IOException("Failed to create directory "
-							+ screenshotDir.getAbsolutePath());
+					throw new IOException("Failed to create directory " + screenshotDir.getAbsolutePath());
 				}
 			}
 
-			File screenshotPath = new File(screenshotDir,
-					AnnoUtils.generateScreenshotName());
+			File screenshotPath = new File(screenshotDir, AnnoUtils.generateScreenshotName());
 			fos = new FileOutputStream(screenshotPath);
-
-			is = activity.getAssets().open(
-					"www/anno/pages/intro/css/images/defaultsht.jpg");
+			is = activity.getAssets().open("www/anno/pages/intro/css/images/defaultsht.jpg");
 			byte b[] = new byte[is.available()];
 			is.read(b);
-
 			fos.write(b);
 			filePath = screenshotPath.getAbsolutePath();
 		} catch (Exception e) {
@@ -362,9 +317,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 		Uri imageUri = Uri.parse("file://" + imageFile.getPath());
 		intent.putExtra(Intent.EXTRA_STREAM, imageUri);
 
-		if (activity instanceof AnnoDrawActivity
-				|| activity instanceof IntroActivity
-				|| activity instanceof CommunityActivity) {
+		if (activity instanceof AnnoDrawActivity || activity instanceof IntroActivity || activity instanceof CommunityActivity) {
 			// current app is standalone anno, or anno plugin activity.
 			intent.putExtra(AnnoUtils.LEVEL, 1);
 		} else {
@@ -381,34 +334,26 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 	 * @param args
 	 * @param callbackContext
 	 */
-	private void processImageAndAppInfo(final JSONArray args,
-			final CallbackContext callbackContext) {
+	private void processImageAndAppInfo(final JSONArray args, final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
 				JSONObject result = new JSONObject();
 				try {
 					JSONObject imageAttrs = doSaveImage(args);
 					result.put("imageAttrs", imageAttrs);
-
 					JSONObject appInfo = getAppInfo();
 					result.put("appInfo", appInfo);
 					result.put("success", true);
-
 					callbackContext.success(result);
 				} catch (Exception e) {
 					try {
 						result.put("success", false);
-						result.put(
-								"message",
-								"An error occurred when processing image: "
-										+ e.getMessage());
+						result.put("message", "An error occurred when processing image: " + e.getMessage());
 					} catch (JSONException dummy) {
-
 					}
 
 					callbackContext.error(result);
 				}
-
 			}
 		});
 	}
@@ -421,27 +366,23 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 			base64Str = args.getString(0);
 		}
 
-		AnnoDrawActivity annoDrawActivity = (AnnoDrawActivity) this.cordova
-				.getActivity();
+		AnnoDrawActivity annoDrawActivity = (AnnoDrawActivity) this.cordova.getActivity();
 
 		String appLocation = AnnoUtils.getDataLocation();
 		String screenshotDirName = AnnoUtils.getScreenshotDirName();
-		String screenshotDirPath = new File(appLocation, screenshotDirName)
-				.getAbsolutePath();
+		String screenshotDirPath = new File(appLocation, screenshotDirName).getAbsolutePath();
 		AnnoUtils.mkdirs(annoDrawActivity, screenshotDirPath);
 		// checkEnoughSpace(bitmap.getByteCount());
 
 		String imageKey = AnnoUtils.generateUniqueImageKey();
-		FileOutputStream out = new FileOutputStream(new File(screenshotDirPath,
-				imageKey));
+		FileOutputStream out = new FileOutputStream(new File(screenshotDirPath, imageKey));
 
 		Bitmap bmp;
 		if (base64Str.length() > 0) {
 			byte bytes[] = Base64.decode(base64Str, Base64.DEFAULT);
 			bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 		} else {
-			bmp = BitmapFactory
-					.decodeFile(annoDrawActivity.getScreenshotPath());
+			bmp = BitmapFactory.decodeFile(annoDrawActivity.getScreenshotPath());
 		}
 
 		bmp.compress(Bitmap.CompressFormat.JPEG, COMPRESS_QUALITY, out);
@@ -461,12 +402,10 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 	 */
 	private JSONObject getAppInfo() throws Exception {
 		JSONObject result = new JSONObject();
-		AnnoDrawActivity annoDrawActivity = (AnnoDrawActivity) this.cordova
-				.getActivity();
+		AnnoDrawActivity annoDrawActivity = (AnnoDrawActivity) this.cordova.getActivity();
 
 		String source, appName, appVersion;
-		if (AnnoUtils.isAnno(annoDrawActivity.getPackageName())
-				&& annoDrawActivity.getLevel() != 2) {
+		if (AnnoUtils.isAnno(annoDrawActivity.getPackageName()) && annoDrawActivity.getLevel() != 2) {
 			source = AnnoUtils.ANNO_SOURCE_STANDALONE;
 			appName = AnnoUtils.UNKNOWN_APP_NAME;
 		} else {
@@ -494,38 +433,25 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 	 */
 	private void getRecentTasks(JSONArray args, CallbackContext callbackContext)
 			throws JSONException {
-		AnnoDrawActivity annoDrawActivity = (AnnoDrawActivity) this.cordova
-				.getActivity();
+		AnnoDrawActivity annoDrawActivity = (AnnoDrawActivity) this.cordova.getActivity();
 		int taskNum = args.getInt(0);
 
-		ActivityManager mActivityManager = (ActivityManager) annoDrawActivity
-				.getSystemService(Context.ACTIVITY_SERVICE);
+		ActivityManager mActivityManager = (ActivityManager) annoDrawActivity.getSystemService(Context.ACTIVITY_SERVICE);
 		// Print Recent Running Tasks
 		JSONArray jsonArray = new JSONArray();
 		JSONObject jso = null;
-		List<ActivityManager.RecentTaskInfo> recentTasks = mActivityManager
-				.getRecentTasks(taskNum,
-						ActivityManager.RECENT_IGNORE_UNAVAILABLE);
+		List<ActivityManager.RecentTaskInfo> recentTasks = mActivityManager.getRecentTasks(taskNum, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
 		for (ActivityManager.RecentTaskInfo rti : recentTasks) {
 			Intent intent = rti.baseIntent;
 
 			try {
-				ResolveInfo resolveInfo = annoDrawActivity.getPackageManager()
-						.resolveActivity(intent, 0);
+				ResolveInfo resolveInfo = annoDrawActivity.getPackageManager().resolveActivity(intent, 0);
 				jso = new JSONObject();
-				jso.put("name",
-						resolveInfo.loadLabel(
-								annoDrawActivity.getPackageManager())
-								.toString());
-				jso.put("versionName",
-						annoDrawActivity.getPackageManager().getPackageInfo(
-								resolveInfo.activityInfo.packageName, 0).versionName);
-
+				jso.put("name", resolveInfo.loadLabel(annoDrawActivity.getPackageManager()).toString());
+				jso.put("versionName", annoDrawActivity.getPackageManager().getPackageInfo(resolveInfo.activityInfo.packageName, 0).versionName);
 				jsonArray.put(jso);
 			} catch (Exception dummy) {
-
 			}
-
 		}
 
 		callbackContext.success(jsonArray);
@@ -539,8 +465,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 	 * @return
 	 * @throws JSONException
 	 */
-	private void getInstalledAppList(JSONArray args,
-			CallbackContext callbackContext) throws JSONException {
+	private void getInstalledAppList(JSONArray args, CallbackContext callbackContext) throws JSONException {
 		Activity activity = this.cordova.getActivity();
 
 		PackageManager packageManager = activity.getPackageManager();
@@ -551,11 +476,9 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 		for (PackageInfo app : apps) {
 			if ((app.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
 				jso = new JSONObject();
-				jso.put("name", app.applicationInfo.loadLabel(packageManager)
-						.toString());
+				jso.put("name", app.applicationInfo.loadLabel(packageManager).toString());
 				jso.put("packageName", app.packageName);
 				jso.put("versionName", app.versionName);
-
 				jsonArray.put(jso);
 			}
 		}
