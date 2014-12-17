@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.usersource.anno.CommunityActivity;
+import io.usersource.annoplugin.shake.ShakeActivitySession;
 import io.usersource.annoplugin.utils.AnnoUtils;
 import android.app.Activity;
 import android.content.Context;
@@ -34,7 +35,7 @@ public class AnnoSingleton {
 	Integer unreadCount = 0;
 
 	Class<?> customInfoActivity = null;
-	static Context appContext = null;
+	public static Context appContext = null;
 
 	protected AnnoSingleton() {
 	}
@@ -153,5 +154,13 @@ public class AnnoSingleton {
 			e.printStackTrace();
 			pluginConfig = null;
 		}
+	}
+
+	public void startShakeListening() {
+		ShakeActivitySession.getInstance().startShakeListening();
+	}
+
+	public void stopShakeListening() {
+		ShakeActivitySession.getInstance().stopShakeListening();
 	}
 }
