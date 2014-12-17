@@ -22,10 +22,9 @@ public class AnnoSingleton {
 	String ANONYMOUS_USER_EMAIL = "dev%s@devnull.usersource.io";
 	String ANONYMOUS_USER_DISPLAY_NAME = "Anonymous";
 	String UNREAD_URL = "/anno/1.0/user/unread";
-	String TAG = "UserSource";
-
-	String serverConfigFilePath = "www/anno/scripts/server-url.json";
-	String pluginConfigFilePath = "www/anno/scripts/plugin_settings/pluginConfig.json";
+	String TAG = "Anno8 Plugin";
+	String SERVER_CONFIG_FILE_PATH = "www/anno/scripts/server-url.json";
+	String PLUGIN_CONFIG_FILE_PATH = "www/anno/scripts/plugin_settings/pluginConfig.json";
 
 	String email, displayName, userImageURL, teamKey, teamSecret;
 	JSONObject serverConfig, pluginConfig;
@@ -138,7 +137,7 @@ public class AnnoSingleton {
 
 	public void readServerConfiguration() {
 		try {
-			serverConfig = readJSONFromFile(serverConfigFilePath);
+			serverConfig = readJSONFromFile(SERVER_CONFIG_FILE_PATH);
 			cloudHost = serverConfig.getJSONObject("1").getString("apiRoot");
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -149,7 +148,7 @@ public class AnnoSingleton {
 
 	public void readPluginConfiguration() {
 		try {
-			pluginConfig = readJSONFromFile(pluginConfigFilePath);
+			pluginConfig = readJSONFromFile(PLUGIN_CONFIG_FILE_PATH);
 		} catch (JSONException e) {
 			e.printStackTrace();
 			pluginConfig = null;

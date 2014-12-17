@@ -82,8 +82,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
     }
 
 	@Override
-	public boolean execute(String action, JSONArray args,
-			CallbackContext callbackContext) throws JSONException {
+	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
 		if (EXIT_CURRENT_ACTIVITY.equals(action)) {
 			exitCurrentActivity(args, callbackContext);
 			return true;
@@ -414,12 +413,10 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 		}
 
 		appVersion = AnnoUtils.getAppVersion(annoDrawActivity);
-
 		result.put("source", source);
 		result.put("appName", appName);
 		result.put("appVersion", appVersion);
 		result.put("level", annoDrawActivity.getLevel());
-
 		return result;
 	}
 
