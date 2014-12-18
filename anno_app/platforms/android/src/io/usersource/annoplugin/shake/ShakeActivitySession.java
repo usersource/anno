@@ -5,6 +5,7 @@ import io.usersource.annoplugin.utils.AnnoUtils;
 
 import java.util.concurrent.ExecutionException;
 
+import android.app.Activity;
 import android.content.Context;
 import android.hardware.SensorManager;
 import android.util.Log;
@@ -14,10 +15,12 @@ public class ShakeActivitySession implements ShakeListener {
 	private ShakeDetector shakeDetector;
 	private SensorManager sensorManager;
 	Context context;
+	Activity activity;
 
 	public ShakeActivitySession() {
 		shakeDetector = new ShakeDetector(this);
 		context = AnnoSingleton.appContext;
+		activity = AnnoSingleton.appActivity;
 	}
 	
 	public static ShakeActivitySession getInstance() {
@@ -29,7 +32,7 @@ public class ShakeActivitySession implements ShakeListener {
 
 	@Override
 	public void onDeviceShaked() throws InterruptedException, ExecutionException {
-//		AnnoUtils.triggerCreateAnno(AnnoSingleton.appActivity);
+//		AnnoUtils.triggerCreateAnno(activity);
 		showShakeActivityMenu();
 	}
 
@@ -46,7 +49,7 @@ public class ShakeActivitySession implements ShakeListener {
 	}
 
 	private void showShakeActivityMenu() {
-		Log.d("AnnoSingleton", "shake detected");
-		AnnoSingleton.getInstance(null).showCommunityPage(AnnoSingleton.appActivity);
+		Log.d(AnnoSingleton.TAG, "shake detected");
+		AnnoSingleton.getInstance(null).showCommunityPage(activity);
 	}
 }
