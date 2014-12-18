@@ -1,17 +1,21 @@
 package io.usersource.annoplugin.shake;
 
 import io.usersource.annoplugin.AnnoSingleton;
-import io.usersource.annoplugin.utils.AnnoUtils;
+import io.usersource.annoplugin.gesture.ScreenshotGestureListener;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.SensorManager;
 import android.util.Log;
 
 public class ShakeActivitySession implements ShakeListener {
 	private static ShakeActivitySession shakeActivitySession = null;
+	public static String screenshotPath;
+	public static Boolean shakeMenuVisible = false;
 	private ShakeDetector shakeDetector;
 	private SensorManager sensorManager;
 	Context context;
@@ -32,8 +36,16 @@ public class ShakeActivitySession implements ShakeListener {
 
 	@Override
 	public void onDeviceShaked() throws InterruptedException, ExecutionException {
-//		AnnoUtils.triggerCreateAnno(activity);
-		showShakeActivityMenu();
+		Log.d(AnnoSingleton.TAG, "shake detected");
+		if (shakeMenuVisible) return;
+		try {
+			screenshotPath = ScreenshotGestureListener.takeScreenshot(activity);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Intent intent = new Intent(activity, ShakeMenu.class);
+		activity.startActivity(intent);
+		shakeMenuVisible = true;
 	}
 
 	@Override
@@ -46,10 +58,5 @@ public class ShakeActivitySession implements ShakeListener {
 	public void stopShakeListening() {
 		context = null;
 		shakeDetector.stop();
-	}
-
-	private void showShakeActivityMenu() {
-		Log.d(AnnoSingleton.TAG, "shake detected");
-		AnnoSingleton.getInstance(null).showCommunityPage(activity);
 	}
 }

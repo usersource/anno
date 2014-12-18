@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom" >
+
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view_feedback"
+        android:text="Cancel"
+        android:onClick="closeShakeMenu" />
+
+    <Button
+        android:id="@+id/view_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/new_feedback"
+        android:text="View Feedback"
+        android:onClick="clickedViewFeedback" />
+
+    <Button
+        android:id="@+id/new_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="New Feedback"
+        android:onClick="clickedNewFeedback" />
+
+</RelativeLayout>
