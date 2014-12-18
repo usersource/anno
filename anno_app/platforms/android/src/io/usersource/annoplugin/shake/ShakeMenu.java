@@ -1,5 +1,7 @@
 package io.usersource.annoplugin.shake;
 
+import java.io.File;
+
 import io.usersource.anno.R;
 import io.usersource.annoplugin.AnnoSingleton;
 import android.app.Activity;
@@ -26,7 +28,9 @@ public class ShakeMenu extends Activity {
 
 	public void clickedNewFeedback(View view) {
 		closeShakeMenu(view);
-		String imageURI = ShakeActivitySession.screenshotPath;
+		String screenshotPath = ShakeActivitySession.screenshotPath;
+		File imageFile = new File(screenshotPath);
+		String imageURI = "file://" + imageFile.getPath();
 		AnnoSingleton.getInstance(null).showAnnoDrawPage(AnnoSingleton.appActivity, imageURI);
 	}
 }
