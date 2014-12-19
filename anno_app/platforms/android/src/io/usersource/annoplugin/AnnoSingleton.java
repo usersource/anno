@@ -38,6 +38,8 @@ public class AnnoSingleton {
 	String SERVER_CONFIG_FILE_PATH = "www/anno/scripts/server-url.json";
 	String PLUGIN_CONFIG_FILE_PATH = "www/anno/scripts/plugin_settings/pluginConfig.json";
 
+	public static Boolean annot8Visible = false;
+
 	String email, displayName, userImageURL, teamKey, teamSecret;
 	JSONObject serverConfig, pluginConfig;
 	String cloudHost;
@@ -168,6 +170,7 @@ public class AnnoSingleton {
 
 		Intent intent = new Intent(activity, CommunityActivity.class);
 		activity.startActivity(intent);
+		annot8Visible = true;
 	}
 
 	public void showAnnoDrawPage(Activity activity, String imageURI) {
@@ -186,6 +189,7 @@ public class AnnoSingleton {
 		intent.putExtra(Intent.EXTRA_STREAM, imageUri);
 		intent.putExtra(AnnoUtils.LEVEL, 0);
 		activity.startActivity(intent);
+		annot8Visible = true;
 	}
 
 	public JSONArray getUserInfo() {

@@ -253,7 +253,12 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 	 * @param callbackContext
 	 */
 	private void exitCurrentActivity(JSONArray args, CallbackContext callbackContext) {
+		Activity activity = this.cordova.getActivity();
 		this.cordova.getActivity().finish();
+
+		if (activity instanceof CommunityActivity ||activity instanceof AnnoDrawActivity) {
+			AnnoSingleton.annot8Visible = false;
+	    }
 	}
 
 	/**

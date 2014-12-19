@@ -37,15 +37,16 @@ public class ShakeActivitySession implements ShakeListener {
 	@Override
 	public void onDeviceShaked() throws InterruptedException, ExecutionException {
 		Log.d(AnnoSingleton.TAG, "shake detected");
-		if (shakeMenuVisible) return;
+		if (shakeMenuVisible || AnnoSingleton.annot8Visible) return;
+
 		try {
 			screenshotPath = ScreenshotGestureListener.takeScreenshot(activity);
+			Intent intent = new Intent(activity, ShakeMenu.class);
+			activity.startActivity(intent);
+			shakeMenuVisible = true;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Intent intent = new Intent(activity, ShakeMenu.class);
-		activity.startActivity(intent);
-		shakeMenuVisible = true;
 	}
 
 	@Override
