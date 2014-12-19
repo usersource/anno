@@ -49,8 +49,8 @@ public class AnnoSingleton {
 
 	String[] shakeSensitivityValues = { "1 Shake", "2 Shakes", "3 Shakes" };
 	JSONObject shakeSettingsData;
-	Boolean allowShake;
-	Integer shakeValue;
+	public static Boolean allowShake;
+	public static Integer shakeValue;
 
 	Class<?> customInfoActivity = null;
 	public static Context appContext = null;
