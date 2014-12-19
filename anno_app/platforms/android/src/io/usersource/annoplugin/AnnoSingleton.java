@@ -1,9 +1,17 @@
 package io.usersource.annoplugin;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Random;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,7 +20,9 @@ import io.usersource.anno.CommunityActivity;
 import io.usersource.annoplugin.shake.ShakeActivitySession;
 import io.usersource.annoplugin.utils.AnnoUtils;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
@@ -60,6 +70,8 @@ public class AnnoSingleton {
 		this.userImageURL = userImageURLValue;
 		this.teamKey = teamKeyValue;
 		this.teamSecret = teamSecretValue;
+		readServerConfiguration();
+		readPluginConfiguration();
 	}
 
 	public void setupAnonymousUserWithTeamCredentials(String teamKeyValue, String teamSecretValue) {
@@ -164,5 +176,65 @@ public class AnnoSingleton {
 
 	public void stopShakeListening() {
 		ShakeActivitySession.getInstance().stopShakeListening();
+	}
+
+	public void showNewMyActivityNotification() {
+		String uri = cloudHost + UNREAD_URL;
+		uri.concat(String.format("?user_email=%s&team_key=%s", this.email, this.teamKey));
+
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpGet httpGet = new HttpGet(uri);
+
+		try {
+			HttpResponse response = httpClient.execute(httpGet);
+			InputStream inputStream = new BufferedInputStream(response.getEntity().getContent());
+			String responseData = convertInputStreamToString(inputStream);
+			JSONObject results;
+			try {
+				results = new JSONObject(responseData);
+				unreadCountPresent = true;
+				unreadCount = results.getInt("unread_count");
+				if (unreadCount > 0) {
+					String message = String.format("New Activity on %s item%s", unreadCount, (unreadCount > 1) ? "s" : "");
+					new AlertDialog.Builder(appActivity)
+							.setTitle("Your Feedback")
+							.setMessage(message)
+							.setPositiveButton("Show Me",
+									new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface dialog, int which) {
+											instance.showCommunityPage(appActivity);
+										}
+									})
+							.setNegativeButton("Later",
+									new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface dialog, int which) {
+										}
+									}).show();
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private String convertInputStreamToString(InputStream inputStream) throws IOException {
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+		String line = "";
+		String result = "";
+
+		while ((line = bufferedReader.readLine()) != null) {
+			result += line;
+		}
+
+		/* Close Stream */
+		if (null != inputStream) {
+			inputStream.close();
+		}
+
+		return result;
 	}
 }
