@@ -42,13 +42,15 @@ public class AnnoSingleton {
 	String cloudHost;
 
 	Boolean unreadCountPresent = false;
-	Integer unreadCount = 0;
+	Integer unreadCount;
 
 	Class<?> customInfoActivity = null;
 	public static Context appContext = null;
 	public static Activity appActivity = null;
 
 	protected AnnoSingleton() {
+		cloudHost = "http://usersource-anno.appspot.com";
+		unreadCount = 0;
 	}
 
 	public static AnnoSingleton getInstance(Context context) {
@@ -62,6 +64,11 @@ public class AnnoSingleton {
 		return instance;
 	}
 
+	private void initMethod() {
+		readServerConfiguration();
+		readPluginConfiguration();
+	}
+
 	public void setupWithUserInfo(String emailValue, String displayNameValue,
 			String userImageURLValue, String teamKeyValue,
 			String teamSecretValue) {
@@ -70,8 +77,7 @@ public class AnnoSingleton {
 		this.userImageURL = userImageURLValue;
 		this.teamKey = teamKeyValue;
 		this.teamSecret = teamSecretValue;
-		readServerConfiguration();
-		readPluginConfiguration();
+		initMethod();
 	}
 
 	public void setupAnonymousUserWithTeamCredentials(String teamKeyValue, String teamSecretValue) {
