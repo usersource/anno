@@ -90,6 +90,7 @@ public class AnnoSingleton {
 				shakeSettingsData = new JSONObject(strJson);
 				shakeSettingsData = shakeSettingsData.getJSONObject(this.email);
 			} else {
+				shakeSettingsData = new JSONObject();
 				shakeSettingsData.put("allowShake", true);
 				shakeSettingsData.put("shakeValue", 0);
 			}
