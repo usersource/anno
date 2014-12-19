@@ -26,6 +26,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 
 public class AnnoSingleton {
@@ -39,6 +40,7 @@ public class AnnoSingleton {
 	String PLUGIN_CONFIG_FILE_PATH = "www/anno/scripts/plugin_settings/pluginConfig.json";
 
 	public static Boolean annot8Visible = false;
+	public static Boolean showUnreadMyActivityNotification = true;
 
 	String email, displayName, userImageURL, teamKey, teamSecret;
 	JSONObject serverConfig, pluginConfig;
@@ -225,6 +227,9 @@ public class AnnoSingleton {
 		try {
 			serverConfig = readJSONFromFile(SERVER_CONFIG_FILE_PATH);
 			cloudHost = serverConfig.getJSONObject("1").getString("apiRoot");
+			if (showUnreadMyActivityNotification) {
+				showNewMyActivityNotification();
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 			serverConfig = null;
@@ -252,14 +257,34 @@ public class AnnoSingleton {
 	public void showNewMyActivityNotification() {
 		String uri = cloudHost + UNREAD_URL;
 		uri.concat(String.format("?user_email=%s&team_key=%s", this.email, this.teamKey));
+		new makeHTTPCall().execute(uri);
+	}
 
-		HttpClient httpClient = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet(uri);
+	private class makeHTTPCall extends AsyncTask<String, Integer, String> {
+		protected String doInBackground(String... urls) {
+			Log.e(AnnoSingleton.TAG, urls[0]);
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpGet httpGet = new HttpGet(urls[0]);
 
-		try {
-			HttpResponse response = httpClient.execute(httpGet);
-			InputStream inputStream = new BufferedInputStream(response.getEntity().getContent());
-			String responseData = convertInputStreamToString(inputStream);
+			try {
+				HttpResponse response = httpClient.execute(httpGet);
+				InputStream inputStream = new BufferedInputStream(response.getEntity().getContent());
+				String responseData = convertInputStreamToString(inputStream);
+				return responseData;
+			} catch (ClientProtocolException  e) {
+				e.printStackTrace();
+				return null;
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {}
+
+		@Override
+		protected void onPostExecute(String responseData) {
 			JSONObject results;
 			try {
 				results = new JSONObject(responseData);
@@ -270,25 +295,23 @@ public class AnnoSingleton {
 					new AlertDialog.Builder(appActivity)
 							.setTitle("Your Feedback")
 							.setMessage(message)
-							.setPositiveButton("Show Me",
-									new DialogInterface.OnClickListener() {
-										public void onClick(DialogInterface dialog, int which) {
+							.setPositiveButton("Show Me", new DialogInterface.OnClickListener() {
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
 											instance.showCommunityPage(appActivity);
 										}
 									})
-							.setNegativeButton("Later",
-									new DialogInterface.OnClickListener() {
-										public void onClick(DialogInterface dialog, int which) {
+							.setNegativeButton("Later", new DialogInterface.OnClickListener() {
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
 										}
 									}).show();
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
