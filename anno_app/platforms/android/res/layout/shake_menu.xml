@@ -7,24 +7,39 @@
     <Button
         android:id="@+id/cancel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_below="@+id/view_feedback"
+        android:layout_marginLeft="17.5dp"
+        android:layout_marginRight="17.5dp"
+        android:background="@color/gray"
+        android:onClick="closeShakeMenu"
         android:text="Cancel"
-        android:onClick="closeShakeMenu" />
+        android:textColor="@android:color/white" />
 
     <Button
         android:id="@+id/view_feedback"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_below="@+id/new_feedback"
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="17.5dp"
+        android:layout_marginRight="17.5dp"
+        android:background="@color/gray"
+        android:onClick="clickedViewFeedback"
         android:text="View Feedback"
-        android:onClick="clickedViewFeedback" />
+        android:textColor="@android:color/white" />
 
     <Button
         android:id="@+id/new_feedback"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="17.5dp"
+        android:layout_marginRight="17.5dp"
+        android:background="@color/gray"
+        android:onClick="clickedNewFeedback"
         android:text="New Feedback"
-        android:onClick="clickedNewFeedback" />
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
 
 </RelativeLayout>
