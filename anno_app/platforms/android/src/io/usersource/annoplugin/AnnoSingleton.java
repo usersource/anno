@@ -24,6 +24,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 
@@ -41,8 +42,13 @@ public class AnnoSingleton {
 	JSONObject serverConfig, pluginConfig;
 	String cloudHost;
 
-	Boolean unreadCountPresent = false;
+	Boolean unreadCountPresent;
 	Integer unreadCount;
+
+	String[] shakeSensitivityValues = { "1 Shake", "2 Shakes", "3 Shakes" };
+	JSONObject shakeSettingsData;
+	Boolean allowShake;
+	Integer shakeValue;
 
 	Class<?> customInfoActivity = null;
 	public static Context appContext = null;
@@ -51,6 +57,9 @@ public class AnnoSingleton {
 	protected AnnoSingleton() {
 		cloudHost = "http://usersource-anno.appspot.com";
 		unreadCount = 0;
+		unreadCountPresent = false;
+		allowShake = true;
+		shakeValue = 0;
 	}
 
 	public static AnnoSingleton getInstance(Context context) {
@@ -67,6 +76,57 @@ public class AnnoSingleton {
 	private void initMethod() {
 		readServerConfiguration();
 		readPluginConfiguration();
+		getShakeSettings();
+	}
+
+	private void getShakeSettings() {
+		// data sturcture for shake settings
+		// { "shakeSettings" : { "<user_email>" : { "allowShake" : BOOL, "shakeValue" : int }}}
+		SharedPreferences sharedPref = appActivity.getPreferences(Context.MODE_PRIVATE);
+		String strJson = sharedPref.getString("shakeSettings", null);
+
+		try {
+			if (strJson != null) {
+				shakeSettingsData = new JSONObject(strJson);
+				shakeSettingsData = shakeSettingsData.getJSONObject(this.email);
+			} else {
+				shakeSettingsData.put("allowShake", true);
+				shakeSettingsData.put("shakeValue", 0);
+			}
+
+			allowShake = shakeSettingsData.getBoolean("allowShake");
+			shakeValue = shakeSettingsData.getInt("shakeValue");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void saveAllowShake(Boolean allowShakeValue) {
+		allowShake = allowShakeValue;
+		saveShakeSettings();
+	}
+
+	public void saveShakeValue(Integer shakeValueNumber) {
+		shakeValue = shakeValueNumber;
+		saveShakeSettings();
+	}
+
+	private void saveShakeSettings() {
+		try {
+			shakeSettingsData.put("allowShake", allowShake);
+			shakeSettingsData.put("shakeValue", shakeValue);
+
+			SharedPreferences sharedPref = appActivity.getPreferences(Context.MODE_PRIVATE);
+			String strJson = sharedPref.getString("shakeSettings", null);
+			JSONObject tempShakeSettingsData = new JSONObject(strJson);
+			tempShakeSettingsData.put(this.email, shakeSettingsData);
+
+			SharedPreferences.Editor editor = sharedPref.edit();
+			editor.putString("shakeSettings", tempShakeSettingsData.toString());
+			editor.commit();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void setupWithUserInfo(String emailValue, String displayNameValue,
