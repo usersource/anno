@@ -3,7 +3,6 @@ package io.usersource.annoplugin.shake;
 import io.usersource.annoplugin.AnnoSingleton;
 import io.usersource.annoplugin.gesture.ScreenshotGestureListener;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;

@@ -17,7 +17,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.usersource.anno.CommunityActivity;
-import io.usersource.annoplugin.shake.ShakeEnabler;
 import io.usersource.annoplugin.utils.AnnoUtils;
 import android.app.Activity;
 import android.app.AlertDialog;

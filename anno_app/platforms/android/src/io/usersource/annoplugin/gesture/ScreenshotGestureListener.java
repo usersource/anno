@@ -7,10 +7,6 @@ import io.usersource.anno.*;
 import io.usersource.annoplugin.utils.AnnoUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -24,8 +20,6 @@ import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.gesture.Prediction;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
 
 /**
@@ -42,7 +36,7 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
 
 	private static final String FEEDBACK_ACTIVITY = "io.usersource.anno.AnnoDrawActivity";
 	private static final String GESTURE_NAME_PATTERN = "UserSource spiral[0-9]";
-	private static final String SCREENSHOTS_DIR_NAME = "Screenshots";
+	// private static final String SCREENSHOTS_DIR_NAME = "Screenshots";
 	public static final String TAKE_SCREENSHOT_FAIL_MESSAGE = "Take Screenshot Failed.";
 
 	private Activity activity;
