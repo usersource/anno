@@ -59,7 +59,7 @@ public class AnnoSingleton {
 	public static Activity appActivity = null;
 
 	protected AnnoSingleton() {
-		cloudHost = "http://usersource-anno.appspot.com";
+		cloudHost = "https://annoserver.appspot.com/_ah/api";
 		unreadCount = 0;
 		unreadCountPresent = false;
 		allowShake = true;
