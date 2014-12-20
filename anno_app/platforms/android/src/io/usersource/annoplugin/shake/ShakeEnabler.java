@@ -12,8 +12,8 @@ import android.content.Intent;
 import android.hardware.SensorManager;
 import android.util.Log;
 
-public class ShakeActivitySession implements ShakeListener {
-	private static ShakeActivitySession shakeActivitySession = null;
+public class ShakeEnabler implements ShakeListener {
+	private static ShakeEnabler shakeEnabler = null;
 	public static String screenshotPath;
 	public static Boolean shakeMenuVisible = false;
 	private ShakeDetector shakeDetector;
@@ -23,7 +23,7 @@ public class ShakeActivitySession implements ShakeListener {
 
 	Integer lastShakeTime, shakeValue;
 
-	public ShakeActivitySession() {
+	public ShakeEnabler() {
 		shakeDetector = new ShakeDetector(this);
 		context = AnnoSingleton.appContext;
 		activity = AnnoSingleton.appActivity;
@@ -31,11 +31,11 @@ public class ShakeActivitySession implements ShakeListener {
 		shakeValue = 0;
 	}
 	
-	public static ShakeActivitySession getInstance() {
-		if (shakeActivitySession == null) {
-			shakeActivitySession = new ShakeActivitySession();
+	public static ShakeEnabler getInstance() {
+		if (shakeEnabler == null) {
+			shakeEnabler = new ShakeEnabler();
 		}
-		return shakeActivitySession;
+		return shakeEnabler;
 	}
 
 	@Override
@@ -68,16 +68,27 @@ public class ShakeActivitySession implements ShakeListener {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void startListening(Context contextValue) {
+		ShakeEnabler.getInstance().startShakeListening(contextValue);
+	}
+	
+	public static void stopListening(Context contextValue) {
+		ShakeEnabler.getInstance().stopShakeListening(contextValue);
+	}
 
 	@Override
-	public void startShakeListening() {
+	public void startShakeListening(Context contextValue) {
+		context = contextValue.getApplicationContext();
+		activity = (Activity) contextValue;
 		sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 		shakeDetector.start(sensorManager);
 	}
 
 	@Override
-	public void stopShakeListening() {
+	public void stopShakeListening(Context contextValue) {
 		context = null;
+		activity = null;
 		shakeDetector.stop();
 	}
 }

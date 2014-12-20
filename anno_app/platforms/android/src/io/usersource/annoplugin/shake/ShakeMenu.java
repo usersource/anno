@@ -18,7 +18,7 @@ public class ShakeMenu extends Activity {
 
 	public void closeShakeMenu(View view) {
 		this.finish();
-		ShakeActivitySession.shakeMenuVisible = false;
+		ShakeEnabler.shakeMenuVisible = false;
 	}
 
 	public void clickedViewFeedback(View view) {
@@ -28,7 +28,7 @@ public class ShakeMenu extends Activity {
 
 	public void clickedNewFeedback(View view) {
 		closeShakeMenu(view);
-		String screenshotPath = ShakeActivitySession.screenshotPath;
+		String screenshotPath = ShakeEnabler.screenshotPath;
 		File imageFile = new File(screenshotPath);
 		String imageURI = "file://" + imageFile.getPath();
 		AnnoSingleton.getInstance(null).showAnnoDrawPage(AnnoSingleton.appActivity, imageURI);

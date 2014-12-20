@@ -17,7 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.usersource.anno.CommunityActivity;
-import io.usersource.annoplugin.shake.ShakeActivitySession;
+import io.usersource.annoplugin.shake.ShakeEnabler;
 import io.usersource.annoplugin.utils.AnnoUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -244,14 +244,6 @@ public class AnnoSingleton {
 			e.printStackTrace();
 			pluginConfig = null;
 		}
-	}
-
-	public void startShakeListening() {
-		ShakeActivitySession.getInstance().startShakeListening();
-	}
-
-	public void stopShakeListening() {
-		ShakeActivitySession.getInstance().stopShakeListening();
 	}
 
 	public void showNewMyActivityNotification() {
