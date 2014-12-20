@@ -57,16 +57,12 @@ public class ShakeEnabler implements ShakeListener {
 		shakeValue += 1;
 		if (shakeValue != (AnnoSingleton.shakeValue + 1)) return;
 
-		try {
-			screenshotPath = ScreenshotGestureListener.takeScreenshot(activity);
-			Intent intent = new Intent(activity, ShakeMenu.class);
-			activity.startActivity(intent);
-			shakeMenuVisible = true;
-			lastShakeTime = 0;
-			shakeValue = 0;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		screenshotPath = ScreenshotGestureListener.takeScreenshot(activity);
+		Intent intent = new Intent(activity, ShakeMenu.class);
+		activity.startActivity(intent);
+		shakeMenuVisible = true;
+		lastShakeTime = 0;
+		shakeValue = 0;
 	}
 	
 	public static void startListening(Context contextValue) {
