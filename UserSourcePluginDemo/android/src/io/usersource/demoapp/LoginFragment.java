@@ -1,8 +1,11 @@
 package io.usersource.demoapp;
 
+import java.util.Arrays;
+
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
+import com.facebook.widget.LoginButton;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,6 +29,11 @@ public class LoginFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.main, container, false);
+
+		LoginButton authButton = (LoginButton) view.findViewById(R.id.authButton);
+		authButton.setReadPermissions(Arrays.asList("public_profile"));
+		authButton.setFragment(this);
+
 		return view;
 	}
 
@@ -47,6 +55,12 @@ public class LoginFragment extends Fragment {
 	@Override
 	public void onResume() {
 	    super.onResume();
+
+	    Session session = Session.getActiveSession();
+	    if (session != null && (session.isOpened() || session.isClosed()) ) {
+	        onSessionStateChange(session, session.getState(), null);
+	    }
+
 	    uiHelper.onResume();
 	}
 
