@@ -1,0 +1,178 @@
+/**
+ * A sample file for custom CSS to style the Home Page
+ * This includes the Feed, Activity, Settings and Community Screens
+ * Please update this file for any changed behaviours
+ */
+
+.mobile body {
+    font-family: 'Helvetica Neue';
+	background-color: #151a20;
+}
+
+/* Home Screen */
+#listContainerStart {
+    background-color: #151a20;
+}
+
+#headingStart {
+    background-color: #1c262f;
+}
+
+/* The List of entries */
+#listContainerStart li.row {
+	border: none;
+    border-bottom: 1px solid #333333;
+}
+
+#listContainerStart li.row .listTitle {
+    color: white;
+}
+
+#listContainerStart li.row.read {
+	background-color: #151a20;
+}
+
+#listContainerStart li.row.unread {
+	background-color: #151a20;
+}
+
+#listContainerStart li.unread .listTitle {
+    color: #ff9900;
+    font-weight: normal;
+}
+
+
+/* My Stuff Screen */
+
+/* The Top Bar */
+#headingMyStuff {
+	background-color: #1c262f;;
+}
+#headingMyStuff .headingTitle:before {
+	content: " Exposure ";
+}
+
+/* The List of entries */
+
+#listContainerMyStuff {
+    background-color: #151a20;
+}
+
+#listContainerMyStuff li.row {
+	border: none;
+    border-bottom: 1px solid #333333;
+}
+
+.listTitle {
+    color: white;
+}
+
+#listContainerMyStuff li.row.read {
+	background-color: #151a20;
+}
+
+#listContainerMyStuff li.row.unread {
+	background-color: #151a20;
+}
+
+#listContainerMyStuff li.row.unread .listTitle {
+    font-weight: normal;
+    color: #ff9900;
+}
+
+#learnHowContainer {
+    background-color: #151a20;
+    color: #cecece;
+}
+
+.btn {
+    background-color: #ff9900;
+}
+
+/* Time */
+.annoActWhen {
+	color: white;
+}
+
+/* Action Icon */
+.annoActIndicator {
+	color: white;
+}
+
+/* Name and other details */
+.listAppName {
+	color: white;
+}
+
+/* Author */
+.listAuthor, .circleLevelSep, #listContainerStart .circleLevelName, .pluginInfoText, .pluginInfoText .annoActIndicator {
+	color: #d2d2d2;
+}
+
+.userProfileImage {
+    border-radius: 50%;
+}
+
+
+/* Detail Screen */
+
+/* The Top Bar */
+#headingDetail {
+	background-color: #1c262f;
+}
+
+#unreadCount {
+    background-color: #ff9900;
+}
+
+#textNew {
+    color: #ff9900;
+}
+
+/* The Container */
+#detailContentContainer {
+	background-color: #151a20;
+	color: white;
+}
+
+#detailContentContainer .clickableDiv {
+	color: white;
+}
+
+#addCommentContainer {
+	border: none;
+	background-color: none;
+}
+
+#childCommentContainer {
+    background-color: #1c262f;
+}
+#childCommentContainer textarea {
+    background-color: #1c262f;
+    color: white;
+}
+
+#sendComment {
+    color: #ff9900;
+}
+
+.icoImgActive {
+    color: #ff9900;
+}
+
+#detailSuggestedTags {
+    background-color: #151a20;
+    border: 0px;
+    color: white;
+}
+
+.tag {
+    color: inherit;
+}
+
+span.taggedUser, span.hashTag, span.commentURL {
+    background: none;
+    padding: 0;
+    font-weight: bold;
+    color: #ff9900;
+}
