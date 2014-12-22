@@ -1,5 +1,8 @@
 package io.usersource.demoapp;
 
+import io.usersource.annoplugin.AnnoSingleton;
+import io.usersource.annoplugin.shake.ShakeEnabler;
+
 import java.util.Arrays;
 
 
@@ -23,6 +26,7 @@ import android.view.ViewGroup;
 public class LoginFragment extends Fragment {
 	private static final String TAG = "LoginFragment";
 	private UiLifecycleHelper uiHelper;
+	private AnnoSingleton anno = null;
 
 	String name, email, image_url;
 
@@ -31,6 +35,8 @@ public class LoginFragment extends Fragment {
 	    super.onCreate(savedInstanceState);
 	    uiHelper = new UiLifecycleHelper(getActivity(), callback);
 	    uiHelper.onCreate(savedInstanceState);
+	    anno = AnnoSingleton.getInstance(getActivity());
+	    ShakeEnabler.startListening(getActivity());
 	}
 
 	@Override
@@ -47,8 +53,10 @@ public class LoginFragment extends Fragment {
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
 	    if (state.isOpened()) {
 	        Log.i(TAG, "Logged in...");
+	        anno.setupWithUserInfo(email, name, image_url, "io.usersource.demo", "usersource");
 	    } else if (state.isClosed()) {
 	        Log.i(TAG, "Logged out...");
+	        anno.setupAnonymousUserWithTeamCredentials("io.usersource.demo", "usersource");
 	    }
 	}
 
