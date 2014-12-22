@@ -3,9 +3,11 @@ package io.usersource.demoapp;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
+import android.view.MenuItem;
 
 public class LoginActivity extends FragmentActivity {
 	private LoginFragment loginFragment;
+	static Menu mainMenu;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +24,31 @@ public class LoginActivity extends FragmentActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
+		updateMenuItemTitle(menu);
+		mainMenu = menu;
 		return true;
+	}
+
+	public static void updateMenuItemTitle(Menu menu) {
+		menu = (menu == null) ? mainMenu : menu;
+		if (LoginFragment.sessionState != null && menu != null) {
+			if (LoginFragment.sessionState.isOpened()) {
+				menu.getItem(0).setTitle(R.string.facebook_logout);
+			} else if (LoginFragment.sessionState.isClosed()) {
+				menu.getItem(0).setTitle(R.string.facebook_login);
+			}
+		}
+	}
+
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		if (item.getTitle() == getString(R.string.action_settings)) {
+			return true;
+		} else if (item.getTitle() == getString(R.string.facebook_login)
+				|| (item.getTitle() == getString(R.string.facebook_logout))) {
+			loginFragment.authButton.performClick();
+			return true;
+		}
+		return false;
 	}
 }

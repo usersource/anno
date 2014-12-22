@@ -28,6 +28,9 @@ public class LoginFragment extends Fragment {
 	private UiLifecycleHelper uiHelper;
 	private AnnoSingleton anno = null;
 
+	LoginButton authButton;
+	static SessionState sessionState;
+
 	String name, email, image_url;
 
 	@Override
@@ -43,7 +46,7 @@ public class LoginFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.main, container, false);
 
-		LoginButton authButton = (LoginButton) view.findViewById(R.id.authButton);
+		authButton = (LoginButton) view.findViewById(R.id.authButton);
 		authButton.setReadPermissions(Arrays.asList("public_profile", "email"));
 		authButton.setFragment(this);
 
@@ -51,6 +54,8 @@ public class LoginFragment extends Fragment {
 	}
 
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
+		sessionState = state;
+		LoginActivity.updateMenuItemTitle(null);
 	    if (state.isOpened()) {
 	        Log.i(TAG, "Logged in...");
 	        anno.setupWithUserInfo(email, name, image_url, "io.usersource.demo", "usersource");
