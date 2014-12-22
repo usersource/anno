@@ -3,5 +3,6 @@
 
     <string name="app_name">UserSourceDemoApp</string>
     <string name="facebook_app_id">299826953549470</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

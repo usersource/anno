@@ -2,6 +2,7 @@ package io.usersource.demoapp;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.Menu;
 
 public class LoginActivity extends FragmentActivity {
 	private LoginFragment loginFragment;
@@ -16,5 +17,11 @@ public class LoginActivity extends FragmentActivity {
 	    } else {
 	        loginFragment = (LoginFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
 	    }
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
 	}
 }
