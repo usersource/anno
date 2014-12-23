@@ -9,4 +9,6 @@ public class AppConstant {
 	public static final int GRID_PADDING = 4;
 
 	public static final List<String> FILE_EXTN = Arrays.asList("jpg", "jpeg", "png");
+
+	public static final int MAX_IMAGE_COUNT = 21;
 }

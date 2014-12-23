@@ -40,9 +40,11 @@ public class Utils {
 						if (file.isDirectory()) {
 							File[] listSubFiles = file.listFiles();
 							if (listSubFiles.length > 0) {
+								int imageCount = 0;
 								for (File subFile : listSubFiles) {
 									String filePath = subFile.getAbsolutePath();
-									if (IsSupportedFile(filePath)) {
+									if (IsSupportedFile(filePath) && imageCount <= AppConstant.MAX_IMAGE_COUNT) {
+										imageCount += 1;
 										filePaths.add(filePath);
 									}
 								}
