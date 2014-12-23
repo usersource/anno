@@ -32,6 +32,7 @@
         <activity
             android:name="io.usersource.demoapp.FullScreenViewActivity"
             android:theme="@android:style/Theme.Holo.NoActionBar" />
+        <activity android:name="io.usersource.demoapp.SettingsActivity" />
 
         <activity android:name="io.usersource.anno.CommunityActivity" />
         <activity android:name="io.usersource.anno.AnnoDrawActivity" />

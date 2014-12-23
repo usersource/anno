@@ -1,5 +1,6 @@
 package io.usersource.demoapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -43,6 +44,8 @@ public class LoginActivity extends FragmentActivity {
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if (item.getTitle() == getString(R.string.action_settings)) {
+			Intent intent = new Intent(this, SettingsActivity.class);
+			this.startActivity(intent);
 			return true;
 		} else if (item.getTitle() == getString(R.string.facebook_login)
 				|| (item.getTitle() == getString(R.string.facebook_logout))) {
