@@ -12,28 +12,39 @@ import android.view.Display;
 import android.view.WindowManager;
 
 public class Utils {
-	private Context _context;
+	private static Utils instance = null;
+	private static Context _context;
+	public static ArrayList<String> filePaths;
 
-	public Utils(Context context) {
-		this._context = context;
+	public Utils() {
+	}
+
+	public static Utils getInstance(Context context) {
+		if (instance == null) {
+			instance = new Utils();
+			_context = context;
+		}
+		return instance;
 	}
 
 	public ArrayList<String> getFilePaths() {
-		ArrayList<String> filePaths = new ArrayList<String>();
+		if (filePaths == null) {
+			filePaths = new ArrayList<String>();
 
-		File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+			File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 
-		if (directory.isDirectory()) {
-			File[] listFiles = directory.listFiles();
-			if (listFiles.length > 0) {
-				for (File file : listFiles) {
-					if (file.isDirectory()) {
-						File[] listSubFiles = file.listFiles();
-						if (listSubFiles.length > 0) {
-							for (File subFile : listSubFiles) {
-								String filePath = subFile.getAbsolutePath();
-								if (IsSupportedFile(filePath)) {
-									filePaths.add(filePath);
+			if (directory.isDirectory()) {
+				File[] listFiles = directory.listFiles();
+				if (listFiles.length > 0) {
+					for (File file : listFiles) {
+						if (file.isDirectory()) {
+							File[] listSubFiles = file.listFiles();
+							if (listSubFiles.length > 0) {
+								for (File subFile : listSubFiles) {
+									String filePath = subFile.getAbsolutePath();
+									if (IsSupportedFile(filePath)) {
+										filePaths.add(filePath);
+									}
 								}
 							}
 						}

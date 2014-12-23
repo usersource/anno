@@ -18,7 +18,6 @@ public class LoginActivity extends FragmentActivity {
 	private LoginFragment loginFragment;
 	static Menu mainMenu;
 
-	private Utils utils;
     private ArrayList<String> imagePaths = new ArrayList<String>();
     private GridViewAdapter adapter;
     private GridView gridView;
@@ -30,9 +29,8 @@ public class LoginActivity extends FragmentActivity {
 		setContentView(R.layout.main);
 		
 		gridView = (GridView) findViewById(R.id.gridView);
-        utils = new Utils(this); 
         InitilizeGridLayout();
-        imagePaths = utils.getFilePaths();
+        imagePaths = Utils.getInstance(this).getFilePaths();
         adapter = new GridViewAdapter(LoginActivity.this, imagePaths, columnWidth);
         gridView.setAdapter(adapter);
 
@@ -48,7 +46,8 @@ public class LoginActivity extends FragmentActivity {
 		Resources r = getResources();
 		float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, AppConstant.GRID_PADDING, r.getDisplayMetrics());
 
-		columnWidth = (int) ((utils.getScreenWidth() - ((AppConstant.NUM_OF_COLUMNS + 1) * padding)) / AppConstant.NUM_OF_COLUMNS);
+		int screenWidth = Utils.getInstance(this).getScreenWidth();
+		columnWidth = (int) ((screenWidth - ((AppConstant.NUM_OF_COLUMNS + 1) * padding)) / AppConstant.NUM_OF_COLUMNS);
 
 		gridView.setNumColumns(AppConstant.NUM_OF_COLUMNS);
 		gridView.setColumnWidth(columnWidth);
