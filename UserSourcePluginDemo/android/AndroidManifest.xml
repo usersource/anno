@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="9"
+        android:minSdkVersion="11"
         android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -28,6 +28,10 @@
             </intent-filter>
         </activity>
         <activity android:name="com.facebook.LoginActivity" />
+        
+        <activity
+            android:name="io.usersource.demoapp.FullScreenViewActivity"
+            android:theme="@android:style/Theme.Holo.NoActionBar" />
 
         <activity android:name="io.usersource.anno.CommunityActivity" />
         <activity android:name="io.usersource.anno.AnnoDrawActivity" />

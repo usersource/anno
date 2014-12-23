@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.View;
@@ -66,9 +67,9 @@ public class GridViewAdapter extends BaseAdapter {
 
 		@Override
 		public void onClick(View v) {
-			/*Intent i = new Intent(_activity, FullScreenViewActivity.class);
+			Intent i = new Intent(_activity, FullScreenViewActivity.class);
 			i.putExtra("position", _postion);
-			_activity.startActivity(i);*/
+			_activity.startActivity(i);
 		}
 
 	}
