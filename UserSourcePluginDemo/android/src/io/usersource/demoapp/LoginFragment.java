@@ -112,6 +112,8 @@ public class LoginFragment extends Fragment {
 			Request detailRequest = getUserProfileDetails(session);
 			requestBatch.add(detailRequest);
 			requestBatch.executeAsync();
+		} else {
+			onSessionStateChange(state);
 		}
 	}
 
