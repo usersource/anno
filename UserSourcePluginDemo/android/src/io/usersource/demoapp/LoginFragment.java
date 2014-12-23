@@ -86,7 +86,7 @@ public class LoginFragment extends Fragment {
 		gridView.setVerticalSpacing((int) padding);
 	}
 
-	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
+	private void onSessionStateChange(SessionState state) {
 		sessionState = state;
 		LoginActivity.updateMenuItemTitle(null);
 	    if (state.isOpened()) {
@@ -100,10 +100,10 @@ public class LoginFragment extends Fragment {
 
 	private Session.StatusCallback callback = new Session.StatusCallback() {
 	    @Override
-	    public void call(Session session, SessionState state, Exception exception) {
-	        onSessionStateChange(session, state, exception);
-	        getUserInfo(session, state);
-	    }
+		public void call(Session session, SessionState state, Exception exception) {
+			sessionState = state;
+			getUserInfo(session, state);
+		}
 
 		private void getUserInfo(Session session, SessionState state) {
 			if (state.isOpened()) {
@@ -126,6 +126,7 @@ public class LoginFragment extends Fragment {
 	                        Log.d(TAG, "Name: " + name);
 	                        Log.d(TAG, "Email: " + email);
 	                        Log.d(TAG, "Image URL: " + image_url);
+	                        onSessionStateChange(sessionState);
 	                    } catch (Exception e) {
 	                        e.printStackTrace();
 	                        Log.e(TAG, "Exception e");
@@ -142,7 +143,7 @@ public class LoginFragment extends Fragment {
 
 	    Session session = Session.getActiveSession();
 	    if (session != null && (session.isOpened() || session.isClosed()) ) {
-	        onSessionStateChange(session, session.getState(), null);
+	        onSessionStateChange(session.getState());
 	    }
 
 	    uiHelper.onResume();
