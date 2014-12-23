@@ -31,18 +31,16 @@ public class SettingsActivity extends Activity {
 
 		checkedTextView = (CheckedTextView) findViewById(R.id.allowShake);
 		checkedTextView.setChecked(AnnoSingleton.allowShake);
-		checkedTextView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				Boolean allowShakeValue = checkedTextView.isChecked();
-				checkedTextView.setChecked(allowShakeValue);
-				shakeSensitivityLayout.setClickable(allowShakeValue);
-				annoSingleton.saveAllowShake(allowShakeValue);
-			}
-		});
 
 		shakeValueTextView = (TextView) findViewById(R.id.shakeSensitivityValue);
 		shakeValueTextView.setText(AnnoSingleton.shakeSensitivityValues.get(AnnoSingleton.shakeValue));
+	}
+
+	public void toggleAllowShake(View view) {
+		Boolean allowShakeValue = !checkedTextView.isChecked();
+		checkedTextView.setChecked(allowShakeValue);
+		shakeSensitivityLayout.setClickable(allowShakeValue);
+		annoSingleton.saveAllowShake(allowShakeValue);
 	}
 
 	public void showShakeSensitivityDialog(View view) {
