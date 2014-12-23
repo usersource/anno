@@ -256,7 +256,7 @@ public class AnnoSingleton {
 
 	public void showNewMyActivityNotification() {
 		String uri = cloudHost + UNREAD_URL;
-		uri.concat(String.format("?user_email=%s&team_key=%s", this.email, this.teamKey));
+		uri = String.format("%s?user_email=%s&team_key=%s", uri, this.email, this.teamKey);
 		new makeHTTPCall().execute(uri);
 	}
 
