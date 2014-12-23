@@ -104,47 +104,48 @@ public class LoginFragment extends Fragment {
 			sessionState = state;
 			getUserInfo(session, state);
 		}
-
-		private void getUserInfo(Session session, SessionState state) {
-			if (state.isOpened()) {
-				RequestBatch requestBatch = new RequestBatch();
-				Request detailRequest = getUserProfileDetails(session);
-				requestBatch.add(detailRequest);
-				requestBatch.executeAsync();
-			}
-		}
-
-		private Request getUserProfileDetails(Session session) {
-			return Request.newMeRequest(session, new Request.GraphUserCallback() {
-	            @Override
-	            public void onCompleted(GraphUser user, Response response) {
-	                if (response != null) {
-	                    try {
-	                        name = user.getName();
-	                        email = (String) user.getProperty("email");
-							image_url = "http://graph.facebook.com/" + user.getId() + "/picture";
-	                        Log.d(TAG, "Name: " + name);
-	                        Log.d(TAG, "Email: " + email);
-	                        Log.d(TAG, "Image URL: " + image_url);
-	                        onSessionStateChange(sessionState);
-	                    } catch (Exception e) {
-	                        e.printStackTrace();
-	                        Log.e(TAG, "Exception e");
-	                    }
-	                }
-	            }
-	        });
-		}
 	};
+
+	private void getUserInfo(Session session, SessionState state) {
+		if (state.isOpened()) {
+			RequestBatch requestBatch = new RequestBatch();
+			Request detailRequest = getUserProfileDetails(session);
+			requestBatch.add(detailRequest);
+			requestBatch.executeAsync();
+		}
+	}
+
+	private Request getUserProfileDetails(Session session) {
+		return Request.newMeRequest(session, new Request.GraphUserCallback() {
+            @Override
+            public void onCompleted(GraphUser user, Response response) {
+                if (response != null) {
+                    try {
+                        name = user.getName();
+                        email = (String) user.getProperty("email");
+						image_url = "http://graph.facebook.com/" + user.getId() + "/picture";
+                        Log.d(TAG, "Name: " + name);
+                        Log.d(TAG, "Email: " + email);
+                        Log.d(TAG, "Image URL: " + image_url);
+                        onSessionStateChange(sessionState);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "Exception e");
+                    }
+                }
+            }
+        });
+	}
 
 	@Override
 	public void onResume() {
 	    super.onResume();
 
 	    Session session = Session.getActiveSession();
-	    if (session != null && (session.isOpened() || session.isClosed()) ) {
-	        onSessionStateChange(session.getState());
-	    }
+		if (session != null && (session.isOpened() || session.isClosed())) {
+			sessionState = session.getState();
+			getUserInfo(session, sessionState);
+		}
 
 	    uiHelper.onResume();
 	}
