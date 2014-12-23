@@ -260,7 +260,6 @@ public class AnnoSingleton {
 
 	private class makeHTTPCall extends AsyncTask<String, Integer, String> {
 		protected String doInBackground(String... urls) {
-			Log.e(AnnoSingleton.TAG, urls[0]);
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpGet httpGet = new HttpGet(urls[0]);
 

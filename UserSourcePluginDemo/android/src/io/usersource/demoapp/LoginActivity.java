@@ -1,38 +1,17 @@
 package io.usersource.demoapp;
 
-import io.usersource.demoapp.adapter.GridViewAdapter;
-import io.usersource.demoapp.helper.AppConstant;
-import io.usersource.demoapp.helper.Utils;
-
-import java.util.ArrayList;
-
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.GridView;
 
 public class LoginActivity extends FragmentActivity {
 	private LoginFragment loginFragment;
 	static Menu mainMenu;
 
-    private ArrayList<String> imagePaths = new ArrayList<String>();
-    private GridViewAdapter adapter;
-    private GridView gridView;
-    private int columnWidth;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
-		
-		gridView = (GridView) findViewById(R.id.gridView);
-        InitilizeGridLayout();
-        imagePaths = Utils.getInstance(this).getFilePaths();
-        adapter = new GridViewAdapter(LoginActivity.this, imagePaths, columnWidth);
-        gridView.setAdapter(adapter);
 
 	    if (savedInstanceState == null) {
 	        loginFragment = new LoginFragment();
@@ -40,21 +19,6 @@ public class LoginActivity extends FragmentActivity {
 	    } else {
 	        loginFragment = (LoginFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
 	    }
-	}
-
-	private void InitilizeGridLayout() {
-		Resources r = getResources();
-		float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, AppConstant.GRID_PADDING, r.getDisplayMetrics());
-
-		int screenWidth = Utils.getInstance(this).getScreenWidth();
-		columnWidth = (int) ((screenWidth - ((AppConstant.NUM_OF_COLUMNS + 1) * padding)) / AppConstant.NUM_OF_COLUMNS);
-
-		gridView.setNumColumns(AppConstant.NUM_OF_COLUMNS);
-		gridView.setColumnWidth(columnWidth);
-		gridView.setStretchMode(GridView.NO_STRETCH);
-		gridView.setPadding((int) padding, (int) padding, (int) padding, (int) padding);
-		gridView.setHorizontalSpacing((int) padding);
-		gridView.setVerticalSpacing((int) padding);
 	}
 
 	@Override
