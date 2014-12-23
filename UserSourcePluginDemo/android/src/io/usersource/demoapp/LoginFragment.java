@@ -146,7 +146,7 @@ public class LoginFragment extends Fragment {
 	    Session session = Session.getActiveSession();
 		if (session != null && (session.isOpened() || session.isClosed())) {
 			sessionState = session.getState();
-			getUserInfo(session, sessionState);
+			LoginActivity.updateMenuItemTitle(null);
 		}
 
 	    uiHelper.onResume();
