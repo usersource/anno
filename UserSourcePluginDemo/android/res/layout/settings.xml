@@ -12,12 +12,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_margin="20dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
         android:checkMark="?android:attr/listChoiceIndicatorMultiple"
         android:checked="true"
         android:clickable="true"
+        android:gravity="center_vertical"
         android:onClick="toggleAllowShake"
         android:text="Allow Shake"
+        android:textSize="16sp"
+        android:textStyle="normal"
         tools:ignore="HardcodedText,ObsoleteLayoutParam" />
 
     <View
@@ -36,8 +42,13 @@
             android:id="@+id/shakeSensitivityLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
             android:text="Shake Sensitivity"
+            android:textSize="16sp"
+            android:textStyle="normal"
             tools:ignore="HardcodedText" />
 
         <TextView
@@ -45,9 +56,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_margin="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
             android:layout_toLeftOf="@+id/shakeSensitivityLabel"
             android:text="Shake"
+            android:textSize="16sp"
+            android:textStyle="normal"
             tools:ignore="HardcodedText,ObsoleteLayoutParam" />
 
         <View
