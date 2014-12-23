@@ -73,7 +73,7 @@ public class GridViewAdapter extends BaseAdapter {
 
 	}
 
-	public static Bitmap decodeFile(String filePath, int WIDTH, int HIGHT) {
+	public static Bitmap decodeFile(String filePath, int WIDTH, int HEIGHT) {
 		try {
 			File f = new File(filePath);
 			BitmapFactory.Options o = new BitmapFactory.Options();
@@ -81,10 +81,10 @@ public class GridViewAdapter extends BaseAdapter {
 			BitmapFactory.decodeStream(new FileInputStream(f), null, o);
 
 			final int REQUIRED_WIDTH = WIDTH;
-			final int REQUIRED_HIGHT = HIGHT;
+			final int REQUIRED_HEIGHT = HEIGHT;
 			int scale = 1;
-			/*while (o.outWidth / scale / 2 >= REQUIRED_WIDTH && o.outHeight / scale / 2 >= REQUIRED_HIGHT)
-				scale *= 2;*/
+			while (o.outWidth / scale / 2 >= REQUIRED_WIDTH && o.outHeight / scale / 2 >= REQUIRED_HEIGHT)
+				scale *= 2;
 
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = scale;
