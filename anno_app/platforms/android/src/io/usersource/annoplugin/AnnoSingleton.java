@@ -86,10 +86,10 @@ public class AnnoSingleton {
 		// data sturcture for shake settings
 		// { "shakeSettings" : { "<user_email>" : { "allowShake" : BOOL, "shakeValue" : int }}}
 		SharedPreferences sharedPref = appActivity.getPreferences(Context.MODE_PRIVATE);
-		String strJson = sharedPref.getString("shakeSettings", null);
+		String strJson = sharedPref.getString("shakeSettings", "");
 
 		try {
-			if (strJson != null) {
+			if (!strJson.isEmpty()) {
 				shakeSettingsData = new JSONObject(strJson);
 				shakeSettingsData = shakeSettingsData.getJSONObject(this.email);
 			} else {
