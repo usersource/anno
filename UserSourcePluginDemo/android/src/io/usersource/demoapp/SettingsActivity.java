@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckedTextView;
+import android.widget.TextView;
 
 public class SettingsActivity extends Activity {
 	private AnnoSingleton annoSingleton = null;
@@ -30,5 +31,8 @@ public class SettingsActivity extends Activity {
 				annoSingleton.saveAllowShake(checkedTextView.isChecked());
 			}
 		});
+
+		TextView shakeSensitivityValue = (TextView) findViewById(R.id.shakeSensitivityValue);
+		shakeSensitivityValue.setText(AnnoSingleton.shakeSensitivityValues.get(AnnoSingleton.shakeValue));
 	}
 }

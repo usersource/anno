@@ -5,6 +5,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import org.apache.http.HttpResponse;
@@ -48,7 +50,7 @@ public class AnnoSingleton {
 	Boolean unreadCountPresent;
 	Integer unreadCount;
 
-	String[] shakeSensitivityValues = { "1 Shake", "2 Shakes", "3 Shakes" };
+	public static List<String> shakeSensitivityValues = Arrays.asList("1 Shake", "2 Shakes", "3 Shakes");
 	JSONObject shakeSettingsData;
 	public static Boolean allowShake;
 	public static Integer shakeValue;
