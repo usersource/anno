@@ -121,8 +121,15 @@ public class AnnoSingleton {
 			shakeSettingsData.put("shakeValue", shakeValue);
 
 			SharedPreferences sharedPref = appActivity.getPreferences(Context.MODE_PRIVATE);
-			String strJson = sharedPref.getString("shakeSettings", null);
-			JSONObject tempShakeSettingsData = new JSONObject(strJson);
+			String strJson = sharedPref.getString("shakeSettings", "");
+
+			JSONObject tempShakeSettingsData;
+			if (strJson.isEmpty()) {
+				tempShakeSettingsData = new JSONObject();
+			} else {
+				tempShakeSettingsData = new JSONObject(strJson);
+			}
+
 			tempShakeSettingsData.put(this.email, shakeSettingsData);
 
 			SharedPreferences.Editor editor = sharedPref.edit();
