@@ -1,5 +1,9 @@
 package io.usersource.demoapp;
 
+import io.usersource.demoapp.adapter.GridViewAdapter;
+import io.usersource.demoapp.helper.AppConstant;
+import io.usersource.demoapp.helper.Utils;
+
 import java.util.ArrayList;
 
 import android.content.res.Resources;

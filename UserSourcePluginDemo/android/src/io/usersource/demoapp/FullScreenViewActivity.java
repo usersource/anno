@@ -1,5 +1,7 @@
 package io.usersource.demoapp;
 
+import io.usersource.demoapp.adapter.FullScreenImageAdapter;
+import io.usersource.demoapp.helper.Utils;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

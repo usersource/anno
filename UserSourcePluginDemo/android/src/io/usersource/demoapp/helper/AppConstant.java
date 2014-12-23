@@ -1,4 +1,4 @@
-package io.usersource.demoapp;
+package io.usersource.demoapp.helper;
 
 import java.util.Arrays;
 import java.util.List;

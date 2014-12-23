@@ -1,4 +1,6 @@
-package io.usersource.demoapp;
+package io.usersource.demoapp.adapter;
+
+import io.usersource.demoapp.R;
 
 import java.util.ArrayList;
 
