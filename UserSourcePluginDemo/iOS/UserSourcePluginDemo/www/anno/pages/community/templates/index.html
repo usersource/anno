@@ -1,0 +1,184 @@
+<div class="view mblView">
+    <script type="dojo/require">at: "dojox/mvc/at"</script>
+    <div id="headingStart" data-dojo-type="dojox/mobile/Heading" style="padding-top: 0px;height: 48px">
+        <table id="headingStartTable" width="100%" height="100%" style="border-spacing: 0px;">
+            <tr>
+                <td id="tdHeadingLeft" width="180">
+                    <table style="border-spacing: 0px">
+                        <tr>
+                            <td id="tdLogo">
+                                <span id="navBtnBackHome" class="icon-forward navBtnBack" style="display: none" data-dojo-props="back2:true" data-dojo-type="dojox.mobile.ToolBarButton"></span>
+                                <div id="annoLogoHome"></div>
+                            </td>
+                            <td>
+                                <span id="navLogoTextHome" class="headingTitle" style="float: none">UserSource</span>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td align="right" width2="60%">
+                    <table style="border-spacing: 0px" width="100%">
+                        <tr>
+                            <td id="tdTxtSearchAnno">
+                                <input id="txtSearchAnno" type="search" placeholder="search usersource" class="searchInput" style="display: none">
+                            </td>
+                            <td id="tdNavBtnBackFeeds" style="display: none;">
+                            	<div id="navBtnBackFeeds" style="width: 49px;"></div>
+                            	<div style="display: inline-block; vertical-align: top; font-size: 18px;">Feedback</div>
+                            </td>
+                            <td id="tdBarAddImage" width="60" align="center" style="padding-right: 6px;">
+                                <span id="barAddImage" class="barIcon icon-plus" style="font-size: 26px"></span>
+                                <div id="textNew" style="display: none;"></div>
+                            </td>
+                            <td id="tdBarMyStuff" width="60" align="center">
+                                <span id="barMyStuff" class="barIcon icon-stack3"></span>
+                                <div class="text-me" style="display: none;position: relative;">
+                                	Me
+                                	<div id="unreadCount" style="display: none;"></div>
+                                </div>
+                            </td>
+                            <td id="tdBarSearchAnno" width="60" align="center">
+                                <span id="barSearchAnno" class="barIcon icon-search" style="font-size: 33px;"></span>
+                            </td>
+                            <td id="tdBarSettings" width="60" align="center">
+                                <span id="barSettings" class="barIcon icon-cog" style="font-size: 28px;"></span>
+                            </td>
+                            <td id="tdBarMoreMenuHome" width="48" align="center" style="display:none;padding-top: 0px;">
+                                <div id="barMoreMenuHome" class="barMoreMenu"></div>
+                            </td>
+                            <td id="tdNavInfo" style="display: none;">
+                            	<span id="navInfo"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <div id="progressBar" style="position: absolute;top: 45px;" data-dojo-type="anno/common/SmoothProgressBar" data-dojo-props="width:600"></div>
+        <div id="pullToRefreshMsg" style="line-height: 48px;display: none;">Pull down to refresh</div>
+    </div>
+    <div id="searchAppNameContainer" style="display:none;height: 26px;padding-top: 0px;box-sizing: border-box;padding-left: 102px;padding-right:10px;background-color: black;font-size: 13pt;color: #A9A9A9;font-weight: bold;">
+        <span style="float: left">App:</span>
+        <span id="searchAppName" style="float: left;padding-left:4px;width:60%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis"></span>
+        <span id="closeSearchAppName" style="float: right;width: 40px;font-size: 16pt;">X</span>
+    </div>
+    <div id="searchSortsBarHome" style="height: 26px;-webkit-box-shadow:0px 6px 6px #888888;box-shadow: 0px 6px 6px #888888;position: relative;display: none;z-index: 10">
+        <table width="100%" height="100%" style="border-spacing: 0px;">
+            <tr>
+                <td width="33.3%" align="center" class="searchSortItemActive" style="border-left: none;">
+                    <div id="searchSortsBarRecent">Recent</div>
+                </td>
+                <td width="33.3%" align="center" style="border-left: none;">
+                    <div id="searchSortsBarActive">Active</div>
+                </td>
+                <td width="33.3%" align="center" style="border-left: none;border-right: none;">
+                    <div id="searchSortsBarPopular">Popular</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="noSearchResultContainer" style="display:none;text-align: center;margin-top: 20px;color: #D37011">
+        <div>No items matched your search.</div>
+    </div>
+	<div id="listContainerStart" style="width: 100%;overflow: auto" class="smooth_scroll">
+		<div id="listContainerStart_middle" style="width: 100%;height: 100%;overflow: scroll;" class="smooth_scroll">
+			<div id="listContainerStart_inner">
+				<ul data-dojo-type="dojox/mobile/EdgeToEdgeList">
+					<div class="fieldset"
+					data-dojo-type="dojox/mvc/Repeat"
+					data-dojo-props="exprchar: '#', children: this.loadedModels.events.model">
+						<li id="event#{this.index}" class="row #{this.ref[this.index].readStatusClass}"
+						data-dojo-type="dojox/mobile/ListItem"
+						data-dojo-props="transition:'slide',variableHeight:true,clickable:true,noArrow:true,transitionOptions:{target:'detail',url:'#detail',params:{cursor:'#{this.index}'}},onClick:annoRead"
+						style="padding: 6px;">
+							<div class="infoContainer">
+								<table style="width: 100%;table-layout: fixed;">
+									<tr>
+										<td width="40" align="center" style="vertical-align: top; padding-top: 5px;">
+											<span data-dojo-props="class: at('rel:#{this.index}', 'annoIcon')" data-dojo-type="dojox/mvc/Output" class="annoListItemIcon"></span>
+											<img class="appIconImage" data-dojo-type="dojox/mvc/Output" style="width: 40px;height: 40px;border-radius: 8px;" data-dojo-props="src: at('rel:#{this.index}', 'app_icon_url'), class: at('rel:#{this.index}', 'appIconClass')" />
+											<span data-dojo-props="class: at('rel:#{this.index}', 'userProfile')" data-dojo-type="dojox/mvc/Output" class="icon-user defaultUserImage"></span>
+											<img class="userProfileImage" data-dojo-type="dojox/mvc/Output" data-dojo-props="src: at('rel:#{this.index}', 'author_image_url'), class: at('rel:#{this.index}', 'userProfileClass')" />
+										</td>
+										<td width="95%">
+											<table style="width: 100%;table-layout: fixed;">
+												<tr>
+													<td style="width: 100%;">
+														<div class="listTitle" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:#{this.index}', 'annoText')"></div>
+													</td>
+												</tr>
+											</table>
+											<table style="width: 100%;table-layout: fixed;font-size: 14px;">
+												<tr>
+													<td class="tdListAppName" style="width: 42%;">
+														<div class="listAppName" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:#{this.index}', 'app')"></div>
+													</td>
+													<td class="tdListAuthor" style="width: 42%;">
+														<div class="listAuthor" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:#{this.index}', 'author')" style="display: inline-block;"></div>
+														<div class="circleLevelSep" data-dojo-type="dojox/mvc/Output" 
+															data-dojo-props="value: at('rel:#{this.index}', 'circle_level_sep_value')"
+															style="display: none;vertical-align: top;"></div>
+														<div class="circleLevelName" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:#{this.index}', 'circle_level_value')" style="display: none;vertical-align: top;"></div>
+													</td>
+													<td style="width: 16%;text-align: right;">
+														<div class="listAuthor" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:#{this.index}', 'created')"></div>
+													</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</li>
+					</div>
+				</ul>
+			</div>
+		</div>
+	</div>
+    <div id="menusDialog" data-dojo-type="dojox/mobile/SimpleDialog" style="display: none;width: 200px;height: 116px;padding: 0px;border:2px solid black;border-top-color:black ">
+        <div id="menuItemIntro" class="menuItem">Intro</div>
+        <div id="menuItemFeedback" class="menuItem">Feedback</div>
+        <div id="menuItemSettings" class="menuItem">Settings</div>
+    </div>
+    <div id="appNameDialog" data-dojo-type="dojox/mobile/SimpleDialog" style="display: none;padding: 4px;">
+        <div id="sdTitle">
+            <div style="padding-left: 20px;padding-top: 16px;"><span class="icon-filter"></span><span style="padding-left: 10px">Filter by App</span></div>
+            <div style="padding-left: 40px;padding-top: 16px;padding-bottom: 10px">
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <input id="txtSearchAppName" type="search" placeholder="App name" class="searchInput">
+                        </td>
+                        <td width="50">
+                            <span id="icoSearchAppName" class="icon-search" style="font-size: 30px;"></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div id="sdAppList" style="overflow-y:auto">
+            <div id="sdAppListContent">
+            </div>
+        </div>
+        <div id="sdBottom" style="padding-left: 20px">
+            <div style="text-align: center">
+                <input id="chkLimitToMyApps" type="checkbox" data-dojo-type="dojox/mobile/CheckBox" data-dojo-props="onChange:onChkLimitToMyApps">
+                <label for="chkLimitToMyApps">Limit to my apps</label>
+            </div>
+            <div style="text-align: center;padding-top: 10px">
+                <button class="newbtn" id="btnAppNameDialogCancel" type="button">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="newbtn disabledBtn" id="btnAppNameDialogDone" disabled="disabled" type="button">Done</button>
+            </div>
+        </div>
+    </div>
+    <div id="errorWindow" style="position: absolute;top: 48px;display:none;">
+		<table width="100%" height="100%" cellspacing="0" cellpadding="0" style="table-layout: fixed;">
+			<tr>
+				<td>
+					<div id="errorMessage" style="padding: 10px;"></div>
+					<button id="btnErrorAction" class="btn"></button>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>

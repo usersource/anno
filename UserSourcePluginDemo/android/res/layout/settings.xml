@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:orientation="vertical" >
+
+    <CheckedTextView
+        android:id="@+id/allowShake"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:checked="true"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:onClick="toggleAllowShake"
+        android:text="Allow Shake"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        tools:ignore="HardcodedText,ObsoleteLayoutParam" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
+
+    <RelativeLayout
+        android:id="@+id/shakeSensitivity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:onClick="showShakeSensitivityDialog"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/shakeSensitivityLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
+            android:text="Shake Sensitivity"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/shakeSensitivityValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_toLeftOf="@+id/shakeSensitivityLabel"
+            android:text="Shake"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            tools:ignore="HardcodedText,ObsoleteLayoutParam" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/shakeSensitivityLabel"
+            android:background="@android:color/darker_gray" />
+    </RelativeLayout>
+
+</LinearLayout>
