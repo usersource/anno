@@ -14,9 +14,10 @@
     "dojo/text!../../server-url.json",
     "dojo/text!../../strings.json",
     "dojo/text!../../device_list.json",
+    "dojo/text!../../api_url.json",
     "anno/common/DBUtil",
     "anno/common/GestureHandler"
-], function(lang, declare, connect, dom, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, pluginConfig, serverURLConfig, stringsRes, deviceList, DBUtil, GestureHandler){
+], function(lang, declare, connect, dom, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, pluginConfig, serverURLConfig, stringsRes, deviceList, APIURL, DBUtil, GestureHandler){
 
     String.prototype.replaceAt = function(startIndex, replaceCount, character) {
         return this.substr(0, startIndex) + character + this.substr(startIndex + replaceCount);
@@ -26,6 +27,8 @@
     stringsRes = dojoJson.parse(stringsRes);
     deviceList = dojoJson.parse(deviceList);
     pluginConfig = dojoJson.parse(pluginConfig);
+    APIURL = dojoJson.parse(APIURL);
+
     // console.log("using server Url config:" + JSON.stringify(serverURLConfig));
     var popularTags = [], teamUsers = [], annoEngagedUsers = [];
     var suggestTags = false, countToSuggestTags = 0, tagStringArray = [];
@@ -137,24 +140,6 @@
                 annodraw: 'annoDraw',
                 auth: 'auth'
             }
-        },
-        APIURL : {
-            "account.account.authenticate" : { "url" : "/account/1.0/account/authenticate", "method" : "POST" },
-            "anno.anno.list" : { "url" : "/anno/1.0/anno", "method" : "GET" },
-            "tag.tag.popular" : { "url" : "/tag/1.0/tag_popular", "method" : "GET" },
-            "anno.anno.insert" : { "url" : "/anno/1.0/anno", "method" : "POST" },
-            "anno.anno.merge" : { "url" : "/anno/1.0/anno", "method" : "POST", "url_fields" : ["id"] },
-            "anno.anno.delete" : { "url" : "/anno/1.0/anno", "method" : "DELETE", "url_fields" : ["id"] },
-            "anno.anno.get" : { "url" : "/anno/1.0/anno", "method" : "GET", "url_fields" : ["id"] },
-            "anno.anno.users" : { "url" : "/anno/1.0/anno/users", "method" : "GET", "url_fields" : ["id"] },
-            "followup.followup.insert" : { "url" : "/followup/1.0/followup", "method" : "POST" },
-            "vote.vote.insert" : { "url" : "/vote/1.0/vote", "method" : "POST" },
-            "vote.vote.delete" : { "url" : "/vote/1.0/vote", "method" : "DELETE" },
-            "flag.flag.insert" : { "url" : "/flag/1.0/flag", "method" : "POST" },
-            "flag.flag.delete" : { "url" : "/flag/1.0/flag", "method" : "DELETE" },
-            "anno.anno.mystuff" : { "url" : "/anno/1.0/anno_my_stuff", "method" : "GET" },
-            "anno.user.unread" : { "url" : "/anno/1.0/user/unread", "method" : "GET" },
-            "user.community.users" : { "url" : "/user/1.0/user/community/users", "method" : "GET" }
         },
         dataCollectorURL : {
             "main_page" : "http://datacollector.ignitesol.com/collector/update"
@@ -1023,7 +1008,7 @@
             }
 
             var root_url = this.getCEAPIConfig().apiRoot,
-                endpoint_info = this.APIURL[config.method],
+                endpoint_info = APIURL[config.method],
                 endpoint_url = root_url + endpoint_info.url,
                 endpoint_method = endpoint_info.method;
 
