@@ -109,7 +109,7 @@ def auth_user(headers):
 def get_user_team_token(email, password, team_key, team_secret, display_name, image_url):
     token = dict(token_type="Basic", expires_in=3600 * 24)
     user_info_data = [email, password, team_key, team_secret, display_name, image_url]
-    token["access_token"] = "_$_".join(user_info_data).encode("base64", "strict")
+    token["access_token"] = base64.b64encode("_$_".join(user_info_data))
     return token
 
 def get_country_by_coordinate(latitude, longitude):
