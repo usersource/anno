@@ -9,11 +9,14 @@ from helper.utils import validate_team_secret
 from helper.utils import md5
 from helper.utils import get_endpoints_current_user
 from helper.utils import reset_password
+from helper.utils import get_user_team_token
 from helper.utils_enum import AuthSourceType
 from model.user import User
 from model.community import Community
 from model.userrole import UserRole
 from message.account_message import AccountMessage
+from message.account_message import AccountAuthenticateMessage
+from message.account_message import UserTeamTokenMessage
 from message.user_message import UserMessage
 
 
@@ -73,6 +76,31 @@ class AccountApi(remote.Service):
                 raise endpoints.UnauthorizedException("Authentication failed. Email and password are not matched.")
 
         return UserMessage(id=user.key.id(), display_name=user.display_name)
+
+    @endpoints.method(AccountMessage, AccountAuthenticateMessage, path="account/dashboard/authenticate",
+                      http_method="POST", name="account.dashboard.authenticate")
+    def dashboard_authenticate(self, request):
+        email = request.user_email
+        password = request.password
+
+        authenticated = False
+        teams = []
+
+        users = User.get_all_user_by_email(email, password)
+
+        for user in users:
+            team = Community.getCommunityFromTeamKey(user.account_type)
+            if team:
+                userTeamToken = get_user_team_token(email, password, team.team_key,
+                                                    team.team_secret, user.display_name, user.image_url)
+                teams.append(UserTeamTokenMessage(display_name=user.display_name,
+                                                  image_url=user.image_url,
+                                                  team_name=team.name,
+                                                  team_key=team.team_key,
+                                                  user_team_token=userTeamToken))
+
+        if len(teams): authenticated = True
+        return AccountAuthenticateMessage(authenticated=authenticated, teams=teams)
 
     @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/forgot_detail',
                       http_method='POST', name='account.forgot_detail')

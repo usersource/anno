@@ -106,6 +106,12 @@ def auth_user(headers):
 
     return user
 
+def get_user_team_token(email, password, team_key, team_secret, display_name, image_url):
+    token = dict(token_type="Basic", expires_in=3600 * 24)
+    user_info_data = [email, password, team_key, team_secret, display_name, image_url]
+    token["access_token"] = "_$_".join(user_info_data).encode("base64", "strict")
+    return token
+
 def get_country_by_coordinate(latitude, longitude):
     """
     This function returns country information by the specified coordinate.

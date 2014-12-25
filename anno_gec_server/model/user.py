@@ -34,6 +34,14 @@ class User(ndb.Model):
         return query.get()
 
     @classmethod
+    def get_all_user_by_email(cls, email, password):
+        query = cls.query().filter(ndb.AND(cls.user_email == email,
+                                           cls.password == password,
+                                           cls.auth_source == AuthSourceType.PLUGIN))
+
+        return query.fetch()
+
+    @classmethod
     def find_user_by_display_name(cls, display_name):
         return cls.query(User.display_name == display_name).get()
 
@@ -48,7 +56,7 @@ class User(ndb.Model):
         else:
             auth_source = AuthSourceType.GOOGLE
 
-        user = User(user_email=email, display_name=username, password=password, 
+        user = User(user_email=email, display_name=username, password=password,
                     auth_source=auth_source, account_type=account_type,
                     image_url=image_url)
         user.put()
