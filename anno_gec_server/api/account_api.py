@@ -2,6 +2,8 @@ import endpoints
 from protorpc import message_types
 from protorpc import remote
 
+import json
+
 from helper.settings import anno_js_client_id
 from helper.utils import validate_email
 from helper.utils import validate_password
@@ -97,7 +99,7 @@ class AccountApi(remote.Service):
                                                   image_url=user.image_url,
                                                   team_name=team.name,
                                                   team_key=team.team_key,
-                                                  user_team_token=userTeamToken))
+                                                  user_team_token=json.dumps(userTeamToken)))
 
         if len(teams): authenticated = True
         return AccountAuthenticateMessage(authenticated=authenticated, teams=teams)
