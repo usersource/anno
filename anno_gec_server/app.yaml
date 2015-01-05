@@ -25,6 +25,8 @@ handlers:
 - url: /docs
   static_dir: docs/build/html
   login: admin
+- url: /dashboard
+  static_dir: dashboard
 - url: /.*
   script: main.application
 
