@@ -11,14 +11,29 @@
     vertical-align: middle;
     text-align: center;
 }
-#login_inner {
+#usersource_logo {
+    width: 120px;
+    height: 120px;
+    display: inline-block;
+    background: url(../images/logo.png);
+    vertical-align: middle;
+}
+#title_text {
+    display: inline-block;
+    font-size: 3em;
+    font-weight: bold;
+    color: #f62;
+    margin-left: 20px;
+    vertical-align: middle;
+}
+#login_login_inner {
     width: 400px;
     margin: 0 auto;
     padding: 20px;
     border-radius: 8px;
     background: #fefead;
 }
-#login_inner input {
+#login_login_inner input {
     width: 380px;
     height: 50px;
     border-radius: 8px;
