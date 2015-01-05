@@ -16,9 +16,11 @@ from helper.utils_enum import AuthSourceType
 from model.user import User
 from model.community import Community
 from model.userrole import UserRole
+from model.anno import Anno
 from message.account_message import AccountMessage
 from message.account_message import AccountAuthenticateMessage
 from message.user_message import UserMessage
+from message.anno_api_messages import AnnoListMessage
 
 
 @endpoints.api(name='account', version='1.0', description='Account API',
@@ -84,6 +86,7 @@ class AccountApi(remote.Service):
         email = request.user_email
         password = request.password
         team_key = request.team_key
+        get_feeds = request.get_feeds or False
 
         respMessage = AccountAuthenticateMessage(authenticated=False)
         user = User.get_all_user_by_email(email, md5(password), team_key=team_key)
@@ -94,12 +97,14 @@ class AccountApi(remote.Service):
                 userTeamToken = get_user_team_token(email, password, team_key,
                                                     team.team_secret, user.display_name,
                                                     user.image_url)
+                feed_data = Anno.query_by_page(15, None, None, user, True) if get_feeds else AnnoListMessage()
                 respMessage = AccountAuthenticateMessage(authenticated=True,
                                                          display_name=user.display_name,
                                                          image_url=user.image_url,
                                                          team_name=team.name,
                                                          team_key=team_key,
-                                                         user_team_token=json.dumps(userTeamToken))
+                                                         user_team_token=json.dumps(userTeamToken),
+                                                         feed_data=feed_data)
 
         return respMessage
 
