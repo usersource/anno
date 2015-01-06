@@ -4,6 +4,24 @@
       <title>UserSource Dashboard</title>
       <link rel="stylesheet" type="text/css" href="css/main.css">
       <link rel="stylesheet" type="text/css" href="css/login.css">
+      <script type="text/javascript" src="js/lib/jquery.min.js"></script>
+      <script type="text/javascript" src="js/utils.js"></script>
+      <script type="text/javascript">
+          function authenticate_dashboard() {
+              var login_data = {
+                  "user_email" : $("#login_email").val(),
+                  "password" : $("#login_password").val(),
+                  "team_key" : $("#login_team_key").val()
+              };
+
+              call_server("account.dashboard.authenticate", login_data, false, function(resp) {
+                  console.log(resp);
+                  if ("user_team_token" in resp) {
+                      save_user_access_token(resp.user_team_token);
+                  }
+              });
+          }
+      </script>
    </head>
    <body>
      <div id="login_outer">
@@ -18,7 +36,7 @@
                 <input type="password" id="login_password" placeholder="Password"/>
                 <br/>
                 <input id="login_team_key" placeholder="Team Key"/>
-                <div id="login_button">Log In</div>
+                <div id="login_button" onclick="authenticate_dashboard();">Log In</div>
             </div>
         </div>
      </div>
