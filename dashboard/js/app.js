@@ -1,6 +1,6 @@
 var DashboardLogin = angular.module('DashboardLogin', ['DashboardConstantsModule']);
 
-DashboardLogin.controller('Login', ['$scope', '$http', '$window', '$location', 'DashboardConstants', function($scope, $http, $window, $location, DashboardConstants) {
+DashboardLogin.controller('Login', function($scope, $http, $window, $location, DashboardConstants) {
 	$scope.apiRoot = DashboardConstants.apiRoot[DashboardConstants.serverURLKey];
 	$scope.endpointData = DashboardConstants.endpointUrl["account.dashboard.authenticate"];
     $scope.url = $scope.apiRoot + "/" + $scope.endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + $scope.endpointData.path;
@@ -21,9 +21,10 @@ DashboardLogin.controller('Login', ['$scope', '$http', '$window', '$location', '
 
 		$http($scope.req).success(function(data, status) {
 			$scope.data = data;
+			DashboardLogin.factory('UserData', function() { return $scope.data; });
 			if ($scope.data.authenticated) {
 				$window.location.href = $location.absUrl().replace('login.html', 'index.html');
 			}
 		});
 	};
-}]);
+});
