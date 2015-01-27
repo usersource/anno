@@ -4,10 +4,13 @@ DashboardLogin.controller('Login', ['$scope', '$http', '$window', '$location', '
 	$scope.apiRoot = DashboardConstants.apiRoot[DashboardConstants.serverURLKey];
 	$scope.endpointData = DashboardConstants.endpointUrl["account.dashboard.authenticate"];
     $scope.url = $scope.apiRoot + "/" + $scope.endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + $scope.endpointData.path;
-    $scope.params = { "user_email" : $scope.email, "team_key" : $scope.teamkey, "password" : $scope.password };
 
 	$scope.authenticate_dashboard = function() {
-		$scope.params = { "user_email" : $scope.email, "team_key" : $scope.teamkey, "password" : $scope.password };
+		$scope.params = {
+			"user_email" : $scope.email,
+			"team_key" : $scope.teamkey,
+			"password" : $scope.password
+		};
 
 		$scope.req = {
 			method: $scope.endpointData.method,
@@ -16,8 +19,9 @@ DashboardLogin.controller('Login', ['$scope', '$http', '$window', '$location', '
 			data: $scope.params,
 		};
 
-		$http($scope.req).success(function(data, status){
-			if (data.authenticated) {
+		$http($scope.req).success(function(data, status) {
+			$scope.data = data;
+			if ($scope.data.authenticated) {
 				$window.location.href = $location.absUrl().replace('login.html', 'index.html');
 			}
 		});
