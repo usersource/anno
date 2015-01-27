@@ -7,13 +7,13 @@ DashboardConstantsModule.value("DashboardConstants", {
         "3" : "https://usersource-anno.appspot.com/_ah/api",
         "4" : "http://localhost:8081/_ah/api"
     },
-    apiUrl : {
+    serverURLKey: "3",
+    endpointVersion: "1.0",
+    endpointUrl : {
         "account.dashboard.authenticate" : {
             "root" : "account",
             "path" : "account/dashboard/authenticate",
             "method" : "POST"
         }
-    },
-    serverURLKey: "4",
-    apiVersion: "1.0"
+    }
 });

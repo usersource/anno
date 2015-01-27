@@ -1,30 +1,31 @@
 <!DOCTYPE html>
 <html ng-app="DashboardLogin">
-   <head>
-      <title>UserSource Dashboard</title>
-      <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'>
-      <link rel="stylesheet" type="text/css" href="css/main.css">
-      <link rel="stylesheet" type="text/css" href="css/login.css">
-      <script type="text/javascript" src="js/lib/angular.min.js"></script>
-      <script type="text/javascript" src="js/contstants.js"></script>
-      <script type="text/javascript" src="js/login.js"></script>
-   </head>
-   <body ng-controller="Login">
-     <div id="login_outer">
-        <div id="login_middle">
-            <div style="margin-bottom: 50px;">
-              <div id="usersource_logo"></div>
-              <div id="title_text">UserSource Dashboard</div>
-            </div>
-            <div id="login_login_inner">
-                <input ng-model="email" type="email" id="login_email" placeholder="Email Address"/>
-                <br/>
-                <input ng-model="password" type="password" id="login_password" placeholder="Password"/>
-                <br/>
-                <input ng-model="teamkey" id="login_team_key" placeholder="Team Key"/>
-                <div id="login_button" onclick="authenticate_dashboard();">Log In</div>
-            </div>
+  <head>
+    <title>UserSource Dashboard</title>
+    <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/login.css">
+    <script type="text/javascript" src="js/lib/angular.min.js"></script>
+    <script type="text/javascript" src="js/constants.js"></script>
+    <script type="text/javascript" src="js/login.js"></script>
+  </head>
+  <body ng-controller="Login">
+    <div class="header"></div>
+    <div id="login_outer">
+      <div id="login_middle">
+        <div style="margin-bottom: 50px;">
+          <div id="usersource_logo"></div>
+          <div id="title_text">UserSource Dashboard</div>
         </div>
-     </div>
-   </body>
+        <div id="login_login_inner">
+          <input ng-model="email" type="email" id="login_email" placeholder="Email Address"/>
+          <br/>
+          <input ng-model="password" type="password" id="login_password" placeholder="Password"/>
+          <br/>
+          <input ng-model="teamkey" type="text" id="login_team_key" placeholder="Team Key"/>
+          <div id="login_button" ng-click="authenticate_dashboard();">Log In</div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
