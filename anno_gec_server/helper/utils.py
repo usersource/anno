@@ -253,12 +253,16 @@ def getCommunityForApp(id=None, app_name=None):
 
     return app_community
 
-def getCommunityApps(community_id, app_count=None):
-    community = Community.get_by_id(community_id)
+def getCommunityApps(community_id=None, team_key=None, app_count=None):
+    if community_id:
+        community = Community.get_by_id(community_id)
+    elif team_key:
+        community = Community.query(Community.team_key == team_key).get()
+
     return community.apps[0:app_count] if app_count else community.apps
 
-def getAppInfo(community_id):
-    community_apps = getCommunityApps(community_id, app_count=1)
+def getAppInfo(community_id=None, team_key=None):
+    community_apps = getCommunityApps(community_id, team_key, app_count=1)
     if len(community_apps):
         appinfo = AppInfo.get_by_id(community_apps[0].id())
     else:
