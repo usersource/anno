@@ -17,8 +17,8 @@
         <div style="font-size: 150%; font-weight: bold; color: #f62; text-align: center;">ANNOT8</div>
       </div>
       <div class="col-md-2">
-        <img width="50px" height="50px" style="border-radius: 12px; vertical-align: top;" src="http://a2.mzstatic.com/us/r30/Purple3/v4/97/7d/f5/977df538-9256-feb7-4059-255f986d982a/icon175x175.png">
-        <div class="active" style="display: inline-block; margin-left: 18px;">ShowMate</div>
+        <img width="50px" height="50px" style="border-radius: 12px; vertical-align: top;" src="{{appInfo.icon_url}}">
+        <div class="active" style="display: inline-block; margin-left: 18px;">{{appInfo.name}}</div>
       </div>
       <div class="col-md-1"></div>
       <div class="col-md-1 active" style="text-align: center;">Feed</div>
@@ -26,10 +26,10 @@
       <div class="col-md-1" style="text-align: center;">Manage</div>
       <div class="col-md-1" style="text-align: center;">Profile</div>
       <div class="col-md-3" id="user_info">
-        <img width="45px" height="45px" style="border-radius: 25px;" src="http://graph.facebook.com/imranahmed1991/picture">
+        <img width="45px" height="45px" style="border-radius: 25px;" src="{{userData.image_url}}">
         <div style="display: inline-block; margin-left: 12px; vertical-align: middle;">
-          <div style="font-size: 18px; text-align: left;" class="active">Imran Ahmed</div>
-          <div style="font-size: 14px;">imran.ahmed@ignitesol.com</div>
+          <div style="font-size: 18px; text-align: left;" class="active">{{userData.display_name}}</div>
+          <div style="font-size: 14px;">{{userData.email}}</div>
         </div>
       </div>
     </div>

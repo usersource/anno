@@ -14,6 +14,11 @@ DashboardConstantsModule.value("DashboardConstants", {
             "root" : "account",
             "path" : "account/dashboard/authenticate",
             "method" : "POST"
+        },
+        "appinfo.appinfo.get" : {
+            "root" : "appinfo",
+            "path" : "appinfo/get",
+            "method" : "GET"
         }
     }
 });
