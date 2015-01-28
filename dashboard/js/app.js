@@ -15,8 +15,8 @@ Dashboard.controller('Login', function($scope, DashboardConstants, DataService) 
 });
 
 Dashboard.controller('Feed', function($scope, $window, DataService) {
+    $scope.userData = angular.fromJson($window.localStorage.user);
     DataService.getAppInfo($scope.userData.team_key, function(data) {
         $scope.appInfo = data;
     });
-    $scope.userData = angular.fromJson($window.localStorage.user);
 });
