@@ -2,16 +2,20 @@ var DataServiceModule = angular.module('DataServiceModule', ['DashboardConstants
 
 DataServiceModule.factory('DataService', function($http, $location, $window, DashboardConstants) {
     var apiRoot = DashboardConstants.apiRoot[DashboardConstants.serverURLKey];
+    var userInfo =  angular.fromJson($window.localStorage.user);
+    var userTeamToken = angular.fromJson(userInfo.user_team_token);
+
+    $http.defaults.headers.common.Authorization = userTeamToken.token_type + ' ' + userTeamToken.access_token;
+    $http.defaults.headers.common.contentType = 'application/json';
 
     function authenticateDashboard(params) {
         var endpointData = DashboardConstants.endpointUrl["account.dashboard.authenticate"];
         var url = apiRoot + "/" + endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + endpointData.path;
 
         var req = {
-            method: endpointData.method,
-            url: url,
-            headers: { 'Content-Type': 'application/json' },
-            data: params
+            method : endpointData.method,
+            url : url,
+            data : params
         };
 
         $http(req).then(function(resp) {
@@ -30,10 +34,10 @@ DataServiceModule.factory('DataService', function($http, $location, $window, Das
         var url = apiRoot + "/" + endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + endpointData.path;
 
         var req = {
-            method: endpointData.method,
-            url: url + '?team_key=' + team_key,
-            headers: { 'Content-Type': 'application/json' },
-            data: { team_key : team_key }
+            method : endpointData.method,
+            url : url,
+            params : { team_key : team_key },
+            cache : true
         };
 
         $http(req).then(function(resp) {
