@@ -43,4 +43,9 @@ Dashboard.controller('Feed', function($scope, $cookieStore, DataService) {
     DataService.getAppInfo($cookieStore.get('team_key'), function(data) {
         $scope.appInfo = data;
     });
+
+    DataService.getAnnos(function(data) {
+        $scope.annoList = data.anno_list;
+        console.log($scope.annoList);
+    });
 });

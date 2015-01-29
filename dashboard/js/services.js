@@ -81,11 +81,35 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
         });
     }
 
+    function getAnnos(callback) {
+        var endpointData = DashboardConstants.endpointUrl["anno.anno.list"];
+        var url = apiRoot + "/" + endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + endpointData.path;
+
+        var req = {
+            method : endpointData.method,
+            url : url,
+            params : {
+                is_plugin : true,
+                outcome : 'cursor,has_more,anno_list'
+            },
+            cache : true
+        };
+
+        $http(req).success(function(data, status, header, config) {
+            if (status == 200) {
+                callback(data);
+            }
+        }).error(function(data, status, header, config) {
+            console.error("Error while getting anno");
+        });
+    }
+
     return ({
         storeUserDataInCookies : storeUserDataInCookies,
         removeUserDataCookies : removeUserDataCookies,
         checkAuthentication : checkAuthentication,
         authenticateDashboard : authenticateDashboard,
-        getAppInfo : getAppInfo
+        getAppInfo : getAppInfo,
+        getAnnos : getAnnos
     });
 });
