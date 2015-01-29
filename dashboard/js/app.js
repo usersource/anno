@@ -15,7 +15,11 @@ Dashboard.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.headers.common.contentType = 'application/json';
 }]);
 
-Dashboard.controller('Login', function($scope, DashboardConstants, DataService) {
+Dashboard.controller('Login', function($scope, $cookieStore, DashboardConstants, DataService) {
+    $scope.initLogin = function() {
+        // DataService.checkAuthentication();
+    };
+
     $scope.authenticate_dashboard = function() {
         var params = {
             'user_email' : $scope.email,
@@ -27,9 +31,16 @@ Dashboard.controller('Login', function($scope, DashboardConstants, DataService) 
     };
 });
 
-Dashboard.controller('Feed', function($scope, $window, DataService) {
-    $scope.userData = angular.fromJson($window.localStorage.user);
-    DataService.getAppInfo($scope.userData.team_key, function(data) {
+Dashboard.controller('Feed', function($scope, $cookieStore, DataService) {
+    $scope.display_name = $cookieStore.get('user_display_name');
+    $scope.email = $cookieStore.get('user_email');
+    $scope.image_url = $cookieStore.get('user_image_url');
+
+    $scope.initLogin = function() {
+        // DataService.checkAuthentication();
+    };
+
+    DataService.getAppInfo($cookieStore.get('team_key'), function(data) {
         $scope.appInfo = data;
     });
 });

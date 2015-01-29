@@ -4,12 +4,37 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
     var apiRoot = DashboardConstants.apiRoot[DashboardConstants.serverURLKey];
 
     function storeUserDataInCookies(data) {
+        $cookieStore.put('authenticated', data.authenticated);
         $cookieStore.put('user_display_name', data.display_name);
         $cookieStore.put('user_email', data.email);
         $cookieStore.put('user_image_url', data.image_url);
         $cookieStore.put('team_key', data.team_key);
         $cookieStore.put('team_name', data.team_name);
         $cookieStore.put('user_team_token', angular.fromJson(data.user_team_token));
+    }
+
+    function removeUserDataCookies() {
+        $cookieStore.put('authenticated', false);
+        $cookieStore.remove('user_display_name');
+        $cookieStore.remove('user_email');
+        $cookieStore.remove('user_image_url');
+        $cookieStore.remove('team_key');
+        $cookieStore.remove('team_name');
+        $cookieStore.remove('user_team_token');
+    }
+
+    function checkAuthentication() {
+        var currentPath = $location.path();
+        if ($cookieStore.get('authenticated')) {
+            if (currentPath == 'login.html') {
+                $window.location.href = $location.absUrl().replace('login.html' , 'index.html');
+            }
+        } else {
+            if (currentPath == 'index.html') {
+                $window.location.href = $location.absUrl().replace('index.html' , 'login.html');
+                this.removeUserDataCookies();
+            }
+        }
     }
 
     function authenticateDashboard(params) {
@@ -58,6 +83,8 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
 
     return ({
         storeUserDataInCookies : storeUserDataInCookies,
+        removeUserDataCookies : removeUserDataCookies,
+        checkAuthentication : checkAuthentication,
         authenticateDashboard : authenticateDashboard,
         getAppInfo : getAppInfo
     });
