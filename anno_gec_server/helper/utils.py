@@ -108,7 +108,7 @@ def auth_user(headers):
 
 def get_user_team_token(email, password, team_key, team_secret, display_name, image_url):
     token = dict(token_type="Basic", expires_in=3600 * 24)
-    user_info_data = [email, password, team_key, team_secret, display_name, image_url]
+    user_info_data = ['plugin', email, password, team_key, team_secret, display_name, image_url]
     token["access_token"] = base64.b64encode("_$_".join(user_info_data))
     return token
 
@@ -172,7 +172,7 @@ def md5(content):
 
 
 def get_credential(headers):
-    authorization = headers.get("Authorization")
+    authorization = headers.get("Authorization", headers.get("authorization"))
     if authorization is None:
         raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
 
