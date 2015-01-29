@@ -2,11 +2,6 @@ var DataServiceModule = angular.module('DataServiceModule', ['DashboardConstants
 
 DataServiceModule.factory('DataService', function($http, $location, $window, DashboardConstants) {
     var apiRoot = DashboardConstants.apiRoot[DashboardConstants.serverURLKey];
-    var userInfo =  angular.fromJson($window.localStorage.user);
-    var userTeamToken = angular.fromJson(userInfo.user_team_token);
-
-    $http.defaults.headers.common.Authorization = userTeamToken.token_type + ' ' + userTeamToken.access_token;
-    $http.defaults.headers.common.contentType = 'application/json';
 
     function authenticateDashboard(params) {
         var endpointData = DashboardConstants.endpointUrl["account.dashboard.authenticate"];
@@ -18,14 +13,16 @@ DataServiceModule.factory('DataService', function($http, $location, $window, Das
             data : params
         };
 
-        $http(req).then(function(resp) {
-            if (resp.status == 200) {
-                resp.data['email'] = params.user_email;
-                $window.localStorage['user'] = angular.toJson(resp.data);
-                if (resp.data.authenticated) {
+        $http(req).success(function(data, status, header, config) {
+            if (status == 200) {
+                data['email'] = params.user_email;
+                $window.localStorage['user'] = angular.toJson(data);
+                if (data.authenticated) {
                     $window.location.href = $location.absUrl().replace('login.html', 'index.html');
                 }
             }
+        }).error(function(data, status, header, config) {
+            console.error("Invalid email or password");
         });
     }
 
@@ -40,10 +37,12 @@ DataServiceModule.factory('DataService', function($http, $location, $window, Das
             cache : true
         };
 
-        $http(req).then(function(resp) {
-            if (resp.status == 200) {
-                callback(resp.data);
+        $http(req).success(function(data, status, header, config) {
+            if (status == 200) {
+                callback(data);
             }
+        }).error(function(data, status, header, config) {
+            console.error("Error while getting app info");
         });
     }
 
