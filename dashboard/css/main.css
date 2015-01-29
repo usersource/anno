@@ -17,6 +17,7 @@ body {
   background: #fff;
   margin: 0 !important;
   line-height: 54px;
+  border-bottom: 1px solid #b7b7b7;
 }
 .header div {
   font-size: 16px;

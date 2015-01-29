@@ -44,8 +44,8 @@ Dashboard.controller('Feed', function($scope, $cookieStore, DataService) {
         $scope.appInfo = data;
     });
 
-    DataService.getAnnos(function(data) {
+    /*DataService.getAnnos(function(data) {
         $scope.annoList = data.anno_list;
         console.log($scope.annoList);
-    });
+    });*/
 });
