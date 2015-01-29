@@ -21,6 +21,8 @@
   border-radius: 4px;
   background-color: white;
   margin: 16px;
+  position: relative;
+  font-size: 14px;
 }
 .anno-item .anno-screenshot {
   width: 35%;
@@ -30,10 +32,39 @@
   border-right: 1px solid #b7b7b7;
 }
 .anno-item .anno-details {
-  width: 64.7672552%;
-  width: calc(65% - 0.5px);
-  width: -webkit-calc(65% - 0.5px);
+  width: 65%;
   height: 100%;
   display: inline-block;
-  margin-left: -3px;
+  position: absolute;
+  top: 0;
+}
+.anno-item .anno-info {
+  width: 100%;
+  padding: 12px 16px;
+  border-bottom: 1px solid #b7b7b7;
+}
+.anno-item .anno-info .anno-info-main {
+  width: 80%;
+  display: inline-block;
+}
+.anno-item .anno-info .anno-info-action {
+  width: 19%;
+  display: inline-block;
+  margin-left: -4px;
+  vertical-align: top;
+}
+.anno-item .anno-info .anno-info-counts .anno-info-counts-text {
+  display: inline-block;
+  vertical-align: middle;
+}
+.anno-item .anno-info .anno-author-image {
+  width: 35px;
+  border-radius: 18px;
+  margin-left: 4px;
+}
+.anno-item .anno-info .anno-author-text {
+  margin-left: 4px;
+  font-weight: 600;
+  color: #229bcd;
+  vertical-align: middle;
 }
