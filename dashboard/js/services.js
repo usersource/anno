@@ -1,9 +1,19 @@
-var DataServiceModule = angular.module('DataServiceModule', ['DashboardConstantsModule']);
+var DataServiceModule = angular.module('DataServiceModule', ['ngCookies', 'DashboardConstantsModule']);
 
-DataServiceModule.factory('DataService', function($http, $location, $window, DashboardConstants) {
+DataServiceModule.factory('DataService', function($http, $location, $window, $cookieStore, DashboardConstants) {
     var apiRoot = DashboardConstants.apiRoot[DashboardConstants.serverURLKey];
 
+    function storeUserDataInCookies(data) {
+        $cookieStore.put('user_display_name', data.display_name);
+        $cookieStore.put('user_email', data.email);
+        $cookieStore.put('user_image_url', data.image_url);
+        $cookieStore.put('team_key', data.team_key);
+        $cookieStore.put('team_name', data.team_name);
+        $cookieStore.put('user_team_token', angular.fromJson(data.user_team_token));
+    }
+
     function authenticateDashboard(params) {
+        var self = this;
         var endpointData = DashboardConstants.endpointUrl["account.dashboard.authenticate"];
         var url = apiRoot + "/" + endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + endpointData.path;
 
@@ -16,7 +26,7 @@ DataServiceModule.factory('DataService', function($http, $location, $window, Das
         $http(req).success(function(data, status, header, config) {
             if (status == 200) {
                 data['email'] = params.user_email;
-                $window.localStorage['user'] = angular.toJson(data);
+                self.storeUserDataInCookies(data);
                 if (data.authenticated) {
                     $window.location.href = $location.absUrl().replace('login.html', 'index.html');
                 }
@@ -47,6 +57,7 @@ DataServiceModule.factory('DataService', function($http, $location, $window, Das
     }
 
     return ({
+        storeUserDataInCookies : storeUserDataInCookies,
         authenticateDashboard : authenticateDashboard,
         getAppInfo : getAppInfo
     });

@@ -1,12 +1,17 @@
 'use strict';
 
-var Dashboard = angular.module('Dashboard', ['DashboardConstantsModule', 'DataServiceModule']);
+var Dashboard = angular.module('Dashboard', ['ngCookies', 'DashboardConstantsModule', 'DataServiceModule']);
 
 Dashboard.config(['$httpProvider', function($httpProvider) {
-    var userInfo =  angular.fromJson(window.localStorage.user);
-    var userTeamToken = angular.fromJson(userInfo.user_team_token);
+    var $cookies;
+    angular.injector(['ngCookies']).invoke(function(_$cookies_) {
+        $cookies = _$cookies_;
+    });
 
-    $httpProvider.defaults.headers.common.Authorization = userTeamToken.token_type + ' ' + userTeamToken.access_token;
+    var userTeamToken = angular.fromJson($cookies.user_team_token);
+    if (userTeamToken != undefined) {
+        $httpProvider.defaults.headers.common.Authorization = userTeamToken.token_type + ' ' + userTeamToken.access_token;
+    }
     $httpProvider.defaults.headers.common.contentType = 'application/json';
 }]);
 
