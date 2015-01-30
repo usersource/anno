@@ -62,6 +62,7 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
     }
 
     function getAppInfo(team_key, callback) {
+        var self = this;
         var endpointData = DashboardConstants.endpointUrl["appinfo.appinfo.get"];
         var url = apiRoot + "/" + endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + endpointData.path;
 
@@ -78,10 +79,15 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
             }
         }).error(function(data, status, header, config) {
             console.error("Error while getting app info");
+            if (status == 401) {
+                $window.location.href = $location.absUrl().replace('index.html' , 'login.html');
+                self.removeUserDataCookies();
+            }
         });
     }
 
     function getAnnos(callback) {
+        var self = this;
         var endpointData = DashboardConstants.endpointUrl["anno.anno.dashboard.list"];
         var url = apiRoot + "/" + endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + endpointData.path;
 
@@ -98,6 +104,10 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
             }
         }).error(function(data, status, header, config) {
             console.error("Error while getting anno");
+            if (status == 401) {
+                $window.location.href = $location.absUrl().replace('index.html' , 'login.html');
+                self.removeUserDataCookies();
+            }
         });
     }
 

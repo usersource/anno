@@ -12,6 +12,7 @@ Dashboard.config(['$httpProvider', function($httpProvider) {
     if (userTeamToken != undefined) {
         $httpProvider.defaults.headers.common.Authorization = userTeamToken.token_type + ' ' + userTeamToken.access_token;
     }
+
     $httpProvider.defaults.headers.common.contentType = 'application/json';
 }]);
 
