@@ -2,7 +2,6 @@ var DataServiceModule = angular.module('DataServiceModule', ['ngCookies', 'Dashb
 
 DataServiceModule.factory('DataService', function($http, $location, $window, $cookieStore, DashboardConstants) {
     var apiRoot = DashboardConstants.apiRoot[DashboardConstants.serverURLKey];
-    var imageURL = DashboardConstants.imageURL[DashboardConstants.serverURLKey];
 
     function storeUserDataInCookies(data) {
         $cookieStore.put('authenticated', data.authenticated);
@@ -89,12 +88,13 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
         var req = {
             method : endpointData.method,
             url : url,
-            params : { outcome : 'cursor,has_more,anno_list' }
+            params : { outcome : 'cursor,has_more,anno_list' },
+            cache : true
         };
 
         $http(req).success(function(data, status, header, config) {
             if (status == 200) {
-                callback(data, imageURL);
+                callback(data);
             }
         }).error(function(data, status, header, config) {
             console.error("Error while getting anno");

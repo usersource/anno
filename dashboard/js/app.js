@@ -31,7 +31,8 @@ Dashboard.controller('Login', function($scope, $cookieStore, DashboardConstants,
     };
 });
 
-Dashboard.controller('Feed', function($scope, $cookieStore, DataService) {
+Dashboard.controller('Feed', function($scope, $cookieStore, DataService, DashboardConstants) {
+    $scope.imageBasicURL = DashboardConstants.imageURL[DashboardConstants.serverURLKey];
     $scope.display_name = $cookieStore.get('user_display_name');
     $scope.email = $cookieStore.get('user_email');
     $scope.image_url = $cookieStore.get('user_image_url');
@@ -45,7 +46,6 @@ Dashboard.controller('Feed', function($scope, $cookieStore, DataService) {
     });
 
     DataService.getAnnos(function(data, imageURL) {
-        $scope.imageBasicURL = imageURL;
         $scope.tags = [];
         $scope.mentions = [];
         $scope.annoList = data.anno_list;
