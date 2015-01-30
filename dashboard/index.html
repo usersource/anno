@@ -74,7 +74,7 @@
                                         <span class="anno-author-text">{{anno.creator.display_name}}</span>
                                         <img width="12px" height="12px" style="margin-left: 20px;" src="images/icon_calendar.png">
                                         <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Created on:</span>
-                                        <span style="vertical-align: middle; margin-left: 2px;">{{anno.created}}</span>
+                                        <span style="vertical-align: middle; margin-left: 2px;">{{anno.created | date:'medium'}} UTC</span>
                                     </div>
                                     <div class="anno-text" style="margin-bottom: 20px;">{{anno.anno_text}}</div>
                                     <div style="margin-bottom: 16px;">
@@ -83,7 +83,7 @@
                                         <span style="vertical-align: middle; margin-left: 2px;">{{anno.device_model}} ({{anno.os_name}} {{anno.os_version}})</span>
                                         <img width="12px" height="14px" style="margin-left: 20px;" src="images/icon_version.png">
                                         <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Version:</span>
-                                        <span style="vertical-align: middle; margin-left: 2px;">{{anno.app_name}} {{anno.app_version}}</span>
+                                        <span style="vertical-align: middle; margin-left: 2px;">{{anno.app_name}} v{{anno.app_version}}</span>
                                     </div>
                                 </div>
                                 <div class="anno-info-action">
@@ -148,7 +148,7 @@
                                             <img class="anno-commenter-image" style="margin: 0;" ng-src="{{comment.creator.image_url}}">
                                             <div class="anno-comment-item-meta">
                                                 <div style="font-weight: 600; color: #229bcd;">{{comment.creator.display_name}}</div>
-                                                <div>{{comment.created}}</div>
+                                                <div>{{comment.created | date:'medium'}} UTC</div>
                                             </div>
                                         </div>
                                         <div class="anno-comment-item-text">{{comment.comment}}</div>
