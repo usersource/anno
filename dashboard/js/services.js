@@ -88,11 +88,7 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
         var req = {
             method : endpointData.method,
             url : url,
-            params : {
-                is_plugin : true,
-                outcome : 'cursor,has_more,anno_list'
-            },
-            cache : true
+            params : { outcome : 'cursor,has_more,anno_list' }
         };
 
         $http(req).success(function(data, status, header, config) {

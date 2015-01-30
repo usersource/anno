@@ -137,6 +137,17 @@ class Anno(BaseModel):
         app_name = app.name if app else self.app_name
         app_version = app.version if app else self.app_version
 
+        # set anno association with followups
+        from model.follow_up import FollowUp
+        followups = FollowUp.find_by_anno(self)
+        followup_messages = [ entity.to_message() for entity in followups ]
+
+        from model.vote import Vote
+        is_my_vote = Vote.is_belongs_user(self, user)
+
+        from model.flag import Flag
+        is_my_flag = Flag.is_belongs_user(self, user)
+
         anno_message = AnnoDashboardResponseMessage(id=self.key.id(),
                                                     anno_text=self.anno_text,
                                                     device_model=self.device_model,
@@ -150,7 +161,10 @@ class Anno(BaseModel):
                                                     vote_count=self.vote_count,
                                                     flag_count=self.flag_count,
                                                     followup_count=self.followup_count,
-                                                    team_notes="")
+                                                    team_notes="",
+                                                    followup_list=followup_messages,
+                                                    is_my_vote=is_my_vote,
+                                                    is_my_flag=is_my_flag)
 
         return anno_message
 
