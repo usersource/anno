@@ -120,20 +120,20 @@
                             <div class="anno-tags anno-item-section">
                                 <div style="margin-bottom: 16px;">
                                     <img width="16px" height="16px" src="images/icon_tag.png">
-                                    <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{tags.length}} Tag(s)</span>
+                                    <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.tags.length}} Tag(s)</span>
                                 </div>
                                 <div style="margin-bottom: 8px;">
-                                    <span class="anno-item-tag-item" ng-repeat="tag in tags">{{tag}}</span>
+                                    <span class="anno-item-tag-item" ng-repeat="tag in anno.tags">{{tag}}</span>
                                     <span class="anno-item-tag-item anno-item-add-button"></span>
                                 </div>
                             </div>
                             <div class="anno-mentions anno-item-section">
                                 <div style="margin-bottom: 16px;">
                                     <img width="16px" height="16px" src="images/icon_mentions.png">
-                                    <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{mentions.length}} Mention(s)</span>
+                                    <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.mentions.length}} Mention(s)</span>
                                 </div>
                                 <div style="margin-bottom: 8px;">
-                                    <span class="anno-item-tag-item" ng-repeat="mention in mentions">{{mention}}</span>
+                                    <span class="anno-item-tag-item" ng-repeat="mention in anno.mentions">{{mention}}</span>
                                     <span class="anno-item-tag-item anno-item-add-button"></span>
                                 </div>
                             </div>

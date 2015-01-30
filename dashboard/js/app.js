@@ -47,9 +47,14 @@ Dashboard.controller('Feed', function($scope, $cookieStore, DataService, Dashboa
     });
 
     DataService.getAnnos(function(data, imageURL) {
-        $scope.tags = [];
-        $scope.mentions = [];
         $scope.annoList = data.anno_list;
         console.log($scope.annoList);
+        angular.forEach($scope.annoList, function(anno) {
+			anno.tags = [];
+			anno.mentions = [];
+			if (anno.device_model in DashboardConstants.deviceList) {
+				anno.device_model = DashboardConstants.deviceList[anno.device_model];
+			}
+        });
     });
 });
