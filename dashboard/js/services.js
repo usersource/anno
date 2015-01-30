@@ -82,7 +82,7 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
     }
 
     function getAnnos(callback) {
-        var endpointData = DashboardConstants.endpointUrl["anno.anno.list"];
+        var endpointData = DashboardConstants.endpointUrl["anno.anno.dashboard.list"];
         var url = apiRoot + "/" + endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + endpointData.path;
 
         var req = {

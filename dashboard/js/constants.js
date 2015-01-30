@@ -20,9 +20,9 @@ DashboardConstantsModule.value("DashboardConstants", {
             "path" : "appinfo/get",
             "method" : "GET"
         },
-        "anno.anno.list" : {
+        "anno.anno.dashboard.list" : {
             "root" : "anno",
-            "path" : "anno",
+            "path" : "anno/dashboard",
             "method" : "GET"
         }
     }
