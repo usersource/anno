@@ -44,7 +44,10 @@ Dashboard.controller('Feed', function($scope, $cookieStore, DataService) {
         $scope.appInfo = data;
     });
 
-    DataService.getAnnos(function(data) {
+    DataService.getAnnos(function(data, imageURL) {
+        $scope.imageBasicURL = imageURL;
+        $scope.tags = [];
+        $scope.mentions = [];
         $scope.annoList = data.anno_list;
         console.log($scope.annoList);
     });

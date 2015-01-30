@@ -7,6 +7,12 @@ DashboardConstantsModule.value("DashboardConstants", {
         "3" : "https://usersource-anno.appspot.com/_ah/api",
         "4" : "http://localhost:8081/_ah/api"
     },
+    imageURL : {
+        "1" : "https://annoserver.appspot.com/screenshot?anno_id=",
+        "2" : "https://annoserver-test.appspot.com/screenshot?anno_id=",
+        "3" : "https://usersource-anno.appspot.com/screenshot?anno_id=",
+        "4" : "https://localhost:8081/screenshot?anno_id="
+    },
     serverURLKey: "3",
     endpointVersion: "1.0",
     endpointUrl : {
