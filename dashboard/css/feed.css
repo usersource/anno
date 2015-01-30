@@ -87,7 +87,10 @@
   text-align: right;
   right: 16px;
   position: absolute;
-  color: gray;
+  color: #9399a5;
+}
+.anno-item .anno-team-notes .no-team-notes {
+  color: #9399a5;
 }
 .anno-item .anno-item-tag-item {
   background-color: #e0e0e0;
