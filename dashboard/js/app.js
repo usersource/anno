@@ -50,16 +50,18 @@ Dashboard.controller('Feed', function($scope, $cookieStore, DataService, Dashboa
         $scope.annoList = data.anno_list;
         console.log($scope.annoList);
         angular.forEach($scope.annoList, function(anno) {
-			anno.tags = [];
-			anno.mentions = [];
-			anno.teamNotesNotPresent = false;
-			if (anno.device_model in DashboardConstants.deviceList) {
-				anno.device_model = DashboardConstants.deviceList[anno.device_model];
-			}
-			if (anno.team_notes.length === 0) {
-				anno.teamNotesNotPresent = true;
-				anno.team_notes = "No Notes";
-			}
+            anno.tags = [];
+            anno.mentions = [];
+            anno.teamNotesNotPresent = false;
+
+            if (anno.device_model in DashboardConstants.deviceList) {
+                anno.device_model = DashboardConstants.deviceList[anno.device_model];
+            }
+
+            if (anno.team_notes.length === 0) {
+                anno.teamNotesNotPresent = true;
+                anno.team_notes = "No Notes";
+            }
         });
     });
 });
