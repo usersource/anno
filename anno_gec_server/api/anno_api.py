@@ -58,6 +58,7 @@ from protorpc import remote
 from message.anno_api_messages import AnnoMessage
 from message.anno_api_messages import AnnoMergeMessage
 from message.anno_api_messages import AnnoListMessage
+from message.anno_api_messages import AnnoDashboardListMessage
 from message.anno_api_messages import AnnoResponseMessage
 from message.anno_api_messages import UserUnreadMessage
 from message.user_message import UserMessage
@@ -166,7 +167,7 @@ class AnnoApi(remote.Service):
         return anno_resp_message
 
 
-    @endpoints.method(anno_list_resource_container, AnnoListMessage, path='anno', 
+    @endpoints.method(anno_list_resource_container, AnnoListMessage, path='anno',
                       http_method='GET', name='anno.list')
     def anno_list(self, request):
         """
@@ -213,7 +214,26 @@ class AnnoApi(remote.Service):
             return Anno.query_by_page(limit, select_projection, curs, user, is_plugin)
 
 
-    @endpoints.method(AnnoMessage, AnnoResponseMessage, path='anno', 
+    @endpoints.method(anno_list_resource_container, AnnoDashboardListMessage, path='anno/dashboard',
+                      http_method='GET', name='anno.dashboard.list')
+    def anno_dashboard_list(self, request):
+        user = auth_user(self.request_state.headers)
+
+        limit = 10
+        if request.limit is not None:
+            limit = request.limit
+
+        curs = None
+        if request.cursor is not None:
+            try:
+                curs = Cursor(urlsafe=request.cursor)
+            except BadValueError:
+                raise endpoints.BadRequestException('Invalid cursor %s.' % request.cursor)
+
+        return Anno.query_by_page_for_dashboard(limit, curs, user)
+
+
+    @endpoints.method(AnnoMessage, AnnoResponseMessage, path='anno',
                       http_method='POST', name="anno.insert")
     def anno_insert(self, request):
         """
@@ -229,7 +249,7 @@ class AnnoApi(remote.Service):
             raise endpoints.BadRequestException("Duplicate anno(%s) already exists." % exist_anno.key.id())
 
         entity = Anno.insert_anno(request, user)
-        
+
         # find all hashtags
         tags = extract_tags_from_text(entity.anno_text.lower())
         for tag, count in tags.iteritems():

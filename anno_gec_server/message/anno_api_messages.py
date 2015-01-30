@@ -43,7 +43,7 @@ class AnnoMessage(messages.Message):
     user_email = messages.StringField(25) #:
     circle_level = messages.IntegerField(26) #:
     screen_info = messages.StringField(27) #:
- 
+
 
 class AnnoMergeMessage(messages.Message):
     """
@@ -71,7 +71,7 @@ class AnnoMergeMessage(messages.Message):
 
 
 class AnnoResponseMessage(messages.Message):
-    ''' 
+    '''
     response message for an individual anno
     '''
 
@@ -91,8 +91,8 @@ class AnnoResponseMessage(messages.Message):
     os_version = messages.StringField(14)  #:
     created = message_types.DateTimeField(15)  #:
     creator = messages.MessageField(UserMessage, 16)  #:
-    is_my_vote = messages.BooleanField(17)  #: add this properties special for get anno api. 
-    is_my_flag = messages.BooleanField(18)  #: add this properties special for get anno api. 
+    is_my_vote = messages.BooleanField(17)  #: add this properties special for get anno api.
+    is_my_flag = messages.BooleanField(18)  #: add this properties special for get anno api.
     followup_list = messages.MessageField(FollowupMessage, 19, repeated=True)  #:
     draw_elements = messages.StringField(20)  #:
     screenshot_is_anonymized = messages.BooleanField(21)  #:
@@ -113,6 +113,26 @@ class AnnoResponseMessage(messages.Message):
     last_activity_user = messages.MessageField(UserMessage, 36)
     circle_level_value = messages.StringField(37)
 
+class AnnoDashboardResponseMessage(messages.Message):
+    id = messages.IntegerField(1)
+    anno_text = messages.StringField(2)
+    image = messages.BytesField(3)
+    device_model = messages.StringField(4)
+    app_name = messages.StringField(5)
+    app_version = messages.StringField(6)
+    os_name = messages.StringField(7)
+    os_version = messages.StringField(8)
+    created = message_types.DateTimeField(9)
+    creator = messages.MessageField(UserMessage, 10)
+    is_my_vote = messages.BooleanField(11)
+    is_my_flag = messages.BooleanField(12)
+    followup_list = messages.MessageField(FollowupMessage, 13, repeated=True)
+    draw_elements = messages.StringField(14)
+    vote_count = messages.IntegerField(15)
+    flag_count = messages.IntegerField(16)
+    followup_count = messages.IntegerField(17)
+    team_notes = messages.StringField(18)
+
 class AnnoListMessage(messages.Message):
     """
     ProtoRPC message definition to represent a list of stored anno.
@@ -121,6 +141,12 @@ class AnnoListMessage(messages.Message):
     cursor = messages.StringField(2) #:
     has_more = messages.BooleanField(3) #:
     offset = messages.IntegerField(4) #:
+
+class AnnoDashboardListMessage(messages.Message):
+    anno_list = messages.MessageField(AnnoDashboardResponseMessage, 1, repeated=True)
+    cursor = messages.StringField(2)
+    has_more = messages.BooleanField(3)
+    offset = messages.IntegerField(4)
 
 class UserUnreadMessage(messages.Message):
     unread_count = messages.IntegerField(1)

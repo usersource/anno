@@ -9,7 +9,9 @@ from google.appengine.api import search
 from google.appengine.ext import ndb
 
 from message.anno_api_messages import AnnoResponseMessage
+from message.anno_api_messages import AnnoDashboardResponseMessage
 from message.anno_api_messages import AnnoListMessage
+from message.anno_api_messages import AnnoDashboardListMessage
 from message.user_message import UserMessage
 from model.base_model import BaseModel
 from model.community import Community
@@ -121,6 +123,34 @@ class Anno(BaseModel):
                                    last_activity=self.last_activity,
                                    last_update_type=self.last_update_type,
         )
+
+        return anno_message
+
+    def to_dashboard_response_message(self, user):
+        user_message = None
+        if self.creator is not None:
+            user_info = self.creator.get()
+            user_message = UserMessage(display_name=user_info.display_name,
+                                       image_url=user_info.image_url)
+
+        app = self.app.get() if self.app else None
+        app_name = app.name if app else self.app_name
+        app_version = app.version if app else self.app_version
+
+        anno_message = AnnoDashboardResponseMessage(id=self.key.id(),
+                                                    anno_text=self.anno_text,
+                                                    device_model=self.device_model,
+                                                    app_name=app_name,
+                                                    app_version=app_version,
+                                                    os_name=self.os_name,
+                                                    os_version=self.os_version,
+                                                    created=self.created,
+                                                    creator=user_message,
+                                                    draw_elements=self.draw_elements,
+                                                    vote_count=self.vote_count,
+                                                    flag_count=self.flag_count,
+                                                    followup_count=self.followup_count,
+                                                    team_notes="")
 
         return anno_message
 
@@ -375,6 +405,20 @@ class Anno(BaseModel):
             return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
         else:
             return AnnoListMessage(anno_list=items, has_more=more)
+
+    @classmethod
+    def query_by_page_for_dashboard(cls, limit, curs, user):
+        query = cls.query()
+        query = query.order(-cls.created)
+        query = filter_anno_by_user(query, user, True)
+
+        annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
+        items = [entity.to_dashboard_response_message(user) for entity in annos]
+
+        if more:
+            return AnnoDashboardListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
+        else:
+            return AnnoDashboardListMessage(anno_list=items, has_more=more)
 
     @classmethod
     def query_by_community(cls, community, limit, projection, curs, user):
