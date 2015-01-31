@@ -40,7 +40,7 @@
                     <div class="anno-item" ng-repeat="anno in annoList">
                         <div class="anno-screenshot">
                             <img width="100%" ng-src="{{imageBasicURL}}{{anno.id}}">
-                            <input type="button" value="Show Annotation" style="margin-top: 32px;">
+                            <input type="button" value="Show Annotation" style="margin-top: 25px;">
                         </div>
                         <div class="anno-details">
                             <div class="anno-info anno-item-section">
@@ -67,16 +67,16 @@
                                             <div class="anno-info-counts-text">{{anno.flag_count}}</div>
                                         </div>
                                     </div>
-                                    <div style="margin: 30px 0;">
+                                    <div style="margin: 20px 0;">
                                         <span style="font-weight: 600; vertical-align: middle;">By</span>
                                         <img class="anno-author-image" ng-src="{{anno.creator.image_url}}">
                                         <span class="anno-author-text">{{anno.creator.display_name}}</span>
-                                        <img width="12px" height="12px" style="margin-left: 20px;" src="images/icon_calendar.png">
+                                        <img width="12px" height="12px" style="margin-left: 4.372%;" src="images/icon_calendar.png">
                                         <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Created on:</span>
-                                        <span style="vertical-align: middle; margin-left: 2px;">{{anno.created | date:'medium'}} UTC</span>
+                                        <span style="vertical-align: middle; margin-left: 2px;">{{anno.created | date:'short'}} UTC</span>
                                     </div>
                                     <div class="anno-text" style="margin-bottom: 20px;">{{anno.anno_text}}</div>
-                                    <div style="margin-bottom: 16px;">
+                                    <div style="margin-bottom: 20px;">
                                         <img width="10px" height="16px" src="images/icon_device.png">
                                         <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Device:</span>
                                         <span style="vertical-align: middle; margin-left: 2px;">{{anno.device_model}} ({{anno.os_name}} {{anno.os_version}})</span>
@@ -106,7 +106,7 @@
                                 </div>
                             </div>
                             <div class="anno-team-notes anno-item-section">
-                                <div style="margin-bottom: 16px;">
+                                <div style="margin-bottom: 20px;">
                                     <img width="11px" height="16px" src="images/icon_team-notes.png">
                                     <span class="section-header" style="vertical-align: middle; margin-left: 4px;">Team Notes</span>
                                     <div class="anno-team-notes-edit">
@@ -114,30 +114,30 @@
                                         <span style="vertical-align: middle; margin-left: 4px;">Edit</span>
                                     </div>
                                 </div>
-                                <div style="margin-bottom: 20px;" ng-class={'no-team-notes':anno.teamNotesNotPresent}>{{anno.team_notes}}</div>
+                                <div ng-class={'no-team-notes':anno.teamNotesNotPresent}>{{anno.team_notes}}</div>
                             </div>
                             <div class="anno-tags anno-item-section">
-                                <div style="margin-bottom: 16px;">
+                                <div style="margin-bottom: 20px;">
                                     <img width="16px" height="16px" src="images/icon_tag.png">
                                     <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.tags.length}} Tag(s)</span>
                                 </div>
-                                <div style="margin-bottom: 8px;">
+                                <div>
                                     <span class="anno-item-tag-item" ng-repeat="tag in anno.tags">{{tag}}</span>
                                     <span class="anno-item-tag-item anno-item-add-button"></span>
                                 </div>
                             </div>
                             <div class="anno-mentions anno-item-section">
-                                <div style="margin-bottom: 16px;">
+                                <div style="margin-bottom: 20px;">
                                     <img width="16px" height="16px" src="images/icon_mentions.png">
                                     <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.mentions.length}} Mention(s)</span>
                                 </div>
-                                <div style="margin-bottom: 8px;">
+                                <div>
                                     <span class="anno-item-tag-item" ng-repeat="mention in anno.mentions">{{mention}}</span>
                                     <span class="anno-item-tag-item anno-item-add-button"></span>
                                 </div>
                             </div>
                             <div class="anno-comments anno-item-section">
-                                <div style="padding: 16px 0; border-bottom: 1px solid #c4cfd7;">
+                                <div style="padding: 20px 0; border-bottom: 1px solid #c4cfd7;">
                                     <img width="16px" height="16px" src="images/icon_comments.png">
                                     <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.followup_count}} Comment(s)</span>
                                 </div>
@@ -146,14 +146,14 @@
                                         <div style="margin-bottom: 20px;">
                                             <img class="anno-commenter-image" style="margin: 0;" ng-src="{{comment.creator.image_url}}">
                                             <div class="anno-comment-item-meta">
-                                                <div style="font-weight: 600; color: #229bcd;">{{comment.creator.display_name}}</div>
-                                                <div>{{comment.created | date:'medium'}} UTC</div>
+                                                <div style="font-weight: 600; color: #1b96c9;">{{comment.creator.display_name}}</div>
+                                                <div class="anno-comment-item-date">{{comment.created | date:'short'}} UTC</div>
                                             </div>
                                         </div>
                                         <div class="anno-comment-item-text">{{comment.comment}}</div>
                                     </div>
                                 </div>
-                                <div class="post-comment" style="padding: 32px 16px 64px 0">
+                                <div class="post-comment" style="padding: 30px 3.38% 50px 0">
                                     <textarea placeholder="Write a comment..."></textarea>
                                     <br>
                                     <input type="button" value="Post Comment">
