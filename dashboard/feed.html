@@ -11,6 +11,15 @@
         <script type="text/javascript" src="js/constants.js"></script>
         <script type="text/javascript" src="js/services.js"></script>
         <script type="text/javascript" src="js/controllers.js"></script>
+        <script type="text/javascript" src="js/directives.js"></script>
+        <script type="text/javascript">
+             var dojoConfig = {
+                 parseOnLoad : false,
+                 async : 1,
+                 packages : [{ name:'anno', location:'../anno' }]
+             };
+        </script>
+        <script type="text/javascript" src="js/dojo/dojo.js"></script>
     </head>
     <body ng-controller="Feed" ng-init="initLogin;">
         <div class="header row">
@@ -42,9 +51,12 @@
             <div id="side-panel" class="col-lg-2 col-md-2 col-sm-2 col-xs-2"></div>
             <div id="annos" class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
                 <div id="annos-inner">
-                    <div class="anno-item" ng-repeat="anno in annoList">
+                    <div id="anno_{{anno.id}}" class="anno-item" ng-repeat="anno in annoList">
                         <div class="anno-screenshot">
-                            <img width="100%" ng-src="{{imageBasicURL}}{{anno.id}}">
+                            <div class="screenshotContainer">
+                                <img class="imgDetailScreenshot" width="100%" style="display: none" imgonload="screenshotLoad($event);" data-index="{{$index}}" ng-src="{{imageBaseURL}}{{anno.id}}">
+                            </div>
+                            <div id="gfxCanvasContainer_{{$index}}" class="gfxCanvasContainer" style="width: 500px; height: 500px;display: none"></div>
                             <input type="button" value="Show Annotation" style="margin-top: 25px;">
                         </div>
                         <div class="anno-details">

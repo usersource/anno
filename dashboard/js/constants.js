@@ -32,6 +32,7 @@ DashboardConstantsModule.value("DashboardConstants", {
             "method" : "GET"
         }
     },
+    borderColor : "#ff9900",
     deviceList : {
         "iPhone1,1": "iPhone",
         "iPhone1,2": "iPhone 3G",

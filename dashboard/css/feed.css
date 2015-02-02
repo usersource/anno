@@ -25,11 +25,12 @@
   font-size: 14px;
 }
 .anno-item .anno-screenshot {
-  width: 35%;
+  width: 30.756%;
   height: 100%;
   display: inline-block;
-  padding: 2.122%;
+  margin: 2.122%;
   text-align: center;
+  position: relative;
 }
 .anno-item .anno-details {
   width: 65%;
@@ -147,4 +148,29 @@
   font-weight: 600;
   background-color: #9399a5;
   color: white;
+}
+.screenshotContainer {
+  width: 100%;
+  border-color: #ff9900;
+  box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing:content-box;
+}
+.imgDetailScreenshot {
+  box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing:content-box;
+}
+.gfxCanvasContainer {
+  position: absolute;
+  border-color: transparent;
+  border-style: solid;
+  box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing:content-box;
+}
+#gfxCanvasContainer svg {
+  box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing:content-box;
 }

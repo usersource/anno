@@ -327,7 +327,7 @@ define([
             },
             parse: function(shapesJson, cbxStrokeStyle)
             {
-                this.clear();
+                // this.clear();
 
                 var item;
                 for (var p in shapesJson)

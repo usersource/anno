@@ -32,14 +32,18 @@ Dashboard.controller('Login', function($scope, $cookieStore, DashboardConstants,
     };
 });
 
-Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, DataService, DashboardConstants) {
-    $scope.imageBasicURL = DashboardConstants.imageURL[DashboardConstants.serverURLKey];
+Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, DataService, ComStyleGetter, DashboardConstants) {
+    $scope.imageBaseURL = DashboardConstants.imageURL[DashboardConstants.serverURLKey];
     $scope.display_name = $cookieStore.get('user_display_name');
     $scope.email = $cookieStore.get('user_email');
     $scope.image_url = $cookieStore.get('user_image_url');
 
     $scope.showSignoutButton = "none";
     $scope.signoutArrowValue = false;
+
+    $scope.imageWidth = 0;
+    $scope.imageHeight = 0;
+    $scope.borderWidth = 4;
 
     $scope.signoutButtonClicked = function() {
         if (logout_button.style.display === "none") {
@@ -82,4 +86,58 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             }
         });
     });
+
+    $scope.screenshotLoad = function (event) {
+        var anno_index = Number(event.target.dataset.index);
+        var imgDetailScreenshot = document.getElementsByClassName('imgDetailScreenshot')[anno_index];
+        angular.element(imgDetailScreenshot).css('display', '');
+
+        var self = this;
+        require(["anno/draw/Surface"], function(Surface) {
+            // self.imageWidth = parseInt(ComStyleGetter.getComStyle(imgDetailScreenshot).width, 10);
+            // self.imageHeight = parseInt(ComStyleGetter.getComStyle(imgDetailScreenshot).height, 10);
+            self.imageWidth = imgDetailScreenshot.width;
+            self.imageHeight = imgDetailScreenshot.height;
+            // self.borderWidth = Math.floor(self.imageWidth * 0.02);
+
+            var surface = new Surface({
+                container : document.getElementById('gfxCanvasContainer_' + anno_index),
+                width : 500,
+                height : 500,
+                editable : false,
+                borderWidth : 0
+            });
+
+            self.applyAnnoLevelColor(anno_index, imgDetailScreenshot);
+            self.redrawShapes(anno_index, surface);
+        });
+    };
+
+    $scope.applyAnnoLevelColor = function (anno_index, imgDetailScreenshot) {
+        var screenshotContainer = document.getElementsByClassName('screenshotContainer')[anno_index];
+        angular.element(screenshotContainer).css({
+            width : (this.imageWidth - this.borderWidth * 2) + 'px',
+            height : (this.imageHeight - this.borderWidth * 2) + 'px',
+            'border-color' : DashboardConstants.borderColor,
+            'border-style' : 'solid',
+            'border-width' : this.borderWidth + 'px'
+        });
+
+        angular.element(imgDetailScreenshot).css({ width : '100%', height : '100%' });
+    };
+
+    $scope.redrawShapes = function(anno_index, surface) {
+        var annoData = this.annoList[anno_index];
+        var drawElements = annoData.draw_elements;
+        var lineStrokeStyle = { color: DashboardConstants.borderColor, width: 3 };
+
+        if (drawElements) {
+            var elementsObject = angular.fromJson(drawElements);
+            surface.show();
+            angular.element(surface.container).css({'border': this.borderWidth + 'px solid transparent', left: '0px',top: '0px'});
+            surface.borderWidth = this.borderWidth;
+            surface.setDimensions(this.imageWidth - this.borderWidth * 2, this.imageHeight - this.borderWidth * 2);
+            surface.parse(elementsObject, lineStrokeStyle);
+        }
+    };
 });
