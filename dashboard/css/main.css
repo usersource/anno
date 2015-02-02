@@ -18,7 +18,7 @@ body {
   background: #fff;
   margin: 0 !important;
   line-height: 57px;
-  border-bottom: 1px solid #b7b7b7;
+  border-bottom: 1px solid #c4cfd7;
 }
 .header div {
   font-size: 16px;
@@ -32,4 +32,30 @@ body {
   line-height: 22px;
   margin: 5px 0;
   text-align: right;
+}
+.header #logout_arrow {
+  width: 12px;
+  height: 6px;
+  display: inline-block;
+  background-image: url('../images/icon_chevron.png');
+  margin-left: 10px;
+}
+.header #logout_arrow.signout-arrow-clicked {
+  background-image: url('../images/icon_chevron-blue.png');
+}
+.header #logout_button {
+  width: 212px;
+  height: 48px;
+  border: 1px solid #c4cfd7;
+  border-top: 0;
+  color: #282828;
+  position: absolute;
+  top: 74px;
+  right: 1.25%;
+  background: #FFF;
+  border-radius: 0px 0px 4px 4px;
+  text-align: center;
+  line-height: 46px;
+  font-size: 14px;
+  box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.1);
 }

@@ -32,11 +32,29 @@ Dashboard.controller('Login', function($scope, $cookieStore, DashboardConstants,
     };
 });
 
-Dashboard.controller('Feed', function($scope, $cookieStore, DataService, DashboardConstants) {
+Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, DataService, DashboardConstants) {
     $scope.imageBasicURL = DashboardConstants.imageURL[DashboardConstants.serverURLKey];
     $scope.display_name = $cookieStore.get('user_display_name');
     $scope.email = $cookieStore.get('user_email');
     $scope.image_url = $cookieStore.get('user_image_url');
+
+    $scope.showSignoutButton = "none";
+    $scope.signoutArrowValue = false;
+
+    $scope.signoutButtonClicked = function() {
+        if (logout_button.style.display === "none") {
+            $scope.showSignoutButton = "block";
+            $scope.signoutArrowValue = true;
+        } else {
+            $scope.showSignoutButton = "none";
+            $scope.signoutArrowValue = false;
+        }
+    };
+
+    $scope.signoutDashboard = function() {
+        $window.location.href = $location.absUrl().replace('index.html' , 'login.html');
+        DataService.removeUserDataCookies();
+    };
 
     $scope.initLogin = function() {
         // DataService.checkAuthentication();

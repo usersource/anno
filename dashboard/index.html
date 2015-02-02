@@ -25,12 +25,17 @@
             <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Stats</div>
             <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Manage</div>
             <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Profile</div>
-            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3" id="user_info">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3" id="user_info" ng-click="signoutButtonClicked();">
                 <img width="45px" height="45px" style="border-radius: 25px;" ng-src="{{image_url}}">
                 <div style="display: inline-block; margin-left: 12px; vertical-align: middle;">
                     <div style="font-size: 18px; text-align: left;" class="active">{{display_name}}</div>
                     <div style="font-size: 14px;">{{email}}</div>
                 </div>
+                <div id="logout_arrow" ng-class="{'signout-arrow-clicked' : signoutArrowValue}"></div>
+            </div>
+            <div id="logout_button" ng-style="{display: showSignoutButton}" ng-click="signoutDashboard();">
+              <img width="16px" height="16px" src="images/icon_signout.png">
+              <span style="vertical-align: middle; margin-left: 8px;">Sign out</span>
             </div>
         </div>
         <div id="feed-content">
