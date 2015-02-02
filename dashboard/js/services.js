@@ -27,11 +27,11 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
         var currentPath = $location.path();
         if ($cookieStore.get('authenticated')) {
             if (currentPath == 'login.html') {
-                $window.location.href = $location.absUrl().replace('login.html' , 'index.html');
+                $window.location.href = $location.absUrl().replace('login.html' , 'feed.html');
             }
         } else {
-            if (currentPath == 'index.html') {
-                $window.location.href = $location.absUrl().replace('index.html' , 'login.html');
+            if (currentPath == 'feed.html') {
+                $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
                 this.removeUserDataCookies();
             }
         }
@@ -53,7 +53,7 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
                 data['email'] = params.user_email;
                 self.storeUserDataInCookies(data);
                 if (data.authenticated) {
-                    $window.location.href = $location.absUrl().replace('login.html', 'index.html');
+                    $window.location.href = $location.absUrl().replace('login.html', 'feed.html');
                 }
             }
         }).error(function(data, status, header, config) {
@@ -80,7 +80,7 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
         }).error(function(data, status, header, config) {
             console.error("Error while getting app info");
             if (status == 401) {
-                $window.location.href = $location.absUrl().replace('index.html' , 'login.html');
+                $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
                 self.removeUserDataCookies();
             }
         });
@@ -105,7 +105,7 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
         }).error(function(data, status, header, config) {
             console.error("Error while getting anno");
             if (status == 401) {
-                $window.location.href = $location.absUrl().replace('index.html' , 'login.html');
+                $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
                 self.removeUserDataCookies();
             }
         });

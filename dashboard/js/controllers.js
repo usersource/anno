@@ -52,7 +52,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     };
 
     $scope.signoutDashboard = function() {
-        $window.location.href = $location.absUrl().replace('index.html' , 'login.html');
+        $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
         DataService.removeUserDataCookies();
     };
 
