@@ -89,7 +89,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
 
     $scope.screenshotLoad = function (event) {
         var anno_index = Number(event.target.dataset.index);
-        var imgDetailScreenshot = document.getElementsByClassName('imgDetailScreenshot')[anno_index];
+        var imgDetailScreenshot = eval("anno_" + anno_index).querySelector(".imgDetailScreenshot");
         angular.element(imgDetailScreenshot).css('display', '');
 
         var self = this;
@@ -114,7 +114,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     };
 
     $scope.applyAnnoLevelColor = function (anno_index, imgDetailScreenshot) {
-        var screenshotContainer = document.getElementsByClassName('screenshotContainer')[anno_index];
+        var screenshotContainer = eval("anno_" + anno_index).querySelector(".screenshotContainer");
         angular.element(screenshotContainer).css({
             width : (this.imageWidth - this.borderWidth * 2) + 'px',
             height : (this.imageHeight - this.borderWidth * 2) + 'px',
