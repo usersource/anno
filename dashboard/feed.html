@@ -90,7 +90,7 @@
                                         <span class="anno-author-text">{{anno.creator.display_name}}</span>
                                         <img width="12px" height="12px" style="margin-left: 4.372%;" src="images/icon_calendar.png">
                                         <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Created on:</span>
-                                        <span style="vertical-align: middle; margin-left: 2px;">{{anno.created | date:'short'}} UTC</span>
+                                        <span style="vertical-align: middle; margin-left: 2px;">{{anno.created | date:'medium'}}</span>
                                     </div>
                                     <div class="anno-text" style="margin-bottom: 20px;">{{anno.anno_text}}</div>
                                     <div style="margin-bottom: 20px;">
@@ -168,7 +168,7 @@
                                             <img class="anno-commenter-image" style="margin: 0;" ng-src="{{comment.creator.image_url}}">
                                             <div class="anno-comment-item-meta">
                                                 <div style="font-weight: 600; color: #1b96c9;">{{comment.creator.display_name}}</div>
-                                                <div class="anno-comment-item-date">{{comment.created | date:'medium'}} UTC</div>
+                                                <div class="anno-comment-item-date">{{comment.created | date:'medium'}}</div>
                                             </div>
                                         </div>
                                         <div class="anno-comment-item-text" ng-bind-html="comment.modified_comment"></div>

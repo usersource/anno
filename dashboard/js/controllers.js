@@ -74,6 +74,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         $scope.annoList = data.anno_list;
         console.log($scope.annoList);
         angular.forEach($scope.annoList, function(anno) {
+            anno.created = new Date(anno.created);
             anno.upvote_text = anno.is_my_vote ? "Upvoted" : "Upvote";
             anno.flag_text = anno.is_my_flag ? "Flagged" : "Flag";
 
@@ -91,6 +92,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             }
 
             angular.forEach(anno.followup_list, function(comment) {
+                comment.created = new Date(comment.created);
                 comment.modified_comment = comment.comment;
                 comment.modified_comment = DataService.replaceURLWithLink(comment.modified_comment);
                 comment.modified_comment = DataService.replaceEmailWithName(comment.modified_comment, comment.tagged_users_detail);
