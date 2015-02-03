@@ -33,6 +33,8 @@ Dashboard.controller('Login', function($scope, $cookieStore, DashboardConstants,
 });
 
 Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, $sce, DataService, ComStyleGetter, DashboardConstants) {
+    var noTeamNotesText = "No Notes";
+
     $scope.imageBaseURL = DashboardConstants.imageURL[DashboardConstants.serverURLKey];
     $scope.display_name = $cookieStore.get('user_display_name');
     $scope.email = $cookieStore.get('user_email');
@@ -85,7 +87,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
 
             if (anno.team_notes.length === 0) {
                 anno.teamNotesNotPresent = true;
-                anno.team_notes = "No Notes";
+                anno.team_notes = noTeamNotesText;
             }
 
             angular.forEach(anno.followup_list, function(comment) {
@@ -146,6 +148,24 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             surface.borderWidth = this.borderWidth;
             surface.setDimensions(this.imageWidth - this.borderWidth * 2, this.imageHeight - this.borderWidth * 2);
             surface.parse(elementsObject, lineStrokeStyle);
+        }
+    };
+
+    $scope.editTeamNotes = function(event) {
+        var teamNotesParentNode = event.currentTarget.parentElement.parentElement,
+            teamNotesTextNode = teamNotesParentNode.querySelector('.team-notes'),
+            teamNotesTextInput = teamNotesParentNode.querySelector('.anno-team-notes-edittext');
+
+        if (teamNotesTextNode.style.display !== "none") {
+            teamNotesTextNode.style.display = "none";
+            teamNotesTextInput.style.display = "block";
+        } else {
+            teamNotesTextNode.style.display = "block";
+            teamNotesTextInput.style.display = "none";
+        }
+
+        if (teamNotesTextNode.innerText !== noTeamNotesText) {
+            teamNotesTextInput.querySelector('textarea').value = teamNotesTextNode.innerText;
         }
     };
 });

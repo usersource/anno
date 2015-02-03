@@ -126,12 +126,12 @@
                                 <div style="margin-bottom: 20px;">
                                     <img width="11px" height="16px" src="images/icon_team-notes.png">
                                     <span class="section-header" style="vertical-align: middle; margin-left: 4px;">Team Notes</span>
-                                    <div class="anno-team-notes-edit">
+                                    <div class="anno-team-notes-edit" ng-click="editTeamNotes($event);">
                                         <img width="12px" height="12px" src="images/icon_edit.png">
-                                        <span style="vertical-align: middle; margin-left: 4px;" ng-click="editTeamNotes();">Edit</span>
+                                        <span style="vertical-align: middle; margin-left: 4px;">Edit</span>
                                     </div>
                                 </div>
-                                <div ng-class={'no-team-notes':anno.teamNotesNotPresent}>{{anno.team_notes}}</div>
+                                <div class="team-notes" ng-class={'no-team-notes':anno.teamNotesNotPresent}>{{anno.team_notes}}</div>
                                 <div class="anno-team-notes-edittext" style="display: none;">
                                     <textarea placeholder="Write team notes..."></textarea>
                                     <input type="button" value="Save">
