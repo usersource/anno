@@ -69,6 +69,7 @@
   border: 1px solid #c4cfd7;
   border-radius: 4px;
   line-height: 24px;
+  cursor: pointer;
 }
 .anno-item .anno-info .anno-info-action-item .action-icon {
   width: 16px;
@@ -115,6 +116,7 @@
   right: 3.27%;
   position: absolute;
   color: #9399a5;
+  cursor: pointer;
 }
 .anno-item .anno-team-notes .no-team-notes {
   color: #9399a5;
@@ -132,6 +134,7 @@
   background-image: url('../images/icon_squared-plus.png');
   background-repeat: no-repeat;
   background-position: center;
+  cursor: pointer;
 }
 .anno-item .anno-comments {
   padding: 0 0 0 3.27%;
