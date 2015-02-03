@@ -88,6 +88,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             angular.forEach(anno.followup_list, function(comment) {
                 comment.modified_comment = comment.comment;
                 comment.modified_comment = DataService.replaceURLWithLink(comment.modified_comment);
+                comment.modified_comment = DataService.replaceEmailWithName(comment.modified_comment, comment.tagged_users_detail);
                 comment.modified_comment = $sce.trustAsHtml(comment.modified_comment);
             });
         });

@@ -24,9 +24,28 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
     }
 
     function replaceURLWithLink(s) {
-        var commentURLTemplate = '$1<a class="commentURL" href="$2" target="_blank">$2</a>';
+        var commentURLTemplate = '$1<a class="anno-comment-url" href="$2" target="_blank">$2</a>';
         s = s.replace(/(^|\W)\b((www\d{0,3}[.])(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, "$1http://$2");
         return s.replace(/(^|\W)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, commentURLTemplate);
+    }
+
+    function replaceEmailWithName(s, tagged_users) {
+        var self = this;
+        var matchedEmailList = s.match(/(^|\W)(__[a-z\d][\w-._@]*)/ig) || [];
+        tagged_users = tagged_users || [];
+
+        angular.forEach(matchedEmailList, function(id) {
+            id = id.trim();
+            var filteredUser = tagged_users.filter(function(user) {
+                return user.id === id.split("__")[1];
+            });
+            if (filteredUser.length) {
+                var userDisplayName = filteredUser[0]["display_name"];
+                s = s.replace(id, "<span class='anno-comment-tagged-user'>" + userDisplayName + "</span>");
+            }
+        });
+
+        return s;
     }
 
     function checkAuthentication() {
@@ -121,6 +140,7 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
         storeUserDataInCookies : storeUserDataInCookies,
         removeUserDataCookies : removeUserDataCookies,
         replaceURLWithLink : replaceURLWithLink,
+        replaceEmailWithName : replaceEmailWithName,
         checkAuthentication : checkAuthentication,
         authenticateDashboard : authenticateDashboard,
         getAppInfo : getAppInfo,
