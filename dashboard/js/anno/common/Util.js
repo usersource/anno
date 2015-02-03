@@ -7,8 +7,7 @@ define([
     "dojox/mobile/SimpleDialog",
     "dojox/mobile/_ContentPaneMixin",
     "dijit/registry",
-    "anno/common/DBUtil"
-], function(declare, connect, domStyle, dojoJson, win, SimpleDialog, _ContentPaneMixin, registry, DBUtil){
+], function(declare, connect, domStyle, dojoJson, win, SimpleDialog, _ContentPaneMixin, registry){
 
     var util = {
         loadingIndicator:null,
@@ -218,7 +217,7 @@ define([
             }
             var settingsSQl = "select * from app_settings";
             var self = this;
-            DBUtil.executeSelectSql(settingsSQl, [], function(res){
+            /*DBUtil.executeSelectSql(settingsSQl, [], function(res){
                 var rows = res.rows;
                 console.error("app_settings rows: "+rows.length);
 
@@ -233,17 +232,17 @@ define([
 
                 self.settings = settings;
                 callback(settings);
-            }, onSQLError);
+            }, onSQLError);*/
         },
         saveSettings: function(settingItem, callback)
         {
             var settingsSQl = "update app_settings set value=? where item=?";
             var self = this;
-            DBUtil.executeUpdateSql(settingsSQl, [settingItem.value, settingItem.item], function(res){
+            /*DBUtil.executeUpdateSql(settingsSQl, [settingItem.value, settingItem.item], function(res){
                 self.settings[settingItem.item] = settingItem.value;
 
                 callback(true);
-            }, callback(false));
+            }, callback(false));*/
         },
         getSettings: function()
         {
@@ -430,7 +429,7 @@ define([
         },
         getCurrentUserInfo:function()
         {
-            return DBUtil.localUserInfo;
+            // return DBUtil.localUserInfo;
         }
     };
 
