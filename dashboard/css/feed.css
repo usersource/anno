@@ -68,7 +68,13 @@
   padding-left: 12px;
   border: 1px solid #c4cfd7;
   border-radius: 4px;
-  line-height: 26px;
+  line-height: 24px;
+}
+.anno-item .anno-info .anno-info-action-item > div {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  vertical-align: middle;
 }
 .anno-item .anno-info .anno-info-counts .anno-info-counts-text {
   display: inline-block;
