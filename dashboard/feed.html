@@ -73,7 +73,7 @@
                                         </div>
                                         <div style="display: inline-block; margin-left: 16px;">
                                             <img width="16px" height="16px" src="images/icon_comments.png">
-                                            <div class="anno-info-counts-text">{{anno.followup_count}}</div>
+                                            <div class="anno-info-counts-text">{{anno.followup_list.length}}</div>
                                         </div>
                                         <div style="display: inline-block; margin-left: 16px;">
                                             <img width="16px" height="16px" src="images/icon_upvotes.png">
@@ -134,7 +134,7 @@
                                 <div class="team-notes" ng-class={'no-team-notes':anno.teamNotesNotPresent}>{{anno.team_notes}}</div>
                                 <div class="anno-team-notes-edittext" style="display: none;">
                                     <textarea placeholder="Write team notes..."></textarea>
-                                    <input type="button" value="Save">
+                                    <input type="button" value="Save" ng-click="saveTeamNotes($event);">
                                 </div>
                             </div>
                             <div class="anno-tags anno-item-section">
@@ -160,7 +160,7 @@
                             <div class="anno-comments anno-item-section">
                                 <div style="padding: 20px 0; border-bottom: 1px solid #c4cfd7;">
                                     <img width="16px" height="16px" src="images/icon_comments.png">
-                                    <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.followup_count}} Comment(s)</span>
+                                    <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.followup_list.length}} Comment(s)</span>
                                 </div>
                                 <div>
                                     <div class="anno-comment-item" ng-repeat="comment in anno.followup_list">
@@ -168,7 +168,7 @@
                                             <img class="anno-commenter-image" style="margin: 0;" ng-src="{{comment.creator.image_url}}">
                                             <div class="anno-comment-item-meta">
                                                 <div style="font-weight: 600; color: #1b96c9;">{{comment.creator.display_name}}</div>
-                                                <div class="anno-comment-item-date">{{comment.created | date:'short'}} UTC</div>
+                                                <div class="anno-comment-item-date">{{comment.created | date:'medium'}} UTC</div>
                                             </div>
                                         </div>
                                         <div class="anno-comment-item-text" ng-bind-html="comment.modified_comment"></div>

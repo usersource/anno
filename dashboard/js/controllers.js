@@ -168,4 +168,17 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             teamNotesTextInput.querySelector('textarea').value = teamNotesTextNode.innerText;
         }
     };
+
+    $scope.saveTeamNotes = function(event) {
+        var teamNotesParentNode = event.currentTarget.parentElement.parentElement,
+            teamNotesTextNode = teamNotesParentNode.querySelector('.team-notes'),
+            teamNotesTextInput = teamNotesParentNode.querySelector('.anno-team-notes-edittext');
+
+        teamNotesTextNode.style.display = "block";
+        teamNotesTextInput.style.display = "none";
+        var teamNotes = teamNotesTextInput.querySelector('textarea').value.trim();
+        if (teamNotes.length) {
+            teamNotesTextNode.innerText = teamNotes;
+        }
+    };
 });
