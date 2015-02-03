@@ -76,6 +76,7 @@
 }
 .anno-item .anno-info .anno-author-image, .anno-comments .anno-comment-item .anno-commenter-image {
   width: 35px;
+  height: 35px;
   border-radius: 18px;
   margin-left: 4px;
 }

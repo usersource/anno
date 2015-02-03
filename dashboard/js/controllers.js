@@ -94,10 +94,8 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
 
         var self = this;
         require(["anno/draw/Surface"], function(Surface) {
-            // self.imageWidth = parseInt(ComStyleGetter.getComStyle(imgDetailScreenshot).width, 10);
-            // self.imageHeight = parseInt(ComStyleGetter.getComStyle(imgDetailScreenshot).height, 10);
-            self.imageWidth = imgDetailScreenshot.width;
-            self.imageHeight = imgDetailScreenshot.height;
+            self.imageWidth = parseInt(ComStyleGetter.getComStyle(imgDetailScreenshot).width, 10);
+            self.imageHeight = parseInt(ComStyleGetter.getComStyle(imgDetailScreenshot).height, 10);
             // self.borderWidth = Math.floor(self.imageWidth * 0.02);
 
             var surface = new Surface({
