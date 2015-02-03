@@ -112,9 +112,8 @@ define([
                 if (comment)
                 {
                     if (this.shortText) comment = this.shortText;
-                    var textDiv = dom.byId('textDiv_'+this.id);
-                    args.surface.container.querySelector("#textDiv_" + this.id).innerHTML = comment.replace(/\n/g, "<br>");
-                    // dom.byId('textDiv_'+this.id).innerHTML = comment.replace(/\n/g, "<br>");
+                    var textDiv = args.surface.container.querySelector("#textDiv_" + this.id);
+                    textDiv.innerHTML = comment.replace(/\n/g, "<br>");
                     domStyle.set(textDiv, 'color', this.normalColor);
 
                     this.inputElement.value = comment;
