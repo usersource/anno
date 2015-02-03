@@ -23,6 +23,12 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
         $cookieStore.remove('user_team_token');
     }
 
+    function replaceURLWithLink(s) {
+        var commentURLTemplate = '$1<a class="commentURL" href="$2" target="_blank">$2</a>';
+        s = s.replace(/(^|\W)\b((www\d{0,3}[.])(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, "$1http://$2");
+        return s.replace(/(^|\W)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, commentURLTemplate);
+    }
+
     function checkAuthentication() {
         var currentPath = $location.path();
         if ($cookieStore.get('authenticated')) {
@@ -114,6 +120,7 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
     return ({
         storeUserDataInCookies : storeUserDataInCookies,
         removeUserDataCookies : removeUserDataCookies,
+        replaceURLWithLink : replaceURLWithLink,
         checkAuthentication : checkAuthentication,
         authenticateDashboard : authenticateDashboard,
         getAppInfo : getAppInfo,

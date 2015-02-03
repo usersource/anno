@@ -167,7 +167,7 @@
                                                 <div class="anno-comment-item-date">{{comment.created | date:'short'}} UTC</div>
                                             </div>
                                         </div>
-                                        <div class="anno-comment-item-text">{{comment.comment}}</div>
+                                        <div class="anno-comment-item-text" ng-bind-html="comment.modified_comment"></div>
                                     </div>
                                 </div>
                                 <div class="post-comment" style="padding: 30px 3.38% 50px 0">

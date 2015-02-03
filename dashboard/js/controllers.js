@@ -32,7 +32,7 @@ Dashboard.controller('Login', function($scope, $cookieStore, DashboardConstants,
     };
 });
 
-Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, DataService, ComStyleGetter, DashboardConstants) {
+Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, $sce, DataService, ComStyleGetter, DashboardConstants) {
     $scope.imageBaseURL = DashboardConstants.imageURL[DashboardConstants.serverURLKey];
     $scope.display_name = $cookieStore.get('user_display_name');
     $scope.email = $cookieStore.get('user_email');
@@ -84,6 +84,12 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
                 anno.teamNotesNotPresent = true;
                 anno.team_notes = "No Notes";
             }
+
+            angular.forEach(anno.followup_list, function(comment) {
+                comment.modified_comment = comment.comment;
+                comment.modified_comment = DataService.replaceURLWithLink(comment.modified_comment);
+                comment.modified_comment = $sce.trustAsHtml(comment.modified_comment);
+            });
         });
     });
 
