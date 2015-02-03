@@ -72,6 +72,9 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         $scope.annoList = data.anno_list;
         console.log($scope.annoList);
         angular.forEach($scope.annoList, function(anno) {
+            anno.upvote_text = anno.is_my_vote ? "Upvoted" : "Upvote";
+            anno.flag_text = anno.is_my_flag ? "Flagged" : "Flag";
+
             anno.tags = [];
             anno.mentions = [];
             anno.teamNotesNotPresent = false;

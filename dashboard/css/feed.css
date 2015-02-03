@@ -70,11 +70,28 @@
   border-radius: 4px;
   line-height: 24px;
 }
-.anno-item .anno-info .anno-info-action-item > div {
+.anno-item .anno-info .anno-info-action-item .action-icon {
   width: 16px;
   height: 16px;
   display: inline-block;
   vertical-align: middle;
+}
+.anno-item .anno-info .anno-info-action-item.upvote .action-icon {
+  background-image: url(../images/icon_upvotes.png);
+}
+.anno-item .anno-info .anno-info-action-item.upvote.upvoted,
+.anno-item .anno-info .anno-info-action-item.flag.flagged {
+  color: #1b96c9;
+  border: 1px solid #1b96c9;
+}
+.anno-item .anno-info .anno-info-action-item.upvote.upvoted .action-icon {
+  background-image: url(../images/icon_upvotes-blue.png);
+}
+.anno-item .anno-info .anno-info-action-item.flag .action-icon {
+  background-image: url(../images/icon_flag.png);
+}
+.anno-item .anno-info .anno-info-action-item.flag.flagged .action-icon {
+  background-image: url(../images/icon_flag-blue.png);
 }
 .anno-item .anno-info .anno-info-counts .anno-info-counts-text {
   display: inline-block;
