@@ -147,6 +147,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     };
 
     $scope.editTeamNotes = function(event) {
+        $scope.team_notes_save = "Save";
         var anno_item = DataService.findAncestor(event.currentTarget, 'anno-item'),
             teamNotesTextNode = anno_item.querySelector('.team-notes'),
             teamNotesTextInput = anno_item.querySelector('.anno-team-notes-edittext');
@@ -165,16 +166,21 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     };
 
     $scope.saveTeamNotes = function(event) {
+        $scope.team_notes_save = "Saving...";
         var anno_item = DataService.findAncestor(event.currentTarget, 'anno-item'),
             teamNotesTextNode = anno_item.querySelector('.team-notes'),
             teamNotesTextInput = anno_item.querySelector('.anno-team-notes-edittext');
 
-        teamNotesTextNode.style.display = "block";
-        teamNotesTextInput.style.display = "none";
         var teamNotes = teamNotesTextInput.querySelector('textarea').value.trim();
         if (teamNotes.length) {
             teamNotesTextNode.innerText = teamNotes;
-            DataService.insertTeamNotes(anno_item.dataset.annoId, teamNotes);
+            DataService.insertTeamNotes(anno_item.dataset.annoId, teamNotes, function() {
+                $scope.team_notes_save = "Saved";
+                setTimeout(function() {
+                    teamNotesTextNode.style.display = "block";
+                    teamNotesTextInput.style.display = "none";
+                }, 1000);
+            });
         }
     };
 });

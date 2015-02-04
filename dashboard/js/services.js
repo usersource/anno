@@ -149,7 +149,7 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
         };
 
         $http(req).success(function(data, status, header, config) {
-            if (status == 200 && callback) {
+            if (callback !== undefined) {
                 callback(data);
             }
         }).error(function(data, status, header, config) {

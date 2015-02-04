@@ -56,7 +56,7 @@
                             <div class="screenshotContainer">
                                 <img class="imgDetailScreenshot" width="100%" style="display: none;" imgonload="screenshotLoad($event);" ng-src="{{imageBaseURL}}{{anno.id}}">
                             </div>
-                            <div id="gfxCanvasContainer_{{$index}}" class="gfxCanvasContainer" style="width: 500px; height: 500px;display: none"></div>
+                            <div id="gfxCanvasContainer_{{$index}}" class="gfxCanvasContainer" style="width: 500px; height: 500px;display: none;"></div>
                             <input type="button" value="Hide Annotation" style="margin-top: 25px;">
                         </div>
                         <div class="anno-details">
@@ -134,7 +134,7 @@
                                 <div class="team-notes" ng-class={'no-team-notes':!anno.team_notes.length}>{{anno.team_notes.length ? anno.team_notes : noTeamNotesText}}</div>
                                 <div class="anno-team-notes-edittext" style="display: none;">
                                     <textarea placeholder="Write team notes..."></textarea>
-                                    <input type="button" value="Save" ng-click="saveTeamNotes($event);">
+                                    <input type="button" ng-value="team_notes_save" ng-click="saveTeamNotes($event);">
                                 </div>
                             </div>
                             <div class="anno-tags anno-item-section">
