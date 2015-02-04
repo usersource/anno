@@ -61,6 +61,7 @@ from message.anno_api_messages import AnnoListMessage
 from message.anno_api_messages import AnnoDashboardListMessage
 from message.anno_api_messages import AnnoResponseMessage
 from message.anno_api_messages import UserUnreadMessage
+from message.anno_api_messages import AnnoTeamNotesMetadataMessage
 from message.user_message import UserMessage
 from message.user_message import UserListMessage
 from model.anno import Anno
@@ -76,6 +77,7 @@ from helper.settings import anno_js_client_id
 from helper.utils import auth_user
 from helper.utils import put_search_document
 from helper.utils import extract_tags_from_text
+from helper.utils import parseTeamNotesForHashtags
 from helper.activity_push_notifications import ActivityPushNotifications
 from helper.utils_enum import AnnoQueryType, AnnoActionType
 from helper.utils_enum import SearchIndexName
@@ -412,11 +414,12 @@ class AnnoApi(remote.Service):
 
         return UserListMessage(user_list=users)
 
-    @endpoints.method(anno_with_id_resource_container, message_types.VoidMessage, path='anno/teamnotes',
+    @endpoints.method(anno_with_id_resource_container, AnnoTeamNotesMetadataMessage, path='anno/teamnotes',
                       http_method='POST', name='anno.teamnotes.insert')
     def anno_teamnotes_insert(self, request):
         anno = Anno.get_by_id(request.id)
         if anno:
             anno.team_notes = request.team_notes
             anno.put()
-        return message_types.VoidMessage()
+        return AnnoTeamNotesMetadataMessage(tags=parseTeamNotesForHashtags(request.team_notes),
+                                            mentions=[])

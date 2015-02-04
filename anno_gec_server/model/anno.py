@@ -14,6 +14,7 @@ from message.anno_api_messages import AnnoListMessage
 from message.anno_api_messages import AnnoDashboardListMessage
 from message.anno_api_messages import AnnoTagsResponseMessage
 from message.anno_api_messages import AnnoMentionsResponseMessage
+from message.anno_api_messages import AnnoTeamNotesMetadataMessage
 from message.user_message import UserMessage
 from model.base_model import BaseModel
 from model.community import Community
@@ -151,6 +152,9 @@ class Anno(BaseModel):
         from model.flag import Flag
         is_my_flag = Flag.is_belongs_user(self, user)
 
+        team_notes_metadata = AnnoTeamNotesMetadataMessage(tags=parseTeamNotesForHashtags(self.team_notes),
+                                                           mentions=[])
+
         anno_message = AnnoDashboardResponseMessage(id=self.key.id(),
                                                     anno_text=self.anno_text,
                                                     device_model=self.device_model,
@@ -167,8 +171,7 @@ class Anno(BaseModel):
                                                     followup_list=followup_messages,
                                                     is_my_vote=is_my_vote,
                                                     is_my_flag=is_my_flag,
-                                                    tags=parseTeamNotesForHashtags(self.team_notes),
-                                                    mentions=[AnnoMentionsResponseMessage()],
+                                                    team_notes_metadata=team_notes_metadata,
                                                     team_notes=self.team_notes)
 
         return anno_message

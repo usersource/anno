@@ -119,6 +119,10 @@ class AnnoTagsResponseMessage(messages.Message):
 class AnnoMentionsResponseMessage(messages.Message):
     value = messages.StringField(1)
 
+class AnnoTeamNotesMetadataMessage(messages.Message):
+    tags = messages.MessageField(AnnoTagsResponseMessage, 1, repeated=True)
+    mentions = messages.MessageField(AnnoMentionsResponseMessage, 2, repeated=True)
+
 class AnnoDashboardResponseMessage(messages.Message):
     id = messages.IntegerField(1)
     anno_text = messages.StringField(2)
@@ -138,8 +142,7 @@ class AnnoDashboardResponseMessage(messages.Message):
     flag_count = messages.IntegerField(16)
     followup_count = messages.IntegerField(17)
     team_notes = messages.StringField(18)
-    tags = messages.MessageField(AnnoTagsResponseMessage, 19, repeated=True)
-    mentions = messages.MessageField(AnnoMentionsResponseMessage, 20, repeated=True)
+    team_notes_metadata = messages.MessageField(AnnoTeamNotesMetadataMessage, 19)
 
 class AnnoListMessage(messages.Message):
     """
