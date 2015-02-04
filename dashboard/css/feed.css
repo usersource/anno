@@ -125,7 +125,7 @@
 .anno-item .anno-item-tag-item {
   background-color: #dee0e4;
   border-radius: 4px;
-  margin-right: 8px;
+  margin: 0 8px 8px 0;
   height: 24px;
   display: inline-block;
   padding: 0 15px;
