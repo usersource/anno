@@ -97,6 +97,7 @@
 .anno-item .anno-info .anno-info-counts .anno-info-counts-text {
   display: inline-block;
   vertical-align: middle;
+  margin-left: 2px;
 }
 .anno-item .anno-info .anno-author-image, .anno-comments .anno-comment-item .anno-commenter-image {
   width: 35px;
