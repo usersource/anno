@@ -147,9 +147,9 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     };
 
     $scope.editTeamNotes = function(event) {
-        var teamNotesParentNode = event.currentTarget.parentElement.parentElement,
-            teamNotesTextNode = teamNotesParentNode.querySelector('.team-notes'),
-            teamNotesTextInput = teamNotesParentNode.querySelector('.anno-team-notes-edittext');
+        var anno_item = DataService.findAncestor(event.currentTarget, 'anno-item'),
+            teamNotesTextNode = anno_item.querySelector('.team-notes'),
+            teamNotesTextInput = anno_item.querySelector('.anno-team-notes-edittext');
 
         if (teamNotesTextNode.style.display !== "none") {
             teamNotesTextNode.style.display = "none";
@@ -165,9 +165,9 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     };
 
     $scope.saveTeamNotes = function(event) {
-        var teamNotesParentNode = event.currentTarget.parentElement.parentElement,
-            teamNotesTextNode = teamNotesParentNode.querySelector('.team-notes'),
-            teamNotesTextInput = teamNotesParentNode.querySelector('.anno-team-notes-edittext');
+        var anno_item = DataService.findAncestor(event.currentTarget, 'anno-item'),
+            teamNotesTextNode = anno_item.querySelector('.team-notes'),
+            teamNotesTextInput = anno_item.querySelector('.anno-team-notes-edittext');
 
         teamNotesTextNode.style.display = "block";
         teamNotesTextInput.style.display = "none";
