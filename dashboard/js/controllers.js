@@ -89,6 +89,22 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         return comment;
     };
 
+    $scope.getAnnoById = function(anno_id) {
+        var annoData = {};
+
+        if ($scope.annoList.length) {
+            var annoDataList = $scope.annoList.filter(function(anno) {
+                return anno.id === anno_id;
+            });
+
+            if (annoDataList.length) {
+                annoData = annoDataList[0];
+            }
+        }
+
+        return annoData;
+    };
+
     DataService.getAnnos(function(data, imageURL) {
         $scope.annoList = data.anno_list;
         console.log($scope.annoList);
@@ -132,12 +148,11 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     };
 
     $scope.redrawShapes = function(anno_id, surface) {
-        var annoData = this.annoList.filter(function(anno) { return anno.id == anno_id; })[0];
-        var drawElements = annoData.draw_elements;
+        var annoData = $scope.getAnnoById(anno_id);
         var lineStrokeStyle = { color: DashboardConstants.borderColor, width: 3 };
 
-        if (drawElements) {
-            var elementsObject = angular.fromJson(drawElements);
+        if (angular.isObject(annoData)) {
+            var elementsObject = angular.fromJson(annoData.draw_elements);
             surface.show();
             angular.element(surface.container).css({'border': this.borderWidth + 'px solid transparent', left: '0px',top: '0px'});
             surface.borderWidth = this.borderWidth;
@@ -169,12 +184,14 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         $scope.team_notes_save = "Saving...";
         var anno_item = Utils.findAncestor(event.currentTarget, 'anno-item'),
             teamNotesTextNode = anno_item.querySelector('.team-notes'),
-            teamNotesTextInput = anno_item.querySelector('.anno-team-notes-edittext');
+            teamNotesTextInput = anno_item.querySelector('.anno-team-notes-edittext'),
+            anno_id = anno_item.dataset.annoId;
 
         var teamNotes = teamNotesTextInput.querySelector('textarea').value.trim();
         if (teamNotes.length) {
             teamNotesTextNode.innerText = teamNotes;
-            DataService.insertTeamNotes(anno_item.dataset.annoId, teamNotes, function() {
+            DataService.insertTeamNotes(anno_id, teamNotes, function(data) {
+                $scope.getAnnoById(anno_id).team_notes_metadata.tags = data.tags;
                 $scope.team_notes_save = "Saved";
                 setTimeout(function() {
                     teamNotesTextNode.style.display = "block";
