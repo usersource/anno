@@ -174,6 +174,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         var teamNotes = teamNotesTextInput.querySelector('textarea').value.trim();
         if (teamNotes.length) {
             teamNotesTextNode.innerText = teamNotes;
+            DataService.insertTeamNotes(anno_item.dataset.annoId, teamNotes);
         }
     };
 });

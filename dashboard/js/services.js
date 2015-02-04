@@ -136,6 +136,27 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
         });
     }
 
+    function insertTeamNotes(anno_id, team_notes, callback) {
+        var self = this;
+        var endpointData = DashboardConstants.endpointUrl["anno.anno.teamnotes.insert"];
+        var url = apiRoot + "/" + endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + endpointData.path;
+
+        var req = {
+            method : endpointData.method,
+            url : url,
+            params : { id: anno_id, team_notes: team_notes },
+            cache : true
+        };
+
+        $http(req).success(function(data, status, header, config) {
+            if (status == 200 && callback) {
+                callback(data);
+            }
+        }).error(function(data, status, header, config) {
+            console.error("Error while inserting team notes");
+        });
+    }
+
     function findAncestor(el, cls) {
         while ((el = el.parentElement) && !el.classList.contains(cls));
         return el;
@@ -150,6 +171,7 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
         authenticateDashboard : authenticateDashboard,
         getAppInfo : getAppInfo,
         getAnnos : getAnnos,
+        insertTeamNotes : insertTeamNotes,
         findAncestor : findAncestor
     });
 });

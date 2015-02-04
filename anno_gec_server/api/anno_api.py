@@ -91,7 +91,8 @@ class AnnoApi(remote.Service):
     anno_with_id_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
         id=messages.IntegerField(2, required=True),
-        team_key=messages.StringField(3)
+        team_key=messages.StringField(3),
+        team_notes=messages.StringField(4)
     )
 
     anno_list_resource_container = endpoints.ResourceContainer(
@@ -410,3 +411,12 @@ class AnnoApi(remote.Service):
         users = sorted(users, key=lambda user_info: user_info.display_name.lower())
 
         return UserListMessage(user_list=users)
+
+    @endpoints.method(anno_with_id_resource_container, message_types.VoidMessage, path='anno/teamnotes',
+                      http_method='POST', name='anno.teamnotes.insert')
+    def anno_teamnotes_insert(self, request):
+        anno = Anno.get_by_id(request.id)
+        if anno:
+            anno.team_notes = request.team_notes
+            anno.put()
+        return message_types.VoidMessage()

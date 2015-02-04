@@ -30,6 +30,11 @@ DashboardConstantsModule.value("DashboardConstants", {
             "root" : "anno",
             "path" : "anno/dashboard",
             "method" : "GET"
+        },
+        "anno.anno.teamnotes.insert" : {
+            "root" : "anno",
+            "path" : "anno/teamnotes",
+            "method" : "POST"
         }
     },
     borderColor : "#ff9900",
