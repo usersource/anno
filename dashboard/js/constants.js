@@ -35,6 +35,11 @@ DashboardConstantsModule.value("DashboardConstants", {
             "root" : "anno",
             "path" : "anno/teamnotes",
             "method" : "POST"
+        },
+        "followup.followup.insert" : {
+            "root" : "followup",
+            "path" : "followup",
+            "method" : "POST"
         }
     },
     borderColor : "#ff9900",

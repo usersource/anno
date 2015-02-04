@@ -223,4 +223,28 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             });
         }
     };
+
+    $scope.postComment = function(event) {
+        var anno_item = Utils.findAncestor(event.currentTarget, 'anno-item'),
+            postCommentTextarea = anno_item.querySelector('.post-comment').querySelector('textarea'),
+            anno_id = anno_item.dataset.annoId;
+
+        var comment = postCommentTextarea.value.trim();
+        if (comment.length) {
+            DataService.makeHTTPCall("followup.followup.insert", {
+                anno_id : anno_id,
+                comment : comment
+            }, function(data) {
+                postCommentTextarea.value = "";
+                var latestComment = {
+                    id : data.id,
+                    anno_id : data.anno_id,
+                    comment : data.comment,
+                    created : data.created,
+                    creator : data.creator
+                };
+                $scope.getAnnoById(anno_id).followup_list.push(latestComment);
+            });
+        }
+    };
 });
