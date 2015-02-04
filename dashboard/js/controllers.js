@@ -92,10 +92,6 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     DataService.getAnnos(function(data, imageURL) {
         $scope.annoList = data.anno_list;
         console.log($scope.annoList);
-        angular.forEach($scope.annoList, function(anno) {
-            anno.tags = [];
-            anno.mentions = [];
-        });
     });
 
     $scope.screenshotLoad = function (event) {

@@ -12,6 +12,8 @@ from message.anno_api_messages import AnnoResponseMessage
 from message.anno_api_messages import AnnoDashboardResponseMessage
 from message.anno_api_messages import AnnoListMessage
 from message.anno_api_messages import AnnoDashboardListMessage
+from message.anno_api_messages import AnnoTagsResponseMessage
+from message.anno_api_messages import AnnoMentionsResponseMessage
 from message.user_message import UserMessage
 from model.base_model import BaseModel
 from model.community import Community
@@ -59,6 +61,7 @@ class Anno(BaseModel):
     country = ndb.StringProperty()
     circle_level = ndb.IntegerProperty(default=0)
     screen_info = ndb.StringProperty()
+    team_notes = ndb.TextProperty()
 
     def __eq__(self, other):
         return self.key.id() == other.key.id()
@@ -161,10 +164,12 @@ class Anno(BaseModel):
                                                     vote_count=self.vote_count,
                                                     flag_count=self.flag_count,
                                                     followup_count=self.followup_count,
-                                                    team_notes="",
                                                     followup_list=followup_messages,
                                                     is_my_vote=is_my_vote,
-                                                    is_my_flag=is_my_flag)
+                                                    is_my_flag=is_my_flag,
+                                                    tags=[AnnoTagsResponseMessage()],
+                                                    mentions=[AnnoMentionsResponseMessage()],
+                                                    team_notes=self.team_notes)
 
         return anno_message
 

@@ -113,6 +113,12 @@ class AnnoResponseMessage(messages.Message):
     last_activity_user = messages.MessageField(UserMessage, 36)
     circle_level_value = messages.StringField(37)
 
+class AnnoTagsResponseMessage(messages.Message):
+    value = messages.StringField(1)
+
+class AnnoMentionsResponseMessage(messages.Message):
+    value = messages.StringField(1)
+
 class AnnoDashboardResponseMessage(messages.Message):
     id = messages.IntegerField(1)
     anno_text = messages.StringField(2)
@@ -132,6 +138,8 @@ class AnnoDashboardResponseMessage(messages.Message):
     flag_count = messages.IntegerField(16)
     followup_count = messages.IntegerField(17)
     team_notes = messages.StringField(18)
+    tags = messages.MessageField(AnnoTagsResponseMessage, 19, repeated=True)
+    mentions = messages.MessageField(AnnoMentionsResponseMessage, 20, repeated=True)
 
 class AnnoListMessage(messages.Message):
     """
