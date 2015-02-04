@@ -201,6 +201,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     };
 
     $scope.saveTeamNotes = function(event) {
+        if (event.keyCode !== 13) return;
         $scope.team_notes_save = "Saving...";
         var anno_item = Utils.findAncestor(event.currentTarget, 'anno-item'),
             teamNotesTextNode = anno_item.querySelector('.team-notes'),
@@ -225,6 +226,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     };
 
     $scope.postComment = function(event) {
+        if (event.keyCode !== 13) return;
         var anno_item = Utils.findAncestor(event.currentTarget, 'anno-item'),
             postCommentTextarea = anno_item.querySelector('.post-comment').querySelector('textarea'),
             anno_id = anno_item.dataset.annoId;
