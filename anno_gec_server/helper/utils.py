@@ -380,7 +380,7 @@ def extract_tags_from_text(text):
 def parseTeamNotesForHashtags(team_notes):
     hashtag_list = []
     if team_notes:
-        for hashtag in re.findall(r'(#[a-z\d][\w-]*)', team_notes):
+        for hashtag in list(set(re.findall(r'(#[a-z\d][\w-]*)', team_notes))):
             hashtag_list.append(AnnoTagsResponseMessage(value=hashtag))
 
     return hashtag_list
