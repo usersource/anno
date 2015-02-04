@@ -57,7 +57,7 @@
                                 <img class="imgDetailScreenshot" width="100%" style="display: none" imgonload="screenshotLoad($event);" data-index="{{$index}}" ng-src="{{imageBaseURL}}{{anno.id}}">
                             </div>
                             <div id="gfxCanvasContainer_{{$index}}" class="gfxCanvasContainer" style="width: 500px; height: 500px;display: none"></div>
-                            <input type="button" value="Show Annotation" style="margin-top: 25px;">
+                            <input type="button" value="Hide Annotation" style="margin-top: 25px;">
                         </div>
                         <div class="anno-details">
                             <div class="anno-info anno-item-section">
@@ -110,11 +110,11 @@
                                     </div>
                                     <div class="anno-info-action-item upvote" ng-class="{'upvoted':anno.is_my_vote}">
                                         <div class="action-icon"></div>
-                                        <span style="vertical-align: middle; margin-left: 4px;">{{anno.upvote_text}}</span>
+                                        <span style="vertical-align: middle; margin-left: 4px;">Upvote{{anno.is_my_vote === true ? "d" : ""}}</span>
                                     </div>
                                     <div class="anno-info-action-item flag" ng-class="{'flagged':anno.is_my_flag}">
                                         <div class="action-icon"></div>
-                                        <span style="vertical-align: middle; margin-left: 4px;">{{anno.flag_text}}</span>
+                                        <span style="vertical-align: middle; margin-left: 4px;">Flag{{anno.is_my_flag === true ? "ged" : ""}}</span>
                                     </div>
                                     <div class="anno-info-action-item archive">
                                         <div class="action-icon" style="background-image: url(images/icon_archive.png);"></div>
@@ -140,7 +140,7 @@
                             <div class="anno-tags anno-item-section">
                                 <div style="margin-bottom: 20px;">
                                     <img width="16px" height="16px" src="images/icon_tag.png">
-                                    <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.tags.length}} Tag(s)</span>
+                                    <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.tags.length}} Tag{{anno.tags.length !== 1 ? "s" : ""}}</span>
                                 </div>
                                 <div>
                                     <span class="anno-item-tag-item" ng-repeat="tag in anno.tags">{{tag}}</span>
@@ -150,7 +150,7 @@
                             <div class="anno-mentions anno-item-section">
                                 <div style="margin-bottom: 20px;">
                                     <img width="16px" height="16px" src="images/icon_mentions.png">
-                                    <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.mentions.length}} Mention(s)</span>
+                                    <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.mentions.length}} Mention{{anno.mentions.length !== 1 ? "s" : ""}}</span>
                                 </div>
                                 <div>
                                     <span class="anno-item-tag-item" ng-repeat="mention in anno.mentions">{{mention}}</span>
@@ -160,7 +160,7 @@
                             <div class="anno-comments anno-item-section">
                                 <div style="padding: 20px 0; border-bottom: 1px solid #c4cfd7;">
                                     <img width="16px" height="16px" src="images/icon_comments.png">
-                                    <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.followup_list.length}} Comment(s)</span>
+                                    <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.followup_list.length}} Comment{{anno.followup_list.length !== 1 ? "s" : ""}}</span>
                                 </div>
                                 <div>
                                     <div class="anno-comment-item" ng-repeat="comment in anno.followup_list">

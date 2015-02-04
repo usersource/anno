@@ -75,8 +75,6 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         console.log($scope.annoList);
         angular.forEach($scope.annoList, function(anno) {
             anno.created = new Date(anno.created);
-            anno.upvote_text = anno.is_my_vote ? "Upvoted" : "Upvote";
-            anno.flag_text = anno.is_my_flag ? "Flagged" : "Flag";
 
             anno.tags = [];
             anno.mentions = [];
