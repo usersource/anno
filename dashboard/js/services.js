@@ -60,7 +60,7 @@ ServiceModule.factory('Utils', function($cookieStore) {
     };
 });
 
-ServiceModule.factory('DataService', function($http, $location, $window, DashboardConstants) {
+ServiceModule.factory('DataService', function($http, $location, $window, Utils, DashboardConstants) {
     var apiRoot = DashboardConstants.apiRoot[DashboardConstants.serverURLKey];
 
     function checkAuthentication() {
@@ -91,7 +91,7 @@ ServiceModule.factory('DataService', function($http, $location, $window, Dashboa
         $http(req).success(function(data, status, header, config) {
             if (status == 200) {
                 data['email'] = params.user_email;
-                self.storeUserDataInCookies(data);
+                Utils.storeUserDataInCookies(data);
                 if (data.authenticated) {
                     $window.location.href = $location.absUrl().replace('login.html', 'feed.html');
                 }
@@ -121,7 +121,7 @@ ServiceModule.factory('DataService', function($http, $location, $window, Dashboa
             console.error("Error while getting app info");
             if (status == 401) {
                 $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
-                self.removeUserDataCookies();
+                Utils.removeUserDataCookies();
             }
         });
     }
@@ -146,7 +146,7 @@ ServiceModule.factory('DataService', function($http, $location, $window, Dashboa
             console.error("Error while getting anno");
             if (status == 401) {
                 $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
-                self.removeUserDataCookies();
+                Utils.removeUserDataCookies();
             }
         });
     }
