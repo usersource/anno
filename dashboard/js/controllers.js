@@ -1,6 +1,6 @@
 'use strict';
 
-var Dashboard = angular.module('Dashboard', ['ngCookies', 'DashboardConstantsModule', 'DataServiceModule']);
+var Dashboard = angular.module('Dashboard', ['ngCookies', 'DashboardConstantsModule', 'ServiceModule']);
 
 Dashboard.config(['$httpProvider', function($httpProvider) {
     var $cookies;
@@ -32,7 +32,7 @@ Dashboard.controller('Login', function($scope, $cookieStore, DashboardConstants,
     };
 });
 
-Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, $sce, DataService, ComStyleGetter, DashboardConstants) {
+Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, $sce, Utils, DataService, ComStyleGetter, DashboardConstants) {
     $scope.noTeamNotesText = "No Notes";
 
     $scope.imageBaseURL = DashboardConstants.imageURL[DashboardConstants.serverURLKey];
@@ -59,7 +59,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
 
     $scope.signoutDashboard = function() {
         $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
-        DataService.removeUserDataCookies();
+        Utils.removeUserDataCookies();
     };
 
     $scope.initLogin = function() {
@@ -83,8 +83,8 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     };
 
     $scope.parseComment = function(comment, tagged_users_detail) {
-        comment = DataService.replaceURLWithLink(comment);
-        comment = DataService.replaceEmailWithName(comment, tagged_users_detail);
+        comment = Utils.replaceURLWithLink(comment);
+        comment = Utils.replaceEmailWithName(comment, tagged_users_detail);
         comment = $sce.trustAsHtml(comment);
         return comment;
     };
@@ -95,7 +95,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     });
 
     $scope.screenshotLoad = function (event) {
-        var anno_item = DataService.findAncestor(event.currentTarget, 'anno-item');
+        var anno_item = Utils.findAncestor(event.currentTarget, 'anno-item');
         var imgDetailScreenshot = anno_item.querySelector(".imgDetailScreenshot");
         angular.element(imgDetailScreenshot).css('display', '');
 
@@ -148,7 +148,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
 
     $scope.editTeamNotes = function(event) {
         $scope.team_notes_save = "Save";
-        var anno_item = DataService.findAncestor(event.currentTarget, 'anno-item'),
+        var anno_item = Utils.findAncestor(event.currentTarget, 'anno-item'),
             teamNotesTextNode = anno_item.querySelector('.team-notes'),
             teamNotesTextInput = anno_item.querySelector('.anno-team-notes-edittext');
 
@@ -167,7 +167,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
 
     $scope.saveTeamNotes = function(event) {
         $scope.team_notes_save = "Saving...";
-        var anno_item = DataService.findAncestor(event.currentTarget, 'anno-item'),
+        var anno_item = Utils.findAncestor(event.currentTarget, 'anno-item'),
             teamNotesTextNode = anno_item.querySelector('.team-notes'),
             teamNotesTextInput = anno_item.querySelector('.anno-team-notes-edittext');
 

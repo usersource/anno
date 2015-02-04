@@ -1,8 +1,6 @@
-var DataServiceModule = angular.module('DataServiceModule', ['ngCookies', 'DashboardConstantsModule']);
+var ServiceModule = angular.module('ServiceModule', ['ngCookies', 'DashboardConstantsModule']);
 
-DataServiceModule.factory('DataService', function($http, $location, $window, $cookieStore, DashboardConstants) {
-    var apiRoot = DashboardConstants.apiRoot[DashboardConstants.serverURLKey];
-
+ServiceModule.factory('Utils', function($cookieStore) {
     function storeUserDataInCookies(data) {
         $cookieStore.put('authenticated', data.authenticated);
         $cookieStore.put('user_display_name', data.display_name);
@@ -47,6 +45,23 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
 
         return s;
     }
+
+    function findAncestor(el, cls) {
+        while ((el = el.parentElement) && !el.classList.contains(cls));
+        return el;
+    }
+
+    return {
+        storeUserDataInCookies : storeUserDataInCookies,
+        removeUserDataCookies : removeUserDataCookies,
+        replaceURLWithLink : replaceURLWithLink,
+        replaceEmailWithName : replaceEmailWithName,
+        findAncestor : findAncestor
+    };
+});
+
+ServiceModule.factory('DataService', function($http, $location, $window, DashboardConstants) {
+    var apiRoot = DashboardConstants.apiRoot[DashboardConstants.serverURLKey];
 
     function checkAuthentication() {
         var currentPath = $location.path();
@@ -157,26 +172,16 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
         });
     }
 
-    function findAncestor(el, cls) {
-        while ((el = el.parentElement) && !el.classList.contains(cls));
-        return el;
-    }
-
     return ({
-        storeUserDataInCookies : storeUserDataInCookies,
-        removeUserDataCookies : removeUserDataCookies,
-        replaceURLWithLink : replaceURLWithLink,
-        replaceEmailWithName : replaceEmailWithName,
         checkAuthentication : checkAuthentication,
         authenticateDashboard : authenticateDashboard,
         getAppInfo : getAppInfo,
         getAnnos : getAnnos,
-        insertTeamNotes : insertTeamNotes,
-        findAncestor : findAncestor
+        insertTeamNotes : insertTeamNotes
     });
 });
 
-DataServiceModule.factory("ComStyleGetter", function() {
+ServiceModule.factory("ComStyleGetter", function() {
     var userAgentUtil = {
         initialized:false,
         init: function() {
