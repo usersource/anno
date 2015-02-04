@@ -16,7 +16,7 @@ Dashboard.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.headers.common.contentType = 'application/json';
 }]);
 
-Dashboard.controller('Login', function($scope, $cookieStore, DashboardConstants, DataService) {
+Dashboard.controller('Login', function($scope, $window, $location, $cookieStore, Utils, DashboardConstants, DataService) {
     $scope.initLogin = function() {
         // DataService.checkAuthentication();
     };
@@ -28,7 +28,13 @@ Dashboard.controller('Login', function($scope, $cookieStore, DashboardConstants,
             'team_key' : $scope.teamkey
         };
 
-        DataService.authenticateDashboard(params);
+        DataService.makeHTTPCall("account.dashboard.authenticate", params, function(data) {
+            data['email'] = params.user_email;
+            Utils.storeUserDataInCookies(data);
+            if (data.authenticated) {
+                $window.location.href = $location.absUrl().replace('login.html', 'feed.html');
+            }
+        });
     };
 });
 
@@ -66,8 +72,15 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         // DataService.checkAuthentication();
     };
 
-    DataService.getAppInfo($cookieStore.get('team_key'), function(data) {
+    DataService.makeHTTPCall("appinfo.appinfo.get", {
+        team_key : $cookieStore.get('team_key')
+    }, function(data) {
         $scope.appInfo = data;
+    }, function(status) {
+        if (status == 401) {
+            $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
+            Utils.removeUserDataCookies();
+        }
     });
 
     $scope.showLocalDateTime = function(datetime) {
@@ -105,9 +118,16 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         return annoData;
     };
 
-    DataService.getAnnos(function(data, imageURL) {
+    DataService.makeHTTPCall("anno.anno.dashboard.list", {
+        outcome : 'cursor,has_more,anno_list'
+    }, function(data) {
         $scope.annoList = data.anno_list;
         console.log($scope.annoList);
+    }, function(status) {
+        if (status == 401) {
+            $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
+            Utils.removeUserDataCookies();
+        }
     });
 
     $scope.screenshotLoad = function (event) {
@@ -190,7 +210,10 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         var teamNotes = teamNotesTextInput.querySelector('textarea').value.trim();
         if (teamNotes.length) {
             teamNotesTextNode.innerText = teamNotes;
-            DataService.insertTeamNotes(anno_id, teamNotes, function(data) {
+            DataService.makeHTTPCall("anno.anno.teamnotes.insert", {
+                id: anno_id,
+                team_notes: teamNotes
+            }, function(data) {
                 $scope.getAnnoById(anno_id).team_notes_metadata.tags = data.tags;
                 $scope.team_notes_save = "Saved";
                 setTimeout(function() {

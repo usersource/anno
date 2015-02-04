@@ -77,107 +77,34 @@ ServiceModule.factory('DataService', function($http, $location, $window, Utils, 
         }
     }
 
-    function authenticateDashboard(params) {
+    function makeHTTPCall(endpointName, params, success_callback, error_callback) {
         var self = this;
-        var endpointData = DashboardConstants.endpointUrl["account.dashboard.authenticate"];
+        var endpointData = DashboardConstants.endpointUrl[endpointName];
         var url = apiRoot + "/" + endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + endpointData.path;
 
         var req = {
             method : endpointData.method,
             url : url,
-            data : params
-        };
-
-        $http(req).success(function(data, status, header, config) {
-            if (status == 200) {
-                data['email'] = params.user_email;
-                Utils.storeUserDataInCookies(data);
-                if (data.authenticated) {
-                    $window.location.href = $location.absUrl().replace('login.html', 'feed.html');
-                }
-            }
-        }).error(function(data, status, header, config) {
-            console.error("Invalid email or password");
-        });
-    }
-
-    function getAppInfo(team_key, callback) {
-        var self = this;
-        var endpointData = DashboardConstants.endpointUrl["appinfo.appinfo.get"];
-        var url = apiRoot + "/" + endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + endpointData.path;
-
-        var req = {
-            method : endpointData.method,
-            url : url,
-            params : { team_key : team_key },
+            data : params,
+            params : params,
             cache : true
         };
 
         $http(req).success(function(data, status, header, config) {
-            if (status == 200) {
-                callback(data);
+            if (success_callback !== undefined) {
+                success_callback(data);
             }
         }).error(function(data, status, header, config) {
-            console.error("Error while getting app info");
-            if (status == 401) {
-                $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
-                Utils.removeUserDataCookies();
+            console.error("Error:", endpointName);
+            if (error_callback !== undefined) {
+                error_callback(status);
             }
-        });
-    }
-
-    function getAnnos(callback) {
-        var self = this;
-        var endpointData = DashboardConstants.endpointUrl["anno.anno.dashboard.list"];
-        var url = apiRoot + "/" + endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + endpointData.path;
-
-        var req = {
-            method : endpointData.method,
-            url : url,
-            params : { outcome : 'cursor,has_more,anno_list' },
-            cache : true
-        };
-
-        $http(req).success(function(data, status, header, config) {
-            if (status == 200) {
-                callback(data);
-            }
-        }).error(function(data, status, header, config) {
-            console.error("Error while getting anno");
-            if (status == 401) {
-                $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
-                Utils.removeUserDataCookies();
-            }
-        });
-    }
-
-    function insertTeamNotes(anno_id, team_notes, callback) {
-        var self = this;
-        var endpointData = DashboardConstants.endpointUrl["anno.anno.teamnotes.insert"];
-        var url = apiRoot + "/" + endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + endpointData.path;
-
-        var req = {
-            method : endpointData.method,
-            url : url,
-            params : { id: anno_id, team_notes: team_notes },
-            cache : true
-        };
-
-        $http(req).success(function(data, status, header, config) {
-            if (callback !== undefined) {
-                callback(data);
-            }
-        }).error(function(data, status, header, config) {
-            console.error("Error while inserting team notes");
         });
     }
 
     return ({
         checkAuthentication : checkAuthentication,
-        authenticateDashboard : authenticateDashboard,
-        getAppInfo : getAppInfo,
-        getAnnos : getAnnos,
-        insertTeamNotes : insertTeamNotes
+        makeHTTPCall : makeHTTPCall
     });
 });
 
