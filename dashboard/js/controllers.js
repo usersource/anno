@@ -33,7 +33,7 @@ Dashboard.controller('Login', function($scope, $cookieStore, DashboardConstants,
 });
 
 Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, $sce, DataService, ComStyleGetter, DashboardConstants) {
-    var noTeamNotesText = "No Notes";
+    $scope.noTeamNotesText = "No Notes";
 
     $scope.imageBaseURL = DashboardConstants.imageURL[DashboardConstants.serverURLKey];
     $scope.display_name = $cookieStore.get('user_display_name');
@@ -70,32 +70,31 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         $scope.appInfo = data;
     });
 
+    $scope.showLocalDateTime = function(datetime) {
+        return new Date(datetime);
+    };
+
+    $scope.showProperDeviceName = function(device_model) {
+        if (device_model in DashboardConstants.deviceList) {
+            device_model = DashboardConstants.deviceList[device_model];
+        }
+
+        return device_model;
+    };
+
+    $scope.parseComment = function(comment, tagged_users_detail) {
+        comment = DataService.replaceURLWithLink(comment);
+        comment = DataService.replaceEmailWithName(comment, tagged_users_detail);
+        comment = $sce.trustAsHtml(comment);
+        return comment;
+    };
+
     DataService.getAnnos(function(data, imageURL) {
         $scope.annoList = data.anno_list;
         console.log($scope.annoList);
         angular.forEach($scope.annoList, function(anno) {
-            anno.created = new Date(anno.created);
-
             anno.tags = [];
             anno.mentions = [];
-            anno.teamNotesNotPresent = false;
-
-            if (anno.device_model in DashboardConstants.deviceList) {
-                anno.device_model = DashboardConstants.deviceList[anno.device_model];
-            }
-
-            if (anno.team_notes.length === 0) {
-                anno.teamNotesNotPresent = true;
-                anno.team_notes = noTeamNotesText;
-            }
-
-            angular.forEach(anno.followup_list, function(comment) {
-                comment.created = new Date(comment.created);
-                comment.modified_comment = comment.comment;
-                comment.modified_comment = DataService.replaceURLWithLink(comment.modified_comment);
-                comment.modified_comment = DataService.replaceEmailWithName(comment.modified_comment, comment.tagged_users_detail);
-                comment.modified_comment = $sce.trustAsHtml(comment.modified_comment);
-            });
         });
     });
 
@@ -164,7 +163,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             teamNotesTextInput.style.display = "none";
         }
 
-        if (teamNotesTextNode.innerText !== noTeamNotesText) {
+        if (teamNotesTextNode.innerText !== $scope.noTeamNotesText) {
             teamNotesTextInput.querySelector('textarea').value = teamNotesTextNode.innerText;
         }
     };

@@ -90,13 +90,13 @@
                                         <span class="anno-author-text">{{anno.creator.display_name}}</span>
                                         <img width="12px" height="12px" style="margin-left: 4.372%;" src="images/icon_calendar.png">
                                         <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Created on:</span>
-                                        <span style="vertical-align: middle; margin-left: 2px;">{{anno.created | date:'medium'}}</span>
+                                        <span style="vertical-align: middle; margin-left: 2px;">{{showLocalDateTime(anno.created) | date:'medium'}}</span>
                                     </div>
                                     <div class="anno-text" style="margin-bottom: 20px;">{{anno.anno_text}}</div>
                                     <div style="margin-bottom: 20px;">
                                         <img width="10px" height="16px" src="images/icon_device.png">
                                         <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Device:</span>
-                                        <span style="vertical-align: middle; margin-left: 2px;">{{anno.device_model}} ({{anno.os_name}} {{anno.os_version}})</span>
+                                        <span style="vertical-align: middle; margin-left: 2px;">{{showProperDeviceName(anno.device_model)}} ({{anno.os_name}} {{anno.os_version}})</span>
                                         <img width="12px" height="14px" style="margin-left: 20px;" src="images/icon_version.png">
                                         <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Version:</span>
                                         <span style="vertical-align: middle; margin-left: 2px;">{{anno.app_name}} v{{anno.app_version}}</span>
@@ -131,7 +131,7 @@
                                         <span style="vertical-align: middle; margin-left: 4px;">Edit</span>
                                     </div>
                                 </div>
-                                <div class="team-notes" ng-class={'no-team-notes':anno.teamNotesNotPresent}>{{anno.team_notes}}</div>
+                                <div class="team-notes" ng-class={'no-team-notes':!anno.team_notes.length}>{{anno.team_notes.length ? anno.team_notes : noTeamNotesText}}</div>
                                 <div class="anno-team-notes-edittext" style="display: none;">
                                     <textarea placeholder="Write team notes..."></textarea>
                                     <input type="button" value="Save" ng-click="saveTeamNotes($event);">
@@ -168,10 +168,10 @@
                                             <img class="anno-commenter-image" style="margin: 0;" ng-src="{{comment.creator.image_url}}">
                                             <div class="anno-comment-item-meta">
                                                 <div style="font-weight: 600; color: #1b96c9;">{{comment.creator.display_name}}</div>
-                                                <div class="anno-comment-item-date">{{comment.created | date:'medium'}}</div>
+                                                <div class="anno-comment-item-date">{{showLocalDateTime(comment.created) | date:'medium'}}</div>
                                             </div>
                                         </div>
-                                        <div class="anno-comment-item-text" ng-bind-html="comment.modified_comment"></div>
+                                        <div class="anno-comment-item-text" ng-bind-html="parseComment(comment.comment, comment.tagged_users_detail);"></div>
                                     </div>
                                 </div>
                                 <div class="post-comment" style="padding: 30px 3.38% 50px 0">
