@@ -20,6 +20,7 @@ from helper.utils_enum import SearchIndexName
 from helper.utils_enum import SignInMethod
 from helper.settings import SUPPORT_EMAIL_ID
 from message.appinfo_message import AppInfoMessage
+from message.anno_api_messages import AnnoTagsResponseMessage
 
 
 APP_NAME = "UserSource"
@@ -375,3 +376,11 @@ def extract_tags_from_text(text):
         tagcloud.setdefault(tag, tags.count(tag))
 
     return tagcloud
+
+def parseTeamNotesForHashtags(team_notes):
+    hashtag_list = []
+    if team_notes:
+        for hashtag in re.findall(r'(#[a-z\d][\w-]*)', team_notes):
+            hashtag_list.append(AnnoTagsResponseMessage(value=hashtag))
+
+    return hashtag_list

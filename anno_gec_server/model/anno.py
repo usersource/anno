@@ -167,7 +167,7 @@ class Anno(BaseModel):
                                                     followup_list=followup_messages,
                                                     is_my_vote=is_my_vote,
                                                     is_my_flag=is_my_flag,
-                                                    tags=[AnnoTagsResponseMessage()],
+                                                    tags=parseTeamNotesForHashtags(self.team_notes),
                                                     mentions=[AnnoMentionsResponseMessage()],
                                                     team_notes=self.team_notes)
 
