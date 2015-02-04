@@ -95,8 +95,8 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     });
 
     $scope.screenshotLoad = function (event) {
-        var anno_index = Number(event.target.dataset.index);
-        var imgDetailScreenshot = eval("anno_" + anno_index).querySelector(".imgDetailScreenshot");
+        var anno_item = DataService.findAncestor(event.currentTarget, 'anno-item');
+        var imgDetailScreenshot = anno_item.querySelector(".imgDetailScreenshot");
         angular.element(imgDetailScreenshot).css('display', '');
 
         var self = this;
@@ -106,20 +106,20 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             // self.borderWidth = Math.floor(self.imageWidth * 0.02);
 
             var surface = new Surface({
-                container : document.getElementById('gfxCanvasContainer_' + anno_index),
+                container : anno_item.querySelector(".gfxCanvasContainer"),
                 width : 500,
                 height : 500,
                 editable : false,
                 borderWidth : 0
             });
 
-            self.applyAnnoLevelColor(anno_index, imgDetailScreenshot);
-            self.redrawShapes(anno_index, surface);
+            self.applyAnnoLevelColor(anno_item, imgDetailScreenshot);
+            self.redrawShapes(anno_item.dataset.annoId, surface);
         });
     };
 
-    $scope.applyAnnoLevelColor = function (anno_index, imgDetailScreenshot) {
-        var screenshotContainer = eval("anno_" + anno_index).querySelector(".screenshotContainer");
+    $scope.applyAnnoLevelColor = function (anno_item, imgDetailScreenshot) {
+        var screenshotContainer = anno_item.querySelector(".screenshotContainer");
         angular.element(screenshotContainer).css({
             width : (this.imageWidth - this.borderWidth * 2) + 'px',
             height : (this.imageHeight - this.borderWidth * 2) + 'px',
@@ -131,8 +131,8 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         angular.element(imgDetailScreenshot).css({ width : '100%', height : '100%' });
     };
 
-    $scope.redrawShapes = function(anno_index, surface) {
-        var annoData = this.annoList[anno_index];
+    $scope.redrawShapes = function(anno_id, surface) {
+        var annoData = this.annoList.filter(function(anno) { return anno.id == anno_id; })[0];
         var drawElements = annoData.draw_elements;
         var lineStrokeStyle = { color: DashboardConstants.borderColor, width: 3 };
 

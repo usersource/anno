@@ -136,6 +136,11 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
         });
     }
 
+    function findAncestor(el, cls) {
+        while ((el = el.parentElement) && !el.classList.contains(cls));
+        return el;
+    }
+
     return ({
         storeUserDataInCookies : storeUserDataInCookies,
         removeUserDataCookies : removeUserDataCookies,
@@ -144,7 +149,8 @@ DataServiceModule.factory('DataService', function($http, $location, $window, $co
         checkAuthentication : checkAuthentication,
         authenticateDashboard : authenticateDashboard,
         getAppInfo : getAppInfo,
-        getAnnos : getAnnos
+        getAnnos : getAnnos,
+        findAncestor : findAncestor
     });
 });
 
