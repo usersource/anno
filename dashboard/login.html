@@ -23,7 +23,10 @@
             <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Benefits</div>
             <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center; white-space: nowrap;">SDK for iOS</div>
             <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Contact</div>
-            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
+            <div id="action-button" class="col-lg-3 col-md-3 col-sm-3 col-xs-3" style="text-align: right;">
+                <input id="login" type="button" value="Log In">
+                <input id="signup" type="button" value="Sign Up">
+            </div>
         </div>
         <div id="login_outer">
             <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
@@ -43,6 +46,7 @@
                 </div>
                 <div id="login_button" ng-click="authenticate_dashboard();">
                     <span>Log In Now</span>
+                    <img width="5px" height="7px" src="images/chevron.png" style="margin-left: 6px;">
                 </div>
             </div>
             <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>

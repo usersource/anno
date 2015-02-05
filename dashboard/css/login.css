@@ -3,6 +3,25 @@
   height: 100%;
   background: #f9f9f9;
 }
+#action-button input {
+  padding: 0 9.259259259%;
+  height: 36px;
+  vertical-align: middle;
+  line-height: 33px;
+  border-radius: 4px;
+  outline: 0;
+  color: #FFF;
+  margin-left: 16px;
+  font-size: 18px;
+}
+#action-button input#login {
+  background-color: #9399a5;
+  border: 1px solid #939393;
+}
+#action-button input#signup {
+  background-color: #ff6622;
+  border: 1px solid #f65007;
+}
 #login_inner {
   border-radius: 4px;
   background: white;
@@ -38,6 +57,7 @@
   outline: 0;
   border: 0;
   padding-left: 6px;
+  vertical-align: middle;
 }
 #login_email, #login_password, #login_team_key {
   margin-bottom: 20px;
@@ -49,7 +69,6 @@
   background-color: #9399A5;
   color: #FFF;
   line-height: 40px;
-  font-size: 18px;
   border-radius: 4px;
   margin-bottom: 60px;
 }
