@@ -1,3 +1,5 @@
+'use strict';
+
 var DashboardConstantsModule = angular.module('DashboardConstantsModule', []);
 
 DashboardConstantsModule.value("DashboardConstants", {

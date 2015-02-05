@@ -1,3 +1,5 @@
+'use strict';
+
 var ServiceModule = angular.module('ServiceModule', ['ngCookies', 'DashboardConstantsModule']);
 
 ServiceModule.factory('Utils', function($cookieStore) {
