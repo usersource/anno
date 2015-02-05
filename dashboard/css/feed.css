@@ -155,8 +155,7 @@
   font-size: 13px;
   color: #9399a5;
 }
-.anno-comments .anno-comment-item .anno-comment-url,
-.anno-comments .anno-comment-item .anno-comment-tagged-user {
+.anno-item .url, .anno-item .hashtag, .anno-item .tagged-user {
   color: #1b96c9;
   outline: 0;
 }

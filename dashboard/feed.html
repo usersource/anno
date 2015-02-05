@@ -134,7 +134,7 @@
                                         <span style="vertical-align: middle; margin-left: 4px;">Edit</span>
                                     </div>
                                 </div>
-                                <div class="team-notes" ng-class={'no-team-notes':!anno.team_notes.length}>{{anno.team_notes.length ? anno.team_notes : noTeamNotesText}}</div>
+                                <div class="team-notes" ng-class={'no-team-notes':!anno.team_notes.length} ng-bind-html="parseForTagsMentionsLinks(anno.team_notes.length ? anno.team_notes : noTeamNotesText);"></div>
                                 <div class="anno-team-notes-edittext" style="display: none;">
                                     <textarea placeholder="Write team notes..." ng-keydown="saveTeamNotes($event);"></textarea>
                                     <input type="button" ng-value="team_notes_save" ng-click="saveTeamNotes($event);">
@@ -174,7 +174,7 @@
                                                 <div class="anno-comment-item-date">{{showLocalDateTime(comment.created) | date:'medium'}}</div>
                                             </div>
                                         </div>
-                                        <div class="anno-comment-item-text" ng-bind-html="parseComment(comment.comment, comment.tagged_users_detail);"></div>
+                                        <div class="anno-comment-item-text" ng-bind-html="parseForTagsMentionsLinks(comment.comment, comment.tagged_users_detail);"></div>
                                     </div>
                                 </div>
                                 <div class="post-comment" style="padding: 30px 3.38% 50px 0">

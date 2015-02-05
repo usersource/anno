@@ -24,7 +24,7 @@ ServiceModule.factory('Utils', function($cookieStore) {
     }
 
     function replaceURLWithLink(s) {
-        var commentURLTemplate = '$1<a class="anno-comment-url" href="$2" target="_blank">$2</a>';
+        var commentURLTemplate = '$1<a class="url" href="$2" target="_blank">$2</a>';
         s = s.replace(/(^|\W)\b((www\d{0,3}[.])(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, "$1http://$2");
         return s.replace(/(^|\W)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, commentURLTemplate);
     }
@@ -41,11 +41,16 @@ ServiceModule.factory('Utils', function($cookieStore) {
             });
             if (filteredUser.length) {
                 var userDisplayName = filteredUser[0]["display_name"];
-                s = s.replace(id, "<span class='anno-comment-tagged-user'>" + userDisplayName + "</span>");
+                s = s.replace(id, "<span class='tagged-user'>" + userDisplayName + "</span>");
             }
         });
 
         return s;
+    }
+
+    function replaceHashTagWithLink(s) {
+        var linkScript = '$1<span class="hashtag">$2</span>';
+        return s.replace(/(^|\W)(#[a-z\d][\w-]*)/ig, linkScript);
     }
 
     function findAncestor(el, cls) {
@@ -58,6 +63,7 @@ ServiceModule.factory('Utils', function($cookieStore) {
         removeUserDataCookies : removeUserDataCookies,
         replaceURLWithLink : replaceURLWithLink,
         replaceEmailWithName : replaceEmailWithName,
+        replaceHashTagWithLink : replaceHashTagWithLink,
         findAncestor : findAncestor
     };
 });

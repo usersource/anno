@@ -95,11 +95,12 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         return device_model;
     };
 
-    $scope.parseComment = function(comment, tagged_users_detail) {
-        comment = Utils.replaceURLWithLink(comment);
-        comment = Utils.replaceEmailWithName(comment, tagged_users_detail);
-        comment = $sce.trustAsHtml(comment);
-        return comment;
+    $scope.parseForTagsMentionsLinks = function(text, tagged_users_detail) {
+        text = Utils.replaceURLWithLink(text);
+        text = Utils.replaceEmailWithName(text, tagged_users_detail);
+        text = Utils.replaceHashTagWithLink(text);
+        text = $sce.trustAsHtml(text);
+        return text;
     };
 
     $scope.getAnnoById = function(anno_id) {
