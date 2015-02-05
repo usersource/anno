@@ -5,6 +5,7 @@
         <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'>
         <link rel="stylesheet" type="text/css" href="css/main.css">
         <link rel="stylesheet" type="text/css" href="css/login.css">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
         <script type="text/javascript" src="js/lib/angular.min.js"></script>
         <script type="text/javascript" src="js/lib/angular-cookies.min.js"></script>
         <script type="text/javascript" src="js/constants.js"></script>
@@ -12,22 +13,39 @@
         <script type="text/javascript" src="js/controllers.js"></script>
     </head>
     <body ng-controller="Login" ng-init="initLogin();">
-        <div class="header"></div>
+        <div class="header row">
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                <div style="font-size: 150%; font-weight: bold; color: #f62; text-align: center;">ANNOT8</div>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"></div>
+            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Intro</div>
+            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Features</div>
+            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Benefits</div>
+            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center; white-space: nowrap;">SDK for iOS</div>
+            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Contact</div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
+        </div>
         <div id="login_outer">
-            <div id="login_middle">
-                <div style="margin-bottom: 50px;">
-                    <div id="usersource_logo"></div>
-                    <div id="title_text">UserSource Dashboard</div>
-                </div>
-                <div id="login_login_inner">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
+            <div id="login_inner" class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                <div id="title">Log in to Annot8 Dashaboard</div>
+                <div class="input-div">
+                    <img width="16px" height="10px" src="images/icon_mail.png">
                     <input ng-model="email" type="email" id="login_email" placeholder="Email Address"/>
-                    <br/>
+                </div>
+                <div class="input-div">
+                    <img width="12px" height="15px" src="images/icon_password.png" style="margin: 0 2px;">
                     <input ng-model="password" type="password" id="login_password" placeholder="Password"/>
-                    <br/>
+                </div>
+                <div class="input-div">
+                    <img width="12px" height="15px" src="images/icon_key.png" style="margin: 0 2px;">
                     <input ng-model="teamkey" type="text" id="login_team_key" placeholder="Team Key"/>
-                    <div id="login_button" ng-click="authenticate_dashboard();">Log In</div>
+                </div>
+                <div id="login_button" ng-click="authenticate_dashboard();">
+                    <span>Log In Now</span>
                 </div>
             </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
         </div>
     </body>
 </html>
