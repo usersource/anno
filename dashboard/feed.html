@@ -54,7 +54,7 @@
             <div id="side-panel" class="col-lg-2 col-md-2 col-sm-2 col-xs-2"></div>
             <div id="annos" class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
                 <div id="annos-inner">
-                    <div id="anno_{{$index}}" data-anno-id="{{anno.id}}"  class="anno-item" ng-repeat="anno in annoList">
+                    <div id="anno_{{$index}}" data-anno-id="{{anno.id}}"  class="anno-item" ng-repeat="anno in annoList track by anno.id">
                         <div class="anno-screenshot">
                             <div class="screenshotContainer">
                                 <img class="imgDetailScreenshot" width="100%" style="display: none;" imgonload="screenshotLoad($event);" ng-src="{{imageBaseURL}}{{anno.id}}">
@@ -166,7 +166,7 @@
                                     <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.followup_list.length}} Comment{{anno.followup_list.length !== 1 ? "s" : ""}}</span>
                                 </div>
                                 <div>
-                                    <div class="anno-comment-item" ng-repeat="comment in anno.followup_list">
+                                    <div class="anno-comment-item" ng-repeat="comment in anno.followup_list track by comment.id">
                                         <div style="margin-bottom: 20px;">
                                             <img class="anno-commenter-image" style="margin: 0;" ng-src="{{comment.creator.image_url}}">
                                             <div class="anno-comment-item-meta">
