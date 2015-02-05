@@ -89,20 +89,20 @@
                                     </div>
                                     <div style="margin: 20px 0;">
                                         <span style="font-weight: 600; vertical-align: middle;">By</span>
-                                        <img class="anno-author-image" ng-src="{{anno.creator.image_url}}">
-                                        <span class="anno-author-text">{{anno.creator.display_name}}</span>
+                                        <img class="anno-author-image" ng-src="{{::anno.creator.image_url}}">
+                                        <span class="anno-author-text">{{::anno.creator.display_name}}</span>
                                         <img width="12px" height="12px" style="margin-left: 4.372%;" src="images/icon_calendar.png">
                                         <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Created on:</span>
-                                        <span style="vertical-align: middle; margin-left: 2px;">{{showLocalDateTime(anno.created) | date:'medium'}}</span>
+                                        <span style="vertical-align: middle; margin-left: 2px;">{{::showLocalDateTime(anno.created) | date:'medium'}}</span>
                                     </div>
-                                    <div class="anno-text" style="margin-bottom: 20px;">{{anno.anno_text}}</div>
+                                    <div class="anno-text" style="margin-bottom: 20px;">{{::anno.anno_text}}</div>
                                     <div style="margin-bottom: 20px;">
                                         <img width="10px" height="16px" src="images/icon_device.png">
                                         <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Device:</span>
-                                        <span style="vertical-align: middle; margin-left: 2px;">{{showProperDeviceName(anno.device_model)}} ({{anno.os_name}} {{anno.os_version}})</span>
+                                        <span style="vertical-align: middle; margin-left: 2px;">{{::showProperDeviceName(anno.device_model)}} ({{::anno.os_name}} {{::anno.os_version}})</span>
                                         <img width="12px" height="14px" style="margin-left: 20px;" src="images/icon_version.png">
                                         <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Version:</span>
-                                        <span style="vertical-align: middle; margin-left: 2px;">{{anno.app_name}} v{{anno.app_version}}</span>
+                                        <span style="vertical-align: middle; margin-left: 2px;">{{::anno.app_name}} v{{::anno.app_version}}</span>
                                     </div>
                                 </div>
                                 <div class="anno-info-action">

@@ -130,14 +130,13 @@
   display: inline-block;
   padding: 0 15px;
   vertical-align: middle;
-  line-height: 22px;
+  line-height: 23px;
 }
 .anno-item .anno-item-add-button {
   background-image: url('../images/icon_squared-plus.png');
   background-repeat: no-repeat;
   background-position: center;
   cursor: pointer;
-  margin-left: -4px;
 }
 .anno-item .anno-comments {
   padding: 0 0 0 3.27%;
