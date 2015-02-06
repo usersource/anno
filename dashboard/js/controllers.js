@@ -247,7 +247,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
                     created : data.created,
                     creator : data.creator
                 };
-                $scope.getAnnoById(anno_id).followup_list.push(latestComment);
+                $scope.getAnnoById(anno_id).followup_list.unshift(latestComment);
             });
         }
     };
