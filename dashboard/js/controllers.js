@@ -211,13 +211,13 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
 
         var teamNotes = teamNotesTextInput.querySelector('textarea').value.trim();
         if (teamNotes.length) {
-            var anno_item = $scope.getAnnoById(anno_id);
-            anno_item.team_notes = teamNotes;
+            var anno_item_data = $scope.getAnnoById(anno_id);
+            anno_item_data.team_notes = teamNotes;
             DataService.makeHTTPCall("anno.anno.teamnotes.insert", {
                 id: anno_id,
                 team_notes: teamNotes
             }, function(data) {
-                anno_item.team_notes_metadata.tags = data.tags;
+                anno_item_data.team_notes_metadata.tags = data.tags;
                 $scope.team_notes_save = "Saved";
                 setTimeout(function() {
                     teamNotesTextNode.style.display = "block";
