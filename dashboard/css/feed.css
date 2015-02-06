@@ -77,22 +77,43 @@
   display: inline-block;
   vertical-align: middle;
 }
-.anno-item .anno-info .anno-info-action-item.upvote .action-icon {
-  background-image: url(../images/icon_upvotes.png);
-}
+.anno-item .anno-info .anno-info-action-item.share:hover,
 .anno-item .anno-info .anno-info-action-item.upvote.upvoted,
-.anno-item .anno-info .anno-info-action-item.flag.flagged {
+.anno-item .anno-info .anno-info-action-item.upvote:hover,
+.anno-item .anno-info .anno-info-action-item.flag.flagged,
+.anno-item .anno-info .anno-info-action-item.flag:hover,
+.anno-item .anno-info .anno-info-action-item.archive.archived,
+.anno-item .anno-info .anno-info-action-item.archive:hover {
   color: #1b96c9;
   border: 1px solid #1b96c9;
 }
-.anno-item .anno-info .anno-info-action-item.upvote.upvoted .action-icon {
+.anno-item .anno-info .anno-info-action-item.share .action-icon {
+  background-image: url(../images/icon_share-alt.png);
+}
+.anno-item .anno-info .anno-info-action-item.share.upvoted .action-icon,
+.anno-item .anno-info .anno-info-action-item.share:hover .action-icon {
+  background-image: url(../images/icon_share-alt-blue.png);
+}
+.anno-item .anno-info .anno-info-action-item.upvote .action-icon {
+  background-image: url(../images/icon_upvotes.png);
+}
+.anno-item .anno-info .anno-info-action-item.upvote.upvoted .action-icon,
+.anno-item .anno-info .anno-info-action-item.upvote:hover .action-icon {
   background-image: url(../images/icon_upvotes-blue.png);
 }
 .anno-item .anno-info .anno-info-action-item.flag .action-icon {
   background-image: url(../images/icon_flag.png);
 }
-.anno-item .anno-info .anno-info-action-item.flag.flagged .action-icon {
+.anno-item .anno-info .anno-info-action-item.flag.flagged .action-icon,
+.anno-item .anno-info .anno-info-action-item.flag:hover .action-icon {
   background-image: url(../images/icon_flag-blue.png);
+}
+.anno-item .anno-info .anno-info-action-item.archive .action-icon {
+  background-image: url(../images/icon_archive.png);
+}
+.anno-item .anno-info .anno-info-action-item.archive.archived .action-icon,
+.anno-item .anno-info .anno-info-action-item.archive:hover .action-icon {
+  background-image: url(../images/icon_archive-blue.png);
 }
 .anno-item .anno-info .anno-info-counts .anno-info-counts-text {
   display: inline-block;
@@ -158,6 +179,10 @@
 .anno-item .url, .anno-item .hashtag, .anno-item .tagged-user {
   color: #1b96c9;
   outline: 0;
+  cursor: pointer;
+}
+.anno-item .url:hover, .anno-item .hashtag:hover, .anno-item .tagged-user:hover {
+  text-decoration: underline;
 }
 .anno-item .post-comment textarea, .anno-item .anno-team-notes-edittext textarea {
   width: 100%;
