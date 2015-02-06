@@ -52,12 +52,13 @@ class User(ndb.Model):
     def insert_user(cls, email, username=None, password=None, auth_source=None, account_type=None, image_url=None):
         username = username or email.split('@')[0]
 
-        if password:
-            auth_source = AuthSourceType.ANNO
-        elif account_type:
-            auth_source = AuthSourceType.PLUGIN
-        else:
-            auth_source = AuthSourceType.GOOGLE
+        if auth_source is None:
+            if password:
+                auth_source = AuthSourceType.ANNO
+            elif account_type:
+                auth_source = AuthSourceType.PLUGIN
+            else:
+                auth_source = AuthSourceType.GOOGLE
 
         user = User(user_email=email, display_name=username, password=password,
                     auth_source=auth_source, account_type=account_type,

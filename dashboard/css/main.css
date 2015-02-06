@@ -36,6 +36,9 @@ body {
   text-align: right;
   cursor: pointer;
 }
+.header #user_info:hover #logout_arrow {
+  background-image: url('../images/icon_chevron-blue.png');
+}
 .header #logout_arrow {
   width: 12px;
   height: 6px;
