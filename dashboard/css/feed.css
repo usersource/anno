@@ -140,6 +140,21 @@
   color: #9399a5;
   cursor: pointer;
 }
+.anno-item .anno-team-notes .edit-icon {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  background-image: url(../images/icon_edit.png);
+  vertical-align: middle;
+}
+.anno-item .anno-team-notes-edit:hover .edit-icon,
+.anno-item .anno-team-notes-edit.editing .edit-icon {
+  background-image: url(../images/icon_edit-blue.png);
+}
+.anno-item .anno-team-notes-edit:hover,
+.anno-item .anno-team-notes-edit.editing {
+  color: #1b96c9;
+}
 .anno-item .anno-team-notes .no-team-notes {
   color: #9399a5;
 }

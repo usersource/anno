@@ -130,8 +130,8 @@
                                 <div style="margin-bottom: 20px;">
                                     <img width="11px" height="16px" src="images/icon_team-notes.png">
                                     <span class="section-header" style="vertical-align: middle; margin-left: 4px;">Team Notes</span>
-                                    <div class="anno-team-notes-edit" ng-click="editTeamNotes($event);">
-                                        <img width="12px" height="12px" src="images/icon_edit.png">
+                                    <div class="anno-team-notes-edit" ng-class={'editing':isTeamNotesEditing} ng-click="editTeamNotes($event);">
+                                        <div class="edit-icon"></div>
                                         <span style="vertical-align: middle; margin-left: 4px;">Edit</span>
                                     </div>
                                 </div>

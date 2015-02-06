@@ -189,9 +189,11 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             teamNotesTextInput = anno_item.querySelector('.anno-team-notes-edittext');
 
         if (teamNotesTextNode.style.display !== "none") {
+            $scope.isTeamNotesEditing = true;
             teamNotesTextNode.style.display = "none";
             teamNotesTextInput.style.display = "block";
         } else {
+            $scope.isTeamNotesEditing = false;
             teamNotesTextNode.style.display = "block";
             teamNotesTextInput.style.display = "none";
         }
@@ -219,6 +221,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             }, function(data) {
                 anno_item_data.team_notes_metadata.tags = data.tags;
                 $scope.team_notes_save = "Saved";
+                $scope.isTeamNotesEditing = false;
                 setTimeout(function() {
                     teamNotesTextNode.style.display = "block";
                     teamNotesTextInput.style.display = "none";
