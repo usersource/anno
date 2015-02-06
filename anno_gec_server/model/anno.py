@@ -143,7 +143,7 @@ class Anno(BaseModel):
 
         # set anno association with followups
         from model.follow_up import FollowUp
-        followups = FollowUp.find_by_anno(self)
+        followups = FollowUp.find_by_anno(self, True)
         followup_messages = [ entity.to_message() for entity in followups ]
 
         from model.vote import Vote
