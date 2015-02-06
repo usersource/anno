@@ -46,7 +46,9 @@
   text-align: left;
   margin-bottom: 20px;
 }
-#login_inner input {
+#login_inner input[type="email"],
+#login_inner input[type="password"],
+#login_inner input[type="text"] {
   width: 94.783%;
   width: calc(100% - 26px);
   width: -webkit-calc(100% - 26px);
@@ -72,4 +74,6 @@
   border-radius: 4px;
   margin-bottom: 60px;
   cursor: pointer;
+  padding: 0;
+  border: 0;
 }

@@ -32,23 +32,23 @@
         <div id="login_outer">
             <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
             <div id="login_inner" class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                <div id="title">Log in to Annot8 Dashaboard</div>
-                <div class="input-div">
-                    <img width="16px" height="10px" src="images/icon_mail.png">
-                    <input ng-model="email" type="email" id="login_email" placeholder="Email Address"/>
+                <form ng-submit="authenticate_dashboard();">
+                    <div id="title">Log in to Annot8 Dashaboard</div>
+                    <div class="input-div">
+                        <img width="16px" height="10px" src="images/icon_mail.png">
+                        <input ng-model="email" type="email" id="login_email" placeholder="Email Address"/>
+                    </div>
+                    <div class="input-div">
+                        <img width="12px" height="15px" src="images/icon_password.png" style="margin: 0 2px;">
+                        <input ng-model="password" type="password" id="login_password" placeholder="Password"/>
+                    </div>
+                    <div class="input-div">
+                        <img width="12px" height="15px" src="images/icon_key.png" style="margin: 0 2px;">
+                        <input ng-model="teamkey" type="text" id="login_team_key" placeholder="Team Key"/>
+                    </div>
+                    <input id="login_button" type="submit" value="Log In Now">
                 </div>
-                <div class="input-div">
-                    <img width="12px" height="15px" src="images/icon_password.png" style="margin: 0 2px;">
-                    <input ng-model="password" type="password" id="login_password" placeholder="Password"/>
-                </div>
-                <div class="input-div">
-                    <img width="12px" height="15px" src="images/icon_key.png" style="margin: 0 2px;">
-                    <input ng-model="teamkey" type="text" id="login_team_key" placeholder="Team Key"/>
-                </div>
-                <div id="login_button" ng-click="authenticate_dashboard();">
-                    <span>Log In Now</span>
-                    <img width="5px" height="7px" src="images/chevron.png" style="margin-left: 6px;">
-                </div>
+                </form>
             </div>
             <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
         </div>
