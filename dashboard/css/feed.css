@@ -32,6 +32,10 @@
   text-align: center;
   position: relative;
 }
+.anno-item.landscape .anno-screenshot {
+  width: 50%;
+  margin: 2.122% 25%;
+}
 .anno-item .anno-details {
   width: 65%;
   height: 100%;
@@ -39,6 +43,12 @@
   vertical-align: top;
   margin-left: -4px;
   border-left: 1px solid #c4cfd7;
+}
+.anno-item.landscape .anno-details {
+  width: 100%;
+  margin-left: 0;
+  border-left: 0;
+  border-top: 1px solid #C4CFD7;
 }
 .anno-item .anno-item-section {
   width: 100%;
