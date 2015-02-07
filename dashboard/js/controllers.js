@@ -131,10 +131,23 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         }
     });
 
-    $scope.screenshotLoad = function (event) {
-        var anno_item = Utils.findAncestor(event.currentTarget, 'anno-item');
+    $scope.screenshotLoad = function (event, anno_item) {
+        if (event !== undefined) {
+            anno_item = Utils.findAncestor(event.currentTarget, 'anno-item');
+        }
         var imgDetailScreenshot = anno_item.querySelector(".imgDetailScreenshot");
         angular.element(imgDetailScreenshot).css('display', '');
+        if ((imgDetailScreenshot.naturalWidth / imgDetailScreenshot.naturalHeight) > 1.0) {
+            var anno_item_data = $scope.getAnnoById(anno_item.dataset.annoId);
+            anno_item_data.landscapeView = true;
+            if (!anno_item_data.landscapeViewLoaded) {
+                anno_item_data.landscapeViewLoaded = true;
+                setTimeout(function() {
+                    $scope.screenshotLoad(undefined, anno_item);
+                }, 0);
+                return;
+            }
+        }
 
         var self = this;
         require(["anno/draw/Surface"], function(Surface) {
