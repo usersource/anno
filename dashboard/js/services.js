@@ -86,7 +86,39 @@ ServiceModule.factory('Utils', function($cookieStore) {
         return engagedUsers.concat(teamUsers).filter(function(user) { return user != undefined; });
     }
 
-    function setSuggestionBoxPosition(event, suggestion_div) {
+    function getAnnoById(anno_list, anno_id) {
+        var annoData = {};
+
+        if (anno_list.length) {
+            var annoDataList = anno_list.filter(function(anno) {
+                return anno.id === anno_id;
+            });
+
+            if (annoDataList.length) {
+                annoData = annoDataList[0];
+            }
+        }
+
+        return annoData;
+    };
+
+    return {
+        storeUserDataInCookies : storeUserDataInCookies,
+        removeUserDataCookies : removeUserDataCookies,
+        replaceURLWithLink : replaceURLWithLink,
+        replaceEmailWithName : replaceEmailWithName,
+        replaceHashTagWithLink : replaceHashTagWithLink,
+        findAncestor : findAncestor,
+        getUniqueEngagedUsers : getUniqueEngagedUsers,
+        getAnnoById : getAnnoById
+    };
+});
+
+ServiceModule.factory('Autocomplete', function(Utils) {
+    var Autocomplete = {};
+    Autocomplete.currentEngagedUserList = [];
+
+    Autocomplete.setSuggestionBoxPosition = function(event, suggestion_div) {
         var div_suggestion = document.querySelector(suggestion_div),
             currentTargetBoundingRect = event.currentTarget.getBoundingClientRect(),
             leftValue = (currentTargetBoundingRect.width / 2 + currentTargetBoundingRect.left) - 100;
@@ -100,18 +132,19 @@ ServiceModule.factory('Utils', function($cookieStore) {
         }
 
         div_suggestion.style.top = topValue + 'px';
-    }
-
-    return {
-        storeUserDataInCookies : storeUserDataInCookies,
-        removeUserDataCookies : removeUserDataCookies,
-        replaceURLWithLink : replaceURLWithLink,
-        replaceEmailWithName : replaceEmailWithName,
-        replaceHashTagWithLink : replaceHashTagWithLink,
-        findAncestor : findAncestor,
-        getUniqueEngagedUsers : getUniqueEngagedUsers,
-        setSuggestionBoxPosition : setSuggestionBoxPosition
     };
+
+    Autocomplete.typeahead = function(anno_list) {
+        if (event.shiftKey && event.keyCode === 50) {
+            var anno_item = Utils.findAncestor(event.currentTarget, 'anno-item'),
+                anno_id = anno_item.dataset.annoId;
+
+            this.currentEngagedUserList = Utils.getAnnoById(anno_list, anno_id).engaged_users;
+            this.setSuggestionBoxPosition(event, "#engaged-users-suggestion");
+        }
+    };
+
+    return Autocomplete;
 });
 
 ServiceModule.factory('DataService', function($http, $location, $window, Utils, DashboardConstants) {

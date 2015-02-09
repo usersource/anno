@@ -42,7 +42,7 @@ Dashboard.controller('Login', function($scope, $window, $location, $cookieStore,
     };
 });
 
-Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, $sce, Utils, DataService, ComStyleGetter, DashboardConstants) {
+Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, $sce, Utils, DataService, ComStyleGetter, DashboardConstants, Autocomplete) {
     $scope.noTeamNotesText = "No Notes";
 
     $scope.imageBaseURL = DashboardConstants.imageURL[DashboardConstants.serverURLKey];
@@ -108,22 +108,6 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         return text;
     };
 
-    $scope.getAnnoById = function(anno_id) {
-        var annoData = {};
-
-        if ($scope.annoList.length) {
-            var annoDataList = $scope.annoList.filter(function(anno) {
-                return anno.id === anno_id;
-            });
-
-            if (annoDataList.length) {
-                annoData = annoDataList[0];
-            }
-        }
-
-        return annoData;
-    };
-
     // Getting anno list data
     DataService.makeHTTPCall("anno.anno.dashboard.list", {
         outcome : 'cursor,has_more,anno_list'
@@ -156,7 +140,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         var imgDetailScreenshot = anno_item.querySelector(".imgDetailScreenshot");
         angular.element(imgDetailScreenshot).css('display', '');
         if ((imgDetailScreenshot.naturalWidth / imgDetailScreenshot.naturalHeight) > 1.0) {
-            var anno_item_data = $scope.getAnnoById(anno_item.dataset.annoId);
+            var anno_item_data = Utils.getAnnoById($scope.annoList, anno_item.dataset.annoId);
             anno_item_data.landscapeView = true;
             if (!anno_item_data.landscapeViewLoaded) {
                 anno_item_data.landscapeViewLoaded = true;
@@ -200,7 +184,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     };
 
     $scope.redrawShapes = function(anno_id, surface) {
-        var annoData = $scope.getAnnoById(anno_id);
+        var annoData = Utils.getAnnoById($scope.annoList, anno_id);
         var lineStrokeStyle = { color: DashboardConstants.borderColor, width: 3 };
 
         if (angular.isObject(annoData)) {
@@ -241,12 +225,9 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             } else if (type === 'comment') {
                 $scope.postComment(event);
             }
-        } else if (event.shiftKey && event.keyCode === 50) {
-            var anno_item = Utils.findAncestor(event.currentTarget, 'anno-item'),
-                anno_id = anno_item.dataset.annoId;
-
-            $scope.currentEngagedUserList = $scope.getAnnoById(anno_id).engaged_users;
-            Utils.setSuggestionBoxPosition(event, "#engaged-users-suggestion");
+        } else {
+            $scope.currentEngagedUserList = Autocomplete.currentEngagedUserList;
+            Autocomplete.typeahead($scope.annoList);
         }
     };
 
@@ -266,7 +247,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
 
         var teamNotes = teamNotesTextInput.querySelector('textarea').value.trim();
         if (teamNotes.length) {
-            var anno_item_data = $scope.getAnnoById(anno_id);
+            var anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
             anno_item_data.team_notes = teamNotes;
             DataService.makeHTTPCall("anno.anno.teamnotes.insert", {
                 id: anno_id,
@@ -302,7 +283,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
                     created : data.created,
                     creator : data.creator
                 };
-                $scope.getAnnoById(anno_id).followup_list.unshift(latestComment);
+                Utils.getAnnoById($scope.annoList, anno_id).followup_list.unshift(latestComment);
             });
         }
     };
