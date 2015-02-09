@@ -62,13 +62,8 @@ ServiceModule.factory('Utils', function($cookieStore) {
         var uniqueNames = [], uniqueUserName;
         engagedUsers = engagedUsers || [];
 
-        function isUnique(userName) {
-            var isUniqueName = uniqueNames.indexOf(userName) !== -1;
-            if (!perAnnoEngagedUsers) {
-                return isUniqueName;
-            } else {
-                return isUniqueName && teamUsers.some(function(user) { return user.unique_name == userName; });
-            }
+        function uniqueCount(userName) {
+            return uniqueNames.indexOf(userName) + 1;
         }
 
         angular.forEach(engagedUsers, function(mentionedUser, index) {
@@ -76,15 +71,13 @@ ServiceModule.factory('Utils', function($cookieStore) {
                 (teamUsers.some(function(user) { return user["user_email"] === mentionedUser["user_email"]; }) && perAnnoEngagedUsers)) {
                 delete engagedUsers[index];
             } else  if (!("unique_name" in mentionedUser)) {
-                var trimDisplayName = mentionedUser["display_name"].split(" ").join("");
-                uniqueUserName = trimDisplayName;
-                if (isUnique(uniqueUserName)) {
-                    var trimUserEmail = mentionedUser["user_email"].split("@")[0];
-                    uniqueUserName = trimDisplayName + trimUserEmail;
-                    if (isUnique(uniqueUserName)) {
-                        uniqueUserName = trimDisplayName + mentionedUser["user_email"];
-                    }
+                var uniqueUserName = mentionedUser["display_name"].replace(/ /g, ""),
+                    uniqueUserNameCount = uniqueCount(uniqueUserName);
+
+                if (uniqueUserNameCount > 0) {
+                    uniqueUserName += uniqueUserNameCount;
                 }
+
                 mentionedUser["unique_name"] = uniqueUserName;
                 uniqueNames.push(uniqueUserName);
             }
