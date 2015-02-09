@@ -124,7 +124,12 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     DataService.makeHTTPCall("anno.anno.dashboard.list", {
         outcome : 'cursor,has_more,anno_list'
     }, function(data) {
-        $scope.annoList = data.anno_list;
+        var newAnnoListData = data.anno_list;
+        $scope.annoList = $scope.annoList || [];
+        angular.forEach(newAnnoListData, function(anno) {
+            anno.engaged_users = Utils.getUniqueEngagedUsers(anno.engaged_users, $scope.community_engaged_users, true) || [];
+        });
+        $scope.annoList = $scope.annoList.concat(newAnnoListData);
         console.log($scope.annoList);
     }, function(status) {
         if (status == 401) {
@@ -137,7 +142,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     DataService.makeHTTPCall("user.user.community.users", {
         account_type : $cookieStore.get('team_key')
     }, function(data) {
-        $scope.community_engaged_users = data.user_list;
+        $scope.community_engaged_users = Utils.getUniqueEngagedUsers(data.user_list, [], false) || [];
     });
 
     $scope.screenshotLoad = function (event, anno_item) {

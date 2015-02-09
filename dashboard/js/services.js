@@ -58,13 +58,49 @@ ServiceModule.factory('Utils', function($cookieStore) {
         return el;
     }
 
+    function getUniqueEngagedUsers(engagedUsers, teamUsers, perAnnoEngagedUsers) {
+        var uniqueNames = [], uniqueUserName;
+        engagedUsers = engagedUsers || [];
+
+        function isUnique(userName) {
+            var isUniqueName = uniqueNames.indexOf(userName) !== -1;
+            if (!perAnnoEngagedUsers) {
+                return isUniqueName;
+            } else {
+                return isUniqueName && teamUsers.some(function(user) { return user.unique_name == userName; });
+            }
+        }
+
+        angular.forEach(engagedUsers, function(mentionedUser, index) {
+            if ((mentionedUser["display_name"] === "") ||
+                (teamUsers.some(function(user) { return user["user_email"] === mentionedUser["user_email"]; }) && perAnnoEngagedUsers)) {
+                delete engagedUsers[index];
+            } else  if (!("unique_name" in mentionedUser)) {
+                var trimDisplayName = mentionedUser["display_name"].split(" ").join("");
+                uniqueUserName = trimDisplayName;
+                if (isUnique(uniqueUserName)) {
+                    var trimUserEmail = mentionedUser["user_email"].split("@")[0];
+                    uniqueUserName = trimDisplayName + trimUserEmail;
+                    if (isUnique(uniqueUserName)) {
+                        uniqueUserName = trimDisplayName + mentionedUser["user_email"];
+                    }
+                }
+                mentionedUser["unique_name"] = uniqueUserName;
+                uniqueNames.push(uniqueUserName);
+            }
+        });
+
+        return engagedUsers.concat(teamUsers).filter(function(user) { return user != undefined; });
+    }
+
     return {
         storeUserDataInCookies : storeUserDataInCookies,
         removeUserDataCookies : removeUserDataCookies,
         replaceURLWithLink : replaceURLWithLink,
         replaceEmailWithName : replaceEmailWithName,
         replaceHashTagWithLink : replaceHashTagWithLink,
-        findAncestor : findAncestor
+        findAncestor : findAncestor,
+        getUniqueEngagedUsers : getUniqueEngagedUsers
     };
 });
 
