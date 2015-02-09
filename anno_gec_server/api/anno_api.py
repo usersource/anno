@@ -394,25 +394,8 @@ class AnnoApi(remote.Service):
     @endpoints.method(anno_with_id_resource_container, UserListMessage,
                       path="anno/users/{id}", http_method="GET", name="anno.anno.users")
     def getEngagedUsers(self, request):
-        userannostates = UserAnnoState.list_users_by_anno(anno_id=request.id, projection=[UserAnnoState.user])
-
-        users = []
-        for userannostate in userannostates:
-            current_user = userannostate.user.get()
-            users.append(UserMessage(id=current_user.key.id(),
-                                     user_email=current_user.user_email,
-                                     display_name=current_user.display_name,
-                                     image_url=current_user.image_url))
-
-        # removing auth_user
         user = auth_user(self.request_state.headers)
-        if user:
-            [ users.remove(user_info) for user_info in users if user_info.user_email == user.user_email ]
-
-        # sorting users alphabetically
-        users = sorted(users, key=lambda user_info: user_info.display_name.lower())
-
-        return UserListMessage(user_list=users)
+        return UserListMessage(user_list=Anno.getEngagedUsers(anno_id=request.id, auth_user=user))
 
     @endpoints.method(anno_with_id_resource_container, AnnoTeamNotesMetadataMessage, path='anno/teamnotes',
                       http_method='POST', name='anno.teamnotes.insert')

@@ -143,6 +143,7 @@ class AnnoDashboardResponseMessage(messages.Message):
     followup_count = messages.IntegerField(17)
     team_notes = messages.StringField(18)
     team_notes_metadata = messages.MessageField(AnnoTeamNotesMetadataMessage, 19)
+    engaged_users = messages.MessageField(UserMessage, 20, repeated=True)
 
 class AnnoListMessage(messages.Message):
     """

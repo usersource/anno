@@ -125,8 +125,7 @@ class Anno(BaseModel):
                                    followup_count=self.followup_count,
                                    last_update_time=self.last_update_time,
                                    last_activity=self.last_activity,
-                                   last_update_type=self.last_update_type,
-        )
+                                   last_update_type=self.last_update_type)
 
         return anno_message
 
@@ -155,6 +154,8 @@ class Anno(BaseModel):
         team_notes_metadata = AnnoTeamNotesMetadataMessage(tags=parseTeamNotesForHashtags(self.team_notes),
                                                            mentions=[])
 
+        engaged_users = Anno.getEngagedUsers(anno_id=self.key.id(), auth_user=user)
+
         anno_message = AnnoDashboardResponseMessage(id=self.key.id(),
                                                     anno_text=self.anno_text,
                                                     device_model=self.device_model,
@@ -172,7 +173,8 @@ class Anno(BaseModel):
                                                     is_my_vote=is_my_vote,
                                                     is_my_flag=is_my_flag,
                                                     team_notes_metadata=team_notes_metadata,
-                                                    team_notes=self.team_notes)
+                                                    team_notes=self.team_notes,
+                                                    engaged_users=engaged_users)
 
         return anno_message
 
@@ -786,3 +788,23 @@ class Anno(BaseModel):
         for anno in query:
             anno_list.append(anno)
         return anno_list
+
+    @classmethod
+    def getEngagedUsers(cls, anno_id, auth_user):
+        from model.userannostate import UserAnnoState
+        userannostates = UserAnnoState.list_users_by_anno(anno_id=anno_id, projection=[UserAnnoState.user])
+
+        users = []
+        for userannostate in userannostates:
+            current_user = userannostate.user.get()
+            users.append(UserMessage(id=current_user.key.id(),
+                                     user_email=current_user.user_email,
+                                     display_name=current_user.display_name,
+                                     image_url=current_user.image_url))
+
+        # removing auth_user
+        if auth_user:
+            [ users.remove(user_info) for user_info in users if user_info.user_email == auth_user.user_email ]
+
+        # sorting users alphabetically
+        return sorted(users, key=lambda user_info: user_info.display_name.lower())
