@@ -72,6 +72,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         // DataService.checkAuthentication();
     };
 
+    // Getting app info
     DataService.makeHTTPCall("appinfo.appinfo.get", {
         team_key : $cookieStore.get('team_key')
     }, function(data) {
@@ -119,6 +120,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         return annoData;
     };
 
+    // Getting anno list data
     DataService.makeHTTPCall("anno.anno.dashboard.list", {
         outcome : 'cursor,has_more,anno_list'
     }, function(data) {
@@ -129,6 +131,13 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
             Utils.removeUserDataCookies();
         }
+    });
+
+    // Getting community users
+    DataService.makeHTTPCall("user.user.community.users", {
+        account_type : $cookieStore.get('team_key')
+    }, function(data) {
+        $scope.community_engaged_users = data.user_list;
     });
 
     $scope.screenshotLoad = function (event, anno_item) {

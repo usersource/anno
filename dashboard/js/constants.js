@@ -42,6 +42,11 @@ DashboardConstantsModule.value("DashboardConstants", {
             "root" : "followup",
             "path" : "followup",
             "method" : "POST"
+        },
+        "user.user.community.users" : {
+            "root" : "user",
+            "path" : "user/community/users",
+            "method" : "GET"
         }
     },
     borderColor : "#ff9900",
