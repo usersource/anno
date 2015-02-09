@@ -93,6 +93,22 @@ ServiceModule.factory('Utils', function($cookieStore) {
         return engagedUsers.concat(teamUsers).filter(function(user) { return user != undefined; });
     }
 
+    function setSuggestionBoxPosition(event, suggestion_div) {
+        var div_suggestion = document.querySelector(suggestion_div),
+            currentTargetBoundingRect = event.currentTarget.getBoundingClientRect(),
+            leftValue = (currentTargetBoundingRect.width / 2 + currentTargetBoundingRect.left) - 100;
+
+        div_suggestion.style.display = "block";
+        div_suggestion.style.left = leftValue + 'px';
+
+        var topValue = currentTargetBoundingRect.bottom - (currentTargetBoundingRect.height + 138);
+        if (annos.getBoundingClientRect().bottom - currentTargetBoundingRect.bottom > 138) {
+            topValue = currentTargetBoundingRect.bottom + 10;
+        }
+
+        div_suggestion.style.top = topValue + 'px';
+    }
+
     return {
         storeUserDataInCookies : storeUserDataInCookies,
         removeUserDataCookies : removeUserDataCookies,
@@ -100,7 +116,8 @@ ServiceModule.factory('Utils', function($cookieStore) {
         replaceEmailWithName : replaceEmailWithName,
         replaceHashTagWithLink : replaceHashTagWithLink,
         findAncestor : findAncestor,
-        getUniqueEngagedUsers : getUniqueEngagedUsers
+        getUniqueEngagedUsers : getUniqueEngagedUsers,
+        setSuggestionBoxPosition : setSuggestionBoxPosition
     };
 });
 

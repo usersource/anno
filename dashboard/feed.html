@@ -51,6 +51,15 @@
         <div id="dashboard_message" style="display: none;">
             <div id="dashboard_message_text" ng-class="{'error-message':dashboard_error_type}"></div>
         </div>
+        <div id="engaged-users-suggestion" style="display: none;">
+            <div class="engaged-user" ng-repeat="engagedUser in currentEngagedUserList">
+                <img width="24px" height="24px" style="border-radius: 12px;" ng-src="{{engagedUser.image_url && engagedUser.image_url || 'images/icon_no-user.png'}}">
+                <div style="display: inline-block;vertical-align: middle;margin-left: 2px;">
+                    <div style="font-size: 12px;font-weight: 600;">{{engagedUser.display_name}}</div>
+                    <div style="font-size: 10px;color: #9399A5;">{{engagedUser.user_email}}</div>
+                </div>
+            </div>
+        </div>
         <div id="feed-content">
             <div id="side-panel" class="col-lg-2 col-md-2 col-sm-2 col-xs-2"></div>
             <div id="annos" class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
@@ -137,7 +146,7 @@
                                 </div>
                                 <div class="team-notes" ng-class={'no-team-notes':!anno.team_notes.length} ng-bind-html="parseForTagsMentionsLinks(anno.team_notes.length ? anno.team_notes : noTeamNotesText);"></div>
                                 <div class="anno-team-notes-edittext" style="display: none;">
-                                    <textarea placeholder="Write team notes..." ng-keydown="saveTeamNotes($event);"></textarea>
+                                    <textarea placeholder="Write team notes..." ng-keydown="textareaKeydown($event, 'teamnotes');"></textarea>
                                     <input type="button" ng-value="team_notes_save" ng-click="saveTeamNotes($event);">
                                 </div>
                             </div>
@@ -179,7 +188,7 @@
                                     </div>
                                 </div>
                                 <div class="post-comment" style="padding: 30px 3.38% 50px 0">
-                                    <textarea placeholder="Write a comment..." ng-keydown="postComment($event);"></textarea>
+                                    <textarea placeholder="Write a comment..." ng-keydown="textareaKeydown($event, 'comment');"></textarea>
                                     <br>
                                     <input type="button" value="Post Comment" ng-click="postComment($event);">
                                 </div>

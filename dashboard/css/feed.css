@@ -260,3 +260,25 @@
   -webkit-box-sizing: content-box;
   -moz-box-sizing:content-box;
 }
+#engaged-users-suggestion {
+  max-height: 128px;
+  overflow-y: scroll;
+  position: absolute;
+  z-index: 1;
+  background-color: #FFF;
+  border-radius: 4px;
+  border: 1px solid #C4CFD7;
+}
+.engaged-user {
+  height: 42px;
+  position: relative;
+  padding: 4px 10px 0 10px;
+  border-bottom: 1px dashed #C4CFD7;
+  cursor: pointer;
+}
+.engaged-user:hover {
+  background-color: #f6f6f8;
+}
+.engaged-user:last-child {
+  border-bottom: 0;
+}

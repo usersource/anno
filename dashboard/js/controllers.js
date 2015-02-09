@@ -230,8 +230,23 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         }
     };
 
+    $scope.textareaKeydown = function(event, type) {
+        if (event.keyCode === 13) {
+            if (type === 'teamnotes') {
+                $scope.saveTeamNotes(event);
+            } else if (type === 'comment') {
+                $scope.postComment(event);
+            }
+        } else if (event.shiftKey && event.keyCode === 50) {
+            var anno_item = Utils.findAncestor(event.currentTarget, 'anno-item'),
+                anno_id = anno_item.dataset.annoId;
+
+            $scope.currentEngagedUserList = $scope.getAnnoById(anno_id).engaged_users;
+            Utils.setSuggestionBoxPosition(event, "#engaged-users-suggestion");
+        }
+    };
+
     $scope.saveTeamNotes = function(event) {
-        if (event.type === "keydown" && event.keyCode !== 13) return;
         $scope.team_notes_save = "Saving...";
         var anno_item = Utils.findAncestor(event.currentTarget, 'anno-item'),
             teamNotesTextNode = anno_item.querySelector('.team-notes'),
@@ -258,7 +273,6 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     };
 
     $scope.postComment = function(event) {
-        if (event.type === "keydown" && event.keyCode !== 13) return;
         var anno_item = Utils.findAncestor(event.currentTarget, 'anno-item'),
             postCommentTextarea = anno_item.querySelector('.post-comment').querySelector('textarea'),
             anno_id = anno_item.dataset.annoId;
