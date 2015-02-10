@@ -96,9 +96,9 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         return device_model;
     };
 
-    $scope.parseForTagsMentionsLinks = function(text, tagged_users_detail) {
+    $scope.parseForTagsMentionsLinks = function(text, tagged_users, engaged_users) {
         text = Utils.replaceURLWithLink(text);
-        text = Utils.replaceEmailWithName(text, tagged_users_detail);
+        text = Utils.replaceEmailWithName(text, tagged_users, engaged_users);
         text = Utils.replaceHashTagWithLink(text);
         text = $sce.trustAsHtml(text);
         return text;
@@ -243,7 +243,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         var teamNotes = teamNotesTextInput.querySelector('textarea').value.trim();
         if (teamNotes.length) {
             var anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
-            var teamNotesData = Utils.replaceUniqueUserNameWithID(teamNotes, anno_item_data.engaged_users);
+            var teamNotesData = Utils.replaceUniqueUserNameWithID(teamNotes, [], anno_item_data.engaged_users);
             teamNotes = teamNotesData[0];
             anno_item_data.team_notes = teamNotes;
             DataService.makeHTTPCall("anno.anno.teamnotes.insert", {

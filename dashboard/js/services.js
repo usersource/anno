@@ -33,8 +33,11 @@ ServiceModule.factory('Utils', function($cookieStore) {
         return s.replace(/(^|\W)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, commentURLTemplate);
     }
 
-    function replaceUniqueUserNameWithID(s, engaged_users) {
+    function replaceUniqueUserNameWithID(s, tagged_users, engaged_users) {
+        tagged_users = tagged_users || [];
         engaged_users = engaged_users || [];
+        engaged_users = engaged_users.concat(tagged_users);
+
         var taggedUniqueName = s.match(/(^|\W)(@[a-z\d][\w]*)/ig) || [],
             taggedUserIDs = [];
 
@@ -53,10 +56,12 @@ ServiceModule.factory('Utils', function($cookieStore) {
         return [s, taggedUserIDs];
     }
 
-    function replaceEmailWithName(s, tagged_users) {
-        var matchedEmailList = s.match(/(^|\W)(__[a-z\d][\w]*)/ig) || [];
+    function replaceEmailWithName(s, tagged_users, engaged_users) {
         tagged_users = tagged_users || [];
+        engaged_users = engaged_users || [];
+        tagged_users = tagged_users.concat(engaged_users);
 
+        var matchedEmailList = s.match(/(^|\W)(__[a-z\d][\w]*)/ig) || [];
         angular.forEach(matchedEmailList, function(id) {
             id = id.trim();
             var filteredUser = tagged_users.filter(function(user) {
