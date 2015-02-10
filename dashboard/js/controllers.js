@@ -129,6 +129,12 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         $scope.community_engaged_users = Utils.getUniqueEngagedUsers(data.user_list, [], false) || [];
     });
 
+    DataService.makeHTTPCall("tag.tag.popular", {
+        limit : 100
+    }, function(data) {
+        $scope.popular_tags = 'tags' in data ? data.tags : [];
+    });
+
     $scope.screenshotLoad = function (event, anno_item) {
         if (event !== undefined) {
             anno_item = Utils.findAncestor(event.currentTarget, 'anno-item');

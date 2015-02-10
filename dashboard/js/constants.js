@@ -47,6 +47,11 @@ DashboardConstantsModule.value("DashboardConstants", {
             "root" : "user",
             "path" : "user/community/users",
             "method" : "GET"
+        },
+        "tag.tag.popular" : {
+            "root" : "tag",
+            "path" : "tag_popular",
+            "method" : "GET"
         }
     },
     borderColor : "#ff9900",
