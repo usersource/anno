@@ -70,8 +70,9 @@ ServiceModule.factory('Utils', function($cookieStore) {
                     var userUniqueName = filteredUser[0]["unique_name"];
                     s = s.replace(id, "@" + userUniqueName);
                 } else {
-                    var userDisplayName = filteredUser[0]["display_name"];
-                    s = s.replace(id, "<span class='tagged-user'>" + userDisplayName + "</span>");
+                    var userDisplayName = filteredUser[0]["display_name"],
+                        userEmail = filteredUser[0]["user_email"];
+                    s = s.replace(id, "<span class='tagged-user' title='" + userEmail + "'>" + userDisplayName + "</span>");
                 }
             }
         });

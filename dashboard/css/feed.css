@@ -184,16 +184,19 @@
   padding: 0 8px;
   color: #1B96C9;
   font-weight: 600;
-  font-size: 12px;
+  cursor: pointer;
 }
 .anno-item .anno-mentions .anno-item-tag-item.current-user {
   background-color: #1B96C9;
   color: #FFF;
 }
+.anno-item .anno-mentions .anno-item-tag-item .anno-item-tag-item-image {
+  border-radius: 10px;
+}
 .anno-item .anno-mentions .anno-item-tag-item .anno-item-tag-item-name {
   display: inline-block;
   vertical-align: middle;
-  margin-left: 4px;
+  margin-left: 2px;
 }
 .anno-item .anno-item-add-button {
   background-image: url('../images/icon_squared-plus.png');
