@@ -120,10 +120,10 @@ ServiceModule.factory('Autocomplete', function(Utils) {
 
     Autocomplete.setSuggestionBoxPosition = function(event, suggestion_div) {
         var currentTargetBoundingRect = event.srcElement.getBoundingClientRect(),
-            leftValue = (currentTargetBoundingRect.width / 2 + currentTargetBoundingRect.left) - 100;
+            leftValue = (currentTargetBoundingRect.width / 2 + currentTargetBoundingRect.left) - (suggestion_div.clientWidth / 2);
 
-        var topValue = currentTargetBoundingRect.bottom - (currentTargetBoundingRect.height + 138);
-        if (angular.element(annos)[0].getBoundingClientRect().bottom - currentTargetBoundingRect.bottom > 138) {
+        var topValue = currentTargetBoundingRect.bottom - (currentTargetBoundingRect.height + suggestion_div.clientHeight + 10);
+        if ((angular.element(annos)[0].getBoundingClientRect().bottom - currentTargetBoundingRect.bottom) > (suggestion_div.clientHeight + 10)) {
             topValue = currentTargetBoundingRect.bottom + 10;
         }
 
@@ -151,8 +151,8 @@ ServiceModule.factory('Autocomplete', function(Utils) {
                     callback();
                 }
                 if (this.currentEngagedUserList.length) {
-                    this.setSuggestionBoxPosition(event, suggestion_div);
                     suggestion_div.style.display = "block";
+                    this.setSuggestionBoxPosition(event, suggestion_div);
                 } else {
                     suggestion_div.style.display = "none";
                 }
