@@ -210,7 +210,11 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         }
 
         if (teamNotesTextNode.innerText !== $scope.noTeamNotesText) {
-            teamNotesTextInput.querySelector('textarea').value = teamNotesTextNode.innerText;
+            var anno_item_data = Utils.getAnnoById($scope.annoList, anno_item.dataset.annoId);
+            teamNotesTextInput.querySelector('textarea').value = Utils.replaceEmailWithName(anno_item_data.team_notes,
+                                                                                            [],
+                                                                                            anno_item_data.engaged_users,
+                                                                                            true);
         }
     };
 

@@ -56,7 +56,7 @@ ServiceModule.factory('Utils', function($cookieStore) {
         return [s, taggedUserIDs];
     }
 
-    function replaceEmailWithName(s, tagged_users, engaged_users) {
+    function replaceEmailWithName(s, tagged_users, engaged_users, editMode) {
         tagged_users = tagged_users || [];
         engaged_users = engaged_users || [];
         tagged_users = tagged_users.concat(engaged_users);
@@ -68,8 +68,13 @@ ServiceModule.factory('Utils', function($cookieStore) {
                 return user.id === id.split("__")[1];
             });
             if (filteredUser.length) {
-                var userDisplayName = filteredUser[0]["display_name"];
-                s = s.replace(id, "<span class='tagged-user'>" + userDisplayName + "</span>");
+                if (editMode) {
+                    var userUniqueName = filteredUser[0]["unique_name"];
+                    s = s.replace(id, "@" + userUniqueName);
+                } else {
+                    var userDisplayName = filteredUser[0]["display_name"];
+                    s = s.replace(id, "<span class='tagged-user'>" + userDisplayName + "</span>");
+                }
             }
         });
 
