@@ -33,10 +33,8 @@ ServiceModule.factory('Utils', function($cookieStore) {
         return s.replace(/(^|\W)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig, commentURLTemplate);
     }
 
-    function replaceUniqueUserNameWithID(s, tagged_users, engaged_users) {
-        tagged_users = tagged_users || [];
+    function replaceUniqueUserNameWithID(s, engaged_users) {
         engaged_users = engaged_users || [];
-        engaged_users = engaged_users.concat(tagged_users);
 
         var taggedUniqueName = s.match(/(^|\W)(@[a-z\d][\w]*)/ig) || [],
             taggedUserIDs = [];
@@ -56,15 +54,13 @@ ServiceModule.factory('Utils', function($cookieStore) {
         return [s, taggedUserIDs];
     }
 
-    function replaceEmailWithName(s, tagged_users, engaged_users, editMode) {
-        tagged_users = tagged_users || [];
+    function replaceEmailWithName(s, engaged_users, editMode) {
         engaged_users = engaged_users || [];
-        tagged_users = tagged_users.concat(engaged_users);
 
         var matchedEmailList = s.match(/(^|\W)(__[a-z\d][\w]*)/ig) || [];
         angular.forEach(matchedEmailList, function(id) {
             id = id.trim();
-            var filteredUser = tagged_users.filter(function(user) {
+            var filteredUser = engaged_users.filter(function(user) {
                 return user.id === id.split("__")[1];
             });
             if (filteredUser.length) {
@@ -91,9 +87,19 @@ ServiceModule.factory('Utils', function($cookieStore) {
         return el;
     }
 
-    function getUniqueEngagedUsers(engagedUsers, teamUsers, perAnnoEngagedUsers) {
-        var uniqueNames = [], uniqueUserName;
-        engagedUsers = engagedUsers || [];
+    function getUniqueEngagedUsers(anno, teamUsers, perAnnoEngagedUsers) {
+        var uniqueNames = [], uniqueUserName, engagedUsers;
+
+        if (perAnnoEngagedUsers) {
+            engagedUsers = [];
+            angular.forEach(anno.followup_list, function(followup) {
+                if ('tagged_users_detail' in followup) {
+                    engagedUsers = engagedUsers.concat(followup.tagged_users_detail);
+                }
+            });
+        } else {
+            engagedUsers = anno;
+        }
 
         function uniqueCount(userName) {
             return uniqueNames.indexOf(userName) + 1;

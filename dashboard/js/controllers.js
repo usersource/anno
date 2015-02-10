@@ -96,9 +96,9 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         return device_model;
     };
 
-    $scope.parseForTagsMentionsLinks = function(text, tagged_users, engaged_users) {
+    $scope.parseForTagsMentionsLinks = function(text, engaged_users) {
         text = Utils.replaceURLWithLink(text);
-        text = Utils.replaceEmailWithName(text, tagged_users, engaged_users);
+        text = Utils.replaceEmailWithName(text, engaged_users);
         text = Utils.replaceHashTagWithLink(text);
         text = $sce.trustAsHtml(text);
         return text;
@@ -111,7 +111,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         var newAnnoListData = data.anno_list;
         $scope.annoList = $scope.annoList || [];
         angular.forEach(newAnnoListData, function(anno) {
-            anno.engaged_users = Utils.getUniqueEngagedUsers(anno.engaged_users, $scope.community_engaged_users, true) || [];
+            anno.engaged_users = Utils.getUniqueEngagedUsers(anno, $scope.community_engaged_users, true) || [];
         });
         $scope.annoList = $scope.annoList.concat(newAnnoListData);
         console.log($scope.annoList);
@@ -252,7 +252,8 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             anno_item_data.team_notes = teamNotes;
             DataService.makeHTTPCall("anno.anno.teamnotes.insert", {
                 id: anno_id,
-                team_notes: teamNotes
+                team_notes: teamNotes,
+                tagged_users: teamNotesData[1]
             }, function(data) {
                 if (!('team_notes_metadata' in anno_item_data)) {
                     anno_item_data["team_notes_metadata"] = {};
