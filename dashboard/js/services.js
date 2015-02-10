@@ -47,7 +47,9 @@ ServiceModule.factory('Utils', function($cookieStore) {
             if (filteredUser.length) {
                 var userID = filteredUser[0]["id"];
                 s = s.replace(name, "__" + userID + "__");
-                taggedUserIDs.push(userID);
+                if (taggedUserIDs.indexOf(userID) === -1) {
+                    taggedUserIDs.push(userID);
+                }
             }
         });
 
