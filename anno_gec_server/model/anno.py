@@ -63,6 +63,7 @@ class Anno(BaseModel):
     circle_level = ndb.IntegerProperty(default=0)
     screen_info = ndb.StringProperty()
     team_notes = ndb.TextProperty()
+    tagged_users = ndb.StringProperty(repeated=True)
 
     def __eq__(self, other):
         return self.key.id() == other.key.id()
@@ -134,6 +135,7 @@ class Anno(BaseModel):
         if self.creator is not None:
             user_info = self.creator.get()
             user_message = UserMessage(display_name=user_info.display_name,
+                                       user_email=user_info.user_email,
                                        image_url=user_info.image_url)
 
         app = self.app.get() if self.app else None
@@ -151,8 +153,17 @@ class Anno(BaseModel):
         from model.flag import Flag
         is_my_flag = Flag.is_belongs_user(self, user)
 
+        mentions = []
+        for tagged_user in self.tagged_users:
+            tagged_user_info = User.get_by_id(int(tagged_user))
+            is_auth_user = tagged_user_info.user_email == user_message.user_email
+            mentions.append(AnnoMentionsResponseMessage(id=tagged_user_info.key.id(),
+                                                        display_name=tagged_user_info.display_name,
+                                                        user_email=tagged_user_info.user_email,
+                                                        is_auth_user=is_auth_user))
+
         team_notes_metadata = AnnoTeamNotesMetadataMessage(tags=parseTeamNotesForHashtags(self.team_notes),
-                                                           mentions=[])
+                                                           mentions=mentions)
 
         engaged_users = Anno.getEngagedUsers(anno_id=self.key.id(), auth_user=user)
 

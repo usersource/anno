@@ -212,7 +212,6 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         if (teamNotesTextNode.innerText !== $scope.noTeamNotesText) {
             var anno_item_data = Utils.getAnnoById($scope.annoList, anno_item.dataset.annoId);
             teamNotesTextInput.querySelector('textarea').value = Utils.replaceEmailWithName(anno_item_data.team_notes,
-                                                                                            [],
                                                                                             anno_item_data.engaged_users,
                                                                                             true);
         }
@@ -244,29 +243,36 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             teamNotesTextInput = anno_item.querySelector('.anno-team-notes-edittext'),
             anno_id = anno_item.dataset.annoId;
 
-        var teamNotes = teamNotesTextInput.querySelector('textarea').value.trim();
+        var teamNotes = teamNotesTextInput.querySelector('textarea').value.trim(),
+            tagged_users = [],
+            anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
+
         if (teamNotes.length) {
-            var anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
-            var teamNotesData = Utils.replaceUniqueUserNameWithID(teamNotes, [], anno_item_data.engaged_users);
+            var teamNotesData = Utils.replaceUniqueUserNameWithID(teamNotes, anno_item_data.engaged_users);
             teamNotes = teamNotesData[0];
-            anno_item_data.team_notes = teamNotes;
-            DataService.makeHTTPCall("anno.anno.teamnotes.insert", {
-                id: anno_id,
-                team_notes: teamNotes,
-                tagged_users: teamNotesData[1]
-            }, function(data) {
-                if (!('team_notes_metadata' in anno_item_data)) {
-                    anno_item_data["team_notes_metadata"] = {};
-                }
-                anno_item_data["team_notes_metadata"]["tags"] = 'tags' in data ? data.tags : [];
-                $scope.team_notes_save = "Saved";
-                $scope.isTeamNotesEditing = false;
-                setTimeout(function() {
-                    teamNotesTextNode.style.display = "block";
-                    teamNotesTextInput.style.display = "none";
-                }, 1000);
-            });
+            tagged_users = teamNotesData[1];
         }
+
+        anno_item_data.team_notes = teamNotes;
+        DataService.makeHTTPCall("anno.anno.teamnotes.insert", {
+            id: anno_id,
+            team_notes: teamNotes,
+            tagged_users: tagged_users
+        }, function(data) {
+            if (!('team_notes_metadata' in anno_item_data)) {
+                anno_item_data["team_notes_metadata"] = {};
+            }
+
+            anno_item_data["team_notes_metadata"]["tags"] = 'tags' in data ? data.tags : [];
+            anno_item_data["team_notes_metadata"]["mentions"] = 'mentions' in data ? data.mentions : [];
+
+            $scope.team_notes_save = "Saved";
+            $scope.isTeamNotesEditing = false;
+            setTimeout(function() {
+                teamNotesTextNode.style.display = "block";
+                teamNotesTextInput.style.display = "none";
+            }, 1000);
+        });
     };
 
     $scope.postComment = function(event) {
@@ -277,7 +283,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         var comment = postCommentTextarea.value.trim();
         if (comment.length) {
             var anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
-            var commentData = Utils.replaceUniqueUserNameWithID(comment, [], anno_item_data.engaged_users);
+            var commentData = Utils.replaceUniqueUserNameWithID(comment, anno_item_data.engaged_users);
             comment = commentData[0];
             DataService.makeHTTPCall("followup.followup.insert", {
                 anno_id : anno_id,

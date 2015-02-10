@@ -117,7 +117,11 @@ class AnnoTagsResponseMessage(messages.Message):
     value = messages.StringField(1)
 
 class AnnoMentionsResponseMessage(messages.Message):
-    value = messages.StringField(1)
+    id = messages.IntegerField(1)
+    user_email = messages.StringField(2)
+    display_name = messages.StringField(3)
+    image_url = messages.StringField(4)
+    is_auth_user = messages.BooleanField(5)
 
 class AnnoTeamNotesMetadataMessage(messages.Message):
     tags = messages.MessageField(AnnoTagsResponseMessage, 1, repeated=True)

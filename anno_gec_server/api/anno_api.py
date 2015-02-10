@@ -62,6 +62,7 @@ from message.anno_api_messages import AnnoDashboardListMessage
 from message.anno_api_messages import AnnoResponseMessage
 from message.anno_api_messages import UserUnreadMessage
 from message.anno_api_messages import AnnoTeamNotesMetadataMessage
+from message.anno_api_messages import AnnoMentionsResponseMessage
 from message.user_message import UserMessage
 from message.user_message import UserListMessage
 from model.anno import Anno
@@ -94,7 +95,8 @@ class AnnoApi(remote.Service):
         message_types.VoidMessage,
         id=messages.IntegerField(2, required=True),
         team_key=messages.StringField(3),
-        team_notes=messages.StringField(4)
+        team_notes=messages.StringField(4),
+        tagged_users=messages.StringField(5, repeated=True)
     )
 
     anno_list_resource_container = endpoints.ResourceContainer(
@@ -401,8 +403,20 @@ class AnnoApi(remote.Service):
                       http_method='POST', name='anno.teamnotes.insert')
     def anno_teamnotes_insert(self, request):
         anno = Anno.get_by_id(request.id)
+        user = auth_user(self.request_state.headers)
+
         if anno:
             anno.team_notes = request.team_notes
+            anno.tagged_users = request.tagged_users
             anno.put()
+
+        mentions = []
+        for tagged_user in request.tagged_users:
+            user_info = User.get_by_id(int(tagged_user))
+            is_auth_user = user_info.user_email == user.user_email
+            mentions.append(AnnoMentionsResponseMessage(id=user_info.key.id(),
+                                                        display_name=user_info.display_name,
+                                                        user_email=user_info.user_email))
+
         return AnnoTeamNotesMetadataMessage(tags=parseTeamNotesForHashtags(request.team_notes),
-                                            mentions=[])
+                                            mentions=mentions)
