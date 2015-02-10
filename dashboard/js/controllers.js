@@ -243,6 +243,8 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         var teamNotes = teamNotesTextInput.querySelector('textarea').value.trim();
         if (teamNotes.length) {
             var anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
+            var teamNotesData = Utils.replaceUniqueUserNameWithID(teamNotes, anno_item_data.engaged_users);
+            teamNotes = teamNotesData[0];
             anno_item_data.team_notes = teamNotes;
             DataService.makeHTTPCall("anno.anno.teamnotes.insert", {
                 id: anno_id,
