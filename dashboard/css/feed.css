@@ -178,6 +178,23 @@
   vertical-align: middle;
   line-height: 23px;
 }
+.anno-item .anno-mentions .anno-item-tag-item {
+  height: 28px;
+  line-height: 26px;
+  padding: 0 8px;
+  color: #1B96C9;
+  font-weight: 600;
+  font-size: 12px;
+}
+.anno-item .anno-mentions .anno-item-tag-item.current-user {
+  background-color: #1B96C9;
+  color: #FFF;
+}
+.anno-item .anno-mentions .anno-item-tag-item .anno-item-tag-item-name {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 4px;
+}
 .anno-item .anno-item-add-button {
   background-image: url('../images/icon_squared-plus.png');
   background-repeat: no-repeat;

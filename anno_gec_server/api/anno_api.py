@@ -416,7 +416,9 @@ class AnnoApi(remote.Service):
             is_auth_user = user_info.user_email == user.user_email
             mentions.append(AnnoMentionsResponseMessage(id=user_info.key.id(),
                                                         display_name=user_info.display_name,
-                                                        user_email=user_info.user_email))
+                                                        user_email=user_info.user_email,
+                                                        image_url=user_info.image_url,
+                                                        is_auth_user=is_auth_user))
 
         return AnnoTeamNotesMetadataMessage(tags=parseTeamNotesForHashtags(request.team_notes),
                                             mentions=mentions)

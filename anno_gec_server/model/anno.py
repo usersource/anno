@@ -160,6 +160,7 @@ class Anno(BaseModel):
             mentions.append(AnnoMentionsResponseMessage(id=tagged_user_info.key.id(),
                                                         display_name=tagged_user_info.display_name,
                                                         user_email=tagged_user_info.user_email,
+                                                        image_url=tagged_user_info.image_url,
                                                         is_auth_user=is_auth_user))
 
         team_notes_metadata = AnnoTeamNotesMetadataMessage(tags=parseTeamNotesForHashtags(self.team_notes),

@@ -166,8 +166,11 @@
                                     <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.team_notes_metadata.mentions ? anno.team_notes_metadata.mentions.length : 0}} Mention{{anno.mentions.length !== 1 ? "s" : ""}}</span>
                                 </div>
                                 <div>
-                                    <span class="anno-item-tag-item" ng-repeat="mention in anno.team_notes_metadata.mentions">{{mention.value}}</span>
-                                    <span class="anno-item-tag-item anno-item-add-button"></span>
+                                    <div class="anno-item-tag-item" ng-repeat="mention in anno.team_notes_metadata.mentions" ng-class={'current-user':mention.is_auth_user}>
+                                        <img width="16px" height="16px" style="border-radius: 8px;" ng-src="{{mention.image_url && mention.image_url || 'images/icon_no-user.png'}}">
+                                        <div class="anno-item-tag-item-name">{{mention.display_name}}</div>
+                                    </div>
+                                    <span class="anno-item-tag-item anno-item-add-button" style="padding: 0 15px;"></span>
                                 </div>
                             </div>
                             <div class="anno-comments anno-item-section">
