@@ -161,7 +161,7 @@ ServiceModule.factory('Autocomplete', function(Utils) {
     Autocomplete.currentHashtagList = [];
 
     Autocomplete.setSuggestionBoxPosition = function(event, suggestion_div) {
-        var currentTargetBoundingRect = event.srcElement.getBoundingClientRect(),
+        var currentTargetBoundingRect = event.target.getBoundingClientRect(),
             leftValue = (currentTargetBoundingRect.width / 2 + currentTargetBoundingRect.left) - (suggestion_div.clientWidth / 2);
 
         var topValue = currentTargetBoundingRect.bottom - (currentTargetBoundingRect.height + suggestion_div.clientHeight + 10);
@@ -174,7 +174,7 @@ ServiceModule.factory('Autocomplete', function(Utils) {
     };
 
     Autocomplete.typeahead = function(event, anno_list, hashtag_list, callback) {
-        currentTextareaInput = event.srcElement;
+        currentTextareaInput = event.target;
         var selectionStart = currentTextareaInput.selectionStart,
             suggestion_div,
             wordList = currentTextareaInput.value.slice(0, selectionStart).split(" ").reverse();
