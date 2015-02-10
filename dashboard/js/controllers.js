@@ -1,9 +1,5 @@
 'use strict';
 
-String.prototype.replaceAt = function(startIndex, replaceCount, character) {
-    return this.substr(0, startIndex) + character + this.substr(startIndex + replaceCount);
-};
-
 var Dashboard = angular.module('Dashboard', ['ngCookies', 'DashboardConstantsModule', 'ServiceModule']);
 
 Dashboard.config(['$httpProvider', function($httpProvider) {
@@ -235,12 +231,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         }
     };
 
-    $scope.selectUserSuggestion = function(event) {
-        var input = document.querySelector('.anno-team-notes textarea');
-        var unique_name = event.currentTarget.dataset.value;
-        var replaceIndex = input.selectionStart - 1;
-        input.value = input.value.replaceAt(replaceIndex - 1, 1 + 1, "@" + unique_name + " ");
-    };
+    $scope.selectSuggestion = Autocomplete.selectSuggestion;
 
     $scope.saveTeamNotes = function(event) {
         $scope.team_notes_save = "Saving...";

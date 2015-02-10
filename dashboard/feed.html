@@ -52,7 +52,7 @@
             <div id="dashboard_message_text" ng-class="{'error-message':dashboard_error_type}"></div>
         </div>
         <div id="engaged-users-suggestion" style="display: none;">
-            <div class="engaged-user" ng-repeat="engagedUser in currentEngagedUserList" data-value="{{engagedUser.unique_name}}" ng-click="selectUserSuggestion($event);">
+            <div class="engaged-user" ng-repeat="engagedUser in currentEngagedUserList" data-value="{{engagedUser.unique_name}}" ng-click="selectSuggestion($event);">
                 <img width="24px" height="24px" style="border-radius: 12px;" ng-src="{{engagedUser.image_url && engagedUser.image_url || 'images/icon_no-user.png'}}">
                 <div style="display: inline-block;vertical-align: middle;margin-left: 2px;">
                     <div style="font-size: 12px;font-weight: 600;">{{engagedUser.display_name}}</div>
