@@ -156,7 +156,9 @@ ServiceModule.factory('Utils', function($cookieStore) {
 
 ServiceModule.factory('Autocomplete', function(Utils) {
     var Autocomplete = {}, currentTextareaInput, currentWord;
+
     Autocomplete.currentEngagedUserList = [];
+    Autocomplete.currentHashtagList = [];
 
     Autocomplete.setSuggestionBoxPosition = function(event, suggestion_div) {
         var currentTargetBoundingRect = event.srcElement.getBoundingClientRect(),
@@ -171,34 +173,58 @@ ServiceModule.factory('Autocomplete', function(Utils) {
         suggestion_div.style.top = topValue + 'px';
     };
 
-    Autocomplete.typeahead = function(event, anno_list, callback) {
+    Autocomplete.typeahead = function(event, anno_list, hashtag_list, callback) {
         currentTextareaInput = event.srcElement;
         var selectionStart = currentTextareaInput.selectionStart,
+            suggestion_div,
             wordList = currentTextareaInput.value.slice(0, selectionStart).split(" ").reverse();
 
-        if (wordList.length && (wordList[0].search(/^@/) !== -1)) {
-            currentWord = wordList[0].split("@")[1];
-            var anno_item = Utils.findAncestor(currentTextareaInput, 'anno-item'),
-                anno_id = anno_item.dataset.annoId,
+        if (wordList.length) {
+            if (wordList.length && (wordList[0].search(/^@/) !== -1)) {
+                currentWord = wordList[0].split("@")[1];
                 suggestion_div = document.querySelector("#engaged-users-suggestion");
 
-            if (currentWord.length) {
-                this.currentEngagedUserList = Utils.getAnnoById(anno_list, anno_id).engaged_users.filter(function(user) {
-                    return ((user.display_name.toLowerCase().indexOf(currentWord.toLowerCase()) === 0) ||
-                            (user.user_email.indexOf(currentWord.toLowerCase()) === 0) ||
-                            (user.unique_name.indexOf(currentWord) === 0));
-                });
-                if (callback !== undefined) {
-                    callback();
-                }
-                if (this.currentEngagedUserList.length) {
-                    suggestion_div.style.display = "block";
-                    this.setSuggestionBoxPosition(event, suggestion_div);
+                var anno_item = Utils.findAncestor(currentTextareaInput, 'anno-item'),
+                    anno_id = anno_item.dataset.annoId;
+
+                if (currentWord.length) {
+                    this.currentEngagedUserList = Utils.getAnnoById(anno_list, anno_id).engaged_users.filter(function(user) {
+                        return ((user.display_name.toLowerCase().indexOf(currentWord.toLowerCase()) === 0) ||
+                                (user.user_email.indexOf(currentWord.toLowerCase()) === 0) ||
+                                (user.unique_name.indexOf(currentWord) === 0));
+                    });
+                    if (callback !== undefined) {
+                        callback();
+                    }
+                    if (this.currentEngagedUserList.length) {
+                        suggestion_div.style.display = "block";
+                        this.setSuggestionBoxPosition(event, suggestion_div);
+                    } else {
+                        this.clearSuggestion();
+                    }
                 } else {
                     this.clearSuggestion();
                 }
-            } else {
-                this.clearSuggestion();
+            } else if (wordList[0].search(/^#/) !== -1) {
+                currentWord = wordList[0].split("#")[1];
+                suggestion_div = document.querySelector("#engaged-hashtags-suggestion");
+
+                if (currentWord.length) {
+                    this.currentHashtagList = hashtag_list.filter(function(hashtag) {
+                        return (hashtag.text.toLowerCase().indexOf(currentWord.toLowerCase()) === 0);
+                    });
+                    if (callback !== undefined) {
+                        callback();
+                    }
+                    if (this.currentHashtagList.length) {
+                        suggestion_div.style.display = "block";
+                        this.setSuggestionBoxPosition(event, suggestion_div);
+                    } else {
+                        this.clearSuggestion();
+                    }
+                } else {
+                    this.clearSuggestion();
+                }
             }
         }
     };
@@ -207,14 +233,20 @@ ServiceModule.factory('Autocomplete', function(Utils) {
         currentTextareaInput = undefined;
         currentWord = "";
         document.querySelector("#engaged-users-suggestion").style.display = "none";
+        document.querySelector("#engaged-hashtags-suggestion").style.display = "none";
     };
 
     Autocomplete.selectSuggestion = function(event) {
         if (currentTextareaInput === undefined) return;
         var unique_name = event.currentTarget.dataset.value,
+            prefixValue = "@",
             replaceIndex = currentTextareaInput.selectionStart - currentWord.length;
 
-        currentTextareaInput.value = currentTextareaInput.value.replaceAt(replaceIndex - 1, currentWord.length + 1, "@" + unique_name + " ");
+        if (angular.element(event.currentTarget).hasClass("engaged-hashtag")) {
+            prefixValue = "#";
+        }
+
+        currentTextareaInput.value = currentTextareaInput.value.replaceAt(replaceIndex - 1, currentWord.length + 1, prefixValue + unique_name + " ");
         currentTextareaInput.focus();
         currentTextareaInput.selectionStart = currentTextareaInput.value.length;
         Autocomplete.clearSuggestion();

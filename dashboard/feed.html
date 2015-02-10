@@ -60,6 +60,9 @@
                 </div>
             </div>
         </div>
+        <div id="engaged-hashtags-suggestion" style="display: none;">
+            <div class="engaged-hashtag" ng-repeat="hashtag in currentHashtagList" data-value="{{hashtag.text}}" ng-click="selectSuggestion($event);">#{{hashtag.text}}</div>
+        </div>
         <div id="feed-content">
             <div id="side-panel" class="col-lg-2 col-md-2 col-sm-2 col-xs-2"></div>
             <div id="annos" class="col-lg-10 col-md-10 col-sm-10 col-xs-10">

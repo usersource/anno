@@ -277,7 +277,7 @@
   -webkit-box-sizing: content-box;
   -moz-box-sizing:content-box;
 }
-#engaged-users-suggestion {
+#engaged-users-suggestion, #engaged-hashtags-suggestion {
   max-height: 128px;
   overflow-y: scroll;
   position: absolute;
@@ -293,9 +293,16 @@
   border-bottom: 1px dashed #C4CFD7;
   cursor: pointer;
 }
-.engaged-user:hover {
+.engaged-hashtag {
+  font-size: 14px;
+  position: relative;
+  padding: 4px 8px;
+  border-bottom: 1px dashed #c4cfd7;
+  cursor: pointer;
+}
+.engaged-user:hover, .engaged-hashtag:hover {
   background-color: #f6f6f8;
 }
-.engaged-user:last-child {
+.engaged-user:last-child, .engaged-hashtag:last-child {
   border-bottom: 0;
 }

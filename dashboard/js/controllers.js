@@ -132,7 +132,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     DataService.makeHTTPCall("tag.tag.popular", {
         limit : 100
     }, function(data) {
-        $scope.popular_tags = 'tags' in data ? data.tags : [];
+        $scope.popularHashtags = 'tags' in data ? data.tags : [];
     });
 
     $scope.screenshotLoad = function (event, anno_item) {
@@ -232,8 +232,9 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             }
         } else {
             setTimeout(function() {
-                Autocomplete.typeahead(event, $scope.annoList, function() {
+                Autocomplete.typeahead(event, $scope.annoList, $scope.popularHashtags, function() {
                     $scope.currentEngagedUserList = Autocomplete.currentEngagedUserList;
+                    $scope.currentHashtagList = Autocomplete.currentHashtagList;
                     $scope.$apply();
                 });
             }, 0);
