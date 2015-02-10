@@ -119,37 +119,47 @@ ServiceModule.factory('Autocomplete', function(Utils) {
     Autocomplete.currentEngagedUserList = [];
 
     Autocomplete.setSuggestionBoxPosition = function(event, suggestion_div) {
-        var div_suggestion = document.querySelector(suggestion_div),
-            currentTargetBoundingRect = event.srcElement.getBoundingClientRect(),
+        var currentTargetBoundingRect = event.srcElement.getBoundingClientRect(),
             leftValue = (currentTargetBoundingRect.width / 2 + currentTargetBoundingRect.left) - 100;
 
-        div_suggestion.style.display = "block";
-        div_suggestion.style.left = leftValue + 'px';
-
         var topValue = currentTargetBoundingRect.bottom - (currentTargetBoundingRect.height + 138);
-        if (annos.getBoundingClientRect().bottom - currentTargetBoundingRect.bottom > 138) {
+        if (angular.element(annos)[0].getBoundingClientRect().bottom - currentTargetBoundingRect.bottom > 138) {
             topValue = currentTargetBoundingRect.bottom + 10;
         }
 
-        div_suggestion.style.top = topValue + 'px';
+        suggestion_div.style.left = leftValue + 'px';
+        suggestion_div.style.top = topValue + 'px';
     };
 
-    Autocomplete.typeahead = function(event, anno_list) {
-        var self = this;
-        setTimeout(function() {
-            var textareaInput = event.srcElement,
-                selectionStart = textareaInput.selectionStart,
-                wordList = textareaInput.value.slice(0, selectionStart).split(" ").reverse();
+    Autocomplete.typeahead = function(event, anno_list, callback) {
+        var textareaInput = event.srcElement,
+            selectionStart = textareaInput.selectionStart,
+            wordList = textareaInput.value.slice(0, selectionStart).split(" ").reverse();
 
-            if (wordList.length && (wordList[0].search(/^@/) !== -1)) {
-                var currentWord = wordList[0],
-                    anno_item = Utils.findAncestor(textareaInput, 'anno-item'),
-                    anno_id = anno_item.dataset.annoId;
+        if (wordList.length && (wordList[0].search(/^@/) !== -1)) {
+            var currentWord = wordList[0].split("@")[1],
+                anno_item = Utils.findAncestor(textareaInput, 'anno-item'),
+                anno_id = anno_item.dataset.annoId,
+                suggestion_div = document.querySelector("#engaged-users-suggestion");
 
-                self.currentEngagedUserList = Utils.getAnnoById(anno_list, anno_id).engaged_users;
-                self.setSuggestionBoxPosition(event, "#engaged-users-suggestion");
+            if (currentWord.length) {
+                this.currentEngagedUserList = Utils.getAnnoById(anno_list, anno_id).engaged_users.filter(function(user) {
+                    return ((user.display_name.toLowerCase().indexOf(currentWord) === 0) ||
+                            (user.user_email.indexOf(currentWord) === 0));
+                });
+                if (callback !== undefined) {
+                    callback();
+                }
+                if (this.currentEngagedUserList.length) {
+                    this.setSuggestionBoxPosition(event, suggestion_div);
+                    suggestion_div.style.display = "block";
+                } else {
+                    suggestion_div.style.display = "none";
+                }
+            } else {
+                suggestion_div.style.display = "none";
             }
-        }, 10);
+        }
     };
 
     return Autocomplete;

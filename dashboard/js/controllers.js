@@ -226,8 +226,12 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
                 $scope.postComment(event);
             }
         } else {
-            $scope.currentEngagedUserList = Autocomplete.currentEngagedUserList;
-            Autocomplete.typeahead(event, $scope.annoList);
+            setTimeout(function() {
+                Autocomplete.typeahead(event, $scope.annoList, function() {
+                    $scope.currentEngagedUserList = Autocomplete.currentEngagedUserList;
+                    $scope.$apply();
+                });
+            }, 0);
         }
     };
 
