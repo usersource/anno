@@ -120,7 +120,7 @@ ServiceModule.factory('Autocomplete', function(Utils) {
 
     Autocomplete.setSuggestionBoxPosition = function(event, suggestion_div) {
         var div_suggestion = document.querySelector(suggestion_div),
-            currentTargetBoundingRect = event.currentTarget.getBoundingClientRect(),
+            currentTargetBoundingRect = event.srcElement.getBoundingClientRect(),
             leftValue = (currentTargetBoundingRect.width / 2 + currentTargetBoundingRect.left) - 100;
 
         div_suggestion.style.display = "block";
@@ -134,14 +134,22 @@ ServiceModule.factory('Autocomplete', function(Utils) {
         div_suggestion.style.top = topValue + 'px';
     };
 
-    Autocomplete.typeahead = function(anno_list) {
-        if (event.shiftKey && event.keyCode === 50) {
-            var anno_item = Utils.findAncestor(event.currentTarget, 'anno-item'),
-                anno_id = anno_item.dataset.annoId;
+    Autocomplete.typeahead = function(event, anno_list) {
+        var self = this;
+        setTimeout(function() {
+            var textareaInput = event.srcElement,
+                selectionStart = textareaInput.selectionStart,
+                wordList = textareaInput.value.slice(0, selectionStart).split(" ").reverse();
 
-            this.currentEngagedUserList = Utils.getAnnoById(anno_list, anno_id).engaged_users;
-            this.setSuggestionBoxPosition(event, "#engaged-users-suggestion");
-        }
+            if (wordList.length && (wordList[0].search(/^@/) !== -1)) {
+                var currentWord = wordList[0],
+                    anno_item = Utils.findAncestor(textareaInput, 'anno-item'),
+                    anno_id = anno_item.dataset.annoId;
+
+                self.currentEngagedUserList = Utils.getAnnoById(anno_list, anno_id).engaged_users;
+                self.setSuggestionBoxPosition(event, "#engaged-users-suggestion");
+            }
+        }, 10);
     };
 
     return Autocomplete;

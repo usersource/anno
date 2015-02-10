@@ -227,7 +227,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             }
         } else {
             $scope.currentEngagedUserList = Autocomplete.currentEngagedUserList;
-            Autocomplete.typeahead($scope.annoList);
+            Autocomplete.typeahead(event, $scope.annoList);
         }
     };
 
