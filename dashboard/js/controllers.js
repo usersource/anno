@@ -248,7 +248,10 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
                 id: anno_id,
                 team_notes: teamNotes
             }, function(data) {
-                anno_item_data.team_notes_metadata.tags = data.tags;
+                if (!('team_notes_metadata' in anno_item_data)) {
+                    anno_item_data["team_notes_metadata"] = {};
+                }
+                anno_item_data["team_notes_metadata"]["tags"] = 'tags' in data ? data.tags : [];
                 $scope.team_notes_save = "Saved";
                 $scope.isTeamNotesEditing = false;
                 setTimeout(function() {
