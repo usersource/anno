@@ -228,6 +228,8 @@ ServiceModule.factory('Autocomplete', function(Utils) {
                 } else {
                     this.clearSuggestion();
                 }
+            } else {
+                this.clearSuggestion();
             }
         }
     };
