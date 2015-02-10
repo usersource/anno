@@ -176,7 +176,7 @@ ServiceModule.factory('Autocomplete', function(Utils) {
     Autocomplete.selectSuggestion = function(event) {
         if (currentTextareaInput === undefined) return;
         var unique_name = event.currentTarget.dataset.value,
-            replaceIndex = currentTextareaInput.selectionStart - 1;
+            replaceIndex = currentTextareaInput.selectionStart - currentWord.length;
 
         currentTextareaInput.value = currentTextareaInput.value.replaceAt(replaceIndex - 1, currentWord.length + 1, "@" + unique_name + " ");
         currentTextareaInput.focus();
