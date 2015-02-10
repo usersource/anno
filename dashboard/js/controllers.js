@@ -275,9 +275,13 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
 
         var comment = postCommentTextarea.value.trim();
         if (comment.length) {
+            var anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
+            var commentData = Utils.replaceUniqueUserNameWithID(comment, [], anno_item_data.engaged_users);
+            comment = commentData[0];
             DataService.makeHTTPCall("followup.followup.insert", {
                 anno_id : anno_id,
-                comment : comment
+                comment : comment,
+                tagged_users : commentData[1]
             }, function(data) {
                 postCommentTextarea.value = "";
                 var latestComment = {
@@ -287,7 +291,10 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
                     created : data.created,
                     creator : data.creator
                 };
-                Utils.getAnnoById($scope.annoList, anno_id).followup_list.unshift(latestComment);
+                if (!('followup' in anno_item_data)) {
+                    anno_item_data["followup_list"] = [];
+                }
+                anno_item_data.followup_list.unshift(latestComment);
             });
         }
     };
