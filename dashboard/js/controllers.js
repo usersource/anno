@@ -298,7 +298,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
                     created : data.created,
                     creator : data.creator
                 };
-                if (!('followup' in anno_item_data)) {
+                if (!('followup_list' in anno_item_data)) {
                     anno_item_data["followup_list"] = [];
                 }
                 anno_item_data.followup_list.unshift(latestComment);
