@@ -164,7 +164,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             anno_item_data.landscapeView = true;
             if (!anno_item_data.landscapeViewLoaded) {
                 anno_item_data.landscapeViewLoaded = true;
-                setTimeout(function() {
+                $timeout(function() {
                     $scope.screenshotLoad(undefined, anno_item);
                 }, 0);
                 return;
@@ -249,7 +249,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
                 $scope.postComment(event);
             }
         } else {
-            setTimeout(function() {
+            $timeout(function() {
                 Autocomplete.typeahead(event, $scope.annoList, $scope.popularHashtags, function() {
                     $scope.currentEngagedUserList = Autocomplete.currentEngagedUserList;
                     $scope.currentHashtagList = Autocomplete.currentHashtagList;
@@ -293,7 +293,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
 
             $scope.team_notes_save = "Saved";
             $scope.isTeamNotesEditing = false;
-            setTimeout(function() {
+            $timeout(function() {
                 teamNotesTextNode.style.display = "block";
                 teamNotesTextInput.style.display = "none";
             }, 1000);
