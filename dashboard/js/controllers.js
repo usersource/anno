@@ -38,7 +38,7 @@ Dashboard.controller('Login', function($scope, $window, $location, $cookieStore,
     };
 });
 
-Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, $sce, Utils, DataService, ComStyleGetter, DashboardConstants, Autocomplete) {
+Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, $sce, $timeout, Utils, DataService, ComStyleGetter, DashboardConstants, Autocomplete) {
     $scope.noTeamNotesText = "No Notes";
 
     $scope.imageBaseURL = DashboardConstants.imageURL[DashboardConstants.serverURLKey];
@@ -114,6 +114,13 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         return text;
     };
 
+    $scope.watchersCount = function() {
+        $timeout(function() {
+            $scope.watchers = Utils.watchersContainedIn($scope);
+            console.log("Number of watchers:", $scope.watchers);
+        });
+    };
+
     // Getting anno list data
     DataService.makeHTTPCall("anno.anno.dashboard.list", {
         outcome : 'cursor,has_more,anno_list'
@@ -124,7 +131,8 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             anno.engaged_users = Utils.getUniqueEngagedUsers(anno, $scope.community_engaged_users, true) || [];
         });
         $scope.annoList = $scope.annoList.concat(newAnnoListData);
-        console.log($scope.annoList);
+        console.log("$scope.annoList:", $scope.annoList);
+        $scope.watchersCount();
     }, function(status) {
         if (status == 401) {
             $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');

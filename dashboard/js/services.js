@@ -145,6 +145,16 @@ ServiceModule.factory('Utils', function($cookieStore) {
         return annoData;
     };
 
+    function watchersContainedIn(scope) {
+        var watchers = (scope.$$watchers) ? scope.$$watchers.length : 0;
+        var child = scope.$$childHead;
+        while (child) {
+            watchers += (child.$$watchers) ? child.$$watchers.length : 0;
+            child = child.$$nextSibling;
+        }
+        return watchers;
+    };
+
     return {
         storeUserDataInCookies : storeUserDataInCookies,
         removeUserDataCookies : removeUserDataCookies,
@@ -154,7 +164,8 @@ ServiceModule.factory('Utils', function($cookieStore) {
         replaceUniqueUserNameWithID : replaceUniqueUserNameWithID,
         findAncestor : findAncestor,
         getUniqueEngagedUsers : getUniqueEngagedUsers,
-        getAnnoById : getAnnoById
+        getAnnoById : getAnnoById,
+        watchersContainedIn : watchersContainedIn
     };
 });
 
