@@ -261,7 +261,7 @@ ServiceModule.factory('Autocomplete', function(Utils) {
     };
 
     Autocomplete.selectSuggestion = function(event) {
-        if (!angular.isDefined(currentTextareaInput)) return;
+        if (angular.isUndefined(currentTextareaInput)) return;
         var unique_name = event.currentTarget.dataset.value,
             prefixValue = "@",
             replaceIndex = currentTextareaInput.selectionStart - currentWord.length;
