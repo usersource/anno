@@ -113,7 +113,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             outcome : 'cursor,has_more,anno_list'
         }, function(data) {
             var newAnnoData = data.anno_list;
-            if ($scope.hasOwnProperty('community_engaged_users') && $scope.community_engaged_users) {
+            if ($scope.hasOwnProperty('community_engaged_users') && $scope.community_engaged_users.length) {
                 angular.forEach(newAnnoData, function(anno) {
                     anno.engaged_users = Utils.getUniqueEngagedUsers(anno, $scope.community_engaged_users, true) || [];
                 });
