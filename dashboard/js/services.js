@@ -215,7 +215,7 @@ ServiceModule.factory('Autocomplete', function(Utils) {
                                 (user.user_email.indexOf(currentWord.toLowerCase()) === 0) ||
                                 (user.unique_name.indexOf(currentWord) === 0));
                     });
-                    if (angular.isDefined(callback)) {
+                    if (angular.isFunction(callback)) {
                         callback();
                     }
                     if (this.currentEngagedUserList.length) {
@@ -235,7 +235,7 @@ ServiceModule.factory('Autocomplete', function(Utils) {
                     this.currentHashtagList = hashtag_list.filter(function(hashtag) {
                         return (hashtag.text.toLowerCase().indexOf(currentWord.toLowerCase()) === 0);
                     });
-                    if (angular.isDefined(callback)) {
+                    if (angular.isFunction(callback)) {
                         callback();
                     }
                     if (this.currentHashtagList.length) {
@@ -310,12 +310,12 @@ ServiceModule.factory('DataService', function($http, $location, $window, Utils, 
         };
 
         $http(req).success(function(data, status, header, config) {
-            if (angular.isDefined(success_callback)) {
+            if (angular.isFunction(success_callback)) {
                 success_callback(data);
             }
         }).error(function(data, status, header, config) {
             console.error("Error:", endpointName);
-            if (angular.isDefined(error_callback)) {
+            if (angular.isFunction(error_callback)) {
                 error_callback(status);
             }
         });
