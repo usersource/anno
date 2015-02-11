@@ -22,14 +22,12 @@ Dashboard.controller('Login', function($scope, $window, $location, $cookieStore,
     };
 
     $scope.authenticate_dashboard = function() {
-        var params = {
+        DataService.makeHTTPCall("account.dashboard.authenticate", {
             'user_email' : $scope.email,
             'password' : $scope.password,
             'team_key' : $scope.teamkey
-        };
-
-        DataService.makeHTTPCall("account.dashboard.authenticate", params, function(data) {
-            data['email'] = params.user_email;
+        }, function(data) {
+            data['email'] = $scope.email;
             Utils.storeUserDataInCookies(data);
             if (data.authenticated) {
                 $window.location.href = $location.absUrl().replace('login.html', 'feed.html');
@@ -107,7 +105,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         $timeout(function() {
             $scope.watchers = Utils.watchersContainedIn($scope);
             console.log("Number of watchers:", $scope.watchers);
-        });
+        }, 10000);
     };
 
     function getDashboardList() {

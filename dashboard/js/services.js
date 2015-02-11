@@ -202,17 +202,19 @@ ServiceModule.factory('Autocomplete', function(Utils) {
             wordList = currentTextareaInput.value.slice(0, selectionStart).split(" ").reverse();
 
         if (wordList.length) {
-            if (wordList.length && (wordList[0].search(/^@/) !== -1)) {
-                currentWord = wordList[0].split("@")[1];
+            var lastWord = wordList[0];
+            if (lastWord.search(/^@/) !== -1) {
+                currentWord = lastWord.split("@")[1];
                 suggestion_div = document.querySelector("#engaged-users-suggestion");
 
                 var anno_item = Utils.findAncestor(currentTextareaInput, 'anno-item'),
                     anno_id = anno_item.dataset.annoId;
 
                 if (currentWord.length) {
-                    this.currentEngagedUserList = Utils.getAnnoById(anno_list, anno_id).engaged_users.filter(function(user) {
+                    var anno_item_data = Utils.getAnnoById(anno_list, anno_id);
+                    this.currentEngagedUserList = anno_item_data.engaged_users.filter(function(user) {
                         return ((user.display_name.toLowerCase().indexOf(currentWord.toLowerCase()) === 0) ||
-                                (user.user_email.indexOf(currentWord.toLowerCase()) === 0) ||
+                                (user.user_email.toLowerCase().indexOf(currentWord.toLowerCase()) === 0) ||
                                 (user.unique_name.indexOf(currentWord) === 0));
                     });
                     if (angular.isFunction(callback)) {
@@ -227,8 +229,8 @@ ServiceModule.factory('Autocomplete', function(Utils) {
                 } else {
                     this.clearSuggestion();
                 }
-            } else if (wordList[0].search(/^#/) !== -1) {
-                currentWord = wordList[0].split("#")[1];
+            } else if (lastWord.search(/^#/) !== -1) {
+                currentWord = lastWord.split("#")[1];
                 suggestion_div = document.querySelector("#engaged-hashtags-suggestion");
 
                 if (currentWord.length) {
@@ -297,7 +299,6 @@ ServiceModule.factory('DataService', function($http, $location, $window, Utils, 
     }
 
     function makeHTTPCall(endpointName, params, success_callback, error_callback) {
-        var self = this;
         var endpointData = DashboardConstants.endpointUrl[endpointName];
         var url = apiRoot + "/" + endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + endpointData.path;
 
