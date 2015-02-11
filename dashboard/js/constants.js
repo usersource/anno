@@ -52,6 +52,11 @@ DashboardConstantsModule.value("DashboardConstants", {
             "root" : "tag",
             "path" : "tag_popular",
             "method" : "GET"
+        },
+        "anno.anno.archive" : {
+            "root" : "anno",
+            "path" : "anno/archive",
+            "method" : "POST"
         }
     },
     borderColor : "#ff9900",

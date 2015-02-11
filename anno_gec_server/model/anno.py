@@ -64,6 +64,7 @@ class Anno(BaseModel):
     screen_info = ndb.StringProperty()
     team_notes = ndb.TextProperty()
     tagged_users = ndb.StringProperty(repeated=True)
+    archived = ndb.BooleanProperty(default=False)
 
     def __eq__(self, other):
         return self.key.id() == other.key.id()
@@ -186,7 +187,8 @@ class Anno(BaseModel):
                                                     is_my_flag=is_my_flag,
                                                     team_notes_metadata=team_notes_metadata,
                                                     team_notes=self.team_notes,
-                                                    engaged_users=engaged_users)
+                                                    engaged_users=engaged_users,
+                                                    archived=self.archived)
 
         return anno_message
 
@@ -820,3 +822,9 @@ class Anno(BaseModel):
 
         # sorting users alphabetically
         return sorted(users, key=lambda user_info: user_info.display_name.lower())
+
+    @classmethod
+    def archive(cls, anno_id):
+        anno = cls.get_by_id(int(anno_id))
+        anno.archived = not anno.archived
+        anno.put()

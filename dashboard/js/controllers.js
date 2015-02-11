@@ -84,6 +84,16 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         }
     });
 
+    $scope.archiveAnno = function(event) {
+        var anno_id = Utils.findAncestor(event.target, 'anno-item').dataset.annoId;
+        DataService.makeHTTPCall("anno.anno.archive", {
+            id : anno_id
+        }, function(data) {
+            var anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
+            anno_item_data["archived"] = !(anno_item_data.archived);
+        });
+    };
+
     $scope.showLocalDateTime = function(datetime) {
         return new Date(datetime);
     };

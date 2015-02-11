@@ -422,3 +422,9 @@ class AnnoApi(remote.Service):
 
         return AnnoTeamNotesMetadataMessage(tags=parseTeamNotesForHashtags(request.team_notes),
                                             mentions=mentions)
+
+    @endpoints.method(anno_with_id_resource_container, message_types.VoidMessage, path='anno/archive',
+                      http_method='POST', name='anno.archive')
+    def anno_archive(self, request):
+        Anno.archive(request.id)
+        return message_types.VoidMessage()

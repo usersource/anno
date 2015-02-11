@@ -112,6 +112,7 @@ class AnnoResponseMessage(messages.Message):
     anno_read_status = messages.BooleanField(35)
     last_activity_user = messages.MessageField(UserMessage, 36)
     circle_level_value = messages.StringField(37)
+    archived = messages.BooleanField(38)
 
 class AnnoTagsResponseMessage(messages.Message):
     value = messages.StringField(1)
@@ -148,6 +149,7 @@ class AnnoDashboardResponseMessage(messages.Message):
     team_notes = messages.StringField(18)
     team_notes_metadata = messages.MessageField(AnnoTeamNotesMetadataMessage, 19)
     engaged_users = messages.MessageField(UserMessage, 20, repeated=True)
+    archived = messages.BooleanField(21)
 
 class AnnoListMessage(messages.Message):
     """
