@@ -113,7 +113,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             outcome : 'cursor,has_more,anno_list'
         }, function(data) {
             var newAnnoData = data.anno_list;
-            if ($scope.hasOwnProperty('community_engaged_users')) {
+            if ($scope.hasOwnProperty('community_engaged_users') && $scope.community_engaged_users) {
                 angular.forEach(newAnnoData, function(anno) {
                     anno.engaged_users = Utils.getUniqueEngagedUsers(anno, $scope.community_engaged_users, true) || [];
                 });
@@ -121,11 +121,13 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             $scope.annoList = $scope.annoList.concat(newAnnoData);
             console.log("$scope.annoList:", $scope.annoList);
             if (firstTime) {
-                getAppinfoData();
-                getPopularTags();
-                getCommunityUsers();
-                watchersCount();
                 firstTime = false;
+                $timeout(function() {
+                    getAppinfoData();
+                    getPopularTags();
+                    getCommunityUsers();
+                    watchersCount();
+                }, 1000);
             }
         }, function(status) {
             if (status == 401) {
@@ -175,7 +177,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
                 anno_item_data.landscapeViewLoaded = true;
                 $timeout(function() {
                     $scope.screenshotLoad(undefined, anno_item);
-                }, 0);
+                });
                 return;
             }
         }

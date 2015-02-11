@@ -153,7 +153,7 @@ ServiceModule.factory('Utils', function($cookieStore) {
     function watchersContainedIn(scope) {
         // from http://www.closedinterval.com/count-angularjs-watchers/
         var slice = [].slice;
-        var elems = slice.call(document.querySelectorAll("body, body *"));
+        var elems = slice.call(document.querySelectorAll("*"));
 
         return elems.map(function(elem) {
             var data = angular.element(elem).data();
