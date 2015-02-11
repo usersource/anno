@@ -39,17 +39,19 @@ Dashboard.controller('Login', function($scope, $window, $location, $cookieStore,
 });
 
 Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, $sce, $timeout, Utils, DataService, ComStyleGetter, DashboardConstants, Autocomplete) {
-    $scope.noTeamNotesText = "No Notes";
+    var imageWidth = 0,
+        imageHeight = 0,
+        borderWidth = 4,
+        firstTime = true;
 
+    $scope.noTeamNotesText = "No Notes";
     $scope.imageBaseURL = DashboardConstants.imageURL[DashboardConstants.serverURLKey];
     $scope.display_name = $cookieStore.get('user_display_name');
     $scope.email = $cookieStore.get('user_email');
     $scope.image_url = $cookieStore.get('user_image_url');
-
     $scope.showSignoutButton = "none";
     $scope.signoutArrowValue = false;
-
-    var imageWidth = 0, imageHeight = 0, borderWidth = 4;
+    $scope.annoList = [];
 
     $scope.signoutButtonClicked = function() {
         if (logout_button.style.display === "none") {
@@ -101,7 +103,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         return text;
     };
 
-    $scope.watchersCount = function() {
+    function watchersCount() {
         $timeout(function() {
             $scope.watchers = Utils.watchersContainedIn($scope);
             console.log("Number of watchers:", $scope.watchers);
@@ -113,15 +115,17 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             outcome : 'cursor,has_more,anno_list'
         }, function(data) {
             var newAnnoListData = data.anno_list;
-            $scope.annoList = $scope.annoList || [];
             angular.forEach(newAnnoListData, function(anno) {
                 anno.engaged_users = Utils.getUniqueEngagedUsers(anno, $scope.community_engaged_users, true) || [];
             });
             $scope.annoList = $scope.annoList.concat(newAnnoListData);
-            getAppinfoData();
-            getPopularTags();
             console.log("$scope.annoList:", $scope.annoList);
-            $scope.watchersCount();
+            if (firstTime) {
+                getAppinfoData();
+                getPopularTags();
+                watchersCount();
+                firstTime = false;
+            }
         }, function(status) {
             if (status == 401) {
                 $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
