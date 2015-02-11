@@ -341,6 +341,7 @@ def filter_anno_by_user(query, user, is_plugin=False):
 
     from model.anno import Anno
     query = eval("query.filter(ndb.OR(%s))" % ", ".join(filter_strings))
+    query = query.filter(Anno.archived == False)
     query = query.order(Anno._key)
 
     return query

@@ -117,6 +117,21 @@ indexes:
 
 - kind: Anno
   properties:
+  - name: archived
+  - name: circle_level
+  - name: community
+  - name: created
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: archived
+  - name: community
+  - name: created
+    direction: desc
+
+- kind: Anno
+  properties:
   - name: circle_level
   - name: community
   - name: created

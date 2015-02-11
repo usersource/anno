@@ -60,18 +60,18 @@ def update_anno_schema(cursor=None):
     anno_update_list = []
     for anno in anno_list:
         # updating anno schema for plugin
-        if not anno.circle_level:
-            anno.circle_level = 0
+        if not anno.archived:
+            anno.archived = False
             anno_update_list.append(anno)
 
         # updating app for anno schema
 #         if not anno.app:
 #             appinfo = AppInfo.get(name=anno.app_name)
-# 
+#
 #             if appinfo is None:
 #                 appInfoMessage = AppInfoMessage(name=anno.app_name, version=anno.app_version)
 #                 appinfo = AppInfo.insert(appInfoMessage)
-# 
+#
 #             anno.app = appinfo.key
 #             anno_update_list.append(anno)
 
