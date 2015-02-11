@@ -49,9 +49,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     $scope.showSignoutButton = "none";
     $scope.signoutArrowValue = false;
 
-    $scope.imageWidth = 0;
-    $scope.imageHeight = 0;
-    $scope.borderWidth = 4;
+    var imageWidth = 0, imageHeight = 0, borderWidth = 4;
 
     $scope.signoutButtonClicked = function() {
         if (logout_button.style.display === "none") {
@@ -177,9 +175,9 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
 
         var self = this;
         require(["anno/draw/Surface"], function(Surface) {
-            self.imageWidth = parseInt(ComStyleGetter.getComStyle(imgDetailScreenshot).width, 10);
-            self.imageHeight = parseInt(ComStyleGetter.getComStyle(imgDetailScreenshot).height, 10);
-            // self.borderWidth = Math.floor(self.imageWidth * 0.02);
+            imageWidth = parseInt(ComStyleGetter.getComStyle(imgDetailScreenshot).width, 10);
+            imageHeight = parseInt(ComStyleGetter.getComStyle(imgDetailScreenshot).height, 10);
+            // borderWidth = Math.floor(self.imageWidth * 0.02);
 
             var surface = new Surface({
                 container : anno_item.querySelector(".gfxCanvasContainer"),
@@ -197,11 +195,11 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     $scope.applyAnnoLevelColor = function (anno_item, imgDetailScreenshot) {
         var screenshotContainer = anno_item.querySelector(".screenshotContainer");
         angular.element(screenshotContainer).css({
-            width : (this.imageWidth - this.borderWidth * 2) + 'px',
-            height : (this.imageHeight - this.borderWidth * 2) + 'px',
+            width : (imageWidth - borderWidth * 2) + 'px',
+            height : (imageHeight - borderWidth * 2) + 'px',
             'border-color' : DashboardConstants.borderColor,
             'border-style' : 'solid',
-            'border-width' : this.borderWidth + 'px'
+            'border-width' : borderWidth + 'px'
         });
 
         angular.element(imgDetailScreenshot).css({ width : '100%', height : '100%' });
@@ -214,9 +212,9 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         if (angular.isObject(annoData)) {
             var elementsObject = angular.fromJson(annoData.draw_elements);
             surface.show();
-            angular.element(surface.container).css({'border': this.borderWidth + 'px solid transparent', left: '0px',top: '0px'});
-            surface.borderWidth = this.borderWidth;
-            surface.setDimensions(this.imageWidth - this.borderWidth * 2, this.imageHeight - this.borderWidth * 2);
+            angular.element(surface.container).css({'border': borderWidth + 'px solid transparent', left: '0px',top: '0px'});
+            surface.borderWidth = borderWidth;
+            surface.setDimensions(imageWidth - borderWidth * 2, imageHeight - borderWidth * 2);
             surface.parse(elementsObject, lineStrokeStyle);
         }
     };
