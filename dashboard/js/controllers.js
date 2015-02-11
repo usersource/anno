@@ -88,7 +88,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     };
 
     $scope.showProperDeviceName = function(device_model) {
-        if (device_model in DashboardConstants.deviceList) {
+        if (DashboardConstants.deviceList.hasOwnProperty(device_model)) {
             device_model = DashboardConstants.deviceList[device_model];
         }
 
@@ -155,7 +155,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         DataService.makeHTTPCall("tag.tag.popular", {
             limit : 100
         }, function(data) {
-            $scope.popularHashtags = 'tags' in data ? data.tags : [];
+            $scope.popularHashtags = data.hasOwnProperty('tags') ? data.tags : [];
         });
     }
 
@@ -290,12 +290,12 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             team_notes: teamNotes,
             tagged_users: tagged_users
         }, function(data) {
-            if (!('team_notes_metadata' in anno_item_data)) {
+            if (!anno_item_data.hasOwnProperty('team_notes_metadata')) {
                 anno_item_data["team_notes_metadata"] = {};
             }
 
-            anno_item_data["team_notes_metadata"]["tags"] = 'tags' in data ? data.tags : [];
-            anno_item_data["team_notes_metadata"]["mentions"] = 'mentions' in data ? data.mentions : [];
+            anno_item_data["team_notes_metadata"]["tags"] = data.hasOwnProperty('tags') ? data.tags : [];
+            anno_item_data["team_notes_metadata"]["mentions"] = data.hasOwnProperty('mentions') ? data.mentions : [];
 
             $scope.team_notes_save = "Saved";
             $scope.isTeamNotesEditing = false;
@@ -329,7 +329,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
                     created : data.created,
                     creator : data.creator
                 };
-                if (!('followup_list' in anno_item_data)) {
+                if (!anno_item_data.hasOwnProperty('followup_list')) {
                     anno_item_data["followup_list"] = [];
                 }
                 anno_item_data.followup_list.unshift(latestComment);

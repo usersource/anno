@@ -96,7 +96,7 @@ ServiceModule.factory('Utils', function($cookieStore) {
         if (perAnnoEngagedUsers) {
             engagedUsers = [];
             angular.forEach(anno.followup_list, function(followup) {
-                if ('tagged_users_detail' in followup) {
+                if (followup.hasOwnProperty('tagged_users_detail')) {
                     engagedUsers = engagedUsers.concat(followup.tagged_users_detail);
                 }
             });
@@ -113,7 +113,7 @@ ServiceModule.factory('Utils', function($cookieStore) {
                 (teamUsers &&  teamUsers.length &&
                  teamUsers.some(function(user) { return user["user_email"] === mentionedUser["user_email"]; }) && perAnnoEngagedUsers)) {
                 delete engagedUsers[index];
-            } else  if (!("unique_name" in mentionedUser)) {
+            } else  if (!mentionedUser.hasOwnProperty('unique_name')) {
                 var uniqueUserName = mentionedUser["display_name"].replace(/ /g, ""),
                     uniqueUserNameCount = uniqueCount(uniqueUserName);
 
