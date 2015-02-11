@@ -110,7 +110,8 @@ ServiceModule.factory('Utils', function($cookieStore) {
 
         angular.forEach(engagedUsers, function(mentionedUser, index) {
             if ((mentionedUser["display_name"] === "") ||
-                (teamUsers.some(function(user) { return user["user_email"] === mentionedUser["user_email"]; }) && perAnnoEngagedUsers)) {
+                (teamUsers.length &&
+                 teamUsers.some(function(user) { return user["user_email"] === mentionedUser["user_email"]; }) && perAnnoEngagedUsers)) {
                 delete engagedUsers[index];
             } else  if (!("unique_name" in mentionedUser)) {
                 var uniqueUserName = mentionedUser["display_name"].replace(/ /g, ""),
