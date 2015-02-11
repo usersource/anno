@@ -69,7 +69,7 @@
             <div id="side-panel" class="col-lg-2 col-md-2 col-sm-2 col-xs-2"></div>
             <div id="annos" class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
                 <div id="annos-inner">
-                    <div id="anno_{{::$index}}" data-anno-id="{{::anno.id}}" class="anno-item" ng-class="{'landscape':anno.landscapeView}" ng-repeat="anno in annoList track by anno.id">
+                    <div id="anno_{{::$index}}" data-anno-id="{{::anno.id}}" class="anno-item" ng-class="{'landscape':anno.landscapeView}" ng-repeat="anno in annoList track by anno.id" ng-if="!anno.archived">
                         <div class="anno-screenshot">
                             <div class="screenshotContainer">
                                 <img class="imgDetailScreenshot" width="100%" style="display: none;" imgonload="screenshotLoad($event);" ng-src="{{::imageBaseURL}}{{::anno.id}}">
