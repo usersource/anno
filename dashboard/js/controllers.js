@@ -9,7 +9,7 @@ Dashboard.config(['$httpProvider', function($httpProvider) {
     });
 
     var userTeamToken = angular.fromJson($cookies.user_team_token);
-    if (userTeamToken != undefined) {
+    if (angular.isDefined(userTeamToken)) {
         $httpProvider.defaults.headers.common.Authorization = userTeamToken.token_type + ' ' + userTeamToken.access_token;
     }
 
@@ -160,7 +160,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     }
 
     $scope.screenshotLoad = function (event, anno_item) {
-        if (event !== undefined) {
+        if (angular.isDefined(event)) {
             anno_item = Utils.findAncestor(event.currentTarget, 'anno-item');
         }
         var imgDetailScreenshot = anno_item.querySelector(".imgDetailScreenshot");

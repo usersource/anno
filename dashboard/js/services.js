@@ -126,7 +126,7 @@ ServiceModule.factory('Utils', function($cookieStore) {
             }
         });
 
-        return engagedUsers.concat(teamUsers).filter(function(user) { return user != undefined; });
+        return engagedUsers.concat(teamUsers).filter(function(user) { return angular.isDefined(user); });
     }
 
     function getAnnoById(anno_list, anno_id) {
@@ -215,7 +215,7 @@ ServiceModule.factory('Autocomplete', function(Utils) {
                                 (user.user_email.indexOf(currentWord.toLowerCase()) === 0) ||
                                 (user.unique_name.indexOf(currentWord) === 0));
                     });
-                    if (callback !== undefined) {
+                    if (angular.isDefined(callback)) {
                         callback();
                     }
                     if (this.currentEngagedUserList.length) {
@@ -235,7 +235,7 @@ ServiceModule.factory('Autocomplete', function(Utils) {
                     this.currentHashtagList = hashtag_list.filter(function(hashtag) {
                         return (hashtag.text.toLowerCase().indexOf(currentWord.toLowerCase()) === 0);
                     });
-                    if (callback !== undefined) {
+                    if (angular.isDefined(callback)) {
                         callback();
                     }
                     if (this.currentHashtagList.length) {
@@ -261,7 +261,7 @@ ServiceModule.factory('Autocomplete', function(Utils) {
     };
 
     Autocomplete.selectSuggestion = function(event) {
-        if (currentTextareaInput === undefined) return;
+        if (!angular.isDefined(currentTextareaInput)) return;
         var unique_name = event.currentTarget.dataset.value,
             prefixValue = "@",
             replaceIndex = currentTextareaInput.selectionStart - currentWord.length;
@@ -310,12 +310,12 @@ ServiceModule.factory('DataService', function($http, $location, $window, Utils, 
         };
 
         $http(req).success(function(data, status, header, config) {
-            if (success_callback !== undefined) {
+            if (angular.isDefined(success_callback)) {
                 success_callback(data);
             }
         }).error(function(data, status, header, config) {
             console.error("Error:", endpointName);
-            if (error_callback !== undefined) {
+            if (angular.isDefined(error_callback)) {
                 error_callback(status);
             }
         });
