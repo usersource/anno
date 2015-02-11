@@ -203,6 +203,7 @@
   background-repeat: no-repeat;
   background-position: center;
   cursor: pointer;
+  display: none;
 }
 .anno-item .anno-item-add-button:hover {
   background-image: url('../images/icon_squared-plus-blue.png');
