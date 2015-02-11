@@ -146,20 +146,26 @@ ServiceModule.factory('Utils', function($cookieStore) {
     };
 
     function watchersContainedIn(scope) {
-        /*var watchers = (scope.$$watchers) ? scope.$$watchers.length : 0;
-        var child = scope.$$childHead;
-        while (child) {
-            watchers += (child.$$watchers) ? child.$$watchers.length : 0;
-            child = child.$$nextSibling;
-        }*/
-        var watchers = 0, eleScope, allDomElements = document.querySelectorAll('*');
-        angular.forEach(allDomElements, function(ele) {
-            eleScope = angular.element(ele).scope();
-            if (eleScope.$$watchers != null) {
-                watchers += eleScope.$$watchers.length;
+        // from http://www.closedinterval.com/count-angularjs-watchers/
+        var slice = [].slice;
+        var elems = slice.call(document.querySelectorAll("body, body *"));
+
+        return elems.map(function(elem) {
+            var data = angular.element(elem).data();
+            return data.$scope || null;
+        }).filter(function(scope) {
+            return scope && scope.$$watchers;
+        }).reduce(function(tmp, scope) {
+            if (tmp.cache[scope.$id]) {
+                return tmp;
             }
-        });
-        return watchers;
+            tmp.cache[scope.$id] = true;
+            tmp.count += scope.$$watchers.length;
+            return tmp;
+        }, {
+            count : 0,
+            cache : {}
+        }).count;
     };
 
     return {
