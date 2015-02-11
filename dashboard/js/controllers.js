@@ -70,19 +70,8 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
 
     $scope.initLogin = function() {
         // DataService.checkAuthentication();
+        getCommunityUsers();
     };
-
-    // Getting app info
-    DataService.makeHTTPCall("appinfo.appinfo.get", {
-        team_key : $cookieStore.get('team_key')
-    }, function(data) {
-        $scope.appInfo = data;
-    }, function(status) {
-        if (status == 401) {
-            $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
-            Utils.removeUserDataCookies();
-        }
-    });
 
     $scope.archiveAnno = function(event) {
         var anno_id = Utils.findAncestor(event.target, 'anno-item').dataset.annoId;
@@ -121,37 +110,52 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         });
     };
 
-    // Getting anno list data
-    DataService.makeHTTPCall("anno.anno.dashboard.list", {
-        outcome : 'cursor,has_more,anno_list'
-    }, function(data) {
-        var newAnnoListData = data.anno_list;
-        $scope.annoList = $scope.annoList || [];
-        angular.forEach(newAnnoListData, function(anno) {
-            anno.engaged_users = Utils.getUniqueEngagedUsers(anno, $scope.community_engaged_users, true) || [];
+    function getDashboardList() {
+        DataService.makeHTTPCall("anno.anno.dashboard.list", {
+            outcome : 'cursor,has_more,anno_list'
+        }, function(data) {
+            var newAnnoListData = data.anno_list;
+            $scope.annoList = $scope.annoList || [];
+            angular.forEach(newAnnoListData, function(anno) {
+                anno.engaged_users = Utils.getUniqueEngagedUsers(anno, $scope.community_engaged_users, true) || [];
+            });
+            $scope.annoList = $scope.annoList.concat(newAnnoListData);
+            getAppinfoData();
+            getPopularTags();
+            console.log("$scope.annoList:", $scope.annoList);
+            $scope.watchersCount();
+        }, function(status) {
+            if (status == 401) {
+                $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
+                Utils.removeUserDataCookies();
+            }
         });
-        $scope.annoList = $scope.annoList.concat(newAnnoListData);
-        console.log("$scope.annoList:", $scope.annoList);
-        $scope.watchersCount();
-    }, function(status) {
-        if (status == 401) {
-            $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
-            Utils.removeUserDataCookies();
-        }
-    });
+    }
 
-    // Getting community users
-    DataService.makeHTTPCall("user.user.community.users", {
-        account_type : $cookieStore.get('team_key')
-    }, function(data) {
-        $scope.community_engaged_users = Utils.getUniqueEngagedUsers(data.user_list, [], false) || [];
-    });
+    function getAppinfoData() {
+        DataService.makeHTTPCall("appinfo.appinfo.get", {
+            team_key : $cookieStore.get('team_key')
+        }, function(data) {
+            $scope.appInfo = data;
+        });
+    }
 
-    DataService.makeHTTPCall("tag.tag.popular", {
-        limit : 100
-    }, function(data) {
-        $scope.popularHashtags = 'tags' in data ? data.tags : [];
-    });
+    function getCommunityUsers() {
+        DataService.makeHTTPCall("user.user.community.users", {
+            account_type : $cookieStore.get('team_key')
+        }, function(data) {
+            $scope.community_engaged_users = Utils.getUniqueEngagedUsers(data.user_list, [], false) || [];
+            getDashboardList();
+        });
+    }
+
+    function getPopularTags() {
+        DataService.makeHTTPCall("tag.tag.popular", {
+            limit : 100
+        }, function(data) {
+            $scope.popularHashtags = 'tags' in data ? data.tags : [];
+        });
+    }
 
     $scope.screenshotLoad = function (event, anno_item) {
         if (event !== undefined) {
