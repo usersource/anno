@@ -95,11 +95,16 @@ ServiceModule.factory('Utils', function($cookieStore) {
 
         if (perAnnoEngagedUsers) {
             engagedUsers = [];
-            angular.forEach(anno.followup_list, function(followup) {
-                if (followup.hasOwnProperty('tagged_users_detail')) {
-                    engagedUsers = engagedUsers.concat(followup.tagged_users_detail);
+            if (angular.isObject(anno)) {
+                if (anno.hasOwnProperty('engaged_users')) {
+                    engagedUsers = engagedUsers.concat(anno.engaged_users);
                 }
-            });
+                if (anno.hasOwnProperty('team_notes_metadata')) {
+                    if (anno.team_notes_metadata.hasOwnProperty('mentions')) {
+                        engagedUsers = engagedUsers.concat(anno.team_notes_metadata.mentions);
+                    }
+                }
+            }
         } else {
             engagedUsers = anno;
         }

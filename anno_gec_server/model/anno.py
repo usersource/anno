@@ -181,7 +181,6 @@ class Anno(BaseModel):
                                                     draw_elements=self.draw_elements,
                                                     vote_count=self.vote_count,
                                                     flag_count=self.flag_count,
-                                                    followup_count=self.followup_count,
                                                     followup_list=followup_messages,
                                                     is_my_vote=is_my_vote,
                                                     is_my_flag=is_my_flag,
