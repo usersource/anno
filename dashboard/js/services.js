@@ -146,12 +146,19 @@ ServiceModule.factory('Utils', function($cookieStore) {
     };
 
     function watchersContainedIn(scope) {
-        var watchers = (scope.$$watchers) ? scope.$$watchers.length : 0;
+        /*var watchers = (scope.$$watchers) ? scope.$$watchers.length : 0;
         var child = scope.$$childHead;
         while (child) {
             watchers += (child.$$watchers) ? child.$$watchers.length : 0;
             child = child.$$nextSibling;
-        }
+        }*/
+        var watchers = 0, eleScope, allDomElements = document.querySelectorAll('*');
+        angular.forEach(allDomElements, function(ele) {
+            eleScope = angular.element(ele).scope();
+            if (eleScope.$$watchers != null) {
+                watchers += eleScope.$$watchers.length;
+            }
+        });
         return watchers;
     };
 
