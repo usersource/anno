@@ -104,7 +104,7 @@
                                     </div>
                                     <div style="margin: 20px 0;">
                                         <span style="font-weight: 600; vertical-align: middle;">By</span>
-                                        <img class="anno-author-image" ng-src="{{anno.creator.image_url && anno.creator.image_url || 'images/icon_no-user.png'}}">
+                                        <img class="anno-author-image" ng-src="{{::anno.creator.image_url && anno.creator.image_url || 'images/icon_no-user.png'}}">
                                         <span class="anno-author-text">{{::anno.creator.display_name}}</span>
                                         <img width="12px" height="12px" style="margin-left: 4.372%;" src="images/icon_calendar.png">
                                         <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Created on:</span>
@@ -171,7 +171,7 @@
                                     <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.team_notes_metadata.mentions ? anno.team_notes_metadata.mentions.length : 0}} Mention{{anno.mentions.length !== 1 ? "s" : ""}}</span>
                                 </div>
                                 <div>
-                                    <div class="anno-item-tag-item" ng-repeat="mention in anno.team_notes_metadata.mentions track by mention.id" ng-class={'current-user':mention.is_auth_user} title="{{::mention.user_email}}">
+                                    <div class="anno-item-tag-item" ng-repeat="mention in anno.team_notes_metadata.mentions track by mention.id" ng-class="::{'current-user':mention.is_auth_user}" title="{{::mention.user_email}}">
                                         <img width="20px" height="20px" class="anno-item-tag-item-image" ng-src="{{::mention.image_url && mention.image_url || 'images/icon_no-user.png'}}">
                                         <div class="anno-item-tag-item-name">{{::mention.display_name}}</div>
                                     </div>
