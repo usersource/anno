@@ -50,9 +50,9 @@
                 <span id="logout_button_text" style="vertical-align: middle; margin-left: 8px;">Sign out</span>
             </div>
         </div>
-        <div id="dashboard_message" style="display: none;">
+        <!-- <div id="dashboard_message" style="display: none;">
             <div id="dashboard_message_text" ng-class="{'error-message':dashboard_error_type}"></div>
-        </div>
+        </div> -->
         <div id="engaged-users-suggestion" style="display: none;">
             <div class="engaged-user" ng-repeat="engagedUser in currentEngagedUserList" data-value="{{::engagedUser.unique_name}}" ng-click="selectSuggestion($event);">
                 <img width="24px" height="24px" style="border-radius: 12px;" ng-src="{{::engagedUser.image_url && engagedUser.image_url || 'images/icon_no-user.png'}}">
@@ -66,7 +66,17 @@
             <div class="engaged-hashtag" ng-repeat="hashtag in currentHashtagList" data-value="{{::hashtag.text}}" ng-click="selectSuggestion($event);">#{{::hashtag.text}}</div>
         </div>
         <div id="feed-content">
-            <div id="side-panel" class="col-lg-2 col-md-2 col-sm-2 col-xs-2"></div>
+            <div id="side-panel" class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                <div style="margin-bottom: 18px;">Filter results by:</div>
+                <div style="margin-bottom: 30px;">
+                    <div class="side-panel-filter">My @mentions</div>
+                    <div class="side-panel-filter">Most Active</div>
+                    <div class="side-panel-filter">Most Popular</div>
+                    <div class="side-panel-filter">Most Flagged</div>
+                    <div class="side-panel-filter">Archived</div>
+                </div>
+                <input id="side-panel-search" type="text" placeholder="Type to search..." />
+            </div>
             <div id="annos" class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
                 <div id="annos-inner">
                     <div id="anno_{{::$index}}" data-anno-id="{{::anno.id}}" class="anno-item" ng-class="{'landscape':anno.landscapeView}" ng-repeat="anno in annoList track by anno.id" ng-if="!anno.archived">
