@@ -24,6 +24,7 @@
 #side-panel .side-panel-filter:hover,
 #side-panel .side-panel-filter.active {
   color: #1b96c9;
+  border: 1px solid #1B96C9;
   background-color: #e5e8eb;
 }
 #side-panel #side-panel-search {
@@ -123,6 +124,7 @@
 .anno-item .anno-info .anno-info-action-item.archive:hover {
   color: #1b96c9;
   border: 1px solid #1b96c9;
+  background-color: #E5E8EB;
 }
 .anno-item .anno-info .anno-info-action-item.share .action-icon {
   background-image: url(../images/icon_share-alt.png);

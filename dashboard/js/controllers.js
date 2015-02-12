@@ -68,7 +68,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
 
     $scope.initFeed = function() {
         // DataService.checkAuthentication();
-        getDashboardList(DashboardConstants.filters.basic, true);
+        getDashboardList(DashboardConstants.filters.basic);
     };
 
     $scope.archiveAnno = function(event) {
@@ -106,7 +106,8 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         if (angular.equals(query_type, $scope.filterType)) {
             query_type = DashboardConstants.filters.basic;
         }
-        getDashboardList(query_type, true);
+        $scope.annoList = [];
+        getDashboardList(query_type);
     };
 
     function watchersCount() {
@@ -116,15 +117,12 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         }, 10000);
     };
 
-    function getDashboardList(query_type, clear_anno) {
+    function getDashboardList(query_type) {
         $scope.filterType = query_type;
         DataService.makeHTTPCall("anno.anno.dashboard.list", {
             outcome : 'cursor,has_more,anno_list',
             query_type : $scope.filterType
         }, function(data) {
-            if (clear_anno) {
-                $scope.annoList = [];
-            }
             var newAnnoData = data.hasOwnProperty('anno_list') ? data.anno_list : [];
             if ($scope.hasOwnProperty('community_engaged_users') && $scope.community_engaged_users.length) {
                 angular.forEach(newAnnoData, function(anno) {
