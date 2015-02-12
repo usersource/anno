@@ -50,6 +50,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     $scope.showSignoutButton = "none";
     $scope.signoutArrowValue = false;
     $scope.annoList = [];
+    $scope.landscapeView = [];
 
     $scope.signoutButtonClicked = function() {
         if (logout_button.style.display === "none") {
@@ -184,7 +185,12 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         var imgDetailScreenshot = anno_item.querySelector(".imgDetailScreenshot");
         angular.element(imgDetailScreenshot).css('display', '');
         if ((imgDetailScreenshot.naturalWidth / imgDetailScreenshot.naturalHeight) > 1.0) {
-            var anno_item_data = Utils.getAnnoById($scope.annoList, anno_item.dataset.annoId);
+            var anno_id = anno_item.dataset.annoId,
+                anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
+
+            if (angular.equals($scope.landscapeView.indexOf(anno_id), -1)) {
+                $scope.landscapeView.push(anno_id);
+            }
             anno_item_data.landscapeView = true;
             if (!anno_item_data.landscapeViewLoaded) {
                 anno_item_data.landscapeViewLoaded = true;
