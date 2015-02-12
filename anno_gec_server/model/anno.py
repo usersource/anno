@@ -167,7 +167,7 @@ class Anno(BaseModel):
         team_notes_metadata = AnnoTeamNotesMetadataMessage(tags=parseTeamNotesForHashtags(self.team_notes),
                                                            mentions=mentions)
 
-        engaged_users = Anno.getEngagedUsers(anno_id=self.key.id(), auth_user=user)
+        engaged_users = Anno.getEngagedUsers(anno_id=self.key.id(), auth_user=user, include_auth_user=True)
 
         anno_message = AnnoDashboardResponseMessage(id=self.key.id(),
                                                     anno_text=self.anno_text,
@@ -826,7 +826,7 @@ class Anno(BaseModel):
         return anno_list
 
     @classmethod
-    def getEngagedUsers(cls, anno_id, auth_user):
+    def getEngagedUsers(cls, anno_id, auth_user, include_auth_user=False):
         from model.userannostate import UserAnnoState
         userannostates = UserAnnoState.list_users_by_anno(anno_id=anno_id, projection=[UserAnnoState.user])
 
@@ -840,7 +840,14 @@ class Anno(BaseModel):
 
         # removing auth_user
         if auth_user:
-            [ users.remove(user_info) for user_info in users if user_info.user_email == auth_user.user_email ]
+            if include_auth_user:
+                if not any(user_info.user_email == auth_user.user_email for user_info in users):
+                    users.append(UserMessage(id=auth_user.key.id(),
+                                             user_email=auth_user.user_email,
+                                             display_name=auth_user.display_name,
+                                             image_url=auth_user.image_url))
+            else:
+                [ users.remove(user_info) for user_info in users if user_info.user_email == auth_user.user_email ]
 
         # sorting users alphabetically
         return sorted(users, key=lambda user_info: user_info.display_name.lower())
