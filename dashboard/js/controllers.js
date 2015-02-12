@@ -191,7 +191,6 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             if (angular.equals($scope.landscapeView.indexOf(anno_id), -1)) {
                 $scope.landscapeView.push(anno_id);
             }
-            anno_item_data.landscapeView = true;
             if (!anno_item_data.landscapeViewLoaded) {
                 anno_item_data.landscapeViewLoaded = true;
                 $timeout(function() {
