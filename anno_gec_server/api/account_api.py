@@ -89,22 +89,23 @@ class AccountApi(remote.Service):
         get_feeds = request.get_feeds or False
 
         respMessage = AccountAuthenticateMessage(authenticated=False)
-        user = User.get_all_user_by_email(email, md5(password), team_key=team_key)
+        if email and password and team_key:
+            user = User.get_all_user_by_email(email, md5(password), team_key=team_key)
 
-        if user:
-            team = Community.getCommunityFromTeamKey(team_key)
-            if team:
-                userTeamToken = get_user_team_token(email, password, team_key,
-                                                    team.team_secret, user.display_name,
-                                                    user.image_url)
-                feed_data = Anno.query_by_page(15, None, None, user, True) if get_feeds else AnnoListMessage()
-                respMessage = AccountAuthenticateMessage(authenticated=True,
-                                                         display_name=user.display_name,
-                                                         image_url=user.image_url,
-                                                         team_name=team.name,
-                                                         team_key=team_key,
-                                                         user_team_token=json.dumps(userTeamToken),
-                                                         feed_data=feed_data)
+            if user:
+                team = Community.getCommunityFromTeamKey(team_key)
+                if team:
+                    userTeamToken = get_user_team_token(email, password, team_key,
+                                                        team.team_secret, user.display_name,
+                                                        user.image_url)
+                    feed_data = Anno.query_by_page(15, None, None, user, True) if get_feeds else AnnoListMessage()
+                    respMessage = AccountAuthenticateMessage(authenticated=True,
+                                                             display_name=user.display_name,
+                                                             image_url=user.image_url,
+                                                             team_name=team.name,
+                                                             team_key=team_key,
+                                                             user_team_token=json.dumps(userTeamToken),
+                                                             feed_data=feed_data)
 
         return respMessage
 

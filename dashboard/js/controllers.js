@@ -28,8 +28,8 @@ Dashboard.controller('Login', function($scope, $window, $location, $cookieStore,
             'team_key' : $scope.teamkey
         }, function(data) {
             data['email'] = $scope.email;
-            Utils.storeUserDataInCookies(data);
             if (data.authenticated) {
+                Utils.storeUserDataInCookies(data);
                 $window.location.href = $location.absUrl().replace('login.html', 'feed.html');
             } else {
                 $scope.error_message = "Authentication failed. Please try again.";
