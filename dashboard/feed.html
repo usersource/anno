@@ -24,7 +24,7 @@
         </script>
         <script type="text/javascript" src="js/lib/dojo.js"></script>
     </head>
-    <body ng-controller="Feed" ng-init="initLogin();">
+    <body ng-controller="Feed" ng-init="initFeed();">
         <div class="header row">
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
                 <div style="font-size: 150%; font-weight: bold; color: #f62; text-align: center;">ANNOT8</div>
@@ -69,11 +69,11 @@
             <div id="side-panel" class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
                 <div style="margin-bottom: 18px;">Filter results by:</div>
                 <div style="margin-bottom: 30px;">
-                    <div class="side-panel-filter">My @mentions</div>
-                    <div class="side-panel-filter">Most Active</div>
-                    <div class="side-panel-filter">Most Popular</div>
-                    <div class="side-panel-filter">Most Flagged</div>
-                    <div class="side-panel-filter">Archived</div>
+                    <div class="side-panel-filter" data-type="myMentions" ng-click="filterAnno($event);" ng-class="{'active':(filterType == 'by_my_mentions')}">My @mentions</div>
+                    <div class="side-panel-filter" data-type="mostActive">Most Active</div>
+                    <div class="side-panel-filter" data-type="mostPopular">Most Popular</div>
+                    <div class="side-panel-filter" data-type="mostFlagged">Most Flagged</div>
+                    <div class="side-panel-filter" data-type="archived">Archived</div>
                 </div>
                 <input id="side-panel-search" type="text" placeholder="Type to search..." />
             </div>

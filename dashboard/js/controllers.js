@@ -66,9 +66,9 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         Utils.removeUserDataCookies();
     };
 
-    $scope.initLogin = function() {
+    $scope.initFeed = function() {
         // DataService.checkAuthentication();
-        getDashboardList();
+        getDashboardList(DashboardConstants.filters.basic, true);
     };
 
     $scope.archiveAnno = function(event) {
@@ -101,6 +101,14 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         return text;
     };
 
+    $scope.filterAnno = function(event) {
+        var query_type = DashboardConstants.filters[event.target.dataset.type];
+        if (angular.equals(query_type, $scope.filterType)) {
+            query_type = DashboardConstants.filters.basic;
+        }
+        getDashboardList(query_type, true);
+    };
+
     function watchersCount() {
         $timeout(function() {
             $scope.watchers = Utils.watchersContainedIn($scope);
@@ -108,11 +116,16 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         }, 10000);
     };
 
-    function getDashboardList() {
+    function getDashboardList(query_type, clear_anno) {
+        $scope.filterType = query_type;
         DataService.makeHTTPCall("anno.anno.dashboard.list", {
-            outcome : 'cursor,has_more,anno_list'
+            outcome : 'cursor,has_more,anno_list',
+            query_type : $scope.filterType
         }, function(data) {
-            var newAnnoData = data.anno_list;
+            if (clear_anno) {
+                $scope.annoList = [];
+            }
+            var newAnnoData = data.hasOwnProperty('anno_list') ? data.anno_list : [];
             if ($scope.hasOwnProperty('community_engaged_users') && $scope.community_engaged_users.length) {
                 angular.forEach(newAnnoData, function(anno) {
                     anno.engaged_users = Utils.getUniqueEngagedUsers(anno, $scope.community_engaged_users, true) || [];

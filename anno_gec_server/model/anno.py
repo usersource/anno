@@ -438,6 +438,7 @@ class Anno(BaseModel):
         else:
             items = [entity.to_response_message(user) for entity in annos]
 
+        cls.query_by_my_mentions_for_dashboard(limit, curs, user)
         if more:
             return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
         else:
@@ -456,6 +457,28 @@ class Anno(BaseModel):
             return AnnoDashboardListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
         else:
             return AnnoDashboardListMessage(anno_list=items, has_more=more)
+
+    @classmethod
+    def query_by_my_mentions_for_dashboard(cls, limit, curs, user):
+        query = cls.query()
+        query = query.order(-cls.created)
+        query = filter_anno_by_user(query, user, True)
+
+        from model.userannostate import UserAnnoState
+        userannostate_list = UserAnnoState.query().filter(ndb.AND(UserAnnoState.user == user.key, UserAnnoState.tagged == True)).fetch()
+        anno_list = [ userannostate.anno.id() for userannostate in userannostate_list]
+        if len(anno_list):
+            query = query.filter(cls.anno_id.IN(anno_list))
+
+            annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
+            items = [entity.to_dashboard_response_message(user) for entity in annos]
+
+            if more:
+                return AnnoDashboardListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
+            else:
+                return AnnoDashboardListMessage(anno_list=items, has_more=more)
+        else:
+            return AnnoDashboardListMessage(anno_list=[])
 
     @classmethod
     def query_by_community(cls, community, limit, projection, curs, user):

@@ -3,6 +3,10 @@
 var DashboardConstantsModule = angular.module('DashboardConstantsModule', []);
 
 DashboardConstantsModule.value("DashboardConstants", {
+    filters : {
+        "basic" : "basic",
+        "myMentions" : "by_my_mentions"
+    },
     apiRoot : {
         "1" : "https://annoserver.appspot.com/_ah/api",
         "2" : "https://annoserver-test.appspot.com/_ah/api",

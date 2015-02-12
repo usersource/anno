@@ -235,7 +235,10 @@ class AnnoApi(remote.Service):
             except BadValueError:
                 raise endpoints.BadRequestException('Invalid cursor %s.' % request.cursor)
 
-        return Anno.query_by_page_for_dashboard(limit, curs, user)
+        if request.query_type == AnnoQueryType.MY_MENTIONS:
+            return Anno.query_by_my_mentions_for_dashboard(limit, curs, user)
+        else:
+            return Anno.query_by_page_for_dashboard(limit, curs, user)
 
 
     @endpoints.method(AnnoMessage, AnnoResponseMessage, path='anno',
@@ -407,7 +410,7 @@ class AnnoApi(remote.Service):
 
         if anno:
             anno.team_notes = request.team_notes
-            UserAnnoState.tag_users(anno, request.tagged_users)
+            UserAnnoState.tag_users(anno, anno.tagged_users, request.tagged_users)
             anno.tagged_users = request.tagged_users
             anno.put()
 

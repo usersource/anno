@@ -18,6 +18,15 @@ indexes:
 - kind: Anno
   properties:
   - name: anno_id
+  - name: archived
+  - name: circle_level
+  - name: community
+  - name: created
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: anno_id
   - name: last_update_time
     direction: desc
 
