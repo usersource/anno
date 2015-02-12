@@ -26,6 +26,7 @@ class UpdateAnnoHandler(webapp2.RequestHandler):
 #         add_lowercase_appname()
 #         delete_all_anno_indices()
         update_anno_schema()
+        update_userannostate_schema()
 #         update_followup_indices()
 #         update_userannostate_schema_from_anno_action(cls=Vote)
 #         update_userannostate_schema_from_anno_action(cls=FollowUp)
@@ -99,6 +100,21 @@ def update_anno_schema(cursor=None):
 
     if more:
         update_anno_schema(cursor=cursor)
+
+def update_userannostate_schema(cursor=None):
+    userannostate_list, cursor, more = UserAnnoState.query().fetch_page(BATCH_SIZE, start_cursor=cursor)
+
+    userannostate_update_list = []
+    for userannostate in userannostate_list:
+        if not userannostate.tagged:
+            userannostate.tagged = False
+            userannostate_update_list.append(userannostate)
+
+    if len(userannostate_update_list):
+        ndb.put_multi(userannostate_update_list)
+
+    if more:
+        update_userannostate_schema(cursor=cursor)
 
 
 def update_followup_indices(cursor=None):

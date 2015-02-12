@@ -407,6 +407,7 @@ class AnnoApi(remote.Service):
 
         if anno:
             anno.team_notes = request.team_notes
+            UserAnnoState.tag_users(anno, request.tagged_users)
             anno.tagged_users = request.tagged_users
             anno.put()
 
