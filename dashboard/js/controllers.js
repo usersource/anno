@@ -16,7 +16,7 @@ Dashboard.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.headers.common.contentType = 'application/json';
 }]);
 
-Dashboard.controller('Login', function($scope, $window, $location, $cookieStore, Utils, DashboardConstants, DataService) {
+Dashboard.controller('Login', function($scope, $window, $location, $cookieStore, $timeout, Utils, DashboardConstants, DataService) {
     $scope.initLogin = function() {
         // DataService.checkAuthentication();
     };
@@ -31,6 +31,12 @@ Dashboard.controller('Login', function($scope, $window, $location, $cookieStore,
             Utils.storeUserDataInCookies(data);
             if (data.authenticated) {
                 $window.location.href = $location.absUrl().replace('login.html', 'feed.html');
+            } else {
+                $scope.error_message = "Authentication failed. Please try again.";
+                document.querySelector('#dashboard_message').style.display = "block";
+                $timeout(function() {
+                    document.querySelector('#dashboard_message').style.display = "none";
+                }, 5000);
             }
         });
     };
