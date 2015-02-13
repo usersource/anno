@@ -30,7 +30,7 @@ Dashboard.controller('Login', function($scope, $window, $location, $cookieStore,
             data['email'] = $scope.email;
             if (data.authenticated) {
                 Utils.storeUserDataInCookies(data);
-                $window.location.href = $location.absUrl().replace('login.html', 'feed.html');
+                $window.location.href = $location.absUrl().replace(/(login.*)/g, 'feed');
             } else {
                 $scope.error_message = "Authentication failed. Please try again.";
                 document.querySelector('#dashboard_message').style.display = "block";
@@ -69,7 +69,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
     };
 
     $scope.signoutDashboard = function() {
-        $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
+        $window.location.href = $location.absUrl().replace('feed' , 'login');
         Utils.removeUserDataCookies();
     };
 
@@ -151,7 +151,7 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             }
         }, function(status) {
             if (status == 401) {
-                $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
+                $window.location.href = $location.absUrl().replace('feed' , 'login');
                 Utils.removeUserDataCookies();
             }
         });
