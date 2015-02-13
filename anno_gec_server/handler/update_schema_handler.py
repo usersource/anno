@@ -11,9 +11,11 @@ from model.follow_up import FollowUp
 from model.flag import Flag
 from model.appinfo import AppInfo
 from model.tags import Tag
+from model.community import Community
 from helper.utils import put_search_document
 from helper.utils import OPEN_COMMUNITY
 from helper.utils import extract_tags_from_text
+from helper.utils import md5
 from helper.utils_enum import SearchIndexName
 from message.appinfo_message import AppInfoMessage
 
@@ -24,9 +26,10 @@ BATCH_SIZE = 50  # ideal batch size may vary based on entity size
 class UpdateAnnoHandler(webapp2.RequestHandler):
     def get(self):
 #         add_lowercase_appname()
+        add_teamhash()
 #         delete_all_anno_indices()
-        update_anno_schema()
-        update_userannostate_schema()
+#        update_anno_schema()
+#        update_userannostate_schema()
 #         update_followup_indices()
 #         update_userannostate_schema_from_anno_action(cls=Vote)
 #         update_userannostate_schema_from_anno_action(cls=FollowUp)
@@ -169,6 +172,21 @@ def add_lowercase_appname(cursor=None):
 
     if more:
         add_lowercase_appname(cursor=cursor)
+
+def add_teamhash(cursor=None):
+    community_list, cursor, more = Community.query().fetch_page(BATCH_SIZE, start_cursor=cursor)
+
+    community_update_list = []
+    for community in community_list:
+        if (not community.team_hash) and community.team_key:
+            community.team_hash = md5(community.team_key)[-8:]
+            community_update_list.append(community)
+
+    if len(community_update_list):
+        ndb.put_multi(community_update_list)
+
+    if more:
+        add_teamhash(cursor=cursor)
 
 def create_tags(text):
     tags = extract_tags_from_text(text.lower())
