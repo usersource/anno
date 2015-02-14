@@ -19,7 +19,7 @@ class CommunityMessage(messages.Message):
     user = messages.MessageField(UserMessage, 8)
     team_key = messages.StringField(9)
     team_secret = messages.StringField(10)
-    
+
 class CommunityAppInfoMessage(messages.Message):
     community = messages.MessageField(CommunityMessage, 1)
     app = messages.MessageField(AppInfoMessage, 2)
@@ -51,3 +51,10 @@ class CreateInviteResponseMessage(messages.Message):
     user_email = messages.StringField(2)
     invite_msg = messages.StringField(3)
     community = messages.StringField(4)
+
+class CommunityValueMessage(messages.Message):
+    name = messages.StringField(1)
+    key = messages.StringField(2)
+
+class CommunityValueListMessage(messages.Message):
+    teams = messages.MessageField(CommunityValueMessage, 1, repeated=True)

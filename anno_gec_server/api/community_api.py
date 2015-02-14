@@ -18,6 +18,8 @@ from message.community_message import CommunityUserListMessage
 from message.community_message import CommunityUserRoleMessage
 from message.community_message import CommunityInviteMessage
 from message.community_message import CreateInviteResponseMessage
+from message.community_message import CommunityValueMessage
+from message.community_message import CommunityValueListMessage
 from message.user_message import UserMessage
 from message.common_message import ResponseMessage
 from model.community import Community
@@ -161,3 +163,10 @@ class CommunityApi(remote.Service):
         invite_msg = request.invite_msg or ""
         return CreateInviteResponseMessage(user_name=request.name, user_email=request.email,
                                            invite_msg=invite_msg, community=community_name)
+
+    @endpoints.method(message_types.VoidMessage, CommunityValueListMessage, path="community/list",
+                      http_method="GET", name="community.list")
+    def list_community(self, request):
+        community_list = Community.query().filter(Community.team_key != None).fetch()
+        community_value_list = [ CommunityValueMessage(name=community.name, key=community.team_key) for community in community_list ]
+        return CommunityValueListMessage(teams=community_value_list)
