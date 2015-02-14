@@ -15,11 +15,14 @@
 
 #define LOOKAHEAD 3
 
+static NSString *CellIdentifier = @"CellIdentifier";
+
 @interface ViewController () {
     NSMutableArray *assetGroups;
     NSMutableArray *assetUrls;
     ALAssetsLibrary* library;
     BOOL userInfoFetch;
+    NSArray *teamValues;
 }
 
 @end
@@ -34,7 +37,7 @@
     self.loginView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
     [self.view addSubview:self.loginView];
     self.loginView.hidden = YES;
-    
+
     [bottomView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.6]];
 
     UILabel *appName = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 150, 20)];
@@ -51,11 +54,69 @@
                                      (self.loginView.center.x - (fbLoginView.frame.size.width / 2)),
                                      ((self.loginView.center.y * 1.5) - (fbLoginView.frame.size.height / 2)));
     [self.loginView addSubview:fbLoginView];
+    
+    teamValues = [[NSArray alloc] init];
+    teamValues = @[@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1"];
 }
 
 - (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView {
     self.loginView.hidden = YES;
+    [self selectTeam];
+}
 
+- (void) setUIComponentsConstraints {
+    navigationBar.translatesAutoresizingMaskIntoConstraints = NO;
+    selectTeamTableView.translatesAutoresizingMaskIntoConstraints = NO;
+
+    NSDictionary *views = NSDictionaryOfVariableBindings(navigationBar, selectTeamTableView);
+
+    [self.selectTeamView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[navigationBar]-0-|"
+                                                                      options:0
+                                                                      metrics:nil
+                                                                        views:views]];
+
+    [self.selectTeamView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[navigationBar(65)]"
+                                                                      options:0
+                                                                      metrics:nil
+                                                                        views:views]];
+    
+    [self.selectTeamView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[selectTeamTableView]-0-|"
+                                                                                options:0
+                                                                                metrics:nil
+                                                                                  views:views]];
+    
+    [self.selectTeamView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[navigationBar]-0-[selectTeamTableView]-0-|"
+                                                                                options:0
+                                                                                metrics:nil
+                                                                                  views:views]];
+}
+
+- (void) selectTeam {
+    self.selectTeamView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    [self.view addSubview:self.selectTeamView];
+
+    navItem = [[UINavigationItem alloc] init];
+    navigationBar = [[UINavigationBar alloc] init];
+    navItem.title = @"Select a Team";
+    [self.selectTeamView addSubview:navigationBar];
+    navigationBar.items = [NSArray arrayWithObjects: navItem, nil];
+
+    cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Continue"
+                                                    style:UIBarButtonItemStyleDone
+                                                   target:self
+                                                   action:@selector(closeInfo:)];
+    navItem.rightBarButtonItem = cancelButton;
+    navItem.rightBarButtonItem.enabled = NO;
+    
+    selectTeamTableView = [[UITableView alloc] init];
+    selectTeamTableView.dataSource = self;
+    selectTeamTableView.delegate = self;
+    [self.selectTeamView addSubview:selectTeamTableView];
+
+    [self setUIComponentsConstraints];
+}
+
+- (void) showPhotoLibrary {
     assetGroups = [[NSMutableArray alloc] init];
     assetUrls = [[NSMutableArray alloc] init];
     library = [[ALAssetsLibrary alloc] init];
@@ -70,7 +131,7 @@
     UIPanGestureRecognizer *gestureRecognizer = [[UIPanGestureRecognizer alloc]
                                                  initWithTarget:self action:@selector(handlePanGesture:)];
     [scrollView addGestureRecognizer:gestureRecognizer];
-    
+
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
     [scrollView addGestureRecognizer:tapGesture];
 
@@ -341,6 +402,27 @@
     if (buttonIndex == 1) {
         [[AnnoSingleton sharedInstance] showCommunityPage];
     }
+}
+
+#pragma mark - Table view data source
+
+- (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+- (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [teamValues count];
+}
+
+- (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+    }
+
+    cell.textLabel.text = [teamValues objectAtIndex:indexPath.row];
+    return cell;
 }
 
 @end
