@@ -61,6 +61,11 @@ DashboardConstantsModule.value("DashboardConstants", {
             "root" : "anno",
             "path" : "anno/archive",
             "method" : "POST"
+        },
+        "community.community.hash" : {
+            "root" : "community",
+            "path" : "community/hash",
+            "method" : "GET"
         }
     },
     borderColor : "#ff9900",

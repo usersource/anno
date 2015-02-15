@@ -19,6 +19,15 @@ Dashboard.config(['$httpProvider', function($httpProvider) {
 Dashboard.controller('Login', function($scope, $window, $location, $cookieStore, $timeout, Utils, DashboardConstants, DataService) {
     $scope.initLogin = function() {
         // DataService.checkAuthentication();
+        var team_hash = $location.absUrl().split("/").reverse()[0];
+        if (!angular.equals(team_hash, 'login')) {
+            $scope.hideTeamKeyField = true;
+            DataService.makeHTTPCall("community.community.hash", {
+                team_hash : team_hash
+            }, function(data) {
+                $scope.teamkey = data.team_key;
+            });
+        }
     };
 
     $scope.authenticate_dashboard = function() {

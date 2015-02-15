@@ -20,6 +20,12 @@ class CommunityMessage(messages.Message):
     team_key = messages.StringField(9)
     team_secret = messages.StringField(10)
 
+class CommunityHashResponseMessage(messages.Message):
+    id = messages.IntegerField(1)
+    app_name = messages.StringField(2)
+    app_icon = messages.StringField(3)
+    team_key = messages.StringField(4)
+
 class CommunityAppInfoMessage(messages.Message):
     community = messages.MessageField(CommunityMessage, 1)
     app = messages.MessageField(AppInfoMessage, 2)

@@ -132,3 +132,7 @@ class Community(ndb.Model):
     @classmethod
     def getCircleLevelValue(cls, community=None, circle_level=0):
         return community.get().circles.get(str(circle_level))
+
+    @classmethod
+    def get_by_hash(cls, team_hash):
+        return cls.query().filter(cls.team_hash == team_hash).get()
