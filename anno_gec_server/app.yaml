@@ -25,14 +25,14 @@ handlers:
 - url: /docs
   static_dir: docs/build/html
   login: admin
-- url: /dashboard/login/(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css))
+- url: /dashboard/partials/(.*\.(html))
+  static_files: dashboard/partials/\1
+  upload: /dashboard/partials/(.*\.(html))
+- url: /dashboard/(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css))
   static_files: dashboard/\1
   upload: dashboard/(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css))
-- url: /dashboard/login(/.*)*
-  static_files: dashboard/login.html
-  upload: dashboard/(.*)
-- url: /dashboard/feed
-  static_files: dashboard/feed.html
+- url: /dashboard(/.*)*
+  static_files: dashboard/index.html
   upload: dashboard/(.*)
 - url: /dashboard
   static_dir: dashboard

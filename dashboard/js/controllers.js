@@ -1,6 +1,6 @@
 'use strict';
 
-var Dashboard = angular.module('Dashboard', ['ngCookies', 'DashboardConstantsModule', 'ServiceModule']);
+var Dashboard = angular.module('Dashboard', ['ngCookies', 'ngRoute', 'DashboardConstantsModule', 'ServiceModule']);
 
 Dashboard.config(['$httpProvider', function($httpProvider) {
     var $cookies;
