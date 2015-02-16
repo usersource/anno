@@ -4,7 +4,7 @@
             <div style="font-size: 150%; font-weight: bold; color: #f62; text-align: center;">ANNOT8</div>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-            <img width="50px" height="50px" style="border-radius: 12px;" ng-src="{{appInfo.icon_url && appInfo.icon_url || 'images/icon_mobile.png'}}">
+            <img width="50px" height="50px" style="border-radius: 12px;" ng-src="{{appInfo.icon_url && appInfo.icon_url || '/dashboard/images/icon_mobile.png'}}">
             <div class="active" style="display: inline-block; margin-left: 18px;">{{::appInfo.name}}</div>
         </div>
         <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1 active" style="text-align: center;">Feed</div>
@@ -12,7 +12,7 @@
         <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Manage</div>
         <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Profile</div>
         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3" id="user_info" ng-click="signoutButtonClicked();">
-            <img width="45px" height="45px" style="border-radius: 25px;" ng-src="{{::image_url && image_url || 'images/icon_no-user.png'}}">
+            <img width="45px" height="45px" style="border-radius: 25px;" ng-src="{{::image_url && image_url || '/dashboard/images/icon_no-user.png'}}">
             <div style="display: inline-block; margin-left: 12px; vertical-align: middle;">
                 <div style="font-size: 18px; text-align: left;" class="active">{{::display_name}}</div>
                 <div style="font-size: 14px;">{{::email}}</div>
@@ -29,7 +29,7 @@
     </div> -->
     <div id="engaged-users-suggestion" style="display: none;">
         <div class="engaged-user" ng-repeat="engagedUser in currentEngagedUserList" data-value="{{::engagedUser.unique_name}}" ng-click="selectSuggestion($event);">
-            <img width="24px" height="24px" style="border-radius: 12px;" ng-src="{{::engagedUser.image_url && engagedUser.image_url || 'images/icon_no-user.png'}}">
+            <img width="24px" height="24px" style="border-radius: 12px;" ng-src="{{::engagedUser.image_url && engagedUser.image_url || '/dashboard/images/icon_no-user.png'}}">
             <div style="display: inline-block;vertical-align: middle;margin-left: 2px;">
                 <div style="font-size: 12px;font-weight: 600;">{{::engagedUser.display_name}}</div>
                 <div style="font-size: 10px;color: #9399A5;">{{::engagedUser.user_email}}</div>
@@ -66,40 +66,40 @@
                             <div class="anno-info-main">
                                 <div class="anno-info-counts">
                                     <div style="display: inline-block;">
-                                        <img width="16px" height="16px" src="images/icon_tag.png">
+                                        <img width="16px" height="16px" src="/dashboard/images/icon_tag.png">
                                         <div class="anno-info-counts-text">{{anno.team_notes_metadata.tags ? anno.team_notes_metadata.tags.length : 0}}</div>
                                     </div>
                                     <div style="display: inline-block; margin-left: 16px;">
-                                        <img width="16px" height="16px" src="images/icon_mentions.png">
+                                        <img width="16px" height="16px" src="/dashboard/images/icon_mentions.png">
                                         <div class="anno-info-counts-text">{{anno.team_notes_metadata.mentions ? anno.team_notes_metadata.mentions.length : 0}}</div>
                                     </div>
                                     <div style="display: inline-block; margin-left: 16px;">
-                                        <img width="16px" height="16px" src="images/icon_comments.png">
+                                        <img width="16px" height="16px" src="/dashboard/images/icon_comments.png">
                                         <div class="anno-info-counts-text">{{anno.followup_list ? anno.followup_list.length : 0}}</div>
                                     </div>
                                     <div style="display: inline-block; margin-left: 16px;">
-                                        <img width="16px" height="16px" src="images/icon_upvotes.png">
+                                        <img width="16px" height="16px" src="/dashboard/images/icon_upvotes.png">
                                         <div class="anno-info-counts-text">{{anno.vote_count}}</div>
                                     </div>
                                     <div style="display: inline-block; margin-left: 16px;">
-                                        <img width="16px" height="16px" src="images/icon_flag.png">
+                                        <img width="16px" height="16px" src="/dashboard/images/icon_flag.png">
                                         <div class="anno-info-counts-text">{{anno.flag_count}}</div>
                                     </div>
                                 </div>
                                 <div style="margin: 20px 0;">
                                     <span style="font-weight: 600; vertical-align: middle;">By</span>
-                                    <img class="anno-author-image" ng-src="{{::anno.creator.image_url && anno.creator.image_url || 'images/icon_no-user.png'}}">
+                                    <img class="anno-author-image" ng-src="{{::anno.creator.image_url && anno.creator.image_url || '/dashboard/images/icon_no-user.png'}}">
                                     <span class="anno-author-text">{{::anno.creator.display_name}}</span>
-                                    <img width="12px" height="12px" style="margin-left: 4.372%;" src="images/icon_calendar.png">
+                                    <img width="12px" height="12px" style="margin-left: 4.372%;" src="/dashboard/images/icon_calendar.png">
                                     <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Created on:</span>
                                     <span style="vertical-align: middle; margin-left: 2px;">{{::showLocalDateTime(anno.created) | date:'medium'}}</span>
                                 </div>
                                 <div class="anno-text" style="margin-bottom: 20px;">{{::anno.anno_text}}</div>
                                 <div style="margin-bottom: 20px;">
-                                    <img width="10px" height="16px" src="images/icon_device.png">
+                                    <img width="10px" height="16px" src="/dashboard/images/icon_device.png">
                                     <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Device:</span>
                                     <span style="vertical-align: middle; margin-left: 2px;">{{::showProperDeviceName(anno.device_model)}} ({{::anno.os_name}} {{::anno.os_version}})</span>
-                                    <img width="12px" height="14px" style="margin-left: 20px;" src="images/icon_version.png">
+                                    <img width="12px" height="14px" style="margin-left: 20px;" src="/dashboard/images/icon_version.png">
                                     <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Version:</span>
                                     <span style="vertical-align: middle; margin-left: 2px;">{{::anno.app_name}} v{{::anno.app_version}}</span>
                                 </div>
@@ -126,7 +126,7 @@
                         </div>
                         <div class="anno-team-notes anno-item-section">
                             <div style="margin-bottom: 20px;">
-                                <img width="11px" height="16px" src="images/icon_team-notes.png">
+                                <img width="11px" height="16px" src="/dashboard/images/icon_team-notes.png">
                                 <span class="section-header" style="vertical-align: middle; margin-left: 4px;">Team Notes</span>
                                 <div class="anno-team-notes-edit" ng-class={'editing':isTeamNotesEditing} ng-click="editTeamNotes($event);">
                                     <div class="edit-icon"></div>
@@ -141,7 +141,7 @@
                         </div>
                         <div class="anno-tags anno-item-section">
                             <div style="margin-bottom: 20px;">
-                                <img width="16px" height="16px" src="images/icon_tag.png">
+                                <img width="16px" height="16px" src="/dashboard/images/icon_tag.png">
                                 <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.team_notes_metadata.tags ? anno.team_notes_metadata.tags.length : 0}} Tag{{anno.tags.length !== 1 ? "s" : ""}}</span>
                             </div>
                             <div>
@@ -151,12 +151,12 @@
                         </div>
                         <div class="anno-mentions anno-item-section">
                             <div style="margin-bottom: 20px;">
-                                <img width="16px" height="16px" src="images/icon_mentions.png">
+                                <img width="16px" height="16px" src="/dashboard/images/icon_mentions.png">
                                 <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.team_notes_metadata.mentions ? anno.team_notes_metadata.mentions.length : 0}} Mention{{anno.mentions.length !== 1 ? "s" : ""}}</span>
                             </div>
                             <div>
                                 <div class="anno-item-tag-item" ng-repeat="mention in anno.team_notes_metadata.mentions track by mention.id" ng-class="::{'current-user':mention.is_auth_user}" title="{{::mention.user_email}}">
-                                    <img width="20px" height="20px" class="anno-item-tag-item-image" ng-src="{{::mention.image_url && mention.image_url || 'images/icon_no-user.png'}}">
+                                    <img width="20px" height="20px" class="anno-item-tag-item-image" ng-src="{{::mention.image_url && mention.image_url || '/dashboard/images/icon_no-user.png'}}">
                                     <div class="anno-item-tag-item-name">{{::mention.display_name}}</div>
                                 </div>
                                 <span class="anno-item-tag-item anno-item-add-button" style="padding: 0 15px;"></span>
@@ -164,13 +164,13 @@
                         </div>
                         <div class="anno-comments anno-item-section">
                             <div style="padding: 20px 0; border-bottom: 1px solid #c4cfd7;">
-                                <img width="16px" height="16px" src="images/icon_comments.png">
+                                <img width="16px" height="16px" src="/dashboard/images/icon_comments.png">
                                 <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.followup_list ? anno.followup_list.length : 0}} Comment{{anno.followup_list.length !== 1 ? "s" : ""}}</span>
                             </div>
                             <div>
                                 <div class="anno-comment-item" ng-repeat="comment in anno.followup_list track by comment.id">
                                     <div style="margin-bottom: 20px;">
-                                        <img class="anno-commenter-image" style="margin: 0;" ng-src="{{::comment.creator.image_url && comment.creator.image_url || 'images/icon_no-user.png'}}">
+                                        <img class="anno-commenter-image" style="margin: 0;" ng-src="{{::comment.creator.image_url && comment.creator.image_url || '/dashboard/images/icon_no-user.png'}}">
                                         <div class="anno-comment-item-meta">
                                             <div style="font-weight: 600; color: #1b96c9;">{{::comment.creator.display_name}}</div>
                                             <div class="anno-comment-item-date">{{::showLocalDateTime(comment.created) | date:'medium'}}</div>
