@@ -18,11 +18,14 @@
 static NSString *CellIdentifier = @"CellIdentifier";
 
 @interface ViewController () {
+    AnnoSingleton *anno;
     NSMutableArray *assetGroups;
     NSMutableArray *assetUrls;
     ALAssetsLibrary* library;
     BOOL userInfoFetch;
     NSArray *teamValues;
+    NSString *teamKeyValue;
+    NSString *teamSecretValue;
 }
 
 @end
@@ -31,22 +34,57 @@ static NSString *CellIdentifier = @"CellIdentifier";
 
 @synthesize assetsCollectionView, scrollView, assetsFlowLayout, bottomView;
 
+- (id) init {
+    self = [super init];
+
+    if (self) {
+        anno = [AnnoSingleton sharedInstance];
+    }
+
+    return self;
+}
+
 - (void) viewDidLoad {
     [super viewDidLoad];
-    
+    [self getTeams];
+}
+
+- (void) getTeams {
+    NSURL *url = [NSURL URLWithString:@"https://usersource-anno.appspot.com/_ah/api/community/1.0/community/list?team_hash=us3rs0urc3"];
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                               if (data.length > 0 && connectionError == nil) {
+                                   NSDictionary *jsonData = [NSJSONSerialization JSONObjectWithData:data
+                                                                                            options:0
+                                                                                              error:NULL];
+                                   if ([[jsonData objectForKey:@"teams"] count] > 0) {
+                                       teamValues = [[NSArray alloc] initWithArray:[jsonData objectForKey:@"teams"]];
+                                       [self selectTeam];
+                                   } else {
+                                       [self showLoginPage];
+                                   }
+                               }
+    }];
+}
+
+- (void) showLoginPage {
+    self.selectTeamView.hidden = YES;
+
     self.loginView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
     [self.view addSubview:self.loginView];
     self.loginView.hidden = YES;
-
+    
     [bottomView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.6]];
-
+    
     UILabel *appName = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 150, 20)];
     appName.text = @"UserSource Demo";
     appName.frame = CGRectOffset(appName.frame,
                                  (self.loginView.center.x - (appName.frame.size.width / 2)),
                                  ((self.loginView.center.y * 0.5) - (appName.frame.size.height / 2)));
     [self.loginView addSubview:appName];
-
+    
     NSArray *permissions = @[@"email"];
     FBLoginView *fbLoginView = [[FBLoginView alloc] initWithReadPermissions:permissions];
     fbLoginView.delegate = self;
@@ -54,14 +92,11 @@ static NSString *CellIdentifier = @"CellIdentifier";
                                      (self.loginView.center.x - (fbLoginView.frame.size.width / 2)),
                                      ((self.loginView.center.y * 1.5) - (fbLoginView.frame.size.height / 2)));
     [self.loginView addSubview:fbLoginView];
-    
-    teamValues = [[NSArray alloc] init];
-    teamValues = @[@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1"];
+    [self showPhotoLibrary];
 }
 
 - (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView {
     self.loginView.hidden = YES;
-    [self selectTeam];
 }
 
 - (void) setUIComponentsConstraints {
@@ -75,7 +110,7 @@ static NSString *CellIdentifier = @"CellIdentifier";
                                                                       metrics:nil
                                                                         views:views]];
 
-    [self.selectTeamView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[navigationBar(65)]"
+    [self.selectTeamView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[navigationBar(45)]"
                                                                       options:0
                                                                       metrics:nil
                                                                         views:views]];
@@ -101,11 +136,11 @@ static NSString *CellIdentifier = @"CellIdentifier";
     [self.selectTeamView addSubview:navigationBar];
     navigationBar.items = [NSArray arrayWithObjects: navItem, nil];
 
-    cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Continue"
+    continueButton = [[UIBarButtonItem alloc] initWithTitle:@"Continue"
                                                     style:UIBarButtonItemStyleDone
                                                    target:self
-                                                   action:@selector(closeInfo:)];
-    navItem.rightBarButtonItem = cancelButton;
+                                                   action:@selector(showLoginPage)];
+    navItem.rightBarButtonItem = continueButton;
     navItem.rightBarButtonItem.enabled = NO;
     
     selectTeamTableView = [[UITableView alloc] init];
@@ -147,12 +182,11 @@ static NSString *CellIdentifier = @"CellIdentifier";
                               completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
                                   if (!error) {
                                       NSString *pictureURL = [[[result objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
-                                      AnnoSingleton *anno = [AnnoSingleton sharedInstance];
                                       [anno setupWithEmail:[user objectForKey:@"email"]
                                                displayName:[user objectForKey:@"name"]
                                               userImageURL:pictureURL
-                                                   teamKey:@"io.usersource.demo"
-                                                teamSecret:@"usersource"];
+                                                   teamKey:teamKeyValue
+                                                teamSecret:teamSecretValue];
                                       [anno notificationsForTarget:self performSelector:@selector(notificationsCount:)];
                                       [anno setInfoViewControllerClass:[InfoViewController class]];
                                   }
@@ -165,8 +199,7 @@ static NSString *CellIdentifier = @"CellIdentifier";
 
 - (void) loginViewShowingLoggedOutUser:(FBLoginView *)loginView {
     self.loginView.hidden = NO;
-    AnnoSingleton *anno = [AnnoSingleton sharedInstance];
-    [anno setupAnonymousUserWithteamKey:@"io.usersource.demo" teamSecret:@"usersource"];
+    [anno setupAnonymousUserWithteamKey:teamKeyValue teamSecret:teamSecretValue];
 }
 
 - (void) loginView:(FBLoginView *)loginView handleError:(NSError *)error {
@@ -398,14 +431,14 @@ static NSString *CellIdentifier = @"CellIdentifier";
     }
 }
 
--(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+- (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 1) {
         [[AnnoSingleton sharedInstance] showCommunityPage];
     }
 }
 
-#pragma mark - Table view data source
-
+#pragma mark TableViewDelegate
+#pragma mark TableViewDatasource
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
@@ -421,8 +454,14 @@ static NSString *CellIdentifier = @"CellIdentifier";
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
 
-    cell.textLabel.text = [teamValues objectAtIndex:indexPath.row];
+    cell.textLabel.text = [[teamValues objectAtIndex:[indexPath row]] objectForKey:@"name"];
     return cell;
+}
+
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    teamKeyValue = [[teamValues objectAtIndex:[indexPath row]] objectForKey:@"key"];
+    teamSecretValue = [[teamValues objectAtIndex:[indexPath row]] objectForKey:@"secret"];
+    navItem.rightBarButtonItem.enabled = YES;
 }
 
 @end
