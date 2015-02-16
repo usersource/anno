@@ -2,20 +2,6 @@
 
 var Dashboard = angular.module('Dashboard', ['ngCookies', 'ngRoute', 'DashboardConstantsModule', 'ServiceModule']);
 
-Dashboard.config(['$httpProvider', function($httpProvider) {
-    var $cookies;
-    angular.injector(['ngCookies']).invoke(function(_$cookies_) {
-        $cookies = _$cookies_;
-    });
-
-    var userTeamToken = angular.fromJson($cookies.user_team_token);
-    if (angular.isDefined(userTeamToken)) {
-        $httpProvider.defaults.headers.common.Authorization = userTeamToken.token_type + ' ' + userTeamToken.access_token;
-    }
-
-    $httpProvider.defaults.headers.common.contentType = 'application/json';
-}]);
-
 Dashboard.controller('Login', function($scope, $location, $cookieStore, $timeout, $routeParams, Utils, DashboardConstants, DataService) {
     var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
 
@@ -40,7 +26,8 @@ Dashboard.controller('Login', function($scope, $location, $cookieStore, $timeout
             data['email'] = $scope.email;
             if (data.authenticated) {
                 Utils.storeUserDataInCookies(data);
-                $location.path('/dashboard/feed');
+                var current_team_hash = angular.isDefined(team_hash) ? team_hash : '';
+                $location.path('/dashboard/feed/' + current_team_hash);
             } else {
                 $scope.error_message = "Authentication failed. Please try again.";
                 document.querySelector('#dashboard_message').style.display = "block";
@@ -52,7 +39,9 @@ Dashboard.controller('Login', function($scope, $location, $cookieStore, $timeout
     };
 });
 
-Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, $sce, $timeout, Utils, DataService, ComStyleGetter, DashboardConstants, Autocomplete) {
+Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $timeout, $routeParams, $http, Utils, DataService, ComStyleGetter, DashboardConstants, Autocomplete) {
+    var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
+
     var imageWidth = 0,
         imageHeight = 0,
         borderWidth = 4,
@@ -78,13 +67,22 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
         }
     };
 
+    function redirectToLogin () {
+        var current_team_hash = angular.isDefined(team_hash) ? team_hash : '';
+        $location.path('/dashboard/login/' + current_team_hash);
+    }
+
     $scope.signoutDashboard = function() {
-        $window.location.href = $location.absUrl().replace('feed' , 'login');
         Utils.removeUserDataCookies();
+        redirectToLogin();
     };
 
     $scope.initFeed = function() {
         // DataService.checkAuthentication();
+        var userTeamToken = angular.fromJson($cookieStore.get('user_team_token'));
+        if (angular.isDefined(userTeamToken)) {
+            $http.defaults.headers.common.Authorization = userTeamToken.token_type + ' ' + userTeamToken.access_token;
+        }
         getDashboardList(DashboardConstants.filters.basic, true);
     };
 
@@ -161,8 +159,8 @@ Dashboard.controller('Feed', function($scope, $window, $location, $cookieStore, 
             }
         }, function(status) {
             if (status == 401) {
-                $window.location.href = $location.absUrl().replace('feed' , 'login');
                 Utils.removeUserDataCookies();
+                redirectToLogin();
             }
         });
     }

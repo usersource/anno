@@ -1,5 +1,9 @@
 'use strict';
 
+Dashboard.config(function($httpProvider) {
+    $httpProvider.defaults.headers.common.contentType = 'application/json';
+});
+
 Dashboard.config(function($routeProvider, $locationProvider) {
     $routeProvider.
         when('/dashboard/login/:teamHash?/:teamName?', {
