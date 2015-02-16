@@ -19,7 +19,7 @@
                                                  UITableViewDataSource> {
     UINavigationBar *navigationBar;
     UINavigationItem *navItem;
-    UIBarButtonItem *cancelButton;
+    UIBarButtonItem *continueButton;
     UITableView *selectTeamTableView;
 }
 

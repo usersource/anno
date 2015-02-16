@@ -33,20 +33,27 @@ static NSString *CellIdentifier = @"CellIdentifier";
 
 - (void) viewDidLoad {
     [super viewDidLoad];
-    
+    [self selectTeam];
+    teamValues = [[NSArray alloc] init];
+    teamValues = @[@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1"];
+}
+
+- (void) showLoginPage {
+    self.selectTeamView.hidden = YES;
+
     self.loginView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
     [self.view addSubview:self.loginView];
     self.loginView.hidden = YES;
-
+    
     [bottomView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.6]];
-
+    
     UILabel *appName = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 150, 20)];
     appName.text = @"UserSource Demo";
     appName.frame = CGRectOffset(appName.frame,
                                  (self.loginView.center.x - (appName.frame.size.width / 2)),
                                  ((self.loginView.center.y * 0.5) - (appName.frame.size.height / 2)));
     [self.loginView addSubview:appName];
-
+    
     NSArray *permissions = @[@"email"];
     FBLoginView *fbLoginView = [[FBLoginView alloc] initWithReadPermissions:permissions];
     fbLoginView.delegate = self;
@@ -54,14 +61,10 @@ static NSString *CellIdentifier = @"CellIdentifier";
                                      (self.loginView.center.x - (fbLoginView.frame.size.width / 2)),
                                      ((self.loginView.center.y * 1.5) - (fbLoginView.frame.size.height / 2)));
     [self.loginView addSubview:fbLoginView];
-    
-    teamValues = [[NSArray alloc] init];
-    teamValues = @[@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1"];
 }
 
 - (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView {
     self.loginView.hidden = YES;
-    [self selectTeam];
 }
 
 - (void) setUIComponentsConstraints {
@@ -101,11 +104,11 @@ static NSString *CellIdentifier = @"CellIdentifier";
     [self.selectTeamView addSubview:navigationBar];
     navigationBar.items = [NSArray arrayWithObjects: navItem, nil];
 
-    cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Continue"
+    continueButton = [[UIBarButtonItem alloc] initWithTitle:@"Continue"
                                                     style:UIBarButtonItemStyleDone
                                                    target:self
-                                                   action:@selector(closeInfo:)];
-    navItem.rightBarButtonItem = cancelButton;
+                                                   action:@selector(showLoginPage)];
+    navItem.rightBarButtonItem = continueButton;
     navItem.rightBarButtonItem.enabled = NO;
     
     selectTeamTableView = [[UITableView alloc] init];
