@@ -34,16 +34,6 @@ static NSString *CellIdentifier = @"CellIdentifier";
 
 @synthesize assetsCollectionView, scrollView, assetsFlowLayout, bottomView;
 
-- (id) init {
-    self = [super init];
-
-    if (self) {
-        anno = [AnnoSingleton sharedInstance];
-    }
-
-    return self;
-}
-
 - (void) viewDidLoad {
     [super viewDidLoad];
     [self getTeams];
@@ -182,6 +172,7 @@ static NSString *CellIdentifier = @"CellIdentifier";
                               completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
                                   if (!error) {
                                       NSString *pictureURL = [[[result objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+                                      anno = [AnnoSingleton sharedInstance];
                                       [anno setupWithEmail:[user objectForKey:@"email"]
                                                displayName:[user objectForKey:@"name"]
                                               userImageURL:pictureURL
@@ -199,6 +190,7 @@ static NSString *CellIdentifier = @"CellIdentifier";
 
 - (void) loginViewShowingLoggedOutUser:(FBLoginView *)loginView {
     self.loginView.hidden = NO;
+    anno = [AnnoSingleton sharedInstance];
     [anno setupAnonymousUserWithteamKey:teamKeyValue teamSecret:teamSecretValue];
 }
 
