@@ -1,220 +1,193 @@
-<!DOCTYPE html>
-<html ng-app="Dashboard">
-    <head>
-        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-        <meta content="utf-8" http-equiv="encoding">
-        <title>UserSource Dashboard</title>
-        <link rel="icon" type="image/x-icon" href="images/favicon.ico"/>
-        <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'>
-        <link rel="stylesheet" type="text/css" href="css/main.css">
-        <link rel="stylesheet" type="text/css" href="css/feed.css">
-        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-        <script type="text/javascript" src="js/lib/angular.min.js"></script>
-        <script type="text/javascript" src="js/lib/angular-cookies.min.js"></script>
-        <script type="text/javascript" src="js/constants.js"></script>
-        <script type="text/javascript" src="js/services.js"></script>
-        <script type="text/javascript" src="js/controllers.js"></script>
-        <script type="text/javascript" src="js/directives.js"></script>
-        <script type="text/javascript">
-             var dojoConfig = {
-                 parseOnLoad : false,
-                 async : 1,
-                 packages : [{ name:'anno', location:'../anno' }]
-             };
-        </script>
-        <script type="text/javascript" src="js/lib/dojo.js"></script>
-    </head>
-    <body ng-controller="Feed" ng-init="initFeed();">
-        <div class="header row">
-            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                <div style="font-size: 150%; font-weight: bold; color: #f62; text-align: center;">ANNOT8</div>
+<div ng-controller="Feed" ng-init="initFeed();">
+    <div class="header row">
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+            <div style="font-size: 150%; font-weight: bold; color: #f62; text-align: center;">ANNOT8</div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            <img width="50px" height="50px" style="border-radius: 12px;" ng-src="{{appInfo.icon_url && appInfo.icon_url || 'images/icon_mobile.png'}}">
+            <div class="active" style="display: inline-block; margin-left: 18px;">{{::appInfo.name}}</div>
+        </div>
+        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1 active" style="text-align: center;">Feed</div>
+        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Stats</div>
+        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Manage</div>
+        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Profile</div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3" id="user_info" ng-click="signoutButtonClicked();">
+            <img width="45px" height="45px" style="border-radius: 25px;" ng-src="{{::image_url && image_url || 'images/icon_no-user.png'}}">
+            <div style="display: inline-block; margin-left: 12px; vertical-align: middle;">
+                <div style="font-size: 18px; text-align: left;" class="active">{{::display_name}}</div>
+                <div style="font-size: 14px;">{{::email}}</div>
             </div>
-            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-                <img width="50px" height="50px" style="border-radius: 12px;" ng-src="{{appInfo.icon_url && appInfo.icon_url || 'images/icon_mobile.png'}}">
-                <div class="active" style="display: inline-block; margin-left: 18px;">{{::appInfo.name}}</div>
-            </div>
-            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1 active" style="text-align: center;">Feed</div>
-            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Stats</div>
-            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Manage</div>
-            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Profile</div>
-            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3" id="user_info" ng-click="signoutButtonClicked();">
-                <img width="45px" height="45px" style="border-radius: 25px;" ng-src="{{::image_url && image_url || 'images/icon_no-user.png'}}">
-                <div style="display: inline-block; margin-left: 12px; vertical-align: middle;">
-                    <div style="font-size: 18px; text-align: left;" class="active">{{::display_name}}</div>
-                    <div style="font-size: 14px;">{{::email}}</div>
-                </div>
-                <div id="logout_arrow" ng-class="{'signout-arrow-clicked' : signoutArrowValue}"></div>
-            </div>
-            <div id="logout_button" ng-style="{display: showSignoutButton}" ng-click="signoutDashboard();">
-                <div id="logout_button_icon"></div>
-                <span id="logout_button_text" style="vertical-align: middle; margin-left: 8px;">Sign out</span>
+            <div id="logout_arrow" ng-class="{'signout-arrow-clicked' : signoutArrowValue}"></div>
+        </div>
+        <div id="logout_button" ng-style="{display: showSignoutButton}" ng-click="signoutDashboard();">
+            <div id="logout_button_icon"></div>
+            <span id="logout_button_text" style="vertical-align: middle; margin-left: 8px;">Sign out</span>
+        </div>
+    </div>
+    <!-- <div id="dashboard_message" style="display: none;">
+        <div id="dashboard_message_text" ng-class="{'error-message':dashboard_error_type}"></div>
+    </div> -->
+    <div id="engaged-users-suggestion" style="display: none;">
+        <div class="engaged-user" ng-repeat="engagedUser in currentEngagedUserList" data-value="{{::engagedUser.unique_name}}" ng-click="selectSuggestion($event);">
+            <img width="24px" height="24px" style="border-radius: 12px;" ng-src="{{::engagedUser.image_url && engagedUser.image_url || 'images/icon_no-user.png'}}">
+            <div style="display: inline-block;vertical-align: middle;margin-left: 2px;">
+                <div style="font-size: 12px;font-weight: 600;">{{::engagedUser.display_name}}</div>
+                <div style="font-size: 10px;color: #9399A5;">{{::engagedUser.user_email}}</div>
             </div>
         </div>
-        <!-- <div id="dashboard_message" style="display: none;">
-            <div id="dashboard_message_text" ng-class="{'error-message':dashboard_error_type}"></div>
-        </div> -->
-        <div id="engaged-users-suggestion" style="display: none;">
-            <div class="engaged-user" ng-repeat="engagedUser in currentEngagedUserList" data-value="{{::engagedUser.unique_name}}" ng-click="selectSuggestion($event);">
-                <img width="24px" height="24px" style="border-radius: 12px;" ng-src="{{::engagedUser.image_url && engagedUser.image_url || 'images/icon_no-user.png'}}">
-                <div style="display: inline-block;vertical-align: middle;margin-left: 2px;">
-                    <div style="font-size: 12px;font-weight: 600;">{{::engagedUser.display_name}}</div>
-                    <div style="font-size: 10px;color: #9399A5;">{{::engagedUser.user_email}}</div>
-                </div>
+    </div>
+    <div id="engaged-hashtags-suggestion" style="display: none;">
+        <div class="engaged-hashtag" ng-repeat="hashtag in currentHashtagList" data-value="{{::hashtag.text}}" ng-click="selectSuggestion($event);">#{{::hashtag.text}}</div>
+    </div>
+    <div id="feed-content">
+        <div id="side-panel" class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+            <div style="margin-bottom: 18px;">Filter results by:</div>
+            <div style="margin-bottom: 30px;">
+                <div class="side-panel-filter" data-type="myMentions" ng-click="filterAnno($event);" ng-class="{'active':(filterType == 'by_my_mentions')}">My @mentions</div>
+                <div class="side-panel-filter" data-type="mostActive">Most Active</div>
+                <div class="side-panel-filter" data-type="mostPopular">Most Popular</div>
+                <div class="side-panel-filter" data-type="mostFlagged">Most Flagged</div>
+                <div class="side-panel-filter" data-type="archived">Archived</div>
             </div>
+            <input id="side-panel-search" type="text" placeholder="Type to search..." />
         </div>
-        <div id="engaged-hashtags-suggestion" style="display: none;">
-            <div class="engaged-hashtag" ng-repeat="hashtag in currentHashtagList" data-value="{{::hashtag.text}}" ng-click="selectSuggestion($event);">#{{::hashtag.text}}</div>
-        </div>
-        <div id="feed-content">
-            <div id="side-panel" class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                <div style="margin-bottom: 18px;">Filter results by:</div>
-                <div style="margin-bottom: 30px;">
-                    <div class="side-panel-filter" data-type="myMentions" ng-click="filterAnno($event);" ng-class="{'active':(filterType == 'by_my_mentions')}">My @mentions</div>
-                    <div class="side-panel-filter" data-type="mostActive">Most Active</div>
-                    <div class="side-panel-filter" data-type="mostPopular">Most Popular</div>
-                    <div class="side-panel-filter" data-type="mostFlagged">Most Flagged</div>
-                    <div class="side-panel-filter" data-type="archived">Archived</div>
-                </div>
-                <input id="side-panel-search" type="text" placeholder="Type to search..." />
-            </div>
-            <div id="annos" class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
-                <div id="annos-inner">
-                    <div id="anno_{{::$index}}" data-anno-id="{{::anno.id}}" class="anno-item" ng-class="{'landscape':(landscapeView.indexOf(anno.id) !== -1)}" ng-repeat="anno in annoList track by anno.id" ng-if="!anno.archived">
-                        <div class="anno-screenshot">
-                            <div class="screenshotContainer">
-                                <img class="imgDetailScreenshot" width="100%" style="display: none;" imgonload="screenshotLoad($event);" ng-src="{{::imageBaseURL}}{{::anno.id}}">
-                            </div>
-                            <div id="gfxCanvasContainer_{{::$index}}" class="gfxCanvasContainer" style="width: 500px; height: 500px;display: none;"></div>
-                            <input type="button" value="Hide Annotation" style="margin-top: 25px;">
+        <div id="annos" class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+            <div id="annos-inner">
+                <div id="anno_{{::$index}}" data-anno-id="{{::anno.id}}" class="anno-item" ng-class="{'landscape':(landscapeView.indexOf(anno.id) !== -1)}" ng-repeat="anno in annoList track by anno.id" ng-if="!anno.archived">
+                    <div class="anno-screenshot">
+                        <div class="screenshotContainer">
+                            <img class="imgDetailScreenshot" width="100%" style="display: none;" imgonload="screenshotLoad($event);" ng-src="{{::imageBaseURL}}{{::anno.id}}">
                         </div>
-                        <div class="anno-details">
-                            <div class="anno-info anno-item-section">
-                                <div class="anno-info-main">
-                                    <div class="anno-info-counts">
-                                        <div style="display: inline-block;">
-                                            <img width="16px" height="16px" src="images/icon_tag.png">
-                                            <div class="anno-info-counts-text">{{anno.team_notes_metadata.tags ? anno.team_notes_metadata.tags.length : 0}}</div>
-                                        </div>
-                                        <div style="display: inline-block; margin-left: 16px;">
-                                            <img width="16px" height="16px" src="images/icon_mentions.png">
-                                            <div class="anno-info-counts-text">{{anno.team_notes_metadata.mentions ? anno.team_notes_metadata.mentions.length : 0}}</div>
-                                        </div>
-                                        <div style="display: inline-block; margin-left: 16px;">
-                                            <img width="16px" height="16px" src="images/icon_comments.png">
-                                            <div class="anno-info-counts-text">{{anno.followup_list ? anno.followup_list.length : 0}}</div>
-                                        </div>
-                                        <div style="display: inline-block; margin-left: 16px;">
-                                            <img width="16px" height="16px" src="images/icon_upvotes.png">
-                                            <div class="anno-info-counts-text">{{anno.vote_count}}</div>
-                                        </div>
-                                        <div style="display: inline-block; margin-left: 16px;">
-                                            <img width="16px" height="16px" src="images/icon_flag.png">
-                                            <div class="anno-info-counts-text">{{anno.flag_count}}</div>
-                                        </div>
+                        <div id="gfxCanvasContainer_{{::$index}}" class="gfxCanvasContainer" style="width: 500px; height: 500px;display: none;"></div>
+                        <input type="button" value="Hide Annotation" style="margin-top: 25px;">
+                    </div>
+                    <div class="anno-details">
+                        <div class="anno-info anno-item-section">
+                            <div class="anno-info-main">
+                                <div class="anno-info-counts">
+                                    <div style="display: inline-block;">
+                                        <img width="16px" height="16px" src="images/icon_tag.png">
+                                        <div class="anno-info-counts-text">{{anno.team_notes_metadata.tags ? anno.team_notes_metadata.tags.length : 0}}</div>
                                     </div>
-                                    <div style="margin: 20px 0;">
-                                        <span style="font-weight: 600; vertical-align: middle;">By</span>
-                                        <img class="anno-author-image" ng-src="{{::anno.creator.image_url && anno.creator.image_url || 'images/icon_no-user.png'}}">
-                                        <span class="anno-author-text">{{::anno.creator.display_name}}</span>
-                                        <img width="12px" height="12px" style="margin-left: 4.372%;" src="images/icon_calendar.png">
-                                        <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Created on:</span>
-                                        <span style="vertical-align: middle; margin-left: 2px;">{{::showLocalDateTime(anno.created) | date:'medium'}}</span>
+                                    <div style="display: inline-block; margin-left: 16px;">
+                                        <img width="16px" height="16px" src="images/icon_mentions.png">
+                                        <div class="anno-info-counts-text">{{anno.team_notes_metadata.mentions ? anno.team_notes_metadata.mentions.length : 0}}</div>
                                     </div>
-                                    <div class="anno-text" style="margin-bottom: 20px;">{{::anno.anno_text}}</div>
+                                    <div style="display: inline-block; margin-left: 16px;">
+                                        <img width="16px" height="16px" src="images/icon_comments.png">
+                                        <div class="anno-info-counts-text">{{anno.followup_list ? anno.followup_list.length : 0}}</div>
+                                    </div>
+                                    <div style="display: inline-block; margin-left: 16px;">
+                                        <img width="16px" height="16px" src="images/icon_upvotes.png">
+                                        <div class="anno-info-counts-text">{{anno.vote_count}}</div>
+                                    </div>
+                                    <div style="display: inline-block; margin-left: 16px;">
+                                        <img width="16px" height="16px" src="images/icon_flag.png">
+                                        <div class="anno-info-counts-text">{{anno.flag_count}}</div>
+                                    </div>
+                                </div>
+                                <div style="margin: 20px 0;">
+                                    <span style="font-weight: 600; vertical-align: middle;">By</span>
+                                    <img class="anno-author-image" ng-src="{{::anno.creator.image_url && anno.creator.image_url || 'images/icon_no-user.png'}}">
+                                    <span class="anno-author-text">{{::anno.creator.display_name}}</span>
+                                    <img width="12px" height="12px" style="margin-left: 4.372%;" src="images/icon_calendar.png">
+                                    <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Created on:</span>
+                                    <span style="vertical-align: middle; margin-left: 2px;">{{::showLocalDateTime(anno.created) | date:'medium'}}</span>
+                                </div>
+                                <div class="anno-text" style="margin-bottom: 20px;">{{::anno.anno_text}}</div>
+                                <div style="margin-bottom: 20px;">
+                                    <img width="10px" height="16px" src="images/icon_device.png">
+                                    <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Device:</span>
+                                    <span style="vertical-align: middle; margin-left: 2px;">{{::showProperDeviceName(anno.device_model)}} ({{::anno.os_name}} {{::anno.os_version}})</span>
+                                    <img width="12px" height="14px" style="margin-left: 20px;" src="images/icon_version.png">
+                                    <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Version:</span>
+                                    <span style="vertical-align: middle; margin-left: 2px;">{{::anno.app_name}} v{{::anno.app_version}}</span>
+                                </div>
+                            </div>
+                            <div class="anno-info-action">
+                                <div class="section-header">Actions:</div>
+                                <div class="anno-info-action-item share">
+                                    <div class="action-icon"></div>
+                                    <span style="vertical-align: middle; margin-left: 4px;">Share</span>
+                                </div>
+                                <div class="anno-info-action-item upvote" ng-class="{'upvoted':anno.is_my_vote}">
+                                    <div class="action-icon"></div>
+                                    <span style="vertical-align: middle; margin-left: 4px;">Upvote{{anno.is_my_vote === true ? "d" : ""}}</span>
+                                </div>
+                                <div class="anno-info-action-item flag" ng-class="{'flagged':anno.is_my_flag}">
+                                    <div class="action-icon"></div>
+                                    <span style="vertical-align: middle; margin-left: 4px;">Flag{{anno.is_my_flag === true ? "ged" : ""}}</span>
+                                </div>
+                                <div class="anno-info-action-item archive" ng-class="{'archived':anno.archived}" ng-click="archiveAnno($event);">
+                                    <div class="action-icon"></div>
+                                    <span style="vertical-align: middle; margin-left: 4px;">Archive{{anno.archived === true && "d" || ""}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="anno-team-notes anno-item-section">
+                            <div style="margin-bottom: 20px;">
+                                <img width="11px" height="16px" src="images/icon_team-notes.png">
+                                <span class="section-header" style="vertical-align: middle; margin-left: 4px;">Team Notes</span>
+                                <div class="anno-team-notes-edit" ng-class={'editing':isTeamNotesEditing} ng-click="editTeamNotes($event);">
+                                    <div class="edit-icon"></div>
+                                    <span style="vertical-align: middle; margin-left: 4px;">Edit</span>
+                                </div>
+                            </div>
+                            <div class="team-notes" ng-class={'no-team-notes':!anno.team_notes.length} ng-bind-html="parseForTagsMentionsLinks(anno.team_notes.length ? anno.team_notes : noTeamNotesText, anno.team_notes_metadata.mentions);"></div>
+                            <div class="anno-team-notes-edittext" style="display: none;">
+                                <textarea placeholder="Write team notes..." ng-keydown="textareaKeydown($event, 'teamnotes');"></textarea>
+                                <input type="button" ng-value="team_notes_save" ng-click="saveTeamNotes($event);">
+                            </div>
+                        </div>
+                        <div class="anno-tags anno-item-section">
+                            <div style="margin-bottom: 20px;">
+                                <img width="16px" height="16px" src="images/icon_tag.png">
+                                <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.team_notes_metadata.tags ? anno.team_notes_metadata.tags.length : 0}} Tag{{anno.tags.length !== 1 ? "s" : ""}}</span>
+                            </div>
+                            <div>
+                                <span class="anno-item-tag-item" ng-repeat="tag in anno.team_notes_metadata.tags">{{::tag.value}}</span>
+                                <span class="anno-item-tag-item anno-item-add-button"></span>
+                            </div>
+                        </div>
+                        <div class="anno-mentions anno-item-section">
+                            <div style="margin-bottom: 20px;">
+                                <img width="16px" height="16px" src="images/icon_mentions.png">
+                                <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.team_notes_metadata.mentions ? anno.team_notes_metadata.mentions.length : 0}} Mention{{anno.mentions.length !== 1 ? "s" : ""}}</span>
+                            </div>
+                            <div>
+                                <div class="anno-item-tag-item" ng-repeat="mention in anno.team_notes_metadata.mentions track by mention.id" ng-class="::{'current-user':mention.is_auth_user}" title="{{::mention.user_email}}">
+                                    <img width="20px" height="20px" class="anno-item-tag-item-image" ng-src="{{::mention.image_url && mention.image_url || 'images/icon_no-user.png'}}">
+                                    <div class="anno-item-tag-item-name">{{::mention.display_name}}</div>
+                                </div>
+                                <span class="anno-item-tag-item anno-item-add-button" style="padding: 0 15px;"></span>
+                            </div>
+                        </div>
+                        <div class="anno-comments anno-item-section">
+                            <div style="padding: 20px 0; border-bottom: 1px solid #c4cfd7;">
+                                <img width="16px" height="16px" src="images/icon_comments.png">
+                                <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.followup_list ? anno.followup_list.length : 0}} Comment{{anno.followup_list.length !== 1 ? "s" : ""}}</span>
+                            </div>
+                            <div>
+                                <div class="anno-comment-item" ng-repeat="comment in anno.followup_list track by comment.id">
                                     <div style="margin-bottom: 20px;">
-                                        <img width="10px" height="16px" src="images/icon_device.png">
-                                        <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Device:</span>
-                                        <span style="vertical-align: middle; margin-left: 2px;">{{::showProperDeviceName(anno.device_model)}} ({{::anno.os_name}} {{::anno.os_version}})</span>
-                                        <img width="12px" height="14px" style="margin-left: 20px;" src="images/icon_version.png">
-                                        <span style="font-weight: 600; margin-left: 2px; vertical-align: middle;">Version:</span>
-                                        <span style="vertical-align: middle; margin-left: 2px;">{{::anno.app_name}} v{{::anno.app_version}}</span>
-                                    </div>
-                                </div>
-                                <div class="anno-info-action">
-                                    <div class="section-header">Actions:</div>
-                                    <div class="anno-info-action-item share">
-                                        <div class="action-icon"></div>
-                                        <span style="vertical-align: middle; margin-left: 4px;">Share</span>
-                                    </div>
-                                    <div class="anno-info-action-item upvote" ng-class="{'upvoted':anno.is_my_vote}">
-                                        <div class="action-icon"></div>
-                                        <span style="vertical-align: middle; margin-left: 4px;">Upvote{{anno.is_my_vote === true ? "d" : ""}}</span>
-                                    </div>
-                                    <div class="anno-info-action-item flag" ng-class="{'flagged':anno.is_my_flag}">
-                                        <div class="action-icon"></div>
-                                        <span style="vertical-align: middle; margin-left: 4px;">Flag{{anno.is_my_flag === true ? "ged" : ""}}</span>
-                                    </div>
-                                    <div class="anno-info-action-item archive" ng-class="{'archived':anno.archived}" ng-click="archiveAnno($event);">
-                                        <div class="action-icon"></div>
-                                        <span style="vertical-align: middle; margin-left: 4px;">Archive{{anno.archived === true && "d" || ""}}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="anno-team-notes anno-item-section">
-                                <div style="margin-bottom: 20px;">
-                                    <img width="11px" height="16px" src="images/icon_team-notes.png">
-                                    <span class="section-header" style="vertical-align: middle; margin-left: 4px;">Team Notes</span>
-                                    <div class="anno-team-notes-edit" ng-class={'editing':isTeamNotesEditing} ng-click="editTeamNotes($event);">
-                                        <div class="edit-icon"></div>
-                                        <span style="vertical-align: middle; margin-left: 4px;">Edit</span>
-                                    </div>
-                                </div>
-                                <div class="team-notes" ng-class={'no-team-notes':!anno.team_notes.length} ng-bind-html="parseForTagsMentionsLinks(anno.team_notes.length ? anno.team_notes : noTeamNotesText, anno.team_notes_metadata.mentions);"></div>
-                                <div class="anno-team-notes-edittext" style="display: none;">
-                                    <textarea placeholder="Write team notes..." ng-keydown="textareaKeydown($event, 'teamnotes');"></textarea>
-                                    <input type="button" ng-value="team_notes_save" ng-click="saveTeamNotes($event);">
-                                </div>
-                            </div>
-                            <div class="anno-tags anno-item-section">
-                                <div style="margin-bottom: 20px;">
-                                    <img width="16px" height="16px" src="images/icon_tag.png">
-                                    <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.team_notes_metadata.tags ? anno.team_notes_metadata.tags.length : 0}} Tag{{anno.tags.length !== 1 ? "s" : ""}}</span>
-                                </div>
-                                <div>
-                                    <span class="anno-item-tag-item" ng-repeat="tag in anno.team_notes_metadata.tags">{{::tag.value}}</span>
-                                    <span class="anno-item-tag-item anno-item-add-button"></span>
-                                </div>
-                            </div>
-                            <div class="anno-mentions anno-item-section">
-                                <div style="margin-bottom: 20px;">
-                                    <img width="16px" height="16px" src="images/icon_mentions.png">
-                                    <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.team_notes_metadata.mentions ? anno.team_notes_metadata.mentions.length : 0}} Mention{{anno.mentions.length !== 1 ? "s" : ""}}</span>
-                                </div>
-                                <div>
-                                    <div class="anno-item-tag-item" ng-repeat="mention in anno.team_notes_metadata.mentions track by mention.id" ng-class="::{'current-user':mention.is_auth_user}" title="{{::mention.user_email}}">
-                                        <img width="20px" height="20px" class="anno-item-tag-item-image" ng-src="{{::mention.image_url && mention.image_url || 'images/icon_no-user.png'}}">
-                                        <div class="anno-item-tag-item-name">{{::mention.display_name}}</div>
-                                    </div>
-                                    <span class="anno-item-tag-item anno-item-add-button" style="padding: 0 15px;"></span>
-                                </div>
-                            </div>
-                            <div class="anno-comments anno-item-section">
-                                <div style="padding: 20px 0; border-bottom: 1px solid #c4cfd7;">
-                                    <img width="16px" height="16px" src="images/icon_comments.png">
-                                    <span class="section-header" style="vertical-align: middle; margin-left: 4px;">{{anno.followup_list ? anno.followup_list.length : 0}} Comment{{anno.followup_list.length !== 1 ? "s" : ""}}</span>
-                                </div>
-                                <div>
-                                    <div class="anno-comment-item" ng-repeat="comment in anno.followup_list track by comment.id">
-                                        <div style="margin-bottom: 20px;">
-                                            <img class="anno-commenter-image" style="margin: 0;" ng-src="{{::comment.creator.image_url && comment.creator.image_url || 'images/icon_no-user.png'}}">
-                                            <div class="anno-comment-item-meta">
-                                                <div style="font-weight: 600; color: #1b96c9;">{{::comment.creator.display_name}}</div>
-                                                <div class="anno-comment-item-date">{{::showLocalDateTime(comment.created) | date:'medium'}}</div>
-                                            </div>
+                                        <img class="anno-commenter-image" style="margin: 0;" ng-src="{{::comment.creator.image_url && comment.creator.image_url || 'images/icon_no-user.png'}}">
+                                        <div class="anno-comment-item-meta">
+                                            <div style="font-weight: 600; color: #1b96c9;">{{::comment.creator.display_name}}</div>
+                                            <div class="anno-comment-item-date">{{::showLocalDateTime(comment.created) | date:'medium'}}</div>
                                         </div>
-                                        <div class="anno-comment-item-text" ng-bind-html="::parseForTagsMentionsLinks(comment.comment, comment.tagged_users_detail);"></div>
                                     </div>
+                                    <div class="anno-comment-item-text" ng-bind-html="::parseForTagsMentionsLinks(comment.comment, comment.tagged_users_detail);"></div>
                                 </div>
-                                <div class="post-comment" style="padding: 30px 3.38% 50px 0">
-                                    <textarea placeholder="Write a comment..." ng-keydown="textareaKeydown($event, 'comment');"></textarea>
-                                    <br>
-                                    <input type="button" value="Post Comment" ng-click="postComment($event);">
-                                </div>
+                            </div>
+                            <div class="post-comment" style="padding: 30px 3.38% 50px 0">
+                                <textarea placeholder="Write a comment..." ng-keydown="textareaKeydown($event, 'comment');"></textarea>
+                                <br>
+                                <input type="button" value="Post Comment" ng-click="postComment($event);">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </body>
-</html>
+    </div>
+</div>

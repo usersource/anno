@@ -17,6 +17,15 @@
         <script type="text/javascript" src="/dashboard/js/services.js"></script>
         <script type="text/javascript" src="/dashboard/js/controllers.js"></script>
         <script type="text/javascript" src="/dashboard/js/config.js"></script>
+        <script type="text/javascript" src="/dashboard/js/directives.js"></script>
+        <script type="text/javascript">
+             var dojoConfig = {
+                 parseOnLoad : false,
+                 async : 1,
+                 packages : [{ name:'anno', location:'../anno' }]
+             };
+        </script>
+        <script type="text/javascript" src="/dashboard/js/lib/dojo.js"></script>
     </head>
     <body ng-app="Dashboard">
         <div ng-view></div>

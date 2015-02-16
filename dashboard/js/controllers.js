@@ -16,10 +16,11 @@ Dashboard.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.headers.common.contentType = 'application/json';
 }]);
 
-Dashboard.controller('Login', function($scope, $window, $location, $cookieStore, $timeout, $routeParams, Utils, DashboardConstants, DataService) {
+Dashboard.controller('Login', function($scope, $location, $cookieStore, $timeout, $routeParams, Utils, DashboardConstants, DataService) {
+    var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
+
     $scope.initLogin = function() {
         // DataService.checkAuthentication();
-        var team_hash = $routeParams.teamHash;
         if (angular.isDefined(team_hash)) {
             $scope.hideTeamKeyField = true;
             DataService.makeHTTPCall("community.community.hash", {
@@ -39,7 +40,7 @@ Dashboard.controller('Login', function($scope, $window, $location, $cookieStore,
             data['email'] = $scope.email;
             if (data.authenticated) {
                 Utils.storeUserDataInCookies(data);
-                $window.location.href = $location.absUrl().replace(/(login.*)/g, 'feed');
+                $location.path('/dashboard/feed');
             } else {
                 $scope.error_message = "Authentication failed. Please try again.";
                 document.querySelector('#dashboard_message').style.display = "block";

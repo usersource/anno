@@ -6,8 +6,8 @@ Dashboard.config(function($routeProvider, $locationProvider) {
             templateUrl: '/dashboard/partials/login.html',
             controller: 'Login'
         }).
-        when('/feed/:teamHash?/:teamName?', {
-            templateUrl: 'partials/feed.html',
+        when('/dashboard/feed/:teamHash?/:teamName?', {
+            templateUrl: '/dashboard/partials/feed.html',
             controller: 'Feed'
         }).
         otherwise({
