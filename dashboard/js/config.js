@@ -11,7 +11,7 @@ Dashboard.config(function($routeProvider, $locationProvider) {
             controller: 'Feed'
         }).
         otherwise({
-            redirectTo: '/dashboard/login'
+            redirectTo: '/dashboard'
         });
 
     $locationProvider.html5Mode({ enabled: true, requireBase: false });

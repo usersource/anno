@@ -16,11 +16,11 @@ Dashboard.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.headers.common.contentType = 'application/json';
 }]);
 
-Dashboard.controller('Login', function($scope, $window, $location, $cookieStore, $timeout, Utils, DashboardConstants, DataService) {
+Dashboard.controller('Login', function($scope, $window, $location, $cookieStore, $timeout, $routeParams, Utils, DashboardConstants, DataService) {
     $scope.initLogin = function() {
         // DataService.checkAuthentication();
-        var team_hash = $location.absUrl().split("/").reverse()[0];
-        if (!angular.equals(team_hash, 'login')) {
+        var team_hash = $routeParams.teamHash;
+        if (angular.isDefined(team_hash)) {
             $scope.hideTeamKeyField = true;
             DataService.makeHTTPCall("community.community.hash", {
                 team_hash : team_hash
