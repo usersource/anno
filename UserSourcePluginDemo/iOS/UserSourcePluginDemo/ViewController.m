@@ -24,6 +24,7 @@ static NSString *CellIdentifier = @"CellIdentifier";
     BOOL userInfoFetch;
     NSArray *teamValues;
     NSString *teamKeyValue;
+    NSString *teamSecretValue;
 }
 
 @end
@@ -38,7 +39,7 @@ static NSString *CellIdentifier = @"CellIdentifier";
 }
 
 - (void) getTeams {
-    NSURL *url = [NSURL URLWithString:@"https://usersource-anno.appspot.com/_ah/api/community/1.0/community/list"];
+    NSURL *url = [NSURL URLWithString:@"https://usersource-anno.appspot.com/_ah/api/community/1.0/community/list?team_hash=us3rs0urc3"];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:[NSOperationQueue mainQueue]
@@ -174,8 +175,8 @@ static NSString *CellIdentifier = @"CellIdentifier";
                                       [anno setupWithEmail:[user objectForKey:@"email"]
                                                displayName:[user objectForKey:@"name"]
                                               userImageURL:pictureURL
-                                                   teamKey:@"io.usersource.demo"
-                                                teamSecret:@"usersource"];
+                                                   teamKey:teamKeyValue
+                                                teamSecret:teamSecretValue];
                                       [anno notificationsForTarget:self performSelector:@selector(notificationsCount:)];
                                       [anno setInfoViewControllerClass:[InfoViewController class]];
                                   }
@@ -189,7 +190,7 @@ static NSString *CellIdentifier = @"CellIdentifier";
 - (void) loginViewShowingLoggedOutUser:(FBLoginView *)loginView {
     self.loginView.hidden = NO;
     AnnoSingleton *anno = [AnnoSingleton sharedInstance];
-    [anno setupAnonymousUserWithteamKey:@"io.usersource.demo" teamSecret:@"usersource"];
+    [anno setupAnonymousUserWithteamKey:teamKeyValue teamSecret:teamSecretValue];
 }
 
 - (void) loginView:(FBLoginView *)loginView handleError:(NSError *)error {
@@ -427,8 +428,8 @@ static NSString *CellIdentifier = @"CellIdentifier";
     }
 }
 
-#pragma mark - Table view data source
-
+#pragma mark TableViewDelegate
+#pragma mark TableViewDatasource
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
@@ -450,6 +451,7 @@ static NSString *CellIdentifier = @"CellIdentifier";
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     teamKeyValue = [[teamValues objectAtIndex:[indexPath row]] objectForKey:@"key"];
+    teamSecretValue = [[teamValues objectAtIndex:[indexPath row]] objectForKey:@"secret"];
     navItem.rightBarButtonItem.enabled = YES;
 }
 
