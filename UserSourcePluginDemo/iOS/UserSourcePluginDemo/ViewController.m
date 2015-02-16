@@ -92,11 +92,11 @@ static NSString *CellIdentifier = @"CellIdentifier";
                                      (self.loginView.center.x - (fbLoginView.frame.size.width / 2)),
                                      ((self.loginView.center.y * 1.5) - (fbLoginView.frame.size.height / 2)));
     [self.loginView addSubview:fbLoginView];
-    [self showPhotoLibrary];
 }
 
 - (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView {
     self.loginView.hidden = YES;
+    [self showPhotoLibrary];
 }
 
 - (void) setUIComponentsConstraints {
