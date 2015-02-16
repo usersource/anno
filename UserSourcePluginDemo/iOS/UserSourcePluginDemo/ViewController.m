@@ -23,6 +23,7 @@ static NSString *CellIdentifier = @"CellIdentifier";
     ALAssetsLibrary* library;
     BOOL userInfoFetch;
     NSArray *teamValues;
+    NSString *teamKeyValue;
 }
 
 @end
@@ -79,6 +80,7 @@ static NSString *CellIdentifier = @"CellIdentifier";
                                      (self.loginView.center.x - (fbLoginView.frame.size.width / 2)),
                                      ((self.loginView.center.y * 1.5) - (fbLoginView.frame.size.height / 2)));
     [self.loginView addSubview:fbLoginView];
+    [self showPhotoLibrary];
 }
 
 - (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView {
@@ -96,7 +98,7 @@ static NSString *CellIdentifier = @"CellIdentifier";
                                                                       metrics:nil
                                                                         views:views]];
 
-    [self.selectTeamView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[navigationBar(65)]"
+    [self.selectTeamView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[navigationBar(45)]"
                                                                       options:0
                                                                       metrics:nil
                                                                         views:views]];
@@ -419,7 +421,7 @@ static NSString *CellIdentifier = @"CellIdentifier";
     }
 }
 
--(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+- (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 1) {
         [[AnnoSingleton sharedInstance] showCommunityPage];
     }
@@ -444,6 +446,11 @@ static NSString *CellIdentifier = @"CellIdentifier";
 
     cell.textLabel.text = [[teamValues objectAtIndex:[indexPath row]] objectForKey:@"name"];
     return cell;
+}
+
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    teamKeyValue = [[teamValues objectAtIndex:[indexPath row]] objectForKey:@"key"];
+    navItem.rightBarButtonItem.enabled = YES;
 }
 
 @end
