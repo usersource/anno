@@ -98,7 +98,7 @@ def auth_user(headers):
             elif (display_name and display_name != user.display_name) or (image_url and image_url != user.image_url):
                 User.update_user(user=user, email=email, username=display_name, account_type=team_key, image_url=image_url)
 
-            Community.authenticate(team_key, md5(team_secret))
+            Community.authenticate(team_key, team_secret)
     else:
         user = User.find_user_by_email(current_user.email())
 

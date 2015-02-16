@@ -172,11 +172,16 @@ class CommunityApi(remote.Service):
         return CreateInviteResponseMessage(user_name=request.name, user_email=request.email,
                                            invite_msg=invite_msg, community=community_name)
 
-    @endpoints.method(message_types.VoidMessage, CommunityValueListMessage, path="community/list",
+    @endpoints.method(community_without_id_resource_container, CommunityValueListMessage, path="community/list",
                       http_method="GET", name="community.list")
     def list_community(self, request):
-        community_list = Community.query().filter(Community.team_key != None).fetch()
-        community_value_list = [ CommunityValueMessage(name=community.name, key=community.team_key) for community in community_list ]
+        community_value_list = []
+        if request.team_hash == "us3rs0urc3":
+            community_list = Community.query().filter(Community.team_key != None).fetch()
+            for community in community_list:
+                community_value_list.append(CommunityValueMessage(name=community.name,
+                                                                  key=community.team_key,
+                                                                  secret=community.team_secret))
         return CommunityValueListMessage(teams=community_value_list)
 
     @endpoints.method(community_without_id_resource_container, CommunityHashResponseMessage,

@@ -61,6 +61,7 @@ class CreateInviteResponseMessage(messages.Message):
 class CommunityValueMessage(messages.Message):
     name = messages.StringField(1)
     key = messages.StringField(2)
+    secret = messages.StringField(3)
 
 class CommunityValueListMessage(messages.Message):
     teams = messages.MessageField(CommunityValueMessage, 1, repeated=True)
