@@ -33,9 +33,27 @@ static NSString *CellIdentifier = @"CellIdentifier";
 
 - (void) viewDidLoad {
     [super viewDidLoad];
-    [self selectTeam];
-    teamValues = [[NSArray alloc] init];
-    teamValues = @[@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1",@"1"];
+    [self getTeams];
+}
+
+- (void) getTeams {
+    NSURL *url = [NSURL URLWithString:@"https://usersource-anno.appspot.com/_ah/api/community/1.0/community/list"];
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                               if (data.length > 0 && connectionError == nil) {
+                                   NSDictionary *jsonData = [NSJSONSerialization JSONObjectWithData:data
+                                                                                            options:0
+                                                                                              error:NULL];
+                                   if ([[jsonData objectForKey:@"teams"] count] > 0) {
+                                       teamValues = [[NSArray alloc] initWithArray:[jsonData objectForKey:@"teams"]];
+                                       [self selectTeam];
+                                   } else {
+                                       [self showLoginPage];
+                                   }
+                               }
+    }];
 }
 
 - (void) showLoginPage {
@@ -424,7 +442,7 @@ static NSString *CellIdentifier = @"CellIdentifier";
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
 
-    cell.textLabel.text = [teamValues objectAtIndex:indexPath.row];
+    cell.textLabel.text = [[teamValues objectAtIndex:[indexPath row]] objectForKey:@"name"];
     return cell;
 }
 
