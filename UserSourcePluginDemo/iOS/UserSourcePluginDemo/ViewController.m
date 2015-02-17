@@ -350,9 +350,14 @@ static NSString *CellIdentifier = @"CellIdentifier";
         if (result) {
             [assetUrls addObject:[result valueForProperty:ALAssetPropertyAssetURL]];
         } else {
+            if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:@"Camera Roll"] &&
+                [[group valueForProperty:ALAssetsGroupPropertyType] isEqualToNumber:@16]) {
+                assetUrls = (NSMutableArray*)[[assetUrls reverseObjectEnumerator] allObjects];
+            }
             [self reloadAllImages];
         }
     }];
+
     [assetsCollectionView setHidden:YES];
 }
 
