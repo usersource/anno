@@ -25,11 +25,11 @@ BATCH_SIZE = 50  # ideal batch size may vary based on entity size
 
 class UpdateAnnoHandler(webapp2.RequestHandler):
     def get(self):
-#         add_lowercase_appname()
-        add_teamhash()
-#         delete_all_anno_indices()
+#        add_teamhash()
 #        update_anno_schema()
 #        update_userannostate_schema()
+#         add_lowercase_appname()
+#         delete_all_anno_indices()
 #         update_followup_indices()
 #         update_userannostate_schema_from_anno_action(cls=Vote)
 #         update_userannostate_schema_from_anno_action(cls=FollowUp)
