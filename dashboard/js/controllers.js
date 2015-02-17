@@ -6,7 +6,7 @@ Dashboard.controller('Login', function($scope, $location, $cookieStore, $timeout
     var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
 
     $scope.initLogin = function() {
-        // DataService.checkAuthentication();
+        DataService.checkAuthentication(team_hash, team_name);
         if (angular.isDefined(team_hash)) {
             $scope.hideTeamKeyField = true;
             DataService.makeHTTPCall("community.community.hash", {
@@ -26,8 +26,7 @@ Dashboard.controller('Login', function($scope, $location, $cookieStore, $timeout
             data['email'] = $scope.email;
             if (data.authenticated) {
                 Utils.storeUserDataInCookies(data);
-                var current_team_hash = angular.isDefined(team_hash) ? team_hash : '';
-                $location.path('/dashboard/feed/' + current_team_hash);
+                $location.path('/dashboard/' + team_hash + '/' + team_name + '/feed');
             } else {
                 $scope.error_message = "Authentication failed. Please try again.";
                 document.querySelector('#dashboard_message').style.display = "block";
@@ -67,18 +66,13 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         }
     };
 
-    function redirectToLogin () {
-        var current_team_hash = angular.isDefined(team_hash) ? team_hash : '';
-        $location.path('/dashboard/login/' + current_team_hash);
-    }
-
     $scope.signoutDashboard = function() {
         Utils.removeUserDataCookies();
-        redirectToLogin();
+        $location.path('/dashboard/' + team_hash + '/' + team_name + '/login');
     };
 
     $scope.initFeed = function() {
-        // DataService.checkAuthentication();
+        DataService.checkAuthentication(team_hash, team_name);
         var userTeamToken = angular.fromJson($cookieStore.get('user_team_token'));
         if (angular.isDefined(userTeamToken)) {
             $http.defaults.headers.common.Authorization = userTeamToken.token_type + ' ' + userTeamToken.access_token;
@@ -159,8 +153,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             }
         }, function(status) {
             if (status == 401) {
-                Utils.removeUserDataCookies();
-                redirectToLogin();
+                $scope.signoutDashboard();
             }
         });
     }

@@ -292,21 +292,13 @@ ServiceModule.factory('Autocomplete', function(Utils) {
     return Autocomplete;
 });
 
-ServiceModule.factory('DataService', function($http, $location, $window, Utils, DashboardConstants) {
+ServiceModule.factory('DataService', function($http, $location, $window, $cookieStore, Utils, DashboardConstants) {
     var apiRoot = DashboardConstants.apiRoot[DashboardConstants.serverURLKey];
 
-    function checkAuthentication() {
-        var currentPath = $location.path();
-        if ($cookieStore.get('authenticated')) {
-            if (currentPath == 'login.html') {
-                $window.location.href = $location.absUrl().replace('login.html' , 'feed.html');
-            }
-        } else {
-            if (currentPath == 'feed.html') {
-                $window.location.href = $location.absUrl().replace('feed.html' , 'login.html');
-                this.removeUserDataCookies();
-            }
-        }
+    function checkAuthentication(team_hash, team_name) {
+        var primary_url = '/dashboard/' + team_hash + '/' + team_name;
+        var action_page = $cookieStore.get('authenticated') ? '/feed' : '/login';
+        return primary_url + action_page;
     }
 
     function makeHTTPCall(endpointName, params, success_callback, error_callback) {
