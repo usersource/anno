@@ -21,6 +21,17 @@ Dashboard.config(function($routeProvider, $locationProvider) {
             var action_page = angular.equals($cookies.authenticated, "true") ? '/feed' : '/login';
             return current_url + action_page;
         }
+    }).when('/dashboard/login', {
+        templateUrl: '/dashboard/partials/login.html',
+        controller: 'Login'
+    }).when('/dashboard/feed', {
+        templateUrl: '/dashboard/partials/feed.html',
+        controller: 'Feed'
+    }).when('/dashboard', {
+        redirectTo: function(params, current_url) {
+            var action_page = angular.equals($cookies.authenticated, "true") ? '/feed' : '/login';
+            return current_url + action_page;
+        }
     }).otherwise({
         redirectTo: '/dashboard'
     });

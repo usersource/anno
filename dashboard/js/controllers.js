@@ -28,7 +28,11 @@ Dashboard.controller('Login', function($scope, $location, $cookieStore, $timeout
             data['email'] = $scope.email;
             if (data.authenticated) {
                 Utils.storeUserDataInCookies(data);
-                $location.path('/dashboard/' + team_hash + '/' + team_name + '/feed');
+                if (angular.isDefined(team_hash)) {
+                    $location.path('/dashboard/' + team_hash + '/' + team_name + '/feed');
+                } else {
+                    $location.path('/dashboard/feed');
+                }
             } else {
                 $scope.error_message = "Authentication failed. Please try again.";
                 document.querySelector('#dashboard_message').style.display = "block";
@@ -70,7 +74,11 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
     $scope.signoutDashboard = function() {
         Utils.removeUserDataCookies();
-        $location.path('/dashboard/' + team_hash + '/' + team_name + '/login');
+        if (angular.isDefined(team_hash)) {
+            $location.path('/dashboard/' + team_hash + '/' + team_name + '/login');
+        } else {
+            $location.path('/dashboard/login');
+        }
     };
 
     $scope.initFeed = function() {
