@@ -13,6 +13,8 @@ Dashboard.controller('Login', function($scope, $location, $cookieStore, $timeout
                 team_hash : team_hash
             }, function(data) {
                 $scope.teamkey = data.team_key;
+                $scope.appname = data.hasOwnProperty('app_name') ? data.app_name : '';
+                $scope.appicon = data.hasOwnProperty('app_icon') ? data.app_icon : '';
             });
         }
     };
