@@ -1205,12 +1205,9 @@ require([
         }
     };
 
-    var loadCommunities = function(callback)
-    {
-        OAuthUtil.getAccessToken(function(){
-            annoUtil.loadUserCommunities(true, function(data){
-                if (callback) callback(data.communityList);
-            });
+    var loadCommunities = function(callback) {
+        annoUtil.loadUserCommunities(true, function(data){
+            if (callback) callback(data.communityList);
         });
     };
 

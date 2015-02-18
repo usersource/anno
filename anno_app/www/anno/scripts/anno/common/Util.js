@@ -61,6 +61,7 @@
         annoPermaLinkBaseUrl:"http://anno-webapp.appspot.com/usersource/pages/permalink/index.html#/anno/",
         startBackgroundSyncTimer: null,
         isPlugin: false,
+        pluginServerValueSaved: false,
         pluginServer: "1",
         pluginUserEmail : "",
         pluginUserDisplayName : "",
@@ -999,7 +1000,10 @@
             this.exceptionGATracking(["<ShowErrorMessage> code:", error.code, "type:", error.type, "msg:", error.message].join(" "), false);
         },
         callGAEAPI: function(config) {
-            this.setDefaultServer(this.pluginServer);
+            if (this.isPlugin && !this.pluginServerValueSaved) {
+                this.setDefaultServer(this.pluginServer);
+                this.pluginServerValueSaved = true;
+            }
 
             config.showLoadingSpinner = config.showLoadingSpinner == null ? true : config.showLoadingSpinner;
 

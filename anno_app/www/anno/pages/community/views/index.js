@@ -1316,7 +1316,7 @@ define([
                         }
 
                         annoUtil.showLoadingIndicator();
-                        OAuthUtil.getAccessToken(function() { loadListData(); });
+                        loadListData();
                     });
 
                     adjustSize();
