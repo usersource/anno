@@ -288,7 +288,7 @@ define([
             {
                 // Analytics
                 Util.screenGATracking(Util.analytics.category.my_activity);
-                
+
                 adjustSize();
 
                 if (!needRefresh) {
@@ -304,9 +304,11 @@ define([
                         dom.byId("annoActText_" + lastOpenAnnoId).innerHTML = currentAnno.lastActivityText;
                         dom.byId("annoActWhen_" + lastOpenAnnoId).innerHTML = Util.getTimeAgoString(currentAnno.when);
 
-                        dom.byId("pluginAnnoActText_" + lastOpenAnnoId).innerHTML = currentAnno.lastActivityText;
-                        dom.byId("pluginAnnoActWhen_" + lastOpenAnnoId).innerHTML = Util.getTimeAgoString(currentAnno.when);
-                        dom.byId("pluginAnnoActUser_" + lastOpenAnnoId).innerHTML = Util.pluginUserDisplayName;
+                        if (Util.isPlugin) {
+                            dom.byId("pluginAnnoActText_" + lastOpenAnnoId).innerHTML = currentAnno.lastActivityText;
+                            dom.byId("pluginAnnoActWhen_" + lastOpenAnnoId).innerHTML = Util.getTimeAgoString(currentAnno.when);
+                            dom.byId("pluginAnnoActUser_" + lastOpenAnnoId).innerHTML = Util.pluginUserDisplayName;
+                        }
 
                         // move latest updated anno to top
                         var firstAnno = dom.byId("annoListMyStuff").firstElementChild.firstElementChild,

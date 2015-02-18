@@ -59,6 +59,10 @@
         "url": "/anno/1.0/anno_my_stuff",
         "method": "GET"
     },
+    "anno.anno.search": {
+        "url": "/anno/1.0/anno_search",
+        "method": "GET"
+    },
     "anno.user.unread": {
         "url": "/anno/1.0/user/unread",
         "method": "GET"
@@ -78,5 +82,31 @@
     "user.user.deviceid.update": {
         "url": "/user/1.0/user/deviceid/update",
         "method": "POST"
+    },
+    "user.favorite_apps.list": {
+        "url": "/user/1.0/user/favorite_apps",
+        "method": "GET"
+    },
+    "community.user.list": {
+        "url": "/community/1.0/userlist",
+        "method": "GET",
+        "url_fields": ["id"]
+    },
+    "community.user.edit_role": {
+        "url": "/community/1.0/user/edit_role",
+        "method": "POST"
+    },
+    "community.user.delete": {
+        "url": "/community/1.0/user",
+        "method": "DELETE"
+    },
+    "community.invite.create": {
+        "url": "/community/1.0/invite",
+        "method": "POST"
+    },
+    "community.community.edit_welcome_msg": {
+        "url": "/community/1.0/edit_welcome_msg",
+        "method": "POST",
+        "url_fields": ["id"]
     }
 }
