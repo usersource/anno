@@ -11,6 +11,7 @@ from model.follow_up import FollowUp
 from model.flag import Flag
 from model.appinfo import AppInfo
 from model.tags import Tag
+from model.user import User
 from model.community import Community
 from helper.utils import put_search_document
 from helper.utils import OPEN_COMMUNITY
@@ -25,6 +26,7 @@ BATCH_SIZE = 50  # ideal batch size may vary based on entity size
 
 class UpdateAnnoHandler(webapp2.RequestHandler):
     def get(self):
+#        migrate_photo_time_annos()
 #        add_teamhash()
 #        update_anno_schema()
 #        update_userannostate_schema()
@@ -36,6 +38,17 @@ class UpdateAnnoHandler(webapp2.RequestHandler):
 #         update_userannostate_schema_from_anno_action(cls=Flag)
         self.response.out.write("Schema migration successfully initiated.")
 
+def migrate_photo_time_annos(cursor=None):
+    team_key = 'us.orbe.Reko-Album'
+    phototime_app = AppInfo.query().filter(AppInfo.lc_name == 'phototime').get()
+    phototime_community = Community.getCommunityFromTeamKey(team_key=team_key)
+    anno_list = Anno.query().filter(Anno.app == phototime_app.key).fetch()
+
+    for anno in anno_list:
+        anno.community = phototime_community.key
+        user_email = anno.creator.get().user_email
+        anno.creator = User.find_user_by_email(email=user_email, team_key=team_key).key
+        anno.put()
 
 def delete_all_anno_indices():
     doc_index = search.Index(name=SearchIndexName.ANNO)
