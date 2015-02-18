@@ -180,10 +180,12 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         DataService.makeHTTPCall("user.user.community.users", {
             account_type : $cookieStore.get('team_key')
         }, function(data) {
-            $scope.community_engaged_users = Utils.getUniqueEngagedUsers(data.user_list, [], false) || [];
-            angular.forEach($scope.annoList, function(anno) {
-                anno.engaged_users = Utils.getUniqueEngagedUsers(anno, $scope.community_engaged_users, true) || [];
-            });
+            if (data.hasOwnProperty('user_list')) {
+                $scope.community_engaged_users = Utils.getUniqueEngagedUsers(data.user_list, [], false) || [];
+                angular.forEach($scope.annoList, function(anno) {
+                    anno.engaged_users = Utils.getUniqueEngagedUsers(anno, $scope.community_engaged_users, true) || [];
+                });
+            }
         });
     }
 
