@@ -361,6 +361,13 @@
 }
 
 @media (min-width: 768px) {
+  .anno-info-action-item {
+    text-align: center;
+    padding: 0 !important;
+  }
+  .anno-info-action-item > span {
+    display: none;
+  }
 }
 
 @media (max-width: 768px) {

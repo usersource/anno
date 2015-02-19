@@ -106,19 +106,19 @@
                             </div>
                             <div class="anno-info-action">
                                 <div class="section-header">Actions:</div>
-                                <div class="anno-info-action-item share">
+                                <div class="anno-info-action-item share" title="Share">
                                     <div class="action-icon"></div>
                                     <span style="vertical-align: middle; margin-left: 4px;">Share</span>
                                 </div>
-                                <div class="anno-info-action-item upvote" ng-class="{'upvoted':anno.is_my_vote}">
+                                <div class="anno-info-action-item upvote" ng-class="{'upvoted':anno.is_my_vote}" title="Upvote">
                                     <div class="action-icon"></div>
                                     <span style="vertical-align: middle; margin-left: 4px;">Upvote{{anno.is_my_vote === true ? "d" : ""}}</span>
                                 </div>
-                                <div class="anno-info-action-item flag" ng-class="{'flagged':anno.is_my_flag}">
+                                <div class="anno-info-action-item flag" ng-class="{'flagged':anno.is_my_flag}" title="Flag">
                                     <div class="action-icon"></div>
                                     <span style="vertical-align: middle; margin-left: 4px;">Flag{{anno.is_my_flag === true ? "ged" : ""}}</span>
                                 </div>
-                                <div class="anno-info-action-item archive" ng-class="{'archived':anno.archived}" ng-click="archiveAnno($event);">
+                                <div class="anno-info-action-item archive" ng-class="{'archived':anno.archived}" ng-click="archiveAnno($event);" title="Archive">
                                     <div class="action-icon"></div>
                                     <span style="vertical-align: middle; margin-left: 4px;">Archive{{anno.archived === true && "d" || ""}}</span>
                                 </div>
