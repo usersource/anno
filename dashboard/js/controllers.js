@@ -53,8 +53,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         imageHeight = 0,
         borderWidth = 4,
         firstTime = true,
-        oldScrollTop = 0,
-        lastAnnoHeight = 0;
+        oldScrollTop = 0;
 
     $scope.noTeamNotesText = "No Notes";
     $scope.imageBaseURL = DashboardConstants.imageURL[DashboardConstants.serverURLKey];
@@ -187,9 +186,9 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             }
 
             $timeout(function() {
-                var annoItems =  annos.querySelectorAll('.anno-item');
-                lastAnnoHeight = annoItems[annoItems.length - 1].getBoundingClientRect().height;
-                LOOK_AHEAD = lastAnnoHeight;
+                if (angular.isDefined(annos)) {
+                    LOOK_AHEAD = annos.querySelector('.anno-item:last-child').getBoundingClientRect().height;
+                }
             });
 
             watchersCount();
