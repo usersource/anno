@@ -157,7 +157,7 @@ class Anno(BaseModel):
         mentions = []
         for tagged_user in self.tagged_users:
             tagged_user_info = User.get_by_id(int(tagged_user))
-            is_auth_user = tagged_user_info.user_email == user_message.user_email
+            is_auth_user = tagged_user_info.user_email == user.user_email
             mentions.append(AnnoMentionsResponseMessage(id=tagged_user_info.key.id(),
                                                         display_name=tagged_user_info.display_name,
                                                         user_email=tagged_user_info.user_email,
