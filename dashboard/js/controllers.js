@@ -53,7 +53,6 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         imageHeight = 0,
         borderWidth = 4,
         firstTime = true,
-        fetchingAnnos = false,
         oldScrollTop = 0,
         lastAnnoHeight = 0;
 
@@ -66,14 +65,15 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
     $scope.signoutArrowValue = false;
     $scope.annoList = [];
     $scope.landscapeView = [];
+    $scope.fetchingAnnos = false;
 
     $scope.getMoreAnnos = function() {
         if (!hasMore) return;
-        if (fetchingAnnos || firstTime) return;
+        if ($scope.fetchingAnnos || firstTime) return;
         if (oldScrollTop > annos.scrollTop) return;
         oldScrollTop = annos.scrollTop;
         if ((annos.scrollHeight - annos.scrollTop) < (annos.getBoundingClientRect().height + LOOK_AHEAD)) {
-            fetchingAnnos = true;
+            $scope.fetchingAnnos = true;
             getDashboardList(DashboardConstants.filters.basic, false);
         }
     };
@@ -183,7 +183,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
                     getCommunityUsers();
                 }, 1000);
             } else {
-                fetchingAnnos = false;
+                $scope.fetchingAnnos = false;
             }
 
             $timeout(function() {

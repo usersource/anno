@@ -339,3 +339,8 @@
 .engaged-user:last-child, .engaged-hashtag:last-child {
   border-bottom: 0;
 }
+#loadingItems {
+  margin-bottom: 2.031%;
+  text-align: center;
+  font-size: 18px;
+}
