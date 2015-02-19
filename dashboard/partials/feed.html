@@ -13,8 +13,8 @@
         <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Profile</div>
         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3" id="user_info" ng-click="signoutButtonClicked();">
             <img width="45px" height="45px" style="border-radius: 25px;" ng-src="{{::image_url && image_url || '/dashboard/images/icon_no-user.png'}}">
-            <div style="display: inline-block; margin-left: 12px; vertical-align: middle;">
-                <div style="font-size: 18px; text-align: left;" class="active">{{::display_name}}</div>
+            <div id="loggedin_user_info">
+                <div style="font-size: 18px;" class="active">{{::display_name}}</div>
                 <div style="font-size: 14px;">{{::email}}</div>
             </div>
             <div id="logout_arrow" ng-class="{'signout-arrow-clicked' : signoutArrowValue}"></div>

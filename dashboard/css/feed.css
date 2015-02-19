@@ -344,3 +344,27 @@
   text-align: center;
   font-size: 18px;
 }
+#loggedin_user_info {
+  max-width: 60.47%;
+  max-width: -webkit-calc(100% - 85px);
+  max-width: -moz-calc(100% - 85px);
+  max-width: -o-calc(100% - 85px);
+  display: inline-block;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+#loggedin_user_info > div {
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+}
+
+@media (max-width: 768px) {
+  #loggedin_user_info {
+    display: none !important;
+  }
+}
