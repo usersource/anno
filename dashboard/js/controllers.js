@@ -173,7 +173,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             $scope.annoList = $scope.annoList.concat(newAnnoData);
             hasMore = data.hasOwnProperty('has_more') ? data.has_more : false;
             annoItemCursor = data.hasOwnProperty('cursor') ? data.cursor : "";
-            console.log("$scope.annoList:", $scope.annoList);
+            // console.log("$scope.annoList:", $scope.annoList);
 
             if (firstTime) {
                 firstTime = false;
@@ -181,7 +181,6 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
                     getAppinfoData();
                     getPopularTags();
                     getCommunityUsers();
-                    watchersCount();
                 }, 1000);
             } else {
                 fetchingAnnos = false;
@@ -192,6 +191,8 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
                 lastAnnoHeight = annoItems[annoItems.length - 1].getBoundingClientRect().height;
                 LOOK_AHEAD = lastAnnoHeight;
             });
+
+            watchersCount();
         }, function(status) {
             if (status == 401) {
                 $scope.signoutDashboard();
