@@ -51,7 +51,7 @@
             </div>
             <input id="side-panel-search" type="text" placeholder="Type to search..." />
         </div>
-        <div id="annos" class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+        <div id="annos" class="col-lg-10 col-md-10 col-sm-10 col-xs-10" on-scroll="getMoreAnnos();">
             <div id="annos-inner">
                 <div id="anno_{{::$index}}" data-anno-id="{{::anno.id}}" class="anno-item" ng-class="{'landscape':(landscapeView.indexOf(anno.id) !== -1)}" ng-repeat="anno in annoList track by anno.id" ng-if="!anno.archived">
                     <div class="anno-screenshot">

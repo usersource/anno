@@ -45,12 +45,17 @@ Dashboard.controller('Login', function($scope, $location, $cookieStore, $timeout
 });
 
 Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $timeout, $routeParams, $http, Utils, DataService, ComStyleGetter, DashboardConstants, Autocomplete) {
+    var LOOK_AHEAD = 500;
     var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
+    var hasMore, annoItemCursor;
 
     var imageWidth = 0,
         imageHeight = 0,
         borderWidth = 4,
-        firstTime = true;
+        firstTime = true,
+        fetchingAnnos = false,
+        oldScrollTop = 0,
+        lastAnnoHeight = 0;
 
     $scope.noTeamNotesText = "No Notes";
     $scope.imageBaseURL = DashboardConstants.imageURL[DashboardConstants.serverURLKey];
@@ -61,6 +66,17 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
     $scope.signoutArrowValue = false;
     $scope.annoList = [];
     $scope.landscapeView = [];
+
+    $scope.getMoreAnnos = function() {
+        if (!hasMore) return;
+        if (fetchingAnnos || firstTime) return;
+        if (oldScrollTop > annos.scrollTop) return;
+        oldScrollTop = annos.scrollTop;
+        if ((annos.scrollHeight - annos.scrollTop) < (annos.getBoundingClientRect().height + LOOK_AHEAD)) {
+            fetchingAnnos = true;
+            getDashboardList(DashboardConstants.filters.basic, false);
+        }
+    };
 
     $scope.signoutButtonClicked = function() {
         if (logout_button.style.display === "none") {
@@ -137,21 +153,28 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
     function getDashboardList(query_type, clear_anno) {
         $scope.filterType = query_type;
-        DataService.makeHTTPCall("anno.anno.dashboard.list", {
+        var args = {
             outcome : 'cursor,has_more,anno_list',
             query_type : $scope.filterType
-        }, function(data) {
-            if (clear_anno) {
-                $scope.annoList = [];
-            }
+        };
+
+        if (annoItemCursor && annoItemCursor.length) args.cursor = annoItemCursor;
+
+        DataService.makeHTTPCall("anno.anno.dashboard.list", args, function(data) {
+            if (clear_anno) $scope.annoList = [];
+
             var newAnnoData = data.hasOwnProperty('anno_list') ? data.anno_list : [];
             if ($scope.hasOwnProperty('community_engaged_users') && $scope.community_engaged_users.length) {
                 angular.forEach(newAnnoData, function(anno) {
                     anno.engaged_users = Utils.getUniqueEngagedUsers(anno, $scope.community_engaged_users, true) || [];
                 });
             }
+
             $scope.annoList = $scope.annoList.concat(newAnnoData);
+            hasMore = data.hasOwnProperty('has_more') ? data.has_more : false;
+            annoItemCursor = data.hasOwnProperty('cursor') ? data.cursor : "";
             console.log("$scope.annoList:", $scope.annoList);
+
             if (firstTime) {
                 firstTime = false;
                 $timeout(function() {
@@ -160,7 +183,15 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
                     getCommunityUsers();
                     watchersCount();
                 }, 1000);
+            } else {
+                fetchingAnnos = false;
             }
+
+            $timeout(function() {
+                var annoItems =  annos.querySelectorAll('.anno-item');
+                lastAnnoHeight = annoItems[annoItems.length - 1].getBoundingClientRect().height;
+                LOOK_AHEAD = lastAnnoHeight;
+            });
         }, function(status) {
             if (status == 401) {
                 $scope.signoutDashboard();
