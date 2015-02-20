@@ -164,11 +164,18 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             if (clear_anno) $scope.annoList = [];
 
             var newAnnoData = data.hasOwnProperty('anno_list') ? data.anno_list : [];
-            if ($scope.hasOwnProperty('community_engaged_users') && $scope.community_engaged_users.length) {
-                angular.forEach(newAnnoData, function(anno) {
+            angular.forEach(newAnnoData, function(anno) {
+                anno.mentions_list = [];
+                if (anno.hasOwnProperty('team_notes_metadata')) {
+                    if (anno['team_notes_metadata'].hasOwnProperty('mentions')) {
+                        anno.mentions_list = anno.mentions_list.concat(anno.team_notes_metadata.mentions);
+                    }
+                }
+
+                if ($scope.hasOwnProperty('community_engaged_users') && $scope.community_engaged_users.length) {
                     anno.engaged_users = Utils.getUniqueEngagedUsers(anno, $scope.community_engaged_users, true) || [];
-                });
-            }
+                }
+            });
 
             $scope.annoList = $scope.annoList.concat(newAnnoData);
             hasMore = data.hasOwnProperty('has_more') ? data.has_more : false;
