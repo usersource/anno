@@ -1,4 +1,4 @@
-<div ng-controller="Feed" ng-init="initFeed();">
+<div id="feed" ng-controller="Feed" ng-init="initFeed();">
     <div class="header row">
         <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
             <div style="font-size: 150%; font-weight: bold; color: #f62; text-align: center;">ANNOT8</div>
@@ -24,9 +24,9 @@
             <span id="logout_button_text" style="vertical-align: middle; margin-left: 8px;">Sign out</span>
         </div>
     </div>
-    <!-- <div id="dashboard_message" style="display: none;">
-        <div id="dashboard_message_text" ng-class="{'error-message':dashboard_error_type}"></div>
-    </div> -->
+    <div id="dashboard_message" ng-show="error_message.length" ng-class="{'error-message':dashboard_error_type}">
+        <div id="dashboard_message_text">{{error_message}}</div>
+    </div>
     <div id="engaged-users-suggestion" style="display: none;">
         <div class="engaged-user" ng-repeat="engagedUser in currentEngagedUserList" data-value="{{::engagedUser.unique_name}}" ng-click="selectSuggestion($event);">
             <img width="24px" height="24px" style="border-radius: 12px;" ng-src="{{::engagedUser.image_url && engagedUser.image_url || '/dashboard/images/icon_no-user.png'}}">

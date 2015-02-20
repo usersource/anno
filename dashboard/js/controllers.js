@@ -107,12 +107,17 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
     };
 
     $scope.archiveAnno = function(event) {
-        var anno_id = Utils.findAncestor(event.target, 'anno-item').dataset.annoId;
+        var anno_id = Utils.findAncestor(event.target, 'anno-item').dataset.annoId,
+            anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
+
+        anno_item_data["archived"] = !(anno_item_data.archived);
         DataService.makeHTTPCall("anno.anno.archive", {
             id : anno_id
         }, function(data) {
-            var anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
-            anno_item_data["archived"] = !(anno_item_data.archived);
+            $scope.error_message = "Item archived successfully.";
+            $timeout(function() {
+                $scope.error_message = "";
+            }, 5000);
         });
     };
 

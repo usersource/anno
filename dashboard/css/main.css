@@ -91,7 +91,14 @@ body {
   line-height: 40px;
   font-size: 16px;
   color: white;
+  background-color: rgba(0, 128, 0, 0.8);
+}
+#login #dashboard_message {
+  left: 25%;
+}
+#feed #dashboard_message {
+  left: 33%;
 }
 #dashboard_message.error-message {
-  background-color: rgba(255, 42, 16, 0.5);
+  background-color: rgba(255, 0, 0, 0.8);
 }
