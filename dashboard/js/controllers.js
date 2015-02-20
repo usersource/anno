@@ -423,17 +423,11 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
                 tagged_users : commentData[1]
             }, function(data) {
                 postCommentTextarea.value = "";
-                var latestComment = {
-                    id : data.id,
-                    anno_id : data.anno_id,
-                    comment : data.comment,
-                    created : data.created,
-                    creator : data.creator
-                };
                 if (!anno_item_data.hasOwnProperty('followup_list')) {
                     anno_item_data["followup_list"] = [];
                 }
-                anno_item_data.followup_list.unshift(latestComment);
+                anno_item_data.followup_list.unshift(data);
+                anno_item_data = getMentionsList(anno_item_data);
             });
         }
     };
