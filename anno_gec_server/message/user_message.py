@@ -11,6 +11,7 @@ class UserMessage(messages.Message):
     device_id = messages.StringField(6)
     device_type = messages.StringField(7)
     image_url = messages.StringField(8)
+    is_auth_user = messages.BooleanField(9)
 
 class UserCommunityMessage(messages.Message):
     from message.community_message import CommunityMessage

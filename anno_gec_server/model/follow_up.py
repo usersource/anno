@@ -19,7 +19,7 @@ class FollowUp(BaseModel):
     last_modified = ndb.DateTimeProperty(auto_now_add=True)
     tagged_users = ndb.StringProperty(repeated=True)
 
-    def to_message(self, team_key=None):
+    def to_message(self, team_key=None, auth_user=None):
         """
         Convert FollowUp data model to follow up message.
         """
@@ -32,9 +32,12 @@ class FollowUp(BaseModel):
         message.tagged_users_detail = []
         for user in self.tagged_users:
             user_info = User.get_by_id(int(user))
+            is_auth_user = (user_info.user_email == auth_user.user_email) if auth_user else False
             message.tagged_users_detail.append(UserMessage(id=user_info.key.id(),
                                                            display_name=user_info.display_name,
-                                                           user_email=user_info.user_email))
+                                                           user_email=user_info.user_email,
+                                                           image_url=user_info.image_url,
+                                                           is_auth_user=is_auth_user))
 
         if self.creator is not None:
             user_info = self.creator.get()
