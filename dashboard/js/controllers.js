@@ -151,6 +151,24 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         }, 10000);
     };
 
+    function getMentionsList(anno) {
+        anno.mentions_list = [];
+        if (anno.hasOwnProperty('team_notes_metadata')) {
+            if (anno['team_notes_metadata'].hasOwnProperty('mentions')) {
+                anno.mentions_list = anno.mentions_list.concat(anno.team_notes_metadata.mentions);
+            }
+        }
+
+        angular.forEach(anno.followup_list, function(followup) {
+            if (followup.hasOwnProperty('tagged_users_detail')) {
+                anno.mentions_list = anno.mentions_list.concat(followup.tagged_users_detail);
+            }
+        });
+
+        anno.mentions_list = Utils.getUniqueData(anno.mentions_list, 'user_email');
+        return anno;
+    }
+
     function getDashboardList(query_type, clear_anno) {
         $scope.filterType = query_type;
         var args = {
@@ -165,20 +183,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
             var newAnnoData = data.hasOwnProperty('anno_list') ? data.anno_list : [];
             angular.forEach(newAnnoData, function(anno) {
-                anno.mentions_list = [];
-                if (anno.hasOwnProperty('team_notes_metadata')) {
-                    if (anno['team_notes_metadata'].hasOwnProperty('mentions')) {
-                        anno.mentions_list = anno.mentions_list.concat(anno.team_notes_metadata.mentions);
-                    }
-                }
-
-                angular.forEach(anno.followup_list, function(followup) {
-                    if (followup.hasOwnProperty('tagged_users_detail')) {
-                        anno.mentions_list = anno.mentions_list.concat(followup.tagged_users_detail);
-                    }
-                });
-
-                anno.mentions_list = Utils.getUniqueData(anno.mentions_list, 'user_email');
+                anno = getMentionsList(anno);
 
                 if ($scope.hasOwnProperty('community_engaged_users') && $scope.community_engaged_users.length) {
                     anno.engaged_users = Utils.getUniqueEngagedUsers(anno, $scope.community_engaged_users, true) || [];
@@ -390,6 +395,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
             anno_item_data["team_notes_metadata"]["tags"] = data.hasOwnProperty('tags') ? data.tags : [];
             anno_item_data["team_notes_metadata"]["mentions"] = data.hasOwnProperty('mentions') ? data.mentions : [];
+            anno_item_data = getMentionsList(anno_item_data);
 
             $scope.team_notes_save = "Saved";
             $scope.isTeamNotesEditing = false;
