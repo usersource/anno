@@ -35,8 +35,10 @@ Dashboard.controller('Login', function($scope, $location, $cookieStore, $timeout
                 }
             } else {
                 $scope.error_message = "Authentication failed. Please try again.";
+                $scope.dashboard_error_type = true;
                 $timeout(function() {
                     $scope.error_message = "";
+                    $scope.dashboard_error_type = false;
                 }, 5000);
             }
         });

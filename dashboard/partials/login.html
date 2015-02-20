@@ -14,8 +14,8 @@
             <input id="signup" type="button" value="Sign Up">
         </div>
     </div>
-    <div id="dashboard_message" ng-show="error_message.length">
-        <div id="dashboard_message_text" ng-class="{'error-message':dashboard_error_type}">{{error_message}}</div>
+    <div id="dashboard_message" ng-show="error_message.length" ng-class="{'error-message':dashboard_error_type}">
+        <div id="dashboard_message_text">{{error_message}}</div>
     </div>
     <div id="login_outer">
         <div class="col-lg-3 col-md-3 col-sm-1 col-xs-1"></div>
