@@ -172,6 +172,14 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
                     }
                 }
 
+                angular.forEach(anno.followup_list, function(followup) {
+                    if (followup.hasOwnProperty('tagged_users_detail')) {
+                        anno.mentions_list = anno.mentions_list.concat(followup.tagged_users_detail);
+                    }
+                });
+
+                anno.mentions_list = Utils.getUniqueData(anno.mentions_list, 'user_email');
+
                 if ($scope.hasOwnProperty('community_engaged_users') && $scope.community_engaged_users.length) {
                     anno.engaged_users = Utils.getUniqueEngagedUsers(anno, $scope.community_engaged_users, true) || [];
                 }

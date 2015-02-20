@@ -173,6 +173,20 @@ ServiceModule.factory('Utils', function($cookieStore) {
         }).count;
     };
 
+    function getUniqueData(data, key) {
+        var newArr = [], found;
+
+        angular.forEach(data, function(obj) {
+            found = undefined;
+            angular.forEach(newArr, function(newObj) {
+                if (obj[key] === newObj[key] && !found) found = true;
+            });
+            if (!found) newArr.push(obj);
+        });
+
+        return newArr;
+    };
+
     return {
         storeUserDataInCookies : storeUserDataInCookies,
         removeUserDataCookies : removeUserDataCookies,
@@ -183,7 +197,8 @@ ServiceModule.factory('Utils', function($cookieStore) {
         findAncestor : findAncestor,
         getUniqueEngagedUsers : getUniqueEngagedUsers,
         getAnnoById : getAnnoById,
-        watchersContainedIn : watchersContainedIn
+        watchersContainedIn : watchersContainedIn,
+        getUniqueData : getUniqueData
     };
 });
 
