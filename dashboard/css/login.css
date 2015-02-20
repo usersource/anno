@@ -83,7 +83,7 @@
   outline: 0;
 }
 
-@media (min-width: 768px) {
+@media (max-width: 768px) {
   #login_inner .input-div, #login_button {
     width: 90%;
   }

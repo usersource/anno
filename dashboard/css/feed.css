@@ -21,10 +21,13 @@
   margin-bottom: 8px;
   cursor: pointer;
 }
-#side-panel .side-panel-filter:hover,
 #side-panel .side-panel-filter.active {
   color: #1b96c9;
   border: 1px solid #1B96C9;
+  background-color: #e5e8eb;
+}
+#side-panel .side-panel-filter:hover {
+  color: #1b96c9;
   background-color: #e5e8eb;
 }
 #side-panel #side-panel-search {
@@ -115,15 +118,18 @@
   display: inline-block;
   vertical-align: middle;
 }
-.anno-item .anno-info .anno-info-action-item.share:hover,
 .anno-item .anno-info .anno-info-action-item.upvote.upvoted,
-.anno-item .anno-info .anno-info-action-item.upvote:hover,
 .anno-item .anno-info .anno-info-action-item.flag.flagged,
-.anno-item .anno-info .anno-info-action-item.flag:hover,
-.anno-item .anno-info .anno-info-action-item.archive.archived,
-.anno-item .anno-info .anno-info-action-item.archive:hover {
+.anno-item .anno-info .anno-info-action-item.archive.archived {
   color: #1b96c9;
   border: 1px solid #1b96c9;
+  background-color: #E5E8EB;
+}
+.anno-item .anno-info .anno-info-action-item.share:hover,
+.anno-item .anno-info .anno-info-action-item.upvote:hover,
+.anno-item .anno-info .anno-info-action-item.flag:hover,
+.anno-item .anno-info .anno-info-action-item.archive:hover {
+  color: #1b96c9;
   background-color: #E5E8EB;
 }
 .anno-item .anno-info .anno-info-action-item.share .action-icon {
@@ -360,7 +366,7 @@
   white-space: nowrap;
 }
 
-@media (min-width: 768px) {
+@media (max-width: 768px) {
   .anno-info-action-item {
     text-align: center;
     padding: 0 !important;
@@ -368,9 +374,6 @@
   .anno-info-action-item > span {
     display: none;
   }
-}
-
-@media (max-width: 768px) {
   #loggedin_user_info {
     display: none !important;
   }

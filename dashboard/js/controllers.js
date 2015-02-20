@@ -187,7 +187,10 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
             $timeout(function() {
                 if (angular.isDefined(annos)) {
-                    LOOK_AHEAD = annos.querySelector('.anno-item:last-child').getBoundingClientRect().height;
+                    var lastAnnoItem = annos.querySelector('.anno-item:last-child');
+                    if (lastAnnoItem) {
+                        LOOK_AHEAD = lastAnnoItem.getBoundingClientRect().height;
+                    }
                 }
             });
 
