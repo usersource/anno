@@ -322,7 +322,7 @@ def isMember(community, user, include_manager=True):
     results = query.get()
     return True if results else False
 
-def filter_anno_by_user(query, user, is_plugin=False):
+def filter_anno_by_user(query, user, is_plugin=False, include_archived=False):
     filter_strings = []
 
     user_community_dict = { role.get("community") : role.get("circle_level") for role in user_community(user) }
@@ -341,9 +341,11 @@ def filter_anno_by_user(query, user, is_plugin=False):
 
     from model.anno import Anno
     query = eval("query.filter(ndb.OR(%s))" % ", ".join(filter_strings))
-    query = query.filter(Anno.archived == False)
-    query = query.order(Anno._key)
 
+    if not include_archived:
+        query = query.filter(Anno.archived == False)
+
+    query = query.order(Anno._key)
     return query
 
 def get_user_from_request(user_id=None, user_email=None, team_key=None):

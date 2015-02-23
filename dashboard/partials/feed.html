@@ -47,13 +47,13 @@
                 <div class="side-panel-filter" data-type="mostActive" ng-click="filterAnno($event);" ng-class="{'active':(filterType == 'by_activity_count')}">Most Active</div>
                 <div class="side-panel-filter" data-type="mostPopular" ng-click="filterAnno($event);" ng-class="{'active':(filterType == 'by_vote_count')}">Most Popular</div>
                 <div class="side-panel-filter" data-type="mostFlagged" ng-click="filterAnno($event);" ng-class="{'active':(filterType == 'by_flag_count')}">Most Flagged</div>
-                <div class="side-panel-filter" data-type="archived">Archived</div>
+                <div class="side-panel-filter" data-type="archived" ng-click="filterAnno($event);" ng-class="{'active':(filterType == 'by_archived')}">Archived</div>
             </div>
             <input id="side-panel-search" type="text" placeholder="Type to search..." />
         </div>
         <div id="annos" class="col-lg-10 col-md-10 col-sm-10 col-xs-10" on-scroll="getMoreAnnos();">
             <div id="annos-inner">
-                <div id="anno_{{::$index}}" data-anno-id="{{::anno.id}}" class="anno-item" ng-class="{'landscape':(landscapeView.indexOf(anno.id) !== -1)}" ng-repeat="anno in annoList track by anno.id" ng-if="!anno.archived">
+                <div id="anno_{{::$index}}" data-anno-id="{{::anno.id}}" class="anno-item" ng-class="{'landscape':(landscapeView.indexOf(anno.id) !== -1)}" ng-repeat="anno in annoList track by anno.id" ng-if="!anno.archived || filterType == 'by_archived'">
                     <div class="anno-screenshot">
                         <div class="screenshotContainer">
                             <img class="imgDetailScreenshot" width="100%" style="display: none;" imgonload="screenshotLoad($event);" ng-src="{{::imageBaseURL}}{{::anno.id}}">

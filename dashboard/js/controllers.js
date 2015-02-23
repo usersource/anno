@@ -187,7 +187,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             team_key : team_key
         };
 
-        if (clear_anno) annoItemCursor = null;
+        if (clear_anno) annoItemCursor = "";
         if (annoItemCursor && annoItemCursor.length) args.cursor = annoItemCursor;
 
         DataService.makeHTTPCall("anno.anno.dashboard.list", args, function(data) {

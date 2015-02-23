@@ -404,7 +404,24 @@ class Anno(BaseModel):
         elif query_type == AnnoQueryType.FLAG_COUNT:
             query = query.filter(cls.flag_count > 0).order(-cls.flag_count)
 
-        query = filter_anno_by_user(query, user)
+        query = filter_anno_by_user(query, user, is_plugin=True)
+
+        annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
+        items = [entity.to_dashboard_response_message(user) for entity in annos]
+
+        if more:
+            return AnnoDashboardListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
+        else:
+            return AnnoDashboardListMessage(anno_list=items, has_more=more)
+
+    @classmethod
+    def query_by_archived_for_dashboard(cls, limit, curs, user, team_key):
+        community = Community.getCommunityFromTeamKey(team_key=team_key)
+
+        query = cls.query()
+        query = query.filter(cls.community == community.key)
+        query = query.filter(cls.archived == True)
+        query = filter_anno_by_user(query, user, is_plugin=True, include_archived=True)
 
         annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
         items = [entity.to_dashboard_response_message(user) for entity in annos]

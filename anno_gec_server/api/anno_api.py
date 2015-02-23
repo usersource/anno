@@ -244,6 +244,8 @@ class AnnoApi(remote.Service):
             return Anno.query_by_count_for_dashboard(limit, curs, user, request.team_key, request.query_type)
         elif request.query_type == AnnoQueryType.FLAG_COUNT:
             return Anno.query_by_count_for_dashboard(limit, curs, user, request.team_key, request.query_type)
+        elif request.query_type == AnnoQueryType.ARCHIVED:
+            return Anno.query_by_archived_for_dashboard(limit, curs, user, request.team_key)
         else:
             return Anno.query_by_page_for_dashboard(limit, curs, user)
 

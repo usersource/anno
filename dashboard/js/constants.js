@@ -8,7 +8,8 @@ DashboardConstantsModule.value("DashboardConstants", {
         "myMentions" : "by_my_mentions",
         "mostPopular" : "by_vote_count",
         "mostFlagged" : "by_flag_count",
-        "mostActive" : "by_activity_count"
+        "mostActive" : "by_activity_count",
+        "archived" : "by_archived"
     },
     apiRoot : {
         "1" : "https://annoserver.appspot.com/_ah/api",
