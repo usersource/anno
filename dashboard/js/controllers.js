@@ -181,6 +181,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             query_type : $scope.filterType
         };
 
+        if (clear_anno) annoItemCursor = null;
         if (annoItemCursor && annoItemCursor.length) args.cursor = annoItemCursor;
 
         DataService.makeHTTPCall("anno.anno.dashboard.list", args, function(data) {
