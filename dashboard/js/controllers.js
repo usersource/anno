@@ -186,8 +186,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         $scope.filterType = query_type;
         var args = {
             outcome : 'cursor,has_more,anno_list',
-            query_type : $scope.filterType,
-            team_key : team_key
+            query_type : $scope.filterType
         };
 
         if (clear_anno) annoItemCursor = "";

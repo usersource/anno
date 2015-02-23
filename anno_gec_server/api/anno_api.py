@@ -239,11 +239,11 @@ class AnnoApi(remote.Service):
         if request.query_type == AnnoQueryType.MY_MENTIONS:
             return Anno.query_by_my_mentions_for_dashboard(limit, curs, user)
         elif request.query_type == AnnoQueryType.ACTIVITY_COUNT:
-            return Anno.query_by_count_for_dashboard(limit, curs, user, request.team_key, request.query_type)
+            return Anno.query_by_count_for_dashboard(limit, curs, user, request.query_type)
         elif request.query_type == AnnoQueryType.VOTE_COUNT:
-            return Anno.query_by_count_for_dashboard(limit, curs, user, request.team_key, request.query_type)
+            return Anno.query_by_count_for_dashboard(limit, curs, user, request.query_type)
         elif request.query_type == AnnoQueryType.FLAG_COUNT:
-            return Anno.query_by_count_for_dashboard(limit, curs, user, request.team_key, request.query_type)
+            return Anno.query_by_count_for_dashboard(limit, curs, user, request.query_type)
         elif request.query_type == AnnoQueryType.ARCHIVED:
             return Anno.query_by_page_for_dashboard(limit, curs, user, query_by_archived=True)
         else:

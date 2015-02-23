@@ -391,11 +391,8 @@ class Anno(BaseModel):
         return AnnoListMessage(anno_list=anno_resp_list)
 
     @classmethod
-    def query_by_count_for_dashboard(cls, limit, curs, user, team_key, query_type):
-        community = Community.getCommunityFromTeamKey(team_key=team_key)
-
+    def query_by_count_for_dashboard(cls, limit, curs, user, query_type):
         query = cls.query()
-        query = query.filter(cls.community == community.key)
 
         if query_type == AnnoQueryType.ACTIVITY_COUNT:
             query = query.filter(cls.followup_count > 0).order(-cls.followup_count)
