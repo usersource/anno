@@ -239,7 +239,9 @@ class AnnoApi(remote.Service):
         if request.query_type == AnnoQueryType.MY_MENTIONS:
             return Anno.query_by_my_mentions_for_dashboard(limit, curs, user)
         elif request.query_type == AnnoQueryType.ACTIVITY_COUNT:
-            return Anno.query_by_activity_count_for_dashboard(limit, curs, user, request.team_key)
+            return Anno.query_by_count_for_dashboard(limit, curs, user, request.team_key, request.query_type)
+        elif request.query_type == AnnoQueryType.VOTE_COUNT:
+            return Anno.query_by_count_for_dashboard(limit, curs, user, request.team_key, request.query_type)
         else:
             return Anno.query_by_page_for_dashboard(limit, curs, user)
 

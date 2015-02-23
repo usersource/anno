@@ -22,7 +22,7 @@ from model.appinfo import AppInfo
 from model.userrole import UserRole
 from helper.utils import *
 from helper.utils_enum import SearchIndexName
-from helper.utils_enum import AnnoActionType
+from helper.utils_enum import AnnoActionType, AnnoQueryType
 
 
 class Anno(BaseModel):
@@ -391,12 +391,17 @@ class Anno(BaseModel):
         return AnnoListMessage(anno_list=anno_resp_list)
 
     @classmethod
-    def query_by_activity_count_for_dashboard(cls, limit, curs, user, team_key):
+    def query_by_count_for_dashboard(cls, limit, curs, user, team_key, query_type):
         community = Community.getCommunityFromTeamKey(team_key=team_key)
 
         query = cls.query()
         query = query.filter(cls.community == community.key)
-        query = query.order(-cls.followup_count)
+
+        if query_type == AnnoQueryType.ACTIVITY_COUNT:
+            query = query.filter(cls.followup_count > 0).order(-cls.followup_count)
+        elif query_type == AnnoQueryType.VOTE_COUNT:
+            query = query.filter(cls.vote_count > 0).order(-cls.vote_count)
+
         query = filter_anno_by_user(query, user)
 
         annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
