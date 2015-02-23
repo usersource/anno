@@ -52,7 +52,7 @@
             <input id="side-panel-search" type="text" placeholder="Type to search..." />
         </div>
         <div id="annos" class="col-lg-10 col-md-10 col-sm-10 col-xs-10" on-scroll="getMoreAnnos();">
-            <div id="annos-inner">
+            <div id="annos-inner" ng-show="annoList.length">
                 <div id="anno_{{::$index}}" data-anno-id="{{::anno.id}}" class="anno-item" ng-class="{'landscape':(landscapeView.indexOf(anno.id) !== -1)}" ng-repeat="anno in annoList track by anno.id" ng-if="(filterType !== 'by_archived' && !anno.archived) || (filterType === 'by_archived' && anno.archived)">
                     <div class="anno-screenshot">
                         <div class="screenshotContainer">
@@ -186,6 +186,12 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div id="no-annos" ng-hide="annoList.length">
+                <div>
+                    <img width="86" height="81" src="/dashboard/images/no_post.png" style="margin-top: 60px;">
+                    <div style="margin-top: 30px;">No Posts Found!</div>
                 </div>
             </div>
             <div id="loadingItems" ng-show="fetchingAnnos">Loading Items...</div>

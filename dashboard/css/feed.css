@@ -45,6 +45,7 @@
   padding: 0;
   background-color: #f9f9f9;
   overflow-y: scroll;
+  position: relative;
 }
 .anno-item {
   height: auto;
@@ -364,6 +365,19 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+#no-annos {
+  text-align: center;
+  margin: 2.031%;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  font-weight: 600;
+  background-color: #FFF;
+  border: 1px solid #C4CFD7;
+  border-radius: 4px;
 }
 
 @media (max-width: 768px) {
