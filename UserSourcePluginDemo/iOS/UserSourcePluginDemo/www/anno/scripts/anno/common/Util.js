@@ -1,4 +1,4 @@
-﻿define([
+define([
     "dojo/_base/lang",
     "dojo/_base/declare",
     "dojo/_base/connect",
@@ -58,7 +58,7 @@
         annoPermaLinkBaseUrl:"http://anno-webapp.appspot.com/usersource/pages/permalink/index.html#/anno/",
         startBackgroundSyncTimer: null,
         isPlugin: false,
-        pluginServer: "3",
+        pluginServer: "2",
         pluginUserEmail : "",
         pluginUserDisplayName : "",
         pluginUserImageURL : "",
