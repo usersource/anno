@@ -109,6 +109,36 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         getDashboardList(DashboardConstants.filters.basic, true);
     };
 
+    $scope.upvoteAnno = function(event) {
+        var anno_id = Utils.findAncestor(event.target, 'anno-item').dataset.annoId,
+            anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
+
+        if (!anno_item_data.is_my_vote) {
+            DataService.makeHTTPCall("vote.vote.insert", { anno_id : anno_id });
+            anno_item_data.is_my_vote = true;
+            anno_item_data.vote_count = String(Number(anno_item_data.vote_count) + 1);
+        } else {
+            // DataService.makeHTTPCall("vote.vote.delete", { anno_id : anno_id });
+            // anno_item_data.is_my_vote = false;
+            // anno_item_data.vote_count = String(Number(anno_item_data.vote_count) - 1);
+        }
+    };
+
+    $scope.flagAnno = function(event) {
+        var anno_id = Utils.findAncestor(event.target, 'anno-item').dataset.annoId,
+            anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
+
+        if (!anno_item_data.is_my_flag) {
+            DataService.makeHTTPCall("flag.flag.insert", { anno_id : anno_id });
+            anno_item_data.is_my_flag = true;
+            anno_item_data.flag_count = String(Number(anno_item_data.flag_count) + 1);
+        } else {
+            // DataService.makeHTTPCall("flag.flag.delete", { anno_id : anno_id });
+            // anno_item_data.is_my_flag = false;
+            // anno_item_data.flag_count = String(Number(anno_item_data.flag_count) - 1);
+        }
+    };
+
     $scope.archiveAnno = function(event) {
         var anno_id = Utils.findAncestor(event.target, 'anno-item').dataset.annoId,
             anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);

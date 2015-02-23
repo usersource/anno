@@ -110,11 +110,11 @@
                                     <div class="action-icon"></div>
                                     <span style="vertical-align: middle; margin-left: 4px;">Share</span>
                                 </div>
-                                <div class="anno-info-action-item upvote" ng-class="{'upvoted':anno.is_my_vote}" title="Upvote">
+                                <div class="anno-info-action-item upvote" ng-class="{'upvoted':anno.is_my_vote}" ng-click="upvoteAnno($event);" title="Upvote">
                                     <div class="action-icon"></div>
                                     <span style="vertical-align: middle; margin-left: 4px;">Upvote{{anno.is_my_vote === true ? "d" : ""}}</span>
                                 </div>
-                                <div class="anno-info-action-item flag" ng-class="{'flagged':anno.is_my_flag}" title="Flag">
+                                <div class="anno-info-action-item flag" ng-class="{'flagged':anno.is_my_flag}" ng-click="flagAnno($event);" title="Flag">
                                     <div class="action-icon"></div>
                                     <span style="vertical-align: middle; margin-left: 4px;">Flag{{anno.is_my_flag === true ? "ged" : ""}}</span>
                                 </div>

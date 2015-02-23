@@ -70,6 +70,26 @@ DashboardConstantsModule.value("DashboardConstants", {
             "root" : "community",
             "path" : "community/hash",
             "method" : "GET"
+        },
+        "vote.vote.insert" : {
+            "root" : "vote",
+            "path" : "vote",
+            "method" : "POST"
+        },
+        "vote.vote.delete" : {
+            "root" : "vote",
+            "path" : "vote",
+            "method" : "DELETE"
+        },
+        "flag.flag.insert" : {
+            "root" : "flag",
+            "path" : "flag",
+            "method" : "POST"
+        },
+        "flag.flag.delete" : {
+            "root" : "flag",
+            "path" : "flag",
+            "method" : "DELETE"
         }
     },
     borderColor : "#ff9900",
