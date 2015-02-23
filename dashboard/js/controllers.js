@@ -70,6 +70,14 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
     $scope.landscapeView = [];
     $scope.fetchingAnnos = false;
 
+    function showDashboardMessage(message, error_type) {
+        $scope.error_message = "Item archived successfully.";
+        $scope.dashboard_error_type = error_type || false;
+        $timeout(function() {
+            $scope.error_message = "";
+        }, 5000);
+    }
+
     $scope.getMoreAnnos = function() {
         if (!hasMore) return;
         if ($scope.fetchingAnnos || firstTime) return;
@@ -147,13 +155,11 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         DataService.makeHTTPCall("anno.anno.archive", {
             id : anno_id
         }, function(data) {
-            $scope.error_message = "Item archived successfully.";
+            var message = "Item archived successfully.";
             if (!anno_item_data.archived) {
-                $scope.error_message = "Item unarchived successfully.";
+                message = "Item unarchived successfully.";
             }
-            $timeout(function() {
-                $scope.error_message = "";
-            }, 5000);
+            showDashboardMessage(message);
         });
     };
 
