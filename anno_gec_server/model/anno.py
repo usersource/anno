@@ -415,23 +415,6 @@ class Anno(BaseModel):
             return AnnoDashboardListMessage(anno_list=items, has_more=more)
 
     @classmethod
-    def query_by_archived_for_dashboard(cls, limit, curs, user, team_key):
-        community = Community.getCommunityFromTeamKey(team_key=team_key)
-
-        query = cls.query()
-        query = query.filter(cls.community == community.key)
-        query = query.filter(cls.archived == True)
-        query = filter_anno_by_user(query, user, is_plugin=True, include_archived=True)
-
-        annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
-        items = [entity.to_dashboard_response_message(user) for entity in annos]
-
-        if more:
-            return AnnoDashboardListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
-        else:
-            return AnnoDashboardListMessage(anno_list=items, has_more=more)
-
-    @classmethod
     def query_by_last_activity(cls, app_name, user):
         query = cls.query()
         query = query.filter(cls.app_name == app_name).order(-cls.last_update_time)
@@ -487,10 +470,15 @@ class Anno(BaseModel):
             return AnnoListMessage(anno_list=items, has_more=more)
 
     @classmethod
-    def query_by_page_for_dashboard(cls, limit, curs, user):
+    def query_by_page_for_dashboard(cls, limit, curs, user, query_by_archived=False):
         query = cls.query()
         query = query.order(-cls.created)
-        query = filter_anno_by_user(query, user, True)
+
+        if query_by_archived:
+            query = query.filter(cls.archived == True)
+            query = filter_anno_by_user(query, user, is_plugin=True, include_archived=True)
+        else:
+            query = filter_anno_by_user(query, user, True)
 
         annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
         items = [entity.to_dashboard_response_message(user) for entity in annos]
