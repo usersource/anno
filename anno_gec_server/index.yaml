@@ -137,6 +137,14 @@ indexes:
   - name: archived
   - name: circle_level
   - name: community
+  - name: flag_count
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: archived
+  - name: circle_level
+  - name: community
   - name: followup_count
     direction: desc
 
@@ -153,6 +161,13 @@ indexes:
   - name: archived
   - name: community
   - name: created
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: archived
+  - name: community
+  - name: flag_count
     direction: desc
 
 - kind: Anno

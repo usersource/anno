@@ -401,6 +401,8 @@ class Anno(BaseModel):
             query = query.filter(cls.followup_count > 0).order(-cls.followup_count)
         elif query_type == AnnoQueryType.VOTE_COUNT:
             query = query.filter(cls.vote_count > 0).order(-cls.vote_count)
+        elif query_type == AnnoQueryType.FLAG_COUNT:
+            query = query.filter(cls.flag_count > 0).order(-cls.flag_count)
 
         query = filter_anno_by_user(query, user)
 

@@ -46,7 +46,7 @@
                 <div class="side-panel-filter" data-type="myMentions" ng-click="filterAnno($event);" ng-class="{'active':(filterType == 'by_my_mentions')}">My @mentions</div>
                 <div class="side-panel-filter" data-type="mostActive" ng-click="filterAnno($event);" ng-class="{'active':(filterType == 'by_activity_count')}">Most Active</div>
                 <div class="side-panel-filter" data-type="mostPopular" ng-click="filterAnno($event);" ng-class="{'active':(filterType == 'by_vote_count')}">Most Popular</div>
-                <div class="side-panel-filter" data-type="mostFlagged">Most Flagged</div>
+                <div class="side-panel-filter" data-type="mostFlagged" ng-click="filterAnno($event);" ng-class="{'active':(filterType == 'by_flag_count')}">Most Flagged</div>
                 <div class="side-panel-filter" data-type="archived">Archived</div>
             </div>
             <input id="side-panel-search" type="text" placeholder="Type to search..." />

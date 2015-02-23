@@ -242,6 +242,8 @@ class AnnoApi(remote.Service):
             return Anno.query_by_count_for_dashboard(limit, curs, user, request.team_key, request.query_type)
         elif request.query_type == AnnoQueryType.VOTE_COUNT:
             return Anno.query_by_count_for_dashboard(limit, curs, user, request.team_key, request.query_type)
+        elif request.query_type == AnnoQueryType.FLAG_COUNT:
+            return Anno.query_by_count_for_dashboard(limit, curs, user, request.team_key, request.query_type)
         else:
             return Anno.query_by_page_for_dashboard(limit, curs, user)
 
