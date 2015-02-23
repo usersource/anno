@@ -107,7 +107,8 @@ class AnnoApi(remote.Service):
         app=messages.StringField(5),
         query_type=messages.StringField(6),
         community=messages.IntegerField(7),
-        is_plugin=messages.BooleanField(8)
+        is_plugin=messages.BooleanField(8),
+        team_key=messages.StringField(9)
     )
 
     anno_update_resource_container = endpoints.ResourceContainer(
@@ -237,6 +238,8 @@ class AnnoApi(remote.Service):
 
         if request.query_type == AnnoQueryType.MY_MENTIONS:
             return Anno.query_by_my_mentions_for_dashboard(limit, curs, user)
+        elif request.query_type == AnnoQueryType.ACTIVITY_COUNT:
+            return Anno.query_by_activity_count_for_dashboard(limit, curs, user, request.team_key)
         else:
             return Anno.query_by_page_for_dashboard(limit, curs, user)
 

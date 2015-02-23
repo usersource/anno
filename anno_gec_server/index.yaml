@@ -135,8 +135,23 @@ indexes:
 - kind: Anno
   properties:
   - name: archived
+  - name: circle_level
+  - name: community
+  - name: followup_count
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: archived
   - name: community
   - name: created
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: archived
+  - name: community
+  - name: followup_count
     direction: desc
 
 - kind: Anno

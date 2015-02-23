@@ -5,7 +5,10 @@ var DashboardConstantsModule = angular.module('DashboardConstantsModule', []);
 DashboardConstantsModule.value("DashboardConstants", {
     filters : {
         "basic" : "basic",
-        "myMentions" : "by_my_mentions"
+        "myMentions" : "by_my_mentions",
+        "mostPopular" : "by_vote_count",
+        "mostFlagged" : "by_flag_count",
+        "mostActive" : "by_activity_count"
     },
     apiRoot : {
         "1" : "https://annoserver.appspot.com/_ah/api",
@@ -19,7 +22,7 @@ DashboardConstantsModule.value("DashboardConstants", {
         "3" : "https://usersource-anno.appspot.com/screenshot?anno_id=",
         "4" : "http://localhost:8081/screenshot?anno_id="
     },
-    serverURLKey: "3",
+    serverURLKey: "4",
     endpointVersion: "1.0",
     endpointUrl : {
         "account.dashboard.authenticate" : {

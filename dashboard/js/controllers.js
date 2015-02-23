@@ -2,7 +2,7 @@
 
 var Dashboard = angular.module('Dashboard', ['ngCookies', 'ngRoute', 'DashboardConstantsModule', 'ServiceModule']);
 
-Dashboard.controller('Login', function($scope, $location, $cookieStore, $timeout, $routeParams, Utils, DashboardConstants, DataService) {
+Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams, Utils, DashboardConstants, DataService) {
     var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
 
     $scope.initLogin = function() {
@@ -47,7 +47,10 @@ Dashboard.controller('Login', function($scope, $location, $cookieStore, $timeout
 
 Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $timeout, $routeParams, $http, Utils, DataService, ComStyleGetter, DashboardConstants, Autocomplete) {
     var LOOK_AHEAD = 500;
-    var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
+    var team_hash = $routeParams.teamHash,
+        team_name = $routeParams.teamName,
+        team_key = $cookieStore.get('team_key');
+
     var hasMore, annoItemCursor;
 
     var imageWidth = 0,
@@ -74,7 +77,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         oldScrollTop = annos.scrollTop;
         if ((annos.scrollHeight - annos.scrollTop) < (annos.getBoundingClientRect().height + LOOK_AHEAD)) {
             $scope.fetchingAnnos = true;
-            getDashboardList(DashboardConstants.filters.basic, false);
+            getDashboardList($scope.filterType, false);
         }
     };
 
@@ -143,9 +146,11 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
     $scope.filterAnno = function(event) {
         var query_type = DashboardConstants.filters[event.target.dataset.type];
+
         if (angular.equals(query_type, $scope.filterType)) {
             query_type = DashboardConstants.filters.basic;
         }
+
         getDashboardList(query_type, true);
     };
 
@@ -153,7 +158,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         $timeout(function() {
             $scope.watchers = Utils.watchersContainedIn($scope);
             console.log("Number of watchers:", $scope.watchers);
-        }, 10000);
+        }, 1000);
     };
 
     function getMentionsList(anno) {
@@ -178,14 +183,18 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         $scope.filterType = query_type;
         var args = {
             outcome : 'cursor,has_more,anno_list',
-            query_type : $scope.filterType
+            query_type : $scope.filterType,
+            team_key : team_key
         };
 
         if (clear_anno) annoItemCursor = null;
         if (annoItemCursor && annoItemCursor.length) args.cursor = annoItemCursor;
 
         DataService.makeHTTPCall("anno.anno.dashboard.list", args, function(data) {
-            if (clear_anno) $scope.annoList = [];
+            if (clear_anno) {
+                $scope.annoList = [];
+                annos.scrollTop = 0;
+            }
 
             var newAnnoData = data.hasOwnProperty('anno_list') ? data.anno_list : [];
             angular.forEach(newAnnoData, function(anno) {
@@ -231,7 +240,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
     function getAppinfoData() {
         DataService.makeHTTPCall("appinfo.appinfo.get", {
-            team_key : $cookieStore.get('team_key')
+            team_key : team_key
         }, function(data) {
             $scope.appInfo = data;
         });
@@ -239,7 +248,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
     function getCommunityUsers() {
         DataService.makeHTTPCall("user.user.community.users", {
-            account_type : $cookieStore.get('team_key')
+            account_type : team_key
         }, function(data) {
             if (data.hasOwnProperty('user_list')) {
                 $scope.community_engaged_users = Utils.getUniqueEngagedUsers(data.user_list, [], false) || [];

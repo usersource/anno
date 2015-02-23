@@ -181,6 +181,7 @@ class Anno(BaseModel):
                                                     draw_elements=self.draw_elements,
                                                     vote_count=self.vote_count,
                                                     flag_count=self.flag_count,
+                                                    followup_count=self.followup_count,
                                                     followup_list=followup_messages,
                                                     is_my_vote=is_my_vote,
                                                     is_my_flag=is_my_flag,
@@ -388,6 +389,23 @@ class Anno(BaseModel):
             anno_message.activity_count = anno.vote_count + anno.flag_count + anno.followup_count
             anno_resp_list.append(anno_message)
         return AnnoListMessage(anno_list=anno_resp_list)
+
+    @classmethod
+    def query_by_activity_count_for_dashboard(cls, limit, curs, user, team_key):
+        community = Community.getCommunityFromTeamKey(team_key=team_key)
+
+        query = cls.query()
+        query = query.filter(cls.community == community.key)
+        query = query.order(-cls.followup_count)
+        query = filter_anno_by_user(query, user)
+
+        annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
+        items = [entity.to_dashboard_response_message(user) for entity in annos]
+
+        if more:
+            return AnnoDashboardListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
+        else:
+            return AnnoDashboardListMessage(anno_list=items, has_more=more)
 
     @classmethod
     def query_by_last_activity(cls, app_name, user):
