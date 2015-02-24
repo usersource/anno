@@ -126,9 +126,9 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             anno_item_data.is_my_vote = true;
             anno_item_data.vote_count = String(Number(anno_item_data.vote_count) + 1);
         } else {
-            // DataService.makeHTTPCall("vote.vote.delete", { anno_id : anno_id });
-            // anno_item_data.is_my_vote = false;
-            // anno_item_data.vote_count = String(Number(anno_item_data.vote_count) - 1);
+            DataService.makeHTTPCall("vote.vote.delete", { anno_id : anno_id });
+            anno_item_data.is_my_vote = false;
+            anno_item_data.vote_count = String(Number(anno_item_data.vote_count) - 1);
         }
     };
 
@@ -141,9 +141,9 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             anno_item_data.is_my_flag = true;
             anno_item_data.flag_count = String(Number(anno_item_data.flag_count) + 1);
         } else {
-            // DataService.makeHTTPCall("flag.flag.delete", { anno_id : anno_id });
-            // anno_item_data.is_my_flag = false;
-            // anno_item_data.flag_count = String(Number(anno_item_data.flag_count) - 1);
+            DataService.makeHTTPCall("flag.flag.delete", { anno_id : anno_id });
+            anno_item_data.is_my_flag = false;
+            anno_item_data.flag_count = String(Number(anno_item_data.flag_count) - 1);
         }
     };
 

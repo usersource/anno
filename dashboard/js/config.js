@@ -1,7 +1,7 @@
 'use strict';
 
 Dashboard.config(function($httpProvider) {
-    $httpProvider.defaults.headers.common.contentType = 'application/json';
+    $httpProvider.defaults.headers.common = { 'Content-Type' : 'application/json;charset=utf-8' };
 });
 
 Dashboard.config(function($routeProvider, $locationProvider) {
