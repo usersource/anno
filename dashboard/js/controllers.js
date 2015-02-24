@@ -71,7 +71,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
     $scope.fetchingAnnos = false;
 
     function showDashboardMessage(message, error_type) {
-        $scope.error_message = "Item archived successfully.";
+        $scope.error_message = message;
         $scope.dashboard_error_type = error_type || false;
         $timeout(function() {
             $scope.error_message = "";
@@ -121,14 +121,18 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         var anno_id = Utils.findAncestor(event.target, 'anno-item').dataset.annoId,
             anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
 
-        if (!anno_item_data.is_my_vote) {
-            DataService.makeHTTPCall("vote.vote.insert", { anno_id : anno_id });
-            anno_item_data.is_my_vote = true;
-            anno_item_data.vote_count = String(Number(anno_item_data.vote_count) + 1);
+        if (!anno_item_data.is_my_flag) {
+            if (!anno_item_data.is_my_vote) {
+                DataService.makeHTTPCall("vote.vote.insert", { anno_id : anno_id });
+                anno_item_data.is_my_vote = true;
+                anno_item_data.vote_count = String(Number(anno_item_data.vote_count) + 1);
+            } else {
+                DataService.makeHTTPCall("vote.vote.delete", { anno_id : anno_id });
+                anno_item_data.is_my_vote = false;
+                anno_item_data.vote_count = String(Number(anno_item_data.vote_count) - 1);
+            }
         } else {
-            DataService.makeHTTPCall("vote.vote.delete", { anno_id : anno_id });
-            anno_item_data.is_my_vote = false;
-            anno_item_data.vote_count = String(Number(anno_item_data.vote_count) - 1);
+            showDashboardMessage("Sorry, you can't upvote as you have already flagged this.", true);
         }
     };
 
@@ -136,14 +140,18 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         var anno_id = Utils.findAncestor(event.target, 'anno-item').dataset.annoId,
             anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
 
-        if (!anno_item_data.is_my_flag) {
-            DataService.makeHTTPCall("flag.flag.insert", { anno_id : anno_id });
-            anno_item_data.is_my_flag = true;
-            anno_item_data.flag_count = String(Number(anno_item_data.flag_count) + 1);
+        if (!anno_item_data.is_my_vote) {
+            if (!anno_item_data.is_my_flag) {
+                DataService.makeHTTPCall("flag.flag.insert", { anno_id : anno_id });
+                anno_item_data.is_my_flag = true;
+                anno_item_data.flag_count = String(Number(anno_item_data.flag_count) + 1);
+            } else {
+                DataService.makeHTTPCall("flag.flag.delete", { anno_id : anno_id });
+                anno_item_data.is_my_flag = false;
+                anno_item_data.flag_count = String(Number(anno_item_data.flag_count) - 1);
+            }
         } else {
-            DataService.makeHTTPCall("flag.flag.delete", { anno_id : anno_id });
-            anno_item_data.is_my_flag = false;
-            anno_item_data.flag_count = String(Number(anno_item_data.flag_count) - 1);
+            showDashboardMessage("Sorry, you can't flag as you have already upvoted this.", true);
         }
     };
 
