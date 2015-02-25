@@ -130,7 +130,19 @@ define([
 
         var doGoogleAuth = function()
         {
-            OAuthUtil.openAuthWindow(authCallback);
+            // OAuthUtil.openAuthWindow(authCallback);
+            window.plugins.googleplus.login({
+                'iOSApiKey': '955803277195-muun2uqv5p581vntrn7813ni6vtieju9.apps.googleusercontent.com'
+            }, function (result) {
+                result["success"] = true;
+                result["userInfo"] = { "id" : result.userId, "email" : result.email };
+                authCallback(result);
+            }, function (error) {
+                annoUtil.showToastDialog("Something went wrong while authenticating with Google");
+                annoUtil.hideLoadingIndicator();
+                console.error('error:', error);
+            });
+
             annoUtil.showLoadingIndicator();
         };
 
@@ -145,15 +157,14 @@ define([
                     var APIConfig = {
                         name: annoUtil.API.user,
                         method: "user.user.displayname.get",
-                        parameter: {email: result.userInfo.email},
+                        parameter: {email: result.email},
                         success: function(data)
                         {
                             console.log("user.displayname.get: "+ JSON.stringify(data));
 
                             currentSignInUserInfo = result.userInfo;
                             _currentAuthResult = result;
-                            if (!data.display_name)
-                            {
+                            if (!data.display_name) {
                                 // goes to pick nick name screen
                                 domStyle.set('pickNickNameContainer', 'display', '');
                                 domStyle.set('annoSigninContainer', 'display', 'none');
@@ -164,10 +175,7 @@ define([
                                     transition:"slide",
                                     duration:300
                                 });
-                            }
-                            else
-                            {
-
+                            } else {
                                 var userInfo = {};
                                 userInfo.userId = currentSignInUserInfo.id;
                                 userInfo.email = currentSignInUserInfo.email;
@@ -200,15 +208,15 @@ define([
         {
             var cbURL = "";
 
-            if (result&&result.token)
+            if (result && result.oauthToken)
             {
                 if (_callbackURL.indexOf("?")>0||_callbackURL.indexOf("#")>0)
                 {
-                    cbURL = _callbackURL+"&token="+encodeURIComponent(JSON.stringify(result.token));
+                    cbURL = _callbackURL+"&token=" + result.oauthToken;
                 }
                 else
                 {
-                    cbURL = _callbackURL+"?token="+encodeURIComponent(JSON.stringify(result.token));
+                    cbURL = _callbackURL+"?token=" + result.oauthToken;
                 }
 
                 if (result.newUser)

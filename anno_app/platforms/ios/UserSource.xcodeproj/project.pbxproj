@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXAggregateTarget section */
 		5BBAD0D719E691860060A80D /* UserSourcePlugin */ = {
 			isa = PBXAggregateTarget;
@@ -84,6 +83,13 @@
 		5BBA243C19FFB3100086AB8E /* ShakeView.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBA243819FFB2CB0086AB8E /* ShakeView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BBAAB9919F004C800AAC24D /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD5266640B0344749F49768A /* AddressBookUI.framework */; };
 		F840E1F1165FE0F500CFE078 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = F840E1F0165FE0F500CFE078 /* config.xml */; };
+		7784CB808E554E389709F3E3 /* GooglePlus.m in Sources */ = {isa = PBXBuildFile; fileRef = ABF26883A9154097BD756457 /* GooglePlus.m */; };
+		38054B42B93B4E0D97DFE419 /* GooglePlus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94F2AD4ABFF3452F997697B7 /* GooglePlus.framework */; };
+		B494BB33A79A45BD873BB269 /* GoogleOpenSource.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E42685CAE404B538B7AF06F /* GoogleOpenSource.framework */; };
+		9188E8A8A5064151B676FEB5 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DDBD1190A9946D7B084C779 /* CoreMotion.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		1B2A3A2F78C941779CD12BD3 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2775F46639AF437EAC061804 /* CoreText.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		93348D7DBB5B4E00AF3908CF /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B02351B18A74AB4A1AF580D /* MediaPlayer.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		4F021CD57BAA4A8481CABC75 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F6A44BD0CE54299B52C91B4 /* Security.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -250,6 +256,14 @@
 		F840E1F0165FE0F500CFE078 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = UserSource/config.xml; sourceTree = "<group>"; };
 		FD5266640B0344749F49768A /* AddressBookUI.framework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		FFA2D6AB6D364653839AC60B /* CDVFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVFile.m; path = org.apache.cordova.file/CDVFile.m; sourceTree = "<group>"; };
+		ABF26883A9154097BD756457 /* GooglePlus.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "GooglePlus.m"; path = "nl.x-services.plugins.googleplus/GooglePlus.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		4F04916C75E647579ACBEA31 /* GooglePlus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "GooglePlus.h"; path = "nl.x-services.plugins.googleplus/GooglePlus.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		94F2AD4ABFF3452F997697B7 /* GooglePlus.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "GooglePlus.framework"; path = "UserSource/Plugins/nl.x-services.plugins.googleplus/GooglePlus.framework"; sourceTree = "<group>"; };
+		9E42685CAE404B538B7AF06F /* GoogleOpenSource.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "GoogleOpenSource.framework"; path = "UserSource/Plugins/nl.x-services.plugins.googleplus/GoogleOpenSource.framework"; sourceTree = "<group>"; };
+		1DDBD1190A9946D7B084C779 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "CoreMotion.framework"; path = "System/Library/Frameworks/CoreMotion.framework"; sourceTree = SDKROOT; fileEncoding = 4; };
+		2775F46639AF437EAC061804 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "CoreText.framework"; path = "System/Library/Frameworks/CoreText.framework"; sourceTree = SDKROOT; fileEncoding = 4; };
+		2B02351B18A74AB4A1AF580D /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "MediaPlayer.framework"; path = "System/Library/Frameworks/MediaPlayer.framework"; sourceTree = SDKROOT; fileEncoding = 4; };
+		5F6A44BD0CE54299B52C91B4 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Security.framework"; path = "System/Library/Frameworks/Security.framework"; sourceTree = SDKROOT; fileEncoding = 4; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -263,6 +277,12 @@
 				1DF9C52A18FBBD54004077BE /* AssetsLibrary.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
 				305D5FD1115AB8F900A74A75 /* MobileCoreServices.framework in Frameworks */,
+				38054B42B93B4E0D97DFE419 /* GooglePlus.framework in Frameworks */,
+				B494BB33A79A45BD873BB269 /* GoogleOpenSource.framework in Frameworks */,
+				9188E8A8A5064151B676FEB5 /* CoreMotion.framework in Frameworks */,
+				1B2A3A2F78C941779CD12BD3 /* CoreText.framework in Frameworks */,
+				93348D7DBB5B4E00AF3908CF /* MediaPlayer.framework in Frameworks */,
+				4F021CD57BAA4A8481CABC75 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -431,6 +451,12 @@
 				5BBAD09019E66C560060A80D /* XCTest.framework */,
 				5BBAD09319E66C560060A80D /* UIKit.framework */,
 				5BC0B89619E7D6DC00A7A082 /* CoreFoundation.framework */,
+				94F2AD4ABFF3452F997697B7 /* GooglePlus.framework */,
+				9E42685CAE404B538B7AF06F /* GoogleOpenSource.framework */,
+				1DDBD1190A9946D7B084C779 /* CoreMotion.framework */,
+				2775F46639AF437EAC061804 /* CoreText.framework */,
+				2B02351B18A74AB4A1AF580D /* MediaPlayer.framework */,
+				5F6A44BD0CE54299B52C91B4 /* Security.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -479,6 +505,8 @@
 				F2418451C4C6486CA194768D /* CDVContact.h */,
 				0A3A51F59B2349C08F199D4F /* UserSourceAppDelegate+notification.m */,
 				68F2E17157404E209E5111E0 /* UserSourceAppDelegate+notification.h */,
+				ABF26883A9154097BD756457 /* GooglePlus.m */,
+				4F04916C75E647579ACBEA31 /* GooglePlus.h */,
 			);
 			name = Plugins;
 			path = UserSource/Plugins;
@@ -660,7 +688,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0600;
+				LastUpgradeCheck = 600;
 				TargetAttributes = {
 					1D6058900D05DD3D006BFB54 = {
 						DevelopmentTeam = G7Y3KRBLX8;
@@ -802,6 +830,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
+				7784CB808E554E389709F3E3 /* GooglePlus.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -952,6 +981,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"\"UserSource/Plugins/nl.x-services.plugins.googleplus\"",
+					"\"UserSource/Plugins/nl.x-services.plugins.googleplus\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1004,6 +1035,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"\"UserSource/Plugins/nl.x-services.plugins.googleplus\"",
+					"\"UserSource/Plugins/nl.x-services.plugins.googleplus\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UserSource/UserSource-Prefix.pch";

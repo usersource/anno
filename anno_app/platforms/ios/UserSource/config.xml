@@ -61,4 +61,9 @@
     <feature name="PushPlugin">
         <param name="ios-package" value="PushPlugin" />
     </feature>
+    <feature name="GooglePlus">
+        <param name="ios-package" value="GooglePlus" />
+        <param name="onload" value="true" />
+    </feature>
+    <access origin="https://accounts.google.com/*" />
 </widget>
