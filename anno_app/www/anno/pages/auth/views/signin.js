@@ -111,7 +111,8 @@ define([
                 method: "account.account.bind_account",
                 parameter: {
                     'display_name':nickName,
-                    'auth_source':'Google'
+                    'auth_source':'Google',
+                    'user_email':currentSignInUserInfo.email
                 },
                 success: function(data){
                     console.log("bind_account:" + JSON.stringify(data));

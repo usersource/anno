@@ -979,10 +979,10 @@
             // we can specify different user-friendly message for different error types
             var message = default_message;
             if (error_message && (
-                (error.code == this.ERROR_CODE.BAD_REQUEST) && (error.type == this.ERROR_TYPES.API_CALL_FAILED) ||
-                (error.code == this.ERROR_CODE.UNAUTHORIZED) && (error.type == this.ERROR_TYPES.API_RETRY_FAILED) ||
-                (error.code == this.ERROR_CODE.FORBIDDEN) && (error.type == this.ERROR_TYPES.API_CALL_FAILED) ||
-                (error.code == this.ERROR_CODE.NOT_FOUND) && (error.type == this.ERROR_TYPES.API_CALL_FAILED))) {
+                (error.code == this.ERROR_CODE.BAD_REQUEST) ||
+                (error.code == this.ERROR_CODE.UNAUTHORIZED) ||
+                (error.code == this.ERROR_CODE.FORBIDDEN) ||
+                (error.code == this.ERROR_CODE.NOT_FOUND))) {
                 message = error_message;
             }
 
@@ -1006,6 +1006,7 @@
             }
 
             config.showLoadingSpinner = config.showLoadingSpinner == null ? true : config.showLoadingSpinner;
+            config.showErrorMessage = config.showErrorMessage == null ? true : config.showErrorMessage;
 
             if (config.showLoadingSpinner) {
                 util.showLoadingIndicator();
@@ -1053,8 +1054,14 @@
                 resp['result'] = lang.clone(resp);
                 config.success(resp);
             }, function(e) {
+                if (!config.keepLoadingSpinnerShown) {
+                    util.hideLoadingIndicator();
+                }
                 console.error("Error while calling " + config.method + ":", e);
                 config.error();
+                if (config.showErrorMessage) {
+                    util.showErrorMessage(e.response.data.error);
+                }
             });
         },
         callGAEAPIWithGAPI: function(config, retryCnt)

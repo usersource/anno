@@ -108,5 +108,9 @@
         "url": "/community/1.0/edit_welcome_msg",
         "method": "POST",
         "url_fields": ["id"]
+    },
+    "account.account.bind_account": {
+        "url": "/account/1.0/account/bind_account",
+        "method": "POST"
     }
 }
