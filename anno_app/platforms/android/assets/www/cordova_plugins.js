@@ -286,6 +286,20 @@ module.exports = [
         "clobbers": [
             "PushNotification"
         ]
+    },
+    {
+        "file": "plugins/nl.x-services.plugins.googleplus/www/GooglePlus.js",
+        "id": "nl.x-services.plugins.googleplus.GooglePlus",
+        "clobbers": [
+            "window.plugins.googleplus"
+        ]
+    },
+    {
+        "file": "plugins/com.phonegap.plugins.facebookconnect/facebookConnectPlugin.js",
+        "id": "com.phonegap.plugins.facebookconnect.FacebookConnectPlugin",
+        "clobbers": [
+            "facebookConnectPlugin"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -300,7 +314,9 @@ module.exports.metadata =
     "com.brodysoft.sqlitePlugin": "1.0.3",
     "nl.x-services.plugins.socialsharing": "4.3.8",
     "org.apache.cordova.contacts": "0.2.13",
-    "com.phonegap.plugins.PushPlugin": "2.4.0"
+    "com.phonegap.plugins.PushPlugin": "2.4.0",
+    "nl.x-services.plugins.googleplus": "1.0.8",
+    "com.phonegap.plugins.facebookconnect": "0.11.0"
 }
 // BOTTOM OF METADATA
 });
