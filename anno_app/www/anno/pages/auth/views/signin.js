@@ -132,7 +132,7 @@ define([
         {
             // OAuthUtil.openAuthWindow(authCallback);
             window.plugins.googleplus.login({
-                'iOSApiKey': '955803277195-muun2uqv5p581vntrn7813ni6vtieju9.apps.googleusercontent.com'
+                'iOSApiKey': annoUtil.getiOSClientID()
             }, function (result) {
                 result["success"] = true;
                 result["userInfo"] = { "id" : result.userId, "email" : result.email };

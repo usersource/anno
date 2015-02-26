@@ -1627,6 +1627,11 @@
                 }
             }
             return -1;
+        },
+        getiOSClientID: function() {
+            var settings = this.getSettings();
+            var config = serverURLConfig[settings.ServerURL];
+            return config.iOSClientID;
         }
     };
 
