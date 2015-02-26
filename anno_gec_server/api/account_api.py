@@ -70,13 +70,15 @@ class AccountApi(remote.Service):
                 User.update_user(user=user, email=email, username=display_name, account_type=team_key, image_url=image_url)
             if not Community.authenticate(team_key, md5(team_secret)):
                 raise endpoints.UnauthorizedException("Authentication failed. Team key and secret are not matched.")
-        else:
+        elif user.auth_source == AuthSourceType.ANNO:
             password = request.password
             validate_password(password)
             if not user:
                 raise endpoints.NotFoundException("Authentication failed. User account " + email + " doesn't exist.")
             if not User.authenticate(email, md5(password)):
                 raise endpoints.UnauthorizedException("Authentication failed. Email and password are not matched.")
+        else:
+            raise endpoints.ForbiddenException("Account for '%s' is Google or Facebook OAuth account." % email)
 
         return UserMessage(id=user.key.id(), display_name=user.display_name)
 
@@ -119,7 +121,7 @@ class AccountApi(remote.Service):
                 validate_email(request.user_email)
                 reset_password(user, request.user_email)
             else:
-                raise endpoints.ForbiddenException("Account for '%s' is Google OAuth account." % request.user_email)
+                raise endpoints.ForbiddenException("Account for '%s' is Google or Facebook OAuth account." % request.user_email)
         else:
             raise endpoints.NotFoundException("Email address is not found. Please enter correct email address.")
 
@@ -128,16 +130,17 @@ class AccountApi(remote.Service):
     @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/bind_account', http_method='POST',
                       name='account.bind_account')
     def bind_account(self, request):
-        current_user = get_endpoints_current_user(raise_unauthorized=True)
+        if request.user_email is None:
+            raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
         auth_source = request.auth_source
         if auth_source is None:
             auth_source = AuthSourceType.GOOGLE
-        email = current_user.email()
+        email = request.user_email
         user = User.find_user_by_email(email)
         if user is not None:
             user.auth_source = auth_source
             user.display_name = request.display_name
             user.put()
         else:
-            User.insert_user(email=current_user.email(), username=request.display_name)
+            User.insert_user(email=email, username=request.display_name)
         return message_types.VoidMessage()

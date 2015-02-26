@@ -14,9 +14,10 @@
     "dojo/text!../../server-url.json",
     "dojo/text!../../strings.json",
     "dojo/text!../../device_list.json",
+    "dojo/text!../../api_url.json",
     "anno/common/DBUtil",
     "anno/common/GestureHandler"
-], function(lang, declare, connect, dom, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, pluginConfig, serverURLConfig, stringsRes, deviceList, DBUtil, GestureHandler){
+], function(lang, declare, connect, dom, domStyle, dojoJson, xhr, win, SimpleDialog, _ContentPaneMixin, registry, pluginConfig, serverURLConfig, stringsRes, deviceList, APIURL, DBUtil, GestureHandler){
 
     String.prototype.replaceAt = function(startIndex, replaceCount, character) {
         return this.substr(0, startIndex) + character + this.substr(startIndex + replaceCount);
@@ -26,6 +27,8 @@
     stringsRes = dojoJson.parse(stringsRes);
     deviceList = dojoJson.parse(deviceList);
     pluginConfig = dojoJson.parse(pluginConfig);
+    APIURL = dojoJson.parse(APIURL);
+
     // console.log("using server Url config:" + JSON.stringify(serverURLConfig));
     var popularTags = [], teamUsers = [], annoEngagedUsers = [];
     var suggestTags = false, countToSuggestTags = 0, tagStringArray = [];
@@ -58,6 +61,7 @@
         annoPermaLinkBaseUrl:"http://anno-webapp.appspot.com/usersource/pages/permalink/index.html#/anno/",
         startBackgroundSyncTimer: null,
         isPlugin: false,
+        pluginServerValueSaved: false,
         pluginServer: "1",
         pluginUserEmail : "",
         pluginUserDisplayName : "",
@@ -137,24 +141,6 @@
                 annodraw: 'annoDraw',
                 auth: 'auth'
             }
-        },
-        APIURL : {
-            "account.account.authenticate" : { "url" : "/account/1.0/account/authenticate", "method" : "POST" },
-            "anno.anno.list" : { "url" : "/anno/1.0/anno", "method" : "GET" },
-            "tag.tag.popular" : { "url" : "/tag/1.0/tag_popular", "method" : "GET" },
-            "anno.anno.insert" : { "url" : "/anno/1.0/anno", "method" : "POST" },
-            "anno.anno.merge" : { "url" : "/anno/1.0/anno", "method" : "POST", "url_fields" : ["id"] },
-            "anno.anno.delete" : { "url" : "/anno/1.0/anno", "method" : "DELETE", "url_fields" : ["id"] },
-            "anno.anno.get" : { "url" : "/anno/1.0/anno", "method" : "GET", "url_fields" : ["id"] },
-            "anno.anno.users" : { "url" : "/anno/1.0/anno/users", "method" : "GET", "url_fields" : ["id"] },
-            "followup.followup.insert" : { "url" : "/followup/1.0/followup", "method" : "POST" },
-            "vote.vote.insert" : { "url" : "/vote/1.0/vote", "method" : "POST" },
-            "vote.vote.delete" : { "url" : "/vote/1.0/vote", "method" : "DELETE" },
-            "flag.flag.insert" : { "url" : "/flag/1.0/flag", "method" : "POST" },
-            "flag.flag.delete" : { "url" : "/flag/1.0/flag", "method" : "DELETE" },
-            "anno.anno.mystuff" : { "url" : "/anno/1.0/anno_my_stuff", "method" : "GET" },
-            "anno.user.unread" : { "url" : "/anno/1.0/user/unread", "method" : "GET" },
-            "user.community.users" : { "url" : "/user/1.0/user/community/users", "method" : "GET" }
         },
         dataCollectorURL : {
             "main_page" : "http://datacollector.ignitesol.com/collector/update"
@@ -993,10 +979,10 @@
             // we can specify different user-friendly message for different error types
             var message = default_message;
             if (error_message && (
-                (error.code == this.ERROR_CODE.BAD_REQUEST) && (error.type == this.ERROR_TYPES.API_CALL_FAILED) ||
-                (error.code == this.ERROR_CODE.UNAUTHORIZED) && (error.type == this.ERROR_TYPES.API_RETRY_FAILED) ||
-                (error.code == this.ERROR_CODE.FORBIDDEN) && (error.type == this.ERROR_TYPES.API_CALL_FAILED) ||
-                (error.code == this.ERROR_CODE.NOT_FOUND) && (error.type == this.ERROR_TYPES.API_CALL_FAILED))) {
+                (error.code == this.ERROR_CODE.BAD_REQUEST) ||
+                (error.code == this.ERROR_CODE.UNAUTHORIZED) ||
+                (error.code == this.ERROR_CODE.FORBIDDEN) ||
+                (error.code == this.ERROR_CODE.NOT_FOUND))) {
                 message = error_message;
             }
 
@@ -1014,16 +1000,20 @@
             this.exceptionGATracking(["<ShowErrorMessage> code:", error.code, "type:", error.type, "msg:", error.message].join(" "), false);
         },
         callGAEAPI: function(config) {
-            this.setDefaultServer(this.pluginServer);
+            if (this.isPlugin && !this.pluginServerValueSaved) {
+                this.setDefaultServer(this.pluginServer);
+                this.pluginServerValueSaved = true;
+            }
 
             config.showLoadingSpinner = config.showLoadingSpinner == null ? true : config.showLoadingSpinner;
+            config.showErrorMessage = config.showErrorMessage == null ? true : config.showErrorMessage;
 
             if (config.showLoadingSpinner) {
                 util.showLoadingIndicator();
             }
 
             var root_url = this.getCEAPIConfig().apiRoot,
-                endpoint_info = this.APIURL[config.method],
+                endpoint_info = APIURL[config.method],
                 endpoint_url = root_url + endpoint_info.url,
                 endpoint_method = endpoint_info.method;
 
@@ -1064,8 +1054,14 @@
                 resp['result'] = lang.clone(resp);
                 config.success(resp);
             }, function(e) {
+                if (!config.keepLoadingSpinnerShown) {
+                    util.hideLoadingIndicator();
+                }
                 console.error("Error while calling " + config.method + ":", e);
                 config.error();
+                if (config.showErrorMessage) {
+                    util.showErrorMessage(e.response.data.error);
+                }
             });
         },
         callGAEAPIWithGAPI: function(config, retryCnt)
