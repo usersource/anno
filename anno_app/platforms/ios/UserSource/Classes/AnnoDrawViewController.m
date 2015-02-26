@@ -231,7 +231,10 @@ extern AnnoUtils* annoUtils;
 
 - (void) viewDidLoad {
     [super viewDidLoad];
-    [self setSplashScreen];
+
+    if ((![@"io.usersource.anno" isEqualToString:[[NSBundle mainBundle] bundleIdentifier]])) {
+        [self setSplashScreen];
+    }
 
     NSArray *versionCompatibility = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
     NSInteger iOSVersion = [[versionCompatibility objectAtIndex:0] intValue];
