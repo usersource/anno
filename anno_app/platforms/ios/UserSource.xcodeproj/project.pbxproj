@@ -90,6 +90,9 @@
 		1B2A3A2F78C941779CD12BD3 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2775F46639AF437EAC061804 /* CoreText.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		93348D7DBB5B4E00AF3908CF /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B02351B18A74AB4A1AF580D /* MediaPlayer.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		4F021CD57BAA4A8481CABC75 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F6A44BD0CE54299B52C91B4 /* Security.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		2E473CFA6E50494E8A3D64BB /* FacebookConnectPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A2FA4613C12492EB756D036 /* FacebookConnectPlugin.m */; };
+		4534B7172D6B41F8BBBBA579 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93A14EEC516145FAA4B3A57A /* FacebookSDK.framework */; };
+		24F803EF0B8D4C0C944F4580 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 387E6551480A42569C9F7E85 /* Accounts.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -264,6 +267,10 @@
 		2775F46639AF437EAC061804 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "CoreText.framework"; path = "System/Library/Frameworks/CoreText.framework"; sourceTree = SDKROOT; fileEncoding = 4; };
 		2B02351B18A74AB4A1AF580D /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "MediaPlayer.framework"; path = "System/Library/Frameworks/MediaPlayer.framework"; sourceTree = SDKROOT; fileEncoding = 4; };
 		5F6A44BD0CE54299B52C91B4 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Security.framework"; path = "System/Library/Frameworks/Security.framework"; sourceTree = SDKROOT; fileEncoding = 4; };
+		9A2FA4613C12492EB756D036 /* FacebookConnectPlugin.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "FacebookConnectPlugin.m"; path = "com.phonegap.plugins.facebookconnect/FacebookConnectPlugin.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		61A796C5D2C54C2CBAB078E1 /* FacebookConnectPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "FacebookConnectPlugin.h"; path = "com.phonegap.plugins.facebookconnect/FacebookConnectPlugin.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		93A14EEC516145FAA4B3A57A /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "FacebookSDK.framework"; path = "UserSource/Plugins/com.phonegap.plugins.facebookconnect/FacebookSDK.framework"; sourceTree = "<group>"; };
+		387E6551480A42569C9F7E85 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Accounts.framework"; path = "System/Library/Frameworks/Accounts.framework"; sourceTree = SDKROOT; fileEncoding = 4; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -283,6 +290,8 @@
 				1B2A3A2F78C941779CD12BD3 /* CoreText.framework in Frameworks */,
 				93348D7DBB5B4E00AF3908CF /* MediaPlayer.framework in Frameworks */,
 				4F021CD57BAA4A8481CABC75 /* Security.framework in Frameworks */,
+				4534B7172D6B41F8BBBBA579 /* FacebookSDK.framework in Frameworks */,
+				24F803EF0B8D4C0C944F4580 /* Accounts.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -457,6 +466,8 @@
 				2775F46639AF437EAC061804 /* CoreText.framework */,
 				2B02351B18A74AB4A1AF580D /* MediaPlayer.framework */,
 				5F6A44BD0CE54299B52C91B4 /* Security.framework */,
+				93A14EEC516145FAA4B3A57A /* FacebookSDK.framework */,
+				387E6551480A42569C9F7E85 /* Accounts.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -507,6 +518,8 @@
 				68F2E17157404E209E5111E0 /* UserSourceAppDelegate+notification.h */,
 				ABF26883A9154097BD756457 /* GooglePlus.m */,
 				4F04916C75E647579ACBEA31 /* GooglePlus.h */,
+				9A2FA4613C12492EB756D036 /* FacebookConnectPlugin.m */,
+				61A796C5D2C54C2CBAB078E1 /* FacebookConnectPlugin.h */,
 			);
 			name = Plugins;
 			path = UserSource/Plugins;
@@ -831,6 +844,7 @@
 			files = (
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				7784CB808E554E389709F3E3 /* GooglePlus.m in Sources */,
+				2E473CFA6E50494E8A3D64BB /* FacebookConnectPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -983,6 +997,7 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"\"UserSource/Plugins/nl.x-services.plugins.googleplus\"",
 					"\"UserSource/Plugins/nl.x-services.plugins.googleplus\"",
+					"\"UserSource/Plugins/com.phonegap.plugins.facebookconnect\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1037,6 +1052,7 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"\"UserSource/Plugins/nl.x-services.plugins.googleplus\"",
 					"\"UserSource/Plugins/nl.x-services.plugins.googleplus\"",
+					"\"UserSource/Plugins/com.phonegap.plugins.facebookconnect\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UserSource/UserSource-Prefix.pch";

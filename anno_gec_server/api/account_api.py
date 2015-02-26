@@ -72,7 +72,7 @@ class AccountApi(remote.Service):
             if not User.authenticate(email, md5(password)):
                 raise endpoints.UnauthorizedException("Authentication failed. Email and password are not matched.")
         else:
-            raise endpoints.ForbiddenException("Account for '%s' is Google OAuth account." % email)
+            raise endpoints.ForbiddenException("Account for '%s' is Google or Facebook OAuth account." % email)
 
         return UserMessage(id=user.key.id(), display_name=user.display_name)
 
@@ -86,7 +86,7 @@ class AccountApi(remote.Service):
                 validate_email(request.user_email)
                 reset_password(user, request.user_email)
             else:
-                raise endpoints.ForbiddenException("Account for '%s' is Google OAuth account." % request.user_email)
+                raise endpoints.ForbiddenException("Account for '%s' is Google or Facebook OAuth account." % request.user_email)
         else:
             raise endpoints.NotFoundException("Email address is not found. Please enter correct email address.")
 

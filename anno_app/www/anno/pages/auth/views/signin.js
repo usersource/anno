@@ -146,6 +146,30 @@ define([
             annoUtil.showLoadingIndicator();
         };
 
+        var doFacebookAuth = function() {
+            facebookConnectPlugin.login([
+                "public_profile", "email"
+            ], function (result) {
+                var user_email;
+                facebookConnectPlugin.api("me?fields=email", [], function(data) {
+                    user_email = data.email;
+                    result["success"] = true;
+                    result["email"] = user_email;
+                    result["oauthToken"] = result.authResponse.accessToken;
+                    result["userInfo"] = { "id" : result.authResponse.userID, "email" : result.email };
+                    authCallback(result);
+                });
+            }, function (error) {
+                if (error.errorCode !== "4201") {
+                    annoUtil.showToastDialog("Something went wrong while authenticating with Facebook");
+                }
+                annoUtil.hideLoadingIndicator();
+                console.error('error:', error);
+            });
+
+            annoUtil.showLoadingIndicator();
+        };
+
         var authCallback = function(result)
         {
             console.log("authCallback invoked.");
@@ -430,6 +454,10 @@ define([
                 {
                     doGoogleAuth();
                 }));
+
+                _connectResults.push(connect.connect(dom.byId("imgFacebook"), 'click', function(e) {
+                    doFacebookAuth();
+                 }));
 
                 _connectResults.push(connect.connect(dom.byId("btnSigninWithAnno"), 'click', function(e)
                 {
