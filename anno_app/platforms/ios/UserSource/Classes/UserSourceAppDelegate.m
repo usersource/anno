@@ -29,8 +29,9 @@
 #import "CommunityViewController.h"
 #import "AnnoSingleton.h"
 #import <UserSourceStatic/UserSourceStatic.h>
-
 #import <Cordova/CDVPlugin.h>
+#import <Fabric/Fabric.h>
+#import <Crashlytics/Crashlytics.h>
 
 @implementation UserSourceAppDelegate
 
@@ -85,6 +86,8 @@
     self.viewController = self.communityViewController;
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
+
+    [Fabric with:@[CrashlyticsKit]];
 
     return YES;
 }
