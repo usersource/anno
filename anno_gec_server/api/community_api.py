@@ -11,13 +11,17 @@ from helper.settings import anno_js_client_id
 from helper.utils import get_user_from_request
 from helper.utils_enum import InvitationStatusType
 from helper.utils import auth_user
+from helper.utils import getAppInfo
 from message.community_message import CommunityMessage
+from message.community_message import CommunityHashResponseMessage
 from message.community_message import CommunityAppInfoMessage
 from message.community_message import CommunityUserMessage
 from message.community_message import CommunityUserListMessage
 from message.community_message import CommunityUserRoleMessage
 from message.community_message import CommunityInviteMessage
 from message.community_message import CreateInviteResponseMessage
+from message.community_message import CommunityValueMessage
+from message.community_message import CommunityValueListMessage
 from message.user_message import UserMessage
 from message.common_message import ResponseMessage
 from model.community import Community
@@ -32,7 +36,13 @@ class CommunityApi(remote.Service):
     community_with_id_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
         id=messages.IntegerField(2, required=True),
-        include_invite=messages.BooleanField(3, default=False)
+        include_invite=messages.BooleanField(3, default=False),
+        team_hash=messages.StringField(4)
+    )
+
+    community_without_id_resource_container = endpoints.ResourceContainer(
+        message_types.VoidMessage,
+        team_hash=messages.StringField(1)
     )
 
     community_with_circles_resource_container = endpoints.ResourceContainer(
@@ -161,3 +171,24 @@ class CommunityApi(remote.Service):
         invite_msg = request.invite_msg or ""
         return CreateInviteResponseMessage(user_name=request.name, user_email=request.email,
                                            invite_msg=invite_msg, community=community_name)
+
+    @endpoints.method(community_without_id_resource_container, CommunityValueListMessage, path="community/list",
+                      http_method="GET", name="community.list")
+    def list_community(self, request):
+        community_value_list = []
+        if request.team_hash == "us3rs0urc3":
+            community_list = Community.query().filter(Community.team_key != None).fetch()
+            for community in community_list:
+                community_value_list.append(CommunityValueMessage(name=community.name,
+                                                                  key=community.team_key,
+                                                                  secret=community.team_secret))
+        return CommunityValueListMessage(teams=community_value_list)
+
+    @endpoints.method(community_without_id_resource_container, CommunityHashResponseMessage,
+                      path="community/hash", http_method="GET", name="community.hash")
+    def get_community_by_hash(self, request):
+        community = Community.get_by_hash(request.team_hash)
+        community_app = getAppInfo(team_key=community.team_key)
+        return CommunityHashResponseMessage(team_key=community.team_key,
+                                            app_name=community_app.name,
+                                            app_icon=community_app.icon_url)

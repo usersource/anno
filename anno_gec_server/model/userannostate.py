@@ -21,6 +21,7 @@ class UserAnnoState(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     modified = ndb.DateTimeProperty()
     notify = ndb.BooleanProperty(default=True)
+    tagged = ndb.BooleanProperty(default=False)
 
     @classmethod
     def get(cls, user, anno):
@@ -39,6 +40,9 @@ class UserAnnoState(ndb.Model):
         elif type in [AnnoActionType.UPVOTED, AnnoActionType.FLAGGED]:
             entity.last_read = datetime.datetime.now()
             entity.modified = entity.last_read
+        elif type == AnnoActionType.TAGGEDUSER:
+            entity.notify = True
+            entity.tagged = True
 
         entity.put()
         return entity
@@ -134,3 +138,23 @@ class UserAnnoState(ndb.Model):
                     unread_count += 1
 
         return unread_count
+
+    @classmethod
+    def tag_users(cls, anno, prev_tagged_users_list, new_tagged_users_list):
+        for prev_tagged_user in prev_tagged_users_list:
+            user = User.get_by_id(int(prev_tagged_user))
+            if user:
+                userannostate = cls.get(user, anno)
+                if userannostate:
+                    userannostate.tagged = False
+                    userannostate.put()
+
+        for new_tagged_user in new_tagged_users_list:
+            user = User.get_by_id(int(new_tagged_user))
+            if user:
+                userannostate = cls.get(user, anno)
+                if userannostate:
+                    userannostate.tagged = True
+                    userannostate.put()
+                else:
+                    cls.insert(user, anno, AnnoActionType.TAGGEDUSER)

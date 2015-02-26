@@ -20,6 +20,7 @@ from helper.utils_enum import SearchIndexName
 from helper.utils_enum import SignInMethod
 from helper.settings import SUPPORT_EMAIL_ID
 from message.appinfo_message import AppInfoMessage
+from message.anno_api_messages import AnnoTagsResponseMessage
 
 
 APP_NAME = "UserSource"
@@ -97,7 +98,7 @@ def auth_user(headers):
             elif (display_name and display_name != user.display_name) or (image_url and image_url != user.image_url):
                 User.update_user(user=user, email=email, username=display_name, account_type=team_key, image_url=image_url)
 
-            Community.authenticate(team_key, md5(team_secret))
+            Community.authenticate(team_key, team_secret)
     else:
         user = User.find_user_by_email(current_user.email())
 
@@ -105,6 +106,12 @@ def auth_user(headers):
         raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
 
     return user
+
+def get_user_team_token(email, password, team_key, team_secret, display_name, image_url):
+    token = dict(token_type="Basic", expires_in=3600 * 24)
+    user_info_data = ['plugin', email, password, team_key, team_secret, display_name, image_url]
+    token["access_token"] = base64.b64encode("_$_".join(user_info_data))
+    return token
 
 def get_country_by_coordinate(latitude, longitude):
     """
@@ -166,7 +173,7 @@ def md5(content):
 
 
 def get_credential(headers):
-    authorization = headers.get("Authorization")
+    authorization = headers.get("Authorization", headers.get("authorization"))
     if authorization is None:
         raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
 
@@ -247,12 +254,16 @@ def getCommunityForApp(id=None, app_name=None):
 
     return app_community
 
-def getCommunityApps(community_id, app_count=None):
-    community = Community.get_by_id(community_id)
+def getCommunityApps(community_id=None, team_key=None, app_count=None):
+    if community_id:
+        community = Community.get_by_id(community_id)
+    elif team_key:
+        community = Community.query(Community.team_key == team_key).get()
+
     return community.apps[0:app_count] if app_count else community.apps
 
-def getAppInfo(community_id):
-    community_apps = getCommunityApps(community_id, app_count=1)
+def getAppInfo(community_id=None, team_key=None):
+    community_apps = getCommunityApps(community_id, team_key, app_count=1)
     if len(community_apps):
         appinfo = AppInfo.get_by_id(community_apps[0].id())
     else:
@@ -311,7 +322,7 @@ def isMember(community, user, include_manager=True):
     results = query.get()
     return True if results else False
 
-def filter_anno_by_user(query, user, is_plugin=False):
+def filter_anno_by_user(query, user, is_plugin=False, include_archived=False):
     filter_strings = []
 
     user_community_dict = { role.get("community") : role.get("circle_level") for role in user_community(user) }
@@ -330,8 +341,11 @@ def filter_anno_by_user(query, user, is_plugin=False):
 
     from model.anno import Anno
     query = eval("query.filter(ndb.OR(%s))" % ", ".join(filter_strings))
-    query = query.order(Anno._key)
 
+    if not include_archived:
+        query = query.filter(Anno.archived == False)
+
+    query = query.order(Anno._key)
     return query
 
 def get_user_from_request(user_id=None, user_email=None, team_key=None):
@@ -365,3 +379,11 @@ def extract_tags_from_text(text):
         tagcloud.setdefault(tag, tags.count(tag))
 
     return tagcloud
+
+def parseTeamNotesForHashtags(team_notes):
+    hashtag_list = []
+    if team_notes:
+        for hashtag in list(set(re.findall(r'(#[a-z\d][\w-]*)', team_notes))):
+            hashtag_list.append(AnnoTagsResponseMessage(value=hashtag))
+
+    return hashtag_list

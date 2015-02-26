@@ -1,0 +1,104 @@
+body {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    font-family: 'Open Sans', sans-serif !important;
+    font-size: 16px !important;
+    margin: 0;
+    color: #282828 !important;
+}
+.header {
+  width: 100%;
+  height: 74px;
+  position: fixed;
+  padding: 8px 0;
+  vertical-align: middle;
+  z-index: 100;
+  box-shadow: 0px 1px 8px 0 rgba(0, 0, 0, 0.15);
+  background: #fff;
+  margin: 0 !important;
+  line-height: 57px;
+  border-bottom: 1px solid #c4cfd7;
+  top: 0;
+  left: 0;
+}
+.header div {
+  font-size: 16px;
+  color: #9399a5;
+}
+.header div.active {
+  color: #282828;
+}
+.header #user_info {
+  display: inline-block;
+  line-height: 22px;
+  margin: 5px 0;
+  text-align: right;
+  cursor: pointer;
+}
+.header #user_info:hover #logout_arrow {
+  background-image: url('../images/icon_chevron-blue.png');
+}
+.header #logout_arrow {
+  width: 12px;
+  height: 6px;
+  display: inline-block;
+  background-image: url('../images/icon_chevron.png');
+  margin-left: 10px;
+}
+.header #logout_arrow.signout-arrow-clicked {
+  background-image: url('../images/icon_chevron-blue.png');
+}
+.header #logout_button {
+  width: 212px;
+  height: 48px;
+  border: 1px solid #c4cfd7;
+  border-top: 0;
+  color: #282828;
+  position: absolute;
+  top: 74px;
+  right: 1.25%;
+  background: #FFF;
+  border-radius: 0px 0px 4px 4px;
+  text-align: center;
+  line-height: 46px;
+  font-size: 14px;
+  box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+.header #logout_button_icon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  background-image: url(../images/icon_signout.png);
+  vertical-align: middle;
+}
+.header #logout_button:hover #logout_button_icon {
+  background-image: url(../images/icon_signout-blue.png);
+}
+.header #logout_button:hover #logout_button_text {
+  color: #1b96c9;
+}
+#dashboard_message {
+  width: 50%;
+  height: 40px;
+  position: fixed;
+  text-align: center;
+  left: 31%;
+  top: 74px;
+  z-index: 100;
+  border-radius: 0 0 4px 4px;
+  line-height: 40px;
+  font-size: 16px;
+  color: white;
+  background-color: rgba(0, 128, 0, 0.8);
+}
+#login #dashboard_message {
+  left: 25%;
+}
+#feed #dashboard_message {
+  left: 33%;
+}
+#dashboard_message.error-message {
+  background-color: rgba(255, 0, 0, 0.8);
+}

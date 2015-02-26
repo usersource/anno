@@ -15,11 +15,17 @@
 
 #define LOOKAHEAD 3
 
+static NSString *CellIdentifier = @"CellIdentifier";
+
 @interface ViewController () {
+    AnnoSingleton *anno;
     NSMutableArray *assetGroups;
     NSMutableArray *assetUrls;
     ALAssetsLibrary* library;
     BOOL userInfoFetch;
+    NSArray *teamValues;
+    NSString *teamKeyValue;
+    NSString *teamSecretValue;
 }
 
 @end
@@ -30,20 +36,45 @@
 
 - (void) viewDidLoad {
     [super viewDidLoad];
-    
+    [self getTeams];
+}
+
+- (void) getTeams {
+    NSURL *url = [NSURL URLWithString:@"https://annoserver-test.appspot.com/_ah/api/community/1.0/community/list?team_hash=us3rs0urc3"];
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                               if (data.length > 0 && connectionError == nil) {
+                                   NSDictionary *jsonData = [NSJSONSerialization JSONObjectWithData:data
+                                                                                            options:0
+                                                                                              error:NULL];
+                                   if ([[jsonData objectForKey:@"teams"] count] > 0) {
+                                       teamValues = [[NSArray alloc] initWithArray:[jsonData objectForKey:@"teams"]];
+                                       [self selectTeam];
+                                   } else {
+                                       [self showLoginPage];
+                                   }
+                               }
+    }];
+}
+
+- (void) showLoginPage {
+    self.selectTeamView.hidden = YES;
+
     self.loginView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
     [self.view addSubview:self.loginView];
     self.loginView.hidden = YES;
     
     [bottomView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.6]];
-
+    
     UILabel *appName = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 150, 20)];
     appName.text = @"UserSource Demo";
     appName.frame = CGRectOffset(appName.frame,
                                  (self.loginView.center.x - (appName.frame.size.width / 2)),
                                  ((self.loginView.center.y * 0.5) - (appName.frame.size.height / 2)));
     [self.loginView addSubview:appName];
-
+    
     NSArray *permissions = @[@"email"];
     FBLoginView *fbLoginView = [[FBLoginView alloc] initWithReadPermissions:permissions];
     fbLoginView.delegate = self;
@@ -55,7 +86,62 @@
 
 - (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView {
     self.loginView.hidden = YES;
+    [self showPhotoLibrary];
+}
 
+- (void) setUIComponentsConstraints {
+    navigationBar.translatesAutoresizingMaskIntoConstraints = NO;
+    selectTeamTableView.translatesAutoresizingMaskIntoConstraints = NO;
+
+    NSDictionary *views = NSDictionaryOfVariableBindings(navigationBar, selectTeamTableView);
+
+    [self.selectTeamView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[navigationBar]-0-|"
+                                                                      options:0
+                                                                      metrics:nil
+                                                                        views:views]];
+
+    [self.selectTeamView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[navigationBar(45)]"
+                                                                      options:0
+                                                                      metrics:nil
+                                                                        views:views]];
+    
+    [self.selectTeamView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[selectTeamTableView]-0-|"
+                                                                                options:0
+                                                                                metrics:nil
+                                                                                  views:views]];
+    
+    [self.selectTeamView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[navigationBar]-0-[selectTeamTableView]-0-|"
+                                                                                options:0
+                                                                                metrics:nil
+                                                                                  views:views]];
+}
+
+- (void) selectTeam {
+    self.selectTeamView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    [self.view addSubview:self.selectTeamView];
+
+    navItem = [[UINavigationItem alloc] init];
+    navigationBar = [[UINavigationBar alloc] init];
+    navItem.title = @"Select a Team";
+    [self.selectTeamView addSubview:navigationBar];
+    navigationBar.items = [NSArray arrayWithObjects: navItem, nil];
+
+    continueButton = [[UIBarButtonItem alloc] initWithTitle:@"Continue"
+                                                    style:UIBarButtonItemStyleDone
+                                                   target:self
+                                                   action:@selector(showLoginPage)];
+    navItem.rightBarButtonItem = continueButton;
+    navItem.rightBarButtonItem.enabled = NO;
+    
+    selectTeamTableView = [[UITableView alloc] init];
+    selectTeamTableView.dataSource = self;
+    selectTeamTableView.delegate = self;
+    [self.selectTeamView addSubview:selectTeamTableView];
+
+    [self setUIComponentsConstraints];
+}
+
+- (void) showPhotoLibrary {
     assetGroups = [[NSMutableArray alloc] init];
     assetUrls = [[NSMutableArray alloc] init];
     library = [[ALAssetsLibrary alloc] init];
@@ -70,7 +156,7 @@
     UIPanGestureRecognizer *gestureRecognizer = [[UIPanGestureRecognizer alloc]
                                                  initWithTarget:self action:@selector(handlePanGesture:)];
     [scrollView addGestureRecognizer:gestureRecognizer];
-    
+
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
     [scrollView addGestureRecognizer:tapGesture];
 
@@ -86,12 +172,12 @@
                               completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
                                   if (!error) {
                                       NSString *pictureURL = [[[result objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
-                                      AnnoSingleton *anno = [AnnoSingleton sharedInstance];
+                                      anno = [AnnoSingleton sharedInstance];
                                       [anno setupWithEmail:[user objectForKey:@"email"]
                                                displayName:[user objectForKey:@"name"]
                                               userImageURL:pictureURL
-                                                   teamKey:@"io.usersource.demo"
-                                                teamSecret:@"usersource"];
+                                                   teamKey:teamKeyValue
+                                                teamSecret:teamSecretValue];
                                       [anno notificationsForTarget:self performSelector:@selector(notificationsCount:)];
                                       [anno setInfoViewControllerClass:[InfoViewController class]];
                                   }
@@ -104,8 +190,8 @@
 
 - (void) loginViewShowingLoggedOutUser:(FBLoginView *)loginView {
     self.loginView.hidden = NO;
-    AnnoSingleton *anno = [AnnoSingleton sharedInstance];
-    [anno setupAnonymousUserWithteamKey:@"io.usersource.demo" teamSecret:@"usersource"];
+    anno = [AnnoSingleton sharedInstance];
+    [anno setupAnonymousUserWithteamKey:teamKeyValue teamSecret:teamSecretValue];
 }
 
 - (void) loginView:(FBLoginView *)loginView handleError:(NSError *)error {
@@ -264,9 +350,14 @@
         if (result) {
             [assetUrls addObject:[result valueForProperty:ALAssetPropertyAssetURL]];
         } else {
+            if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:@"Camera Roll"] &&
+                [[group valueForProperty:ALAssetsGroupPropertyType] isEqualToNumber:@16]) {
+                assetUrls = (NSMutableArray*)[[assetUrls reverseObjectEnumerator] allObjects];
+            }
             [self reloadAllImages];
         }
     }];
+
     [assetsCollectionView setHidden:YES];
 }
 
@@ -337,10 +428,37 @@
     }
 }
 
--(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+- (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 1) {
         [[AnnoSingleton sharedInstance] showCommunityPage];
     }
+}
+
+#pragma mark TableViewDelegate
+#pragma mark TableViewDatasource
+- (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+- (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [teamValues count];
+}
+
+- (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+    }
+
+    cell.textLabel.text = [[teamValues objectAtIndex:[indexPath row]] objectForKey:@"name"];
+    return cell;
+}
+
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    teamKeyValue = [[teamValues objectAtIndex:[indexPath row]] objectForKey:@"key"];
+    teamSecretValue = [[teamValues objectAtIndex:[indexPath row]] objectForKey:@"secret"];
+    navItem.rightBarButtonItem.enabled = YES;
 }
 
 @end

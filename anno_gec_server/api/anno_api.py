@@ -58,8 +58,11 @@ from protorpc import remote
 from message.anno_api_messages import AnnoMessage
 from message.anno_api_messages import AnnoMergeMessage
 from message.anno_api_messages import AnnoListMessage
+from message.anno_api_messages import AnnoDashboardListMessage
 from message.anno_api_messages import AnnoResponseMessage
 from message.anno_api_messages import UserUnreadMessage
+from message.anno_api_messages import AnnoTeamNotesMetadataMessage
+from message.anno_api_messages import AnnoMentionsResponseMessage
 from message.user_message import UserMessage
 from message.user_message import UserListMessage
 from model.anno import Anno
@@ -75,6 +78,7 @@ from helper.settings import anno_js_client_id
 from helper.utils import auth_user
 from helper.utils import put_search_document
 from helper.utils import extract_tags_from_text
+from helper.utils import parseTeamNotesForHashtags
 from helper.activity_push_notifications import ActivityPushNotifications
 from helper.utils_enum import AnnoQueryType, AnnoActionType
 from helper.utils_enum import SearchIndexName
@@ -90,7 +94,9 @@ class AnnoApi(remote.Service):
     anno_with_id_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
         id=messages.IntegerField(2, required=True),
-        team_key=messages.StringField(3)
+        team_key=messages.StringField(3),
+        team_notes=messages.StringField(4),
+        tagged_users=messages.StringField(5, repeated=True)
     )
 
     anno_list_resource_container = endpoints.ResourceContainer(
@@ -101,7 +107,8 @@ class AnnoApi(remote.Service):
         app=messages.StringField(5),
         query_type=messages.StringField(6),
         community=messages.IntegerField(7),
-        is_plugin=messages.BooleanField(8)
+        is_plugin=messages.BooleanField(8),
+        team_key=messages.StringField(9)
     )
 
     anno_update_resource_container = endpoints.ResourceContainer(
@@ -166,7 +173,7 @@ class AnnoApi(remote.Service):
         return anno_resp_message
 
 
-    @endpoints.method(anno_list_resource_container, AnnoListMessage, path='anno', 
+    @endpoints.method(anno_list_resource_container, AnnoListMessage, path='anno',
                       http_method='GET', name='anno.list')
     def anno_list(self, request):
         """
@@ -213,7 +220,37 @@ class AnnoApi(remote.Service):
             return Anno.query_by_page(limit, select_projection, curs, user, is_plugin)
 
 
-    @endpoints.method(AnnoMessage, AnnoResponseMessage, path='anno', 
+    @endpoints.method(anno_list_resource_container, AnnoDashboardListMessage, path='anno/dashboard',
+                      http_method='GET', name='anno.dashboard.list')
+    def anno_dashboard_list(self, request):
+        user = auth_user(self.request_state.headers)
+
+        limit = 10
+        if request.limit is not None:
+            limit = request.limit
+
+        curs = None
+        if request.cursor is not None:
+            try:
+                curs = Cursor(urlsafe=request.cursor)
+            except BadValueError:
+                raise endpoints.BadRequestException('Invalid cursor %s.' % request.cursor)
+
+        if request.query_type == AnnoQueryType.MY_MENTIONS:
+            return Anno.query_by_my_mentions_for_dashboard(limit, curs, user)
+        elif request.query_type == AnnoQueryType.ACTIVITY_COUNT:
+            return Anno.query_by_count_for_dashboard(limit, curs, user, request.query_type)
+        elif request.query_type == AnnoQueryType.VOTE_COUNT:
+            return Anno.query_by_count_for_dashboard(limit, curs, user, request.query_type)
+        elif request.query_type == AnnoQueryType.FLAG_COUNT:
+            return Anno.query_by_count_for_dashboard(limit, curs, user, request.query_type)
+        elif request.query_type == AnnoQueryType.ARCHIVED:
+            return Anno.query_by_page_for_dashboard(limit, curs, user, query_by_archived=True)
+        else:
+            return Anno.query_by_page_for_dashboard(limit, curs, user)
+
+
+    @endpoints.method(AnnoMessage, AnnoResponseMessage, path='anno',
                       http_method='POST', name="anno.insert")
     def anno_insert(self, request):
         """
@@ -229,7 +266,7 @@ class AnnoApi(remote.Service):
             raise endpoints.BadRequestException("Duplicate anno(%s) already exists." % exist_anno.key.id())
 
         entity = Anno.insert_anno(request, user)
-        
+
         # find all hashtags
         tags = extract_tags_from_text(entity.anno_text.lower())
         for tag, count in tags.iteritems():
@@ -371,22 +408,36 @@ class AnnoApi(remote.Service):
     @endpoints.method(anno_with_id_resource_container, UserListMessage,
                       path="anno/users/{id}", http_method="GET", name="anno.anno.users")
     def getEngagedUsers(self, request):
-        userannostates = UserAnnoState.list_users_by_anno(anno_id=request.id, projection=[UserAnnoState.user])
-
-        users = []
-        for userannostate in userannostates:
-            current_user = userannostate.user.get()
-            users.append(UserMessage(id=current_user.key.id(),
-                                     user_email=current_user.user_email,
-                                     display_name=current_user.display_name,
-                                     image_url=current_user.image_url))
-
-        # removing auth_user
         user = auth_user(self.request_state.headers)
-        if user:
-            [ users.remove(user_info) for user_info in users if user_info.user_email == user.user_email ]
+        return UserListMessage(user_list=Anno.getEngagedUsers(anno_id=request.id, auth_user=user))
 
-        # sorting users alphabetically
-        users = sorted(users, key=lambda user_info: user_info.display_name.lower())
+    @endpoints.method(anno_with_id_resource_container, AnnoTeamNotesMetadataMessage, path='anno/teamnotes',
+                      http_method='POST', name='anno.teamnotes.insert')
+    def anno_teamnotes_insert(self, request):
+        anno = Anno.get_by_id(request.id)
+        user = auth_user(self.request_state.headers)
 
-        return UserListMessage(user_list=users)
+        if anno:
+            anno.team_notes = request.team_notes
+            UserAnnoState.tag_users(anno, anno.tagged_users, request.tagged_users)
+            anno.tagged_users = request.tagged_users
+            anno.put()
+
+        mentions = []
+        for tagged_user in request.tagged_users:
+            user_info = User.get_by_id(int(tagged_user))
+            is_auth_user = user_info.user_email == user.user_email
+            mentions.append(AnnoMentionsResponseMessage(id=user_info.key.id(),
+                                                        display_name=user_info.display_name,
+                                                        user_email=user_info.user_email,
+                                                        image_url=user_info.image_url,
+                                                        is_auth_user=is_auth_user))
+
+        return AnnoTeamNotesMetadataMessage(tags=parseTeamNotesForHashtags(request.team_notes),
+                                            mentions=mentions)
+
+    @endpoints.method(anno_with_id_resource_container, message_types.VoidMessage, path='anno/archive',
+                      http_method='POST', name='anno.archive')
+    def anno_archive(self, request):
+        Anno.archive(request.id)
+        return message_types.VoidMessage()

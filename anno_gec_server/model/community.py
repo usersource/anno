@@ -16,6 +16,7 @@ class Community(ndb.Model):
     team_key = ndb.StringProperty()
     team_secret = ndb.StringProperty()
     circles = ndb.JsonProperty()
+    team_hash = ndb.StringProperty()
 
     def to_response_message(self):
         return CommunityMessage(id=self.key.id(),
@@ -66,9 +67,13 @@ class Community(ndb.Model):
             else:
                 message.type = CommunityType.PRIVATE
 
+            from helper.utils import md5
+            team_hash = md5(message.team_key)[-8:]
+
             community = cls(name=message.name, description=message.description,
                             welcome_msg=message.welcome_msg, type=message.type,
-                            team_key=message.team_key, team_secret=message.team_secret)
+                            team_key=message.team_key, team_secret=message.team_secret,
+                            team_hash=team_hash)
             community.circles = { 0 : FIRST_CIRCLE }
             community.put()
             respData = "Community created."
@@ -127,3 +132,7 @@ class Community(ndb.Model):
     @classmethod
     def getCircleLevelValue(cls, community=None, circle_level=0):
         return community.get().circles.get(str(circle_level))
+
+    @classmethod
+    def get_by_hash(cls, team_hash):
+        return cls.query().filter(cls.team_hash == team_hash).get()

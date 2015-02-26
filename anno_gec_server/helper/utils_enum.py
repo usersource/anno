@@ -10,6 +10,8 @@ class AnnoQueryType(object):
     COUNTRY = "by_country"  # :
     COMMUNITY = "by_community"  # :
     APP = "by_app"  # :
+    MY_MENTIONS = "by_my_mentions"  # :
+    ARCHIVED = "by_archived"  # :
 
 class AnnoActionType(object):
     CREATED = "created"

@@ -18,6 +18,15 @@ indexes:
 - kind: Anno
   properties:
   - name: anno_id
+  - name: archived
+  - name: circle_level
+  - name: community
+  - name: created
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: anno_id
   - name: last_update_time
     direction: desc
 
@@ -112,6 +121,66 @@ indexes:
 - kind: Anno
   properties:
   - name: app_name
+  - name: vote_count
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: archived
+  - name: circle_level
+  - name: community
+  - name: created
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: archived
+  - name: circle_level
+  - name: community
+  - name: flag_count
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: archived
+  - name: circle_level
+  - name: community
+  - name: followup_count
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: archived
+  - name: circle_level
+  - name: community
+  - name: vote_count
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: archived
+  - name: community
+  - name: created
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: archived
+  - name: community
+  - name: flag_count
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: archived
+  - name: community
+  - name: followup_count
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: archived
+  - name: community
   - name: vote_count
     direction: desc
 

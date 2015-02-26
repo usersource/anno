@@ -66,7 +66,7 @@ class VoteApi(remote.Service):
     )
 
     @endpoints.method(vote_with_id_resource_container, message_types.VoidMessage, path='vote',
-                      http_method='DELETE', name="vote.delete", )
+                      http_method='DELETE', name="vote.delete")
     def vote_delete(self, request):
         """
         Exposes an API endpoint to delete an existing vote.
