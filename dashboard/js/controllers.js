@@ -170,7 +170,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             showDashboardMessage(message);
         }, function(status) {
             anno_item_data.archived = !(anno_item_data.archived);
-            showDashboardMessage("Oops... Something went wrong. Please try again.", true);
+            showDashboardMessage("Oops... Something went wrong while archiving. Please try again.", true);
         });
     };
 
@@ -439,7 +439,8 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
         var teamNotes = teamNotesTextInput.querySelector('textarea').value.trim(),
             tagged_users = [],
-            anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
+            anno_item_data = Utils.getAnnoById($scope.annoList, anno_id),
+            old_team_notes = anno_item_data.team_notes;
 
         if (teamNotes.length) {
             var teamNotesData = Utils.replaceUniqueUserNameWithID(teamNotes, anno_item_data.engaged_users);
@@ -467,6 +468,12 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
                 teamNotesTextNode.style.display = "block";
                 teamNotesTextInput.style.display = "none";
             }, 1000);
+        }, function(status) {
+            anno_item_data.team_notes = old_team_notes;
+            $scope.isTeamNotesEditing = false;
+            teamNotesTextNode.style.display = "block";
+            teamNotesTextInput.style.display = "none";
+            showDashboardMessage("Oops... Something went wrong while saving team notes. Please try again.", true);
         });
     };
 
