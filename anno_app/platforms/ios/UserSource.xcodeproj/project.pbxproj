@@ -34,6 +34,12 @@
 		1D89FB5A1AA0835B00AFB64E /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F583DEA5C56F422C875065F3 /* AddressBook.framework */; };
 		1D89FB5C1AA083A200AFB64E /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D9C2DFA1A9F47E600DA2B32 /* Fabric.framework */; };
 		1D89FB5D1AA083BE00AFB64E /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D9C2DF91A9F47E500DA2B32 /* Crashlytics.framework */; };
+		1D89FB601AA08D4400AFB64E /* UserSourceAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB6D26219EFAC5500AAF4A2 /* UserSourceAppDelegate.m */; };
+		1D89FB621AA08DBA00AFB64E /* UserSourceAppDelegate+notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3A51F59B2349C08F199D4F /* UserSourceAppDelegate+notification.m */; };
+		1D89FB651AA08FC200AFB64E /* PushPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E586D196A827A00FF9FC0 /* PushPlugin.m */; };
+		1D89FB661AA0900400AFB64E /* CDVContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB0F3648F894BB2AD5AB705 /* CDVContacts.m */; };
+		1D89FB671AA0900400AFB64E /* CDVContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 664D9BA08F294C4BA6067E35 /* CDVContact.m */; };
+		1D89FB681AA0908300AFB64E /* CDVLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = D691F1E126C04979A8ADECC6 /* CDVLocation.m */; };
 		1DAA38FE19023FC600FCE403 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */; };
 		1DAA39011902406000FCE403 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 305D5FD0115AB8F900A74A75 /* MobileCoreServices.framework */; };
 		1DAA390819024F2700FCE403 /* UserSourceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DF46C0619023329005408CA /* UserSourceTests.m */; };
@@ -64,7 +70,6 @@
 		5BB6D26A19EFADAD00AAF4A2 /* IntroViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDCA4E818F41A2B006E63FE /* IntroViewController.m */; };
 		5BB6D26B19EFADAD00AAF4A2 /* OptionFeedbackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDCA4EA18F41A2B006E63FE /* OptionFeedbackViewController.m */; };
 		5BB6D26C19EFADAD00AAF4A2 /* AnnoCordovaPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D933EB918F26F6400C82F37 /* AnnoCordovaPlugin.m */; };
-		5BB6D26D19EFADAD00AAF4A2 /* UserSourceAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB6D26219EFAC5500AAF4A2 /* UserSourceAppDelegate.m */; };
 		5BB6D26E19EFADAD00AAF4A2 /* ScreenshotGestureListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D6F35C91908CDE7002051ED /* ScreenshotGestureListener.m */; };
 		5BB6D26F19EFADD000AAF4A2 /* AnnoUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D44E81B18F7FEF5007A1635 /* AnnoUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BB6D27019EFADD000AAF4A2 /* AnnoDrawViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DDCA4E318F41A2B006E63FE /* AnnoDrawViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -73,22 +78,17 @@
 		5BB6D27319EFADD000AAF4A2 /* OptionFeedbackViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DDCA4E918F41A2B006E63FE /* OptionFeedbackViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BB6D27419EFADD000AAF4A2 /* AnnoCordovaPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D933EB818F26F6400C82F37 /* AnnoCordovaPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BB6D27619EFADD000AAF4A2 /* ScreenshotGestureListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D6F35C81908CDE7002051ED /* ScreenshotGestureListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5BB6D27719EFAE1A00AAF4A2 /* PushPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E586D196A827A00FF9FC0 /* PushPlugin.m */; };
 		5BB6D27819EFAE1A00AAF4A2 /* CDVDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9920240F974842C08E3C61EA /* CDVDevice.m */; };
 		5BB6D27919EFAE1A00AAF4A2 /* CDVInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = B357E14529B745B4AEF4D613 /* CDVInAppBrowser.m */; };
 		5BB6D27A19EFAE1A00AAF4A2 /* CDVFile.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA2D6AB6D364653839AC60B /* CDVFile.m */; };
 		5BB6D27B19EFAE1A00AAF4A2 /* CDVLocalFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = EFFA8AAFDA6B4CA9986F89CF /* CDVLocalFilesystem.m */; };
 		5BB6D27C19EFAE1A00AAF4A2 /* CDVAssetLibraryFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 68CE6AE042F64A29ABB97844 /* CDVAssetLibraryFilesystem.m */; };
-		5BB6D27D19EFAE1A00AAF4A2 /* CDVLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = D691F1E126C04979A8ADECC6 /* CDVLocation.m */; };
 		5BB6D27E19EFAE1A00AAF4A2 /* CDVCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B97616FA62A4AF7A287521D /* CDVCamera.m */; };
 		5BB6D27F19EFAE1A00AAF4A2 /* CDVJpegHeaderWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = B65FB769EDC04C6DA9017D5B /* CDVJpegHeaderWriter.m */; };
 		5BB6D28019EFAE1A00AAF4A2 /* CDVConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = F4815447178640BD972A8AE6 /* CDVConnection.m */; };
 		5BB6D28119EFAE1A00AAF4A2 /* CDVReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 941DE4CAE98246CE88EB2AE0 /* CDVReachability.m */; };
 		5BB6D28219EFAE1A00AAF4A2 /* SQLitePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C4B59A7AF94273A2748F6B /* SQLitePlugin.m */; };
 		5BB6D28319EFAE1A00AAF4A2 /* SocialSharing.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D309A94B6C24ABFA47CBCEA /* SocialSharing.m */; };
-		5BB6D28419EFAE1A00AAF4A2 /* CDVContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB0F3648F894BB2AD5AB705 /* CDVContacts.m */; };
-		5BB6D28519EFAE1A00AAF4A2 /* CDVContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 664D9BA08F294C4BA6067E35 /* CDVContact.m */; };
-		5BB6D28619EFAE1A00AAF4A2 /* UserSourceAppDelegate+notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3A51F59B2349C08F199D4F /* UserSourceAppDelegate+notification.m */; };
 		5BB6D28B19EFAF6900AAF4A2 /* libUserSourceStatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BBAD08119E66C560060A80D /* libUserSourceStatic.a */; };
 		5BB6D28C19EFAF7A00AAF4A2 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F713FA28964CB18D9D3278 /* libsqlite3.dylib */; };
 		5BBA243B19FFB3020086AB8E /* ShakeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBA243919FFB2CB0086AB8E /* ShakeView.m */; };
@@ -877,6 +877,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1D89FB681AA0908300AFB64E /* CDVLocation.m in Sources */,
+				1D89FB661AA0900400AFB64E /* CDVContacts.m in Sources */,
+				1D89FB671AA0900400AFB64E /* CDVContact.m in Sources */,
+				1D89FB651AA08FC200AFB64E /* PushPlugin.m in Sources */,
+				1D89FB621AA08DBA00AFB64E /* UserSourceAppDelegate+notification.m in Sources */,
+				1D89FB601AA08D4400AFB64E /* UserSourceAppDelegate.m in Sources */,
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				7784CB808E554E389709F3E3 /* GooglePlus.m in Sources */,
 				2E473CFA6E50494E8A3D64BB /* FacebookConnectPlugin.m in Sources */,
@@ -906,29 +912,23 @@
 				1D21309A1AA03BEC008F4566 /* UserSourceSwizzler.m in Sources */,
 				5BBA243B19FFB3020086AB8E /* ShakeView.m in Sources */,
 				5BB64FE119F7ABE50017F6FE /* AnnoSingleton.m in Sources */,
-				5BB6D27719EFAE1A00AAF4A2 /* PushPlugin.m in Sources */,
 				5BB6D27819EFAE1A00AAF4A2 /* CDVDevice.m in Sources */,
 				5BB6D27919EFAE1A00AAF4A2 /* CDVInAppBrowser.m in Sources */,
 				5BB6D27A19EFAE1A00AAF4A2 /* CDVFile.m in Sources */,
 				5BB6D27B19EFAE1A00AAF4A2 /* CDVLocalFilesystem.m in Sources */,
 				5BB6D27C19EFAE1A00AAF4A2 /* CDVAssetLibraryFilesystem.m in Sources */,
-				5BB6D27D19EFAE1A00AAF4A2 /* CDVLocation.m in Sources */,
 				5BB6D27E19EFAE1A00AAF4A2 /* CDVCamera.m in Sources */,
 				5BB6D27F19EFAE1A00AAF4A2 /* CDVJpegHeaderWriter.m in Sources */,
 				5BB6D28019EFAE1A00AAF4A2 /* CDVConnection.m in Sources */,
 				5BB6D28119EFAE1A00AAF4A2 /* CDVReachability.m in Sources */,
 				5BB6D28219EFAE1A00AAF4A2 /* SQLitePlugin.m in Sources */,
 				5BB6D28319EFAE1A00AAF4A2 /* SocialSharing.m in Sources */,
-				5BB6D28419EFAE1A00AAF4A2 /* CDVContacts.m in Sources */,
-				5BB6D28519EFAE1A00AAF4A2 /* CDVContact.m in Sources */,
-				5BB6D28619EFAE1A00AAF4A2 /* UserSourceAppDelegate+notification.m in Sources */,
 				5BB6D26719EFADAD00AAF4A2 /* AnnoUtils.m in Sources */,
 				5BB6D26819EFADAD00AAF4A2 /* AnnoDrawViewController.m in Sources */,
 				5BB6D26919EFADAD00AAF4A2 /* CommunityViewController.m in Sources */,
 				5BB6D26A19EFADAD00AAF4A2 /* IntroViewController.m in Sources */,
 				5BB6D26B19EFADAD00AAF4A2 /* OptionFeedbackViewController.m in Sources */,
 				5BB6D26C19EFADAD00AAF4A2 /* AnnoCordovaPlugin.m in Sources */,
-				5BB6D26D19EFADAD00AAF4A2 /* UserSourceAppDelegate.m in Sources */,
 				5BB6D26E19EFADAD00AAF4A2 /* ScreenshotGestureListener.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
