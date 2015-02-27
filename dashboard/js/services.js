@@ -323,13 +323,12 @@ ServiceModule.factory('DataService', function($http, $location, $window, $cookie
         var req = {
             method : endpointData.method,
             url : url,
+            params : params,
             cache : true
         };
 
-        if (req.method == "POST") {
+        if (req.method === "POST") {
             req.data = params;
-        } else {
-            req.params = params;
         }
 
         $http(req).success(function(data, status, header, config) {
