@@ -11,19 +11,8 @@ DashboardConstantsModule.value("DashboardConstants", {
         "mostActive" : "by_activity_count",
         "archived" : "by_archived"
     },
-    apiRoot : {
-        "1" : "https://annoserver.appspot.com/_ah/api",
-        "2" : "https://annoserver-test.appspot.com/_ah/api",
-        "3" : "https://usersource-anno.appspot.com/_ah/api",
-        "4" : "http://localhost:8081/_ah/api"
-    },
-    imageURL : {
-        "1" : "https://annoserver.appspot.com/screenshot?anno_id=",
-        "2" : "https://annoserver-test.appspot.com/screenshot?anno_id=",
-        "3" : "https://usersource-anno.appspot.com/screenshot?anno_id=",
-        "4" : "http://localhost:8081/screenshot?anno_id="
-    },
-    serverURLKey: "4",
+    apiRoot : "/_ah/api",
+    imageURL : "/screenshot?anno_id=",
     endpointVersion: "1.0",
     endpointUrl : {
         "account.dashboard.authenticate" : {

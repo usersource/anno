@@ -60,7 +60,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         oldScrollTop = 0;
 
     $scope.noTeamNotesText = "No Notes";
-    $scope.imageBaseURL = DashboardConstants.imageURL[DashboardConstants.serverURLKey];
+    $scope.imageBaseURL = DashboardConstants.imageURL;
     $scope.display_name = $cookieStore.get('user_display_name');
     $scope.email = $cookieStore.get('user_email');
     $scope.image_url = $cookieStore.get('user_image_url');

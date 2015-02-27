@@ -308,7 +308,7 @@ ServiceModule.factory('Autocomplete', function(Utils) {
 });
 
 ServiceModule.factory('DataService', function($http, $location, $window, $cookieStore, Utils, DashboardConstants) {
-    var apiRoot = DashboardConstants.apiRoot[DashboardConstants.serverURLKey];
+    var apiRoot = DashboardConstants.apiRoot;
 
     function checkAuthentication(team_hash, team_name) {
         var primary_url = '/dashboard/' + team_hash + '/' + team_name;
