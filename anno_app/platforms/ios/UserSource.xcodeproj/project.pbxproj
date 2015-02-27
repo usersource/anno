@@ -24,6 +24,10 @@
 
 /* Begin PBXBuildFile section */
 		1B2A3A2F78C941779CD12BD3 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2775F46639AF437EAC061804 /* CoreText.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		1D2130921AA039D8008F4566 /* UIWindow+AnnoSingleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D21308F1AA03236008F4566 /* UIWindow+AnnoSingleton.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1D2130931AA039D8008F4566 /* UserSourceSwizzler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D21308B1AA02DB5008F4566 /* UserSourceSwizzler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1D2130991AA03BEC008F4566 /* UIWindow+AnnoSingleton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D2130901AA03236008F4566 /* UIWindow+AnnoSingleton.m */; };
+		1D21309A1AA03BEC008F4566 /* UserSourceSwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D21308C1AA02DB6008F4566 /* UserSourceSwizzler.m */; };
 		1D49F333198BC30D0077DE51 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1D49F332198BC30D0077DE51 /* Images.xcassets */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D613FB1190B93E90068C1B7 /* ScreenshotGestureListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D6F35C91908CDE7002051ED /* ScreenshotGestureListener.m */; };
@@ -69,7 +73,6 @@
 		5BB6D27219EFADD000AAF4A2 /* IntroViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DDCA4E718F41A2B006E63FE /* IntroViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BB6D27319EFADD000AAF4A2 /* OptionFeedbackViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DDCA4E918F41A2B006E63FE /* OptionFeedbackViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BB6D27419EFADD000AAF4A2 /* AnnoCordovaPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D933EB818F26F6400C82F37 /* AnnoCordovaPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5BB6D27519EFADD000AAF4A2 /* UserSourceAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BB6D26119EFAC5500AAF4A2 /* UserSourceAppDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BB6D27619EFADD000AAF4A2 /* ScreenshotGestureListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D6F35C81908CDE7002051ED /* ScreenshotGestureListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BB6D27719EFAE1A00AAF4A2 /* PushPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E586D196A827A00FF9FC0 /* PushPlugin.m */; };
 		5BB6D27819EFAE1A00AAF4A2 /* CDVDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9920240F974842C08E3C61EA /* CDVDevice.m */; };
@@ -170,6 +173,10 @@
 		0A3A51F59B2349C08F199D4F /* UserSourceAppDelegate+notification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UserSourceAppDelegate+notification.m"; path = "com.phonegap.plugins.PushPlugin/UserSourceAppDelegate+notification.m"; sourceTree = "<group>"; };
 		1D02161618EED12600E97738 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		1D02161818EED18600E97738 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		1D21308B1AA02DB5008F4566 /* UserSourceSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserSourceSwizzler.h; sourceTree = "<group>"; };
+		1D21308C1AA02DB6008F4566 /* UserSourceSwizzler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserSourceSwizzler.m; sourceTree = "<group>"; };
+		1D21308F1AA03236008F4566 /* UIWindow+AnnoSingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIWindow+AnnoSingleton.h"; sourceTree = "<group>"; };
+		1D2130901AA03236008F4566 /* UIWindow+AnnoSingleton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIWindow+AnnoSingleton.m"; sourceTree = "<group>"; };
 		1D3E586C196A827A00FF9FC0 /* PushPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PushPlugin.h; path = com.phonegap.plugins.PushPlugin/PushPlugin.h; sourceTree = "<group>"; };
 		1D3E586D196A827A00FF9FC0 /* PushPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PushPlugin.m; path = com.phonegap.plugins.PushPlugin/PushPlugin.m; sourceTree = "<group>"; };
 		1D44E81B18F7FEF5007A1635 /* AnnoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnnoUtils.h; sourceTree = "<group>"; };
@@ -343,6 +350,10 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				1D21308F1AA03236008F4566 /* UIWindow+AnnoSingleton.h */,
+				1D2130901AA03236008F4566 /* UIWindow+AnnoSingleton.m */,
+				1D21308B1AA02DB5008F4566 /* UserSourceSwizzler.h */,
+				1D21308C1AA02DB6008F4566 /* UserSourceSwizzler.m */,
 				1D44E81B18F7FEF5007A1635 /* AnnoUtils.h */,
 				1D44E81C18F7FEF5007A1635 /* AnnoUtils.m */,
 				1DDCA4E318F41A2B006E63FE /* AnnoDrawViewController.h */,
@@ -605,11 +616,12 @@
 				5BB6D27219EFADD000AAF4A2 /* IntroViewController.h in Headers */,
 				5BB6D27319EFADD000AAF4A2 /* OptionFeedbackViewController.h in Headers */,
 				5BB6D27419EFADD000AAF4A2 /* AnnoCordovaPlugin.h in Headers */,
-				5BB6D27519EFADD000AAF4A2 /* UserSourceAppDelegate.h in Headers */,
 				5BB6D27619EFADD000AAF4A2 /* ScreenshotGestureListener.h in Headers */,
 				1DAE4C2F19F528B200E3A1BA /* UserSourceStatic.h in Headers */,
 				5BB64FE019F7ABD10017F6FE /* AnnoSingleton.h in Headers */,
 				5BBA243C19FFB3100086AB8E /* ShakeView.h in Headers */,
+				1D2130921AA039D8008F4566 /* UIWindow+AnnoSingleton.h in Headers */,
+				1D2130931AA039D8008F4566 /* UserSourceSwizzler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -894,6 +906,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1D2130991AA03BEC008F4566 /* UIWindow+AnnoSingleton.m in Sources */,
+				1D21309A1AA03BEC008F4566 /* UserSourceSwizzler.m in Sources */,
 				5BBA243B19FFB3020086AB8E /* ShakeView.m in Sources */,
 				5BB64FE119F7ABE50017F6FE /* AnnoSingleton.m in Sources */,
 				5BB6D27719EFAE1A00AAF4A2 /* PushPlugin.m in Sources */,
