@@ -168,6 +168,9 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
                 message = "Item unarchived successfully.";
             }
             showDashboardMessage(message);
+        }, function(status) {
+            anno_item_data.archived = !(anno_item_data.archived);
+            showDashboardMessage("Oops... Something went wrong. Please try again.", true);
         });
     };
 
