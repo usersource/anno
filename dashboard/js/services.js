@@ -337,7 +337,7 @@ ServiceModule.factory('DataService', function($http, $location, $window, $cookie
                 success_callback(data);
             }
         }).error(function(data, status, header, config) {
-            console.error("Error:", endpointName);
+            console.error("Error in", endpointName, ":", data.error);
             if (angular.isFunction(error_callback)) {
                 error_callback(status);
             }
