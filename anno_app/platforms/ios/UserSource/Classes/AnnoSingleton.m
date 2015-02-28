@@ -120,6 +120,15 @@ static AnnoSingleton *sharedInstance = nil;
     self.viewControllerList = [[NSMutableArray alloc] initWithObjects:window.rootViewController, nil];
     self.annoDrawViewControllerList = [[NSMutableArray alloc] init];
     [self getShakeSettings];
+    [self startListener];
+}
+
+- (void) startListener {
+    static BOOL methodSwizzled = NO;
+    if (!methodSwizzled) {
+        SwizzleMethod([UIWindow class], @selector(motionEnded:withEvent:), @selector(UserSourceMotionEnded:withEvent:));
+        methodSwizzled = YES;
+    }
 }
 
 - (void) setupAnonymousUserWithteamKey:(NSString*)teamKeyValue
