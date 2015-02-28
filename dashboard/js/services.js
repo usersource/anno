@@ -308,7 +308,7 @@ ServiceModule.factory('Autocomplete', function(Utils) {
 });
 
 ServiceModule.factory('DataService', function($http, $location, $window, $cookieStore, Utils, DashboardConstants) {
-    var apiRoot = DashboardConstants.apiRoot[DashboardConstants.serverURLKey];
+    var apiRoot = DashboardConstants.apiRoot;
 
     function checkAuthentication(team_hash, team_name) {
         var primary_url = '/dashboard/' + team_hash + '/' + team_name;
@@ -323,13 +323,12 @@ ServiceModule.factory('DataService', function($http, $location, $window, $cookie
         var req = {
             method : endpointData.method,
             url : url,
+            params : params,
             cache : true
         };
 
-        if (req.method == "POST") {
+        if (req.method === "POST") {
             req.data = params;
-        } else {
-            req.params = params;
         }
 
         $http(req).success(function(data, status, header, config) {
@@ -337,7 +336,7 @@ ServiceModule.factory('DataService', function($http, $location, $window, $cookie
                 success_callback(data);
             }
         }).error(function(data, status, header, config) {
-            console.error("Error:", endpointName);
+            console.error("Error in", endpointName, ":", data.error);
             if (angular.isFunction(error_callback)) {
                 error_callback(status);
             }

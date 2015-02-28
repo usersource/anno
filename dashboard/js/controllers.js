@@ -60,7 +60,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         oldScrollTop = 0;
 
     $scope.noTeamNotesText = "No Notes";
-    $scope.imageBaseURL = DashboardConstants.imageURL[DashboardConstants.serverURLKey];
+    $scope.imageBaseURL = DashboardConstants.imageURL;
     $scope.display_name = $cookieStore.get('user_display_name');
     $scope.email = $cookieStore.get('user_email');
     $scope.image_url = $cookieStore.get('user_image_url');
@@ -168,6 +168,9 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
                 message = "Item unarchived successfully.";
             }
             showDashboardMessage(message);
+        }, function(status) {
+            anno_item_data.archived = !(anno_item_data.archived);
+            showDashboardMessage("Oops... Something went wrong while archiving. Please try again.", true);
         });
     };
 
@@ -436,7 +439,8 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
         var teamNotes = teamNotesTextInput.querySelector('textarea').value.trim(),
             tagged_users = [],
-            anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
+            anno_item_data = Utils.getAnnoById($scope.annoList, anno_id),
+            old_team_notes = anno_item_data.team_notes;
 
         if (teamNotes.length) {
             var teamNotesData = Utils.replaceUniqueUserNameWithID(teamNotes, anno_item_data.engaged_users);
@@ -464,6 +468,12 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
                 teamNotesTextNode.style.display = "block";
                 teamNotesTextInput.style.display = "none";
             }, 1000);
+        }, function(status) {
+            anno_item_data.team_notes = old_team_notes;
+            $scope.isTeamNotesEditing = false;
+            teamNotesTextNode.style.display = "block";
+            teamNotesTextInput.style.display = "none";
+            showDashboardMessage("Oops... Something went wrong while saving team notes. Please try again.", true);
         });
     };
 
