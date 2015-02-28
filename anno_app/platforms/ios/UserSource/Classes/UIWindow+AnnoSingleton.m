@@ -6,7 +6,17 @@
 
 - (void) UserSourceMotionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event {
     ShakeView *shakeView = [[ShakeView alloc] init];
-    [shakeView motionEnded:motion withEvent:event];
+    if (event.subtype == UIEventSubtypeMotionShake) {
+        [shakeView showShakeMenu];
+    }
+
+    if ([super respondsToSelector:@selector(motionEnded:withEvent:)]) {
+        [super motionEnded:motion withEvent:event];
+    }
+}
+
+- (BOOL) canBecomeFirstResponder {
+    return YES;
 }
 
 @end

@@ -29,7 +29,7 @@
 - (void) postNewTapped;
 - (void) viewFeedbackTapped;
 - (void) styleSheet;
-- (void) motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event;
+- (void) showShakeMenu;
 
 @end
 
