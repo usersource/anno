@@ -29,10 +29,6 @@
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"Geolocation\"><param name=\"ios-package\" value=\"CDVLocation\" /></feature>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<feature name=\"InAppBrowser\"><param name=\"ios-package\" value=\"CDVInAppBrowser\" /></feature>",
                             "count": 1
                         },
@@ -78,7 +74,7 @@
                     "CoreLocation.framework": [
                         {
                             "xml": "false",
-                            "count": 2
+                            "count": 1
                         }
                     ],
                     "libsqlite3.dylib": [
@@ -113,7 +109,7 @@
                     "NSLocationWhenInUseUsageDescription": [
                         {
                             "xml": "<string />",
-                            "count": 2
+                            "count": 1
                         }
                     ],
                     "CFBundleURLTypes": [],
@@ -155,9 +151,6 @@
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "org.apache.cordova.network-information": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        },
-        "org.apache.cordova.geolocation": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "org.apache.cordova.inappbrowser": {
