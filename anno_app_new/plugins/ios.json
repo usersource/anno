@@ -49,10 +49,6 @@
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"PushPlugin\"><param name=\"ios-package\" value=\"PushPlugin\" /></feature>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<feature name=\"GooglePlus\"><param name=\"ios-package\" value=\"GooglePlus\" /><param name=\"onload\" value=\"true\" /></feature>",
                             "count": 1
                         },
@@ -284,9 +280,6 @@
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "org.apache.cordova.contacts": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        },
-        "com.phonegap.plugins.PushPlugin": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "nl.x-services.plugins.googleplus": {

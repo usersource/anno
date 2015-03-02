@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXAggregateTarget section */
 		5BBAD0D719E691860060A80D /* UserSourcePlugin */ = {
 			isa = PBXAggregateTarget;
@@ -36,7 +35,6 @@
 		1D89FB5D1AA083BE00AFB64E /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D9C2DF91A9F47E500DA2B32 /* Crashlytics.framework */; };
 		1D89FB601AA08D4400AFB64E /* UserSourceAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB6D26219EFAC5500AAF4A2 /* UserSourceAppDelegate.m */; };
 		1D89FB621AA08DBA00AFB64E /* UserSourceAppDelegate+notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3A51F59B2349C08F199D4F /* UserSourceAppDelegate+notification.m */; };
-		1D89FB651AA08FC200AFB64E /* PushPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E586D196A827A00FF9FC0 /* PushPlugin.m */; };
 		1D89FB661AA0900400AFB64E /* CDVContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB0F3648F894BB2AD5AB705 /* CDVContacts.m */; };
 		1D89FB671AA0900400AFB64E /* CDVContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 664D9BA08F294C4BA6067E35 /* CDVContact.m */; };
 		1D89FB681AA0908300AFB64E /* CDVLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = D691F1E126C04979A8ADECC6 /* CDVLocation.m */; };
@@ -880,7 +878,6 @@
 				1D89FB681AA0908300AFB64E /* CDVLocation.m in Sources */,
 				1D89FB661AA0900400AFB64E /* CDVContacts.m in Sources */,
 				1D89FB671AA0900400AFB64E /* CDVContact.m in Sources */,
-				1D89FB651AA08FC200AFB64E /* PushPlugin.m in Sources */,
 				1D89FB621AA08DBA00AFB64E /* UserSourceAppDelegate+notification.m in Sources */,
 				1D89FB601AA08D4400AFB64E /* UserSourceAppDelegate.m in Sources */,
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,

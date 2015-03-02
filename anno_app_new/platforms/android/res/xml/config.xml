@@ -49,9 +49,6 @@
     <feature name="Contacts">
         <param name="android-package" value="org.apache.cordova.contacts.ContactManager" />
     </feature>
-    <feature name="PushPlugin">
-        <param name="android-package" value="com.plugin.gcm.PushPlugin" />
-    </feature>
     <feature name="GooglePlus">
         <param name="android-package" value="nl.xservices.plugins.GooglePlus" />
         <param name="onload" value="true" />
