@@ -321,13 +321,6 @@ module.exports = [
         "merges": [
             "Contact"
         ]
-    },
-    {
-        "file": "plugins/nl.x-services.plugins.googleplus/www/GooglePlus.js",
-        "id": "nl.x-services.plugins.googleplus.GooglePlus",
-        "clobbers": [
-            "window.plugins.googleplus"
-        ]
     }
 ];
 module.exports.metadata = 
@@ -341,8 +334,7 @@ module.exports.metadata =
     "org.apache.cordova.inappbrowser": "0.5.2",
     "com.brodysoft.sqlitePlugin": "1.0.3",
     "nl.x-services.plugins.socialsharing": "4.3.8",
-    "org.apache.cordova.contacts": "0.2.13",
-    "nl.x-services.plugins.googleplus": "1.0.8"
+    "org.apache.cordova.contacts": "0.2.13"
 }
 // BOTTOM OF METADATA
 });

@@ -22,7 +22,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		1B2A3A2F78C941779CD12BD3 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2775F46639AF437EAC061804 /* CoreText.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		1D2130921AA039D8008F4566 /* UIWindow+AnnoSingleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D21308F1AA03236008F4566 /* UIWindow+AnnoSingleton.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1D2130931AA039D8008F4566 /* UserSourceSwizzler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D21308B1AA02DB5008F4566 /* UserSourceSwizzler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1D2130991AA03BEC008F4566 /* UIWindow+AnnoSingleton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D2130901AA03236008F4566 /* UIWindow+AnnoSingleton.m */; };
@@ -55,8 +54,6 @@
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		302D95F214D2391D003F00A1 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 302D95F014D2391D003F00A1 /* MainViewController.xib */; };
 		305D5FD1115AB8F900A74A75 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 305D5FD0115AB8F900A74A75 /* MobileCoreServices.framework */; };
-		38054B42B93B4E0D97DFE419 /* GooglePlus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94F2AD4ABFF3452F997697B7 /* GooglePlus.framework */; };
-		4F021CD57BAA4A8481CABC75 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F6A44BD0CE54299B52C91B4 /* Security.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		5BB64FE019F7ABD10017F6FE /* AnnoSingleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BB64FDC19F79C0E0017F6FE /* AnnoSingleton.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BB64FE119F7ABE50017F6FE /* AnnoSingleton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB64FDD19F79C0E0017F6FE /* AnnoSingleton.m */; };
 		5BB6D26719EFADAD00AAF4A2 /* AnnoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D44E81C18F7FEF5007A1635 /* AnnoUtils.m */; };
@@ -89,10 +86,6 @@
 		5BBA243B19FFB3020086AB8E /* ShakeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBA243919FFB2CB0086AB8E /* ShakeView.m */; };
 		5BBA243C19FFB3100086AB8E /* ShakeView.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBA243819FFB2CB0086AB8E /* ShakeView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BBAAB9919F004C800AAC24D /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD5266640B0344749F49768A /* AddressBookUI.framework */; };
-		7784CB808E554E389709F3E3 /* GooglePlus.m in Sources */ = {isa = PBXBuildFile; fileRef = ABF26883A9154097BD756457 /* GooglePlus.m */; };
-		9188E8A8A5064151B676FEB5 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DDBD1190A9946D7B084C779 /* CoreMotion.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		93348D7DBB5B4E00AF3908CF /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B02351B18A74AB4A1AF580D /* MediaPlayer.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		B494BB33A79A45BD873BB269 /* GoogleOpenSource.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E42685CAE404B538B7AF06F /* GoogleOpenSource.framework */; };
 		F840E1F1165FE0F500CFE078 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = F840E1F0165FE0F500CFE078 /* config.xml */; };
 /* End PBXBuildFile section */
 
@@ -214,7 +207,6 @@
 		3DD8F1237A3D4F449FA17AC4 /* CDVAssetLibraryFilesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVAssetLibraryFilesystem.h; path = org.apache.cordova.file/CDVAssetLibraryFilesystem.h; sourceTree = "<group>"; };
 		3FB0F3648F894BB2AD5AB705 /* CDVContacts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVContacts.m; path = org.apache.cordova.contacts/CDVContacts.m; sourceTree = "<group>"; };
 		4D1C4B1BCA954673AA3A74F9 /* CDVReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVReachability.h; path = "org.apache.cordova.network-information/CDVReachability.h"; sourceTree = "<group>"; };
-		4F04916C75E647579ACBEA31 /* GooglePlus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GooglePlus.h; path = "nl.x-services.plugins.googleplus/GooglePlus.h"; sourceTree = "<group>"; };
 		5491A59902AB44CA90766B19 /* SocialSharing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SocialSharing.h; path = "nl.x-services.plugins.socialsharing/SocialSharing.h"; sourceTree = "<group>"; };
 		5AEE5B34173C68D80009041E /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
@@ -264,7 +256,6 @@
 		9A2FA4613C12492EB756D036 /* FacebookConnectPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FacebookConnectPlugin.m; path = com.phonegap.plugins.facebookconnect/FacebookConnectPlugin.m; sourceTree = "<group>"; };
 		9E42685CAE404B538B7AF06F /* GoogleOpenSource.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleOpenSource.framework; path = "UserSource/Plugins/nl.x-services.plugins.googleplus/GoogleOpenSource.framework"; sourceTree = "<group>"; };
 		A5C848846E0648D78FE1CE30 /* CDVLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVLocation.h; path = org.apache.cordova.geolocation/CDVLocation.h; sourceTree = "<group>"; };
-		ABF26883A9154097BD756457 /* GooglePlus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GooglePlus.m; path = "nl.x-services.plugins.googleplus/GooglePlus.m"; sourceTree = "<group>"; };
 		B357E14529B745B4AEF4D613 /* CDVInAppBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVInAppBrowser.m; path = org.apache.cordova.inappbrowser/CDVInAppBrowser.m; sourceTree = "<group>"; };
 		B65FB769EDC04C6DA9017D5B /* CDVJpegHeaderWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVJpegHeaderWriter.m; path = org.apache.cordova.camera/CDVJpegHeaderWriter.m; sourceTree = "<group>"; };
 		B82173E04CF6475A970FD85E /* ImageIO.framework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
@@ -294,12 +285,6 @@
 				1DF9C52A18FBBD54004077BE /* AssetsLibrary.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
 				305D5FD1115AB8F900A74A75 /* MobileCoreServices.framework in Frameworks */,
-				38054B42B93B4E0D97DFE419 /* GooglePlus.framework in Frameworks */,
-				B494BB33A79A45BD873BB269 /* GoogleOpenSource.framework in Frameworks */,
-				9188E8A8A5064151B676FEB5 /* CoreMotion.framework in Frameworks */,
-				1B2A3A2F78C941779CD12BD3 /* CoreText.framework in Frameworks */,
-				93348D7DBB5B4E00AF3908CF /* MediaPlayer.framework in Frameworks */,
-				4F021CD57BAA4A8481CABC75 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -529,8 +514,6 @@
 				F2418451C4C6486CA194768D /* CDVContact.h */,
 				0A3A51F59B2349C08F199D4F /* UserSourceAppDelegate+notification.m */,
 				68F2E17157404E209E5111E0 /* UserSourceAppDelegate+notification.h */,
-				ABF26883A9154097BD756457 /* GooglePlus.m */,
-				4F04916C75E647579ACBEA31 /* GooglePlus.h */,
 				9A2FA4613C12492EB756D036 /* FacebookConnectPlugin.m */,
 				61A796C5D2C54C2CBAB078E1 /* FacebookConnectPlugin.h */,
 			);
@@ -876,7 +859,6 @@
 				1D89FB621AA08DBA00AFB64E /* UserSourceAppDelegate+notification.m in Sources */,
 				1D89FB601AA08D4400AFB64E /* UserSourceAppDelegate.m in Sources */,
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
-				7784CB808E554E389709F3E3 /* GooglePlus.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -47,14 +47,6 @@
                         {
                             "xml": "<feature name=\"Contacts\"><param name=\"ios-package\" value=\"CDVContacts\" /></feature>",
                             "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"GooglePlus\"><param name=\"ios-package\" value=\"GooglePlus\" /><param name=\"onload\" value=\"true\" /></feature>",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<access origin=\"https://accounts.google.com/*\" />",
-                            "count": 1
                         }
                     ]
                 }
@@ -64,7 +56,7 @@
                     "SystemConfiguration.framework": [
                         {
                             "xml": "true",
-                            "count": 2
+                            "count": 1
                         }
                     ],
                     "CoreGraphics.framework": [
@@ -95,10 +87,6 @@
                         {
                             "xml": "false",
                             "count": 2
-                        },
-                        {
-                            "xml": "true",
-                            "count": 1
                         }
                     ],
                     "libsqlite3.dylib": [
@@ -130,7 +118,7 @@
                     "AddressBook.framework": [
                         {
                             "xml": "true",
-                            "count": 2
+                            "count": 1
                         }
                     ],
                     "AddressBookUI.framework": [
@@ -139,30 +127,10 @@
                             "count": 1
                         }
                     ],
-                    "CoreMotion.framework": [
-                        {
-                            "xml": "true",
-                            "count": 1
-                        }
-                    ],
-                    "CoreText.framework": [
-                        {
-                            "xml": "true",
-                            "count": 1
-                        }
-                    ],
-                    "MediaPlayer.framework": [
-                        {
-                            "xml": "true",
-                            "count": 1
-                        }
-                    ],
-                    "Security.framework": [
-                        {
-                            "xml": "true",
-                            "count": 1
-                        }
-                    ],
+                    "CoreMotion.framework": [],
+                    "CoreText.framework": [],
+                    "MediaPlayer.framework": [],
+                    "Security.framework": [],
                     "Accounts.framework": []
                 }
             },
@@ -174,12 +142,7 @@
                             "count": 2
                         }
                     ],
-                    "CFBundleURLTypes": [
-                        {
-                            "xml": "<array><dict><key>CFBundleTypeRole</key><string>Editor</string><key>CFBundleURLName</key><string>io.usersource.anno</string><key>CFBundleURLSchemes</key><array><string>io.usersource.anno</string></array></dict></array>",
-                            "count": 1
-                        }
-                    ],
+                    "CFBundleURLTypes": [],
                     "FacebookAppID": [],
                     "FacebookDisplayName": []
                 }
@@ -233,9 +196,6 @@
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "org.apache.cordova.contacts": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        },
-        "nl.x-services.plugins.googleplus": {
             "PACKAGE_NAME": "io.usersource.anno"
         }
     },
