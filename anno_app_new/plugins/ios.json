@@ -39,10 +39,6 @@
                         {
                             "xml": "<feature name=\"SQLitePlugin\"><param name=\"ios-package\" value=\"SQLitePlugin\" /></feature>",
                             "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"Contacts\"><param name=\"ios-package\" value=\"CDVContacts\" /></feature>",
-                            "count": 1
                         }
                     ]
                 }
@@ -58,7 +54,7 @@
                     "CoreGraphics.framework": [
                         {
                             "xml": "false",
-                            "count": 4
+                            "count": 3
                         }
                     ],
                     "AssetsLibrary.framework": [
@@ -103,18 +99,8 @@
                             "count": 1
                         }
                     ],
-                    "AddressBook.framework": [
-                        {
-                            "xml": "true",
-                            "count": 1
-                        }
-                    ],
-                    "AddressBookUI.framework": [
-                        {
-                            "xml": "true",
-                            "count": 1
-                        }
-                    ],
+                    "AddressBook.framework": [],
+                    "AddressBookUI.framework": [],
                     "CoreMotion.framework": [],
                     "CoreText.framework": [],
                     "MediaPlayer.framework": [],
@@ -178,9 +164,6 @@
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "com.brodysoft.sqlitePlugin": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        },
-        "org.apache.cordova.contacts": {
             "PACKAGE_NAME": "io.usersource.anno"
         }
     },
