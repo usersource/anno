@@ -1,6 +1,6 @@
 import java.util.regex.Pattern
 
-apply plugin: 'android-lirary'
+apply plugin: 'android-library'
 
 buildscript {
     repositories {
