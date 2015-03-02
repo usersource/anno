@@ -52,13 +52,10 @@
 		1DF46C0519023329005408CA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1DF46C0319023329005408CA /* InfoPlist.strings */; };
 		1DF9C52A18FBBD54004077BE /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */; };
 		1F766FE113BBADB100FB74C0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1F766FDC13BBADB100FB74C0 /* Localizable.strings */; };
-		24F803EF0B8D4C0C944F4580 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 387E6551480A42569C9F7E85 /* Accounts.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
-		2E473CFA6E50494E8A3D64BB /* FacebookConnectPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A2FA4613C12492EB756D036 /* FacebookConnectPlugin.m */; };
 		302D95F214D2391D003F00A1 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 302D95F014D2391D003F00A1 /* MainViewController.xib */; };
 		305D5FD1115AB8F900A74A75 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 305D5FD0115AB8F900A74A75 /* MobileCoreServices.framework */; };
 		38054B42B93B4E0D97DFE419 /* GooglePlus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94F2AD4ABFF3452F997697B7 /* GooglePlus.framework */; };
-		4534B7172D6B41F8BBBBA579 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93A14EEC516145FAA4B3A57A /* FacebookSDK.framework */; };
 		4F021CD57BAA4A8481CABC75 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F6A44BD0CE54299B52C91B4 /* Security.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		5BB64FE019F7ABD10017F6FE /* AnnoSingleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BB64FDC19F79C0E0017F6FE /* AnnoSingleton.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BB64FE119F7ABE50017F6FE /* AnnoSingleton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB64FDD19F79C0E0017F6FE /* AnnoSingleton.m */; };
@@ -303,8 +300,6 @@
 				1B2A3A2F78C941779CD12BD3 /* CoreText.framework in Frameworks */,
 				93348D7DBB5B4E00AF3908CF /* MediaPlayer.framework in Frameworks */,
 				4F021CD57BAA4A8481CABC75 /* Security.framework in Frameworks */,
-				4534B7172D6B41F8BBBBA579 /* FacebookSDK.framework in Frameworks */,
-				24F803EF0B8D4C0C944F4580 /* Accounts.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -882,7 +877,6 @@
 				1D89FB601AA08D4400AFB64E /* UserSourceAppDelegate.m in Sources */,
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				7784CB808E554E389709F3E3 /* GooglePlus.m in Sources */,
-				2E473CFA6E50494E8A3D64BB /* FacebookConnectPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

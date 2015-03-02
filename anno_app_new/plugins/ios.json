@@ -55,34 +55,6 @@
                         {
                             "xml": "<access origin=\"https://accounts.google.com/*\" />",
                             "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"FacebookConnectPlugin\"><param name=\"ios-package\" value=\"FacebookConnectPlugin\" /><param name=\"onload\" value=\"true\" /></feature>",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<plugin name=\"FacebookConnectPlugin\" value=\"FacebookConnectPlugin\" />",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<access origin=\"https://m.facebook.com\" />",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<access origin=\"https://graph.facebook.com\" />",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<access origin=\"https://api.facebook.com\" />",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<access origin=\"https://*.fbcdn.net\" />",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<access origin=\"https://*.akamaihd.net\" />",
-                            "count": 1
                         }
                     ]
                 }
@@ -132,7 +104,7 @@
                     "libsqlite3.dylib": [
                         {
                             "xml": "false",
-                            "count": 2
+                            "count": 1
                         }
                     ],
                     "Social.framework": [
@@ -142,7 +114,7 @@
                         },
                         {
                             "xml": "true",
-                            "count": 2
+                            "count": 1
                         }
                     ],
                     "MessageUI.framework": [
@@ -188,15 +160,10 @@
                     "Security.framework": [
                         {
                             "xml": "true",
-                            "count": 2
-                        }
-                    ],
-                    "Accounts.framework": [
-                        {
-                            "xml": "true",
                             "count": 1
                         }
-                    ]
+                    ],
+                    "Accounts.framework": []
                 }
             },
             "*-Info.plist": {
@@ -211,24 +178,10 @@
                         {
                             "xml": "<array><dict><key>CFBundleTypeRole</key><string>Editor</string><key>CFBundleURLName</key><string>io.usersource.anno</string><key>CFBundleURLSchemes</key><array><string>io.usersource.anno</string></array></dict></array>",
                             "count": 1
-                        },
-                        {
-                            "xml": "<array><dict><key>CFBundleURLSchemes</key><array><string>fb397257797119364</string></array></dict></array>",
-                            "count": 1
                         }
                     ],
-                    "FacebookAppID": [
-                        {
-                            "xml": "<string>397257797119364</string>",
-                            "count": 1
-                        }
-                    ],
-                    "FacebookDisplayName": [
-                        {
-                            "xml": "<string>UserSource</string>",
-                            "count": 1
-                        }
-                    ]
+                    "FacebookAppID": [],
+                    "FacebookDisplayName": []
                 }
             }
         },
@@ -283,11 +236,6 @@
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "nl.x-services.plugins.googleplus": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        },
-        "com.phonegap.plugins.facebookconnect": {
-            "APP_ID": "397257797119364",
-            "APP_NAME": "UserSource",
             "PACKAGE_NAME": "io.usersource.anno"
         }
     },
