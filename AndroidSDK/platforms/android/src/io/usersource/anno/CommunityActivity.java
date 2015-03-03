@@ -29,20 +29,22 @@ public class CommunityActivity extends DroidGap {
 		/**
 		 * spiral gesture support start
 		 */
-		GestureOverlayView view = new GestureOverlayView(this);
-		view.setLayoutParams(new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.MATCH_PARENT,
-				LinearLayout.LayoutParams.MATCH_PARENT, 1));
+		if (AnnoUtils.isAnno(this.getPackageName())) {
+			GestureOverlayView view = new GestureOverlayView(this);
+			view.setLayoutParams(new LinearLayout.LayoutParams(
+					LinearLayout.LayoutParams.MATCH_PARENT,
+					LinearLayout.LayoutParams.MATCH_PARENT, 1));
 
-		setContentView(view);
-		view.addView((View) appView.getParent()); // adds the PhoneGap browser
-		view.getChildAt(0).setLayoutParams(
-				new FrameLayout.LayoutParams(
-						LinearLayout.LayoutParams.MATCH_PARENT,
-						FrameLayout.LayoutParams.MATCH_PARENT, 1));
+			setContentView(view);
+			view.addView((View) appView.getParent()); // adds the PhoneGap browser
+			view.getChildAt(0).setLayoutParams(
+					new FrameLayout.LayoutParams(
+							LinearLayout.LayoutParams.MATCH_PARENT,
+							FrameLayout.LayoutParams.MATCH_PARENT, 1));
 
-		setContentView(view);
-		AnnoUtils.setEnableGesture(this, view, true);
+			setContentView(view);
+			AnnoUtils.setEnableGesture(this, view, true);
+		}
 		/**
 		 * spiral gesture support end
 		 */
