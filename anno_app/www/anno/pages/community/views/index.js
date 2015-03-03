@@ -447,6 +447,7 @@ define([
             else
             {
                 navigator.app.exitApp();
+                cordova.exec(function(result) {}, function(err) {}, "AnnoCordovaPlugin", 'exit_current_activity', []);
             }
         };
 
