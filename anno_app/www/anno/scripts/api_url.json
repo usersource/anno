@@ -112,5 +112,9 @@
     "account.account.bind_account": {
         "url": "/account/1.0/account/bind_account",
         "method": "POST"
+    },
+    "account.account.register": {
+        "url": "/account/1.0/account/register",
+        "method": "POST"
     }
 }
