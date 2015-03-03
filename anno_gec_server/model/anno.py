@@ -460,7 +460,6 @@ class Anno(BaseModel):
         else:
             items = [entity.to_response_message(user) for entity in annos]
 
-        cls.query_by_my_mentions_for_dashboard(limit, curs, user)
         if more:
             return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
         else:
