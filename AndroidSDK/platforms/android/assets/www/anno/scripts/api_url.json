@@ -1,0 +1,120 @@
+{
+    "account.account.authenticate": {
+        "url": "/account/1.0/account/authenticate",
+        "method": "POST"
+    },
+    "anno.anno.list": {
+        "url": "/anno/1.0/anno",
+        "method": "GET"
+    },
+    "tag.tag.popular": {
+        "url": "/tag/1.0/tag_popular",
+        "method": "GET"
+    },
+    "anno.anno.insert": {
+        "url": "/anno/1.0/anno",
+        "method": "POST"
+    },
+    "anno.anno.merge": {
+        "url": "/anno/1.0/anno",
+        "method": "POST",
+        "url_fields": ["id"]
+    },
+    "anno.anno.delete": {
+        "url": "/anno/1.0/anno",
+        "method": "DELETE",
+        "url_fields": ["id"]
+    },
+    "anno.anno.get": {
+        "url": "/anno/1.0/anno",
+        "method": "GET",
+        "url_fields": ["id"]
+    },
+    "anno.anno.users": {
+        "url": "/anno/1.0/anno/users",
+        "method": "GET",
+        "url_fields": ["id"]
+    },
+    "followup.followup.insert": {
+        "url": "/followup/1.0/followup",
+        "method": "POST"
+    },
+    "vote.vote.insert": {
+        "url": "/vote/1.0/vote",
+        "method": "POST"
+    },
+    "vote.vote.delete": {
+        "url": "/vote/1.0/vote",
+        "method": "DELETE"
+    },
+    "flag.flag.insert": {
+        "url": "/flag/1.0/flag",
+        "method": "POST"
+    },
+    "flag.flag.delete": {
+        "url": "/flag/1.0/flag",
+        "method": "DELETE"
+    },
+    "anno.anno.mystuff": {
+        "url": "/anno/1.0/anno_my_stuff",
+        "method": "GET"
+    },
+    "anno.anno.search": {
+        "url": "/anno/1.0/anno_search",
+        "method": "GET"
+    },
+    "anno.user.unread": {
+        "url": "/anno/1.0/user/unread",
+        "method": "GET"
+    },
+    "user.community.users": {
+        "url": "/user/1.0/user/community/users",
+        "method": "GET"
+    },
+    "user.user.displayname.get": {
+        "url": "/user/1.0/user/display_name",
+        "method": "GET"
+    },
+    "user.community.list": {
+        "url": "/user/1.0/community/list",
+        "method": "GET"
+    },
+    "user.user.deviceid.update": {
+        "url": "/user/1.0/user/deviceid/update",
+        "method": "POST"
+    },
+    "user.favorite_apps.list": {
+        "url": "/user/1.0/user/favorite_apps",
+        "method": "GET"
+    },
+    "community.user.list": {
+        "url": "/community/1.0/userlist",
+        "method": "GET",
+        "url_fields": ["id"]
+    },
+    "community.user.edit_role": {
+        "url": "/community/1.0/user/edit_role",
+        "method": "POST"
+    },
+    "community.user.delete": {
+        "url": "/community/1.0/user",
+        "method": "DELETE"
+    },
+    "community.invite.create": {
+        "url": "/community/1.0/invite",
+        "method": "POST"
+    },
+    "community.community.edit_welcome_msg": {
+        "url": "/community/1.0/edit_welcome_msg",
+        "method": "POST",
+        "url_fields": ["id"]
+    },
+    "account.account.bind_account": {
+        "url": "/account/1.0/account/bind_account",
+        "method": "POST"
+    },
+    "account.account.register": {
+        "url": "/account/1.0/account/register",
+        "method": "POST"
+    }
+}

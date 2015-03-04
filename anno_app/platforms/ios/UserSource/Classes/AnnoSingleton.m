@@ -9,10 +9,13 @@
 #import "AnnoSingleton.h"
 
 #define UNREAD_URL @"/anno/1.0/user/unread"
+#define ANONYMOUS_USER_EMAIL @"dev%@@devnull.usersource.io"
+#define ANONYMOUS_USER_DISPLAY_NAME @"Anonymous"
 
 @implementation AnnoSingleton {
     NSDictionary *serverConfig;
     NSString *cloudHost;
+    NSDictionary *unreadData;
 }
 
 @synthesize utils, infoViewControllerClass, unreadCount;
@@ -44,8 +47,10 @@ static AnnoSingleton *sharedInstance = nil;
         cloudHost = @"http://usersource-anno.appspot.com";
         unreadCount = 0;
         self.shakeSensitivityValues = @[@"1 Shake", @"2 Shakes", @"3 Shakes"];
+        unreadData = @{ @"unread_count_present" : [NSNumber numberWithBool:NO], @"unread_count" : @0 };
         
         [self performSelectorInBackground:@selector(readServerConfiguration) withObject:nil];
+        [self performSelectorInBackground:@selector(readPluginConfiguration) withObject:nil];
     }
     
     return self;
@@ -115,6 +120,28 @@ static AnnoSingleton *sharedInstance = nil;
     self.viewControllerList = [[NSMutableArray alloc] initWithObjects:window.rootViewController, nil];
     self.annoDrawViewControllerList = [[NSMutableArray alloc] init];
     [self getShakeSettings];
+    [self startListener];
+}
+
+- (void) startListener {
+    static BOOL methodSwizzled = NO;
+    if (!methodSwizzled) {
+        SwizzleMethod([UIWindow class], @selector(motionEnded:withEvent:), @selector(UserSourceMotionEnded:withEvent:));
+        methodSwizzled = YES;
+    }
+}
+
+- (void) setupAnonymousUserWithteamKey:(NSString*)teamKeyValue
+                            teamSecret:(NSString*)teamSecretValue {
+    NSInteger nowInt = [[NSDate date] timeIntervalSince1970];
+    NSString *additionalString = [NSString stringWithFormat:@"%ld%d", (long)nowInt, arc4random_uniform(99)];
+    NSString *emailValue = [NSString stringWithFormat:ANONYMOUS_USER_EMAIL, additionalString];
+    NSString *displayNameValue = ANONYMOUS_USER_DISPLAY_NAME;
+    [self setupWithEmail:emailValue
+             displayName:displayNameValue
+            userImageURL:@""
+                 teamKey:teamKeyValue
+              teamSecret:teamSecretValue];
 }
 
 - (UIViewController*) getTopMostViewController {
@@ -139,6 +166,26 @@ static AnnoSingleton *sharedInstance = nil;
     return cvc;
 }
 
+- (UIViewController*) topMostViewController {
+    UIViewController *rootViewController = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
+    return [self topViewControllerWithRootViewController:rootViewController];
+}
+
+- (UIViewController*) topViewControllerWithRootViewController:(UIViewController*)rootViewController {
+    if ([rootViewController isKindOfClass:[UITabBarController class]]) {
+        UITabBarController* tabBarController = (UITabBarController*)rootViewController;
+        return [self topViewControllerWithRootViewController:tabBarController.selectedViewController];
+    } else if ([rootViewController isKindOfClass:[UINavigationController class]]) {
+        UINavigationController* navigationController = (UINavigationController*)rootViewController;
+        return [self topViewControllerWithRootViewController:navigationController.visibleViewController];
+    } else if (rootViewController.presentedViewController) {
+        UIViewController* presentedViewController = rootViewController.presentedViewController;
+        return [self topViewControllerWithRootViewController:presentedViewController];
+    } else {
+        return rootViewController;
+    }
+}
+
 - (void) showCommunityPage {
 //        CDVViewController *currentViewController = [self.viewControllerList lastObject];
     UIViewController* currentViewController = [self getTopMostViewController];
@@ -154,6 +201,7 @@ static AnnoSingleton *sharedInstance = nil;
     }
     
     if (currentViewController != self.communityViewController) {
+        [self resetPluginState];
         if (self.communityViewController.presentingViewController == nil) {
             [currentViewController presentViewController:self.communityViewController animated:YES completion:nil];
             [self.viewControllerList addObject:self.communityViewController];
@@ -278,6 +326,9 @@ static AnnoSingleton *sharedInstance = nil;
                                if (json != nil) {
                                    count = (NSNumber*)[json valueForKey:@"unread_count"];
                                    unreadCount = [count intValue];
+                                   unreadData = @{ @"unread_count_present" : [NSNumber numberWithBool:YES],
+                                                   @"unread_count" : [NSNumber numberWithInt:unreadCount]
+                                                };
                                }
                                if ([target respondsToSelector:selector]) {
                                    [target performSelectorOnMainThread:selector withObject:count waitUntilDone:NO];
@@ -296,6 +347,20 @@ static AnnoSingleton *sharedInstance = nil;
         NSLog(@"Error reading file %@ %@", filePath, err);
     }
     return json;
+}
+
+- (NSDictionary*) readPluginConfiguration {
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"pluginConfig"
+                                                         ofType:@"json"
+                                                    inDirectory:@"/www/anno/scripts/plugin_settings"];
+    NSDictionary *dict = nil;
+
+    if (filePath) {
+        dict = [self readJSONFromFile:filePath];
+        self.pluginConfig = [dict copy];
+    }
+
+    return dict;
 }
 
 - (NSDictionary*) readServerConfiguration {
@@ -330,6 +395,26 @@ static AnnoSingleton *sharedInstance = nil;
     }
     
     return json;
+}
+
+- (NSDictionary *) getUnreadData {
+    return unreadData;
+}
+
+- (UIColor *) colorFromHexString:(NSString *)hexString {
+    unsigned rgbValue = 0;
+    NSScanner *scanner = [NSScanner scannerWithString:hexString];
+    [scanner setScanLocation:1]; // bypass '#' character
+    [scanner scanHexInt:&rgbValue];
+    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0
+                           green:((rgbValue & 0xFF00) >> 8)/255.0
+                            blue:(rgbValue & 0xFF)/255.0
+                           alpha:1.0];
+}
+
+- (void) resetPluginState {
+    self.viewControllerString = @"";
+    unreadCount = 0;
 }
 
 @end

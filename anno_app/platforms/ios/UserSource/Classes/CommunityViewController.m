@@ -6,6 +6,7 @@
 //
 
 #import "CommunityViewController.h"
+#import "AnnoSingleton.h"
 
 @implementation CommunityViewController
 
@@ -138,7 +139,10 @@ int level;
 
 - (void) viewDidLoad {
     [super viewDidLoad];
-    [self setSplashScreen];
+
+    if ([[AnnoSingleton sharedInstance] isPlugin]) {
+        [self setSplashScreen];
+    }
 
     NSArray *versionCompatibility = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
     NSInteger iOSVersion = [[versionCompatibility objectAtIndex:0] intValue];

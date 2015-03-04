@@ -34,6 +34,17 @@ class User(ndb.Model):
         return query.get()
 
     @classmethod
+    def get_all_user_by_email(cls, email, password, team_key=None):
+        query = cls.query().filter(ndb.AND(cls.user_email == email,
+                                           cls.password == password,
+                                           cls.auth_source == AuthSourceType.PLUGIN))
+
+        if team_key:
+            query = query.filter(cls.account_type == team_key)
+
+        return query.get()
+
+    @classmethod
     def find_user_by_display_name(cls, display_name):
         return cls.query(User.display_name == display_name).get()
 
@@ -41,14 +52,15 @@ class User(ndb.Model):
     def insert_user(cls, email, username=None, password=None, auth_source=None, account_type=None, image_url=None):
         username = username or email.split('@')[0]
 
-        if password:
-            auth_source = AuthSourceType.ANNO
-        elif account_type:
-            auth_source = AuthSourceType.PLUGIN
-        else:
-            auth_source = AuthSourceType.GOOGLE
+        if auth_source is None:
+            if password:
+                auth_source = AuthSourceType.ANNO
+            elif account_type:
+                auth_source = AuthSourceType.PLUGIN
+            else:
+                auth_source = AuthSourceType.GOOGLE
 
-        user = User(user_email=email, display_name=username, password=password, 
+        user = User(user_email=email, display_name=username, password=password,
                     auth_source=auth_source, account_type=account_type,
                     image_url=image_url)
         user.put()

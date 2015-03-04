@@ -11,9 +11,12 @@ from model.follow_up import FollowUp
 from model.flag import Flag
 from model.appinfo import AppInfo
 from model.tags import Tag
+from model.user import User
+from model.community import Community
 from helper.utils import put_search_document
 from helper.utils import OPEN_COMMUNITY
 from helper.utils import extract_tags_from_text
+from helper.utils import md5
 from helper.utils_enum import SearchIndexName
 from message.appinfo_message import AppInfoMessage
 
@@ -23,15 +26,29 @@ BATCH_SIZE = 50  # ideal batch size may vary based on entity size
 
 class UpdateAnnoHandler(webapp2.RequestHandler):
     def get(self):
+#        migrate_photo_time_annos()
+#        add_teamhash()
+#        update_anno_schema()
+#        update_userannostate_schema()
 #         add_lowercase_appname()
 #         delete_all_anno_indices()
-        update_anno_schema()
 #         update_followup_indices()
 #         update_userannostate_schema_from_anno_action(cls=Vote)
 #         update_userannostate_schema_from_anno_action(cls=FollowUp)
 #         update_userannostate_schema_from_anno_action(cls=Flag)
         self.response.out.write("Schema migration successfully initiated.")
 
+def migrate_photo_time_annos(cursor=None):
+    team_key = 'us.orbe.Reko-Album'
+    phototime_app = AppInfo.query().filter(AppInfo.lc_name == 'phototime').get()
+    phototime_community = Community.getCommunityFromTeamKey(team_key=team_key)
+    anno_list = Anno.query().filter(Anno.app == phototime_app.key).fetch()
+
+    for anno in anno_list:
+        anno.community = phototime_community.key
+        user_email = anno.creator.get().user_email
+        anno.creator = User.find_user_by_email(email=user_email, team_key=team_key).key
+        anno.put()
 
 def delete_all_anno_indices():
     doc_index = search.Index(name=SearchIndexName.ANNO)
@@ -60,18 +77,18 @@ def update_anno_schema(cursor=None):
     anno_update_list = []
     for anno in anno_list:
         # updating anno schema for plugin
-        if not anno.circle_level:
-            anno.circle_level = 0
+        if not anno.archived:
+            anno.archived = False
             anno_update_list.append(anno)
 
         # updating app for anno schema
 #         if not anno.app:
 #             appinfo = AppInfo.get(name=anno.app_name)
-# 
+#
 #             if appinfo is None:
 #                 appInfoMessage = AppInfoMessage(name=anno.app_name, version=anno.app_version)
 #                 appinfo = AppInfo.insert(appInfoMessage)
-# 
+#
 #             anno.app = appinfo.key
 #             anno_update_list.append(anno)
 
@@ -99,6 +116,21 @@ def update_anno_schema(cursor=None):
 
     if more:
         update_anno_schema(cursor=cursor)
+
+def update_userannostate_schema(cursor=None):
+    userannostate_list, cursor, more = UserAnnoState.query().fetch_page(BATCH_SIZE, start_cursor=cursor)
+
+    userannostate_update_list = []
+    for userannostate in userannostate_list:
+        if not userannostate.tagged:
+            userannostate.tagged = False
+            userannostate_update_list.append(userannostate)
+
+    if len(userannostate_update_list):
+        ndb.put_multi(userannostate_update_list)
+
+    if more:
+        update_userannostate_schema(cursor=cursor)
 
 
 def update_followup_indices(cursor=None):
@@ -153,6 +185,21 @@ def add_lowercase_appname(cursor=None):
 
     if more:
         add_lowercase_appname(cursor=cursor)
+
+def add_teamhash(cursor=None):
+    community_list, cursor, more = Community.query().fetch_page(BATCH_SIZE, start_cursor=cursor)
+
+    community_update_list = []
+    for community in community_list:
+        if (not community.team_hash) and community.team_key:
+            community.team_hash = md5(community.team_key)[-8:]
+            community_update_list.append(community)
+
+    if len(community_update_list):
+        ndb.put_multi(community_update_list)
+
+    if more:
+        add_teamhash(cursor=cursor)
 
 def create_tags(text):
     tags = extract_tags_from_text(text.lower())

@@ -1,0 +1,51 @@
+<div class="view mblView" style="background-color: white">
+    <div id="headingSettings" data-dojo-type="dojox/mobile/Heading" class="topHeading">
+        <span id="navBtnBackSettings" class="icon-forward navBtnBack" data-dojo-props="back:true" data-dojo-type="dojox.mobile.ToolBarButton"></span>
+        <span class="barIcon icon-cog barIconHighlight" onclick="history.back()" style="float: left;font-size: 28px;line-height: inherit;"></span>
+        <span id="headerTitleSettings" class="headingTitle" style="padding-left: 20px;">Settings</span>
+    </div>
+    <div id="listContainerSettings" style="width: 100%;overflow: auto;">
+        <ul data-dojo-type="dojox/mobile/EdgeToEdgeList">
+            <li id="settingItemIntro" class="row" style="margin-left: 8px;margin-right: 8px;height: 36px;line-height: 36px"
+                data-dojo-type="dojox/mobile/ListItem"
+                data-dojo-props="variableHeight:true,clickable:true,noArrow:true">
+                <div>How to share your ideas</div>
+            </li>
+            <li id="settingItemFeedback" class="row" style="margin-left: 8px;margin-right: 8px;height: 36px;line-height: 36px"
+                data-dojo-type="dojox/mobile/ListItem"
+                data-dojo-props="variableHeight:true,clickable:true,noArrow:true">
+                <div>Feedback on UserSource</div>
+            </li>
+            <li id="settingItemProfile" class="row" style="margin-left: 8px;margin-right: 8px;height: 36px;line-height: 36px"
+                data-dojo-type="dojox/mobile/ListItem"
+                data-dojo-props="variableHeight:true,clickable:true,noArrow:true">
+                <div>Profile</div>
+            </li>
+        </ul>
+        <div id="versionInfo" style="display: none;"></div>
+    </div>
+    <div id="serverURLDialog" data-dojo-type="dojox/mobile/SimpleDialog" style="display: none;width: 400px;height2: 116px;padding: 0px;border:2px solid black;border-top-color:black ">
+        <div class="menuItem" style="padding-right: 12px;color: #2B78E4;border-bottom: 2px solid #2B78E4">
+            Server URL
+        </div>
+        <div class="menuItem" id="divServerUrlProduction" style="padding-right: 12px;margin-left: 6px;margin-right: 6px;display: none">
+            <label for="rdSUProduction" style="float: left">Production</label>
+            <input type="radio" value="1" data-dojo-props="labelText:'Production'" checked="true" id="rdSUProduction" name="rdServerURL" style="float: right;margin-top: -7px;" data-dojo-type="dojox/mobile/RadioButton">
+        </div>
+        <div class="menuItem" id="divServerUrlTest" style="padding-right: 12px;margin-left: 6px;margin-right: 6px;display: none">
+            <label for="rdSUTest" style="float: left">Test</label>
+            <input type="radio" value="2" data-dojo-props="labelText:'Test'" id="rdSUTest" name="rdServerURL" style="float: right;margin-top: -7px;" data-dojo-type="dojox/mobile/RadioButton">
+        </div>
+        <div class="menuItem" id="divServerUrlDev" style="padding-right: 12px;margin-left: 6px;margin-right: 6px;display: none">
+            <label for="rdSUDev" style="float: left">Dev</label>
+            <input type="radio" value="3" data-dojo-props="labelText:'Dev'" id="rdSUDev" name="rdServerURL" style="float: right;margin-top: -7px;" data-dojo-type="dojox/mobile/RadioButton">
+        </div>
+        <div class="menuItem" id="divServerUrlLocalhost" style="padding-right:12px; margin-left:6px; margin-right:6px; display:none;">
+            <label for="rdSULocalhost" style="float:left;">Localhost</label>
+            <input type="radio" value="4" data-dojo-props="labelText:'Localhost'" id="rdSULocalhost" name="rdServerURL" style="float:right; margin-top:-7px;" data-dojo-type="dojox/mobile/RadioButton">
+        </div>
+        <div id="btnCancelServerURL" class="menuItem" style="padding-right: 12px;margin-left: 6px;margin-right: 6px;border-bottom-width: 0px;text-align: center;color: #808080">
+            Cancel
+        </div>
+    </div>
+</div>

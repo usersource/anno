@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="shakeSensitivityValues">
+        <item>1 Shake</item>
+        <item>2 Shakes</item>
+        <item>3 Shakes</item>
+    </string-array>
+
+</resources>

@@ -1,0 +1,11 @@
+{
+    "highlightColorHEX": "#ff9900",
+    "loadingIndicatorColorHEX": "#cecece",
+    "annotationWidth": 4,
+    "AnnoDrawCommentIcon": "",
+    "AnnoDrawArrowIcon": "",
+    "AnnoDrawBlackRectangleIcon": "",
+    "AnnoDrawRectangleIcon": "",
+    "AnnoDrawShareIcon": "images/icon_share.png",
+    "AnnoDrawCancelIcon": ""
+}

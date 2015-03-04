@@ -16,7 +16,7 @@ NSString *ACTIVITY_INTRO = @"Intro";
 NSString *ACTIVITY_FEEDBACK = @"Feedback";
 float COMPRESSION_QUALITY = 0.7;
 
-AnnoUtils *annoUtils;
+//AnnoUtils *annoUtils;
 //ScreenshotGestureListener *screenshotGestureListener;
 AnnoSingleton *annoSingleton;
 
@@ -164,6 +164,7 @@ AnnoSingleton *annoSingleton;
         NSDictionary *jsonData = @{
             @"imageAttrs" : imageAttrs,
             @"appInfo" : appInfo,
+            @"screenInfo" : annoSingleton.viewControllerString,
             @"success" : @true
         };
 
@@ -288,6 +289,12 @@ AnnoSingleton *annoSingleton;
 - (void) get_user_info:(CDVInvokedUrlCommand*)command {
     NSArray *args = [[NSArray alloc] initWithObjects:annoSingleton.email, annoSingleton.displayName, annoSingleton.userImageURL, annoSingleton.teamKey, annoSingleton.teamSecret, nil];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:(NSString*)args];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) get_unread_count:(CDVInvokedUrlCommand*)command {
+    NSDictionary *unreadData = [annoSingleton getUnreadData];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:(NSString*)unreadData];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 

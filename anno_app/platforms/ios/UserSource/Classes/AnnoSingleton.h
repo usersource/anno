@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import <UserSourceStatic/annoCordovaPlugin.h>
+#include "UserSourceSwizzler.h"
+#include "UIWindow+AnnoSingleton.h"
 
 @interface AnnoSingleton : NSObject {
     AnnoCordovaPlugin *annoPlugin;
@@ -24,12 +26,14 @@
     BOOL allowShake;
     NSInteger shakeValue;
     NSMutableDictionary *shakeSettingsData;
+    NSDictionary *pluginConfig;
 }
 
 @property (strong, retain) CommunityViewController *communityViewController;
 @property (strong, retain) AnnoCordovaPlugin *annoPlugin;
 @property (strong, retain) AnnoUtils *utils;
 @property (strong, retain) NSString *email, *displayName, *userImageURL, *teamKey, *teamSecret;
+@property (strong, retain) NSString *viewControllerString;
 @property NSMutableArray *viewControllerList;
 @property NSMutableArray *annoDrawViewControllerList;
 @property BOOL isPlugin, newAnnoCreated;
@@ -39,6 +43,7 @@
 @property BOOL allowShake;
 @property NSInteger shakeValue;
 @property NSMutableDictionary *shakeSettingsData;
+@property NSDictionary *pluginConfig;
 
 + (id) sharedInstance;
 
@@ -48,8 +53,10 @@
 - (void) exitActivity;
 - (void) notificationsForTarget:(id)target performSelector:(SEL)selector;
 - (NSDictionary*) readServerConfiguration;
+- (NSDictionary*) readPluginConfiguration;
 
 - (UIViewController*) getTopMostViewController;
+- (UIViewController*) topMostViewController;
 
 - (void) showAnnoDraw:(NSString*)imageURI
            levelValue:(int)levelValue
@@ -62,7 +69,14 @@
                 teamKey:(NSString*)teamKey
              teamSecret:(NSString*)teamSecret;
 
+- (void) setupAnonymousUserWithteamKey:(NSString*)teamKeyValue
+                            teamSecret:(NSString*)teamSecretValue;
+
 - (void) saveAllowShake:(BOOL)allowShakeValue;
 - (void) saveShakeValue:(NSInteger)shakeValueNumber;
+- (NSDictionary *) getUnreadData;
+
+- (UIColor *) colorFromHexString:(NSString *)hexString;
+- (void) resetPluginState;
 
 @end

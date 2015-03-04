@@ -2,6 +2,8 @@ import endpoints
 from protorpc import message_types
 from protorpc import remote
 
+import json
+
 from helper.settings import anno_js_client_id
 from helper.utils import validate_email
 from helper.utils import validate_password
@@ -9,12 +11,16 @@ from helper.utils import validate_team_secret
 from helper.utils import md5
 from helper.utils import get_endpoints_current_user
 from helper.utils import reset_password
+from helper.utils import get_user_team_token
 from helper.utils_enum import AuthSourceType
 from model.user import User
 from model.community import Community
 from model.userrole import UserRole
+from model.anno import Anno
 from message.account_message import AccountMessage
+from message.account_message import AccountAuthenticateMessage
 from message.user_message import UserMessage
+from message.anno_api_messages import AnnoListMessage
 
 
 @endpoints.api(name='account', version='1.0', description='Account API',
@@ -64,15 +70,46 @@ class AccountApi(remote.Service):
                 User.update_user(user=user, email=email, username=display_name, account_type=team_key, image_url=image_url)
             if not Community.authenticate(team_key, md5(team_secret)):
                 raise endpoints.UnauthorizedException("Authentication failed. Team key and secret are not matched.")
-        else:
+        elif user.auth_source == AuthSourceType.ANNO:
             password = request.password
             validate_password(password)
             if not user:
                 raise endpoints.NotFoundException("Authentication failed. User account " + email + " doesn't exist.")
             if not User.authenticate(email, md5(password)):
                 raise endpoints.UnauthorizedException("Authentication failed. Email and password are not matched.")
+        else:
+            raise endpoints.ForbiddenException("Account for '%s' is Google or Facebook OAuth account." % email)
 
         return UserMessage(id=user.key.id(), display_name=user.display_name)
+
+    @endpoints.method(AccountMessage, AccountAuthenticateMessage, path="account/dashboard/authenticate",
+                      http_method="POST", name="account.dashboard.authenticate")
+    def dashboard_authenticate(self, request):
+        email = request.user_email
+        password = request.password
+        team_key = request.team_key
+        get_feeds = request.get_feeds or False
+
+        respMessage = AccountAuthenticateMessage(authenticated=False)
+        if email and password and team_key:
+            user = User.get_all_user_by_email(email, md5(password), team_key=team_key)
+
+            if user:
+                team = Community.getCommunityFromTeamKey(team_key)
+                if team:
+                    userTeamToken = get_user_team_token(email, password, team_key,
+                                                        team.team_secret, user.display_name,
+                                                        user.image_url)
+                    feed_data = Anno.query_by_page(15, None, None, user, True) if get_feeds else AnnoListMessage()
+                    respMessage = AccountAuthenticateMessage(authenticated=True,
+                                                             display_name=user.display_name,
+                                                             image_url=user.image_url,
+                                                             team_name=team.name,
+                                                             team_key=team_key,
+                                                             user_team_token=json.dumps(userTeamToken),
+                                                             feed_data=feed_data)
+
+        return respMessage
 
     @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/forgot_detail',
                       http_method='POST', name='account.forgot_detail')
@@ -84,7 +121,7 @@ class AccountApi(remote.Service):
                 validate_email(request.user_email)
                 reset_password(user, request.user_email)
             else:
-                raise endpoints.ForbiddenException("Account for '%s' is Google OAuth account." % request.user_email)
+                raise endpoints.ForbiddenException("Account for '%s' is Google or Facebook OAuth account." % request.user_email)
         else:
             raise endpoints.NotFoundException("Email address is not found. Please enter correct email address.")
 
@@ -93,16 +130,17 @@ class AccountApi(remote.Service):
     @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/bind_account', http_method='POST',
                       name='account.bind_account')
     def bind_account(self, request):
-        current_user = get_endpoints_current_user(raise_unauthorized=True)
+        if request.user_email is None:
+            raise endpoints.UnauthorizedException("Oops, something went wrong. Please try later.")
         auth_source = request.auth_source
         if auth_source is None:
             auth_source = AuthSourceType.GOOGLE
-        email = current_user.email()
+        email = request.user_email
         user = User.find_user_by_email(email)
         if user is not None:
             user.auth_source = auth_source
             user.display_name = request.display_name
             user.put()
         else:
-            User.insert_user(email=current_user.email(), username=request.display_name)
+            User.insert_user(email=email, username=request.display_name)
         return message_types.VoidMessage()

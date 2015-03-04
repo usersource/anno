@@ -51,6 +51,42 @@
                         {
                             "xml": "<feature name=\"PushPlugin\"><param name=\"ios-package\" value=\"PushPlugin\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"GooglePlus\"><param name=\"ios-package\" value=\"GooglePlus\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<access origin=\"https://accounts.google.com/*\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"FacebookConnectPlugin\"><param name=\"ios-package\" value=\"FacebookConnectPlugin\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<plugin name=\"FacebookConnectPlugin\" value=\"FacebookConnectPlugin\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<access origin=\"https://m.facebook.com\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<access origin=\"https://graph.facebook.com\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<access origin=\"https://api.facebook.com\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<access origin=\"https://*.fbcdn.net\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<access origin=\"https://*.akamaihd.net\" />",
+                            "count": 1
                         }
                     ]
                 }
@@ -60,7 +96,7 @@
                     "SystemConfiguration.framework": [
                         {
                             "xml": "true",
-                            "count": 1
+                            "count": 2
                         }
                     ],
                     "CoreGraphics.framework": [
@@ -91,12 +127,16 @@
                         {
                             "xml": "false",
                             "count": 2
+                        },
+                        {
+                            "xml": "true",
+                            "count": 1
                         }
                     ],
                     "libsqlite3.dylib": [
                         {
                             "xml": "false",
-                            "count": 1
+                            "count": 2
                         }
                     ],
                     "Social.framework": [
@@ -106,7 +146,7 @@
                         },
                         {
                             "xml": "true",
-                            "count": 1
+                            "count": 2
                         }
                     ],
                     "MessageUI.framework": [
@@ -122,10 +162,40 @@
                     "AddressBook.framework": [
                         {
                             "xml": "true",
-                            "count": 1
+                            "count": 2
                         }
                     ],
                     "AddressBookUI.framework": [
+                        {
+                            "xml": "true",
+                            "count": 1
+                        }
+                    ],
+                    "CoreMotion.framework": [
+                        {
+                            "xml": "true",
+                            "count": 1
+                        }
+                    ],
+                    "CoreText.framework": [
+                        {
+                            "xml": "true",
+                            "count": 1
+                        }
+                    ],
+                    "MediaPlayer.framework": [
+                        {
+                            "xml": "true",
+                            "count": 1
+                        }
+                    ],
+                    "Security.framework": [
+                        {
+                            "xml": "true",
+                            "count": 2
+                        }
+                    ],
+                    "Accounts.framework": [
                         {
                             "xml": "true",
                             "count": 1
@@ -139,6 +209,28 @@
                         {
                             "xml": "<string />",
                             "count": 2
+                        }
+                    ],
+                    "CFBundleURLTypes": [
+                        {
+                            "xml": "<array><dict><key>CFBundleTypeRole</key><string>Editor</string><key>CFBundleURLName</key><string>io.usersource.anno</string><key>CFBundleURLSchemes</key><array><string>io.usersource.anno</string></array></dict></array>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<array><dict><key>CFBundleURLSchemes</key><array><string>fb397257797119364</string></array></dict></array>",
+                            "count": 1
+                        }
+                    ],
+                    "FacebookAppID": [
+                        {
+                            "xml": "<string>397257797119364</string>",
+                            "count": 1
+                        }
+                    ],
+                    "FacebookDisplayName": [
+                        {
+                            "xml": "<string>UserSource</string>",
+                            "count": 1
                         }
                     ]
                 }
@@ -195,6 +287,14 @@
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "com.phonegap.plugins.PushPlugin": {
+            "PACKAGE_NAME": "io.usersource.anno"
+        },
+        "nl.x-services.plugins.googleplus": {
+            "PACKAGE_NAME": "io.usersource.anno"
+        },
+        "com.phonegap.plugins.facebookconnect": {
+            "APP_ID": "397257797119364",
+            "APP_NAME": "UserSource",
             "PACKAGE_NAME": "io.usersource.anno"
         }
     },

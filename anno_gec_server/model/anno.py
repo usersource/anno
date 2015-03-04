@@ -9,7 +9,12 @@ from google.appengine.api import search
 from google.appengine.ext import ndb
 
 from message.anno_api_messages import AnnoResponseMessage
+from message.anno_api_messages import AnnoDashboardResponseMessage
 from message.anno_api_messages import AnnoListMessage
+from message.anno_api_messages import AnnoDashboardListMessage
+from message.anno_api_messages import AnnoTagsResponseMessage
+from message.anno_api_messages import AnnoMentionsResponseMessage
+from message.anno_api_messages import AnnoTeamNotesMetadataMessage
 from message.user_message import UserMessage
 from model.base_model import BaseModel
 from model.community import Community
@@ -17,7 +22,7 @@ from model.appinfo import AppInfo
 from model.userrole import UserRole
 from helper.utils import *
 from helper.utils_enum import SearchIndexName
-from helper.utils_enum import AnnoActionType
+from helper.utils_enum import AnnoActionType, AnnoQueryType
 
 
 class Anno(BaseModel):
@@ -56,6 +61,10 @@ class Anno(BaseModel):
     longitude = ndb.FloatProperty()
     country = ndb.StringProperty()
     circle_level = ndb.IntegerProperty(default=0)
+    screen_info = ndb.StringProperty()
+    team_notes = ndb.TextProperty()
+    tagged_users = ndb.StringProperty(repeated=True)
+    archived = ndb.BooleanProperty(default=False)
 
     def __eq__(self, other):
         return self.key.id() == other.key.id()
@@ -118,8 +127,68 @@ class Anno(BaseModel):
                                    followup_count=self.followup_count,
                                    last_update_time=self.last_update_time,
                                    last_activity=self.last_activity,
-                                   last_update_type=self.last_update_type,
-        )
+                                   last_update_type=self.last_update_type)
+
+        return anno_message
+
+    def to_dashboard_response_message(self, user):
+        user_message = None
+        if self.creator is not None:
+            user_info = self.creator.get()
+            user_message = UserMessage(display_name=user_info.display_name,
+                                       user_email=user_info.user_email,
+                                       image_url=user_info.image_url)
+
+        app = self.app.get() if self.app else None
+        app_name = app.name if app else self.app_name
+        app_version = app.version if app else self.app_version
+
+        # set anno association with followups
+        from model.follow_up import FollowUp
+        followups = FollowUp.find_by_anno(self, True)
+        followup_messages = [ entity.to_message(auth_user=user) for entity in followups ]
+
+        from model.vote import Vote
+        is_my_vote = Vote.is_belongs_user(self, user)
+
+        from model.flag import Flag
+        is_my_flag = Flag.is_belongs_user(self, user)
+
+        mentions = []
+        for tagged_user in self.tagged_users:
+            tagged_user_info = User.get_by_id(int(tagged_user))
+            is_auth_user = tagged_user_info.user_email == user.user_email
+            mentions.append(AnnoMentionsResponseMessage(id=tagged_user_info.key.id(),
+                                                        display_name=tagged_user_info.display_name,
+                                                        user_email=tagged_user_info.user_email,
+                                                        image_url=tagged_user_info.image_url,
+                                                        is_auth_user=is_auth_user))
+
+        team_notes_metadata = AnnoTeamNotesMetadataMessage(tags=parseTeamNotesForHashtags(self.team_notes),
+                                                           mentions=mentions)
+
+        engaged_users = Anno.getEngagedUsers(anno_id=self.key.id(), auth_user=user, include_auth_user=True)
+
+        anno_message = AnnoDashboardResponseMessage(id=self.key.id(),
+                                                    anno_text=self.anno_text,
+                                                    device_model=self.device_model,
+                                                    app_name=app_name,
+                                                    app_version=app_version,
+                                                    os_name=self.os_name,
+                                                    os_version=self.os_version,
+                                                    created=self.created,
+                                                    creator=user_message,
+                                                    draw_elements=self.draw_elements,
+                                                    vote_count=self.vote_count,
+                                                    flag_count=self.flag_count,
+                                                    followup_count=self.followup_count,
+                                                    followup_list=followup_messages,
+                                                    is_my_vote=is_my_vote,
+                                                    is_my_flag=is_my_flag,
+                                                    team_notes_metadata=team_notes_metadata,
+                                                    team_notes=self.team_notes,
+                                                    engaged_users=engaged_users,
+                                                    archived=self.archived)
 
         return anno_message
 
@@ -149,12 +218,13 @@ class Anno(BaseModel):
                 circle_level = message.circle_level
 
         entity = cls(anno_text=message.anno_text, anno_type=message.anno_type,
-                     level=message.level, device_model=message.device_model, 
-                     os_name=message.os_name, os_version=message.os_version, 
-                     creator=user.key, draw_elements=message.draw_elements, 
+                     level=message.level, device_model=message.device_model,
+                     os_name=message.os_name, os_version=message.os_version,
+                     creator=user.key, draw_elements=message.draw_elements,
                      image=message.image, screenshot_is_anonymized=message.screenshot_is_anonymized,
                      geo_position=message.geo_position, flag_count=0, vote_count=0,
-                     followup_count=0, latitude=message.latitude, longitude=message.longitude)
+                     followup_count=0, latitude=message.latitude, longitude=message.longitude,
+                     screen_info=message.screen_info)
 
         # set appinfo and community
         entity.app = appinfo.key
@@ -321,6 +391,27 @@ class Anno(BaseModel):
         return AnnoListMessage(anno_list=anno_resp_list)
 
     @classmethod
+    def query_by_count_for_dashboard(cls, limit, curs, user, query_type):
+        query = cls.query()
+
+        if query_type == AnnoQueryType.ACTIVITY_COUNT:
+            query = query.filter(cls.followup_count > 0).order(-cls.followup_count)
+        elif query_type == AnnoQueryType.VOTE_COUNT:
+            query = query.filter(cls.vote_count > 0).order(-cls.vote_count)
+        elif query_type == AnnoQueryType.FLAG_COUNT:
+            query = query.filter(cls.flag_count > 0).order(-cls.flag_count)
+
+        query = filter_anno_by_user(query, user, is_plugin=True)
+
+        annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
+        items = [entity.to_dashboard_response_message(user) for entity in annos]
+
+        if more:
+            return AnnoDashboardListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
+        else:
+            return AnnoDashboardListMessage(anno_list=items, has_more=more)
+
+    @classmethod
     def query_by_last_activity(cls, app_name, user):
         query = cls.query()
         query = query.filter(cls.app_name == app_name).order(-cls.last_update_time)
@@ -375,11 +466,52 @@ class Anno(BaseModel):
             return AnnoListMessage(anno_list=items, has_more=more)
 
     @classmethod
+    def query_by_page_for_dashboard(cls, limit, curs, user, query_by_archived=False):
+        query = cls.query()
+        query = query.order(-cls.created)
+
+        if query_by_archived:
+            query = query.filter(cls.archived == True)
+            query = filter_anno_by_user(query, user, is_plugin=True, include_archived=True)
+        else:
+            query = filter_anno_by_user(query, user, True)
+
+        annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
+        items = [entity.to_dashboard_response_message(user) for entity in annos]
+
+        if more:
+            return AnnoDashboardListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
+        else:
+            return AnnoDashboardListMessage(anno_list=items, has_more=more)
+
+    @classmethod
+    def query_by_my_mentions_for_dashboard(cls, limit, curs, user):
+        query = cls.query()
+        query = query.order(-cls.created)
+        query = filter_anno_by_user(query, user, True)
+
+        from model.userannostate import UserAnnoState
+        userannostate_list = UserAnnoState.query().filter(ndb.AND(UserAnnoState.user == user.key, UserAnnoState.tagged == True)).fetch()
+        anno_list = [ userannostate.anno.id() for userannostate in userannostate_list]
+        if len(anno_list):
+            query = query.filter(cls.anno_id.IN(anno_list))
+
+            annos, next_curs, more = query.fetch_page(limit, start_cursor=curs)
+            items = [entity.to_dashboard_response_message(user) for entity in annos]
+
+            if more:
+                return AnnoDashboardListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
+            else:
+                return AnnoDashboardListMessage(anno_list=items, has_more=more)
+        else:
+            return AnnoDashboardListMessage(anno_list=[])
+
+    @classmethod
     def query_by_community(cls, community, limit, projection, curs, user):
         if community:
             query = cls.query(cls.community == community.key)
             query = query.order(-cls.created)
-    
+
             if (curs is not None) and (projection is not None):
                 annos, next_curs, more = query.fetch_page(limit, start_cursor=curs, projection=projection)
             elif (curs is not None) and (projection is None):
@@ -392,7 +524,7 @@ class Anno(BaseModel):
                 items = [entity.to_response_message_by_projection(projection) for entity in annos]
             else:
                 items = [entity.to_response_message(user) for entity in annos]
-    
+
             if more:
                 return AnnoListMessage(anno_list=items, cursor=next_curs.urlsafe(), has_more=more)
             else:
@@ -718,3 +850,36 @@ class Anno(BaseModel):
         for anno in query:
             anno_list.append(anno)
         return anno_list
+
+    @classmethod
+    def getEngagedUsers(cls, anno_id, auth_user, include_auth_user=False):
+        from model.userannostate import UserAnnoState
+        userannostates = UserAnnoState.list_users_by_anno(anno_id=anno_id, projection=[UserAnnoState.user])
+
+        users = []
+        for userannostate in userannostates:
+            current_user = userannostate.user.get()
+            users.append(UserMessage(id=current_user.key.id(),
+                                     user_email=current_user.user_email,
+                                     display_name=current_user.display_name,
+                                     image_url=current_user.image_url))
+
+        # removing auth_user
+        if auth_user:
+            if include_auth_user:
+                if not any(user_info.user_email == auth_user.user_email for user_info in users):
+                    users.append(UserMessage(id=auth_user.key.id(),
+                                             user_email=auth_user.user_email,
+                                             display_name=auth_user.display_name,
+                                             image_url=auth_user.image_url))
+            else:
+                [ users.remove(user_info) for user_info in users if user_info.user_email == auth_user.user_email ]
+
+        # sorting users alphabetically
+        return sorted(users, key=lambda user_info: user_info.display_name.lower())
+
+    @classmethod
+    def archive(cls, anno_id):
+        anno = cls.get_by_id(int(anno_id))
+        anno.archived = not anno.archived
+        anno.put()
