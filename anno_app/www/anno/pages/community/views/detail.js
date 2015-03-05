@@ -1385,9 +1385,8 @@ define([
                     }
                     else
                     {
-                        if (domClass.contains('imgFlag','icoImgActive'))
-                        {
-                            annoUtil.showToastMessage("You must unflag the annotation up.");
+                        if (domClass.contains('imgFlag','icoImgActive')) {
+                            annoUtil.showToastMessage("Sorry, you can't upvote as you have already flagged this.");
                             return;
                         }
 
@@ -1403,6 +1402,11 @@ define([
                     }
                     else
                     {
+                        if (domClass.contains('imgThumbsUp','icoImgActive')) {
+                            annoUtil.showToastMessage("Sorry, you can't flag as you have already upvoted this.");
+                            return;
+                        }
+
                         saveFlag('add_flag');
                     }
                 }));
@@ -1605,7 +1609,7 @@ define([
                 shapeRedraw = false;
 
                 var cursor = this.params["cursor"];
-                
+
                 // Analytics
                 annoUtil.screenGATracking(annoUtil.analytics.category.detail);
                 annoUtil.actionGATracking(annoUtil.analytics.category.detail, "loaded anno", cursor);
