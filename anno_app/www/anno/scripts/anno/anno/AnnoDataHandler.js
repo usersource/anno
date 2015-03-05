@@ -12,8 +12,7 @@ define(["../common/DBUtil", "../common/Util","../common/OAuthUtil"], function(DB
     var save_userInfo_sql = "insert into app_users(userid,email,signinmethod,nickname,password,signedup,teamkey,teamsecret) values (?,?,?,?,?,?,?,?)";
     var select_userInfo_sql = "select * from app_users";
     var delete_userInfo_sql = "delete from app_users";
-    var insert_anno_unsynched_sql = "insert into feedback_comment(x,y,direction,is_moved,object_key,draw_elements,draw_is_anonymized,last_update,comment,screenshot_key,level,app_name,app_version,anno_type,synched,team_key,screen_info)"+
-        " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    var insert_anno_unsynched_sql = "insert into feedback_comment(x,y,direction,is_moved,object_key,draw_elements,draw_is_anonymized,last_update,comment,screenshot_key,level,app_name,app_version,anno_type,synched,team_key) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     var update_anno_unsynched_sql = "update feedback_comment set draw_elements=?,comment=?,app_name=?,app_version=?,draw_is_anonymized=?,synched=?,team_key=? where _id=?";
     var update_anno_unsynched_including_image_sql = "update feedback_comment set screenshot_key=?,draw_elements=?,comment=?,app_name=?,app_version=?,draw_is_anonymized=?,synched=?,team_key=? where _id=?";
 
