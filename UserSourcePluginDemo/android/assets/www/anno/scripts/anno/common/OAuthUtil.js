@@ -224,7 +224,8 @@ define([
             var ret = { authorized : false };
 
             if (DBUtil.hasUserInLocalDB) {
-                switch(DBUtil.localUserInfo.signinmethod) {
+                setAuthTrue();
+                /*switch(DBUtil.localUserInfo.signinmethod) {
                     case this.signinMethod.google:
                         var refreshToken = this.getRefreshToken();
                         if (refreshToken && refreshToken != 'undefined') {
@@ -235,11 +236,11 @@ define([
                     case this.signinMethod.plugin:
                         setAuthTrue();
                         break;
-                }
+                }*/
             }
 
             if (token) {
-                this.setAccessToken(JSON.parse(token));
+                // this.setAccessToken(JSON.parse(token));
             }
 
             console.log('isAuthorized :' + JSON.stringify(ret));
