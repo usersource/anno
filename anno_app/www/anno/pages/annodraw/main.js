@@ -1403,9 +1403,7 @@ require([
                         annoUtil.startActivity("Intro", false);
                     }
 
-                    if (userInfo.signinMethod == OAuthUtil.signinMethod.anno) {
-                        OAuthUtil.processBasicAuthToken(userInfo);
-                    }
+                    OAuthUtil.processBasicAuthToken(userInfo);
                 });
 
                 setupAnnoDrawPage();
