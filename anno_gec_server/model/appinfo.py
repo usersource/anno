@@ -51,12 +51,16 @@ class AppInfo(ndb.Model):
 
     @classmethod
     def insert(cls, message):
-        entity = cls.insert_raw_data(name=message.name, 
-                    platform=getattr(message, 'platform', None),
-                    bundleid=getattr(message, 'bundleid', None), icon=message.icon,
-                    icon_url=message.icon_url, description=message.description,
-                    version=message.version, developer=message.developer,
-                    company_name=message.company_name, app_url=message.app_url)
+        entity = cls.insert_raw_data(name=message.name,
+                                     platform=getattr(message, 'platform', None),
+                                     bundleid=getattr(message, 'bundleid', None),
+                                     icon=message.icon,
+                                     icon_url=message.icon_url,
+                                     description=message.description,
+                                     version=message.version,
+                                     developer=message.developer,
+                                     company_name=message.company_name,
+                                     app_url=message.app_url)
         return entity
 
 

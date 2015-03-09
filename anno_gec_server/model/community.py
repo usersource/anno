@@ -82,6 +82,11 @@ class Community(ndb.Model):
                                          team_key=message.team_key)
             userrole = None
             userrole_type = UserRoleType.ADMIN if message.team_key else UserRoleType.MANAGER
+
+            if (not user) and message.team_key and message.user.user_email:
+                from model.user import User
+                user = User.insert_user(message.user.user_email, account_type=message.team_key, image_url="")
+
             if user:
                 from model.userrole import UserRole
                 userrole = UserRole.insert(user, community, userrole_type)

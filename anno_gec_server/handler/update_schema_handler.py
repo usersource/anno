@@ -13,19 +13,22 @@ from model.appinfo import AppInfo
 from model.tags import Tag
 from model.user import User
 from model.community import Community
+from model.userrole import UserRole
 from helper.utils import put_search_document
 from helper.utils import OPEN_COMMUNITY
 from helper.utils import extract_tags_from_text
 from helper.utils import md5
 from helper.utils_enum import SearchIndexName
 from message.appinfo_message import AppInfoMessage
-
+from message.community_message import CommunityMessage
+from message.user_message import UserMessage
 
 BATCH_SIZE = 50  # ideal batch size may vary based on entity size
 
 
 class UpdateAnnoHandler(webapp2.RequestHandler):
     def get(self):
+#        create_teams()
 #        migrate_photo_time_annos()
 #        add_teamhash()
 #        update_anno_schema()
@@ -37,6 +40,39 @@ class UpdateAnnoHandler(webapp2.RequestHandler):
 #         update_userannostate_schema_from_anno_action(cls=FollowUp)
 #         update_userannostate_schema_from_anno_action(cls=Flag)
         self.response.out.write("Schema migration successfully initiated.")
+
+def create_teams():
+    team_key = ""
+    app_name = ""
+    community_name = ""
+    admin_user_email = ""
+    other_users_email = []
+
+    app = AppInfo.query().filter(AppInfo.lc_name == app_name.lower()).get()
+    if not app:
+        appinfo_message = AppInfoMessage()
+        appinfo_message.name = app_name
+        app = AppInfo.insert(appinfo_message)
+
+    community = Community.getCommunityFromTeamKey(team_key=team_key)
+    if not community:
+        community_message = CommunityMessage(name=community_name,
+                                             team_key=team_key,
+                                             team_secret=md5(community_name.lower()))
+        community_message.user = UserMessage(user_email=admin_user_email)
+        Community.insert(community_message)
+        community = Community.getCommunityFromTeamKey(team_key=team_key)
+
+    if community and app:
+        if not app.key in community.apps:
+            community.apps.append(app.key)
+            community.put()
+
+    for user_email in other_users_email:
+        user = User.find_user_by_email(email=user_email, team_key=team_key)
+        if not user:
+            user = User.insert_user(user_email, account_type=team_key, image_url="")
+        userrole = UserRole.insert(user, community)
 
 def migrate_photo_time_annos(cursor=None):
     team_key = 'us.orbe.Reko-Album'
