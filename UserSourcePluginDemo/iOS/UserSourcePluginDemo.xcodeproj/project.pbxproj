@@ -39,6 +39,8 @@
 		5BB62D841A2DDB0B009355B0 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB62D831A2DDB0B009355B0 /* AssetsLibrary.framework */; };
 		5BB62D881A2DE2B1009355B0 /* assetsCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5BB62D871A2DE2B1009355B0 /* assetsCollectionCell.xib */; };
 		5BB62D901A2DE40A009355B0 /* assetsCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB62D8F1A2DE40A009355B0 /* assetsCollectionViewCell.m */; };
+		5BC1C1F31AA88E8400082CFF /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BC1C1F11AA88E8400082CFF /* Crashlytics.framework */; };
+		5BC1C1F41AA88E8400082CFF /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BC1C1F21AA88E8400082CFF /* Fabric.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,6 +95,8 @@
 		5BB62D871A2DE2B1009355B0 /* assetsCollectionCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = assetsCollectionCell.xib; sourceTree = "<group>"; };
 		5BB62D8E1A2DE40A009355B0 /* assetsCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = assetsCollectionViewCell.h; sourceTree = "<group>"; };
 		5BB62D8F1A2DE40A009355B0 /* assetsCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = assetsCollectionViewCell.m; sourceTree = "<group>"; };
+		5BC1C1F11AA88E8400082CFF /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
+		5BC1C1F21AA88E8400082CFF /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +114,8 @@
 				5BB62D501A2DD72D009355B0 /* UIKit.framework in Frameworks */,
 				5BB4A7841A2EE45B00A6D6DF /* libsqlite3.dylib in Frameworks */,
 				5BB4A76A1A2ED9EC00A6D6DF /* Cordova.framework in Frameworks */,
+				5BC1C1F31AA88E8400082CFF /* Crashlytics.framework in Frameworks */,
+				5BC1C1F41AA88E8400082CFF /* Fabric.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,6 +146,8 @@
 		5BB62D3F1A2DD72D009355B0 = {
 			isa = PBXGroup;
 			children = (
+				5BC1C1F11AA88E8400082CFF /* Crashlytics.framework */,
+				5BC1C1F21AA88E8400082CFF /* Fabric.framework */,
 				5BB4A76E1A2ED9FD00A6D6DF /* config.xml */,
 				1D0803101A30486500875AF3 /* Images */,
 				5BB62D511A2DD72D009355B0 /* UserSourcePluginDemo */,
@@ -240,6 +248,7 @@
 				5BB62D451A2DD72D009355B0 /* Frameworks */,
 				5BB62D461A2DD72D009355B0 /* Resources */,
 				5BB4A7851A2EE5A100A6D6DF /* copy www */,
+				5BC1C1F01AA88E5700082CFF /* Fabric */,
 			);
 			buildRules = (
 			);
@@ -278,7 +287,7 @@
 				ORGANIZATIONNAME = "Increpreneur Inc.";
 				TargetAttributes = {
 					5BB62D471A2DD72D009355B0 = {
-						DevelopmentTeam = DB638VD65N;
+						DevelopmentTeam = G7Y3KRBLX8;
 					};
 					5BB62D6B1A2DD72E009355B0 = {
 						TestTargetID = 5BB62D471A2DD72D009355B0;
@@ -347,6 +356,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "SRC_DIR=\"${PROJECT_DIR}/UserSourcePluginDemo/www/\"\nDST_DIR=\"$BUILT_PRODUCTS_DIR/$FULL_PRODUCT_NAME/www\"\n\nrsync -a \"$SRC_DIR\" \"$DST_DIR\"";
+		};
+		5BC1C1F01AA88E5700082CFF /* Fabric */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Fabric;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Fabric.framework/run 15483efa01068726568c5a2cf531594b734f3f6f a1788e46fb883237da6d8ae5b2c4180380383886d843a82b49808dbf3faff7a0";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -501,6 +524,7 @@
 					"$(PROJECT_DIR)/UserSourcePluginDemo",
 					/Users/imran/Documents/FacebookSDK,
 					/Users/rishi/Documents/FacebookSDK,
+					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UserSourcePluginDemo/UserSourcePluginDemo-Prefix.pch";
@@ -525,6 +549,7 @@
 					"$(PROJECT_DIR)/UserSourcePluginDemo",
 					/Users/imran/Documents/FacebookSDK,
 					/Users/rishi/Documents/FacebookSDK,
+					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UserSourcePluginDemo/UserSourcePluginDemo-Prefix.pch";

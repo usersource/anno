@@ -1068,7 +1068,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = UserSource;
-				PROVISIONING_PROFILE = "498bc07c-0de7-4fe2-91db-e8ee584c2455";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
@@ -1121,7 +1121,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = UserSource;
-				PROVISIONING_PROFILE = "498bc07c-0de7-4fe2-91db-e8ee584c2455";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
