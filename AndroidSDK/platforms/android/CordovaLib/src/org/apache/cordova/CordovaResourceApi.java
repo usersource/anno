@@ -28,7 +28,7 @@ import android.os.Looper;
 import android.util.Base64;
 import android.webkit.MimeTypeMap;
 
-import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp1.OkHttpClient;
 
 import org.apache.http.util.EncodingUtils;
 

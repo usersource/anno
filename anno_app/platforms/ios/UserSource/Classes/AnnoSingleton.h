@@ -78,5 +78,6 @@
 
 - (UIColor *) colorFromHexString:(NSString *)hexString;
 - (void) resetPluginState;
+- (void) enableShakeGesture;
 
 @end
