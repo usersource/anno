@@ -46,6 +46,7 @@ static AnnoSingleton *sharedInstance = nil;
         self.newAnnoCreated = FALSE;
         cloudHost = @"http://usersource-anno.appspot.com";
         unreadCount = 0;
+        self.viewControllerString = @"";
         self.shakeSensitivityValues = @[@"1 Shake", @"2 Shakes", @"3 Shakes"];
         unreadData = @{ @"unread_count_present" : [NSNumber numberWithBool:NO], @"unread_count" : @0 };
         
