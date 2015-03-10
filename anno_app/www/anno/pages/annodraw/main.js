@@ -902,7 +902,7 @@ require([
                     "os_version":deviceInfo.osVersion,
                     "anno_type":"simple comment",
                     "screenshot_is_anonymized":isScreenshotAnonymized,
-                    "screenInfo":screenInfo
+                    "screen_info":screenInfo
                 };
 
                 AnnoDataHandler.insertAnno(annoItem, appInfo.source, screenshotDirPath);
