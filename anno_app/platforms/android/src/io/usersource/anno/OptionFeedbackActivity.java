@@ -1,16 +1,18 @@
 package io.usersource.anno;
 
+import io.usersource.annoplugin.utils.AnnoUtils;
+
+import org.apache.cordova.CordovaActivity;
+
 import android.content.Intent;
 import android.gesture.GestureOverlayView;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import io.usersource.annoplugin.utils.AnnoUtils;
-import org.apache.cordova.DroidGap;
-import android.os.Bundle;
 
 
-public class OptionFeedbackActivity extends DroidGap
+public class OptionFeedbackActivity extends CordovaActivity
 {
   private int level;
 
