@@ -3,6 +3,10 @@
         "url": "/account/1.0/account/authenticate",
         "method": "POST"
     },
+    "account.account.forgot_detail": {
+        "url": "/account/1.0/account/forgot_detail",
+        "method": "POST"
+    },
     "anno.anno.list": {
         "url": "/anno/1.0/anno",
         "method": "GET"
