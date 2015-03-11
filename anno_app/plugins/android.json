@@ -262,12 +262,5 @@
             "PACKAGE_NAME": "io.usersource.anno"
         }
     },
-    "dependent_plugins": {
-        "android.support.v4": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        },
-        "com.google.playservices": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        }
-    }
+    "dependent_plugins": {}
 }
