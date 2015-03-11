@@ -83,6 +83,10 @@
         "url": "/user/1.0/user/deviceid/update",
         "method": "POST"
     },
+    "user.user.password.update": {
+        "url": "/user/1.0/user/update_password",
+        "method": "POST"
+    },
     "user.favorite_apps.list": {
         "url": "/user/1.0/user/favorite_apps",
         "method": "GET"
