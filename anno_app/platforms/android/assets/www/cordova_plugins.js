@@ -1,13 +1,6 @@
 cordova.define('cordova/plugin_list', function(require, exports, module) {
 module.exports = [
     {
-        "file": "plugins/org.apache.cordova.device/www/device.js",
-        "id": "org.apache.cordova.device.device",
-        "clobbers": [
-            "device"
-        ]
-    },
-    {
         "file": "plugins/org.apache.cordova.file/www/DirectoryEntry.js",
         "id": "org.apache.cordova.file.DirectoryEntry",
         "clobbers": [
@@ -293,12 +286,18 @@ module.exports = [
         "merges": [
             ""
         ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.device/www/device.js",
+        "id": "org.apache.cordova.device.device",
+        "clobbers": [
+            "device"
+        ]
     }
 ];
 module.exports.metadata = 
 // TOP OF METADATA
 {
-    "org.apache.cordova.device": "0.2.12",
     "org.apache.cordova.file": "1.3.1",
     "org.apache.cordova.network-information": "0.2.12",
     "org.apache.cordova.inappbrowser": "0.5.2",
@@ -307,7 +306,8 @@ module.exports.metadata =
     "com.phonegap.plugins.facebookconnect": "0.11.0",
     "com.brodysoft.sqlitePlugin": "1.0.5",
     "org.apache.cordova.camera": "0.3.5",
-    "org.apache.cordova.contacts": "0.2.16"
+    "org.apache.cordova.contacts": "0.2.16",
+    "org.apache.cordova.device": "0.3.0"
 }
 // BOTTOM OF METADATA
 });

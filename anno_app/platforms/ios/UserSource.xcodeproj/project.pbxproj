@@ -39,6 +39,7 @@
 		1D75336C1AB1C7CE00CD31B5 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD5266640B0344749F49768A /* AddressBookUI.framework */; };
 		1D75336D1AB1C7E100CD31B5 /* CDVContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB0F3648F894BB2AD5AB705 /* CDVContacts.m */; };
 		1D75336E1AB1C7E100CD31B5 /* CDVContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 664D9BA08F294C4BA6067E35 /* CDVContact.m */; };
+		1D7533711AB1CB5300CD31B5 /* CDVDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9920240F974842C08E3C61EA /* CDVDevice.m */; };
 		1D89FB5C1AA083A200AFB64E /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D9C2DFA1A9F47E600DA2B32 /* Fabric.framework */; };
 		1D89FB5D1AA083BE00AFB64E /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D9C2DF91A9F47E500DA2B32 /* Crashlytics.framework */; };
 		1D89FB601AA08D4400AFB64E /* UserSourceAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB6D26219EFAC5500AAF4A2 /* UserSourceAppDelegate.m */; };
@@ -83,7 +84,6 @@
 		5BB6D27319EFADD000AAF4A2 /* OptionFeedbackViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DDCA4E918F41A2B006E63FE /* OptionFeedbackViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BB6D27419EFADD000AAF4A2 /* AnnoCordovaPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D933EB818F26F6400C82F37 /* AnnoCordovaPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BB6D27619EFADD000AAF4A2 /* ScreenshotGestureListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D6F35C81908CDE7002051ED /* ScreenshotGestureListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5BB6D27819EFAE1A00AAF4A2 /* CDVDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9920240F974842C08E3C61EA /* CDVDevice.m */; };
 		5BB6D27919EFAE1A00AAF4A2 /* CDVInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = B357E14529B745B4AEF4D613 /* CDVInAppBrowser.m */; };
 		5BB6D27A19EFAE1A00AAF4A2 /* CDVFile.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA2D6AB6D364653839AC60B /* CDVFile.m */; };
 		5BB6D27B19EFAE1A00AAF4A2 /* CDVLocalFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = EFFA8AAFDA6B4CA9986F89CF /* CDVLocalFilesystem.m */; };
@@ -903,6 +903,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1D7533711AB1CB5300CD31B5 /* CDVDevice.m in Sources */,
 				1D7533671AB1C39B00CD31B5 /* CDVCamera.m in Sources */,
 				1D7533681AB1C39B00CD31B5 /* CDVJpegHeaderWriter.m in Sources */,
 				1D7533601AB1BDBA00CD31B5 /* SQLitePlugin.m in Sources */,
@@ -910,7 +911,6 @@
 				1D21309A1AA03BEC008F4566 /* UserSourceSwizzler.m in Sources */,
 				5BBA243B19FFB3020086AB8E /* ShakeView.m in Sources */,
 				5BB64FE119F7ABE50017F6FE /* AnnoSingleton.m in Sources */,
-				5BB6D27819EFAE1A00AAF4A2 /* CDVDevice.m in Sources */,
 				5BB6D27919EFAE1A00AAF4A2 /* CDVInAppBrowser.m in Sources */,
 				5BB6D27A19EFAE1A00AAF4A2 /* CDVFile.m in Sources */,
 				5BB6D27B19EFAE1A00AAF4A2 /* CDVLocalFilesystem.m in Sources */,

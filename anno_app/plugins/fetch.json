@@ -17,5 +17,11 @@
             "type": "registry",
             "id": "org.apache.cordova.contacts"
         }
+    },
+    "org.apache.cordova.device": {
+        "source": {
+            "type": "registry",
+            "id": "org.apache.cordova.device"
+        }
     }
 }
