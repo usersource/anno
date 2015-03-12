@@ -35,14 +35,15 @@
 		1D7533601AB1BDBA00CD31B5 /* SQLitePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C4B59A7AF94273A2748F6B /* SQLitePlugin.m */; };
 		1D7533671AB1C39B00CD31B5 /* CDVCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B97616FA62A4AF7A287521D /* CDVCamera.m */; };
 		1D7533681AB1C39B00CD31B5 /* CDVJpegHeaderWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = B65FB769EDC04C6DA9017D5B /* CDVJpegHeaderWriter.m */; };
-		1D89FB5A1AA0835B00AFB64E /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F583DEA5C56F422C875065F3 /* AddressBook.framework */; };
+		1D75336B1AB1C7CE00CD31B5 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F583DEA5C56F422C875065F3 /* AddressBook.framework */; };
+		1D75336C1AB1C7CE00CD31B5 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD5266640B0344749F49768A /* AddressBookUI.framework */; };
+		1D75336D1AB1C7E100CD31B5 /* CDVContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB0F3648F894BB2AD5AB705 /* CDVContacts.m */; };
+		1D75336E1AB1C7E100CD31B5 /* CDVContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 664D9BA08F294C4BA6067E35 /* CDVContact.m */; };
 		1D89FB5C1AA083A200AFB64E /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D9C2DFA1A9F47E600DA2B32 /* Fabric.framework */; };
 		1D89FB5D1AA083BE00AFB64E /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D9C2DF91A9F47E500DA2B32 /* Crashlytics.framework */; };
 		1D89FB601AA08D4400AFB64E /* UserSourceAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB6D26219EFAC5500AAF4A2 /* UserSourceAppDelegate.m */; };
 		1D89FB621AA08DBA00AFB64E /* UserSourceAppDelegate+notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3A51F59B2349C08F199D4F /* UserSourceAppDelegate+notification.m */; };
 		1D89FB651AA08FC200AFB64E /* PushPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E586D196A827A00FF9FC0 /* PushPlugin.m */; };
-		1D89FB661AA0900400AFB64E /* CDVContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB0F3648F894BB2AD5AB705 /* CDVContacts.m */; };
-		1D89FB671AA0900400AFB64E /* CDVContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 664D9BA08F294C4BA6067E35 /* CDVContact.m */; };
 		1DAA38FE19023FC600FCE403 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */; };
 		1DAA39011902406000FCE403 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 305D5FD0115AB8F900A74A75 /* MobileCoreServices.framework */; };
 		1DAA390819024F2700FCE403 /* UserSourceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DF46C0619023329005408CA /* UserSourceTests.m */; };
@@ -92,7 +93,6 @@
 		5BB6D28B19EFAF6900AAF4A2 /* libUserSourceStatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BBAD08119E66C560060A80D /* libUserSourceStatic.a */; };
 		5BBA243B19FFB3020086AB8E /* ShakeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBA243919FFB2CB0086AB8E /* ShakeView.m */; };
 		5BBA243C19FFB3100086AB8E /* ShakeView.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBA243819FFB2CB0086AB8E /* ShakeView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5BBAAB9919F004C800AAC24D /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD5266640B0344749F49768A /* AddressBookUI.framework */; };
 		7784CB808E554E389709F3E3 /* GooglePlus.m in Sources */ = {isa = PBXBuildFile; fileRef = ABF26883A9154097BD756457 /* GooglePlus.m */; };
 		9188E8A8A5064151B676FEB5 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DDBD1190A9946D7B084C779 /* CoreMotion.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		93348D7DBB5B4E00AF3908CF /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B02351B18A74AB4A1AF580D /* MediaPlayer.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -287,11 +287,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1D75336B1AB1C7CE00CD31B5 /* AddressBook.framework in Frameworks */,
+				1D75336C1AB1C7CE00CD31B5 /* AddressBookUI.framework in Frameworks */,
 				1D75335F1AB1BCB300CD31B5 /* libsqlite3.dylib in Frameworks */,
 				1D89FB5D1AA083BE00AFB64E /* Crashlytics.framework in Frameworks */,
 				1D89FB5C1AA083A200AFB64E /* Fabric.framework in Frameworks */,
-				1D89FB5A1AA0835B00AFB64E /* AddressBook.framework in Frameworks */,
-				5BBAAB9919F004C800AAC24D /* AddressBookUI.framework in Frameworks */,
 				5BB6D28B19EFAF6900AAF4A2 /* libUserSourceStatic.a in Frameworks */,
 				1DF9C52A18FBBD54004077BE /* AssetsLibrary.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -872,8 +872,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1D89FB661AA0900400AFB64E /* CDVContacts.m in Sources */,
-				1D89FB671AA0900400AFB64E /* CDVContact.m in Sources */,
+				1D75336D1AB1C7E100CD31B5 /* CDVContacts.m in Sources */,
+				1D75336E1AB1C7E100CD31B5 /* CDVContact.m in Sources */,
 				1D89FB651AA08FC200AFB64E /* PushPlugin.m in Sources */,
 				1D89FB621AA08DBA00AFB64E /* UserSourceAppDelegate+notification.m in Sources */,
 				1D89FB601AA08D4400AFB64E /* UserSourceAppDelegate.m in Sources */,
