@@ -36,7 +36,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>48</string>
+	<string>50</string>
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
@@ -57,14 +57,12 @@
 	<string>UserSource</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string></string>
 	<key>NSMainNibFile</key>
 	<string></string>
 	<key>NSMainNibFile~ipad</key>
 	<string></string>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
