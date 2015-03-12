@@ -302,7 +302,6 @@ module.exports.metadata =
     "org.apache.cordova.file": "1.3.1",
     "org.apache.cordova.camera": "0.3.2",
     "org.apache.cordova.network-information": "0.2.12",
-    "org.apache.cordova.geolocation": "0.3.10",
     "org.apache.cordova.inappbrowser": "0.5.2",
     "com.brodysoft.sqlitePlugin": "1.0.3",
     "org.apache.cordova.contacts": "0.2.13",

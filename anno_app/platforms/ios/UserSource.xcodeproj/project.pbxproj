@@ -38,7 +38,6 @@
 		1D89FB651AA08FC200AFB64E /* PushPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E586D196A827A00FF9FC0 /* PushPlugin.m */; };
 		1D89FB661AA0900400AFB64E /* CDVContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB0F3648F894BB2AD5AB705 /* CDVContacts.m */; };
 		1D89FB671AA0900400AFB64E /* CDVContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 664D9BA08F294C4BA6067E35 /* CDVContact.m */; };
-		1D89FB681AA0908300AFB64E /* CDVLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = D691F1E126C04979A8ADECC6 /* CDVLocation.m */; };
 		1DAA38FE19023FC600FCE403 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */; };
 		1DAA39011902406000FCE403 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 305D5FD0115AB8F900A74A75 /* MobileCoreServices.framework */; };
 		1DAA390819024F2700FCE403 /* UserSourceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DF46C0619023329005408CA /* UserSourceTests.m */; };
@@ -871,7 +870,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1D89FB681AA0908300AFB64E /* CDVLocation.m in Sources */,
 				1D89FB661AA0900400AFB64E /* CDVContacts.m in Sources */,
 				1D89FB671AA0900400AFB64E /* CDVContact.m in Sources */,
 				1D89FB651AA08FC200AFB64E /* PushPlugin.m in Sources */,
