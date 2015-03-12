@@ -33,10 +33,6 @@
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"SocialSharing\"><param name=\"android-package\" value=\"nl.xservices.plugins.SocialSharing\" /></feature>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<feature name=\"Contacts\"><param name=\"android-package\" value=\"org.apache.cordova.contacts.ContactManager\" /></feature>",
                             "count": 1
                         },
@@ -130,10 +126,6 @@
                         }
                     ],
                     "/manifest": [
-                        {
-                            "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
-                            "count": 1
-                        },
                         {
                             "xml": "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\" />",
                             "count": 1
@@ -242,9 +234,6 @@
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "com.brodysoft.sqlitePlugin": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        },
-        "nl.x-services.plugins.socialsharing": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "org.apache.cordova.contacts": {
