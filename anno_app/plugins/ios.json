@@ -33,10 +33,6 @@
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"SQLitePlugin\"><param name=\"ios-package\" value=\"SQLitePlugin\" /></feature>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<feature name=\"Contacts\"><param name=\"ios-package\" value=\"CDVContacts\" /></feature>",
                             "count": 1
                         },
@@ -78,6 +74,10 @@
                         },
                         {
                             "xml": "<access origin=\"https://*.akamaihd.net\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"SQLitePlugin\"><param name=\"ios-package\" value=\"SQLitePlugin\" /></feature>",
                             "count": 1
                         }
                     ]
@@ -129,6 +129,10 @@
                         {
                             "xml": "false",
                             "count": 2
+                        },
+                        {
+                            "xml": false,
+                            "count": 1
                         }
                     ],
                     "Social.framework": [
@@ -266,9 +270,6 @@
         "org.apache.cordova.inappbrowser": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
-        "com.brodysoft.sqlitePlugin": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        },
         "org.apache.cordova.contacts": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
@@ -281,6 +282,9 @@
         "com.phonegap.plugins.facebookconnect": {
             "APP_ID": "397257797119364",
             "APP_NAME": "UserSource",
+            "PACKAGE_NAME": "io.usersource.anno"
+        },
+        "com.brodysoft.sqlitePlugin": {
             "PACKAGE_NAME": "io.usersource.anno"
         }
     },

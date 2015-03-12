@@ -204,13 +204,6 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/com.brodysoft.sqlitePlugin/www/SQLitePlugin.js",
-        "id": "com.brodysoft.sqlitePlugin.SQLitePlugin",
-        "clobbers": [
-            "SQLitePlugin"
-        ]
-    },
-    {
         "file": "plugins/org.apache.cordova.contacts/www/contacts.js",
         "id": "org.apache.cordova.contacts.contacts",
         "clobbers": [
@@ -307,6 +300,13 @@ module.exports = [
         "clobbers": [
             "facebookConnectPlugin"
         ]
+    },
+    {
+        "file": "plugins/com.brodysoft.sqlitePlugin/www/SQLitePlugin.js",
+        "id": "com.brodysoft.sqlitePlugin.SQLitePlugin",
+        "clobbers": [
+            "SQLitePlugin"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -317,11 +317,11 @@ module.exports.metadata =
     "org.apache.cordova.camera": "0.3.2",
     "org.apache.cordova.network-information": "0.2.12",
     "org.apache.cordova.inappbrowser": "0.5.2",
-    "com.brodysoft.sqlitePlugin": "1.0.3",
     "org.apache.cordova.contacts": "0.2.13",
     "com.phonegap.plugins.PushPlugin": "2.4.0",
     "nl.x-services.plugins.googleplus": "1.0.8",
-    "com.phonegap.plugins.facebookconnect": "0.11.0"
+    "com.phonegap.plugins.facebookconnect": "0.11.0",
+    "com.brodysoft.sqlitePlugin": "1.0.5"
 }
 // BOTTOM OF METADATA
 });

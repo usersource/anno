@@ -29,10 +29,6 @@
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"SQLitePlugin\"><param name=\"android-package\" value=\"org.pgsqlite.SQLitePlugin\" /></feature>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<feature name=\"Contacts\"><param name=\"android-package\" value=\"org.apache.cordova.contacts.ContactManager\" /></feature>",
                             "count": 1
                         },
@@ -71,6 +67,10 @@
                         {
                             "xml": "<access origin=\"https://*.akamaihd.net\" />",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"SQLitePlugin\"><param name=\"android-package\" value=\"org.pgsqlite.SQLitePlugin\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -101,10 +101,6 @@
                     ],
                     "/manifest/application": [
                         {
-                            "xml": "<activity android:label=\"@string/app_name\" android:name=\"org.pgsqlite.SQLitePlugin\"></activity>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<activity android:exported=\"true\" android:name=\"com.plugin.gcm.PushHandlerActivity\" />",
                             "count": 1
                         },
@@ -114,6 +110,10 @@
                         },
                         {
                             "xml": "<service android:name=\"com.plugin.gcm.GCMIntentService\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<activity android:label=\"@string/app_name\" android:name=\"org.pgsqlite.SQLitePlugin\"></activity>",
                             "count": 1
                         }
                     ],
@@ -222,9 +222,6 @@
         "org.apache.cordova.inappbrowser": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
-        "com.brodysoft.sqlitePlugin": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        },
         "org.apache.cordova.contacts": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
@@ -237,6 +234,9 @@
         "com.phonegap.plugins.facebookconnect": {
             "APP_ID": "397257797119364",
             "APP_NAME": "UserSource",
+            "PACKAGE_NAME": "io.usersource.anno"
+        },
+        "com.brodysoft.sqlitePlugin": {
             "PACKAGE_NAME": "io.usersource.anno"
         }
     },
