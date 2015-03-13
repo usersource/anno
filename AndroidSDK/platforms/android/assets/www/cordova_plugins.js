@@ -1,21 +1,6 @@
 cordova.define('cordova/plugin_list', function(require, exports, module) {
 module.exports = [
     {
-        "file": "plugins/org.apache.cordova.network-information/www/network.js",
-        "id": "org.apache.cordova.network-information.network",
-        "clobbers": [
-            "navigator.connection",
-            "navigator.network.connection"
-        ]
-    },
-    {
-        "file": "plugins/org.apache.cordova.network-information/www/Connection.js",
-        "id": "org.apache.cordova.network-information.Connection",
-        "clobbers": [
-            "Connection"
-        ]
-    },
-    {
         "file": "plugins/com.brodysoft.sqlitePlugin/www/SQLitePlugin.js",
         "id": "com.brodysoft.sqlitePlugin.SQLitePlugin",
         "clobbers": [
@@ -209,17 +194,32 @@ module.exports = [
         "clobbers": [
             "window.open"
         ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.network-information/www/network.js",
+        "id": "org.apache.cordova.network-information.network",
+        "clobbers": [
+            "navigator.connection",
+            "navigator.network.connection"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.network-information/www/Connection.js",
+        "id": "org.apache.cordova.network-information.Connection",
+        "clobbers": [
+            "Connection"
+        ]
     }
 ];
 module.exports.metadata = 
 // TOP OF METADATA
 {
-    "org.apache.cordova.network-information": "0.2.12",
     "com.brodysoft.sqlitePlugin": "1.0.5",
     "org.apache.cordova.camera": "0.3.5",
     "org.apache.cordova.device": "0.3.0",
     "org.apache.cordova.file": "1.3.3",
-    "org.apache.cordova.inappbrowser": "0.6.0"
+    "org.apache.cordova.inappbrowser": "0.6.0",
+    "org.apache.cordova.network-information": "0.2.15"
 }
 // BOTTOM OF METADATA
 });

@@ -82,3 +82,16 @@
 * CB-6964 ported manual tests
 * Port network tests to plugin-test-framework
 * Fix naviagtor typo
+
+### 0.2.13 (Oct 03, 2014)
+* CB-7595: Android L changes the type from Mobile to Cellular, I'm pretty sure this isn't documented
+
+### 0.2.14 (Dec 02, 2014)
+* CB-7976 **Android**: Use webView's context rather than Activity's context for intent receiver
+* CB-7700 cordova-plugin-network-information documentation translation: cordova-plugin-network-information
+
+### 0.2.15 (Feb 04, 2015)
+* CB-8384 Network status change support on Windows
+* CB-8384 Fixes the way we detect online status on Windows
+* CB-8384 Add Windows platform quirks
+* CB-8384 Add Windows section to Network Information plugin
