@@ -16,13 +16,6 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/org.apache.cordova.inappbrowser/www/inappbrowser.js",
-        "id": "org.apache.cordova.inappbrowser.inappbrowser",
-        "clobbers": [
-            "window.open"
-        ]
-    },
-    {
         "file": "plugins/com.brodysoft.sqlitePlugin/www/SQLitePlugin.js",
         "id": "com.brodysoft.sqlitePlugin.SQLitePlugin",
         "clobbers": [
@@ -209,17 +202,24 @@ module.exports = [
             "cordova"
         ],
         "runs": true
+    },
+    {
+        "file": "plugins/org.apache.cordova.inappbrowser/www/inappbrowser.js",
+        "id": "org.apache.cordova.inappbrowser.inappbrowser",
+        "clobbers": [
+            "window.open"
+        ]
     }
 ];
 module.exports.metadata = 
 // TOP OF METADATA
 {
     "org.apache.cordova.network-information": "0.2.12",
-    "org.apache.cordova.inappbrowser": "0.5.2",
     "com.brodysoft.sqlitePlugin": "1.0.5",
     "org.apache.cordova.camera": "0.3.5",
     "org.apache.cordova.device": "0.3.0",
-    "org.apache.cordova.file": "1.3.3"
+    "org.apache.cordova.file": "1.3.3",
+    "org.apache.cordova.inappbrowser": "0.6.0"
 }
 // BOTTOM OF METADATA
 });
