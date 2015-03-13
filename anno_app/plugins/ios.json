@@ -9,10 +9,6 @@
                 "parents": {
                     "/*": [
                         {
-                            "xml": "<feature name=\"NetworkStatus\"><param name=\"ios-package\" value=\"CDVConnection\" /></feature>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<feature name=\"PushPlugin\"><param name=\"ios-package\" value=\"PushPlugin\" /></feature>",
                             "count": 1
                         },
@@ -79,6 +75,10 @@
                         {
                             "xml": "<feature name=\"InAppBrowser\"><param name=\"ios-package\" value=\"CDVInAppBrowser\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"NetworkStatus\"><param name=\"ios-package\" value=\"CDVConnection\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -89,6 +89,10 @@
                         {
                             "xml": "true",
                             "count": 2
+                        },
+                        {
+                            "xml": true,
+                            "count": 1
                         }
                     ],
                     "CoreGraphics.framework": [
@@ -283,9 +287,6 @@
         }
     },
     "installed_plugins": {
-        "org.apache.cordova.network-information": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        },
         "com.phonegap.plugins.PushPlugin": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
@@ -313,6 +314,9 @@
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "org.apache.cordova.inappbrowser": {
+            "PACKAGE_NAME": "io.usersource.anno"
+        },
+        "org.apache.cordova.network-information": {
             "PACKAGE_NAME": "io.usersource.anno"
         }
     },

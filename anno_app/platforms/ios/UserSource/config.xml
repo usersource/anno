@@ -28,9 +28,6 @@
         <param name="onload" value="true" />
     </feature>
     <plugin name="AnnoCordovaPlugin" value="AnnoCordovaPlugin" />
-    <feature name="NetworkStatus">
-        <param name="ios-package" value="CDVConnection" />
-    </feature>
     <feature name="PushPlugin">
         <param name="ios-package" value="PushPlugin" />
     </feature>
@@ -68,5 +65,8 @@
     </feature>
     <feature name="InAppBrowser">
         <param name="ios-package" value="CDVInAppBrowser" />
+    </feature>
+    <feature name="NetworkStatus">
+        <param name="ios-package" value="CDVConnection" />
     </feature>
 </widget>
