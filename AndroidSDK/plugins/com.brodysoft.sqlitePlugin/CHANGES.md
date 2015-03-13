@@ -1,5 +1,21 @@
 # Changes
 
+## 1.0.5
+
+- Workaround for Android db locking/closing issue
+- Fix double-precision REAL values in result (iOS version)
+- Fix query result truncation in case of NULL character (\0 or \u0000) (iOS version)
+- Convert array SQL parameters to string, according to match Web SQL spec
+- Fix closing of Android database
+- Some fixes for SQL API error handling to be consistent with Web SQL
+
+## 1.0.4
+
+- Pre-populated database option (Android/iOS)
+- Option to select database location to disable iCloud backup (iOS ONLY)
+- Safeguard against closing of database while transaction is pending
+- Fix to prevent double marshaling of data
+
 ## 1.0.3
 
 - Fixed issue with multi-page apps on Android (due to problem when closing & re-opening app)

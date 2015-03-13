@@ -219,7 +219,7 @@ module.exports.metadata =
     "org.apache.cordova.camera": "0.3.2",
     "org.apache.cordova.network-information": "0.2.12",
     "org.apache.cordova.inappbrowser": "0.5.2",
-    "com.brodysoft.sqlitePlugin": "1.0.3"
+    "com.brodysoft.sqlitePlugin": "1.0.5"
 }
 // BOTTOM OF METADATA
 });
