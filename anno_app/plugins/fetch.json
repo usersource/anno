@@ -23,5 +23,11 @@
             "type": "registry",
             "id": "org.apache.cordova.device"
         }
+    },
+    "org.apache.cordova.file": {
+        "source": {
+            "type": "registry",
+            "id": "org.apache.cordova.file"
+        }
     }
 }
