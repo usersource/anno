@@ -16,13 +16,6 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/org.apache.cordova.inappbrowser/www/inappbrowser.js",
-        "id": "org.apache.cordova.inappbrowser.inappbrowser",
-        "clobbers": [
-            "window.open"
-        ]
-    },
-    {
         "file": "plugins/com.phonegap.plugins.PushPlugin/www/PushNotification.js",
         "id": "com.phonegap.plugins.PushPlugin.PushNotification",
         "clobbers": [
@@ -307,13 +300,19 @@ module.exports = [
             "cordova"
         ],
         "runs": true
+    },
+    {
+        "file": "plugins/org.apache.cordova.inappbrowser/www/inappbrowser.js",
+        "id": "org.apache.cordova.inappbrowser.inappbrowser",
+        "clobbers": [
+            "window.open"
+        ]
     }
 ];
 module.exports.metadata = 
 // TOP OF METADATA
 {
     "org.apache.cordova.network-information": "0.2.12",
-    "org.apache.cordova.inappbrowser": "0.5.2",
     "com.phonegap.plugins.PushPlugin": "2.4.0",
     "nl.x-services.plugins.googleplus": "1.0.8",
     "com.phonegap.plugins.facebookconnect": "0.11.0",
@@ -321,7 +320,8 @@ module.exports.metadata =
     "org.apache.cordova.camera": "0.3.5",
     "org.apache.cordova.contacts": "0.2.16",
     "org.apache.cordova.device": "0.3.0",
-    "org.apache.cordova.file": "1.3.3"
+    "org.apache.cordova.file": "1.3.3",
+    "org.apache.cordova.inappbrowser": "0.6.0"
 }
 // BOTTOM OF METADATA
 });

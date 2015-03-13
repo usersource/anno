@@ -59,6 +59,7 @@
 		1DEE8C5E1AB2AC5900D6E96D /* CDVFile.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA2D6AB6D364653839AC60B /* CDVFile.m */; };
 		1DEE8C5F1AB2AC5900D6E96D /* CDVLocalFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = EFFA8AAFDA6B4CA9986F89CF /* CDVLocalFilesystem.m */; };
 		1DEE8C601AB2AC5900D6E96D /* CDVAssetLibraryFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 68CE6AE042F64A29ABB97844 /* CDVAssetLibraryFilesystem.m */; };
+		1DEE8C631AB2AEEF00D6E96D /* CDVInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = B357E14529B745B4AEF4D613 /* CDVInAppBrowser.m */; };
 		1DF46C0519023329005408CA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1DF46C0319023329005408CA /* InfoPlist.strings */; };
 		1DF9C52A18FBBD54004077BE /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */; };
 		1F766FE113BBADB100FB74C0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1F766FDC13BBADB100FB74C0 /* Localizable.strings */; };
@@ -87,7 +88,6 @@
 		5BB6D27319EFADD000AAF4A2 /* OptionFeedbackViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DDCA4E918F41A2B006E63FE /* OptionFeedbackViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BB6D27419EFADD000AAF4A2 /* AnnoCordovaPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D933EB818F26F6400C82F37 /* AnnoCordovaPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BB6D27619EFADD000AAF4A2 /* ScreenshotGestureListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D6F35C81908CDE7002051ED /* ScreenshotGestureListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5BB6D27919EFAE1A00AAF4A2 /* CDVInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = B357E14529B745B4AEF4D613 /* CDVInAppBrowser.m */; };
 		5BB6D28019EFAE1A00AAF4A2 /* CDVConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = F4815447178640BD972A8AE6 /* CDVConnection.m */; };
 		5BB6D28119EFAE1A00AAF4A2 /* CDVReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 941DE4CAE98246CE88EB2AE0 /* CDVReachability.m */; };
 		5BB6D28B19EFAF6900AAF4A2 /* libUserSourceStatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BBAD08119E66C560060A80D /* libUserSourceStatic.a */; };
@@ -903,6 +903,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1DEE8C631AB2AEEF00D6E96D /* CDVInAppBrowser.m in Sources */,
 				1DEE8C5E1AB2AC5900D6E96D /* CDVFile.m in Sources */,
 				1DEE8C5F1AB2AC5900D6E96D /* CDVLocalFilesystem.m in Sources */,
 				1DEE8C601AB2AC5900D6E96D /* CDVAssetLibraryFilesystem.m in Sources */,
@@ -914,7 +915,6 @@
 				1D21309A1AA03BEC008F4566 /* UserSourceSwizzler.m in Sources */,
 				5BBA243B19FFB3020086AB8E /* ShakeView.m in Sources */,
 				5BB64FE119F7ABE50017F6FE /* AnnoSingleton.m in Sources */,
-				5BB6D27919EFAE1A00AAF4A2 /* CDVInAppBrowser.m in Sources */,
 				5BB6D28019EFAE1A00AAF4A2 /* CDVConnection.m in Sources */,
 				5BB6D28119EFAE1A00AAF4A2 /* CDVReachability.m in Sources */,
 				5BB6D26719EFADAD00AAF4A2 /* AnnoUtils.m in Sources */,
