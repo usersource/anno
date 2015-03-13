@@ -9,10 +9,6 @@
                 "parents": {
                     "/*": [
                         {
-                            "xml": "<feature name=\"Device\"><param name=\"android-package\" value=\"org.apache.cordova.device.Device\" /></feature>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<feature name=\"File\"><param name=\"android-package\" value=\"org.apache.cordova.file.FileUtils\" /><param name=\"onload\" value=\"true\" /></feature>",
                             "count": 1
                         },
@@ -30,6 +26,10 @@
                         },
                         {
                             "xml": "<feature name=\"Camera\"><param name=\"android-package\" value=\"org.apache.cordova.camera.CameraLauncher\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Device\"><param name=\"android-package\" value=\"org.apache.cordova.device.Device\" /></feature>",
                             "count": 1
                         }
                     ]
@@ -92,9 +92,6 @@
         }
     },
     "installed_plugins": {
-        "org.apache.cordova.device": {
-            "PACKAGE_NAME": "io.usersource.anno"
-        },
         "org.apache.cordova.file": {
             "PACKAGE_NAME": "io.usersource.anno"
         },
@@ -108,6 +105,9 @@
             "PACKAGE_NAME": "io.usersource.anno"
         },
         "org.apache.cordova.camera": {
+            "PACKAGE_NAME": "io.usersource.anno"
+        },
+        "org.apache.cordova.device": {
             "PACKAGE_NAME": "io.usersource.anno"
         }
     },
