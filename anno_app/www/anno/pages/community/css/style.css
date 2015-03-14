@@ -1111,10 +1111,10 @@ li.unread .listTitle {
 	position: absolute;
 	left: 0;
 	right: 0;
-	bottom: calc(11.443661972% + 40px);
-	bottom: -webkit-calc(11.443661972% + 40px);
-	bottom: -moz-calc(11.443661972% + 40px);
-	bottom: -o-calc(11.443661972% + 40px);
+	bottom: calc(13% + 40px);
+	bottom: -webkit-calc(13% + 40px);
+	bottom: -moz-calc(13% + 40px);
+	bottom: -o-calc(13% + 40px);
 }
 
 /* for plugin */
