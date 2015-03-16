@@ -12,21 +12,14 @@ AdminTeamMaster.controller('Main', function($scope, $timeout, DataService, Admin
     }
 
     $scope.initMain = function() {
-        getAdminTeamMasterList();
+        $scope.getAdminTeamMasterList();
     };
 
     $scope.getAdminTeamMasterList = function(event) {
-        DataService.makeHTTPCall("anno.anno.archive", {
+        DataService.makeHTTPCall("community.community.admin_master", {
         }, function(data) {
         }, function(status) {
             showAdminTeamMasterMessage("Oops... Something went wrong while archiving. Please try again.", true);
         });
-    };
-
-    function watchersCount() {
-        $timeout(function() {
-            $scope.watchers = Utils.watchersContainedIn($scope);
-            console.log("Number of watchers:", $scope.watchers);
-        }, 1000);
     };
 });

@@ -6,10 +6,10 @@ AdminTeamMasterConstantsModule.value("AdminTeamMasterConstants", {
     apiRoot : "/_ah/api",
     endpointVersion: "1.0",
     endpointUrl : {
-        "account.dashboard.authenticate" : {
-            "root" : "account",
-            "path" : "account/dashboard/authenticate",
-            "method" : "POST"
+        "community.community.admin_master" : {
+            "root" : "community",
+            "path" : "community/admin_master_data",
+            "method" : "GET"
         }
     }
 });

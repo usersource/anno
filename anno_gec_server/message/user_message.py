@@ -13,6 +13,13 @@ class UserMessage(messages.Message):
     image_url = messages.StringField(8)
     is_auth_user = messages.BooleanField(9)
 
+class UserAdminMasterMessage(messages.Message):
+    user_email = messages.StringField(1)
+    display_name = messages.StringField(2)
+    password_present = messages.BooleanField(3)
+    role = messages.StringField(4)
+    circle = messages.StringField(5)
+
 class UserCommunityMessage(messages.Message):
     from message.community_message import CommunityMessage
     community = messages.MessageField(CommunityMessage, 1)

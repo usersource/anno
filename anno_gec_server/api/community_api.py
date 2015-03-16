@@ -22,6 +22,8 @@ from message.community_message import CommunityInviteMessage
 from message.community_message import CreateInviteResponseMessage
 from message.community_message import CommunityValueMessage
 from message.community_message import CommunityValueListMessage
+from message.community_message import CommunityAdminMasterMessage
+from message.community_message import CommunityAdminMasterListMessage
 from message.user_message import UserMessage
 from message.common_message import ResponseMessage
 from model.community import Community
@@ -192,3 +194,19 @@ class CommunityApi(remote.Service):
         return CommunityHashResponseMessage(team_key=community.team_key,
                                             app_name=community_app.name,
                                             app_icon=community_app.icon_url)
+
+    @endpoints.method(message_types.VoidMessage, CommunityAdminMasterListMessage,
+                      path="community/admin_master_data", http_method="GET", name="community.admin_master")
+    def get_admin_master_data(self, request):
+        communities_message = []
+        communities = Community.query().filter(Community.team_secret != None).fetch()
+
+        for community in communities:
+            community_message = CommunityAdminMasterMessage()
+            community_message.community_name = community.name
+            community_message.team_key = community.team_key
+            community_message.team_secret = community.team_secret
+            community_message.team_hash = community.team_hash
+            communities_message.append(community_message)
+
+        return CommunityAdminMasterListMessage(communities=communities_message)

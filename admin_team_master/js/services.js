@@ -1,6 +1,6 @@
 'use strict';
 
-var ServiceModule = angular.module('ServiceModule', ['ngCookies', 'AdminTeamMasterConstantsModule']);
+var ServiceModule = angular.module('ServiceModule', ['AdminTeamMasterConstantsModule']);
 
 ServiceModule.factory('DataService', function($http, AdminTeamMasterConstants) {
     var apiRoot = AdminTeamMasterConstants.apiRoot;
