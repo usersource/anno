@@ -15,14 +15,16 @@
     </head>
     <body ng-app="AdminTeamMaster">
         <div id="main" ng-controller="Main" ng-init="initMain();" style="height: 100%;position: relative;">
-            <div style="width: 50%;height: 100%;padding: 0;border-right: 1px solid #C4CFD7;position: absolute;">
+            <div style="width: 50%;height: 100%;padding: 0;border-right: 1px solid #C4CFD7;position: absolute;overflow-x: scroll;">
+                <div style="font-weight: bold;text-align: center;height: 66px;line-height: 66px;font-size: 21px;">Communities</div>
                 <div ng-repeat="community in communities" class="community" ng-class="{'selected':($index == 0)}">
                     <img width="50px" height="50px" style="border-radius: 12px;" ng-src="{{community.app_icon && community.app_icon || '/admin_team_master/images/icon_mobile.png'}}">
                     <span style="vertical-align: middle;margin-left: 8px;">{{community.community_name}}</span>
                     <span style="vertical-align: middle;margin-left: 4px;">({{community.app_name}})</span>
                 </div>
             </div>
-            <div style="width: 50%;height: 100%;padding: 0;position: absolute;right: 0;">
+            <div style="width: 50%;height: 100%;padding: 0;position: absolute;right: 0;overflow-x: scroll;">
+                <div style="font-weight: bold;text-align: center;height: 66px;line-height: 66px;font-size: 21px;">Community Detail</div>
                 <div class="community-detail-row">
                     <div style="display: inline-block;font-weight: bold;">Team Key</div>
                     <div style="position: absolute;right: 16px;display: inline-block;">{{community_detail.team_key}}</div>
@@ -34,6 +36,28 @@
                 <div class="community-detail-row">
                     <div style="display: inline-block;font-weight: bold;">Dashboard URL</div>
                     <a style="position: absolute;right: 16px;display: inline-block;" ng-href="{{getDashboardURL(community_detail.community_name, community_detail.team_hash);}}" target="_blank">{{getDashboardURL(community_detail.community_name, community_detail.team_hash);}}</a>
+                </div>
+                <div class="community-detail-row" style="height: auto;">
+                    <div style="display: inline-block;font-weight: bold;padding-bottom: 8px;">Users ({{community_detail.users.length}})</div>
+                    <div ng-repeat="user in community_detail.users" class="user">
+                        <div>
+                            <img width="45px" height="45px" style="border-radius: 25px;" ng-src="{{::user.image_url && user.image_url || '/dashboard/images/icon_no-user.png'}}">
+                            <span style="margin-left: 4px;font-weight: bold;">{{user.display_name}}</span>
+                            <span style="margin-left: 4px;font-style: italic;">({{user.user_email}})</span>
+                        </div>
+                        <div style="line-height: 30px;">
+                            <span style="font-weight: bold;">Password Present:</span>
+                            <span>{{user.password_present}}</span>
+                        </div>
+                        <div style="line-height: 30px;">
+                            <span style="font-weight: bold;">Role:</span>
+                            <span>{{user.role}}</span>
+                        </div>
+                        <div style="line-height: 30px;">
+                            <span style="font-weight: bold;">Circle:</span>
+                            <span>{{user.circle}}</span>
+                        </div
+                    </div>
                 </div>
             </div>
         </div>
