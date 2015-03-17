@@ -25,6 +25,7 @@ from message.community_message import CommunityValueListMessage
 from message.community_message import CommunityAdminMasterMessage
 from message.community_message import CommunityAdminMasterListMessage
 from message.user_message import UserMessage
+from message.user_message import UserAdminMasterMessage
 from message.common_message import ResponseMessage
 from model.community import Community
 from model.userrole import UserRole
@@ -207,6 +208,20 @@ class CommunityApi(remote.Service):
             community_message.team_key = community.team_key
             community_message.team_secret = community.team_secret
             community_message.team_hash = community.team_hash
+            community_message.users = []
+
+            for userrole in UserRole.community_user_list(community_key=community.key):
+                user = userrole.user.get()
+                if user and (user.account_type == community.team_key):
+                    user_message = UserAdminMasterMessage()
+                    user_message.display_name = user.display_name
+                    user_message.user_email = user.user_email
+                    user_message.password_present = True if user.password else False
+                    user_message.role = userrole.role
+                    if community.circles:
+                        user_message.circle = community.circles.get(str(userrole.circle_level))
+                    community_message.users.append(user_message)
+
             communities_message.append(community_message)
 
         return CommunityAdminMasterListMessage(communities=communities_message)
