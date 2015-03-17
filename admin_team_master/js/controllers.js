@@ -21,7 +21,7 @@ AdminTeamMaster.controller('Main', function($scope, $timeout, $location, DataSer
     $scope.getDashboardURL = function(community_name, team_hash) {
         if (community_name && team_hash) {
             var url = $location.protocol() + "://" + $location.host();
-            if ($location.port() !== "80") {
+            if ($location.port() !== 443) {
                 url = url + ":" + $location.port();
             }
             url = url + "/dashboard/" + team_hash + "/" + community_name.replace(/\W+/g, "-").toLowerCase();

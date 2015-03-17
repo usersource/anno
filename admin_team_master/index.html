@@ -35,7 +35,7 @@
                 </div>
                 <div class="community-detail-row">
                     <div style="display: inline-block;font-weight: bold;">Dashboard URL</div>
-                    <a style="position: absolute;right: 16px;display: inline-block;" ng-href="{{getDashboardURL(community_detail.community_name, community_detail.team_hash);}}" target="_blank">{{getDashboardURL(community_detail.community_name, community_detail.team_hash);}}</a>
+                    <a class="dashboard-url" ng-href="{{getDashboardURL(community_detail.community_name, community_detail.team_hash);}}" target="_blank">{{getDashboardURL(community_detail.community_name, community_detail.team_hash);}}</a>
                 </div>
                 <div class="community-detail-row" style="height: auto;">
                     <div style="display: inline-block;font-weight: bold;padding-bottom: 8px;">Users ({{community_detail.users.length}})</div>
