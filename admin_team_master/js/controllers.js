@@ -2,7 +2,7 @@
 
 var AdminTeamMaster = angular.module('AdminTeamMaster', ['AdminTeamMasterConstantsModule', 'ServiceModule']);
 
-AdminTeamMaster.controller('Main', function($scope, $timeout, DataService, AdminTeamMasterConstants) {
+AdminTeamMaster.controller('Main', function($scope, $timeout, $location, DataService, AdminTeamMasterConstants) {
     function showAdminTeamMasterMessage(message, error_type) {
         $scope.error_message = message;
         $scope.admin_master_team_error_type = error_type || false;
@@ -15,9 +15,29 @@ AdminTeamMaster.controller('Main', function($scope, $timeout, DataService, Admin
         $scope.getAdminTeamMasterList();
     };
 
+    $scope.getDashboardURL = function(community_name, team_hash) {
+        if (community_name && team_hash) {
+            var url = $location.protocol() + "://" + $location.host();
+            if ($location.port() !== "80") {
+                url = url + ":" + $location.port();
+            }
+            url = url + "/dashboard/" + team_hash + "/" + community_name.replace(/\W+/g, "-");
+            return url;
+        } else {
+            return "";
+        }
+    };
+
     $scope.getAdminTeamMasterList = function(event) {
+        $scope.communities = [];
+        $scope.community_detail = {};
+
         DataService.makeHTTPCall("community.community.admin_master", {
         }, function(data) {
+            if (data.hasOwnProperty('communities') && data.communities.length > 0) {
+                $scope.communities = data.communities;
+                $scope.community_detail = data.communities[0];
+            }
         }, function(status) {
             showAdminTeamMasterMessage("Oops... Something went wrong while archiving. Please try again.", true);
         });
