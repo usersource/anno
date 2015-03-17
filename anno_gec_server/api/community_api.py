@@ -208,8 +208,13 @@ class CommunityApi(remote.Service):
             community_message.team_key = community.team_key
             community_message.team_secret = community.team_secret
             community_message.team_hash = community.team_hash
-            community_message.users = []
 
+            app = community.apps[0].get()
+            if app:
+                community_message.app_name = app.name
+                community_message.app_icon = app.icon_url
+
+            community_message.users = []
             for userrole in UserRole.community_user_list(community_key=community.key):
                 user = userrole.user.get()
                 if user and (user.account_type == community.team_key):
@@ -218,6 +223,7 @@ class CommunityApi(remote.Service):
                     user_message.user_email = user.user_email
                     user_message.password_present = True if user.password else False
                     user_message.role = userrole.role
+                    user_message.image_url = user.image_url
                     if community.circles:
                         user_message.circle = community.circles.get(str(userrole.circle_level))
                     community_message.users.append(user_message)

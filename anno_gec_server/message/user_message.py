@@ -19,6 +19,7 @@ class UserAdminMasterMessage(messages.Message):
     password_present = messages.BooleanField(3)
     role = messages.StringField(4)
     circle = messages.StringField(5)
+    image_url = messages.StringField(6)
 
 class UserCommunityMessage(messages.Message):
     from message.community_message import CommunityMessage

@@ -27,7 +27,8 @@ class CommunityAdminMasterMessage(messages.Message):
     team_secret = messages.StringField(3)
     team_hash = messages.StringField(4)
     app_name = messages.StringField(5)
-    users = messages.MessageField(UserAdminMasterMessage, 6, repeated=True)
+    app_icon = messages.StringField(6)
+    users = messages.MessageField(UserAdminMasterMessage, 7, repeated=True)
 
 class CommunityAdminMasterListMessage(messages.Message):
     communities = messages.MessageField(CommunityAdminMasterMessage, 1, repeated=True)
