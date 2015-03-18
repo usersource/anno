@@ -91,13 +91,13 @@
                     </div>
                     <div>
                         <div>
-                            <input class="input_user_display_name" placeholder="Display Name">
-                            <input class="input_user_email" placeholder="Email Address">
-                            <input class="input_user_password" placeholder="Password">
+                            <input class="input_user_display_name" placeholder="Display Name" ng-model="user_display_name">
+                            <input class="input_user_email" placeholder="Email Address" ng-model="user_email">
+                            <input class="input_user_password" placeholder="Password" ng-model="user_password">
                             <button class="remove_other_users">Remove User</button>
                         </div>
                     </div>
-                    <button id="create_community">Create Community</button>
+                    <button id="create_community" ng-click="createSDKTeam();">Create Community</button>
                 </div>
             </div>
         </div>

@@ -31,6 +31,29 @@ AdminTeamMaster.controller('Main', function($scope, $timeout, $location, DataSer
         }
     };
 
+    $scope.createSDKTeam = function() {
+        var admin_user = {};
+        admin_user["display_name"] = $scope.admin_display_name;
+        admin_user["email"] = $scope.admin_email;
+        admin_user["password"] = $scope.admin_password;
+
+        var other_users = [];
+        var other_user = {};
+        other_user["display_name"] = $scope.user_display_name;
+        other_user["email"] = $scope.user_email;
+        other_user["password"] = $scope.user_password;
+        other_users.push(other_user);
+
+        var params = {};
+        params["team_name"] = $scope.team_name;
+        params["app_name"] = $scope.app_name;
+        params["team_key"] = $scope.team_key;
+        params["admin_user"] = admin_user;
+        params["other_users"] = other_users;
+
+        console.log(params);
+    };
+
     $scope.selectCommunity = function(event) {
         var team_key = event.currentTarget.dataset.teamKey;
         angular.element(document.getElementsByClassName("community")).removeClass("selected");
