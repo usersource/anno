@@ -64,5 +64,42 @@
                 </div>
             </div>
         </div>
+        <div id="create-community" style="width: 100%;height: 100%;position: fixed;background: rgba(0, 0, 0, 0.6);">
+            <div id="create-community-inner" style="  width: 90%;height: 90%;margin: 0 auto;background-color: #FFF;">
+                <div>
+                    <div>
+                        <span>Team Name</span>
+                        <input id="input_team_name" ng-model="team_name"/>
+                    </div>
+                    <div>
+                        <span>App Name</span>
+                        <input id="input_app_name" ng-model="app_name"/>
+                    </div>
+                    <div>
+                        <span>Team Key</span>
+                        <input id="input_team_key" ng-model="team_key"/>
+                    </div>
+                    <div>
+                        <div>Admin Users</div>
+                        <input id="input_admin_display_name" ng-model="admin_display_name" placeholder="Display Name">
+                        <input id="input_admin_email" ng-model="admin_email" placeholder="Email Address">
+                        <input id="input_admin_password" ng-model="admin_password" placeholder="Password">
+                    </div>
+                    <div>
+                        <span>Other Users</span>
+                        <button id="add_other_users">Add User</button>
+                    </div>
+                    <div>
+                        <div>
+                            <input class="input_user_display_name" placeholder="Display Name">
+                            <input class="input_user_email" placeholder="Email Address">
+                            <input class="input_user_password" placeholder="Password">
+                            <button class="remove_other_users">Remove User</button>
+                        </div>
+                    </div>
+                    <button id="create_community">Create Community</button>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
