@@ -7,6 +7,40 @@ body {
     margin: 0;
     color: #282828 !important;
 }
+.header {
+  width: 100%;
+  height: 74px;
+  position: fixed;
+  padding: 8px 0;
+  vertical-align: middle;
+  z-index: 100;
+  box-shadow: 0px 1px 8px 0 rgba(0, 0, 0, 0.15);
+  background: #fff;
+  margin: 0 !important;
+  line-height: 57px;
+  border-bottom: 1px solid #c4cfd7;
+  top: 0;
+  left: 0;
+}
+#main {
+  position: absolute;
+  top: 74px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #F9F9F9;
+}
+#main-inner {
+  position: absolute;
+  border-radius: 4px;
+  border: 1px solid #C4CFD7;
+  margin: 2.031%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #FFF;
+}
 .community {
   padding: 8px 16px;
   border-top: 1px solid #C4CFD7;
