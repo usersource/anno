@@ -45,9 +45,10 @@ body {
   padding: 8px 16px;
   border-top: 1px solid #C4CFD7;
   cursor: pointer;
+  background-color: #F0F2F3;
 }
 .community.selected {
-  background-color: #F0F2F3;
+  background-color: white;
 }
 .community-detail-row {
   padding: 8px 16px;
