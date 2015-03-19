@@ -6,6 +6,7 @@ from protorpc import messages
 from protorpc import message_types
 
 from message.user_message import UserMessage
+from message.user_message import CreateUserMessage
 from message.user_message import UserAdminMasterMessage
 from message.appinfo_message import AppInfoMessage
 
@@ -29,6 +30,13 @@ class CommunityAdminMasterMessage(messages.Message):
     app_name = messages.StringField(5)
     app_icon = messages.StringField(6)
     users = messages.MessageField(UserAdminMasterMessage, 7, repeated=True)
+
+class CreateCommunityMessage(messages.Message):
+    community_name = messages.StringField(1)
+    team_key = messages.StringField(2)
+    app_name = messages.StringField(3)
+    admin_user = messages.MessageField(CreateUserMessage, 4)
+    other_users = messages.MessageField(CreateUserMessage, 5, repeated=True)
 
 class CommunityAdminMasterListMessage(messages.Message):
     communities = messages.MessageField(CommunityAdminMasterMessage, 1, repeated=True)

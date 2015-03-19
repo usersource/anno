@@ -5,6 +5,7 @@ var AdminTeamMaster = angular.module('AdminTeamMaster', ['AdminTeamMasterConstan
 AdminTeamMaster.controller('Main', function($scope, $timeout, $location, DataService, AdminTeamMasterConstants) {
     $scope.communities = [];
     $scope.community_detail = {};
+    $scope.createSDKTeamScreenVisible = false;
 
     function showAdminTeamMasterMessage(message, error_type) {
         $scope.error_message = message;
@@ -31,27 +32,25 @@ AdminTeamMaster.controller('Main', function($scope, $timeout, $location, DataSer
         }
     };
 
+    $scope.showCreateSDKTeamScreen = function() {
+        $scope.createSDKTeamScreenVisible = true;
+    };
+
     $scope.createSDKTeam = function() {
-        var admin_user = {};
-        admin_user["display_name"] = $scope.admin_display_name;
-        admin_user["email"] = $scope.admin_email;
-        admin_user["password"] = $scope.admin_password;
-
-        var other_users = [];
-        var other_user = {};
-        other_user["display_name"] = $scope.user_display_name;
-        other_user["email"] = $scope.user_email;
-        other_user["password"] = $scope.user_password;
-        other_users.push(other_user);
-
-        var params = {};
-        params["team_name"] = $scope.team_name;
-        params["app_name"] = $scope.app_name;
-        params["team_key"] = $scope.team_key;
-        params["admin_user"] = admin_user;
-        params["other_users"] = other_users;
-
-        console.log(params);
+        DataService.makeHTTPCall("community.community.create_sdk_community",{
+            "community_name" : $scope.team_name,
+            "app_name" : $scope.app_name,
+            "team_key" : $scope.team_key,
+            "admin_user" : {
+                "user_email" : $scope.admin_email,
+                "display_name" : $scope.admin_display_name,
+                "password" : $scope.admin_password
+            }
+        }, function(data) {
+            $scope.createSDKTeamScreenVisible = false;
+            $scope.communities.push(data.communities[0]);
+        }, function(status) {
+        });
     };
 
     $scope.selectCommunity = function(event) {

@@ -10,6 +10,11 @@ AdminTeamMasterConstantsModule.value("AdminTeamMasterConstants", {
             "root" : "community",
             "path" : "community/admin_master_data",
             "method" : "GET"
+        },
+        "community.community.create_sdk_community" : {
+            "root" : "community",
+            "path" : "community/create_sdk_community",
+            "method" : "POST"
         }
     }
 });
