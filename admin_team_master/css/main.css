@@ -63,19 +63,20 @@ body {
   background-color: white;
 }
 .community-detail-row {
-  padding: 8px 16px;
-  height: 67px;
-  line-height: 50px;
-  border-top: 1px solid #C4CFD7;
+  margin: 20px;
+  border-bottom: 1px solid #C4CFD7;
+}
+.community-detail-row:last-child {
+  border: 0;
 }
 .user {
   border-top: 1px solid #C4CFD7;
   padding: 8px;
 }
 .dashboard-url {
-  position: absolute;
-  right: 16px;
-  display: inline-block;
+  margin-top: 10px;
+  padding-bottom: 20px;
+  display: block;
   max-width: 75%;
   overflow: hidden;
   white-space: nowrap;

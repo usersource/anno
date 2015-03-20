@@ -33,17 +33,26 @@
                     </div>
                 </div>
                 <div style="width: 70%;height: 100%;padding: 0;position: absolute;right: 0;overflow-y: auto;">
-                    <div style="font-weight: 600;margin: 20px 0 20px 20px;">Team Details - {{community_detail.community_name}}</div>
+                    <div style="font-weight: 600;padding: 20px 0 20px 20px;border-bottom: 1px solid #C4CFD7;">Team Details - {{community_detail.community_name}}</div>
                     <div class="community-detail-row">
-                        <div style="display: inline-block;font-weight: bold;">Team Key</div>
-                        <div style="position: absolute;right: 16px;display: inline-block;">{{community_detail.team_key}}</div>
+                        <div style="font-weight: 600;">
+                            <img width="12px" height="15px" src="/admin_team_master/images/icon_key.png" style="margin-right: 6px;">
+                            <span style="vertical-align: middle;">Team Key</span>
+                        </div>
+                        <div style="margin-top: 10px;padding-bottom: 20px;">{{community_detail.team_key}}</div>
                     </div>
                     <div class="community-detail-row">
-                        <div style="display: inline-block;font-weight: bold;">Team Secret</div>
-                        <div style="position: absolute;right: 16px;display: inline-block;">{{community_detail.team_secret}}</div>
+                        <div style="font-weight: 600;">
+                            <img width="12px" height="15px" src="/admin_team_master/images/icon_password.png" style="margin-right: 6px;">
+                            <span style="vertical-align: middle;">Team Secret</span>
+                        </div>
+                        <div style="margin-top: 10px;padding-bottom: 20px;">{{community_detail.team_secret}}</div>
                     </div>
-                    <div class="community-detail-row">
-                        <div style="display: inline-block;font-weight: bold;">Dashboard URL</div>
+                    <div class="community-detail-row" style="  margin: 0;padding: 0 20px;">
+                        <div style="font-weight: 600;">
+                            <img width="14px" height="14px" src="/admin_team_master/images/icon_globe.png" style="margin-right: 6px;">
+                            <span style="vertical-align: middle;">Dashboard URL</span>
+                        </div>
                         <a class="dashboard-url" ng-href="{{getDashboardURL(community_detail.community_name, community_detail.team_hash);}}" target="_blank">{{getDashboardURL(community_detail.community_name, community_detail.team_hash);}}</a>
                     </div>
                     <div class="community-detail-row" style="height: auto;">
