@@ -55,10 +55,11 @@
                         </div>
                         <a class="dashboard-url" ng-href="{{getDashboardURL(community_detail.community_name, community_detail.team_hash);}}" target="_blank">{{getDashboardURL(community_detail.community_name, community_detail.team_hash);}}</a>
                     </div>
-                    <div style="height: auto;margin: 20px;">
+                    <div style="height: auto;margin: 20px;position: relative;">
                         <div style="font-weight: 600;">
                             <img width="16px" height="16px" src="/admin_team_master/images/icon_mentions.png" style="margin-right: 6px;">
-                            <span style="vertical-align: middle;font-size: 16px;">{{community_detail.users.length}} Members</span>
+                            <span style="vertical-align: middle;font-size: 16px;">{{community_detail.users.length}} Member{{community_detail.users.length !== 1 && "s" || ""}}</span>
+                            <div class="admin-button" style="position: absolute;right: 0px;top: 0px;" ng-click="">Add User</div>
                         </div>
                         <div ng-repeat="user in community_detail.users | orderBy:'role'" class="user">
                             <div style="margin-bottom: 20px;">
@@ -116,7 +117,7 @@
                         </div>
                         <div style="text-align: center;">
                             <button type="submit" class="btn btn-success" id="create_community" ng-click="createSDKTeam();">Create Team</button>
-                            <button class="btn btn-danger" id="create_community" ng-click="showCreateSDKTeamScreen(false);" style="margin-left: 16px;">Cancel</button>
+                            <button class="btn btn-danger" id="cancel_community" ng-click="showCreateSDKTeamScreen(false);" style="margin-left: 16px;">Cancel</button>
                         </div>
                     </form>
                 </div>
