@@ -24,16 +24,16 @@
                 <div style="width: 30%;height: 100%;padding: 0;border-right: 1px solid #C4CFD7;position: absolute;overflow-y: auto;">
                     <div style="margin: 20px 0 20px 20px;">
                         <div style="font-weight: 600;font-size: 16px;">Teams</div>
-                        <div style="position: absolute;right: 16px;top: 0;color: #337AB7;text-decoration: underline;cursor: pointer;" ng-click="showCreateSDKTeamScreen();">Add Community</div>
+                        <div class="admin-button" style="position: absolute;right: 20px;top: 20px;" ng-click="showCreateSDKTeamScreen();">Add Team</div>
                     </div>
                     <div ng-repeat="community in communities" class="community" ng-class="{'selected':($index == 0)}" data-team-key="{{community.team_key}} "ng-click="selectCommunity($event);">
                         <img width="35px" height="35px" style="border-radius: 4px;" ng-src="{{community.app_icon && community.app_icon || '/admin_team_master/images/icon_mobile.png'}}">
-                        <span style="vertical-align: middle;margin-left: 8px;">{{community.community_name}}</span>
-                        <span style="vertical-align: middle;margin-left: 4px;">({{community.app_name}})</span>
+                        <span style="vertical-align: middle;margin-left: 10px;">{{community.community_name}}</span>
+                        <!-- <span style="vertical-align: middle;margin-left: 4px;">({{community.app_name}})</span> -->
                     </div>
                 </div>
                 <div style="width: 70%;height: 100%;padding: 0;position: absolute;right: 0;overflow-y: auto;">
-                    <div style="font-weight: bold;text-align: center;height: 66px;line-height: 66px;font-size: 21px;">Community Detail</div>
+                    <div style="font-weight: 600;margin: 20px 0 20px 20px;">Team Details - {{community_detail.community_name}}</div>
                     <div class="community-detail-row">
                         <div style="display: inline-block;font-weight: bold;">Team Key</div>
                         <div style="position: absolute;right: 16px;display: inline-block;">{{community_detail.team_key}}</div>
