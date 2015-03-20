@@ -24,7 +24,7 @@
                 <div style="width: 30%;height: 100%;padding: 0;border-right: 1px solid #C4CFD7;position: absolute;overflow-y: auto;">
                     <div style="margin: 20px 0 20px 20px;">
                         <div style="font-weight: 600;font-size: 16px;">Teams</div>
-                        <div class="admin-button" style="position: absolute;right: 20px;top: 20px;" ng-click="showCreateSDKTeamScreen();">Add Team</div>
+                        <div class="admin-button" style="position: absolute;right: 20px;top: 20px;" ng-click="showCreateSDKTeamScreen(true);">Add Team</div>
                     </div>
                     <div ng-repeat="community in communities" class="community" ng-class="{'selected':($index == 0)}" data-team-key="{{community.team_key}} "ng-click="selectCommunity($event);">
                         <img width="35px" height="35px" style="border-radius: 4px;" ng-src="{{community.app_icon && community.app_icon || '/admin_team_master/images/icon_mobile.png'}}">
@@ -85,28 +85,40 @@
                 </div>
             </div>
         </div>
-        <div id="create-community" style="width: 100%;height: 100%;position: fixed;background: rgba(0, 0, 0, 0.6);" ng-show="createSDKTeamScreenVisible">
-            <div id="create-community-inner" style="  width: 90%;height: 90%;margin: 0 auto;background-color: #FFF;">
-                <div>
-                    <div>
-                        <span>Team Name</span>
-                        <input id="input_team_name" ng-model="team_name"/>
-                    </div>
-                    <div>
-                        <span>App Name</span>
-                        <input id="input_app_name" ng-model="app_name"/>
-                    </div>
-                    <div>
-                        <span>Team Key</span>
-                        <input id="input_team_key" ng-model="team_key"/>
-                    </div>
-                    <div>
-                        <div>Admin Users</div>
-                        <input id="input_admin_display_name" ng-model="admin_display_name" placeholder="Display Name">
-                        <input id="input_admin_email" ng-model="admin_email" placeholder="Email Address">
-                        <input id="input_admin_password" ng-model="admin_password" placeholder="Password">
-                    </div>
-                    <button id="create_community" ng-click="createSDKTeam();">Create Community</button>
+        <div id="create-community" style="display: table;" ng-show="createSDKTeamScreenVisible">
+            <div style="width: 100%;height: 100%;display: table-cell;vertical-align: middle;">
+                <div id="create-community-inner" style="width: 70%;height: auto;margin: 0 auto;background-color: #FFF;padding: 20px;border-radius: 8px;">
+                    <div style="font-weight: 600;font-size: 16px;text-align: center;margin-bottom: 20px;">Create Team</div>
+                    <form>
+                        <div class="form-group">
+                            <label for="teamName">Team Name</label>
+                            <input class="form-control" id="teamName" placeholder="Enter team name">
+                        </div>
+                        <div class="form-group">
+                            <label for="appName">App Name</label>
+                            <input class="form-control" id="appName" placeholder="Enter app name">
+                        </div>
+                        <div class="form-group">
+                            <label for="teamKey">Team Key</label>
+                            <input class="form-control" id="teamKey" placeholder="Enter team key (eg. com.hello.world)">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminDisplayName">Admin Display Name</label>
+                            <input class="form-control" id="adminDisplayName" placeholder="Enter display name of admin">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminEmail">Admin Email Address</label>
+                            <input type="email" class="form-control" id="teamKey" placeholder="Enter email address of admin">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminPassword">Admin Password</label>
+                            <input class="form-control" id="adminPassword" placeholder="Enter password for admin">
+                        </div>
+                        <div style="text-align: center;">
+                            <button type="submit" class="btn btn-success" id="create_community" ng-click="createSDKTeam();">Create Team</button>
+                            <button class="btn btn-danger" id="create_community" ng-click="showCreateSDKTeamScreen(false);" style="margin-left: 16px;">Cancel</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

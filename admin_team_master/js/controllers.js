@@ -32,8 +32,8 @@ AdminTeamMaster.controller('Main', function($scope, $timeout, $location, DataSer
         }
     };
 
-    $scope.showCreateSDKTeamScreen = function() {
-        $scope.createSDKTeamScreenVisible = true;
+    $scope.showCreateSDKTeamScreen = function(state) {
+        $scope.createSDKTeamScreenVisible = state;
     };
 
     $scope.createSDKTeam = function() {

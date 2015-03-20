@@ -78,8 +78,14 @@ body {
   margin-top: 10px;
   padding-bottom: 20px;
   display: block;
-  max-width: 75%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+}
+#create-community {
+  width: 100%;
+  height: 90.62103929%;
+  height: calc(100% - 74px);
+  height: -webkit-calc(100% - 74px);
+  height: -moz-calc(100% - 74px);
+  height: -o-calc(100% - 74px);
+  position: fixed;
+  background: rgba(0, 0, 0, 0.6);
 }
