@@ -64,3 +64,8 @@ class UserRole(ndb.Model):
     def getCircleLevel(cls, user, community):
         entity = cls.query(ndb.AND(cls.user == user.key, cls.community == community.key)).get()
         return entity.circle_level if entity else 0
+
+    @classmethod
+    def getRole(cls, user, community):
+        entity = cls.query(ndb.AND(cls.user == user.key, cls.community == community.key)).get()
+        return entity.role if entity else None

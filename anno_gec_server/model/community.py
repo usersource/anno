@@ -49,23 +49,23 @@ class Community(ndb.Model):
 
     @classmethod
     def insert(cls, message, getCommunity=False):
-        community = None
+        community, user = None, None
 
         try:
             from helper.utils import get_user_from_request, FIRST_CIRCLE
 
             if message.name is None:
-                return "Community name is required" if not getCommunity else None
+                return "Community name is required" if not getCommunity else (community, user)
 
             if message.type:
                 # community should be of type 'private' or 'public'
                 if not message.type in [CommunityType.PRIVATE, CommunityType.PUBLIC]:
-                    return "Community should be of type 'private' or 'public'" if not getCommunity else None
+                    return "Community should be of type 'private' or 'public'" if not getCommunity else (community, user)
                 # only one public community is allowed
                 elif message.type == CommunityType.PUBLIC:
                     queryResultCount = Community.query(Community.type == message.type).count()
                     if queryResultCount:
-                        return "Community not created. Can't create more than one public community." if not getCommunity else None
+                        return "Community not created. Can't create more than one public community." if not getCommunity else (community, user)
             else:
                 message.type = CommunityType.PRIVATE
 
@@ -107,7 +107,7 @@ class Community(ndb.Model):
             logging.exception("Exception while inserting community: %s" % e)
             respData = e
 
-        return respData if not getCommunity else community
+        return respData if not getCommunity else (community, user)
 
     @classmethod
     def delete(cls, community):

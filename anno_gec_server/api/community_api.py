@@ -257,7 +257,7 @@ class CommunityApi(remote.Service):
             community_message.user = UserMessage(user_email=request.admin_user.user_email,
                                                  display_name=request.admin_user.display_name,
                                                  password=request.admin_user.password)
-            community = Community.insert(community_message, getCommunity=True)
+            community, user = Community.insert(community_message, getCommunity=True)
 
         communities_message = []
         if community and app:
@@ -275,19 +275,17 @@ class CommunityApi(remote.Service):
             community_message.app_icon = app.icon_url
 
             community_message.users = []
-            for userrole in UserRole.community_user_list(community_key=community.key):
-                user = userrole.user.get()
-                if user and (user.account_type == community.team_key):
-                    user_message = UserAdminMasterMessage()
-                    user_message.display_name = user.display_name
-                    user_message.user_email = user.user_email
-                    user_message.password_present = True if user.password else False
-                    user_message.role = userrole.role
-                    user_message.image_url = user.image_url
-                    if community.circles:
-                        user_message.circle = community.circles.get(str(userrole.circle_level))
-                    community_message.users.append(user_message)
+            user_message = UserAdminMasterMessage()
+            user_message.display_name = user.display_name
+            user_message.user_email = user.user_email
+            user_message.password_present = True if user.password else False
+            user_message.role = UserRole.getRole(user, community)
+            user_message.image_url = user.image_url
 
+            if community.circles:
+                user_message.circle = community.circles.get(str(UserRole.getCircleLevel(user, community)))
+
+            community_message.users.append(user_message)
             communities_message.append(community_message)
 
         return CommunityAdminMasterListMessage(communities=communities_message)
