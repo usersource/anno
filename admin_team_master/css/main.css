@@ -3,7 +3,7 @@ body {
     height: 100%;
     position: fixed;
     font-family: 'Open Sans', sans-serif !important;
-    font-size: 16px !important;
+    font-size: 14px;
     margin: 0;
     color: #282828 !important;
 }
@@ -58,6 +58,7 @@ body {
   border-top: 1px solid #C4CFD7;
   cursor: pointer;
   background-color: #F0F2F3;
+  font-size: 16px;
 }
 .community.selected {
   background-color: white;
@@ -66,12 +67,12 @@ body {
   margin: 20px;
   border-bottom: 1px solid #C4CFD7;
 }
-.community-detail-row:last-child {
-  border: 0;
-}
 .user {
-  border-top: 1px solid #C4CFD7;
-  padding: 8px;
+  padding: 20px 0;
+  border-bottom: 1px solid #C4CFD7;
+}
+.user:last-child {
+  border: 0;
 }
 .dashboard-url {
   margin-top: 10px;
