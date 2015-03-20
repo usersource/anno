@@ -26,7 +26,7 @@
                         <div style="font-weight: 600;font-size: 16px;">Teams</div>
                         <div class="admin-button" style="position: absolute;right: 20px;top: 20px;" ng-click="showCreateSDKTeamScreen(true);">Add Team</div>
                     </div>
-                    <div ng-repeat="community in communities" class="community" ng-class="{'selected':($index == 0)}" data-team-key="{{community.team_key}} "ng-click="selectCommunity($event);">
+                    <div ng-repeat="community in communities | orderBy:'community_name'" class="community" ng-class="{'selected':($index == 0)}" data-team-key="{{community.team_key}} "ng-click="selectCommunity($event);">
                         <img width="35px" height="35px" style="border-radius: 4px;" ng-src="{{community.app_icon && community.app_icon || '/admin_team_master/images/icon_mobile.png'}}">
                         <span style="vertical-align: middle;margin-left: 10px;">{{community.community_name}}</span>
                         <!-- <span style="vertical-align: middle;margin-left: 4px;">({{community.app_name}})</span> -->
@@ -60,7 +60,7 @@
                             <img width="16px" height="16px" src="/admin_team_master/images/icon_mentions.png" style="margin-right: 6px;">
                             <span style="vertical-align: middle;font-size: 16px;">{{community_detail.users.length}} Members</span>
                         </div>
-                        <div ng-repeat="user in community_detail.users" class="user">
+                        <div ng-repeat="user in community_detail.users | orderBy:'role'" class="user">
                             <div style="margin-bottom: 20px;">
                                 <img style="width: 35px;height: 35px;border-radius: 18px;margin: 0;" ng-src="{{user.image_url && user.image_url || '/admin_team_master/images/icon_no-user.png'}}">
                                 <div style="display: inline-block;vertical-align: middle;margin-left: 8px;">
