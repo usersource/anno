@@ -6,6 +6,7 @@ AdminTeamMaster.controller('Main', function($scope, $timeout, $location, DataSer
     $scope.communities = [];
     $scope.community_detail = {};
     $scope.createSDKTeamScreenVisible = false;
+    $scope.addUserScreenVisible = false;
 
     function showAdminTeamMasterMessage(message, error_type) {
         $scope.error_message = message;
@@ -34,6 +35,10 @@ AdminTeamMaster.controller('Main', function($scope, $timeout, $location, DataSer
 
     $scope.showCreateSDKTeamScreen = function(state) {
         $scope.createSDKTeamScreenVisible = state;
+    };
+
+    $scope.showAddUserScreen = function(state) {
+        $scope.addUserScreenVisible = state;
     };
 
     $scope.createSDKTeam = function() {

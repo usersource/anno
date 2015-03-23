@@ -59,7 +59,7 @@
                         <div style="font-weight: 600;">
                             <img width="16px" height="16px" src="/admin_team_master/images/icon_mentions.png" style="margin-right: 6px;">
                             <span style="vertical-align: middle;font-size: 16px;">{{community_detail.users.length}} Member{{community_detail.users.length !== 1 && "s" || ""}}</span>
-                            <div class="admin-button" style="position: absolute;right: 0px;top: 0px;" ng-click="">Add User</div>
+                            <div class="admin-button" style="position: absolute;right: 0px;top: 0px;" ng-click="showAddUserScreen(true);">Add User</div>
                         </div>
                         <div ng-repeat="user in community_detail.users | orderBy:'role'" class="user">
                             <div style="margin-bottom: 20px;">
@@ -131,6 +131,39 @@
                             <div class="col-md-12" style="text-align: center;">
                                 <button type="submit" class="btn btn-success" id="create_community" ng-click="createSDKTeam();">Create Team</button>
                                 <button class="btn btn-danger" id="cancel_community" ng-click="showCreateSDKTeamScreen(false);" style="margin-left: 16px;">Cancel</button>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="add-user" style="display: table;" ng-show="addUserScreenVisible">
+            <div style="width: 100%;height: 100%;display: table-cell;vertical-align: middle;">
+                <div id="add-user-inner" style="width: 50%;height: auto;margin: 0 auto;background-color: #FFF;padding: 20px;border-radius: 8px;">
+                    <form class="form-horizontal">
+                        <fieldset>
+                            <legend>Add User</legend>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="userDisplayName">User Display Name</label>
+                                <div class="col-md-9">
+                                    <input class="form-control" id="userDisplayName" placeholder="Enter display name of user" ng-model="user_display_name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="userEmail">User Email Address</label>
+                                <div class="col-md-9">
+                                    <input type="email" class="form-control" id="userEmail" placeholder="Enter email address of user" ng-model="user_email">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="userPassword">User Password</label>
+                                <div class="col-md-9">
+                                    <input class="form-control" id="userPassword" placeholder="Enter password for user" ng-model="user_password">
+                                </div>
+                            </div>
+                            <div class="col-md-12" style="text-align: center;">
+                                <button type="submit" class="btn btn-success" id="add_user" ng-click="addUser();">Add User</button>
+                                <button class="btn btn-danger" id="cancel_user" ng-click="showAddUserScreen(false);" style="margin-left: 16px;">Cancel</button>
                             </div>
                         </fieldset>
                     </form>
