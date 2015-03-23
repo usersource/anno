@@ -4,11 +4,11 @@
         <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
         <meta content="utf-8" http-equiv="encoding">
         <title>Admin Team Master</title>
-        <link rel="icon" type="image/x-icon" href="/admin_team_master/images/favicon.ico"/>
+        <link rel="icon" type="image/x-icon" href="/dashboard/images/favicon.ico"/>
         <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'>
         <link rel="stylesheet" type="text/css" href="/admin_team_master/css/main.css">
-        <link rel="stylesheet" type="text/css" href="/admin_team_master/css/bootstrap.min.css">
-        <script type="text/javascript" src="/admin_team_master/js/lib/angular.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="/dashboard/css/bootstrap.min.css">
+        <script type="text/javascript" src="/dashboard/js/lib/angular.min.js"></script>
         <script type="text/javascript" src="/admin_team_master/js/constants.js"></script>
         <script type="text/javascript" src="/admin_team_master/js/services.js"></script>
         <script type="text/javascript" src="/admin_team_master/js/controllers.js"></script>
@@ -27,7 +27,7 @@
                         <div class="admin-button" style="position: absolute;right: 20px;top: 20px;" ng-click="showCreateSDKTeamScreen(true);">Add Team</div>
                     </div>
                     <div ng-repeat="community in communities | orderBy:'community_name'" class="community" ng-class="{'selected':($index == 0)}" data-team-key="{{community.team_key}} "ng-click="selectCommunity($event);">
-                        <img width="35px" height="35px" style="border-radius: 4px;" ng-src="{{community.app_icon && community.app_icon || '/admin_team_master/images/icon_mobile.png'}}">
+                        <img width="35px" height="35px" style="border-radius: 4px;" ng-src="{{community.app_icon && community.app_icon || '/dashboard/images/icon_mobile.png'}}">
                         <span style="vertical-align: middle;margin-left: 10px;">{{community.community_name}}</span>
                         <!-- <span style="vertical-align: middle;margin-left: 4px;">({{community.app_name}})</span> -->
                     </div>
@@ -36,34 +36,34 @@
                     <div style="font-weight: 600;padding: 20px 0 20px 20px;border-bottom: 1px solid #C4CFD7;font-size: 16px;">Team Details - {{community_detail.community_name}}</div>
                     <div class="community-detail-row">
                         <div style="font-weight: 600;">
-                            <img width="12px" height="15px" src="/admin_team_master/images/icon_key.png" style="margin-right: 6px;">
+                            <img width="12px" height="15px" src="/dashboard/images/icon_key.png" style="margin-right: 6px;">
                             <span style="vertical-align: middle;font-size: 16px;">Team Key</span>
                         </div>
                         <div style="margin-top: 10px;padding-bottom: 20px;">{{community_detail.team_key}}</div>
                     </div>
                     <div class="community-detail-row">
                         <div style="font-weight: 600;">
-                            <img width="12px" height="15px" src="/admin_team_master/images/icon_password.png" style="margin-right: 6px;">
+                            <img width="12px" height="15px" src="/dashboard/images/icon_password.png" style="margin-right: 6px;">
                             <span style="vertical-align: middle;font-size: 16px;">Team Secret</span>
                         </div>
                         <div style="margin-top: 10px;padding-bottom: 20px;">{{community_detail.team_secret}}</div>
                     </div>
                     <div class="community-detail-row" style="  margin: 0;padding: 0 20px;">
                         <div style="font-weight: 600;">
-                            <img width="14px" height="14px" src="/admin_team_master/images/icon_globe.png" style="margin-right: 6px;">
+                            <img width="14px" height="14px" src="/dashboard/images/icon_globe.png" style="margin-right: 6px;">
                             <span style="vertical-align: middle;font-size: 16px;">Dashboard URL</span>
                         </div>
                         <a class="dashboard-url" ng-href="{{getDashboardURL(community_detail.community_name, community_detail.team_hash);}}" target="_blank">{{getDashboardURL(community_detail.community_name, community_detail.team_hash);}}</a>
                     </div>
                     <div style="height: auto;margin: 20px;position: relative;">
                         <div style="font-weight: 600;">
-                            <img width="16px" height="16px" src="/admin_team_master/images/icon_mentions.png" style="margin-right: 6px;">
+                            <img width="16px" height="16px" src="/dashboard/images/icon_mentions.png" style="margin-right: 6px;">
                             <span style="vertical-align: middle;font-size: 16px;">{{community_detail.users.length}} Member{{community_detail.users.length !== 1 && "s" || ""}}</span>
                             <div class="admin-button" style="position: absolute;right: 0px;top: 0px;" ng-click="showAddUserScreen(true);">Add User</div>
                         </div>
                         <div ng-repeat="user in community_detail.users | orderBy:'role'" class="user">
                             <div style="margin-bottom: 20px;">
-                                <img style="width: 35px;height: 35px;border-radius: 18px;margin: 0;" ng-src="{{user.image_url && user.image_url || '/admin_team_master/images/icon_no-user.png'}}">
+                                <img style="width: 35px;height: 35px;border-radius: 18px;margin: 0;" ng-src="{{user.image_url && user.image_url || '/dashboard/images/icon_no-user.png'}}">
                                 <div style="display: inline-block;vertical-align: middle;margin-left: 8px;">
                                     <div style="font-weight: 600; color: #1b96c9;">{{user.display_name}}</div>
                                     <div style="color: #9399A5;font-size: 13px;">{{user.user_email}}</div>
