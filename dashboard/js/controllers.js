@@ -54,6 +54,7 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $routeP
     $scope.image_url = $cookieStore.get('user_image_url');
     $scope.showSignoutButton = "none";
     $scope.signoutArrowValue = false;
+    $scope.currentSection = $location.path().split("/").reverse()[0];
 
     $scope.initHeader = function() {
         getAppinfoData();
@@ -71,11 +72,7 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $routeP
 
     $scope.signoutDashboard = function() {
         Utils.removeUserDataCookies();
-        if (angular.isDefined(team_hash)) {
-            $location.path('/dashboard/' + team_hash + '/' + team_name + '/login');
-        } else {
-            $location.path('/dashboard/login');
-        }
+        $scope.selectSection('login');
     };
 
     function getAppinfoData() {
@@ -85,6 +82,14 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $routeP
             $scope.appInfo = data;
         });
     }
+
+    $scope.selectSection = function(sectionName) {
+        if (angular.isDefined(team_hash) && angular.isDefined(team_name)) {
+            $location.path('/dashboard/' + team_hash + '/' + team_name + '/' + sectionName);
+        } else {
+            $location.path('/dashboard/' + sectionName);
+        }
+    };
 });
 
 Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $timeout, $routeParams, $http, Utils, DataService, ComStyleGetter, DashboardConstants, Autocomplete) {
