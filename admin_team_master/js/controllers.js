@@ -38,6 +38,7 @@ AdminTeamMaster.controller('Main', function($scope, $timeout, $location, DataSer
     };
 
     $scope.showAddUserScreen = function(state) {
+        $scope.user_role = "member";
         $scope.addUserScreenVisible = state;
     };
 
@@ -54,6 +55,26 @@ AdminTeamMaster.controller('Main', function($scope, $timeout, $location, DataSer
         }, function(data) {
             $scope.createSDKTeamScreenVisible = false;
             $scope.communities.push(data.communities[0]);
+        }, function(status) {
+        });
+    };
+
+    $scope.addUser = function() {
+        DataService.makeHTTPCall("community.user.insert",{
+            "team_key" : $scope.community_detail.team_key,
+            "user_email" : $scope.user_email,
+            "user_display_name" : $scope.user_display_name,
+            "user_password" : $scope.user_password,
+            "role" : $scope.user_role
+        }, function(data) {
+            $scope.addUserScreenVisible = false;
+            $scope.community_detail.users.push({
+                "user_email" : $scope.user_email,
+                "display_name" : $scope.user_display_name,
+                "password_present" : true,
+                "role" : $scope.user_role,
+                "circle" : $scope.community_detail.users[0].circle
+            });
         }, function(status) {
         });
     };

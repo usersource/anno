@@ -15,6 +15,11 @@ AdminTeamMasterConstantsModule.value("AdminTeamMasterConstants", {
             "root" : "community",
             "path" : "community/create_sdk_community",
             "method" : "POST"
+        },
+        "community.user.insert" : {
+            "root" : "community",
+            "path" : "user",
+            "method" : "POST"
         }
     }
 });

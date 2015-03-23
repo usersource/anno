@@ -161,6 +161,15 @@
                                     <input class="form-control" id="userPassword" placeholder="Enter password for user" ng-model="user_password">
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="selectRole">Select Role</label>
+                                <div class="col-md-9">
+                                    <select id="selectRole" name="selectRole" class="form-control" ng-model="user_role">
+                                        <option value="member">Member</option>
+                                        <option value="admin">Admin</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="col-md-12" style="text-align: center;">
                                 <button type="submit" class="btn btn-success" id="add_user" ng-click="addUser();">Add User</button>
                                 <button class="btn btn-danger" id="cancel_user" ng-click="showAddUserScreen(false);" style="margin-left: 16px;">Cancel</button>

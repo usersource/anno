@@ -9,7 +9,7 @@ from protorpc import remote
 
 from helper.settings import anno_js_client_id
 from helper.utils import get_user_from_request
-from helper.utils_enum import InvitationStatusType
+from helper.utils_enum import InvitationStatusType, UserRoleType, AuthSourceType
 from helper.utils import auth_user
 from helper.utils import getAppInfo
 from helper.utils import md5
@@ -116,9 +116,20 @@ class CommunityApi(remote.Service):
     @endpoints.method(CommunityUserRoleMessage, ResponseMessage, path="user",
                       http_method="POST", name="user.insert")
     def insert_user(self, request):
-        user = get_user_from_request(user_id=request.user_id, user_email=request.user_email)
-        community = Community.get_by_id(request.community_id)
-        role = request.role if request.role else None
+        user = get_user_from_request(user_id=request.user_id,
+                                     user_email=request.user_email,
+                                     team_key=request.team_key)
+
+        if not user:
+            user = User.insert_user(request.user_email,
+                                    username=request.user_display_name,
+                                    account_type=request.team_key,
+                                    auth_source=AuthSourceType.PLUGIN,
+                                    password=md5(request.user_password),
+                                    image_url="")
+
+        community = Community.getCommunityFromTeamKey(request.team_key) if request.team_key else Community.get_by_id(request.community_id)
+        role = request.role if request.role else UserRoleType.MEMBER
 
         resp = None
         if user and community:
