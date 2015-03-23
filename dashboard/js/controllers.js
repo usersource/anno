@@ -6,7 +6,6 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
     var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
 
     $scope.initLogin = function() {
-        DataService.checkAuthentication(team_hash, team_name);
         if (angular.isDefined(team_hash)) {
             $scope.hideTeamKeyField = true;
             DataService.makeHTTPCall("community.community.hash", {
@@ -109,7 +108,6 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
     };
 
     $scope.initFeed = function() {
-        DataService.checkAuthentication(team_hash, team_name);
         var userTeamToken = angular.fromJson($cookieStore.get('user_team_token'));
         if (angular.isDefined(userTeamToken)) {
             $http.defaults.headers.common.Authorization = userTeamToken.token_type + ' ' + userTeamToken.access_token;

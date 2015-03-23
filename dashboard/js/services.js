@@ -310,12 +310,6 @@ ServiceModule.factory('Autocomplete', function(Utils) {
 ServiceModule.factory('DataService', function($http, $location, $window, $cookieStore, Utils, DashboardConstants) {
     var apiRoot = DashboardConstants.apiRoot;
 
-    function checkAuthentication(team_hash, team_name) {
-        var primary_url = '/dashboard/' + team_hash + '/' + team_name;
-        var action_page = $cookieStore.get('authenticated') ? '/feed' : '/login';
-        return primary_url + action_page;
-    }
-
     function makeHTTPCall(endpointName, params, success_callback, error_callback) {
         var endpointData = DashboardConstants.endpointUrl[endpointName];
         var url = apiRoot + "/" + endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + endpointData.path;
@@ -344,7 +338,6 @@ ServiceModule.factory('DataService', function($http, $location, $window, $cookie
     }
 
     return ({
-        checkAuthentication : checkAuthentication,
         makeHTTPCall : makeHTTPCall
     });
 });

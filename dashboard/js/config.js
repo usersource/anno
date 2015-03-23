@@ -27,3 +27,30 @@ Dashboard.config(function($routeProvider, $locationProvider) {
 
     $locationProvider.html5Mode({ enabled: true, requireBase: false });
 });
+
+Dashboard.run(function($rootScope, $location) {
+    var $cookies;
+    angular.injector(['ngCookies']).invoke(function(_$cookies_) {
+        $cookies = _$cookies_;
+    });
+
+    $rootScope.$on("$routeChangeStart", function(event, next, current) {
+        var redirectTo;
+
+        if (angular.equals($cookies.authenticated, "true")) {
+            if (next.templateUrl === "/dashboard/partials/login.html") {
+                redirectTo = "feed";
+            }
+        } else {
+            redirectTo = "login";
+        }
+
+        if (angular.isDefined(redirectTo)) {
+            if (next.params.hasOwnProperty("teamHash") && next.params.hasOwnProperty("teamName")) {
+                $location.path("/dashboard/" + next.params.teamHash + "/" + next.params.teamName + "/" + redirectTo);
+            } else  {
+                $location.path("/dashboard/" + redirectTo);
+            }
+        }
+    });
+});
