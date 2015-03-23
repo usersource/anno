@@ -79,6 +79,16 @@ DashboardConstantsModule.value("DashboardConstants", {
             "root" : "flag",
             "path" : "flag",
             "method" : "DELETE"
+        },
+        "community.community.admin_master" : {
+            "root" : "community",
+            "path" : "community/admin_master_data",
+            "method" : "GET"
+        },
+        "community.user.insert" : {
+            "root" : "community",
+            "path" : "user",
+            "method" : "POST"
         }
     },
     borderColor : "#ff9900",

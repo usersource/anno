@@ -1,6 +1,6 @@
 <div id="manage" ng-controller="Manage" ng-init="initManage();">
     <div class="header row" ng-include="'/dashboard/partials/header.html'"></div>
-    <div id="main-inner">
+    <div id="manage-inner">
         <div style="width: 100%;height: 100%;padding: 0;position: absolute;right: 0;overflow-y: auto;">
             <div style="font-weight: 600;padding: 20px 0 20px 20px;border-bottom: 1px solid #C4CFD7;font-size: 16px;">Team Details - {{community_detail.community_name}}</div>
             <div class="community-detail-row">
@@ -52,57 +52,6 @@
                     </div
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-<div id="create-community" style="display: table;" ng-show="createSDKTeamScreenVisible">
-    <div style="width: 100%;height: 100%;display: table-cell;vertical-align: middle;">
-        <div id="create-community-inner" style="width: 65%;height: auto;margin: 0 auto;background-color: #FFF;padding: 20px;border-radius: 8px;">
-            <form class="form-horizontal">
-                <fieldset>
-                    <legend>Create Team</legend>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label" for="teamName">Team Name</label>
-                        <div class="col-md-9">
-                            <input class="form-control" id="teamName" placeholder="Enter team name" ng-model="team_name">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label" for="appName">App Name</label>
-                        <div class="col-md-9">
-                            <input class="form-control" id="appName" placeholder="Enter app name" ng-model="app_name">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label" for="teamKey">Team Key</label>
-                        <div class="col-md-9">
-                            <input class="form-control" id="teamKey" placeholder="Enter team key (eg. com.hello.world)" ng-model="team_key">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label" for="adminDisplayName">Admin Display Name</label>
-                        <div class="col-md-9">
-                            <input class="form-control" id="adminDisplayName" placeholder="Enter display name of admin" ng-model="admin_display_name">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label" for="adminEmail">Admin Email Address</label>
-                        <div class="col-md-9">
-                            <input type="email" class="form-control" id="adminEmail" placeholder="Enter email address of admin" ng-model="admin_email">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label" for="adminPassword">Admin Password</label>
-                        <div class="col-md-9">
-                            <input class="form-control" id="adminPassword" placeholder="Enter password for admin" ng-model="admin_password">
-                        </div>
-                    </div>
-                    <div class="col-md-12" style="text-align: center;">
-                        <button type="submit" class="btn btn-success" id="create_community" ng-click="createSDKTeam();">Create Team</button>
-                        <button class="btn btn-danger" id="cancel_community" ng-click="showCreateSDKTeamScreen(false);" style="margin-left: 16px;">Cancel</button>
-                    </div>
-                </fieldset>
-            </form>
         </div>
     </div>
 </div>
