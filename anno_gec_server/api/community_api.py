@@ -49,7 +49,8 @@ class CommunityApi(remote.Service):
 
     community_without_id_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
-        team_hash=messages.StringField(1)
+        team_hash=messages.StringField(1),
+        team_key=messages.StringField(2)
     )
 
     community_with_circles_resource_container = endpoints.ResourceContainer(
@@ -211,11 +212,16 @@ class CommunityApi(remote.Service):
                                             app_name=community_app.name,
                                             app_icon=community_app.icon_url)
 
-    @endpoints.method(message_types.VoidMessage, CommunityAdminMasterListMessage,
+    @endpoints.method(community_without_id_resource_container, CommunityAdminMasterListMessage,
                       path="community/admin_master_data", http_method="GET", name="community.admin_master")
     def get_admin_master_data(self, request):
         communities_message = []
-        communities = Community.query().filter(Community.team_secret != None).fetch()
+        query = Community.query().filter(Community.team_secret != None)
+
+        if request.team_key:
+            query = query.filter(Community.team_key == request.team_key)
+
+        communities = query.fetch()
 
         for community in communities:
             community_message = CommunityAdminMasterMessage()

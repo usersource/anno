@@ -512,7 +512,9 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
     };
 });
 
-Dashboard.controller('Manage', function($scope, $timeout, $location, DataService, DashboardConstants) {
+Dashboard.controller('Manage', function($scope, $timeout, $location, $cookieStore, DataService, DashboardConstants) {
+    var team_key = $cookieStore.get('team_key');
+
     $scope.communities = [];
     $scope.community_detail = {};
     $scope.addUserScreenVisible = false;
@@ -569,6 +571,7 @@ Dashboard.controller('Manage', function($scope, $timeout, $location, DataService
 
     $scope.getAdminTeamMasterList = function(event) {
         DataService.makeHTTPCall("community.community.admin_master", {
+            "team_key" : team_key
         }, function(data) {
             if (data.hasOwnProperty('communities') && data.communities.length > 0) {
                 $scope.communities = data.communities;
