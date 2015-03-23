@@ -26,7 +26,7 @@
                         <div style="font-weight: 600;font-size: 16px;">Teams</div>
                         <div class="admin-button" style="position: absolute;right: 20px;top: 20px;" ng-click="showCreateSDKTeamScreen(true);">Add Team</div>
                     </div>
-                    <div ng-repeat="community in communities | orderBy:'community_name'" class="community" ng-class="{'selected':($index == 0)}" data-team-key="{{community.team_key}} "ng-click="selectCommunity($event);">
+                    <div ng-repeat="community in communities" class="community" ng-class="{'selected':($index == 0)}" data-team-key="{{community.team_key}} "ng-click="selectCommunity($event);">
                         <img width="35px" height="35px" style="border-radius: 4px;" ng-src="{{community.app_icon && community.app_icon || '/dashboard/images/icon_mobile.png'}}">
                         <span style="vertical-align: middle;margin-left: 10px;">{{community.community_name}}</span>
                         <!-- <span style="vertical-align: middle;margin-left: 4px;">({{community.app_name}})</span> -->
