@@ -30,8 +30,9 @@ body {
   text-align: center;
   cursor: pointer;
 }
-.header div.active {
-  color: #282828;
+.header .header-tab.active {
+  color: #F62;
+  font-weight: 600;
 }
 .header #user_info {
   display: inline-block;
