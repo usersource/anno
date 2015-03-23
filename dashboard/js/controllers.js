@@ -44,6 +44,49 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
     };
 });
 
+Dashboard.controller('Header', function($scope, $cookieStore, $location, $routeParams, Utils, DataService) {
+    var team_hash = $routeParams.teamHash,
+        team_name = $routeParams.teamName,
+        team_key = $cookieStore.get('team_key');
+
+    $scope.display_name = $cookieStore.get('user_display_name');
+    $scope.email = $cookieStore.get('user_email');
+    $scope.image_url = $cookieStore.get('user_image_url');
+    $scope.showSignoutButton = "none";
+    $scope.signoutArrowValue = false;
+
+    $scope.initHeader = function() {
+        getAppinfoData();
+    };
+
+    $scope.signoutButtonClicked = function() {
+        if (logout_button.style.display === "none") {
+            $scope.showSignoutButton = "block";
+            $scope.signoutArrowValue = true;
+        } else {
+            $scope.showSignoutButton = "none";
+            $scope.signoutArrowValue = false;
+        }
+    };
+
+    $scope.signoutDashboard = function() {
+        Utils.removeUserDataCookies();
+        if (angular.isDefined(team_hash)) {
+            $location.path('/dashboard/' + team_hash + '/' + team_name + '/login');
+        } else {
+            $location.path('/dashboard/login');
+        }
+    };
+
+    function getAppinfoData() {
+        DataService.makeHTTPCall("appinfo.appinfo.get", {
+            team_key : team_key
+        }, function(data) {
+            $scope.appInfo = data;
+        });
+    }
+});
+
 Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $timeout, $routeParams, $http, Utils, DataService, ComStyleGetter, DashboardConstants, Autocomplete) {
     var LOOK_AHEAD = 500;
     var team_hash = $routeParams.teamHash,
@@ -60,11 +103,6 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
     $scope.noTeamNotesText = "No Notes";
     $scope.imageBaseURL = DashboardConstants.imageURL;
-    $scope.display_name = $cookieStore.get('user_display_name');
-    $scope.email = $cookieStore.get('user_email');
-    $scope.image_url = $cookieStore.get('user_image_url');
-    $scope.showSignoutButton = "none";
-    $scope.signoutArrowValue = false;
     $scope.annoList = [];
     $scope.landscapeView = [];
     $scope.fetchingAnnos = false;
@@ -85,25 +123,6 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         if ((annos.scrollHeight - annos.scrollTop) < (annos.getBoundingClientRect().height + LOOK_AHEAD)) {
             $scope.fetchingAnnos = true;
             getDashboardList($scope.filterType, false);
-        }
-    };
-
-    $scope.signoutButtonClicked = function() {
-        if (logout_button.style.display === "none") {
-            $scope.showSignoutButton = "block";
-            $scope.signoutArrowValue = true;
-        } else {
-            $scope.showSignoutButton = "none";
-            $scope.signoutArrowValue = false;
-        }
-    };
-
-    $scope.signoutDashboard = function() {
-        Utils.removeUserDataCookies();
-        if (angular.isDefined(team_hash)) {
-            $location.path('/dashboard/' + team_hash + '/' + team_name + '/login');
-        } else {
-            $location.path('/dashboard/login');
         }
     };
 
@@ -260,7 +279,6 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             if (firstTime) {
                 firstTime = false;
                 $timeout(function() {
-                    getAppinfoData();
                     getPopularTags();
                     getCommunityUsers();
                 }, 1000);
@@ -282,14 +300,6 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             if (status == 401) {
                 $scope.signoutDashboard();
             }
-        });
-    }
-
-    function getAppinfoData() {
-        DataService.makeHTTPCall("appinfo.appinfo.get", {
-            team_key : team_key
-        }, function(data) {
-            $scope.appInfo = data;
         });
     }
 
@@ -500,4 +510,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             });
         }
     };
+});
+
+Dashboard.controller('Manage', function($scope) {
 });
