@@ -3,6 +3,17 @@
     <div id="dashboard_message" ng-show="error_message.length" ng-class="{'error-message':dashboard_error_type}">
         <div id="dashboard_message_text">{{error_message}}</div>
     </div>
+    <div id="dashboard_confirm_box" ng-show="showConfirmBox">
+        <div id="dashboard_confirm_box_inner">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
+            <div id="dashboard_confirm_box_content" class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                <div id="dashboard_confirm_box_title">{{confirm_box_title}}</div>
+                <div id="dashboard_confirm_box_text">{{confirm_box_text}}</div>
+                <input id="dashboard_confirm_box_yes" type="button" ng-click="confirmYesClicked($event);" value="Yes">
+                <div id="dashboard_confirm_box_no" ng-click="confirmNoClicked($event);"></div>
+            </div>
+        </div>
+    </div>
     <div id="engaged-users-suggestion" style="display: none;">
         <div class="engaged-user" ng-repeat="engagedUser in currentEngagedUserList" data-value="{{::engagedUser.unique_name}}" ng-click="selectSuggestion($event);">
             <img width="24px" height="24px" style="border-radius: 12px;" ng-src="{{::engagedUser.image_url && engagedUser.image_url || '/dashboard/images/icon_no-user.png'}}">

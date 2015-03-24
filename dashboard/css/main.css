@@ -107,3 +107,49 @@ body {
 #dashboard_message.error-message {
   background-color: rgba(255, 0, 0, 0.8);
 }
+#dashboard_confirm_box {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 101;
+  display: table;
+}
+#dashboard_confirm_box_inner {
+  width: 100%;
+  height: 100%;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+#dashboard_confirm_box_content {
+  background-color: #FFF;
+  border-radius: 4px;
+}
+#dashboard_confirm_box #dashboard_confirm_box_title {
+  font-size: 26px;
+  color: #111d2b;
+  margin-top: 5.263157895%;
+  margin-bottom: 8.771929825%;
+}
+#dashboard_confirm_box #dashboard_confirm_box_yes {
+  width: 66.666666667%;
+  height: 40px;
+  margin-top: 5.263157895%;
+  margin-bottom: 8.771929825%;
+  padding: 0 15px;
+  border-radius: 4px;
+  outline: 0;
+  color: white;
+  background-color: #ff6622;
+  border: 1px solid #f65007;
+}
+#dashboard_confirm_box #dashboard_confirm_box_no {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5.789473684% 6.666666667%;
+  background-image: url("/dashboard/images/confirm_box_close.png");
+  background-repeat: no-repeat;
+  background-position: 50%;
+}

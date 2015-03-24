@@ -122,6 +122,26 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         }, 5000);
     }
 
+    function showConfirmBox(title, text, onSuccess, onCancel) {
+        $scope.showConfirmBox = true;
+        $scope.confirm_box_title = title;
+        $scope.confirm_box_text = text;
+
+        $scope.confirmYesClicked = function(event) {
+            $scope.showConfirmBox = false;
+            if (angular.isDefined(onSuccess) && angular.isFunction(onSuccess)) {
+                onSuccess();
+            }
+        };
+
+        $scope.confirmNoClicked = function(event) {
+            $scope.showConfirmBox = false;
+            if (angular.isDefined(onCancel) && angular.isFunction(onCancel)) {
+                onCancel();
+            }
+        };
+    }
+
     $scope.getMoreAnnos = function() {
         if (!hasMore) return;
         if ($scope.fetchingAnnos || firstTime) return;
@@ -184,19 +204,32 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         var anno_id = Utils.findAncestor(event.target, 'anno-item').dataset.annoId,
             anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
 
-        anno_item_data.archived = !(anno_item_data.archived);
-        DataService.makeHTTPCall("anno.anno.archive", {
-            id : anno_id
-        }, function(data) {
-            var message = "Item archived successfully.";
-            if (!anno_item_data.archived) {
-                message = "Item unarchived successfully.";
-            }
-            showDashboardMessage(message);
-        }, function(status) {
+        function onArchiveAnno() {
             anno_item_data.archived = !(anno_item_data.archived);
-            showDashboardMessage("Oops... Something went wrong while archiving. Please try again.", true);
-        });
+            DataService.makeHTTPCall("anno.anno.archive", {
+                id : anno_id
+            }, function(data) {
+                var message = "Item archived successfully.";
+                if (!anno_item_data.archived) {
+                    message = "Item unarchived successfully.";
+                }
+                showDashboardMessage(message);
+            }, function(status) {
+                anno_item_data.archived = !(anno_item_data.archived);
+                showDashboardMessage("Oops... Something went wrong while archiving. Please try again.", true);
+            });
+        }
+
+        var title = "Archive Anno",
+            text = "You can unarchive this item from list after applying 'Archive' filter later.",
+            onSuccess = function() { onArchiveAnno(); };
+
+        if (anno_item_data.archived) {
+            title = "Unarchive Anno";
+            text = "You can archive this item from list later.";
+        }
+
+        showConfirmBox(title, text, onSuccess);
     };
 
     $scope.showLocalDateTime = function(datetime) {
