@@ -106,7 +106,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         firstTime = true,
         oldScrollTop = 0;
 
-    $scope.noTeamNotesText = "No Notes";
+    $scope.noTeamNotesText = "No Notes. You can use #hashtags and @mentions here.";
     $scope.imageBaseURL = DashboardConstants.imageURL;
     $scope.annoList = [];
     $scope.landscapeView = [];
@@ -214,6 +214,10 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         text = Utils.replaceHashTagWithLink(text);
         text = $sce.trustAsHtml(text);
         return text;
+    };
+
+    $scope.getTrustedHtml = function(text) {
+        return $sce.trustAsHtml(text);
     };
 
     $scope.filterAnno = function(event) {

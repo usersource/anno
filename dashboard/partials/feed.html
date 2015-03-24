@@ -109,7 +109,7 @@
                                     <span style="vertical-align: middle; margin-left: 4px;">Edit</span>
                                 </div>
                             </div>
-                            <div class="team-notes" ng-class={'no-team-notes':!anno.team_notes.length} ng-bind-html="parseForTagsMentionsLinks(anno.team_notes.length ? anno.team_notes : noTeamNotesText, anno.engaged_users);"></div>
+                            <div class="team-notes" ng-class={'no-team-notes':!anno.team_notes.length} ng-bind-html="anno.team_notes.length && parseForTagsMentionsLinks(anno.team_notes, anno.engaged_users) || getTrustedHtml(noTeamNotesText)"></div>
                             <div class="anno-team-notes-edittext" style="display: none;">
                                 <textarea placeholder="Write team notes..." ng-keydown="textareaKeydown($event, 'teamnotes');"></textarea>
                                 <input type="button" ng-value="team_notes_save" ng-click="saveTeamNotes($event);">
@@ -156,7 +156,7 @@
                                 </div>
                             </div>
                             <div class="post-comment" style="padding: 30px 3.38% 50px 0">
-                                <textarea placeholder="Write a comment..." ng-keydown="textareaKeydown($event, 'comment');"></textarea>
+                                <textarea placeholder="Write a comment. You can use #hashtags and @mentions here." ng-keydown="textareaKeydown($event, 'comment');"></textarea>
                                 <br>
                                 <input type="button" value="Post Comment" ng-click="postComment($event);">
                             </div>
