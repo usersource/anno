@@ -13,7 +13,7 @@ Dashboard.config(function($routeProvider, $locationProvider) {
     $routeProvider.when('/dashboard/:teamHash?/:teamName?/login', {
         templateUrl: '/dashboard/partials/login.html',
         controller: 'Login'
-    }).when('/dashboard/:teamHash?/:teamName?/feed', {
+    }).when('/dashboard/:teamHash?/:teamName?/feed/:annoId?', {
         templateUrl: '/dashboard/partials/feed.html',
         controller: 'Feed'
     }).when('/dashboard/:teamHash?/:teamName?/manage', {

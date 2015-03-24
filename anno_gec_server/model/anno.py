@@ -485,6 +485,17 @@ class Anno(BaseModel):
             return AnnoDashboardListMessage(anno_list=items, has_more=more)
 
     @classmethod
+    def query_by_anno_for_dashboard(cls, user, anno_id):
+        query = cls.query()
+        query = query.filter(cls.anno_id == anno_id)
+        query = filter_anno_by_user(query, user, is_plugin=True, include_archived=True)
+
+        annos = query.fetch()
+        items = [entity.to_dashboard_response_message(user) for entity in annos]
+
+        return AnnoDashboardListMessage(anno_list=items, has_more=False)
+
+    @classmethod
     def query_by_my_mentions_for_dashboard(cls, limit, curs, user):
         query = cls.query()
         query = query.order(-cls.created)

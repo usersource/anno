@@ -96,6 +96,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
     var LOOK_AHEAD = 500;
     var team_hash = $routeParams.teamHash,
         team_name = $routeParams.teamName,
+        param_anno_id = $routeParams.annoId,
         team_key = $cookieStore.get('team_key');
 
     var hasMore, annoItemCursor, surfaces = {};
@@ -111,6 +112,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
     $scope.annoList = [];
     $scope.landscapeView = [];
     $scope.fetchingAnnos = false;
+    $scope.singleAnnoMode = angular.isDefined(param_anno_id) ? true : false;
 
     function showDashboardMessage(message, error_type) {
         $scope.error_message = message;
@@ -124,6 +126,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         if (!hasMore) return;
         if ($scope.fetchingAnnos || firstTime) return;
         if (oldScrollTop > annos.scrollTop) return;
+        if ($scope.singleAnnoMode) return;
         oldScrollTop = annos.scrollTop;
         if ((annos.scrollHeight - annos.scrollTop) < (annos.getBoundingClientRect().height + LOOK_AHEAD)) {
             $scope.fetchingAnnos = true;
@@ -264,6 +267,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
         if (clear_anno) annoItemCursor = "";
         if (annoItemCursor && annoItemCursor.length) args.cursor = annoItemCursor;
+        if ($scope.singleAnnoMode) args.anno_id = param_anno_id;
 
         DataService.makeHTTPCall("anno.anno.dashboard.list", args, function(data) {
             if (clear_anno) {

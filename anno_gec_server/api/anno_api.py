@@ -108,7 +108,8 @@ class AnnoApi(remote.Service):
         query_type=messages.StringField(6),
         community=messages.IntegerField(7),
         is_plugin=messages.BooleanField(8),
-        team_key=messages.StringField(9)
+        team_key=messages.StringField(9),
+        anno_id=messages.IntegerField(10)
     )
 
     anno_update_resource_container = endpoints.ResourceContainer(
@@ -246,6 +247,8 @@ class AnnoApi(remote.Service):
             return Anno.query_by_count_for_dashboard(limit, curs, user, request.query_type)
         elif request.query_type == AnnoQueryType.ARCHIVED:
             return Anno.query_by_page_for_dashboard(limit, curs, user, query_by_archived=True)
+        elif request.anno_id:
+            return Anno.query_by_anno_for_dashboard(user, request.anno_id)
         else:
             return Anno.query_by_page_for_dashboard(limit, curs, user)
 
