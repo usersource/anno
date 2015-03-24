@@ -107,7 +107,7 @@ body {
 #dashboard_message.error-message {
   background-color: rgba(255, 0, 0, 0.8);
 }
-#dashboard_confirm_box {
+#dashboard_confirm_box, #dashboard_share_box {
   width: 100%;
   height: 100%;
   position: fixed;
@@ -115,24 +115,26 @@ body {
   z-index: 101;
   display: table;
 }
-#dashboard_confirm_box_inner {
+#dashboard_confirm_box_inner, #dashboard_share_box_inner {
   width: 100%;
   height: 100%;
   display: table-cell;
   vertical-align: middle;
   text-align: center;
 }
-#dashboard_confirm_box_content {
+#dashboard_confirm_box_content, #dashboard_share_box_content {
   background-color: #FFF;
   border-radius: 4px;
 }
-#dashboard_confirm_box #dashboard_confirm_box_title {
+#dashboard_confirm_box #dashboard_confirm_box_title,
+#dashboard_share_box #dashboard_share_box_title {
   font-size: 26px;
   color: #111d2b;
   margin-top: 5.263157895%;
   margin-bottom: 8.771929825%;
 }
-#dashboard_confirm_box #dashboard_confirm_box_yes {
+#dashboard_confirm_box #dashboard_confirm_box_yes,
+#dashboard_share_box #dashboard_share_box_yes {
   width: 66.666666667%;
   height: 40px;
   margin-top: 5.263157895%;
@@ -144,7 +146,8 @@ body {
   background-color: #ff6622;
   border: 1px solid #f65007;
 }
-#dashboard_confirm_box #dashboard_confirm_box_no {
+#dashboard_confirm_box #dashboard_confirm_box_no,
+#dashboard_share_box #dashboard_share_box_no {
   position: absolute;
   top: 0;
   right: 0;

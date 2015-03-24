@@ -232,6 +232,8 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         showConfirmBox(title, text, onSuccess);
     };
 
+    $scope.shareAnno = function(event) {};
+
     $scope.showLocalDateTime = function(datetime) {
         return new Date(datetime);
     };
