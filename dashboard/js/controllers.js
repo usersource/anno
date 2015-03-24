@@ -98,7 +98,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         team_name = $routeParams.teamName,
         team_key = $cookieStore.get('team_key');
 
-    var hasMore, annoItemCursor;
+    var hasMore, annoItemCursor, surfaces = {};
 
     var imageWidth = 0,
         imageHeight = 0,
@@ -270,6 +270,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             var newAnnoData = data.hasOwnProperty('anno_list') ? data.anno_list : [];
             angular.forEach(newAnnoData, function(anno) {
                 anno = getMentionsList(anno);
+                anno["showingAnnotations"] = true;
 
                 if ($scope.hasOwnProperty('community_engaged_users') && $scope.community_engaged_users.length) {
                     anno.engaged_users = Utils.getUniqueEngagedUsers(anno, $scope.community_engaged_users, true) || [];
@@ -334,10 +335,10 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             anno_item = Utils.findAncestor(event.currentTarget, 'anno-item');
         }
         var imgDetailScreenshot = anno_item.querySelector(".imgDetailScreenshot");
+        var anno_id = anno_item.dataset.annoId;
         angular.element(imgDetailScreenshot).css('display', '');
         if ((imgDetailScreenshot.naturalWidth / imgDetailScreenshot.naturalHeight) > 1.0) {
-            var anno_id = anno_item.dataset.annoId,
-                anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
+            var anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
 
             if (angular.equals($scope.landscapeView.indexOf(anno_id), -1)) {
                 $scope.landscapeView.push(anno_id);
@@ -367,7 +368,22 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
             self.applyAnnoLevelColor(anno_item, imgDetailScreenshot);
             self.redrawShapes(anno_item.dataset.annoId, surface);
+            surfaces[anno_id] = surface;
         });
+    };
+
+    $scope.toggleAnnotation = function(event) {
+        var anno_id = Utils.findAncestor(event.target, 'anno-item').dataset.annoId,
+            anno_item_data = Utils.getAnnoById($scope.annoList, anno_id),
+            surface = surfaces[anno_id];
+
+        if (anno_item_data.showingAnnotations) {
+            anno_item_data.showingAnnotations = false;
+            surface.hide();
+        } else {
+            anno_item_data.showingAnnotations = true;
+            surface.show();
+        }
     };
 
     $scope.applyAnnoLevelColor = function (anno_item, imgDetailScreenshot) {

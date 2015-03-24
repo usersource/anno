@@ -35,7 +35,7 @@
                             <img class="imgDetailScreenshot" width="100%" style="display: none;" imgonload="screenshotLoad($event);" ng-src="{{::imageBaseURL}}{{::anno.id}}">
                         </div>
                         <div id="gfxCanvasContainer_{{::$index}}" class="gfxCanvasContainer" style="width: 500px; height: 500px;display: none;"></div>
-                        <input type="button" value="Hide Annotation" style="margin-top: 25px;">
+                        <input class="toggle-annotation" type="button" ng-value="anno.showingAnnotations && 'Hide Annotation' || 'Show Annotations'" ng-class="{'annotation-present':anno.showingAnnotations}" ng-click="toggleAnnotation($event);" style="margin-top: 25px;">
                     </div>
                     <div class="anno-details">
                         <div class="anno-info anno-item-section" style="min-height: 217px;">

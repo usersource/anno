@@ -280,7 +280,13 @@
   border:  1px solid #c4cfd7;
   resize: vertical;
 }
-.anno-item .post-comment input, .anno-item .anno-screenshot input, .anno-item .anno-team-notes-edittext input {
+.anno-item .anno-screenshot input.toggle-annotation.annotation-present {
+  background-color: #ff6622;
+  border: 1px solid #f65007;
+}
+.anno-item .post-comment input,
+.anno-item .anno-screenshot input.toggle-annotation,
+.anno-item .anno-team-notes-edittext input {
   height: 36px;
   margin-top: 16px;
   padding: 0 15px;
