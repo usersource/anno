@@ -902,7 +902,7 @@ require([
                     "os_version":deviceInfo.osVersion,
                     "anno_type":"simple comment",
                     "screenshot_is_anonymized":isScreenshotAnonymized,
-                    "screenInfo":screenInfo
+                    "screen_info":screenInfo
                 };
 
                 AnnoDataHandler.insertAnno(annoItem, appInfo.source, screenshotDirPath);
@@ -1403,9 +1403,7 @@ require([
                         annoUtil.startActivity("Intro", false);
                     }
 
-                    if (userInfo.signinMethod == OAuthUtil.signinMethod.anno) {
-                        OAuthUtil.processBasicAuthToken(userInfo);
-                    }
+                    OAuthUtil.processBasicAuthToken(userInfo);
                 });
 
                 setupAnnoDrawPage();

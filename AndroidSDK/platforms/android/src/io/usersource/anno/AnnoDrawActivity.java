@@ -1,32 +1,23 @@
 package io.usersource.anno;
 
+import io.usersource.annoplugin.utils.AnnoUtils;
+
+import org.apache.cordova.CordovaActivity;
+
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.gesture.GestureOverlayView;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.webkit.ConsoleMessage;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import io.usersource.annoplugin.utils.*;
-import org.apache.cordova.DroidGap;
 
-import java.io.*;
-
-public class AnnoDrawActivity extends DroidGap
+public class AnnoDrawActivity extends CordovaActivity
 {
   private boolean isPractice;
   private boolean editMode;

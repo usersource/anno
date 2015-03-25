@@ -38,7 +38,7 @@ android {
         versionCode Integer.parseInt("" + getVersionCodeFromManifest() + "0")
     }
 
-    compileSdkVersion 19
+    compileSdkVersion 21
     buildToolsVersion "19.1.0"
 
     if (multiarch || System.env.BUILD_MULTIPLE_APKS) {

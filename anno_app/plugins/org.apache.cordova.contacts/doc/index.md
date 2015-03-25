@@ -19,7 +19,14 @@
 
 # org.apache.cordova.contacts
 
-Provides access to the device contacts database.
+This plugin defines a global `navigator.contacts` object, which provides access to the device contacts database.
+
+Although the object is attached to the global scoped `navigator`, it is not available until after the `deviceready` event.
+
+    document.addEventListener("deviceready", onDeviceReady, false);
+    function onDeviceReady() {
+        console.log(navigator.contacts);
+    }
 
 __WARNING__: Collection and use of contact data raises
 important privacy issues.  Your app's privacy policy should discuss
@@ -44,7 +51,7 @@ contact data.  For more information, please see the Privacy Guide.
 
 ### Firefox OS Quirks
 
-Create __www/manifest.webapp__ as described in 
+Create __www/manifest.webapp__ as described in
 [Manifest Docs](https://developer.mozilla.org/en-US/Apps/Developing/Manifest).
 Add relevant permisions.
 There is also a need to change the webapp type to "privileged"  - [Manifest Docs](https://developer.mozilla.org/en-US/Apps/Developing/Manifest#type).
@@ -116,7 +123,7 @@ function specified by the __contactSuccess__ parameter.
 The __contactFields__ parameter specifies the fields to be used as a
 search qualifier.  A zero-length __contactFields__ parameter is invalid and results in
 `ContactError.INVALID_ARGUMENT_ERROR`. A __contactFields__ value of
-`"*"` returns all contact fields.
+`"*"` searches all contact fields.
 
 The __contactFindOptions.filter__ string can be used as a search
 filter when querying the contacts database.  If provided, a
@@ -127,19 +134,21 @@ parameter to control which contact properties must be returned back.
 
 ### Parameters
 
+- __contactFields__: Contact fields to use as a search qualifier. _(DOMString[])_ [Required]
+
 - __contactSuccess__: Success callback function invoked with the array of Contact objects returned from the database. [Required]
 
 - __contactError__: Error callback function, invoked when an error occurs. [Optional]
 
-- __contactFields__: Contact fields to use as a search qualifier. _(DOMString[])_ [Required]
+- __contactFindOptions__: Search options to filter navigator.contacts. [Optional]
+	
+	Keys include:
 
-- __contactFindOptions__: Search options to filter navigator.contacts. [Optional] Keys include:
+	- __filter__: The search string used to find navigator.contacts. _(DOMString)_ (Default: `""`)
 
-- __filter__: The search string used to find navigator.contacts. _(DOMString)_ (Default: `""`)
+	- __multiple__: Determines if the find operation returns multiple navigator.contacts. _(Boolean)_ (Default: `false`)
 
-- __multiple__: Determines if the find operation returns multiple navigator.contacts. _(Boolean)_ (Default: `false`)
-
-    - __desiredFields__: Contact fields to be returned back. If specified, the resulting `Contact` object only features values for these fields. _(DOMString[])_ [Optional]
+    	- __desiredFields__: Contact fields to be returned back. If specified, the resulting `Contact` object only features values for these fields. _(DOMString[])_ [Optional]
 
 ### Supported Platforms
 
@@ -589,7 +598,7 @@ Contains different kinds of information about a `Contact` object's name.
 ### Supported Platforms
 
 - Amazon Fire OS
-- Android 2.X
+- Android
 - BlackBerry 10
 - Firefox OS
 - iOS
