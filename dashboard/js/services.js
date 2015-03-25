@@ -7,6 +7,10 @@ String.prototype.replaceAt = function(startIndex, replaceCount, character) {
 var ServiceModule = angular.module('ServiceModule', ['ngCookies', 'DashboardConstantsModule']);
 
 ServiceModule.factory('Utils', function($cookieStore) {
+    function getRoutePath(location_path) {
+        return location_path.split("/").reverse()[0];
+    }
+
     function storeUserDataInCookies(data) {
         $cookieStore.put('authenticated', data.authenticated);
         $cookieStore.put('user_display_name', data.display_name);
@@ -188,6 +192,7 @@ ServiceModule.factory('Utils', function($cookieStore) {
     };
 
     return {
+        getRoutePath : getRoutePath,
         storeUserDataInCookies : storeUserDataInCookies,
         removeUserDataCookies : removeUserDataCookies,
         replaceURLWithLink : replaceURLWithLink,

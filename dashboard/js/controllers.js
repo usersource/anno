@@ -4,6 +4,14 @@ var Dashboard = angular.module('Dashboard', ['ngCookies', 'ngRoute', 'DashboardC
 
 Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams, Utils, DashboardConstants, DataService) {
     var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
+    var urlSearchParams = $location.search(), redirectTo;
+
+    if (urlSearchParams.hasOwnProperty('redirect_to')) {
+        redirectTo = urlSearchParams["redirect_to"];
+        if (Utils.getRoutePath(redirectTo) === "login") {
+            redirectTo = undefined;
+        }
+    }
 
     $scope.initLogin = function() {
         if (angular.isDefined(team_hash)) {
@@ -27,10 +35,14 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
             data['email'] = $scope.email;
             if (data.authenticated) {
                 Utils.storeUserDataInCookies(data);
-                if (angular.isDefined(team_hash)) {
-                    $location.path('/dashboard/' + team_hash + '/' + team_name + '/feed');
+                if (angular.isDefined(redirectTo)) {
+                    window.location = redirectTo;
                 } else {
-                    $location.path('/dashboard/feed');
+                    if (angular.isDefined(team_hash)) {
+                        $location.path('/dashboard/' + team_hash + '/' + team_name + '/feed');
+                    } else {
+                        $location.path('/dashboard/feed');
+                    }
                 }
             } else {
                 $scope.error_message = "Authentication failed. Please try again.";
