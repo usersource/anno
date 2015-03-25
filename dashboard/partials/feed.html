@@ -14,17 +14,16 @@
             </div>
         </div>
     </div>
-    <!-- <div id="dashboard_share_box" ng-show="showShareBox">
+    <div id="dashboard_share_box" ng-show="showShareBox">
         <div id="dashboard_share_box_inner">
             <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
             <div id="dashboard_share_box_content" class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                 <div id="dashboard_share_box_title">Share</div>
-                <div id="dashboard_share_box_text">{{anno_share_url}}</div>
-                <input id="dashboard_share_box_yes" type="button" ng-click="copyShareURL($event);" value="Copy">
-                <div id="dashboard_share_box_no" ng-click="closeShareBox($event);"></div>
+                <input id="dashboard_share_box_text" type="text" ng-model="anno_share_url" ng-focus="focusShareBox();" autofocus>
+                <input id="dashboard_share_box_yes" type="button" ng-click="closeShareBox($event);" value="Close">
             </div>
         </div>
-    </div> -->
+    </div>
     <div id="engaged-users-suggestion" style="display: none;">
         <div class="engaged-user" ng-repeat="engagedUser in currentEngagedUserList" data-value="{{::engagedUser.unique_name}}" ng-click="selectSuggestion($event);">
             <img width="24px" height="24px" style="border-radius: 12px;" ng-src="{{::engagedUser.image_url && engagedUser.image_url || '/dashboard/images/icon_no-user.png'}}">

@@ -249,8 +249,16 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         var anno_id = Utils.findAncestor(event.target, 'anno-item').dataset.annoId,
             anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
 
-        var anno_share_url = $location.absUrl() + "/" + anno_item_data.id;
-        window.prompt("Copy share URL", anno_share_url);
+        $scope.anno_share_url = $location.absUrl() + "/" + anno_item_data.id;
+        $scope.showShareBox = true;
+    };
+
+    $scope.closeShareBox = function() {
+        $scope.showShareBox = false;
+    };
+
+    $scope.focusShareBox = function() {
+        dashboard_share_box_text.setSelectionRange(0, dashboard_share_box_text.value.length);
     };
 
     $scope.showLocalDateTime = function(datetime) {

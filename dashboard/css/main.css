@@ -146,8 +146,7 @@ body {
   background-color: #ff6622;
   border: 1px solid #f65007;
 }
-#dashboard_confirm_box #dashboard_confirm_box_no,
-#dashboard_share_box #dashboard_share_box_no {
+#dashboard_confirm_box #dashboard_confirm_box_no {
   position: absolute;
   top: 0;
   right: 0;
@@ -155,4 +154,18 @@ body {
   background-image: url("/dashboard/images/confirm_box_close.png");
   background-repeat: no-repeat;
   background-position: 50%;
+}
+#dashboard_share_box #dashboard_share_box_text {
+  width: 89.203%;
+  width: calc(100% - 80px);
+  width: -webkit-calc(100% - 80px);
+  width: -moz-calc(100% - 80px);
+  width: -o-calc(100% - 80px);
+  display: block;
+  margin: 0 40px;
+  outline: 0;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #C4CFD7;
+  background-color: #F9F9F9;
 }
