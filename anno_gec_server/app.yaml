@@ -36,6 +36,9 @@ handlers:
   upload: dashboard/(.*)
 - url: /dashboard
   static_dir: dashboard
+- url: /admin_team_master
+  static_dir: dashboard/admin_team_master
+  login: admin
 - url: /.*
   script: main.application
 

@@ -21,7 +21,7 @@ define([
         initDB: function(callback)
         {
             this.callback = callback;
-            this.annoDB = window.sqlitePlugin.openDatabase({name: "anno", bgType2: 1});
+            this.annoDB = window.sqlitePlugin.openDatabase({name: "anno", androidLockWorkaround: 1});
             this.checkTables();
 
             window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs){
@@ -30,7 +30,7 @@ define([
         },
         reconnectToDB:function()
         {
-            this.annoDB = window.sqlitePlugin.openDatabase({name: "anno", bgType2: 1});
+            this.annoDB = window.sqlitePlugin.openDatabase({name: "anno", androidLockWorkaround: 1});
             console.log("db reconnected.");
         },
         checkTables: function()
@@ -172,7 +172,8 @@ define([
                     {name:'created', type:'VARCHAR(30)', 'default':"'0'"},
                     {name:'draw_elements', type:'text'},
                     {name:'draw_is_anonymized', type:'integer', 'default':0},
-                    {name:'team_key', type:'text'}
+                    {name:'team_key', type:'text'},
+                    {name:'screen_info', type:'text'}
                     // {name:'column_is_anonymized', type:'integer', 'default':0}
                 ];
 

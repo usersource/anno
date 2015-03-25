@@ -4,7 +4,7 @@ from google.appengine.ext import ndb
 
 from model.appinfo import AppInfo
 from message.community_message import CommunityMessage
-from helper.utils_enum import CommunityType, UserRoleType
+from helper.utils_enum import CommunityType, UserRoleType, AuthSourceType
 
 class Community(ndb.Model):
     name = ndb.StringProperty(required=True)
@@ -48,22 +48,24 @@ class Community(ndb.Model):
         return cls.query(cls.team_key == team_key).get()
 
     @classmethod
-    def insert(cls, message):
+    def insert(cls, message, getCommunity=False):
+        community, user = None, None
+
         try:
             from helper.utils import get_user_from_request, FIRST_CIRCLE
 
             if message.name is None:
-                return "Community name is required"
+                return "Community name is required" if not getCommunity else (community, user)
 
             if message.type:
                 # community should be of type 'private' or 'public'
                 if not message.type in [CommunityType.PRIVATE, CommunityType.PUBLIC]:
-                    return "Community should be of type 'private' or 'public'"
+                    return "Community should be of type 'private' or 'public'" if not getCommunity else (community, user)
                 # only one public community is allowed
                 elif message.type == CommunityType.PUBLIC:
                     queryResultCount = Community.query(Community.type == message.type).count()
                     if queryResultCount:
-                        return "Community not created. Can't create more than one public community."
+                        return "Community not created. Can't create more than one public community." if not getCommunity else (community, user)
             else:
                 message.type = CommunityType.PRIVATE
 
@@ -82,6 +84,17 @@ class Community(ndb.Model):
                                          team_key=message.team_key)
             userrole = None
             userrole_type = UserRoleType.ADMIN if message.team_key else UserRoleType.MANAGER
+
+            if (not user) and message.team_key and message.user.user_email:
+                from model.user import User
+                from helper.utils import md5
+                user = User.insert_user(message.user.user_email,
+                                        username=message.user.display_name,
+                                        account_type=message.team_key,
+                                        auth_source=AuthSourceType.PLUGIN,
+                                        password=md5(message.user.password),
+                                        image_url="")
+
             if user:
                 from model.userrole import UserRole
                 userrole = UserRole.insert(user, community, userrole_type)
@@ -94,7 +107,7 @@ class Community(ndb.Model):
             logging.exception("Exception while inserting community: %s" % e)
             respData = e
 
-        return respData
+        return respData if not getCommunity else (community, user)
 
     @classmethod
     def delete(cls, community):

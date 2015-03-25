@@ -447,6 +447,7 @@ define([
             else
             {
                 navigator.app.exitApp();
+                cordova.exec(function(result) {}, function(err) {}, "AnnoCordovaPlugin", 'exit_current_activity', []);
             }
         };
 
@@ -1311,12 +1312,9 @@ define([
                             annoUtil.startActivity("Intro", false);
                         }
 
-                        if (userInfo.signinMethod == OAuthUtil.signinMethod.anno) {
-                            OAuthUtil.processBasicAuthToken(userInfo);
-                        }
-
+                        OAuthUtil.processBasicAuthToken(userInfo);
                         annoUtil.showLoadingIndicator();
-                        OAuthUtil.getAccessToken(function() { loadListData(); });
+                        loadListData();
                     });
 
                     adjustSize();

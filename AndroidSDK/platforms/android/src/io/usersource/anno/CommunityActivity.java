@@ -1,9 +1,9 @@
 package io.usersource.anno;
 
-import android.webkit.WebView;
 import io.usersource.annoplugin.utils.AnnoUtils;
 
-import org.apache.cordova.DroidGap;
+import org.apache.cordova.CordovaActivity;
+
 import android.content.Intent;
 import android.gesture.GestureOverlayView;
 import android.os.Bundle;
@@ -17,7 +17,7 @@ import android.widget.LinearLayout;
  * @author topcircler
  * 
  */
-public class CommunityActivity extends DroidGap {
+public class CommunityActivity extends CordovaActivity {
 
 	private int level;
 

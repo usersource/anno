@@ -123,3 +123,24 @@
 * convert test to new style
 * added documentation for manual tests
 * merged changes for test framework plugin
+
+### 0.2.14 (Oct 03, 2014)
+* CB-7373 Removes unnecessary Error object creation
+* CB-7373 Adds additional output if method is not supported.
+* CB-7357 Adds missing 'capability' element to phone's appxmanifest.
+
+### 0.2.15 (Dec 02, 2014)
+* CB-7131 Check for profile photo existance
+* CB-7896 Better way to detect **Windows** and **WindowsPhone8.1**
+* CB-7896 Pending tests for `Save` and `Find` methods for **Windows** cause they are not supported yet
+* CB-7977 Mention `deviceready` in plugin docs
+* CB-7772 - [Contacts] Cancelling `pickContact` should call the error callback, not the success callback
+* CB-7761 - Misleading text in documentation
+* CB-7762 - Parameter list is incorrect for `contacts.find`
+* CB-7700 cordova-plugin-contacts documentation translation: cordova-plugin-contacts
+
+### 0.2.16 (Feb 04, 2015)
+* CB-8351 ios: Stop using (newly) deprecated CordovaLib functions
+* CB-8351 ios: Use argumentForIndex rather than NSArray extension
+* android: Update ContactName support
+* Updated the comments for ContactOrganization constructor.

@@ -1205,12 +1205,9 @@ require([
         }
     };
 
-    var loadCommunities = function(callback)
-    {
-        OAuthUtil.getAccessToken(function(){
-            annoUtil.loadUserCommunities(true, function(data){
-                if (callback) callback(data.communityList);
-            });
+    var loadCommunities = function(callback) {
+        annoUtil.loadUserCommunities(true, function(data){
+            if (callback) callback(data.communityList);
         });
     };
 
@@ -1480,8 +1477,8 @@ require([
         else
         {
             window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "cancel");
-
             navigator.app.exitApp();
+            cordova.exec(function(result) {}, function(err) {}, "AnnoCordovaPlugin", 'exit_current_activity', []);
         }
     }, false);
 

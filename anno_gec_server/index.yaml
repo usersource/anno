@@ -210,6 +210,11 @@ indexes:
   - name: last_update_time
     direction: desc
 
+- kind: Community
+  properties:
+  - name: team_key
+  - name: team_secret
+
 - kind: Flag
   properties:
   - name: creator

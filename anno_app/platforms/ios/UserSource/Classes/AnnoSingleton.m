@@ -46,6 +46,7 @@ static AnnoSingleton *sharedInstance = nil;
         self.newAnnoCreated = FALSE;
         cloudHost = @"http://usersource-anno.appspot.com";
         unreadCount = 0;
+        self.viewControllerString = @"";
         self.shakeSensitivityValues = @[@"1 Shake", @"2 Shakes", @"3 Shakes"];
         unreadData = @{ @"unread_count_present" : [NSNumber numberWithBool:NO], @"unread_count" : @0 };
         
@@ -110,20 +111,19 @@ static AnnoSingleton *sharedInstance = nil;
     self.userImageURL = userImageURLValue;
     self.teamKey = teamKeyValue;
     self.teamSecret = teamSecretValue;
-    
-    
+
     UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
     if (window.rootViewController == nil) {
         NSLog(@"WARNING! CommunityViewController being set as rootViewController");
         window.rootViewController = self.communityViewController;
     }
+
     self.viewControllerList = [[NSMutableArray alloc] initWithObjects:window.rootViewController, nil];
     self.annoDrawViewControllerList = [[NSMutableArray alloc] init];
     [self getShakeSettings];
-    [self startListener];
 }
 
-- (void) startListener {
+- (void) enableShakeGesture {
     static BOOL methodSwizzled = NO;
     if (!methodSwizzled) {
         SwizzleMethod([UIWindow class], @selector(motionEnded:withEvent:), @selector(UserSourceMotionEnded:withEvent:));

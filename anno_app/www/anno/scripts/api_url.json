@@ -3,6 +3,10 @@
         "url": "/account/1.0/account/authenticate",
         "method": "POST"
     },
+    "account.account.forgot_detail": {
+        "url": "/account/1.0/account/forgot_detail",
+        "method": "POST"
+    },
     "anno.anno.list": {
         "url": "/anno/1.0/anno",
         "method": "GET"
@@ -81,6 +85,10 @@
     },
     "user.user.deviceid.update": {
         "url": "/user/1.0/user/deviceid/update",
+        "method": "POST"
+    },
+    "user.user.password.update": {
+        "url": "/user/1.0/user/update_password",
         "method": "POST"
     },
     "user.favorite_apps.list": {

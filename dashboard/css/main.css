@@ -26,8 +26,15 @@ body {
   font-size: 16px;
   color: #9399a5;
 }
-.header div.active {
-  color: #282828;
+.header .header-tab {
+  text-align: center;
+  cursor: pointer;
+  display: inline-block;
+  padding: 0 2.5%;
+}
+.header .header-tab.active {
+  color: #F62;
+  font-weight: 600;
 }
 .header #user_info {
   display: inline-block;
@@ -35,6 +42,7 @@ body {
   margin: 5px 0;
   text-align: right;
   cursor: pointer;
+  margin-left: 7.5%;
 }
 .header #user_info:hover #logout_arrow {
   background-image: url('../images/icon_chevron-blue.png');
@@ -101,4 +109,66 @@ body {
 }
 #dashboard_message.error-message {
   background-color: rgba(255, 0, 0, 0.8);
+}
+#dashboard_confirm_box, #dashboard_share_box {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 101;
+  display: table;
+}
+#dashboard_confirm_box_inner, #dashboard_share_box_inner {
+  width: 100%;
+  height: 100%;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+#dashboard_confirm_box_content, #dashboard_share_box_content {
+  background-color: #FFF;
+  border-radius: 4px;
+}
+#dashboard_confirm_box #dashboard_confirm_box_title,
+#dashboard_share_box #dashboard_share_box_title {
+  font-size: 26px;
+  color: #111d2b;
+  margin-top: 5.263157895%;
+  margin-bottom: 8.771929825%;
+}
+#dashboard_confirm_box #dashboard_confirm_box_yes,
+#dashboard_share_box #dashboard_share_box_yes {
+  width: 66.666666667%;
+  height: 40px;
+  margin-top: 5.263157895%;
+  margin-bottom: 8.771929825%;
+  padding: 0 15px;
+  border-radius: 4px;
+  outline: 0;
+  color: white;
+  background-color: #ff6622;
+  border: 1px solid #f65007;
+}
+#dashboard_confirm_box #dashboard_confirm_box_no {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5.789473684% 6.666666667%;
+  background-image: url("/dashboard/images/confirm_box_close.png");
+  background-repeat: no-repeat;
+  background-position: 50%;
+}
+#dashboard_share_box #dashboard_share_box_text {
+  width: 89.203%;
+  width: calc(100% - 80px);
+  width: -webkit-calc(100% - 80px);
+  width: -moz-calc(100% - 80px);
+  width: -o-calc(100% - 80px);
+  display: block;
+  margin: 0 40px;
+  outline: 0;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #C4CFD7;
+  background-color: #F9F9F9;
 }

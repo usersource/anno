@@ -40,7 +40,7 @@ static NSString *CellIdentifier = @"CellIdentifier";
 }
 
 - (void) getTeams {
-    NSURL *url = [NSURL URLWithString:@"https://annoserver-test.appspot.com/_ah/api/community/1.0/community/list?team_hash=us3rs0urc3"];
+    NSURL *url = [NSURL URLWithString:@"https://annoserver.appspot.com/_ah/api/community/1.0/community/list?team_hash=us3rs0urc3"];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:[NSOperationQueue mainQueue]

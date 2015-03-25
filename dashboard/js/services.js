@@ -7,6 +7,10 @@ String.prototype.replaceAt = function(startIndex, replaceCount, character) {
 var ServiceModule = angular.module('ServiceModule', ['ngCookies', 'DashboardConstantsModule']);
 
 ServiceModule.factory('Utils', function($cookieStore) {
+    function getRoutePath(location_path) {
+        return location_path.split("/").reverse()[0];
+    }
+
     function storeUserDataInCookies(data) {
         $cookieStore.put('authenticated', data.authenticated);
         $cookieStore.put('user_display_name', data.display_name);
@@ -25,6 +29,10 @@ ServiceModule.factory('Utils', function($cookieStore) {
         $cookieStore.remove('team_key');
         $cookieStore.remove('team_name');
         $cookieStore.remove('user_team_token');
+    }
+
+    function removeRedirectURL() {
+        $cookieStore.remove("redirect_to");
     }
 
     function replaceURLWithLink(s) {
@@ -188,8 +196,10 @@ ServiceModule.factory('Utils', function($cookieStore) {
     };
 
     return {
+        getRoutePath : getRoutePath,
         storeUserDataInCookies : storeUserDataInCookies,
         removeUserDataCookies : removeUserDataCookies,
+        removeRedirectURL : removeRedirectURL,
         replaceURLWithLink : replaceURLWithLink,
         replaceEmailWithName : replaceEmailWithName,
         replaceHashTagWithLink : replaceHashTagWithLink,
@@ -310,12 +320,6 @@ ServiceModule.factory('Autocomplete', function(Utils) {
 ServiceModule.factory('DataService', function($http, $location, $window, $cookieStore, Utils, DashboardConstants) {
     var apiRoot = DashboardConstants.apiRoot;
 
-    function checkAuthentication(team_hash, team_name) {
-        var primary_url = '/dashboard/' + team_hash + '/' + team_name;
-        var action_page = $cookieStore.get('authenticated') ? '/feed' : '/login';
-        return primary_url + action_page;
-    }
-
     function makeHTTPCall(endpointName, params, success_callback, error_callback) {
         var endpointData = DashboardConstants.endpointUrl[endpointName];
         var url = apiRoot + "/" + endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + endpointData.path;
@@ -344,7 +348,6 @@ ServiceModule.factory('DataService', function($http, $location, $window, $cookie
     }
 
     return ({
-        checkAuthentication : checkAuthentication,
         makeHTTPCall : makeHTTPCall
     });
 });

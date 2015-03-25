@@ -17,7 +17,7 @@ class UserRole(ndb.Model):
                                        UserRoleType.ADMIN],
                               required=True)
     circle_level = ndb.IntegerProperty(required=True, default=0)
-    
+
     @classmethod
     def insert(cls, user, community, role=None, circle_level=0):
         entity = None
@@ -47,16 +47,25 @@ class UserRole(ndb.Model):
         return entity
 
     @classmethod
-    def community_user_list(cls, community_id, only_managers=False):
-        query = cls.query().filter(cls.community == Community.get_by_id(community_id).key)
+    def community_user_list(cls, community_id=None, community_key=None, only_managers=False):
+        if (not community_key) and community_id:
+            community_key = Community.get_by_id(community_id).key
 
-        if only_managers:
-            query = query.filter(cls.role == UserRoleType.MANAGER)
+        users = []
+        if community_key:
+            query = cls.query().filter(cls.community == community_key)
+            if only_managers:
+                query = query.filter(cls.role == UserRoleType.MANAGER)
+            users = query.fetch()
 
-        users = query.fetch()
         return users
 
     @classmethod
     def getCircleLevel(cls, user, community):
         entity = cls.query(ndb.AND(cls.user == user.key, cls.community == community.key)).get()
         return entity.circle_level if entity else 0
+
+    @classmethod
+    def getRole(cls, user, community):
+        entity = cls.query(ndb.AND(cls.user == user.key, cls.community == community.key)).get()
+        return entity.role if entity else None
