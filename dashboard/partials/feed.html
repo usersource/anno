@@ -1,31 +1,28 @@
 <div id="feed" ng-controller="Feed" ng-init="initFeed();">
-    <div class="header row">
-        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-            <div style="font-size: 150%; font-weight: bold; color: #f62; text-align: center;">ANNOT8</div>
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-            <img width="50px" height="50px" style="border-radius: 12px;" ng-src="{{appInfo.icon_url && appInfo.icon_url || '/dashboard/images/icon_mobile.png'}}">
-            <div class="active" style="display: inline-block; margin-left: 18px;">{{::appInfo.name}}</div>
-        </div>
-        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1 active" style="text-align: center;">Feed</div>
-        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Stats</div>
-        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Manage</div>
-        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Profile</div>
-        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3" id="user_info" ng-click="signoutButtonClicked();">
-            <img width="45px" height="45px" style="border-radius: 25px;" ng-src="{{::image_url && image_url || '/dashboard/images/icon_no-user.png'}}">
-            <div id="loggedin_user_info">
-                <div style="font-size: 18px;" class="active">{{::display_name}}</div>
-                <div style="font-size: 14px;">{{::email}}</div>
-            </div>
-            <div id="logout_arrow" ng-class="{'signout-arrow-clicked' : signoutArrowValue}"></div>
-        </div>
-        <div id="logout_button" ng-style="{display: showSignoutButton}" ng-click="signoutDashboard();">
-            <div id="logout_button_icon"></div>
-            <span id="logout_button_text" style="vertical-align: middle; margin-left: 8px;">Sign out</span>
-        </div>
-    </div>
+    <div class="header row" ng-include="'/dashboard/partials/header.html'"></div>
     <div id="dashboard_message" ng-show="error_message.length" ng-class="{'error-message':dashboard_error_type}">
         <div id="dashboard_message_text">{{error_message}}</div>
+    </div>
+    <div id="dashboard_confirm_box" ng-show="showConfirmBox">
+        <div id="dashboard_confirm_box_inner">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
+            <div id="dashboard_confirm_box_content" class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                <div id="dashboard_confirm_box_title">{{confirm_box_title}}</div>
+                <div id="dashboard_confirm_box_text">{{confirm_box_text}}</div>
+                <input id="dashboard_confirm_box_yes" type="button" ng-click="confirmYesClicked($event);" value="Yes">
+                <div id="dashboard_confirm_box_no" ng-click="confirmNoClicked($event);"></div>
+            </div>
+        </div>
+    </div>
+    <div id="dashboard_share_box" ng-show="showShareBox">
+        <div id="dashboard_share_box_inner">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
+            <div id="dashboard_share_box_content" class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                <div id="dashboard_share_box_title">Share</div>
+                <input id="dashboard_share_box_text" type="text" ng-model="anno_share_url" ng-focus="focusShareBox();" autofocus>
+                <input id="dashboard_share_box_yes" type="button" ng-click="closeShareBox($event);" value="Close">
+            </div>
+        </div>
     </div>
     <div id="engaged-users-suggestion" style="display: none;">
         <div class="engaged-user" ng-repeat="engagedUser in currentEngagedUserList" data-value="{{::engagedUser.unique_name}}" ng-click="selectSuggestion($event);">
@@ -40,7 +37,7 @@
         <div class="engaged-hashtag" ng-repeat="hashtag in currentHashtagList" data-value="{{::hashtag.text}}" ng-click="selectSuggestion($event);">#{{::hashtag.text}}</div>
     </div>
     <div id="feed-content">
-        <div id="side-panel" class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+        <div id="side-panel" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" ng-if="!singleAnnoMode">
             <div style="margin-bottom: 18px;">Filter results by:</div>
             <div style="margin-bottom: 30px;">
                 <div class="side-panel-filter" data-type="myMentions" ng-click="filterAnno($event);" ng-class="{'active':(filterType == 'by_my_mentions')}">My @mentions</div>
@@ -49,9 +46,9 @@
                 <div class="side-panel-filter" data-type="mostFlagged" ng-click="filterAnno($event);" ng-class="{'active':(filterType == 'by_flag_count')}">Most Flagged</div>
                 <div class="side-panel-filter" data-type="archived" ng-click="filterAnno($event);" ng-class="{'active':(filterType == 'by_archived')}">Archived</div>
             </div>
-            <input id="side-panel-search" type="text" placeholder="Type to search..." />
+            <!-- <input id="side-panel-search" type="text" placeholder="Type to search..." /> -->
         </div>
-        <div id="annos" class="col-lg-10 col-md-10 col-sm-10 col-xs-10" on-scroll="getMoreAnnos();">
+        <div id="annos" ng-class="{'col-lg-10 col-md-10 col-sm-10 col-xs-10':!singleAnnoMode, 'col-lg-12 col-md-12 col-sm-12 col-xs-12':singleAnnoMode}" on-scroll="getMoreAnnos();">
             <div id="annos-inner" ng-show="annoList.length">
                 <div id="anno_{{::$index}}" data-anno-id="{{::anno.id}}" class="anno-item" ng-class="{'landscape':(landscapeView.indexOf(anno.id) !== -1)}" ng-repeat="anno in annoList track by anno.id" ng-if="(filterType !== 'by_archived' && !anno.archived) || (filterType === 'by_archived' && anno.archived)">
                     <div class="anno-screenshot">
@@ -59,7 +56,7 @@
                             <img class="imgDetailScreenshot" width="100%" style="display: none;" imgonload="screenshotLoad($event);" ng-src="{{::imageBaseURL}}{{::anno.id}}">
                         </div>
                         <div id="gfxCanvasContainer_{{::$index}}" class="gfxCanvasContainer" style="width: 500px; height: 500px;display: none;"></div>
-                        <input type="button" value="Hide Annotation" style="margin-top: 25px;">
+                        <input class="toggle-annotation" type="button" ng-value="anno.showingAnnotations && 'Hide Annotation' || 'Show Annotations'" ng-class="{'annotation-present':anno.showingAnnotations}" ng-click="toggleAnnotation($event);" style="margin-top: 25px;">
                     </div>
                     <div class="anno-details">
                         <div class="anno-info anno-item-section" style="min-height: 217px;">
@@ -106,7 +103,7 @@
                             </div>
                             <div class="anno-info-action">
                                 <div class="section-header">Actions:</div>
-                                <div class="anno-info-action-item share" title="Share">
+                                <div class="anno-info-action-item share" ng-click="shareAnno($event);" title="Share">
                                     <div class="action-icon"></div>
                                     <span style="vertical-align: middle; margin-left: 4px;">Share</span>
                                 </div>
@@ -133,7 +130,7 @@
                                     <span style="vertical-align: middle; margin-left: 4px;">Edit</span>
                                 </div>
                             </div>
-                            <div class="team-notes" ng-class={'no-team-notes':!anno.team_notes.length} ng-bind-html="parseForTagsMentionsLinks(anno.team_notes.length ? anno.team_notes : noTeamNotesText, anno.engaged_users);"></div>
+                            <div class="team-notes" ng-class={'no-team-notes':!anno.team_notes.length} ng-bind-html="anno.team_notes.length && parseForTagsMentionsLinks(anno.team_notes, anno.engaged_users) || getTrustedHtml(noTeamNotesText)"></div>
                             <div class="anno-team-notes-edittext" style="display: none;">
                                 <textarea placeholder="Write team notes..." ng-keydown="textareaKeydown($event, 'teamnotes');"></textarea>
                                 <input type="button" ng-value="team_notes_save" ng-click="saveTeamNotes($event);">
@@ -180,7 +177,7 @@
                                 </div>
                             </div>
                             <div class="post-comment" style="padding: 30px 3.38% 50px 0">
-                                <textarea placeholder="Write a comment..." ng-keydown="textareaKeydown($event, 'comment');"></textarea>
+                                <textarea placeholder="Write a comment. You can use #hashtags and @mentions here." ng-keydown="textareaKeydown($event, 'comment');"></textarea>
                                 <br>
                                 <input type="button" value="Post Comment" ng-click="postComment($event);">
                             </div>

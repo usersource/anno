@@ -6,6 +6,8 @@ from protorpc import messages
 from protorpc import message_types
 
 from message.user_message import UserMessage
+from message.user_message import CreateUserMessage
+from message.user_message import UserAdminMasterMessage
 from message.appinfo_message import AppInfoMessage
 
 class CommunityMessage(messages.Message):
@@ -19,6 +21,25 @@ class CommunityMessage(messages.Message):
     user = messages.MessageField(UserMessage, 8)
     team_key = messages.StringField(9)
     team_secret = messages.StringField(10)
+
+class CommunityAdminMasterMessage(messages.Message):
+    community_name = messages.StringField(1)
+    team_key = messages.StringField(2)
+    team_secret = messages.StringField(3)
+    team_hash = messages.StringField(4)
+    app_name = messages.StringField(5)
+    app_icon = messages.StringField(6)
+    users = messages.MessageField(UserAdminMasterMessage, 7, repeated=True)
+
+class CreateCommunityMessage(messages.Message):
+    community_name = messages.StringField(1)
+    team_key = messages.StringField(2)
+    app_name = messages.StringField(3)
+    admin_user = messages.MessageField(CreateUserMessage, 4)
+    other_users = messages.MessageField(CreateUserMessage, 5, repeated=True)
+
+class CommunityAdminMasterListMessage(messages.Message):
+    communities = messages.MessageField(CommunityAdminMasterMessage, 1, repeated=True)
 
 class CommunityHashResponseMessage(messages.Message):
     id = messages.IntegerField(1)
@@ -41,9 +62,12 @@ class CommunityUserListMessage(messages.Message):
 class CommunityUserRoleMessage(messages.Message):
     user_id = messages.IntegerField(1)
     user_email = messages.StringField(2)
-    community_id = messages.IntegerField(3, required=True)
+    community_id = messages.IntegerField(3)
     role = messages.StringField(4)
     include_invite=messages.BooleanField(5, default=False)
+    user_display_name = messages.StringField(6)
+    user_password = messages.StringField(7)
+    team_key = messages.StringField(8)
 
 class CommunityInviteMessage(messages.Message):
     name = messages.StringField(1)

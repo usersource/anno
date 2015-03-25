@@ -9,10 +9,12 @@ from protorpc import remote
 
 from helper.settings import anno_js_client_id
 from helper.utils import get_user_from_request
-from helper.utils_enum import InvitationStatusType
+from helper.utils_enum import InvitationStatusType, UserRoleType, AuthSourceType
 from helper.utils import auth_user
 from helper.utils import getAppInfo
+from helper.utils import md5
 from message.community_message import CommunityMessage
+from message.community_message import CreateCommunityMessage
 from message.community_message import CommunityHashResponseMessage
 from message.community_message import CommunityAppInfoMessage
 from message.community_message import CommunityUserMessage
@@ -22,12 +24,17 @@ from message.community_message import CommunityInviteMessage
 from message.community_message import CreateInviteResponseMessage
 from message.community_message import CommunityValueMessage
 from message.community_message import CommunityValueListMessage
+from message.community_message import CommunityAdminMasterMessage
+from message.community_message import CommunityAdminMasterListMessage
 from message.user_message import UserMessage
+from message.user_message import UserAdminMasterMessage
+from message.appinfo_message import AppInfoMessage
 from message.common_message import ResponseMessage
 from model.community import Community
 from model.userrole import UserRole
 from model.user import User
 from model.invite import Invite
+from model.appinfo import AppInfo
 
 @endpoints.api(name="community", version="1.0", description="Community API",
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
@@ -42,7 +49,8 @@ class CommunityApi(remote.Service):
 
     community_without_id_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
-        team_hash=messages.StringField(1)
+        team_hash=messages.StringField(1),
+        team_key=messages.StringField(2)
     )
 
     community_with_circles_resource_container = endpoints.ResourceContainer(
@@ -109,9 +117,20 @@ class CommunityApi(remote.Service):
     @endpoints.method(CommunityUserRoleMessage, ResponseMessage, path="user",
                       http_method="POST", name="user.insert")
     def insert_user(self, request):
-        user = get_user_from_request(user_id=request.user_id, user_email=request.user_email)
-        community = Community.get_by_id(request.community_id)
-        role = request.role if request.role else None
+        user = get_user_from_request(user_id=request.user_id,
+                                     user_email=request.user_email,
+                                     team_key=request.team_key)
+
+        if not user:
+            user = User.insert_user(request.user_email,
+                                    username=request.user_display_name,
+                                    account_type=request.team_key,
+                                    auth_source=AuthSourceType.PLUGIN,
+                                    password=md5(request.user_password),
+                                    image_url="")
+
+        community = Community.getCommunityFromTeamKey(request.team_key) if request.team_key else Community.get_by_id(request.community_id)
+        role = request.role if request.role else UserRoleType.MEMBER
 
         resp = None
         if user and community:
@@ -192,3 +211,98 @@ class CommunityApi(remote.Service):
         return CommunityHashResponseMessage(team_key=community.team_key,
                                             app_name=community_app.name,
                                             app_icon=community_app.icon_url)
+
+    @endpoints.method(community_without_id_resource_container, CommunityAdminMasterListMessage,
+                      path="community/admin_master_data", http_method="GET", name="community.admin_master")
+    def get_admin_master_data(self, request):
+        communities_message = []
+        query = Community.query().filter(Community.team_secret != None)
+
+        if request.team_key:
+            query = query.filter(Community.team_key == request.team_key)
+
+        communities = query.fetch()
+
+        for community in communities:
+            community_message = CommunityAdminMasterMessage()
+            community_message.community_name = community.name
+            community_message.team_key = community.team_key
+            community_message.team_secret = community.team_secret
+            community_message.team_hash = community.team_hash
+
+            app = community.apps[0].get()
+            if app:
+                community_message.app_name = app.name
+                community_message.app_icon = app.icon_url
+
+            community_message.users = []
+            for userrole in UserRole.community_user_list(community_key=community.key):
+                user = userrole.user.get()
+                if user and (user.account_type == community.team_key):
+                    user_message = UserAdminMasterMessage()
+                    user_message.display_name = user.display_name
+                    user_message.user_email = user.user_email
+                    user_message.password_present = True if user.password else False
+                    user_message.role = userrole.role
+                    user_message.image_url = user.image_url
+                    if community.circles:
+                        user_message.circle = community.circles.get(str(userrole.circle_level))
+                    community_message.users.append(user_message)
+
+            communities_message.append(community_message)
+
+        return CommunityAdminMasterListMessage(communities=communities_message)
+
+    @endpoints.method(CreateCommunityMessage, CommunityAdminMasterListMessage,
+                      path="community/create_sdk_community", http_method="POST", name="community.create_sdk_community")
+    def create_sdk_community(self, request):
+        team_key = request.team_key
+        app_name = request.app_name
+        community_name = request.community_name
+
+        app = AppInfo.query().filter(AppInfo.lc_name == app_name.lower()).get()
+        if not app:
+            appinfo_message = AppInfoMessage()
+            appinfo_message.name = app_name
+            app = AppInfo.insert(appinfo_message)
+
+        community = Community.getCommunityFromTeamKey(team_key=team_key)
+        if not community:
+            community_message = CommunityMessage(name=community_name,
+                                                 team_key=team_key,
+                                                 team_secret=md5(community_name.lower()))
+            community_message.user = UserMessage(user_email=request.admin_user.user_email,
+                                                 display_name=request.admin_user.display_name,
+                                                 password=request.admin_user.password)
+            community, user = Community.insert(community_message, getCommunity=True)
+
+        communities_message = []
+        if community and app:
+            if not app.key in community.apps:
+                community.apps.append(app.key)
+                community.put()
+
+            # response message
+            community_message = CommunityAdminMasterMessage()
+            community_message.community_name = community.name
+            community_message.team_key = community.team_key
+            community_message.team_secret = community.team_secret
+            community_message.team_hash = community.team_hash
+            community_message.app_name = app.name
+            community_message.app_icon = app.icon_url
+
+            community_message.users = []
+            user_message = UserAdminMasterMessage()
+            user_message.display_name = user.display_name
+            user_message.user_email = user.user_email
+            user_message.password_present = True if user.password else False
+            user_message.role = UserRole.getRole(user, community)
+            user_message.image_url = user.image_url
+
+            if community.circles:
+                user_message.circle = community.circles.get(str(UserRole.getCircleLevel(user, community)))
+
+            community_message.users.append(user_message)
+            communities_message.append(community_message)
+
+        return CommunityAdminMasterListMessage(communities=communities_message)

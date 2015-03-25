@@ -4,9 +4,16 @@ var Dashboard = angular.module('Dashboard', ['ngCookies', 'ngRoute', 'DashboardC
 
 Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams, Utils, DashboardConstants, DataService) {
     var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
+    var urlSearchParams = $location.search(), redirectTo;
+
+    if ($cookies.hasOwnProperty('redirect_to')) {
+        redirectTo = $cookies["redirect_to"];
+        if (Utils.getRoutePath(redirectTo) === "login") {
+            redirectTo = undefined;
+        }
+    }
 
     $scope.initLogin = function() {
-        DataService.checkAuthentication(team_hash, team_name);
         if (angular.isDefined(team_hash)) {
             $scope.hideTeamKeyField = true;
             DataService.makeHTTPCall("community.community.hash", {
@@ -28,10 +35,15 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
             data['email'] = $scope.email;
             if (data.authenticated) {
                 Utils.storeUserDataInCookies(data);
-                if (angular.isDefined(team_hash)) {
-                    $location.path('/dashboard/' + team_hash + '/' + team_name + '/feed');
+                if (angular.isDefined(redirectTo)) {
+                    Utils.removeRedirectURL();
+                    window.location = decodeURIComponent(redirectTo).replace(/"/g, '');
                 } else {
-                    $location.path('/dashboard/feed');
+                    if (angular.isDefined(team_hash)) {
+                        $location.path('/dashboard/' + team_hash + '/' + team_name + '/feed');
+                    } else {
+                        $location.path('/dashboard/feed');
+                    }
                 }
             } else {
                 $scope.error_message = "Authentication failed. Please try again.";
@@ -45,48 +57,20 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
     };
 });
 
-Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $timeout, $routeParams, $http, Utils, DataService, ComStyleGetter, DashboardConstants, Autocomplete) {
-    var LOOK_AHEAD = 500;
+Dashboard.controller('Header', function($scope, $cookieStore, $location, $routeParams, Utils, DataService) {
     var team_hash = $routeParams.teamHash,
         team_name = $routeParams.teamName,
         team_key = $cookieStore.get('team_key');
 
-    var hasMore, annoItemCursor;
-
-    var imageWidth = 0,
-        imageHeight = 0,
-        borderWidth = 4,
-        firstTime = true,
-        oldScrollTop = 0;
-
-    $scope.noTeamNotesText = "No Notes";
-    $scope.imageBaseURL = DashboardConstants.imageURL;
     $scope.display_name = $cookieStore.get('user_display_name');
     $scope.email = $cookieStore.get('user_email');
     $scope.image_url = $cookieStore.get('user_image_url');
     $scope.showSignoutButton = "none";
     $scope.signoutArrowValue = false;
-    $scope.annoList = [];
-    $scope.landscapeView = [];
-    $scope.fetchingAnnos = false;
+    $scope.currentSection = $location.path().split("/").reverse()[0];
 
-    function showDashboardMessage(message, error_type) {
-        $scope.error_message = message;
-        $scope.dashboard_error_type = error_type || false;
-        $timeout(function() {
-            $scope.error_message = "";
-        }, 5000);
-    }
-
-    $scope.getMoreAnnos = function() {
-        if (!hasMore) return;
-        if ($scope.fetchingAnnos || firstTime) return;
-        if (oldScrollTop > annos.scrollTop) return;
-        oldScrollTop = annos.scrollTop;
-        if ((annos.scrollHeight - annos.scrollTop) < (annos.getBoundingClientRect().height + LOOK_AHEAD)) {
-            $scope.fetchingAnnos = true;
-            getDashboardList($scope.filterType, false);
-        }
+    $scope.initHeader = function() {
+        getAppinfoData();
     };
 
     $scope.signoutButtonClicked = function() {
@@ -101,15 +85,89 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
     $scope.signoutDashboard = function() {
         Utils.removeUserDataCookies();
-        if (angular.isDefined(team_hash)) {
-            $location.path('/dashboard/' + team_hash + '/' + team_name + '/login');
+        $scope.selectSection('login');
+    };
+
+    function getAppinfoData() {
+        DataService.makeHTTPCall("appinfo.appinfo.get", {
+            team_key : team_key
+        }, function(data) {
+            $scope.appInfo = data;
+        });
+    }
+
+    $scope.selectSection = function(sectionName) {
+        if (angular.isDefined(team_hash) && angular.isDefined(team_name)) {
+            $location.path('/dashboard/' + team_hash + '/' + team_name + '/' + sectionName);
         } else {
-            $location.path('/dashboard/login');
+            $location.path('/dashboard/' + sectionName);
+        }
+    };
+});
+
+Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $timeout, $routeParams, $http, Utils, DataService, ComStyleGetter, DashboardConstants, Autocomplete) {
+    var LOOK_AHEAD = 500;
+    var team_hash = $routeParams.teamHash,
+        team_name = $routeParams.teamName,
+        param_anno_id = $routeParams.annoId,
+        team_key = $cookieStore.get('team_key');
+
+    var hasMore, annoItemCursor, surfaces = {};
+
+    var imageWidth = 0,
+        imageHeight = 0,
+        borderWidth = 4,
+        firstTime = true,
+        oldScrollTop = 0;
+
+    $scope.noTeamNotesText = "No Notes. You can use #hashtags and @mentions here.";
+    $scope.imageBaseURL = DashboardConstants.imageURL;
+    $scope.annoList = [];
+    $scope.landscapeView = [];
+    $scope.fetchingAnnos = false;
+    $scope.singleAnnoMode = angular.isDefined(param_anno_id) ? true : false;
+
+    function showDashboardMessage(message, error_type) {
+        $scope.error_message = message;
+        $scope.dashboard_error_type = error_type || false;
+        $timeout(function() {
+            $scope.error_message = "";
+        }, 5000);
+    }
+
+    function showConfirmBox(title, text, onSuccess, onCancel) {
+        $scope.showConfirmBox = true;
+        $scope.confirm_box_title = title;
+        $scope.confirm_box_text = text;
+
+        $scope.confirmYesClicked = function(event) {
+            $scope.showConfirmBox = false;
+            if (angular.isDefined(onSuccess) && angular.isFunction(onSuccess)) {
+                onSuccess();
+            }
+        };
+
+        $scope.confirmNoClicked = function(event) {
+            $scope.showConfirmBox = false;
+            if (angular.isDefined(onCancel) && angular.isFunction(onCancel)) {
+                onCancel();
+            }
+        };
+    }
+
+    $scope.getMoreAnnos = function() {
+        if (!hasMore) return;
+        if ($scope.fetchingAnnos || firstTime) return;
+        if (oldScrollTop > annos.scrollTop) return;
+        if ($scope.singleAnnoMode) return;
+        oldScrollTop = annos.scrollTop;
+        if ((annos.scrollHeight - annos.scrollTop) < (annos.getBoundingClientRect().height + LOOK_AHEAD)) {
+            $scope.fetchingAnnos = true;
+            getDashboardList($scope.filterType, false);
         }
     };
 
     $scope.initFeed = function() {
-        DataService.checkAuthentication(team_hash, team_name);
         var userTeamToken = angular.fromJson($cookieStore.get('user_team_token'));
         if (angular.isDefined(userTeamToken)) {
             $http.defaults.headers.common.Authorization = userTeamToken.token_type + ' ' + userTeamToken.access_token;
@@ -159,19 +217,48 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         var anno_id = Utils.findAncestor(event.target, 'anno-item').dataset.annoId,
             anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
 
-        anno_item_data.archived = !(anno_item_data.archived);
-        DataService.makeHTTPCall("anno.anno.archive", {
-            id : anno_id
-        }, function(data) {
-            var message = "Item archived successfully.";
-            if (!anno_item_data.archived) {
-                message = "Item unarchived successfully.";
-            }
-            showDashboardMessage(message);
-        }, function(status) {
+        function onArchiveAnno() {
             anno_item_data.archived = !(anno_item_data.archived);
-            showDashboardMessage("Oops... Something went wrong while archiving. Please try again.", true);
-        });
+            DataService.makeHTTPCall("anno.anno.archive", {
+                id : anno_id
+            }, function(data) {
+                var message = "Item archived successfully.";
+                if (!anno_item_data.archived) {
+                    message = "Item unarchived successfully.";
+                }
+                showDashboardMessage(message);
+            }, function(status) {
+                anno_item_data.archived = !(anno_item_data.archived);
+                showDashboardMessage("Oops... Something went wrong while archiving. Please try again.", true);
+            });
+        }
+
+        var title = "Archive Anno",
+            text = "You can unarchive this item from list after applying 'Archive' filter later.",
+            onSuccess = function() { onArchiveAnno(); };
+
+        if (anno_item_data.archived) {
+            title = "Unarchive Anno";
+            text = "You can archive this item from list later.";
+        }
+
+        showConfirmBox(title, text, onSuccess);
+    };
+
+    $scope.shareAnno = function(event) {
+        var anno_id = Utils.findAncestor(event.target, 'anno-item').dataset.annoId,
+            anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
+
+        $scope.anno_share_url = $location.absUrl() + "/" + anno_item_data.id;
+        $scope.showShareBox = true;
+    };
+
+    $scope.closeShareBox = function() {
+        $scope.showShareBox = false;
+    };
+
+    $scope.focusShareBox = function() {
+        dashboard_share_box_text.setSelectionRange(0, dashboard_share_box_text.value.length);
     };
 
     $scope.showLocalDateTime = function(datetime) {
@@ -192,6 +279,10 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         text = Utils.replaceHashTagWithLink(text);
         text = $sce.trustAsHtml(text);
         return text;
+    };
+
+    $scope.getTrustedHtml = function(text) {
+        return $sce.trustAsHtml(text);
     };
 
     $scope.filterAnno = function(event) {
@@ -238,6 +329,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
         if (clear_anno) annoItemCursor = "";
         if (annoItemCursor && annoItemCursor.length) args.cursor = annoItemCursor;
+        if ($scope.singleAnnoMode) args.anno_id = param_anno_id;
 
         DataService.makeHTTPCall("anno.anno.dashboard.list", args, function(data) {
             if (clear_anno) {
@@ -248,6 +340,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             var newAnnoData = data.hasOwnProperty('anno_list') ? data.anno_list : [];
             angular.forEach(newAnnoData, function(anno) {
                 anno = getMentionsList(anno);
+                anno["showingAnnotations"] = true;
 
                 if ($scope.hasOwnProperty('community_engaged_users') && $scope.community_engaged_users.length) {
                     anno.engaged_users = Utils.getUniqueEngagedUsers(anno, $scope.community_engaged_users, true) || [];
@@ -262,7 +355,6 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             if (firstTime) {
                 firstTime = false;
                 $timeout(function() {
-                    getAppinfoData();
                     getPopularTags();
                     getCommunityUsers();
                 }, 1000);
@@ -284,14 +376,6 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             if (status == 401) {
                 $scope.signoutDashboard();
             }
-        });
-    }
-
-    function getAppinfoData() {
-        DataService.makeHTTPCall("appinfo.appinfo.get", {
-            team_key : team_key
-        }, function(data) {
-            $scope.appInfo = data;
         });
     }
 
@@ -321,10 +405,10 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             anno_item = Utils.findAncestor(event.currentTarget, 'anno-item');
         }
         var imgDetailScreenshot = anno_item.querySelector(".imgDetailScreenshot");
+        var anno_id = anno_item.dataset.annoId;
         angular.element(imgDetailScreenshot).css('display', '');
         if ((imgDetailScreenshot.naturalWidth / imgDetailScreenshot.naturalHeight) > 1.0) {
-            var anno_id = anno_item.dataset.annoId,
-                anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
+            var anno_item_data = Utils.getAnnoById($scope.annoList, anno_id);
 
             if (angular.equals($scope.landscapeView.indexOf(anno_id), -1)) {
                 $scope.landscapeView.push(anno_id);
@@ -354,7 +438,22 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
             self.applyAnnoLevelColor(anno_item, imgDetailScreenshot);
             self.redrawShapes(anno_item.dataset.annoId, surface);
+            surfaces[anno_id] = surface;
         });
+    };
+
+    $scope.toggleAnnotation = function(event) {
+        var anno_id = Utils.findAncestor(event.target, 'anno-item').dataset.annoId,
+            anno_item_data = Utils.getAnnoById($scope.annoList, anno_id),
+            surface = surfaces[anno_id];
+
+        if (anno_item_data.showingAnnotations) {
+            anno_item_data.showingAnnotations = false;
+            surface.hide();
+        } else {
+            anno_item_data.showingAnnotations = true;
+            surface.show();
+        }
     };
 
     $scope.applyAnnoLevelColor = function (anno_item, imgDetailScreenshot) {
@@ -501,5 +600,76 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
                 anno_item_data = getMentionsList(anno_item_data);
             });
         }
+    };
+});
+
+Dashboard.controller('Manage', function($scope, $timeout, $location, $cookieStore, DataService, DashboardConstants) {
+    var team_key = $cookieStore.get('team_key');
+
+    $scope.communities = [];
+    $scope.community_detail = {};
+    $scope.addUserScreenVisible = false;
+
+    function showDashboardMessage(message, error_type) {
+        $scope.error_message = message;
+        $scope.dashboard_error_type = error_type || false;
+        $timeout(function() {
+            $scope.error_message = "";
+        }, 5000);
+    }
+
+    $scope.initManage = function() {
+        $scope.getAdminTeamMasterList();
+    };
+
+    $scope.getDashboardURL = function(community_name, team_hash) {
+        if (community_name && team_hash) {
+            var url = $location.protocol() + "://" + $location.host();
+            if ($location.port() !== 443) {
+                url = url + ":" + $location.port();
+            }
+            url = url + "/dashboard/" + team_hash + "/" + community_name.replace(/\W+/g, "-").toLowerCase();
+            return url;
+        } else {
+            return "";
+        }
+    };
+
+    $scope.showAddUserScreen = function(state) {
+        $scope.user_role = "member";
+        $scope.addUserScreenVisible = state;
+    };
+
+    $scope.addUser = function() {
+        DataService.makeHTTPCall("community.user.insert",{
+            "team_key" : $scope.community_detail.team_key,
+            "user_email" : $scope.user_email,
+            "user_display_name" : $scope.user_display_name,
+            "user_password" : $scope.user_password,
+            "role" : $scope.user_role
+        }, function(data) {
+            $scope.addUserScreenVisible = false;
+            $scope.community_detail.users.push({
+                "user_email" : $scope.user_email,
+                "display_name" : $scope.user_display_name,
+                "password_present" : true,
+                "role" : $scope.user_role,
+                "circle" : $scope.community_detail.users[0].circle
+            });
+        }, function(status) {
+        });
+    };
+
+    $scope.getAdminTeamMasterList = function(event) {
+        DataService.makeHTTPCall("community.community.admin_master", {
+            "team_key" : team_key
+        }, function(data) {
+            if (data.hasOwnProperty('communities') && data.communities.length > 0) {
+                $scope.communities = data.communities;
+                $scope.community_detail = data.communities[0];
+            }
+        }, function(status) {
+            showDashboardMessage("Oops... Something went wrong while archiving. Please try again.", true);
+        });
     };
 });
