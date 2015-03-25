@@ -31,19 +31,18 @@ Dashboard.config(function($routeProvider, $locationProvider) {
     $locationProvider.html5Mode({ enabled: true, requireBase: false });
 });
 
-Dashboard.run(function($rootScope, $location) {
+Dashboard.run(function($rootScope, $location, $cookieStore) {
     $rootScope.$on("$routeChangeStart", function(event, next, current) {
         var redirectTo, redirectURL;
 
-        if (angular.equals($cookies.authenticated, "true")) {
+        if ($cookieStore.get('authenticated')) {
             if (next.templateUrl === "/dashboard/partials/login.html") {
                 redirectTo = "feed";
             }
         } else {
             redirectTo = "login";
-            redirectURL = $location.absUrl();
-            if (next.controller === "Login") {
-                redirectURL = undefined;
+            if (next.controller !== "Login") {
+                $cookieStore.put('redirect_to', $location.absUrl());
             }
         }
 
@@ -53,10 +52,6 @@ Dashboard.run(function($rootScope, $location) {
             } else  {
                 $location.path("/dashboard/" + redirectTo);
             }
-        }
-
-        if (angular.isDefined(redirectURL)) {
-            $location.search("redirect_to", encodeURIComponent(redirectURL));
         }
     });
 });

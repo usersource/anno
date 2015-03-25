@@ -6,8 +6,8 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
     var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
     var urlSearchParams = $location.search(), redirectTo;
 
-    if (urlSearchParams.hasOwnProperty('redirect_to')) {
-        redirectTo = urlSearchParams["redirect_to"];
+    if ($cookies.hasOwnProperty('redirect_to')) {
+        redirectTo = $cookies["redirect_to"];
         if (Utils.getRoutePath(redirectTo) === "login") {
             redirectTo = undefined;
         }
@@ -36,7 +36,8 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
             if (data.authenticated) {
                 Utils.storeUserDataInCookies(data);
                 if (angular.isDefined(redirectTo)) {
-                    window.location = decodeURIComponent(redirectTo);
+                    Utils.removeRedirectURL();
+                    window.location = decodeURIComponent(redirectTo).replace(/"/g, '');
                 } else {
                     if (angular.isDefined(team_hash)) {
                         $location.path('/dashboard/' + team_hash + '/' + team_name + '/feed');
