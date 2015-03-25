@@ -29,6 +29,8 @@ body {
 .header .header-tab {
   text-align: center;
   cursor: pointer;
+  display: inline-block;
+  padding: 0 2.5%;
 }
 .header .header-tab.active {
   color: #F62;
@@ -40,6 +42,7 @@ body {
   margin: 5px 0;
   text-align: right;
   cursor: pointer;
+  margin-left: 7.5%;
 }
 .header #user_info:hover #logout_arrow {
   background-image: url('../images/icon_chevron-blue.png');
