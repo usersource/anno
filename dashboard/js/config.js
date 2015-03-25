@@ -1,15 +1,15 @@
 'use strict';
 
+var $cookies;
+angular.injector(['ngCookies']).invoke(function(_$cookies_) {
+    $cookies = _$cookies_;
+});
+
 Dashboard.config(function($httpProvider) {
     $httpProvider.defaults.headers.common = { 'Content-Type' : 'application/json;charset=utf-8' };
 });
 
 Dashboard.config(function($routeProvider, $locationProvider) {
-    var $cookies;
-    angular.injector(['ngCookies']).invoke(function(_$cookies_) {
-        $cookies = _$cookies_;
-    });
-
     $routeProvider.when('/dashboard/:teamHash?/:teamName?/login', {
         templateUrl: '/dashboard/partials/login.html',
         controller: 'Login'
@@ -32,11 +32,6 @@ Dashboard.config(function($routeProvider, $locationProvider) {
 });
 
 Dashboard.run(function($rootScope, $location) {
-    var $cookies;
-    angular.injector(['ngCookies']).invoke(function(_$cookies_) {
-        $cookies = _$cookies_;
-    });
-
     $rootScope.$on("$routeChangeStart", function(event, next, current) {
         var redirectTo;
 
