@@ -33,7 +33,7 @@ Dashboard.config(function($routeProvider, $locationProvider) {
 
 Dashboard.run(function($rootScope, $location) {
     $rootScope.$on("$routeChangeStart", function(event, next, current) {
-        var redirectTo;
+        var redirectTo, redirectURL;
 
         if (angular.equals($cookies.authenticated, "true")) {
             if (next.templateUrl === "/dashboard/partials/login.html") {
@@ -41,6 +41,10 @@ Dashboard.run(function($rootScope, $location) {
             }
         } else {
             redirectTo = "login";
+            redirectURL = $location.absUrl();
+            if (next.controller === "Login") {
+                redirectURL = undefined;
+            }
         }
 
         if (angular.isDefined(redirectTo)) {
@@ -49,6 +53,10 @@ Dashboard.run(function($rootScope, $location) {
             } else  {
                 $location.path("/dashboard/" + redirectTo);
             }
+        }
+
+        if (angular.isDefined(redirectURL)) {
+            $location.search("redirect_to", encodeURIComponent(redirectURL));
         }
     });
 });

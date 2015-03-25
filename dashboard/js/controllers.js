@@ -36,7 +36,7 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
             if (data.authenticated) {
                 Utils.storeUserDataInCookies(data);
                 if (angular.isDefined(redirectTo)) {
-                    window.location = redirectTo;
+                    window.location = decodeURIComponent(redirectTo);
                 } else {
                     if (angular.isDefined(team_hash)) {
                         $location.path('/dashboard/' + team_hash + '/' + team_name + '/feed');
