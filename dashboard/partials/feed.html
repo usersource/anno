@@ -38,7 +38,7 @@
         <div class="engaged-hashtag" ng-repeat="hashtag in currentHashtagList" data-value="{{::hashtag.text}}" ng-click="selectSuggestion($event);">#{{::hashtag.text}}</div>
     </div>
     <div id="feed-content">
-        <div id="side-panel" class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+        <div id="side-panel" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" ng-if="!singleAnnoMode">
             <div style="margin-bottom: 18px;">Filter results by:</div>
             <div style="margin-bottom: 30px;">
                 <div class="side-panel-filter" data-type="myMentions" ng-click="filterAnno($event);" ng-class="{'active':(filterType == 'by_my_mentions')}">My @mentions</div>
@@ -49,7 +49,7 @@
             </div>
             <!-- <input id="side-panel-search" type="text" placeholder="Type to search..." /> -->
         </div>
-        <div id="annos" class="col-lg-10 col-md-10 col-sm-10 col-xs-10" on-scroll="getMoreAnnos();">
+        <div id="annos" ng-class="{'col-lg-10 col-md-10 col-sm-10 col-xs-10':!singleAnnoMode, 'col-lg-12 col-md-12 col-sm-12 col-xs-12':singleAnnoMode}" on-scroll="getMoreAnnos();">
             <div id="annos-inner" ng-show="annoList.length">
                 <div id="anno_{{::$index}}" data-anno-id="{{::anno.id}}" class="anno-item" ng-class="{'landscape':(landscapeView.indexOf(anno.id) !== -1)}" ng-repeat="anno in annoList track by anno.id" ng-if="(filterType !== 'by_archived' && !anno.archived) || (filterType === 'by_archived' && anno.archived)">
                     <div class="anno-screenshot">
