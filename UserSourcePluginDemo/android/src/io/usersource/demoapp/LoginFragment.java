@@ -51,7 +51,7 @@ public class LoginFragment extends Fragment {
 	    uiHelper = new UiLifecycleHelper(getActivity(), callback);
 	    uiHelper.onCreate(savedInstanceState);
 	    anno = AnnoSingleton.getInstance(getActivity());
-	    anno.setupAnonymousUserWithTeamCredentials("io.usersource.demo", "usersource");
+	    anno.setupAnonymousUserWithTeamCredentials("io.usersource.demo", "51744f77d11f2ee6a1cb8a659f05785a");
 	    ShakeEnabler.startListening(getActivity());
 	}
 
