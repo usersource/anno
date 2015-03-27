@@ -90,6 +90,9 @@ def auth_user(headers):
         if signinMethod == SignInMethod.ANNO:
             User.authenticate(email, md5(password))
         elif signinMethod == SignInMethod.PLUGIN:
+            if not Community.authenticate(team_key, team_secret):
+                 raise endpoints.UnauthorizedException("Incorrect team key or secret")
+
             display_name = unicode(display_name, "utf-8", "ignore")
             if not user:
                 user = User.insert_user(email=email, username=display_name, account_type=team_key, image_url=image_url)
@@ -97,8 +100,6 @@ def auth_user(headers):
                 UserRole.insert(user, community)
             elif (display_name and display_name != user.display_name) or (image_url and image_url != user.image_url):
                 User.update_user(user=user, email=email, username=display_name, account_type=team_key, image_url=image_url)
-
-            Community.authenticate(team_key, team_secret)
     else:
         user = User.find_user_by_email(current_user.email())
 
