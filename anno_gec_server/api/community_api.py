@@ -239,6 +239,9 @@ class CommunityApi(remote.Service):
             for userrole in UserRole.community_user_list(community_key=community.key):
                 user = userrole.user.get()
                 if user and (user.account_type == community.team_key):
+                    if user.user_email.split("@")[1] == "devnull.usersource.io":
+                        break
+
                     user_message = UserAdminMasterMessage()
                     user_message.display_name = user.display_name
                     user_message.user_email = user.user_email
