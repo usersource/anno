@@ -92,10 +92,10 @@ public class LoginFragment extends Fragment {
 		LoginActivity.updateMenuItemTitle(null);
 	    if (state.isOpened()) {
 	        Log.i(TAG, "Logged in...");
-	        anno.setupWithUserInfo(email, name, image_url, "io.usersource.demo", "usersource");
+	        anno.setupWithUserInfo(email, name, image_url, "io.usersource.demo", "51744f77d11f2ee6a1cb8a659f05785a");
 	    } else if (state.isClosed()) {
 	        Log.i(TAG, "Logged out...");
-	        anno.setupAnonymousUserWithTeamCredentials("io.usersource.demo", "usersource");
+	        anno.setupAnonymousUserWithTeamCredentials("io.usersource.demo", "51744f77d11f2ee6a1cb8a659f05785a");
 	    }
 	}
 
