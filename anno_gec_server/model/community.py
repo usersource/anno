@@ -5,6 +5,7 @@ from google.appengine.ext import ndb
 from model.appinfo import AppInfo
 from message.community_message import CommunityMessage
 from helper.utils_enum import CommunityType, UserRoleType, AuthSourceType
+from helper.utils_enum import CircleType, CircleValue
 
 class Community(ndb.Model):
     name = ndb.StringProperty(required=True)
@@ -52,7 +53,7 @@ class Community(ndb.Model):
         community, user = None, None
 
         try:
-            from helper.utils import get_user_from_request, FIRST_CIRCLE
+            from helper.utils import get_user_from_request
 
             if message.name is None:
                 return "Community name is required" if not getCommunity else (community, user)
@@ -76,7 +77,10 @@ class Community(ndb.Model):
                             welcome_msg=message.welcome_msg, type=message.type,
                             team_key=message.team_key, team_secret=message.team_secret,
                             team_hash=team_hash)
-            community.circles = { 0 : FIRST_CIRCLE }
+            community.circles = { CircleValue.CONTRIBUTOR : CircleType.CONTRIBUTOR,
+                                  CircleValue.BETA_TESTER : CircleType.BETA_TESTER,
+                                  CircleValue.ALPHA_TESTER : CircleType.ALPHA_TESTER,
+                                  CircleValue.DEVELOPER : CircleType.DEVELOPER }
             community.put()
             respData = "Community created."
 

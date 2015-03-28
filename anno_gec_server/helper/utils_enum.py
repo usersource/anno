@@ -58,3 +58,15 @@ class AuthSourceType(object):
 class SignInMethod(object):
     ANNO = "anno"
     PLUGIN = "plugin"
+
+class CircleType(object):
+    CONTRIBUTOR = "contributor"
+    BETA_TESTER = "beta_tester"
+    ALPHA_TESTER = "alpha_tester"
+    DEVELOPER = "developer"
+
+class CircleValue(object):
+    CONTRIBUTOR = 0
+    BETA_TESTER = 10
+    ALPHA_TESTER = 30
+    DEVELOPER = 50

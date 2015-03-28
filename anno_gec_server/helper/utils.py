@@ -25,7 +25,6 @@ from message.anno_api_messages import AnnoTagsResponseMessage
 
 APP_NAME = "UserSource"
 OPEN_COMMUNITY = "__open__"
-FIRST_CIRCLE = "community"
 
 
 def get_endpoints_current_user(raise_unauthorized=True):
