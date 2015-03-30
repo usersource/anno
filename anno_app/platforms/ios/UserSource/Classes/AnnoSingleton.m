@@ -111,6 +111,7 @@ static AnnoSingleton *sharedInstance = nil;
     self.userImageURL = userImageURLValue;
     self.teamKey = teamKeyValue;
     self.teamSecret = teamSecretValue;
+    [self setInfoViewControllerClass:[SettingsViewController class]];
 
     UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
     if (window.rootViewController == nil) {
