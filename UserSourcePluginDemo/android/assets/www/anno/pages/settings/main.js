@@ -64,5 +64,18 @@ require([
                     [shake_value]
                 );
             });
+
+            connect.connect(dom.byId("shakeDetectionValue"), "change", function (e) {
+                var allow_shake = e.currentTarget.checked;
+                cordova.exec(
+                    function (result) {},
+                    function (err) {
+                        console.error(err);
+                    },
+                    "AnnoCordovaPlugin",
+                    "save_allow_shake",
+                    [allow_shake]
+                );
+            });
         });
     });
