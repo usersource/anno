@@ -8,8 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import <UserSourceStatic/annoCordovaPlugin.h>
-#include "UserSourceSwizzler.h"
-#include "UIWindow+AnnoSingleton.h"
 
 @interface AnnoSingleton : NSObject {
     AnnoCordovaPlugin *annoPlugin;
