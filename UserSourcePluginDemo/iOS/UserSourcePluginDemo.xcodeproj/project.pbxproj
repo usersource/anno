@@ -17,7 +17,6 @@
 		5BB4A76A1A2ED9EC00A6D6DF /* Cordova.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB4A7681A2ED9EC00A6D6DF /* Cordova.framework */; };
 		5BB4A76D1A2ED9F600A6D6DF /* www in Resources */ = {isa = PBXBuildFile; fileRef = 5BB4A76C1A2ED9F600A6D6DF /* www */; };
 		5BB4A76F1A2ED9FD00A6D6DF /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 5BB4A76E1A2ED9FD00A6D6DF /* config.xml */; };
-		5BB4A7721A2EDA9600A6D6DF /* ShakeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB4A7711A2EDA9600A6D6DF /* ShakeViewController.m */; };
 		5BB4A7761A2EDC2700A6D6DF /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB4A7751A2EDC2700A6D6DF /* MobileCoreServices.framework */; };
 		5BB4A7841A2EE45B00A6D6DF /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB4A7831A2EE45B00A6D6DF /* libsqlite3.dylib */; };
 		5BB4A7861A2EE78400A6D6DF /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB4A7771A2EDD1700A6D6DF /* AddressBookUI.framework */; };
@@ -63,10 +62,8 @@
 		1D9C0E8A1A32ED0200970FEE /* UserSourceStatic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserSourceStatic.framework; path = UserSourcePluginDemo/UserSourceStatic.framework; sourceTree = "<group>"; };
 		1DADA12E1A922C17004AB7BE /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../../Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
 		5BB4A7681A2ED9EC00A6D6DF /* Cordova.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cordova.framework; path = UserSourcePluginDemo/Cordova.framework; sourceTree = "<group>"; };
-		5BB4A76C1A2ED9F600A6D6DF /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = "<group>"; };
+		5BB4A76C1A2ED9F600A6D6DF /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; name = www; path = UserSourcePluginDemo/www; sourceTree = "<group>"; };
 		5BB4A76E1A2ED9FD00A6D6DF /* config.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = config.xml; path = UserSourcePluginDemo/config.xml; sourceTree = "<group>"; };
-		5BB4A7701A2EDA9600A6D6DF /* ShakeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShakeViewController.h; sourceTree = "<group>"; };
-		5BB4A7711A2EDA9600A6D6DF /* ShakeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShakeViewController.m; sourceTree = "<group>"; };
 		5BB4A7731A2EDBCE00A6D6DF /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
 		5BB4A7751A2EDC2700A6D6DF /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		5BB4A7771A2EDD1700A6D6DF /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
@@ -149,6 +146,7 @@
 				5BC1C1F11AA88E8400082CFF /* Crashlytics.framework */,
 				5BC1C1F21AA88E8400082CFF /* Fabric.framework */,
 				5BB4A76E1A2ED9FD00A6D6DF /* config.xml */,
+				5BB4A76C1A2ED9F600A6D6DF /* www */,
 				1D0803101A30486500875AF3 /* Images */,
 				5BB62D511A2DD72D009355B0 /* UserSourcePluginDemo */,
 				5BB62D731A2DD72E009355B0 /* UserSourcePluginDemoTests */,
@@ -190,9 +188,6 @@
 			children = (
 				1D08030D1A30442600875AF3 /* InfoViewController.h */,
 				1D08030E1A30442600875AF3 /* InfoViewController.m */,
-				5BB4A7701A2EDA9600A6D6DF /* ShakeViewController.h */,
-				5BB4A7711A2EDA9600A6D6DF /* ShakeViewController.m */,
-				5BB4A76C1A2ED9F600A6D6DF /* www */,
 				5BB62D5A1A2DD72D009355B0 /* AppDelegate.h */,
 				5BB62D5B1A2DD72D009355B0 /* AppDelegate.m */,
 				5BB62D5D1A2DD72D009355B0 /* Main_iPhone.storyboard */,
@@ -378,7 +373,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5BB4A7721A2EDA9600A6D6DF /* ShakeViewController.m in Sources */,
 				5BB62D651A2DD72D009355B0 /* ViewController.m in Sources */,
 				1D08030F1A30442600875AF3 /* InfoViewController.m in Sources */,
 				5BB62D5C1A2DD72D009355B0 /* AppDelegate.m in Sources */,

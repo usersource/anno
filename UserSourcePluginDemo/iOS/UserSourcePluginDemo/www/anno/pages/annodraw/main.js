@@ -902,7 +902,7 @@ require([
                     "os_version":deviceInfo.osVersion,
                     "anno_type":"simple comment",
                     "screenshot_is_anonymized":isScreenshotAnonymized,
-                    "screenInfo":screenInfo
+                    "screen_info":screenInfo
                 };
 
                 AnnoDataHandler.insertAnno(annoItem, appInfo.source, screenshotDirPath);
@@ -1205,12 +1205,9 @@ require([
         }
     };
 
-    var loadCommunities = function(callback)
-    {
-        OAuthUtil.getAccessToken(function(){
-            annoUtil.loadUserCommunities(true, function(data){
-                if (callback) callback(data.communityList);
-            });
+    var loadCommunities = function(callback) {
+        annoUtil.loadUserCommunities(true, function(data){
+            if (callback) callback(data.communityList);
         });
     };
 
@@ -1406,9 +1403,7 @@ require([
                         annoUtil.startActivity("Intro", false);
                     }
 
-                    if (userInfo.signinMethod == OAuthUtil.signinMethod.anno) {
-                        OAuthUtil.processBasicAuthToken(userInfo);
-                    }
+                    OAuthUtil.processBasicAuthToken(userInfo);
                 });
 
                 setupAnnoDrawPage();
@@ -1480,8 +1475,8 @@ require([
         else
         {
             window.localStorage.setItem(annoUtil.localStorageKeys.editAnnoDone, "cancel");
-
             navigator.app.exitApp();
+            cordova.exec(function(result) {}, function(err) {}, "AnnoCordovaPlugin", 'exit_current_activity', []);
         }
     }, false);
 

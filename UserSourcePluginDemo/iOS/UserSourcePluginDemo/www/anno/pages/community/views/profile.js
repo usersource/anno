@@ -40,11 +40,8 @@ define([
                     userInfo.password = dom.byId('txt_changePwd').value;
 
                     AnnoDataHandler.saveUserInfo(userInfo, function(){
-                        var token = annoUtil.getBasicAuthToken(currentUserInfo);
-                        annoUtil.setAuthToken(token);
-
+                        OAuthUtil.processBasicAuthToken(currentUserInfo);
                         closeChangePasswordDialog();
-
                         annoUtil.showToastMessage("Password has been changed.");
                     });
                 },
