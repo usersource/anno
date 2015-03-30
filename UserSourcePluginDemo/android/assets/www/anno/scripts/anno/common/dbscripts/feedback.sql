@@ -21,5 +21,6 @@ create table if not exists feedback_comment
     created VARCHAR(30) default '0',
     draw_elements text,
     draw_is_anonymized integer default 0,
-	team_key text
+	team_key text,
+    screen_info text
 )

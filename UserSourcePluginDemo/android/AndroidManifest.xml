@@ -36,6 +36,7 @@
 
         <activity android:name="io.usersource.anno.CommunityActivity" />
         <activity android:name="io.usersource.anno.AnnoDrawActivity" />
+        <activity android:name="io.usersource.anno.SettingsActivity" />
         <activity
             android:name="io.usersource.annoplugin.shake.ShakeMenu"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
