@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * Anno Cordova Plugin, provide series functions that can't be done in
  * JavaScript, or done better in native code than Javascript
- * 
+ *
  * @author David Lee
  */
 public class AnnoCordovaPlugin extends CordovaPlugin {
@@ -63,6 +63,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 	public static final String GET_USER_INFO = "get_user_info";
 	public static final String GET_UNREAD_COUNT = "get_unread_count";
 	public static final String GET_SHAKE_SETTINGS = "get_shake_settings";
+    public static final String SAVE_SHAKE_VALUE = "save_shake_value";
 
 	// activity names
 	public static final String ACTIVITY_INTRO = "Intro";
@@ -248,14 +249,20 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 			jsonObject.put("shake_value", AnnoSingleton.shakeValue);
 			callbackContext.success(jsonObject);
 			return true;
-		}
+		} else if (SAVE_SHAKE_VALUE.equals(action)) {
+            Integer shake_value = args.getInt(0);
+            annoSingleton.saveShakeValue(shake_value);
+            JSONObject jsonObject = new JSONObject();
+            callbackContext.success(jsonObject);
+            return true;
+        }
 
 		return false;
 	}
 
 	/**
 	 * exit current activity
-	 * 
+	 *
 	 * @param args
 	 * @param callbackContext
 	 */
@@ -270,7 +277,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 
 	/**
 	 * Exit intro and start feedbackedit with a screenshot.
-	 * 
+	 *
 	 * @param args
 	 * @param callbackContext
 	 */
@@ -339,7 +346,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 
 	/**
 	 * save screenshot to anno data folder and compress.
-	 * 
+	 *
 	 * @param args
 	 * @param callbackContext
 	 */
@@ -405,7 +412,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 
 	/**
 	 * get app Info, app name, source, version, level
-	 * 
+	 *
 	 * @return JSONObject
 	 * @throws Exception
 	 */
@@ -432,7 +439,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 
 	/**
 	 * get recent app list
-	 * 
+	 *
 	 * @param args
 	 * @param callbackContext
 	 * @return
@@ -466,7 +473,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 
 	/**
 	 * get user installed app list
-	 * 
+	 *
 	 * @param args
 	 * @param callbackContext
 	 * @return

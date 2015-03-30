@@ -51,5 +51,18 @@ require([
                     []
                 );
             });
+
+            connect.connect(dom.byId("shakeSensitivity"), "change", function (e) {
+                var shake_value = Number(e.currentTarget.value);
+                cordova.exec(
+                    function (result) {},
+                    function (err) {
+                        console.error(err);
+                    },
+                    "AnnoCordovaPlugin",
+                    "save_shake_value",
+                    [shake_value]
+                );
+            });
         });
     });
