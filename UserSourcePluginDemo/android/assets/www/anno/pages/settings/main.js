@@ -1,3 +1,25 @@
+function init() {
+    var cordova_exec_timeout;
+
+    if (cordova.exec) {
+        clearTimeout(cordova_exec_timeout);
+        cordova.exec(
+            function (result) {
+                document.querySelector("#shakeDetectionValue").checked = result.allow_shake;
+                document.querySelector("#shakeSensitivity").value = String(result.shake_value);
+            },
+            function (err) {
+                console.error(err);
+            },
+            "AnnoCordovaPlugin",
+            "get_shake_settings",
+            []
+        );
+    } else {
+        cordova_exec_timeout = setTimeout(init, 50);
+    }
+}
+
 require([
     "dojo/ready",
     "dojo/_base/connect",

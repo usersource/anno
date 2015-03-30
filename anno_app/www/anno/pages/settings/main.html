@@ -3,7 +3,7 @@
     <head>
         <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"/>
         <meta name="apple-mobile-web-app-capable" content="yes"/>
-        <title>Community MVP</title>
+        <title>Settings</title>
         <link type="text/css" href="../community/css/style.css" rel="stylesheet"/>
         <link type="text/css" href="css/style.css" rel="stylesheet"/>
         <script type="text/javascript">
@@ -20,7 +20,7 @@
         <script type="text/javascript" src="main.js"></script>
         <script type="text/javascript" src="../../../cordova.js"></script>
 	</head>
-	<body id="container">
+    <body id="container" onload="init();">
 		<div id="header">
             <div id="imgBackOuter">
                 <div id="imgBack"></div>
@@ -44,9 +44,9 @@
                     <div class="settingsComponentRow">
                         <div>Sensitivity</div>
                         <select id="shakeSensitivity">
-                            <option>1 Shake</option>
-                            <option>2 Shakes</option>
-                            <option>3 Shakes</option>
+                            <option value="0">1 Shake</option>
+                            <option value="1">2 Shakes</option>
+                            <option value="2">3 Shakes</option>
                         </select>
                     </div>
                     <div id="viewFeedback" class="settingsComponentRow">

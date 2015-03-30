@@ -62,6 +62,7 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 	public static final String IS_PLUGIN = "is_plugin";
 	public static final String GET_USER_INFO = "get_user_info";
 	public static final String GET_UNREAD_COUNT = "get_unread_count";
+	public static final String GET_SHAKE_SETTINGS = "get_shake_settings";
 
 	// activity names
 	public static final String ACTIVITY_INTRO = "Intro";
@@ -239,6 +240,12 @@ public class AnnoCordovaPlugin extends CordovaPlugin {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("unread_count_present", annoSingleton.unreadCountPresent);
 			jsonObject.put("unread_count", annoSingleton.unreadCount);
+			callbackContext.success(jsonObject);
+			return true;
+		} else if (GET_SHAKE_SETTINGS.equals(action)) {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("allow_shake", AnnoSingleton.allowShake);
+			jsonObject.put("shake_value", AnnoSingleton.shakeValue);
 			callbackContext.success(jsonObject);
 			return true;
 		}
