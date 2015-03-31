@@ -21,7 +21,7 @@ define([
         initDB: function(callback)
         {
             this.callback = callback;
-            this.annoDB = window.sqlitePlugin.openDatabase({name: "anno", bgType2: 1});
+            this.annoDB = window.sqlitePlugin.openDatabase({name: "anno", androidLockWorkaround: 1});
             this.checkTables();
 
             window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs){
@@ -30,7 +30,7 @@ define([
         },
         reconnectToDB:function()
         {
-            this.annoDB = window.sqlitePlugin.openDatabase({name: "anno", bgType2: 1});
+            this.annoDB = window.sqlitePlugin.openDatabase({name: "anno", androidLockWorkaround: 1});
             console.log("db reconnected.");
         },
         checkTables: function()
