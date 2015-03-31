@@ -74,6 +74,16 @@
   height: -o-calc(100% - 64px);
   overflow-y: auto;
 }
+.member-info {
+  width: 95.742%;
+  width: calc(100% - 47px);
+  width: -webkit-calc(100% - 47px);
+  width: -moz-calc(100% - 47px);
+  width: -o-calc(100% - 47px);
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 8px;
+}
 #add-user {
   width: 100%;
   height: 90.62103929%;
