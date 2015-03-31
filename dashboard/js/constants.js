@@ -89,6 +89,11 @@ DashboardConstantsModule.value("DashboardConstants", {
             "root" : "community",
             "path" : "user",
             "method" : "POST"
+        },
+        "community.community.circle.users.list" : {
+            "root" : "community",
+            "path" : "community/circle/users/list",
+            "method" : "GET"
         }
     },
     borderColor : "#ff9900",

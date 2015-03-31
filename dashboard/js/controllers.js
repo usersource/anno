@@ -669,7 +669,7 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
                 $scope.community_detail = data.communities[0];
             }
         }, function(status) {
-            showDashboardMessage("Oops... Something went wrong while archiving. Please try again.", true);
+            showDashboardMessage("Oops... Something went wrong. Please try again.", true);
         });
     };
 });
@@ -677,8 +677,8 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
 Dashboard.controller('Members', function($scope, $timeout, $location, $cookieStore, DataService, DashboardConstants) {
     var team_key = $cookieStore.get('team_key');
 
-    $scope.communities = [];
-    $scope.community_detail = {};
+    $scope.circles = [];
+    $scope.current_circle = [];
     $scope.addUserScreenVisible = false;
 
     function showDashboardMessage(message, error_type) {
@@ -689,21 +689,8 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
         }, 5000);
     }
 
-    $scope.initManage = function() {
-        $scope.getAdminTeamMasterList();
-    };
-
-    $scope.getDashboardURL = function(community_name, team_hash) {
-        if (community_name && team_hash) {
-            var url = $location.protocol() + "://" + $location.host();
-            if ($location.port() !== 443) {
-                url = url + ":" + $location.port();
-            }
-            url = url + "/dashboard/" + team_hash + "/" + community_name.replace(/\W+/g, "-").toLowerCase();
-            return url;
-        } else {
-            return "";
-        }
+    $scope.initMembers = function() {
+        $scope.getCircleMembersList();
     };
 
     $scope.showAddUserScreen = function(state) {
@@ -720,27 +707,27 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
             "role" : $scope.user_role
         }, function(data) {
             $scope.addUserScreenVisible = false;
-            $scope.community_detail.users.push({
+            /*$scope.community_detail.users.push({
                 "user_email" : $scope.user_email,
                 "display_name" : $scope.user_display_name,
                 "password_present" : true,
                 "role" : $scope.user_role,
                 "circle" : $scope.community_detail.users[0].circle
-            });
+            });*/
         }, function(status) {
         });
     };
 
-    $scope.getAdminTeamMasterList = function(event) {
-        DataService.makeHTTPCall("community.community.admin_master", {
+    $scope.getCircleMembersList = function(event) {
+        DataService.makeHTTPCall("community.community.circle.users.list", {
             "team_key" : team_key
         }, function(data) {
-            if (data.hasOwnProperty('communities') && data.communities.length > 0) {
-                $scope.communities = data.communities;
-                $scope.community_detail = data.communities[0];
+            if (data.hasOwnProperty('circle_list') && data.circle_list.length > 0) {
+                $scope.circles = data.circle_list;
+                $scope.current_circle = data.circle_list[0];
             }
         }, function(status) {
-            showDashboardMessage("Oops... Something went wrong while archiving. Please try again.", true);
+            showDashboardMessage("Oops... Something went wrong. Please try again.", true);
         });
     };
 });

@@ -5,9 +5,8 @@
             <div id="members-header-text">Members</div>
             <div id="members-circle-selection">
                 <div id="members-circle-selection-text">Circle</div>
-                <select id="members-circle-list">
-                    <option>Test</option>
-                    <option>Test</option>
+                <select id="members-circle-list" ng-model="selectCircle">
+                    <option ng-selected="{{$index == 0}}" ng-repeat="circle in circles" value="{{circle.circle_name}}">{{circle.circle_name}}</option>
                 </select>
             </div>
         </div>
