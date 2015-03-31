@@ -25,7 +25,7 @@
   position: relative;
 }
 #members-header-text {
-  width: 12.5%;
+  width: 15%;
   display: inline-block;
   position: absolute;
   line-height: 64px;
@@ -40,7 +40,7 @@
   margin-top: 18px;
   border: 1px solid #C4CFD7;
   border-bottom: 0;
-  left: 14.531%;
+  left: 17.031%;
   font-size: 13px;
 }
 #members-circle-selection-text {
