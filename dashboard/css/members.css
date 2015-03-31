@@ -1,0 +1,77 @@
+#members {
+  position: absolute;
+  top: 74px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #F9F9F9;
+}
+#members-inner {
+  position: absolute;
+  border-radius: 4px;
+  border: 1px solid #C4CFD7;
+  margin: 2.031%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #FFF;
+}
+#members-header {
+  height: 64px;
+  background-color: #F5F5F5;
+  border-radius: 4px 4px 0 0;
+  border-bottom: 1px solid #C4CFD7;
+  position: relative;
+}
+#members-header-text {
+  width: 12.5%;
+  display: inline-block;
+  position: absolute;
+  line-height: 64px;
+  margin-left: 2.031%;
+  font-weight: 600;
+}
+#members-circle-selection {
+  width: auto;
+  height: 46px;
+  position: absolute;
+  background-color: #FFF;
+  margin-top: 18px;
+  border: 1px solid #C4CFD7;
+  border-bottom: 0;
+  left: 14.531%;
+  font-size: 13px;
+}
+#members-circle-selection-text {
+  height: 24px;
+  display: inline-block;
+  margin-top: 10px;
+  margin-left: 15px;
+  line-height: 24px;
+  padding: 0 15px;
+  background-color: #9399A5;
+  color: #FFF;
+  border-radius: 3px 0 0 3px;
+}
+#members-circle-list {
+  height: 24px;
+  margin-left: -3px;
+  margin-right: 15px;
+  border-color: #C4CFD7;
+  background-color: #FFF;
+  border-left: 0;
+  border-radius: 0 3px 3px 0;
+  padding: 0 15px;
+  outline: 0;
+}
+#add-user {
+  width: 100%;
+  height: 90.62103929%;
+  height: calc(100% - 74px);
+  height: -webkit-calc(100% - 74px);
+  height: -moz-calc(100% - 74px);
+  height: -o-calc(100% - 74px);
+  position: fixed;
+  background: rgba(0, 0, 0, 0.6);
+}

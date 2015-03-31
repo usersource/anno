@@ -9,7 +9,7 @@
         <div class="header-tab" ng-class="{'active':(currentSection === 'feed')}" ng-click="selectSection('feed');">Feed</div>
         <!-- <div class="header-tab">Stats</div> -->
         <div class="header-tab" ng-class="{'active':(currentSection === 'account')}" ng-click="selectSection('account');">Account</div>
-        <div class="header-tab">Members</div>
+        <div class="header-tab" ng-class="{'active':(currentSection === 'members')}" ng-click="selectSection('members');">Members</div>
         <div id="user_info" style="display: inline-block;" ng-click="signoutButtonClicked();">
             <img width="45px" height="45px" style="border-radius: 25px;" ng-src="{{::image_url && image_url || '/dashboard/images/icon_no-user.png'}}">
             <div id="loggedin_user_info">

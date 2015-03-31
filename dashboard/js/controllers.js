@@ -673,3 +673,74 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
         });
     };
 });
+
+Dashboard.controller('Members', function($scope, $timeout, $location, $cookieStore, DataService, DashboardConstants) {
+    var team_key = $cookieStore.get('team_key');
+
+    $scope.communities = [];
+    $scope.community_detail = {};
+    $scope.addUserScreenVisible = false;
+
+    function showDashboardMessage(message, error_type) {
+        $scope.error_message = message;
+        $scope.dashboard_error_type = error_type || false;
+        $timeout(function() {
+            $scope.error_message = "";
+        }, 5000);
+    }
+
+    $scope.initManage = function() {
+        $scope.getAdminTeamMasterList();
+    };
+
+    $scope.getDashboardURL = function(community_name, team_hash) {
+        if (community_name && team_hash) {
+            var url = $location.protocol() + "://" + $location.host();
+            if ($location.port() !== 443) {
+                url = url + ":" + $location.port();
+            }
+            url = url + "/dashboard/" + team_hash + "/" + community_name.replace(/\W+/g, "-").toLowerCase();
+            return url;
+        } else {
+            return "";
+        }
+    };
+
+    $scope.showAddUserScreen = function(state) {
+        $scope.user_role = "member";
+        $scope.addUserScreenVisible = state;
+    };
+
+    $scope.addUser = function() {
+        DataService.makeHTTPCall("community.user.insert",{
+            "team_key" : $scope.community_detail.team_key,
+            "user_email" : $scope.user_email,
+            "user_display_name" : $scope.user_display_name,
+            "user_password" : $scope.user_password,
+            "role" : $scope.user_role
+        }, function(data) {
+            $scope.addUserScreenVisible = false;
+            $scope.community_detail.users.push({
+                "user_email" : $scope.user_email,
+                "display_name" : $scope.user_display_name,
+                "password_present" : true,
+                "role" : $scope.user_role,
+                "circle" : $scope.community_detail.users[0].circle
+            });
+        }, function(status) {
+        });
+    };
+
+    $scope.getAdminTeamMasterList = function(event) {
+        DataService.makeHTTPCall("community.community.admin_master", {
+            "team_key" : team_key
+        }, function(data) {
+            if (data.hasOwnProperty('communities') && data.communities.length > 0) {
+                $scope.communities = data.communities;
+                $scope.community_detail = data.communities[0];
+            }
+        }, function(status) {
+            showDashboardMessage("Oops... Something went wrong while archiving. Please try again.", true);
+        });
+    };
+});
