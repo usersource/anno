@@ -31,6 +31,13 @@ class CommunityAdminMasterMessage(messages.Message):
     app_icon = messages.StringField(6)
     users = messages.MessageField(UserAdminMasterMessage, 7, repeated=True)
 
+class CommunityCircleMembersMessage(messages.Message):
+    circle_name = messages.StringField(1)
+    users = messages.MessageField(UserAdminMasterMessage, 2, repeated=True)
+
+class CommunityCircleMembersListMessage(messages.Message):
+    circle_list = messages.MessageField(CommunityCircleMembersMessage, 1, repeated=True)
+
 class CreateCommunityMessage(messages.Message):
     community_name = messages.StringField(1)
     team_key = messages.StringField(2)

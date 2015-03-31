@@ -26,6 +26,8 @@ from message.community_message import CommunityValueMessage
 from message.community_message import CommunityValueListMessage
 from message.community_message import CommunityAdminMasterMessage
 from message.community_message import CommunityAdminMasterListMessage
+from message.community_message import CommunityCircleMembersMessage
+from message.community_message import CommunityCircleMembersListMessage
 from message.user_message import UserMessage
 from message.user_message import UserAdminMasterMessage
 from message.appinfo_message import AppInfoMessage
@@ -309,3 +311,32 @@ class CommunityApi(remote.Service):
             communities_message.append(community_message)
 
         return CommunityAdminMasterListMessage(communities=communities_message)
+
+    @endpoints.method(community_without_id_resource_container, CommunityCircleMembersListMessage,
+                      path="community/circle/users/list", http_method="GET", name="community.circle.users.list")
+    def get_circle_users(self, request):
+        community = Community.getCommunityFromTeamKey(request.team_key)
+
+        circle_list_message = []
+        for circle_value, circle_name in community.circles.items():
+            circle_message = CommunityCircleMembersMessage()
+            circle_message.circle_name = circle_name.capitalize()
+            circle_message.users = []
+
+            for userrole in UserRole.getUsersByCircle(community.key, int(circle_value)):
+                user = userrole.user.get()
+                if user and (user.account_type == community.team_key):
+                    if user.user_email.split("@")[1] == "devnull.usersource.io":
+                        break
+
+                    user_message = UserAdminMasterMessage()
+                    user_message.display_name = user.display_name
+                    user_message.user_email = user.user_email
+                    user_message.password_present = True if user.password else False
+                    user_message.role = userrole.role
+                    user_message.image_url = user.image_url
+                    circle_message.users.append(user_message)
+
+            circle_list_message.append(circle_message)
+
+        return CommunityCircleMembersListMessage(circle_list=circle_list_message)
