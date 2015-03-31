@@ -320,7 +320,7 @@ class CommunityApi(remote.Service):
         circle_list_message = []
         for circle_value, circle_name in community.circles.items():
             circle_message = CommunityCircleMembersMessage()
-            circle_message.circle_name = circle_name.capitalize()
+            circle_message.circle_name = circle_name
             circle_message.users = []
 
             for userrole in UserRole.getUsersByCircle(community.key, int(circle_value)):

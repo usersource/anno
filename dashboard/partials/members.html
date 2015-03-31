@@ -5,9 +5,24 @@
             <div id="members-header-text">Members</div>
             <div id="members-circle-selection">
                 <div id="members-circle-selection-text">Circle</div>
-                <select id="members-circle-list" ng-model="selectCircle">
+                <select id="members-circle-list" ng-model="selectCircle" ng-change="changeCircle($event);">
                     <option ng-selected="{{$index == 0}}" ng-repeat="circle in circles" value="{{circle.circle_name}}">{{circle.circle_name}}</option>
                 </select>
+            </div>
+        </div>
+        <div id="members_list" style="margin-left: 2.031%;">
+            <div style="margin-top: 3.0465%;">
+                <img width="16px" height="16px" src="/dashboard/images/icon_mentions.png">
+                <span style="vertical-align: middle;margin-left: 4px;font-weight: 600;">{{current_circle.users && current_circle.users.length || 0}} Member{{current_circle.users.length !== 1 && "s" || ""}}</span>
+            </div>
+            <div>
+                <div ng-repeat="user in current_circle.users" style="padding: 2.031% 0;border-bottom: 1px solid #C4CFD7;">
+                    <img style="width: 35px;height: 35px;border-radius: 18px;margin: 0;" ng-src="{{user.image_url && user.image_url || '/dashboard/images/icon_no-user.png'}}">
+                    <div style="display: inline-block;vertical-align: middle;margin-left: 8px;">
+                        <div style="font-weight: 600; color: #1b96c9;display: inline-block;">{{user.display_name}}</div>
+                        <div style="color: #9399A5;font-size: 13px;display: inline-block;">{{user.user_email}}</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

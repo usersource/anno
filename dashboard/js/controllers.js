@@ -725,9 +725,16 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
             if (data.hasOwnProperty('circle_list') && data.circle_list.length > 0) {
                 $scope.circles = data.circle_list;
                 $scope.current_circle = data.circle_list[0];
+                $scope.selectCircle = $scope.current_circle.circle_name;
             }
         }, function(status) {
             showDashboardMessage("Oops... Something went wrong. Please try again.", true);
         });
+    };
+
+    $scope.changeCircle = function(event) {
+        $scope.current_circle = $scope.circles.filter(function(circle) {
+            return circle.circle_name === $scope.selectCircle;
+        })[0];
     };
 });
