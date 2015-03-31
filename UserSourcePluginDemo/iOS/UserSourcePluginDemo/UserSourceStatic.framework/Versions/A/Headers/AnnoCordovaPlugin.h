@@ -10,6 +10,7 @@
 #import "CommunityViewController.h"
 #import "IntroViewController.h"
 #import "OptionFeedbackViewController.h"
+#import "SettingsViewController.h"
 #import "AnnoUtils.h"
 //#import "ScreenshotGestureListener.h"
 
@@ -42,5 +43,8 @@ AnnoUtils *annoUtils;
 - (void) is_plugin:(CDVInvokedUrlCommand*)command;
 - (void) get_user_info:(CDVInvokedUrlCommand*)command;
 - (void) get_unread_count:(CDVInvokedUrlCommand*)command;
+- (void) get_shake_settings:(CDVInvokedUrlCommand*)command;
+- (void) save_allow_shake:(CDVInvokedUrlCommand*)command;
+- (void) save_shake_value:(CDVInvokedUrlCommand*)command;
 
 @end

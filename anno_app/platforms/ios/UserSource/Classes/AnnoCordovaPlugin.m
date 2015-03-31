@@ -298,4 +298,26 @@ AnnoSingleton *annoSingleton;
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void) get_shake_settings:(CDVInvokedUrlCommand*)command {
+    NSDictionary *args = @{
+        @"allow_shake" : [NSNumber numberWithBool:annoSingleton.allowShake],
+        @"shake_value" : [NSNumber numberWithInteger:annoSingleton.shakeValue]
+    };
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:(NSString*)args];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) save_allow_shake:(CDVInvokedUrlCommand*)command {
+    [annoSingleton saveAllowShake:[command.arguments objectAtIndex:0]];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) save_shake_value:(CDVInvokedUrlCommand*)command {
+    [annoSingleton saveShakeValue:[[command.arguments objectAtIndex:0] integerValue]];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 @end

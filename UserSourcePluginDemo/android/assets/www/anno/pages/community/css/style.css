@@ -255,7 +255,7 @@
 }
 
 .listTitle {
-	max-height: 43px;
+	max-height: 40px;
 	font-size: 16px;
     overflow: hidden;
 }
@@ -778,7 +778,7 @@
     box-sizing: border-box;
     border-radius: 0;
 }
-.mblBackground
+html.mobile body.mblBackground
 {
     background-color: #ffffff;
 }
@@ -1088,6 +1088,33 @@ li.unread .listTitle {
 	background: #CCC;
 	color: #FFF;
 	border-radius: 4px;
+}
+
+.signinButton {
+	font-size: 14px;
+	height: 38px;
+	line-height: 38px;
+	width: 74.0625%;
+	margin: 0 auto;
+	border-radius: 20px;
+	position: relative;
+}
+
+.signinButton > img {
+	position: absolute;
+	left: 20px;
+	top: 11px;
+}
+
+#signinContainerInner {
+	text-align: center;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: calc(13% + 40px);
+	bottom: -webkit-calc(13% + 40px);
+	bottom: -moz-calc(13% + 40px);
+	bottom: -o-calc(13% + 40px);
 }
 
 /* for plugin */

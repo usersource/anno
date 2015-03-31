@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.usersource.anno.CommunityActivity;
+import io.usersource.anno.SettingsActivity;
 import io.usersource.annoplugin.utils.AnnoUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -150,6 +151,7 @@ public class AnnoSingleton {
 		this.userImageURL = userImageURLValue;
 		this.teamKey = teamKeyValue;
 		this.teamSecret = teamSecretValue;
+        this.customInfoActivity = SettingsActivity.class;
 		initMethod();
 	}
 
