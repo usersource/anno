@@ -603,7 +603,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
     };
 });
 
-Dashboard.controller('Manage', function($scope, $timeout, $location, $cookieStore, DataService, DashboardConstants) {
+Dashboard.controller('Account', function($scope, $timeout, $location, $cookieStore, DataService, DashboardConstants) {
     var team_key = $cookieStore.get('team_key');
 
     $scope.communities = [];

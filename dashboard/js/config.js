@@ -16,9 +16,9 @@ Dashboard.config(function($routeProvider, $locationProvider) {
     }).when('/dashboard/:teamHash?/:teamName?/feed/:annoId?', {
         templateUrl: '/dashboard/partials/feed.html',
         controller: 'Feed'
-    }).when('/dashboard/:teamHash?/:teamName?/manage', {
-        templateUrl: '/dashboard/partials/manage.html',
-        controller: 'Manage'
+    }).when('/dashboard/:teamHash?/:teamName?/account', {
+        templateUrl: '/dashboard/partials/account.html',
+        controller: 'Account'
     }).when('/dashboard/:teamHash?/:teamName?', {
         redirectTo: function(params, current_url) {
             var action_page = angular.equals($cookies.authenticated, "true") ? '/feed' : '/login';
