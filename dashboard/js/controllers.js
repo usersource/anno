@@ -656,6 +656,7 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
     $scope.circles = [];
     $scope.roles = [];
     $scope.current_circle = [];
+    $scope.current_user = [];
     $scope.addMemberScreenVisible = false;
 
     function showDashboardMessage(message, error_type) {
@@ -738,6 +739,12 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
     $scope.changeCircle = function(event) {
         $scope.current_circle = $scope.circles.filter(function(circle) {
             return circle.circle_name === $scope.selectCircle;
+        })[0];
+    };
+
+    $scope.showMemberDetails = function(event, user_email) {
+        $scope.current_user = $scope.current_circle.users.filter(function(user) {
+            return angular.equals(user.user_email, user_email);
         })[0];
     };
 });

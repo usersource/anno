@@ -144,6 +144,7 @@
 .member_div {
   padding: 2.031% 0;
   border-bottom: 1px solid #C4CFD7;
+  cursor: pointer;
 }
 .member_div:last-child {
   border-bottom: 0
