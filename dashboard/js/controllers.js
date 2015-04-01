@@ -652,6 +652,7 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
     var team_key = $cookieStore.get('team_key');
 
     $scope.circles = [];
+    $scope.roles = [];
     $scope.current_circle = [];
     $scope.addMemberScreenVisible = false;
 
@@ -668,7 +669,8 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
     };
 
     $scope.showAddMemberScreen = function(state) {
-        $scope.user_role = "member";
+        $scope.user_role = $scope.roles[0];
+        $scope.user_circle = $scope.circles[0].circle_name;
         $scope.addMemberScreenVisible = state;
     };
 
@@ -700,6 +702,10 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
                 $scope.circles = data.circle_list;
                 $scope.current_circle = data.circle_list[0];
                 $scope.selectCircle = $scope.current_circle.circle_name;
+            }
+
+            if (data.hasOwnProperty('roles') && data.roles.length > 0) {
+                $scope.roles = data.roles;
             }
         }, function(status) {
             showDashboardMessage("Oops... Something went wrong. Please try again.", true);

@@ -73,8 +73,7 @@
                                     <div class="field_title">Roles</div>
                                     <div>
                                         <select id="selectRole" name="selectRole" ng-model="user_role">
-                                            <option value="member">Member</option>
-                                            <option value="admin">Admin</option>
+                                            <option ng-selected="{{$index == 0}}" ng-repeat="role in roles" value="{{role}}">{{role}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -82,8 +81,7 @@
                                     <div class="field_title">Circles</div>
                                     <div>
                                         <select id="selectCircle" name="selectCircle" ng-model="user_circle">
-                                            <option value="member">Member</option>
-                                            <option value="admin">Admin</option>
+                                            <option ng-selected="{{$index == 0}}" ng-repeat="circle in circles" value="{{circle.circle_name}}">{{circle.circle_name}}</option>
                                         </select>
                                     </div>
                                 </div>

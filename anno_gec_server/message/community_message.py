@@ -37,6 +37,7 @@ class CommunityCircleMembersMessage(messages.Message):
 
 class CommunityCircleMembersListMessage(messages.Message):
     circle_list = messages.MessageField(CommunityCircleMembersMessage, 1, repeated=True)
+    roles = messages.StringField(2, repeated=True)
 
 class CreateCommunityMessage(messages.Message):
     community_name = messages.StringField(1)

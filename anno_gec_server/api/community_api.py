@@ -315,6 +315,7 @@ class CommunityApi(remote.Service):
     @endpoints.method(community_without_id_resource_container, CommunityCircleMembersListMessage,
                       path="community/circle/users/list", http_method="GET", name="community.circle.users.list")
     def get_circle_users(self, request):
+        roles = [UserRoleType.MEMBER, UserRoleType.ADMIN]
         community = Community.getCommunityFromTeamKey(request.team_key)
 
         circle_list_message = []
@@ -339,4 +340,4 @@ class CommunityApi(remote.Service):
 
             circle_list_message.append(circle_message)
 
-        return CommunityCircleMembersListMessage(circle_list=circle_list_message)
+        return CommunityCircleMembersListMessage(circle_list=circle_list_message, roles=roles)
