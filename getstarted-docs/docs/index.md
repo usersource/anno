@@ -11,6 +11,6 @@ UserSource makes it easy to integrate a rich, visual feedback experience right i
 ## Getting started
 
 * Start by downloading the [SDK](sdk.md)
-* Read our User Guide for [iOS]('iosug.md') or [Android]('androidug.md')
+* Read our Developer Guide for [iOS]('iosug.md') or [Android]('androidug.md')
 * Roll out your own customized feedback experience with our Customization Guide for [iOS]('ioscg.md') or [Android]('androidcg.md') 
 
