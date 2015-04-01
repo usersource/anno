@@ -94,3 +94,40 @@
   position: fixed;
   background: rgba(0, 0, 0, 0.6);
 }
+#add-member-inner {
+  width: 70%;
+  height: auto;
+  margin: 0 auto;
+  background-color: #FFF;
+  padding: 2.031%;
+  border-radius: 4px;
+  position: relative;
+}
+#add-user .field_title {
+  margin-bottom: 10px;
+}
+#add-user .field_div {
+  height: 36px;
+  border-radius: 4px;
+  border: 1px solid #C4CFD7;
+  padding: 0 10px;
+  outline: 0;
+  background-color: #F5F5F5;
+  text-align: left;
+  margin-bottom: 20px;
+}
+#add-user input.field_input {
+  width: 93.945%;
+  width: calc(100% - 20px);
+  width: -webkit-calc(100% - 20px);
+  width: -moz-calc(100% - 20px);
+  width: -o-calc(100% - 20px);
+  height: 34px;
+  background-color: #F5F5F5;
+  padding: 0;
+  margin: 0;
+  outline: 0;
+  border: 0;
+  padding-left: 6px;
+  vertical-align: middle;
+}

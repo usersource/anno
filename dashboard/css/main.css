@@ -157,7 +157,7 @@ body {
   background-color: #ff6622;
   border: 1px solid #f65007;
 }
-#dashboard_confirm_box #dashboard_confirm_box_no {
+.popup_close_button {
   position: absolute;
   top: 0;
   right: 0;
