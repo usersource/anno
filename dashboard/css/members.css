@@ -141,3 +141,10 @@
   padding: 0 10px;
   margin-bottom: 20px;
 }
+.member_div {
+  padding: 2.031% 0;
+  border-bottom: 1px solid #C4CFD7;
+}
+.member_div:last-child {
+  border-bottom: 0
+}
