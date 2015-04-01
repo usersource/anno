@@ -674,25 +674,46 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
         $scope.addMemberScreenVisible = state;
     };
 
-    $scope.addUser = function() {
+    $scope.addMember = function() {
         DataService.makeHTTPCall("community.user.insert",{
-            "team_key" : $scope.community_detail.team_key,
+            "team_key" : team_key,
             "user_email" : $scope.user_email,
             "user_display_name" : $scope.user_display_name,
             "user_password" : $scope.user_password,
-            "role" : $scope.user_role
+            "user_image_url" : $scope.user_image_url,
+            "role" : $scope.user_role,
+            "circle" : $scope.user_circle
         }, function(data) {
             $scope.addMemberScreenVisible = false;
-            /*$scope.community_detail.users.push({
-                "user_email" : $scope.user_email,
-                "display_name" : $scope.user_display_name,
-                "password_present" : true,
-                "role" : $scope.user_role,
-                "circle" : $scope.community_detail.users[0].circle
-            });*/
+            showDashboardMessage("'" + $scope.user_display_name + "' is added to team.");
+            angular.forEach($scope.circles, function(circle) {
+                if (circle.circle_name === $scope.user_circle) {
+                    var new_member = {
+                        "user_email" : $scope.user_email,
+                        "display_name" : $scope.user_display_name,
+                        "password_present" : true,
+                        "image_url" : $scope.user_image_url,
+                        "role" : $scope.user_role
+                    };
+
+                    if (circle.users.length) {
+                        circle.users.push(new_member);
+                    } else {
+                        circle.users = Array(new_member);
+                    }
+                }
+            });
+            clearState();
         }, function(status) {
         });
     };
+
+    function clearState() {
+        $scope.user_email = "";
+        $scope.user_display_name = "";
+        $scope.user_password = "";
+        $scope.user_image_url = "";
+    }
 
     $scope.getCircleMembersList = function(event) {
         DataService.makeHTTPCall("community.community.circle.users.list", {

@@ -76,6 +76,8 @@ class CommunityUserRoleMessage(messages.Message):
     user_display_name = messages.StringField(6)
     user_password = messages.StringField(7)
     team_key = messages.StringField(8)
+    user_image_url = messages.StringField(9)
+    circle = messages.StringField(10)
 
 class CommunityInviteMessage(messages.Message):
     name = messages.StringField(1)

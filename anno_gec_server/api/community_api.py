@@ -129,14 +129,19 @@ class CommunityApi(remote.Service):
                                     account_type=request.team_key,
                                     auth_source=AuthSourceType.PLUGIN,
                                     password=md5(request.user_password),
-                                    image_url="")
+                                    image_url=request.user_image_url or "")
 
         community = Community.getCommunityFromTeamKey(request.team_key) if request.team_key else Community.get_by_id(request.community_id)
         role = request.role if request.role else UserRoleType.MEMBER
 
         resp = None
         if user and community:
-            resp = UserRole.insert(user, community, role)
+            circle = 0
+            for circle_value, circle_name in community.circles.iteritems():
+                if circle_name == request.circle:
+                    circle = int(circle_value)
+
+            resp = UserRole.insert(user, community, role, circle)
 
         return ResponseMessage(success=True if resp else False)
 
