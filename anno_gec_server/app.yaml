@@ -43,15 +43,17 @@ handlers:
   login: admin
 
 # GetStarted doc routes
-- url: /getstarted-docs(/.*)*
-  static_files: getstarted-docs/site/index.html
-  upload: getstarted-docs/(.*)
-- url: /css
-  static_dir: getstarted-docs/site/css
-- url: /themes
-  static_dir: getstarted-docs/site/themes
-- url: /fonts
-  static_dir: getstarted-docs/site/fonts
+- url: /getstarted/site/(.*\.(html))
+  static_files: getstarted/site/\1
+  upload: /getstarted/site/(.*\.(html))
+- url: /getstarted/(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css))
+  static_files: getstarted/\1
+  upload: getstarted/(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css))
+- url: /getstarted(/.*)*
+  static_files: getstarted/site/index.html
+  upload: getstarted/(.*)
+- url: /getstarted
+  static_dir: getstarted
 
 - url: /.*
   script: main.application

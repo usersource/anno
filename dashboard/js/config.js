@@ -22,9 +22,6 @@ Dashboard.config(function($routeProvider, $locationProvider) {
     }).when('/dashboard/:teamHash?/:teamName?/members', {
         templateUrl: '/dashboard/partials/members.html',
         controller: 'Members'
-    }).when('/dashboard/:teamHash?/:teamName?/getstarted', {
-        templateUrl: '/dashboard/partials/getstarted.html',
-        controller: 'GetStarted'
     }).when('/dashboard/:teamHash?/:teamName?', {
         redirectTo: function(params, current_url) {
             var action_page = angular.equals($cookies.authenticated, "true") ? '/feed' : '/login';
