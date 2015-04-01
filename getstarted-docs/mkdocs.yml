@@ -11,12 +11,15 @@ pages:
     - ['index.md', 'Introduction']
     - [sdk.md, SDK]
     - [iosug.md, iOS Guides, Developer Guide]
-    - [ioscg.md, iOS Guides, Customization Guide]
+    - [custg.md, iOS Guides, Customization Guide]
 #    - [iosapi.md, iOS Guides, API Reference]
     - [androidug.md, Android Guides, Developer Guide]
-    - [androidcg.md, Android Guides, Customization Guide]
+    - [custg.md, Android Guides, Customization Guide]
 #    - [androidapi.md, Android Guides, API Reference]
     - ['faq.md', 'FAQ']
+
+markdown_extensions: [admonition]
+
 
 
 
