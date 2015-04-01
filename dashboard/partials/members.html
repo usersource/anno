@@ -33,9 +33,9 @@
                 <form class="form-horizontal">
                     <fieldset>
                         <legend style="text-align: center;border: 0;font-size: 24px;margin-bottom: 30px;">Add Member</legend>
-                        <div class="popup_close_button" ng-click="showAddMemberScreen(false);"></div>
+                        <div class="popup_close_button" style="padding: 4.916% 5.663%;"ng-click="showAddMemberScreen(false);"></div>
                         <div>
-                            <div style="width: 50%;">
+                            <div style="width: 48%;display: inline-block;">
                                 <div>
                                     <div class="field_title">Email Address</div>
                                     <div class="field_div">
@@ -61,16 +61,34 @@
                                     <button type="submit" class="admin-button" id="add_member" style="border: 0;outline: 0;margin-top: 10px;" ng-click="addMember();">Save Member</button>
                                 </div>
                             </div>
-                        </div>
-                        <!-- <div class="form-group">
-                            <label class="col-md-3 control-label" for="selectRole">Select Role</label>
-                            <div class="col-md-9">
-                                <select id="selectRole" name="selectRole" class="form-control" ng-model="user_role">
-                                    <option value="member">Member</option>
-                                    <option value="admin">Admin</option>
-                                </select>
+                            <div style="width: 48%;display: inline-block;vertical-align: top;margin-left: 3%;">
+                                <div>
+                                    <div class="field_title">Image URL</div>
+                                    <div class="field_div">
+                                        <img width="14px" height="14px" src="/dashboard/images/icon_globe.png">
+                                        <input class="field_input" id="userImageURL" placeholder="Image URL" ng-model="user_image_url">
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="field_title">Roles</div>
+                                    <div>
+                                        <select id="selectRole" name="selectRole" ng-model="user_role">
+                                            <option value="member">Member</option>
+                                            <option value="admin">Admin</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="field_title">Circles</div>
+                                    <div>
+                                        <select id="selectCircle" name="selectCircle" ng-model="user_circle">
+                                            <option value="member">Member</option>
+                                            <option value="admin">Admin</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
-                        </div> -->
+                        </div>
                     </fieldset>
                 </form>
             </div>
