@@ -1,0 +1,9 @@
+.navbar-brand {
+	font-weight: bold;
+	font-size: 150%;
+	color: #f62 !important;
+}
+
+.bs-sidenav a {
+	color: #f62;
+}
