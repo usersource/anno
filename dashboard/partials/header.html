@@ -5,7 +5,7 @@
         <div class="active" style="display: inline-block; margin-left: 18px;">{{::appInfo.name}}</div>
     </div>
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" style="text-align: right;">
-        <!-- <div class="header-tab">Get Started</div> -->
+        <div class="header-tab" ng-class="{'active':(currentSection === 'getstarted')}" ng-click="selectSection('getstarted');">Get Started</div>
         <div class="header-tab" ng-class="{'active':(currentSection === 'feed')}" ng-click="selectSection('feed');">Feed</div>
         <!-- <div class="header-tab">Stats</div> -->
         <div class="header-tab" ng-class="{'active':(currentSection === 'account')}" ng-click="selectSection('account');">Account</div>

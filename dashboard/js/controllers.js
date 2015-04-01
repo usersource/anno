@@ -739,3 +739,5 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
         })[0];
     };
 });
+
+Dashboard.controller('GetStarted', function($scope) {});

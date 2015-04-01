@@ -25,6 +25,8 @@ handlers:
 - url: /docs
   static_dir: docs/build/html
   login: admin
+
+# Dashboard
 - url: /dashboard/partials/(.*\.(html))
   static_files: dashboard/partials/\1
   upload: /dashboard/partials/(.*\.(html))
@@ -39,6 +41,18 @@ handlers:
 - url: /admin_team_master
   static_dir: dashboard/admin_team_master
   login: admin
+
+# GetStarted doc routes
+- url: /getstarted-docs(/.*)*
+  static_files: getstarted-docs/site/index.html
+  upload: getstarted-docs/(.*)
+- url: /css
+  static_dir: getstarted-docs/site/css
+- url: /themes
+  static_dir: getstarted-docs/site/themes
+- url: /fonts
+  static_dir: getstarted-docs/site/fonts
+
 - url: /.*
   script: main.application
 
