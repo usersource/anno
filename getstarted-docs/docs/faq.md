@@ -6,7 +6,7 @@
 
 1. _NSString is giving an Error now, seriously help_.
 
-	**Answer:** xCode strips some symbols by default from frameworks. Please add the -ObjC linker flag to your project's Build Settings.
+	**Answer:** Xcode strips some symbols by default from frameworks. Please add the -ObjC linker flag to your project's Build Settings.
 
 1. _It says it cannot find index.html when I try to run the Plugin_.
 

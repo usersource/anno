@@ -4,7 +4,7 @@ Just a few minutes of your time will enable you to start collecting awesome feed
 
 ## Step 1: Register
 
-If you haven’t already, [register]('/register') your app (or your project) to get a FREE activation code. 
+If you haven’t already, [register]('/register') your app (or your project) to get a FREE activation code.
 
 ## Step 2: Download the SDK
 
@@ -18,7 +18,7 @@ Double-click the package to extract its contents. You now have a folder `UserSou
 	|-- config.xml
 	|-- UserSourceStatic.framework
 	|-- Cordova.framework
-	`-- www
+	|-- www
 
 ## Step 4: Drop the SDK into your project
 
@@ -38,13 +38,13 @@ Double-click the package to extract its contents. You now have a folder `UserSou
 
 ## Step 5: Activate the SDK
 
-Add this line in your _ApplicationDelegate_ file, e.g. in `YourAppDelegate.m`: 
+Add this line in your _ApplicationDelegate_ file, e.g. in `YourAppDelegate.m`:
 
 	#import <UserSourceStatic/UserSourceStatic.h>
 
 Access the [Accounts](/accounts) tab of the dashboard and obtain the _key_ and _secret_. You will pass these to the SDK in your code.
 
-The next step depends on whether your app knows your user’s email. 
+The next step depends on whether your app knows your user’s email.
 
 ### My app knows the user’s email
 In your `didFinishLaunchingWithOptions` handler, use this method to initialize the SDK:
@@ -57,7 +57,7 @@ In your `didFinishLaunchingWithOptions` handler, use this method to initialize t
 
 	[[AnnoSingleton sharedInstance] setupAnonymousUserWithteamKey:@<key> teamSecret:@<secret>];
 
-**Note**: both anonymous feedback and normal feedback are possible in your app. For example, to allow your users to give feedback prior to sign-in, you can enable the `setupAnonymousUserWithteamKey` option. After the user signs-in, switch the `AnnoSingleton` instance to have the `setupWithEmail` option. 
+**Note**: both anonymous feedback and normal feedback are possible in your app. For example, to allow your users to give feedback prior to sign-in, you can enable the `setupAnonymousUserWithteamKey` option. After the user signs-in, switch the `AnnoSingleton` instance to have the `setupWithEmail` option.
 
 To activate Feedback using a shake gesture, follow these steps. To use another UI approach, see the [UserSource Customization Guide](ioscg).
 
@@ -65,6 +65,6 @@ To activate Feedback using a shake gesture, follow these steps. To use another U
 
 **That’s it, the SDK is installed and configured!**
 
-Many developers want to customize UserSource so it looks and feels exactly like the rest of their app. We’ve provided easy and powerful hooks for you to do exactly that. 
+Many developers want to customize UserSource so it looks and feels exactly like the rest of their app. We’ve provided easy and powerful hooks for you to do exactly that.
 
 Read the [UserSource Customization Guide](ioscg).
