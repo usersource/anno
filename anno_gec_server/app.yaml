@@ -43,30 +43,30 @@ handlers:
   login: admin
 
 # GetStarted doc routes
-- url: /getstarted/docs/(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css|eot|svg|ttf|woff))
-  static_files: getstarted/docs/\1
-  upload: getstarted/(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css|eot|svg|ttf|woff))
+#- url: /getstarted/docs/(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css|eot|svg|ttf|woff))
+#  static_files: getstarted/docs/\1
+#  upload: getstarted/(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css|eot|svg|ttf|woff))
 - url: /getstarted/(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css|eot|svg|ttf|woff))
-  static_files: getstarted/docs/\1
+  static_files: getstarted/\1
   upload: getstarted/(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css|eot|svg|ttf|woff))
-- url: /(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css|eot|svg|ttf|woff))
-  static_files: getstarted/docs/\1
-  upload: getstarted/(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css|eot|svg|ttf|woff))
+#- url: /(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css|eot|svg|ttf|woff))
+#  static_files: getstarted/docs/\1
+#  upload: getstarted/(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css|eot|svg|ttf|woff))
 - url: /getstarted/docs/(.+)/
   static_files: getstarted/docs/\1/index.html
   upload: getstarted/docs/(.+)/index.html
-- url: /getstarted/docs/(.+)
-  static_files: getstarted/docs/\1/index.html
-  upload: getstarted/docs/(.+)/index.html
+#- url: /getstarted/docs/(.+)
+#  static_files: getstarted/docs/\1/index.html
+#  upload: getstarted/docs/(.+)/index.html
 - url: /getstarted/docs/
   static_files: getstarted/docs/index.html
   upload: getstarted/docs/(.*)
-- url: /getstarted/(.+)
-  static_files: getstarted/docs/\1/index.html
-  upload: getstarted/docs/(.+)/index.html
-- url: /(.+)
-  static_files: getstarted/docs/\1/index.html
-  upload: getstarted/docs/(.+)/index.html
+#- url: /getstarted/(.+)
+#  static_files: getstarted/docs/\1/index.html
+#  upload: getstarted/docs/(.+)/index.html
+#- url: /(.+)
+#  static_files: getstarted/docs/\1/index.html
+#  upload: getstarted/docs/(.+)/index.html
 - url: /getstarted/docs
   static_dir: getstarted/docs
 
