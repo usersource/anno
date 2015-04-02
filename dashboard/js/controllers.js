@@ -678,6 +678,11 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
     };
 
     $scope.addMember = function() {
+        if (!angular.equals($scope.user_password, $scope.user_confirm_password)) {
+            showDashboardMessage("Passwords aren't matching", true);
+            return;
+        }
+
         DataService.makeHTTPCall("community.user.insert",{
             "team_key" : team_key,
             "user_email" : $scope.user_email,

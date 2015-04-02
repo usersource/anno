@@ -1,6 +1,6 @@
 <div id="members" ng-controller="Members" ng-init="initMembers();">
     <div class="header row" ng-include="'/dashboard/partials/header.html'"></div>
-    <div id="dashboard_message" ng-show="error_message.length" ng-class="{'error-message':dashboard_error_type}">
+    <div id="dashboard_message" ng-show="error_message.length" ng-class="{'error-message':dashboard_error_type}" style="left: 25%;">
         <div id="dashboard_message_text">{{error_message}}</div>
     </div>
     <div id="members-inner">
@@ -50,7 +50,14 @@
                                     <div class="field_title">Password</div>
                                     <div class="field_div">
                                         <img width="12px" height="15px" src="/dashboard/images/icon_password.png">
-                                        <input class="field_input" id="userPassword" placeholder="Password" ng-model="user_password">
+                                        <input type="password" class="field_input" id="userPassword" placeholder="Password" ng-model="user_password">
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="field_title">Confirm Password</div>
+                                    <div class="field_div">
+                                        <img width="12px" height="15px" src="/dashboard/images/icon_password.png">
+                                        <input type="password" class="field_input" id="userConfirmPassword" placeholder="Confirm Password" ng-model="user_confirm_password">
                                     </div>
                                 </div>
                                 <div>
