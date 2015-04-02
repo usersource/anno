@@ -98,7 +98,7 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $routeP
 
     $scope.selectSection = function(sectionName) {
         if (angular.equals(sectionName, "getstarted")) {
-            window.location = "/getstarted/site";
+            window.location = "/getstarted/docs/";
         } else if (angular.isDefined(team_hash) && angular.isDefined(team_name)) {
             $location.path('/dashboard/' + team_hash + '/' + team_name + '/' + sectionName);
         } else {
