@@ -52,7 +52,8 @@ class CommunityApi(remote.Service):
     community_without_id_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
         team_hash=messages.StringField(1),
-        team_key=messages.StringField(2)
+        team_key=messages.StringField(2),
+        get_user_list=messages.BooleanField(3)
     )
 
     community_with_circles_resource_container = endpoints.ResourceContainer(
@@ -269,21 +270,22 @@ class CommunityApi(remote.Service):
                 community_message.app_icon = app.icon_url
 
             community_message.users = []
-            for userrole in UserRole.community_user_list(community_key=community.key):
-                user = userrole.user.get()
-                if user and (user.account_type == community.team_key):
-                    if user.user_email.split("@")[1] == "devnull.usersource.io":
-                        break
+            if request.get_user_list:
+                for userrole in UserRole.community_user_list(community_key=community.key):
+                    user = userrole.user.get()
+                    if user and (user.account_type == community.team_key):
+                        if user.user_email.split("@")[1] == "devnull.usersource.io":
+                            break
 
-                    user_message = UserAdminMasterMessage()
-                    user_message.display_name = user.display_name
-                    user_message.user_email = user.user_email
-                    user_message.password_present = True if user.password else False
-                    user_message.role = userrole.role
-                    user_message.image_url = user.image_url
-                    if community.circles:
-                        user_message.circle = community.circles.get(str(userrole.circle_level))
-                    community_message.users.append(user_message)
+                        user_message = UserAdminMasterMessage()
+                        user_message.display_name = user.display_name
+                        user_message.user_email = user.user_email
+                        user_message.password_present = True if user.password else False
+                        user_message.role = userrole.role
+                        user_message.image_url = user.image_url
+                        if community.circles:
+                            user_message.circle = community.circles.get(str(userrole.circle_level))
+                        community_message.users.append(user_message)
 
             communities_message.append(community_message)
 

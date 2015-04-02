@@ -623,7 +623,7 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
         $scope.getAdminTeamMasterList();
     };
 
-    $scope.getDashboardURL = function(community_name, team_hash) {
+    /*$scope.getDashboardURL = function(community_name, team_hash) {
         if (community_name && team_hash) {
             var url = $location.protocol() + "://" + $location.host();
             if ($location.port() !== 443) {
@@ -634,7 +634,7 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
         } else {
             return "";
         }
-    };
+    };*/
 
     $scope.getAdminTeamMasterList = function(event) {
         DataService.makeHTTPCall("community.community.admin_master", {

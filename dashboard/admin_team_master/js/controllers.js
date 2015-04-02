@@ -90,6 +90,7 @@ AdminTeamMaster.controller('Main', function($scope, $timeout, $location, DataSer
 
     $scope.getAdminTeamMasterList = function(event) {
         DataService.makeHTTPCall("community.community.admin_master", {
+            "get_user_list" : true
         }, function(data) {
             if (data.hasOwnProperty('communities') && data.communities.length > 0) {
                 $scope.communities = data.communities;
