@@ -57,7 +57,7 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
     };
 });
 
-Dashboard.controller('Header', function($scope, $cookieStore, $location, $routeParams, Utils, DataService) {
+Dashboard.controller('Header', function($scope, $cookieStore, $location, $window, $routeParams, Utils, DataService) {
     var team_hash = $routeParams.teamHash,
         team_name = $routeParams.teamName,
         team_key = $cookieStore.get('team_key');
@@ -98,7 +98,7 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $routeP
 
     $scope.selectSection = function(sectionName) {
         if (angular.equals(sectionName, "getstarted")) {
-            window.location = "/getstarted/docs/";
+            $window.open("/getstarted/docs/index.html");
         } else if (angular.isDefined(team_hash) && angular.isDefined(team_name)) {
             $location.path('/dashboard/' + team_hash + '/' + team_name + '/' + sectionName);
         } else {
