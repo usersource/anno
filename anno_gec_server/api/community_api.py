@@ -145,6 +145,32 @@ class CommunityApi(remote.Service):
 
         return ResponseMessage(success=True if resp else False)
 
+    @endpoints.method(CommunityUserRoleMessage, ResponseMessage, path="user/update",
+                      http_method="POST", name="user.update")
+    def update_user(self, request):
+        user = get_user_from_request(user_id=request.user_id,
+                                     user_email=request.user_email,
+                                     team_key=request.team_key)
+
+        if user:
+            user.display_name = request.user_display_name or user.display_name
+            user.password = md5(request.user_password) if request.user_password else user.password
+            user.image_url = request.user_image_url or user.image_url or ""
+            user.put()
+
+        community = Community.getCommunityFromTeamKey(request.team_key) if request.team_key else Community.get_by_id(request.community_id)
+
+        resp = None
+        if user and community:
+            circle = 0
+            for circle_value, circle_name in community.circles.iteritems():
+                if circle_name == request.circle:
+                    circle = int(circle_value)
+
+            resp = UserRole.edit(user, community, request.role, circle)
+
+        return ResponseMessage(success=True if resp else False)
+
     @endpoints.method(CommunityUserRoleMessage, ResponseMessage, path="user",
                       http_method="DELETE", name="user.delete")
     def delete_user(self, request):

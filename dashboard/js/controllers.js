@@ -658,6 +658,7 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
     $scope.current_circle = [];
     $scope.current_user = [];
     $scope.addMemberScreenVisible = false;
+    $scope.viewMemberDetailMode = false;
 
     function showDashboardMessage(message, error_type) {
         $scope.error_message = message;
@@ -675,6 +676,10 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
         $scope.user_role = $scope.roles[0];
         $scope.user_circle = $scope.circles[0].circle_name;
         $scope.addMemberScreenVisible = state;
+
+        if (!state) {
+            $scope.viewMemberDetailMode = false;
+        }
     };
 
     $scope.addMember = function() {
@@ -683,7 +688,7 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
             return;
         }
 
-        DataService.makeHTTPCall("community.user.insert",{
+        var api_data = {
             "team_key" : team_key,
             "user_email" : $scope.user_email,
             "user_display_name" : $scope.user_display_name,
@@ -691,11 +696,13 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
             "user_image_url" : $scope.user_image_url,
             "role" : $scope.user_role,
             "circle" : $scope.user_circle
-        }, function(data) {
+        };
+
+        function onSuccess(message) {
             $scope.addMemberScreenVisible = false;
-            showDashboardMessage("'" + $scope.user_display_name + "' is added to team.");
+            showDashboardMessage(message);
             angular.forEach($scope.circles, function(circle) {
-                if (circle.circle_name === $scope.user_circle) {
+                if (angular.equals(circle.circle_name, $scope.user_circle)) {
                     var new_member = {
                         "user_email" : $scope.user_email,
                         "display_name" : $scope.user_display_name,
@@ -712,8 +719,21 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
                 }
             });
             clearState();
-        }, function(status) {
-        });
+        }
+
+        if ($scope.viewMemberDetailMode) {
+            DataService.makeHTTPCall("community.user.update", api_data, function(data) {
+                var message = "'" + $scope.user_display_name + "' info updated.";
+                onSuccess(message);
+            }, function(status) {
+            });
+        } else {
+            DataService.makeHTTPCall("community.user.insert", api_data, function(data) {
+                var message = "'" + $scope.user_display_name + "' is added to team.";
+                onSuccess(message);
+            }, function(status) {
+            });
+        }
     };
 
     function clearState() {
@@ -751,5 +771,13 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
         $scope.current_user = $scope.current_circle.users.filter(function(user) {
             return angular.equals(user.user_email, user_email);
         })[0];
+
+        $scope.viewMemberDetailMode = true;
+        $scope.user_email = $scope.current_user.user_email;
+        $scope.user_display_name = $scope.current_user.display_name;
+        $scope.user_image_url = $scope.current_user.image_url;
+        $scope.user_role = $scope.current_user.role;
+        $scope.user_circle = $scope.current_circle.circle_name;
+        $scope.addMemberScreenVisible = true;
     };
 });

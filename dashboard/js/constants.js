@@ -90,6 +90,11 @@ DashboardConstantsModule.value("DashboardConstants", {
             "path" : "user",
             "method" : "POST"
         },
+        "community.user.update" : {
+            "root" : "community",
+            "path" : "user/update",
+            "method" : "POST"
+        },
         "community.community.circle.users.list" : {
             "root" : "community",
             "path" : "community/circle/users/list",
