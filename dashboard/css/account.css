@@ -71,3 +71,13 @@
   margin-left: 1%;
   background-color: #9399A5;
 }
+.editSaveButton {
+  display: inline-block;
+  margin-left: 1%;
+  color: #1B96C9;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.editSaveButton:hover {
+  text-decoration: underline;
+}

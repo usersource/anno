@@ -80,6 +80,12 @@ class CommunityApi(remote.Service):
         resp = Community.insert(request)
         return ResponseMessage(success=True, msg=resp)
 
+    @endpoints.method(CommunityMessage, ResponseMessage, path="community/update",
+                      http_method="POST", name="community.update")
+    def community_update(self, request):
+        Community.update(request)
+        return ResponseMessage(success=True)
+
     @endpoints.method(CommunityAppInfoMessage, ResponseMessage, path="app",
                       http_method="POST", name="app.insert")
     def app_insert(self, request):

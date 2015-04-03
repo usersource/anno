@@ -115,6 +115,13 @@ class Community(ndb.Model):
         return respData if not getCommunity else (community, user)
 
     @classmethod
+    def update(cls, message):
+        community = Community.getCommunityFromTeamKey(message.team_key)
+        if community:
+            community.name = message.name or community.name
+            community.put()
+
+    @classmethod
     def delete(cls, community):
         community.key.delete()
 

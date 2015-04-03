@@ -664,6 +664,42 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
             showDashboardMessage("Oops... Something went wrong. Please try again.", true);
         });
     };
+
+    function updateTeamName() {
+        DataService.makeHTTPCall("community.community.update", {
+            "team_key" : team_key,
+            "name" : $scope.team_name
+        }, function(data) {
+            showDashboardMessage("Team name updated");
+        }, function(status) {
+        });
+    }
+
+    function updateTeamKey() {
+        console.log($scope.team_key);
+    }
+
+    $scope.editSaveButtonClicked = function(type) {
+        if (angular.equals(type, "team_name")) {
+            $scope.team_key_editMode = false;
+            if ($scope.team_name_editMode) {
+                updateTeamName();
+                $scope.team_name_editMode = false;
+            } else {
+                $scope.team_name_editMode = true;
+                teamName.setSelectionRange(0, teamName.value.length);
+            }
+        } else if (angular.equals(type, "team_key")) {
+            $scope.team_name_editMode = false;
+            if ($scope.team_key_editMode) {
+                updateTeamKey();
+                $scope.team_key_editMode = false;
+            } else {
+                $scope.team_key_editMode = true;
+                teamKey.setSelectionRange(0, teamKey.value.length);
+            }
+        }
+    };
 });
 
 Dashboard.controller('Members', function($scope, $timeout, $location, $cookieStore, DataService, DashboardConstants) {
