@@ -828,6 +828,7 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
         $scope.user_email = "";
         $scope.user_display_name = "";
         $scope.user_password = "";
+        $scope.user_confirm_password = "";
         $scope.user_image_url = "";
     }
 
