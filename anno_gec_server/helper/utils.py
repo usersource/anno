@@ -19,6 +19,8 @@ from helper.utils_enum import UserRoleType
 from helper.utils_enum import SearchIndexName
 from helper.utils_enum import SignInMethod
 from helper.settings import SUPPORT_EMAIL_ID
+from helper.settings import PROJECT_NAME
+from helper.settings import DASHBOARD_URL
 from message.appinfo_message import AppInfoMessage
 from message.anno_api_messages import AnnoTagsResponseMessage
 
@@ -366,9 +368,22 @@ def reset_password(user, email):
     body = "Your new password for usersource account is %s" % new_password_string
     send_email(SUPPORT_EMAIL_ID, email, subject, body)
 
-def send_email(sender, to, subject="", body=""):
-    message = mail.EmailMessage(sender=sender, to=to, subject=subject, body=body)
+def send_email(sender, to, subject="", body="", html=""):
+    message = mail.EmailMessage(sender=sender, to=to, subject=subject, body=body, html=html)
     message.send()
+
+def parseTeamName(name):
+    return re.sub('[^A-Za-z0-9]+', '-', name).lower().strip('-')
+
+def send_added_user_email(team_name, added_user_name, action, action_user_name, team_hash):
+    dashboard_url = DASHBOARD_URL % (team_hash, parseTeamName(team_name))
+
+    to = ["imran.ahmed@ignitesol.com"]
+    subject = "UserSource '%s': Member update in '%s'" % (PROJECT_NAME, team_name)
+    body = "Hello,<br/><br/>Member '%s' got %s to the project '%s' by '%s'.<br/><br/>The dashboard can be accessed at <a href='%s'>%s</a>"
+    body = body % (added_user_name, action, team_name, action_user_name, dashboard_url, dashboard_url)
+
+    send_email(SUPPORT_EMAIL_ID, to, subject=subject, html=body)
 
 def extract_tags_from_text(text):
     tagcloud = {}

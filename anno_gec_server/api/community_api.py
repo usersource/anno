@@ -13,6 +13,7 @@ from helper.utils_enum import InvitationStatusType, UserRoleType, AuthSourceType
 from helper.utils import auth_user
 from helper.utils import getAppInfo
 from helper.utils import md5
+from helper.utils import send_added_user_email
 from message.community_message import CommunityMessage
 from message.community_message import CreateCommunityMessage
 from message.community_message import CommunityHashResponseMessage
@@ -139,6 +140,7 @@ class CommunityApi(remote.Service):
     @endpoints.method(CommunityUserRoleMessage, ResponseMessage, path="user",
                       http_method="POST", name="user.insert")
     def insert_user(self, request):
+        action_user = auth_user(self.request_state.headers)
         user = get_user_from_request(user_id=request.user_id,
                                      user_email=request.user_email,
                                      team_key=request.team_key)
@@ -162,6 +164,7 @@ class CommunityApi(remote.Service):
                     circle = int(circle_value)
 
             resp = UserRole.insert(user, community, role, circle)
+            send_added_user_email(community.name, user.display_name, "added", action_user.display_name, community.team_hash)
 
         return ResponseMessage(success=True if resp else False)
 

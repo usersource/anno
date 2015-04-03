@@ -738,7 +738,7 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
     };
 });
 
-Dashboard.controller('Members', function($scope, $timeout, $location, $cookieStore, DataService, DashboardConstants) {
+Dashboard.controller('Members', function($scope, $timeout, $location, $cookieStore, $http, DataService, DashboardConstants) {
     var team_key = $cookieStore.get('team_key');
 
     $scope.circles = [];
@@ -757,6 +757,10 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
     }
 
     $scope.initMembers = function() {
+        var userTeamToken = angular.fromJson($cookieStore.get('user_team_token'));
+        if (angular.isDefined(userTeamToken)) {
+            $http.defaults.headers.common.Authorization = userTeamToken.token_type + ' ' + userTeamToken.access_token;
+        }
         $scope.getCircleMembersList();
     };
 
