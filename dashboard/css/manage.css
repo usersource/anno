@@ -1,4 +1,4 @@
-#manage {
+#account {
   position: absolute;
   top: 74px;
   left: 0;
@@ -6,7 +6,7 @@
   bottom: 0;
   background-color: #F9F9F9;
 }
-#manage-inner {
+#account-inner {
   position: absolute;
   border-radius: 4px;
   border: 1px solid #C4CFD7;

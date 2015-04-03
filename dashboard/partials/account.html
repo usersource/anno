@@ -1,21 +1,30 @@
-<div id="manage" ng-controller="Account" ng-init="initManage();">
+<div id="account" ng-controller="Account" ng-init="initAccount();">
     <div class="header row" ng-include="'/dashboard/partials/header.html'"></div>
-    <div id="manage-inner">
+    <div id="account-inner">
         <div style="width: 100%;height: 100%;padding: 0;position: absolute;right: 0;overflow-y: auto;">
-            <div style="font-weight: 600;padding: 20px 0 20px 20px;border-bottom: 1px solid #C4CFD7;font-size: 16px;">Team Details - {{community_detail.community_name}}</div>
-            <div class="community-detail-row">
-                <div style="font-weight: 600;">
-                    <img width="12px" height="15px" src="/dashboard/images/icon_key.png" style="margin-right: 6px;">
-                    <span style="vertical-align: middle;font-size: 16px;">Team Key</span>
+            <div style="font-weight: 600;padding: 20px 0 0 20px;font-size: 16px;">Account Details</div>
+            <div id="account-details" style="margin-left: 20px;padding: 0 0 10px 10px;border-bottom: 1px solid #C4CFD7;">
+                <div style="width: 48%;margin: 20px 0;">
+                    <div class="field_title">Name</div>
+                    <div class="field_div">
+                        <img width="16px" height="10px" src="/dashboard/images/icon_keyboard.png">
+                        <input class="field_input" id="teamName" ng-model="team_name">
+                    </div>
                 </div>
-                <div style="margin-top: 10px;padding-bottom: 20px;">{{community_detail.team_key}}</div>
-            </div>
-            <div class="community-detail-row">
-                <div style="font-weight: 600;">
-                    <img width="12px" height="15px" src="/dashboard/images/icon_password.png" style="margin-right: 6px;">
-                    <span style="vertical-align: middle;font-size: 16px;">Team Secret</span>
+                <div style="width: 48%;margin: 20px 0;">
+                    <div class="field_title">Team Key</div>
+                    <div class="field_div">
+                        <img width="12px" height="15px" src="/dashboard/images/icon_key.png">
+                        <input class="field_input" id="teamKey" ng-model="team_key">
+                    </div>
                 </div>
-                <div style="margin-top: 10px;padding-bottom: 20px;">{{community_detail.team_secret}}</div>
+                <div style="width: 48%;margin: 20px 0;">
+                    <div class="field_title">Team Secret</div>
+                    <div class="field_div">
+                        <img width="12px" height="15px" src="/dashboard/images/icon_password.png">
+                        <input class="field_input" id="teamSecret" ng-model="team_secret" style="color: gray;" disabled>
+                    </div>
+                </div>
             </div>
             <!-- <div class="community-detail-row" style="  margin: 0;padding: 0 20px;">
                 <div style="font-weight: 600;">

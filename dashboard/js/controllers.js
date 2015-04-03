@@ -619,7 +619,7 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
         }, 5000);
     }
 
-    $scope.initManage = function() {
+    $scope.initAccount = function() {
         $scope.getAdminTeamMasterList();
     };
 
@@ -643,6 +643,10 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
             if (data.hasOwnProperty('communities') && data.communities.length > 0) {
                 $scope.communities = data.communities;
                 $scope.community_detail = data.communities[0];
+
+                $scope.team_name = $scope.community_detail.community_name;
+                $scope.team_key = $scope.community_detail.team_key;
+                $scope.team_secret = $scope.community_detail.team_secret;
             }
         }, function(status) {
             showDashboardMessage("Oops... Something went wrong. Please try again.", true);
