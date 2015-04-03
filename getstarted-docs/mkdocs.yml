@@ -1,9 +1,7 @@
-site_name: UserSource Developer
-site_url: https://usersource.io
+site_name: UserSource Docs
+site_url: https://developer.usersource.io
 
-repo_url: http://usersource.io
-
-theme: bootstrap
+theme: readthedocs
 
 extra_css: ['themes/usersource/css/custom.css']
 
