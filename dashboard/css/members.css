@@ -118,10 +118,10 @@
 }
 #add-user input.field_input, #account input.field_input {
   width: 93.945%;
-  width: calc(100% - 20px);
-  width: -webkit-calc(100% - 20px);
-  width: -moz-calc(100% - 20px);
-  width: -o-calc(100% - 20px);
+  width: calc(100% - 21px);
+  width: -webkit-calc(100% - 21px);
+  width: -moz-calc(100% - 21px);
+  width: -o-calc(100% - 21px);
   height: 34px;
   background-color: #F5F5F5;
   padding: 0;

@@ -65,3 +65,9 @@
   position: fixed;
   background: rgba(0, 0, 0, 0.6);
 }
+#reset_team_secret {
+  border: 0;
+  outline: 0;
+  margin-left: 1%;
+  background-color: #9399A5;
+}

@@ -652,6 +652,18 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
             showDashboardMessage("Oops... Something went wrong. Please try again.", true);
         });
     };
+
+    $scope.resetTeamSecret = function() {
+        DataService.makeHTTPCall("community.teamsecret.reset", {
+            "team_key" : team_key
+        }, function(data) {
+            if (data.hasOwnProperty('secret')) {
+                $scope.team_secret = data.secret;
+            }
+        }, function(status) {
+            showDashboardMessage("Oops... Something went wrong. Please try again.", true);
+        });
+    };
 });
 
 Dashboard.controller('Members', function($scope, $timeout, $location, $cookieStore, DataService, DashboardConstants) {

@@ -1,4 +1,5 @@
 import logging
+import random
 
 from google.appengine.ext import ndb
 
@@ -153,3 +154,15 @@ class Community(ndb.Model):
     @classmethod
     def get_by_hash(cls, team_hash):
         return cls.query().filter(cls.team_hash == team_hash).get()
+
+    @classmethod
+    def reset_team_secret(cls, team_key):
+        team_secret = None
+        community = cls.getCommunityFromTeamKey(team_key)
+        if community:
+            from helper.utils import md5
+            community.team_secret = md5(hex(random.randint(1000000, 9999999))[2:])
+            team_secret = community.team_secret
+            community.put()
+
+        return team_secret

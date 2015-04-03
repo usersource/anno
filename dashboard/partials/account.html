@@ -6,24 +6,25 @@
             <div id="account-details" style="margin-left: 20px;padding: 0 0 10px 10px;border-bottom: 1px solid #C4CFD7;">
                 <div style="width: 48%;margin: 20px 0;">
                     <div class="field_title">Name</div>
-                    <div class="field_div">
+                    <div class="field_div" style="width: 88%;display: inline-block;margin: 0;">
                         <img width="16px" height="10px" src="/dashboard/images/icon_keyboard.png">
                         <input class="field_input" id="teamName" ng-model="team_name">
                     </div>
                 </div>
                 <div style="width: 48%;margin: 20px 0;">
                     <div class="field_title">Team Key</div>
-                    <div class="field_div">
+                    <div class="field_div" style="width: 88%;display: inline-block;margin: 0;">
                         <img width="12px" height="15px" src="/dashboard/images/icon_key.png">
                         <input class="field_input" id="teamKey" ng-model="team_key">
                     </div>
                 </div>
                 <div style="width: 48%;margin: 20px 0;">
                     <div class="field_title">Team Secret</div>
-                    <div class="field_div">
+                    <div class="field_div" style="width: 88%;display: inline-block;margin: 0;">
                         <img width="12px" height="15px" src="/dashboard/images/icon_password.png">
                         <input class="field_input" id="teamSecret" ng-model="team_secret" style="color: gray;" disabled>
                     </div>
+                    <button class="admin-button" id="reset_team_secret" ng-click="resetTeamSecret();">Reset</button>
                 </div>
             </div>
             <!-- <div class="community-detail-row" style="  margin: 0;padding: 0 20px;">

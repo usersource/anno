@@ -374,3 +374,8 @@ class CommunityApi(remote.Service):
             circle_list_message.append(circle_message)
 
         return CommunityCircleMembersListMessage(circle_list=circle_list_message, roles=roles)
+
+    @endpoints.method(community_without_id_resource_container, CommunityValueMessage,
+                      path="community/teamsecret/reset", http_method="POST", name="community.teamsecret.reset")
+    def reset_team_secret(self, request):
+        return CommunityValueMessage(secret=Community.reset_team_secret(request.team_key))

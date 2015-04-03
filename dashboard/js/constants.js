@@ -99,6 +99,11 @@ DashboardConstantsModule.value("DashboardConstants", {
             "root" : "community",
             "path" : "community/circle/users/list",
             "method" : "GET"
+        },
+        "community.teamsecret.reset" : {
+            "root" : "community",
+            "path" : "community/teamsecret/reset",
+            "method" : "POST"
         }
     },
     borderColor : "#ff9900",
