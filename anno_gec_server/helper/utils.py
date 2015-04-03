@@ -378,7 +378,7 @@ def parseTeamName(name):
 def send_added_user_email(team_name, added_user_name, action, action_user_name, team_hash):
     dashboard_url = DASHBOARD_URL % (team_hash, parseTeamName(team_name))
 
-    to = ["imran.ahmed@ignitesol.com"]
+    to = ["david@usersource.io", "anand.shah@ignitesol.com", "imran.ahmed@ignitesol.com"]
     subject = "UserSource '%s': Member update in '%s'" % (PROJECT_NAME, team_name)
     body = "Hello,<br/><br/>Member '%s' got %s to the project '%s' by '%s'.<br/><br/>The dashboard can be accessed at <a href='%s'>%s</a>"
     body = body % (added_user_name, action, team_name, action_user_name, dashboard_url, dashboard_url)
