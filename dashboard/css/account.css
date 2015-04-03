@@ -81,3 +81,18 @@
 .editSaveButton:hover {
   text-decoration: underline;
 }
+#appIconHolder {
+  background: url("/dashboard/images/upload.png");
+  width: 130px;
+  height: 130px;
+  position: absolute;
+  right: 0;
+}
+#appIconImage {
+  width: 118px;
+  height: 120px;
+  position: absolute;
+  right: 6px;
+  top: 5px;
+  border-radius: 3px;
+}

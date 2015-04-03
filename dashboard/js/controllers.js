@@ -93,6 +93,7 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $window
             team_key : team_key
         }, function(data) {
             $scope.appInfo = data;
+            $scope.$emit('appInfo', data);
         });
     }
 
@@ -621,6 +622,9 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
 
     $scope.initAccount = function() {
         $scope.getAdminTeamMasterList();
+        $scope.$on('appInfo', function(event, args) {
+            $scope.app_icon_url = args.icon_url;
+        });
     };
 
     /*$scope.getDashboardURL = function(community_name, team_hash) {
@@ -689,9 +693,23 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
         });
     }
 
+    function updateAppIconURL() {
+        DataService.makeHTTPCall("community.teamkey.update", {
+            "team_key" : team_key,
+            "new_team_key" : $scope.team_key
+        }, function(data) {
+            team_key = $scope.team_key;
+            $cookieStore.put('team_key', $scope.team_key);
+            showDashboardMessage("Team key updated");
+        }, function(status) {
+            showDashboardMessage("Oops... Something went wrong. Please try again.", true);
+        });
+    }
+
     $scope.editSaveButtonClicked = function(type) {
         if (angular.equals(type, "team_name")) {
             $scope.team_key_editMode = false;
+            $scope.app_icon_editMode = false;
             if ($scope.team_name_editMode) {
                 updateTeamName();
                 $scope.team_name_editMode = false;
@@ -701,12 +719,23 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
             }
         } else if (angular.equals(type, "team_key")) {
             $scope.team_name_editMode = false;
+            $scope.app_icon_editMode = false;
             if ($scope.team_key_editMode) {
                 updateTeamKey();
                 $scope.team_key_editMode = false;
             } else {
                 $scope.team_key_editMode = true;
                 teamKey.setSelectionRange(0, teamKey.value.length);
+            }
+        } else if (angular.equals(type, "app_icon")) {
+            $scope.team_name_editMode = false;
+            $scope.team_key_editMode = false;
+            if ($scope.app_icon_editMode) {
+                updateAppIconURL();
+                $scope.app_icon_editMode = false;
+            } else {
+                $scope.app_icon_editMode = true;
+                appIconURL.setSelectionRange(0, appIconURL.value.length);
             }
         }
     };
