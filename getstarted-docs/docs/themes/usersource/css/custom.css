@@ -8,6 +8,21 @@
 	color: #f62;
 }
 
+.rst-content > div[role=navigation] {
+	display: none;
+}
+
+.wy-side-nav-search {
+	background-color: #fcfcfc;
+}
+.wy-side-nav-search > a {
+	color: #f62;
+	font-size: 150%;
+}
+.wy-nav-side {
+	background-color: #f5f5f5;
+}
+
 .note, .attention, .caution, .danger, .error, .hint, .important, .tip, .warning, .seealso, .admonition-todo {
   padding: 12px;
   line-height: 24px;
