@@ -28,6 +28,7 @@ from message.community_message import CommunityAdminMasterMessage
 from message.community_message import CommunityAdminMasterListMessage
 from message.community_message import CommunityCircleMembersMessage
 from message.community_message import CommunityCircleMembersListMessage
+from message.community_message import CommunityTeamKeyEditMessage
 from message.user_message import UserMessage
 from message.user_message import UserAdminMasterMessage
 from message.appinfo_message import AppInfoMessage
@@ -84,6 +85,12 @@ class CommunityApi(remote.Service):
                       http_method="POST", name="community.update")
     def community_update(self, request):
         Community.update(request)
+        return ResponseMessage(success=True)
+
+    @endpoints.method(CommunityTeamKeyEditMessage, ResponseMessage, path="community/teamkey/update",
+                      http_method="POST", name="community.teamkey.update")
+    def community_update(self, request):
+        Community.update_teamkey(request)
         return ResponseMessage(success=True)
 
     @endpoints.method(CommunityAppInfoMessage, ResponseMessage, path="app",

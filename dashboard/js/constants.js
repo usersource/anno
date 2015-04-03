@@ -109,6 +109,11 @@ DashboardConstantsModule.value("DashboardConstants", {
             "root" : "community",
             "path" : "community/update",
             "method" : "POST"
+        },
+        "community.teamkey.update" : {
+            "root" : "community",
+            "path" : "community/teamkey/update",
+            "method" : "POST"
         }
     },
     borderColor : "#ff9900",

@@ -99,3 +99,7 @@ class CommunityValueMessage(messages.Message):
 
 class CommunityValueListMessage(messages.Message):
     teams = messages.MessageField(CommunityValueMessage, 1, repeated=True)
+
+class CommunityTeamKeyEditMessage(messages.Message):
+    team_key = messages.StringField(1)
+    new_team_key = messages.StringField(2)

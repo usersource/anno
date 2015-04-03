@@ -34,6 +34,12 @@ class User(ndb.Model):
         return query.get()
 
     @classmethod
+    def get_all_user_by_team_key(cls, team_key):
+        query = cls.query().filter(ndb.AND(cls.account_type == team_key,
+                                           cls.auth_source == AuthSourceType.PLUGIN))
+        return query.fetch()
+
+    @classmethod
     def get_all_user_by_email(cls, email, password, team_key=None):
         query = cls.query().filter(ndb.AND(cls.user_email == email,
                                            cls.password == password,

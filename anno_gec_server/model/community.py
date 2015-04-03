@@ -4,6 +4,7 @@ import random
 from google.appengine.ext import ndb
 
 from model.appinfo import AppInfo
+from model.user import User
 from message.community_message import CommunityMessage
 from helper.utils_enum import CommunityType, UserRoleType, AuthSourceType
 from helper.utils_enum import CircleType, CircleValue
@@ -120,6 +121,17 @@ class Community(ndb.Model):
         if community:
             community.name = message.name or community.name
             community.put()
+
+    @classmethod
+    def update_teamkey(cls, message):
+        community = Community.getCommunityFromTeamKey(message.team_key)
+        if community:
+            community.team_key = message.new_team_key or community.team_key
+            community.put()
+
+            for user in User.get_all_user_by_team_key(message.team_key):
+                user.account_type = message.new_team_key
+                user.put()
 
     @classmethod
     def delete(cls, community):

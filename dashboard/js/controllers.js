@@ -672,11 +672,21 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
         }, function(data) {
             showDashboardMessage("Team name updated");
         }, function(status) {
+            showDashboardMessage("Oops... Something went wrong. Please try again.", true);
         });
     }
 
     function updateTeamKey() {
-        console.log($scope.team_key);
+        DataService.makeHTTPCall("community.teamkey.update", {
+            "team_key" : team_key,
+            "new_team_key" : $scope.team_key
+        }, function(data) {
+            team_key = $scope.team_key;
+            $cookieStore.put('team_key', $scope.team_key);
+            showDashboardMessage("Team key updated");
+        }, function(status) {
+            showDashboardMessage("Oops... Something went wrong. Please try again.", true);
+        });
     }
 
     $scope.editSaveButtonClicked = function(type) {
