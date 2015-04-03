@@ -134,6 +134,15 @@ class Community(ndb.Model):
                 user.put()
 
     @classmethod
+    def update_appicon(cls, message):
+        community = Community.getCommunityFromTeamKey(message.team_key)
+        if community and len(community.apps):
+            community_app = community.apps[0].get()
+            if community_app:
+                community_app.icon_url = message.app_icon or community.icon_url
+                community_app.put()
+
+    @classmethod
     def delete(cls, community):
         community.key.delete()
 

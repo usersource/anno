@@ -89,8 +89,14 @@ class CommunityApi(remote.Service):
 
     @endpoints.method(CommunityTeamKeyEditMessage, ResponseMessage, path="community/teamkey/update",
                       http_method="POST", name="community.teamkey.update")
-    def community_update(self, request):
+    def community_teamkey_update(self, request):
         Community.update_teamkey(request)
+        return ResponseMessage(success=True)
+
+    @endpoints.method(CommunityAdminMasterMessage, ResponseMessage, path="community/appicon/update",
+                      http_method="POST", name="community.appicon.update")
+    def community_appicon_update(self, request):
+        Community.update_appicon(request)
         return ResponseMessage(success=True)
 
     @endpoints.method(CommunityAppInfoMessage, ResponseMessage, path="app",

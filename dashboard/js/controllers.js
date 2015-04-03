@@ -694,13 +694,10 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
     }
 
     function updateAppIconURL() {
-        DataService.makeHTTPCall("community.teamkey.update", {
+        DataService.makeHTTPCall("community.appicon.update", {
             "team_key" : team_key,
-            "new_team_key" : $scope.team_key
+            "app_icon" : $scope.app_icon_url
         }, function(data) {
-            team_key = $scope.team_key;
-            $cookieStore.put('team_key', $scope.team_key);
-            showDashboardMessage("Team key updated");
         }, function(status) {
             showDashboardMessage("Oops... Something went wrong. Please try again.", true);
         });
