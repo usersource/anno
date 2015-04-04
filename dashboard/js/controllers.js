@@ -333,6 +333,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         if ($scope.singleAnnoMode) args.anno_id = param_anno_id;
 
         DataService.makeHTTPCall("anno.anno.dashboard.list", args, function(data) {
+            if (angular.equals(typeof annos, "undefined")) return;
             if (clear_anno) {
                 $scope.annoList = [];
                 annos.scrollTop = 0;
@@ -402,6 +403,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
     }
 
     $scope.screenshotLoad = function (event, anno_item) {
+        if (angular.equals(typeof annos, "undefined")) return;
         if (angular.isDefined(event)) {
             anno_item = Utils.findAncestor(event.currentTarget, 'anno-item');
         }
