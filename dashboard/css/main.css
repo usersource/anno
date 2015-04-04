@@ -180,3 +180,11 @@ body {
   border: 1px solid #C4CFD7;
   background-color: #F9F9F9;
 }
+.mainSectionDiv {
+  position: absolute;
+  top: 74px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #F9F9F9;
+}

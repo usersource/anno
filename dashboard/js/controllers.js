@@ -98,9 +98,7 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $window
     }
 
     $scope.selectSection = function(sectionName) {
-        if (angular.equals(sectionName, "getstarted")) {
-            $window.open("/getstarted/docs/index.html");
-        } else if (angular.isDefined(team_hash) && angular.isDefined(team_name)) {
+        if (angular.isDefined(team_hash) && angular.isDefined(team_name)) {
             $location.path('/dashboard/' + team_hash + '/' + team_name + '/' + sectionName);
         } else {
             $location.path('/dashboard/' + sectionName);
@@ -874,3 +872,5 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
         $scope.addMemberScreenVisible = true;
     };
 });
+
+Dashboard.controller('GetStarted', function($scope) {});

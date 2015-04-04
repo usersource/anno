@@ -1,4 +1,4 @@
-<div id="members" ng-controller="Members" ng-init="initMembers();">
+<div id="members" class="mainSectionDiv" ng-controller="Members" ng-init="initMembers();">
     <div class="header row" ng-include="'/dashboard/partials/header.html'"></div>
     <div id="dashboard_message" ng-show="error_message.length" ng-class="{'error-message':dashboard_error_type}" style="left: 25%;">
         <div id="dashboard_message_text">{{error_message}}</div>
