@@ -48,7 +48,7 @@ class UserRole(ndb.Model):
         entity = cls.get(user, community)
         if entity:
             entity.role = role or entity.role
-            entity.circle = circle or entity.circle
+            entity.circle_level = circle or entity.circle_level
             entity.put()
         return entity
 
