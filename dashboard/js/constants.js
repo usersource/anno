@@ -11,6 +11,9 @@ DashboardConstantsModule.value("DashboardConstants", {
         "mostActive" : "by_activity_count",
         "archived" : "by_archived"
     },
+    roleType : {
+        "admin" : "admin"
+    },
     apiRoot : "/_ah/api",
     imageURL : "/screenshot?anno_id=",
     endpointVersion: "1.0",

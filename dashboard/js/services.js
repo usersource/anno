@@ -19,6 +19,7 @@ ServiceModule.factory('Utils', function($cookieStore) {
         $cookieStore.put('team_key', data.team_key);
         $cookieStore.put('team_name', data.team_name);
         $cookieStore.put('user_team_token', angular.fromJson(data.user_team_token));
+        $cookieStore.put('role', data.role);
     }
 
     function removeUserDataCookies() {
@@ -29,6 +30,7 @@ ServiceModule.factory('Utils', function($cookieStore) {
         $cookieStore.remove('team_key');
         $cookieStore.remove('team_name');
         $cookieStore.remove('user_team_token');
+        $cookieStore.remove('role');
     }
 
     function removeRedirectURL() {

@@ -18,4 +18,5 @@ class AccountAuthenticateMessage(messages.Message):
     team_name = messages.StringField(4)
     team_key = messages.StringField(5)
     user_team_token = messages.StringField(6)
-    feed_data = messages.MessageField(AnnoListMessage, 7)
+    role = messages.StringField(7)
+    feed_data = messages.MessageField(AnnoListMessage, 8)

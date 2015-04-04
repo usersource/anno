@@ -299,7 +299,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
     function watchersCount() {
         $timeout(function() {
             $scope.watchers = Utils.watchersContainedIn($scope);
-            console.log("Number of watchers:", $scope.watchers);
+            // console.log("Number of watchers:", $scope.watchers);
         }, 1000);
     };
 
@@ -607,10 +607,12 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 });
 
 Dashboard.controller('Account', function($scope, $timeout, $location, $cookieStore, DataService, DashboardConstants) {
-    var team_key = $cookieStore.get('team_key');
+    var team_key = $cookieStore.get('team_key'),
+        role = $cookieStore.get('role');
 
     $scope.communities = [];
     $scope.community_detail = {};
+    $scope.adminRole = DashboardConstants.roleType.admin;
 
     function showDashboardMessage(message, error_type) {
         $scope.error_message = message;
@@ -651,6 +653,7 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
                 $scope.team_name = $scope.community_detail.community_name;
                 $scope.team_key = $scope.community_detail.team_key;
                 $scope.team_secret = $scope.community_detail.team_secret;
+                $scope.role = role;
             }
         }, function(status) {
             showDashboardMessage("Oops... Something went wrong. Please try again.", true);
@@ -658,6 +661,7 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
     };
 
     $scope.resetTeamSecret = function() {
+        if (!angular.equals(role, $scope.adminRole)) return;
         DataService.makeHTTPCall("community.teamsecret.reset", {
             "team_key" : team_key
         }, function(data) {
@@ -670,6 +674,7 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
     };
 
     function updateTeamName() {
+        if (!angular.equals(role, $scope.adminRole)) return;
         DataService.makeHTTPCall("community.community.update", {
             "team_key" : team_key,
             "name" : $scope.team_name
@@ -681,6 +686,7 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
     }
 
     function updateTeamKey() {
+        if (!angular.equals(role, $scope.adminRole)) return;
         DataService.makeHTTPCall("community.teamkey.update", {
             "team_key" : team_key,
             "new_team_key" : $scope.team_key
@@ -694,6 +700,7 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
     }
 
     function updateAppIconURL() {
+        if (!angular.equals(role, $scope.adminRole)) return;
         DataService.makeHTTPCall("community.appicon.update", {
             "team_key" : team_key,
             "app_icon" : $scope.app_icon_url
