@@ -87,3 +87,7 @@
 .danger {
     background-color: #ffe9e9;
 }
+
+.rst-versions {
+  display: none;
+}
