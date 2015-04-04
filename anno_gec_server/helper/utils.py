@@ -65,6 +65,17 @@ def handle_user(creator_id):
             user = User.insert_user(email=current_user.email())
     return user
 
+def is_auth_user_admin(headers=None, action_auth_user=None):
+    is_admin = False
+    user = auth_user(headers) if (not action_auth_user and headers) else action_auth_user
+    if user:
+        community = Community.getCommunityFromTeamKey(user.account_type)
+        if community:
+            role = UserRole.getRole(user, community)
+            is_admin = role == UserRoleType.ADMIN
+
+    return is_admin
+
 def auth_user(headers):
     current_user = get_endpoints_current_user(raise_unauthorized=False)
     user = None

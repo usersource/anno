@@ -11,6 +11,7 @@ from helper.settings import anno_js_client_id
 from helper.utils import get_user_from_request
 from helper.utils_enum import InvitationStatusType, UserRoleType, AuthSourceType
 from helper.utils import auth_user
+from helper.utils import is_auth_user_admin
 from helper.utils import getAppInfo
 from helper.utils import md5
 from helper.utils import send_added_user_email
@@ -85,6 +86,9 @@ class CommunityApi(remote.Service):
     @endpoints.method(CommunityMessage, ResponseMessage, path="community/update",
                       http_method="POST", name="community.update")
     def community_update(self, request):
+        if not is_auth_user_admin(headers=self.request_state.headers):
+            return ResponseMessage(success=False)
+
         Community.update(request)
         return ResponseMessage(success=True)
 

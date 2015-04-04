@@ -606,7 +606,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
     };
 });
 
-Dashboard.controller('Account', function($scope, $timeout, $location, $cookieStore, DataService, DashboardConstants) {
+Dashboard.controller('Account', function($scope, $timeout, $location, $cookieStore, $http, DataService, DashboardConstants) {
     var team_key = $cookieStore.get('team_key'),
         role = $cookieStore.get('role');
 
@@ -623,6 +623,10 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
     }
 
     $scope.initAccount = function() {
+        var userTeamToken = angular.fromJson($cookieStore.get('user_team_token'));
+        if (angular.isDefined(userTeamToken)) {
+            $http.defaults.headers.common.Authorization = userTeamToken.token_type + ' ' + userTeamToken.access_token;
+        }
         $scope.getAdminTeamMasterList();
         $scope.$on('appInfo', function(event, args) {
             $scope.app_icon_url = args.icon_url;
@@ -679,7 +683,9 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
             "team_key" : team_key,
             "name" : $scope.team_name
         }, function(data) {
-            showDashboardMessage("Team name updated");
+            if (data.success) {
+                showDashboardMessage("Team name updated");
+            }
         }, function(status) {
             showDashboardMessage("Oops... Something went wrong. Please try again.", true);
         });
