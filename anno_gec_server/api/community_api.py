@@ -187,8 +187,10 @@ class CommunityApi(remote.Service):
     @endpoints.method(CommunityUserRoleMessage, ResponseMessage, path="user/update",
                       http_method="POST", name="user.update")
     def update_user(self, request):
-        if not is_auth_user_admin(headers=self.request_state.headers):
-            return ResponseMessage(success=False)
+        action_auth_user = auth_user(self.request_state.headers)
+        if not (action_auth_user.user_email == request.user_email):
+            if not is_auth_user_admin(action_auth_user=action_auth_user):
+                return ResponseMessage(success=False)
 
         user = get_user_from_request(user_id=request.user_id,
                                      user_email=request.user_email,

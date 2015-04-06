@@ -764,6 +764,7 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
 
 Dashboard.controller('Members', function($scope, $timeout, $location, $cookieStore, $http, DataService, DashboardConstants) {
     var team_key = $cookieStore.get('team_key'),
+        user_email = $cookieStore.get('user_email'),
         role = $cookieStore.get('role');
 
     $scope.circles = [];
@@ -801,7 +802,9 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
     };
 
     $scope.addMember = function() {
-        if (!angular.equals(role, $scope.adminRole)) return;
+        if (!angular.equals($scope.current_user.user_email, $scope.current_user_email)) {
+            if (!angular.equals(role, $scope.adminRole)) return;
+        }
         if (!angular.equals($scope.user_password, $scope.user_confirm_password)) {
             showDashboardMessage("Passwords aren't matching", true);
             return;
@@ -842,8 +845,10 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
 
         if ($scope.viewMemberDetailMode) {
             DataService.makeHTTPCall("community.user.update", api_data, function(data) {
-                var message = "'" + $scope.user_display_name + "' info updated.";
-                onSuccess(message);
+                if (data.success) {
+                    var message = "'" + $scope.user_display_name + "' info updated.";
+                    onSuccess(message);
+                }
             }, function(status) {
             });
         } else {
@@ -878,6 +883,7 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
             }
 
             $scope.role = role;
+            $scope.current_user_email = user_email;
         }, function(status) {
             showDashboardMessage("Oops... Something went wrong. Please try again.", true);
         });
