@@ -2,7 +2,22 @@
 
 var Dashboard = angular.module('Dashboard', ['ngCookies', 'ngRoute', 'DashboardConstantsModule', 'ServiceModule']);
 
-Dashboard.controller('NoAuthHeader', function($scope) {});
+Dashboard.controller('NoAuthHeader', function($scope, $routeParams, $location) {
+    var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
+
+    $scope.showLoginPage = function() {
+        var login_path = "/dashboard/";
+        if (angular.isDefined(team_hash)) {
+            login_path = login_path + team_hash + "/" + team_name + "/";
+        }
+
+        $location.path(login_path + "login");
+    };
+
+    $scope.showRegisterPage = function() {
+        $location.path("/dashboard/register");
+    };
+});
 
 Dashboard.controller('Register', function($scope) {});
 
