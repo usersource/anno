@@ -673,6 +673,10 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
             if (data.hasOwnProperty('secret') && data.secret) {
                 $scope.team_secret = data.secret;
             }
+            if (data.hasOwnProperty('user_team_token')) {
+                $cookieStore.put('user_team_token', angular.fromJson(data.user_team_token));
+                getAuthorizationHeader();
+            }
         }, function(status) {
             showDashboardMessage("Oops... Something went wrong. Please try again.", true);
         });

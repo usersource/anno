@@ -126,12 +126,16 @@ def get_user_team_token(email, password, team_key, team_secret, display_name, im
     token["access_token"] = base64.b64encode("_$_".join(user_info_data))
     return token
 
-def update_user_team_token(headers, new_team_key):
+def update_user_team_token(headers, team_key=None, team_secret=None):
     credential_pair = get_credential(headers)
+
+    team_key = team_key or credential_pair[3]
+    team_secret = team_secret or credential_pair[4]
+
     return get_user_team_token(credential_pair[1],
                                credential_pair[2],
-                               new_team_key,
-                               credential_pair[4],
+                               team_key,
+                               team_secret,
                                credential_pair[5],
                                credential_pair[6])
 

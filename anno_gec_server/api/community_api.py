@@ -101,7 +101,7 @@ class CommunityApi(remote.Service):
             return ResponseMessage(success=False)
 
         Community.update_teamkey(request)
-        new_user_team_token = update_user_team_token(self.request_state.headers, request.new_team_key)
+        new_user_team_token = update_user_team_token(headers=self.request_state.headers, team_key=request.new_team_key)
         return ResponseMessage(success=True, msg=json.dumps(new_user_team_token))
 
     @endpoints.method(CommunityAdminMasterMessage, ResponseMessage, path="community/appicon/update",
@@ -416,4 +416,6 @@ class CommunityApi(remote.Service):
         if not is_auth_user_admin(headers=self.request_state.headers):
             return CommunityValueMessage(secret=None)
 
-        return CommunityValueMessage(secret=Community.reset_team_secret(request.team_key))
+        secret = Community.reset_team_secret(request.team_key)
+        new_user_team_token = update_user_team_token(headers=self.request_state.headers, team_secret=secret)
+        return CommunityValueMessage(secret=secret, user_team_token=json.dumps(new_user_team_token))
