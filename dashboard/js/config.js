@@ -50,7 +50,11 @@ Dashboard.run(function($rootScope, $location, $cookieStore) {
             }
         } else {
             redirectTo = "login";
-            if (next.controller !== "Login") {
+            if (angular.equals(next.controller, "Register")) {
+                redirectTo = "register";
+            }
+
+            if (!angular.equals(next.controller, "Login")) {
                 $cookieStore.put('redirect_to', $location.absUrl());
             }
         }

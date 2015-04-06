@@ -4,6 +4,8 @@ var Dashboard = angular.module('Dashboard', ['ngCookies', 'ngRoute', 'DashboardC
 
 Dashboard.controller('NoAuthHeader', function($scope) {});
 
+Dashboard.controller('Register', function($scope) {});
+
 Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams, Utils, DashboardConstants, DataService) {
     var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
     var urlSearchParams = $location.search(), redirectTo;
