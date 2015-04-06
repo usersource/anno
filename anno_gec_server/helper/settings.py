@@ -2,6 +2,7 @@ import logging
 from os import environ
 from google.appengine.api import app_identity
 
+GAE_ADMIN_USERS = ["david@usersource.io", "anand.shah@ignitesol.com", "imran.ahmed@ignitesol.com"]
 
 # Client ID for web application
 JS_CLIENT_ID_PROD_USERSOURCE = "22913132792.apps.googleusercontent.com"

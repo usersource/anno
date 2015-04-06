@@ -833,7 +833,7 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
                         "role" : $scope.user_role
                     };
 
-                    if (circle.users.length) {
+                    if (circle.hasOwnProperty('users') && circle.users.length) {
                         circle.users.push(new_member);
                     } else {
                         circle.users = Array(new_member);

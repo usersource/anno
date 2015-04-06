@@ -21,6 +21,7 @@ from helper.utils_enum import SignInMethod
 from helper.settings import SUPPORT_EMAIL_ID
 from helper.settings import PROJECT_NAME
 from helper.settings import DASHBOARD_URL
+from helper.settings import GAE_ADMIN_USERS
 from message.appinfo_message import AppInfoMessage
 from message.anno_api_messages import AnnoTagsResponseMessage
 
@@ -402,7 +403,7 @@ def parseTeamName(name):
 def send_added_user_email(team_name, added_user_name, action, action_user_name, team_hash):
     dashboard_url = DASHBOARD_URL % (team_hash, parseTeamName(team_name))
 
-    to = ["david@usersource.io", "anand.shah@ignitesol.com", "imran.ahmed@ignitesol.com"]
+    to = GAE_ADMIN_USERS
     subject = "UserSource '%s': Member update in '%s'" % (PROJECT_NAME, team_name)
     body = "Hello,<br/><br/>Member '%s' got %s to the project '%s' by '%s'.<br/><br/>The dashboard can be accessed at <a href='%s'>%s</a>"
     body = body % (added_user_name, action, team_name, action_user_name, dashboard_url, dashboard_url)
