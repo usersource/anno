@@ -1,10 +1,10 @@
-#register_outer {
+#register #register_outer {
   width: 100%;
   height: 100%;
   position: absolute;
   background: #f9f9f9;
 }
-#action-button input {
+#register #action-button input {
   padding: 0 20px;
   height: 36px;
   max-width: 100px;
@@ -16,29 +16,29 @@
   margin-left: 16px;
   font-size: 18px;
 }
-#action-button input#register {
+#register #action-button input#register {
   background-color: #9399a5;
   border: 1px solid #939393;
 }
-#action-button input#signup {
+#register #action-button input#signup {
   background-color: #ff6622;
   border: 1px solid #f65007;
 }
-#register_inner {
+#register #register_inner {
   text-align: center;
   margin-top: 124px;
 }
-#register_form_div {
+#register #register_form_div {
   border-radius: 4px;
   background: #FFF;
   border: 1px solid #C4CFD7;
 }
-#register_page_indicator_parent {
+#register #register_page_indicator_parent {
   height: 12px;
   margin-bottom: 30px;
   text-align: center;
 }
-.register_page_indicator {
+#register .register_page_indicator {
   width: 12px;
   height: 100%;
   display: inline-block;
@@ -47,15 +47,15 @@
   border: 1px solid #C4CFD7;
   margin-right: 4px;
 }
-.register_page_indicator:last-child {
+#register .register_page_indicator:last-child {
   margin-right: 0;
 }
-#register_inner #title {
+#register #register_inner #title {
   font-size: 26px;
   color: #111D2B;
   margin: 30px 0;
 }
-#register_inner .input-div {
+#register #register_inner .input-div {
   width: 66.666666667%;
   height: 36px;
   border-radius: 4px;
@@ -67,9 +67,9 @@
   text-align: left;
   margin-bottom: 20px;
 }
-#register_inner input[type="email"],
-#register_inner input[type="password"],
-#register_inner input[type="text"] {
+#register #register_inner input[type="email"],
+#register #register_inner input[type="password"],
+#register #register_inner input[type="text"] {
   width: 94.783%;
   width: calc(100% - 26px);
   width: -webkit-calc(100% - 26px);
@@ -82,10 +82,12 @@
   padding-left: 6px;
   vertical-align: middle;
 }
-#register_email, #register_password, #register_team_key {
+#register #register_email,
+#register #register_password,
+#register #register_team_key {
   margin-bottom: 20px;
 }
-#register_button {
+#register #register_button {
   width: 66.666666667%;
   height: 40px;
   margin: 0 auto;
@@ -101,7 +103,7 @@
 }
 
 @media (max-width: 768px) {
-  #register_inner .input-div, #register_button {
+  #register #register_inner .input-div, #register #register_button {
     width: 90%;
   }
 }
