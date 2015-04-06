@@ -375,9 +375,6 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
             watchersCount();
         }, function(status) {
-            if (status == 401) {
-                $scope.signoutDashboard();
-            }
         });
     }
 
