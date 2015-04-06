@@ -4,10 +4,9 @@
   position: absolute;
   background: #f9f9f9;
 }
-#register #action-button input {
+#action-button input {
   padding: 0 20px;
   height: 36px;
-  max-width: 100px;
   vertical-align: middle;
   line-height: 33px;
   border-radius: 4px;
@@ -16,11 +15,11 @@
   margin-left: 16px;
   font-size: 18px;
 }
-#register #action-button input#register {
+#action-button input#login {
   background-color: #9399a5;
   border: 1px solid #939393;
 }
-#register #action-button input#signup {
+#action-button input#signup {
   background-color: #ff6622;
   border: 1px solid #f65007;
 }
@@ -103,7 +102,8 @@
 }
 
 @media (max-width: 768px) {
-  #register #register_inner .input-div, #register #register_button {
+  #register #register_inner .input-div,
+  #register #register_button {
     width: 90%;
   }
 }
