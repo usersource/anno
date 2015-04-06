@@ -13,6 +13,9 @@ Dashboard.config(function($routeProvider, $locationProvider) {
     $routeProvider.when('/dashboard/:teamHash?/:teamName?/login', {
         templateUrl: '/dashboard/partials/login.html',
         controller: 'Login'
+    }).when('/dashboard/register', {
+        templateUrl: '/dashboard/partials/register.html',
+        controller: 'Register'
     }).when('/dashboard/:teamHash?/:teamName?/feed/:annoId?', {
         templateUrl: '/dashboard/partials/feed.html',
         controller: 'Feed'
