@@ -763,7 +763,8 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
 });
 
 Dashboard.controller('Members', function($scope, $timeout, $location, $cookieStore, $http, DataService, DashboardConstants) {
-    var team_key = $cookieStore.get('team_key');
+    var team_key = $cookieStore.get('team_key'),
+        role = $cookieStore.get('role');
 
     $scope.circles = [];
     $scope.roles = [];
@@ -771,6 +772,7 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
     $scope.current_user = [];
     $scope.addMemberScreenVisible = false;
     $scope.viewMemberDetailMode = false;
+    $scope.adminRole = DashboardConstants.roleType.admin;
 
     function showDashboardMessage(message, error_type) {
         $scope.error_message = message;
@@ -799,6 +801,7 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
     };
 
     $scope.addMember = function() {
+        if (!angular.equals(role, $scope.adminRole)) return;
         if (!angular.equals($scope.user_password, $scope.user_confirm_password)) {
             showDashboardMessage("Passwords aren't matching", true);
             return;
@@ -873,6 +876,8 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
             if (data.hasOwnProperty('roles') && data.roles.length > 0) {
                 $scope.roles = data.roles;
             }
+
+            $scope.role = role;
         }, function(status) {
             showDashboardMessage("Oops... Something went wrong. Please try again.", true);
         });
