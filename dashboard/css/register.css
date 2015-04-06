@@ -27,7 +27,7 @@
   text-align: center;
   margin-top: 124px;
 }
-#register #register_form_div {
+#register .register_main_div {
   border-radius: 4px;
   background: #FFF;
   border: 1px solid #C4CFD7;
