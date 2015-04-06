@@ -126,6 +126,15 @@ def get_user_team_token(email, password, team_key, team_secret, display_name, im
     token["access_token"] = base64.b64encode("_$_".join(user_info_data))
     return token
 
+def update_user_team_token(headers, new_team_key):
+    credential_pair = get_credential(headers)
+    return get_user_team_token(credential_pair[1],
+                               credential_pair[2],
+                               new_team_key,
+                               credential_pair[4],
+                               credential_pair[5],
+                               credential_pair[6])
+
 def get_country_by_coordinate(latitude, longitude):
     """
     This function returns country information by the specified coordinate.

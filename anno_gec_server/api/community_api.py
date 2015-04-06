@@ -1,6 +1,7 @@
 '''
 Community API implemented using Google Cloud Endpoints.
 '''
+import json
 
 import endpoints
 from protorpc import message_types
@@ -15,6 +16,7 @@ from helper.utils import is_auth_user_admin
 from helper.utils import getAppInfo
 from helper.utils import md5
 from helper.utils import send_added_user_email
+from helper.utils import update_user_team_token
 from message.community_message import CommunityMessage
 from message.community_message import CreateCommunityMessage
 from message.community_message import CommunityHashResponseMessage
@@ -95,12 +97,19 @@ class CommunityApi(remote.Service):
     @endpoints.method(CommunityTeamKeyEditMessage, ResponseMessage, path="community/teamkey/update",
                       http_method="POST", name="community.teamkey.update")
     def community_teamkey_update(self, request):
+        if not is_auth_user_admin(headers=self.request_state.headers):
+            return ResponseMessage(success=False)
+
         Community.update_teamkey(request)
-        return ResponseMessage(success=True)
+        new_user_team_token = update_user_team_token(self.request_state.headers, request.new_team_key)
+        return ResponseMessage(success=True, msg=json.dumps(new_user_team_token))
 
     @endpoints.method(CommunityAdminMasterMessage, ResponseMessage, path="community/appicon/update",
                       http_method="POST", name="community.appicon.update")
     def community_appicon_update(self, request):
+        if not is_auth_user_admin(headers=self.request_state.headers):
+            return ResponseMessage(success=False)
+
         Community.update_appicon(request)
         return ResponseMessage(success=True)
 
@@ -404,4 +413,7 @@ class CommunityApi(remote.Service):
     @endpoints.method(community_without_id_resource_container, CommunityValueMessage,
                       path="community/teamsecret/reset", http_method="POST", name="community.teamsecret.reset")
     def reset_team_secret(self, request):
+        if not is_auth_user_admin(headers=self.request_state.headers):
+            return CommunityValueMessage(secret=None)
+
         return CommunityValueMessage(secret=Community.reset_team_secret(request.team_key))

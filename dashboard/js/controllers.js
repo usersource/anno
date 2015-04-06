@@ -619,11 +619,15 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
         }, 5000);
     }
 
-    $scope.initAccount = function() {
+    function getAuthorizationHeader() {
         var userTeamToken = angular.fromJson($cookieStore.get('user_team_token'));
         if (angular.isDefined(userTeamToken)) {
             $http.defaults.headers.common.Authorization = userTeamToken.token_type + ' ' + userTeamToken.access_token;
         }
+    }
+
+    $scope.initAccount = function() {
+        getAuthorizationHeader();
         $scope.getAdminTeamMasterList();
         $scope.$on('appInfo', function(event, args) {
             $scope.app_icon_url = args.icon_url;
@@ -666,7 +670,7 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
         DataService.makeHTTPCall("community.teamsecret.reset", {
             "team_key" : team_key
         }, function(data) {
-            if (data.hasOwnProperty('secret')) {
+            if (data.hasOwnProperty('secret') && data.secret) {
                 $scope.team_secret = data.secret;
             }
         }, function(status) {
@@ -694,9 +698,15 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
             "team_key" : team_key,
             "new_team_key" : $scope.team_key
         }, function(data) {
-            team_key = $scope.team_key;
-            $cookieStore.put('team_key', $scope.team_key);
-            showDashboardMessage("Team key updated");
+            if (data.success) {
+                team_key = $scope.team_key;
+                $cookieStore.put('team_key', $scope.team_key);
+                showDashboardMessage("Team key updated");
+            }
+            if (data.hasOwnProperty('msg')) {
+                $cookieStore.put('user_team_token', angular.fromJson(data.msg));
+                getAuthorizationHeader();
+            }
         }, function(status) {
             showDashboardMessage("Oops... Something went wrong. Please try again.", true);
         });
