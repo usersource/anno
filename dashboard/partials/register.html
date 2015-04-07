@@ -1,6 +1,6 @@
-<div id="register" ng-controller="Register" ng-init="initRegister();">
+<div id="register" ng-controller="Register">
     <div class="header row" ng-include="'/dashboard/partials/no_auth_header.html'"></div>
-    <div id="dashboard_message" ng-show="error_message.length" ng-class="{'error-message':dashboard_error_type}">
+    <div id="dashboard_message" ng-show="error_message.length" ng-class="{'error-message':dashboard_error_type}" style="left: 25%;">
         <div id="dashboard_message_text">{{error_message}}</div>
     </div>
     <div id="register_outer">
@@ -11,7 +11,7 @@
                 <div class="register_page_indicator"></div>
                 <div class="register_page_indicator"></div>
             </div> -->
-            <div id="register_form_div" class="register_main_div" ng-if="!showPlans">
+            <div id="register_form_div" class="register_main_div" ng-hide="showPlans">
                 <div style="padding-bottom: 20px;border-bottom: 1px solid #C4CFD7;">
                     <div class="title">Sign up, it's free</div>
                     <div class="input-div">
@@ -38,7 +38,7 @@
                             <img width="14px" height="14px" src="/dashboard/images/icon_globe.png" style="margin: 0 1px;">
                             <input ng-model="appname" type="text" id="register_app_name" placeholder="App Name"/>
                         </div>
-                        <div ng-if="!appInStore">
+                        <div ng-hide="appInStore">
                             <div class="input-div">
                                 <img width="12px" height="15px" src="/dashboard/images/icon_key.png" style="margin: 0 2px;">
                                 <input ng-model="bundleid" type="text" id="register_bundle_id" placeholder="Unique Identifier"/>
@@ -56,12 +56,12 @@
                                 <input ng-model="appversion" type="text" id="register_app_version" placeholder="Version"/>
                             </div>
                         </div>
-                        <input class="register_button grey" type="submit" value="My App is not in the Store yet" style="margin-bottom: 0;" ng-if="appInStore" ng-click="showInputForAppDetails();"/>
+                        <input class="register_button grey" type="submit" value="My App is not in the Store yet" style="margin-bottom: 0;" ng-show="appInStore" ng-click="showInputForAppDetails();"/>
                     </div>
                 </div>
                 <input class="register_button" type="submit" value="Sign Up Now" style="margin-top: 60px;" ng-click="showPlansPage();"/>
             </div>
-            <div id="register_form_div" class="register_main_div" ng-if="showPlans">
+            <div id="register_form_div" class="register_main_div" ng-show="showPlans">
                 <div class="title">Choose your Plan</div>
                 <div style="width: 80%;margin: 0 auto 50px auto;">
                     <div class="register_plan">

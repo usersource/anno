@@ -31,24 +31,23 @@ Dashboard.controller('Register', function($scope, $timeout) {
         }, 5000);
     }
 
-    $scope.initRegister = function() {
-        $scope.register_email = "";
-    };
-
     $scope.showInputForAppDetails = function() {
         $scope.appInStore = false;
     };
 
     $scope.showPlansPage = function() {
-        /*if (angular.equals($scope.email.length, 0)) {
+        if (angular.isUndefined($scope.register_email) || angular.equals($scope.register_email.length, 0)) {
             showDashboardMessage("Email can't be empty", true);
+            return;
         }
-        if (angular.equals($scope.password.length, 0)) {
+        if (angular.isUndefined($scope.password) || angular.equals($scope.password.length, 0)) {
             showDashboardMessage("Password can't be empty", true);
+            return;
         }
-        if (!angular.equals($scope.password, $scope.confirm_password)) {
+        if (angular.isUndefined($scope.confirm_password) || !angular.equals($scope.password, $scope.confirm_password)) {
             showDashboardMessage("Passwords aren't matching.", true);
-        }*/
+            return;
+        }
 
         $scope.showPlans = true;
     };
