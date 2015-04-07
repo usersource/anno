@@ -11,20 +11,16 @@
                 <div class="register_page_indicator"></div>
                 <div class="register_page_indicator"></div>
             </div> -->
-            <div id="register_form_div" class="register_main_div">
+            <div id="register_form_div" class="register_main_div" ng-if="!showPlans">
                 <div style="padding-bottom: 20px;border-bottom: 1px solid #C4CFD7;">
-                    <div ng-show="hideTeamKeyField" style="margin-top: 30px; font-size: 26px;">
-                        <img width="50px" height="50px" style="border-radius: 12px;" ng-src="{{appicon && appicon || '/dashboard/images/icon_mobile.png'}}">
-                        <div style="display: inline-block; margin-left: 18px; vertical-align: middle;">{{::appname}}</div>
-                    </div>
                     <div class="title">Sign up, it's free</div>
                     <div class="input-div">
                         <img width="16px" height="16px" src="/dashboard/images/icon_mentions.png">
-                        <input ng-model="fullname" type="text" id="register_full_name" placeholder="Full Name"/>
+                        <input ng-model="fullname" type="text" id="register_full_name" placeholder="Full Name" />
                     </div>
                     <div class="input-div">
                         <img width="16px" height="10px" src="/dashboard/images/icon_mail.png">
-                        <input ng-model="email" type="email" id="register_email" placeholder="Email Address"/>
+                        <input ng-model="register_email" type="email" id="register_email" placeholder="Email Address"/>
                     </div>
                     <div class="input-div">
                         <img width="12px" height="15px" src="/dashboard/images/icon_password.png" style="margin: 0 2px;">
@@ -42,7 +38,7 @@
                             <img width="14px" height="14px" src="/dashboard/images/icon_globe.png" style="margin: 0 1px;">
                             <input ng-model="appname" type="text" id="register_app_name" placeholder="App Name"/>
                         </div>
-                        <div style="display: none;">
+                        <div ng-if="!appInStore">
                             <div class="input-div">
                                 <img width="12px" height="15px" src="/dashboard/images/icon_key.png" style="margin: 0 2px;">
                                 <input ng-model="bundleid" type="text" id="register_bundle_id" placeholder="Unique Identifier"/>
@@ -60,12 +56,12 @@
                                 <input ng-model="appversion" type="text" id="register_app_version" placeholder="Version"/>
                             </div>
                         </div>
-                        <input class="register_button grey" type="submit" value="My App is not in App Store" />
+                        <input class="register_button grey" type="submit" value="My App is not in the Store yet" style="margin-bottom: 0;" ng-if="appInStore" ng-click="showInputForAppDetails();"/>
                     </div>
                 </div>
-                <input class="register_button" type="submit" value="Sign Up Now" style="display: none;" />
+                <input class="register_button" type="submit" value="Sign Up Now" style="margin-top: 60px;" ng-click="showPlansPage();"/>
             </div>
-            <div id="register_form_div" class="register_main_div" style="display: none;">
+            <div id="register_form_div" class="register_main_div" ng-if="showPlans">
                 <div class="title">Choose your Plan</div>
                 <div style="width: 80%;margin: 0 auto 50px auto;">
                     <div class="register_plan">

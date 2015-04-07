@@ -19,7 +19,40 @@ Dashboard.controller('NoAuthHeader', function($scope, $routeParams, $location) {
     };
 });
 
-Dashboard.controller('Register', function($scope) {});
+Dashboard.controller('Register', function($scope, $timeout) {
+    $scope.showPlans = false;
+    $scope.appInStore = true;
+
+    function showDashboardMessage(message, error_type) {
+        $scope.error_message = message;
+        $scope.dashboard_error_type = error_type || false;
+        $timeout(function() {
+            $scope.error_message = "";
+        }, 5000);
+    }
+
+    $scope.initRegister = function() {
+        $scope.register_email = "";
+    };
+
+    $scope.showInputForAppDetails = function() {
+        $scope.appInStore = false;
+    };
+
+    $scope.showPlansPage = function() {
+        /*if (angular.equals($scope.email.length, 0)) {
+            showDashboardMessage("Email can't be empty", true);
+        }
+        if (angular.equals($scope.password.length, 0)) {
+            showDashboardMessage("Password can't be empty", true);
+        }
+        if (!angular.equals($scope.password, $scope.confirm_password)) {
+            showDashboardMessage("Passwords aren't matching.", true);
+        }*/
+
+        $scope.showPlans = true;
+    };
+});
 
 Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams, Utils, DashboardConstants, DataService) {
     var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
