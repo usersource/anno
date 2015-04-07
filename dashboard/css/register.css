@@ -3,6 +3,7 @@
   height: 100%;
   position: absolute;
   background: #f9f9f9;
+  overflow: auto;
 }
 #action-button input {
   padding: 0 20px;
@@ -25,7 +26,7 @@
 }
 #register #register_inner {
   text-align: center;
-  margin-top: 124px;
+  margin: 124px 0 50px 0;
 }
 #register .register_main_div {
   border-radius: 4px;
