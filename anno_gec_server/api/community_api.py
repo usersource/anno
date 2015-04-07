@@ -335,10 +335,11 @@ class CommunityApi(remote.Service):
         return CommunityAdminMasterListMessage(communities=communities_message)
 
     @endpoints.method(CreateCommunityMessage, CommunityAdminMasterListMessage,
-                      path="community/create_sdk_community", http_method="POST", name="community.create_sdk_community")
+                      path="community/create_sdk_community", http_method="POST",
+                      name="community.create_sdk_community")
     def create_sdk_community(self, request):
         team_key = request.team_key
-        app_name = request.app_name
+        app_name = request.app.name
         community_name = request.community_name
 
         app = AppInfo.query().filter(AppInfo.lc_name == app_name.lower()).get()

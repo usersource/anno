@@ -42,7 +42,7 @@ class CommunityCircleMembersListMessage(messages.Message):
 class CreateCommunityMessage(messages.Message):
     community_name = messages.StringField(1)
     team_key = messages.StringField(2)
-    app_name = messages.StringField(3)
+    app = messages.MessageField(AppInfoMessage, 3)
     admin_user = messages.MessageField(CreateUserMessage, 4)
     other_users = messages.MessageField(CreateUserMessage, 5, repeated=True)
 
