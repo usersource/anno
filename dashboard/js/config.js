@@ -22,7 +22,7 @@ Dashboard.config(function($routeProvider, $locationProvider) {
     }).when('/dashboard/:teamHash?/:teamName?/account', {
         templateUrl: '/dashboard/partials/account.html',
         controller: 'Account'
-    }).when('/dashboard/:teamHash?/:teamName?/getstarted', {
+    }).when('/dashboard/:teamHash?/:teamName?/guide', {
         templateUrl: '/dashboard/partials/getstarted.html',
         controller: 'GetStarted'
     }).when('/dashboard/:teamHash?/:teamName?/members', {
