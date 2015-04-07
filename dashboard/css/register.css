@@ -104,6 +104,52 @@
   background-color: #9399A5;
   border: 1px solid #939393;
 }
+#register .register_plan {
+  width: 48%;
+  display: inline-block;
+  padding: 30px;
+  border: 1px solid #C4CFD7;
+  border-radius: 4px;
+  text-align: center;
+}
+#register .register_plan.selected {
+  border: 1px solid #F62;
+}
+#register .register_plan .register_plan_selected {
+  width: 31px;
+  height: 31px;
+  display: inline-block;
+  background-image: url("/dashboard/images/check-grey.png");
+  margin-bottom: 16px;
+}
+#register .register_plan.selected .register_plan_selected {
+  background-image: url("/dashboard/images/check-green.png");
+}
+#register .register_plan .register_plan_name {
+  margin: 0 0 16px 0 !important;
+}
+#register .register_plan .register_plan_price {
+  font-weight: 900;
+  font-size: 24px;
+  margin-bottom: 16px;
+  color: #9399A5;
+}
+#register .register_plan.selected .register_plan_price {
+  color: #F62;
+}
+#register .register_plan .register_plan_desc {
+  margin-bottom: 30px;
+}
+#register .register_plan input.register_plan_select {
+  width: 90%;
+  margin-bottom: 20px;
+  background-color: #9399A5;
+  border: 1px solid #939393;
+}
+#register .register_plan.selected input.register_plan_select {
+  background-color: #F62;
+  border: 1px solid #F65007;
+}
 
 @media (max-width: 768px) {
   #register #register_inner .input-div,
