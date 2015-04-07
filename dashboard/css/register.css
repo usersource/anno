@@ -49,7 +49,7 @@
 #register .register_page_indicator:last-child {
   margin-right: 0;
 }
-#register #register_inner #title {
+#register #register_inner .title {
   font-size: 26px;
   color: #111D2B;
   margin: 30px 0;
@@ -86,7 +86,7 @@
 #register #register_team_key {
   margin-bottom: 20px;
 }
-#register #register_button {
+#register .register_button {
   width: 66.666666667%;
   height: 40px;
   margin: 0 auto;
@@ -100,10 +100,14 @@
   padding: 0;
   outline: 0;
 }
+#register .register_button.grey {
+  background-color: #9399A5;
+  border: 1px solid #939393;
+}
 
 @media (max-width: 768px) {
   #register #register_inner .input-div,
-  #register #register_button {
+  #register .register_button {
     width: 90%;
   }
 }

@@ -11,13 +11,13 @@
                 <div class="register_page_indicator"></div>
                 <div class="register_page_indicator"></div>
             </div>
-            <div id="register_form_div" class="register_main_div">
+            <div id="register_form_div" class="register_main_div" style="display: none;">
                 <form ng-submit="authenticate_dashboard();">
                     <div ng-show="hideTeamKeyField" style="margin-top: 30px; font-size: 26px;">
                         <img width="50px" height="50px" style="border-radius: 12px;" ng-src="{{appicon && appicon || '/dashboard/images/icon_mobile.png'}}">
                         <div style="display: inline-block; margin-left: 18px; vertical-align: middle;">{{::appname}}</div>
                     </div>
-                    <div id="title">Sign up, it's free</div>
+                    <div class="title">Sign up, it's free</div>
                     <div class="input-div">
                         <img width="16px" height="16px" src="/dashboard/images/icon_mentions.png">
                         <input ng-model="fullname" type="text" id="register_full_name" placeholder="Full Name"/>
@@ -30,8 +30,35 @@
                         <img width="12px" height="15px" src="/dashboard/images/icon_password.png" style="margin: 0 2px;">
                         <input ng-model="password" type="password" id="register_password" placeholder="Password"/>
                     </div>
-                    <input id="register_button" type="submit" value="Sign Up Now">
+                    <input class="register_button" type="submit" value="Sign Up Now">
                 </form>
+            </div>
+            <div id="register_form_div" class="register_main_div">
+                <div class="title">App Details</div>
+                <div style="border-bottom: 1px solid #C4CFD7;border: 0;">
+                    <div class="input-div">
+                        <img width="14px" height="14px" src="/dashboard/images/icon_globe.png" style="margin: 0 1px;">
+                        <input ng-model="appname" type="text" id="register_app_name" placeholder="App Name"/>
+                    </div>
+                    <div class="input-div">
+                        <img width="12px" height="15px" src="/dashboard/images/icon_key.png" style="margin: 0 2px;">
+                        <input ng-model="bundleid" type="text" id="register_bundle_id" placeholder="Unique Identifier"/>
+                    </div>
+                    <div class="input-div">
+                        <img width="14px" height="14px" src="/dashboard/images/icon_globe.png" style="margin: 0 1px;">
+                        <input ng-model="appurl" type="text" id="register_app_url" placeholder="App URL"/>
+                    </div>
+                    <div class="input-div">
+                        <img width="14px" height="14px" src="/dashboard/images/icon_globe.png" style="margin: 0 1px;">
+                        <input ng-model="appiconurl" type="text" id="register_app_icon_url" placeholder="App Icon URL"/>
+                    </div>
+                    <div class="input-div">
+                        <img width="12px" height="14px" src="/dashboard/images/icon_version.png" style="margin: 0 2px;">
+                        <input ng-model="appversion" type="text" id="register_app_version" placeholder="Version"/>
+                    </div>
+                    <input class="register_button" type="submit" value="Submit">
+                </div>
+                <input class="register_button grey" type="submit" value="My App is not in App Store" style="margin-top: 30px;display:none;" />
             </div>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-1 col-xs-1"></div>
