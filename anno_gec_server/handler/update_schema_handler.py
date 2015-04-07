@@ -20,6 +20,7 @@ from helper.utils import extract_tags_from_text
 from helper.utils import md5
 from helper.utils_enum import SearchIndexName
 from helper.utils_enum import CircleType, CircleValue
+from helper.utils_enum import PlanType
 from message.appinfo_message import AppInfoMessage
 from message.community_message import CommunityMessage
 from message.user_message import UserMessage
@@ -50,6 +51,7 @@ def create_community_circle():
                               CircleValue.BETA_TESTER : CircleType.BETA_TESTER,
                               CircleValue.ALPHA_TESTER : CircleType.ALPHA_TESTER,
                               CircleValue.DEVELOPER : CircleType.DEVELOPER }
+        community.plan = PlanType.BASIC
         community.put()
 
 def create_teams():

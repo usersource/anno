@@ -21,6 +21,7 @@ class CommunityMessage(messages.Message):
     user = messages.MessageField(UserMessage, 8)
     team_key = messages.StringField(9)
     team_secret = messages.StringField(10)
+    plan = messages.StringField(11)
 
 class CommunityAdminMasterMessage(messages.Message):
     community_name = messages.StringField(1)
@@ -45,6 +46,7 @@ class CreateCommunityMessage(messages.Message):
     app = messages.MessageField(AppInfoMessage, 3)
     admin_user = messages.MessageField(CreateUserMessage, 4)
     other_users = messages.MessageField(CreateUserMessage, 5, repeated=True)
+    plan = messages.StringField(6)
 
 class CommunityAdminMasterListMessage(messages.Message):
     communities = messages.MessageField(CommunityAdminMasterMessage, 1, repeated=True)

@@ -122,6 +122,11 @@ DashboardConstantsModule.value("DashboardConstants", {
             "root" : "community",
             "path" : "community/appicon/update",
             "method" : "POST"
+        },
+        "community.community.create_sdk_community" : {
+            "root" : "community",
+            "path" : "community/create_sdk_community",
+            "method" : "POST"
         }
     },
     borderColor : "#ff9900",

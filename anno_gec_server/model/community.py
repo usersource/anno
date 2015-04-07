@@ -20,6 +20,7 @@ class Community(ndb.Model):
     team_secret = ndb.StringProperty()
     circles = ndb.JsonProperty()
     team_hash = ndb.StringProperty()
+    plan = ndb.StringProperty()
 
     def to_response_message(self):
         return CommunityMessage(id=self.key.id(),
@@ -78,7 +79,7 @@ class Community(ndb.Model):
             community = cls(name=message.name, description=message.description,
                             welcome_msg=message.welcome_msg, type=message.type,
                             team_key=message.team_key, team_secret=message.team_secret,
-                            team_hash=team_hash)
+                            team_hash=team_hash, plan=message.plan)
             community.circles = { CircleValue.CONTRIBUTOR : CircleType.CONTRIBUTOR,
                                   CircleValue.BETA_TESTER : CircleType.BETA_TESTER,
                                   CircleValue.ALPHA_TESTER : CircleType.ALPHA_TESTER,
@@ -103,7 +104,7 @@ class Community(ndb.Model):
 
             if user:
                 from model.userrole import UserRole
-                userrole = UserRole.insert(user, community, userrole_type)
+                userrole = UserRole.insert(user, community, userrole_type, int(CircleValue.DEVELOPER))
 
             if userrole is None:
                 community.key.delete()

@@ -10,13 +10,14 @@ from protorpc import remote
 
 from helper.settings import anno_js_client_id
 from helper.utils import get_user_from_request
-from helper.utils_enum import InvitationStatusType, UserRoleType, AuthSourceType
 from helper.utils import auth_user
 from helper.utils import is_auth_user_admin
 from helper.utils import getAppInfo
 from helper.utils import md5
 from helper.utils import send_added_user_email
 from helper.utils import update_user_team_token
+from helper.utils_enum import InvitationStatusType, UserRoleType, AuthSourceType
+from helper.utils_enum import PlanType
 from message.community_message import CommunityMessage
 from message.community_message import CreateCommunityMessage
 from message.community_message import CommunityHashResponseMessage
@@ -340,19 +341,23 @@ class CommunityApi(remote.Service):
     def create_sdk_community(self, request):
         team_key = request.team_key
         app_name = request.app.name
-        community_name = request.community_name
+        community_name = request.community_name or app_name
+        plan = request.plan or PlanType.BASIC
 
         app = AppInfo.query().filter(AppInfo.lc_name == app_name.lower()).get()
         if not app:
             appinfo_message = AppInfoMessage()
             appinfo_message.name = app_name
+            appinfo_message.icon_url = request.app.icon_url
+            appinfo_message.version = request.app.version
             app = AppInfo.insert(appinfo_message)
 
         community = Community.getCommunityFromTeamKey(team_key=team_key)
         if not community:
             community_message = CommunityMessage(name=community_name,
                                                  team_key=team_key,
-                                                 team_secret=md5(community_name.lower()))
+                                                 team_secret=md5(community_name.lower()),
+                                                 plan=plan)
             community_message.user = UserMessage(user_email=request.admin_user.user_email,
                                                  display_name=request.admin_user.display_name,
                                                  password=request.admin_user.password)

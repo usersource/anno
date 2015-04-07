@@ -45,10 +45,6 @@
                             </div>
                             <div class="input-div">
                                 <img width="14px" height="14px" src="/dashboard/images/icon_globe.png" style="margin: 0 1px;">
-                                <input ng-model="appurl" type="text" id="register_app_url" placeholder="App URL"/>
-                            </div>
-                            <div class="input-div">
-                                <img width="14px" height="14px" src="/dashboard/images/icon_globe.png" style="margin: 0 1px;">
                                 <input ng-model="appiconurl" type="text" id="register_app_icon_url" placeholder="App Icon URL"/>
                             </div>
                             <div class="input-div">
@@ -69,7 +65,7 @@
                         <div class="register_plan_name title">Basic Plan</div>
                         <div class="register_plan_price">Free</div>
                         <div class="register_plan_desc">Praesent magna est, mattis quis laoreet sit amet, rhoncus ac felis</div>
-                        <input class="register_button register_plan_select" type="submit" value="Choose Basic Plan">
+                        <input class="register_button register_plan_select" type="submit" value="Choose Basic Plan" ng-click="createSDKTeam();">
                     </div>
                     <div class="register_plan selected" style="margin-left: 3%;vertical-align: top;">
                         <div class="register_plan_selected"></div>
