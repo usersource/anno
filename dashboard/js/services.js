@@ -329,8 +329,7 @@ ServiceModule.factory('DataService', function($http, $location, $window, $cookie
         var req = {
             method : endpointData.method,
             url : url,
-            params : params,
-            cache : true
+            params : params
         };
 
         if (req.method === "POST") {
