@@ -18,6 +18,7 @@ ServiceModule.factory('Utils', function($cookieStore) {
         $cookieStore.put('user_image_url', data.image_url);
         $cookieStore.put('team_key', data.team_key);
         $cookieStore.put('team_name', data.team_name);
+        $cookieStore.put('team_hash', data.team_hash);
         $cookieStore.put('user_team_token', angular.fromJson(data.user_team_token));
         $cookieStore.put('role', data.role);
     }
@@ -29,6 +30,7 @@ ServiceModule.factory('Utils', function($cookieStore) {
         $cookieStore.remove('user_image_url');
         $cookieStore.remove('team_key');
         $cookieStore.remove('team_name');
+        $cookieStore.remove('team_hash');
         $cookieStore.remove('user_team_token');
         $cookieStore.remove('role');
     }
