@@ -42,19 +42,6 @@ handlers:
   static_dir: dashboard/admin_team_master
   login: admin
 
-# GetStarted doc routes
-- url: /getstarted/(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css|eot|svg|ttf|woff))
-  static_files: getstarted/\1
-  upload: getstarted/(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css|eot|svg|ttf|woff))
-- url: /getstarted/docs/(.+)/index.html
-  static_files: getstarted/docs/\1/index.html
-  upload: getstarted/docs/(.+)/index.html
-- url: /getstarted/docs/
-  static_files: getstarted/docs/index.html
-  upload: getstarted/docs/(.*)
-- url: /getstarted/docs
-  static_dir: getstarted/docs
-
 - url: /.*
   script: main.application
 
