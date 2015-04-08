@@ -112,11 +112,7 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
                     Utils.removeRedirectURL();
                     window.location = decodeURIComponent(redirectTo).replace(/"/g, '');
                 } else {
-                    if (angular.isDefined(team_hash)) {
-                        $location.path('/dashboard/' + team_hash + '/' + team_name + '/feed');
-                    } else {
-                        $location.path('/dashboard/feed');
-                    }
+                    $location.path(Utils.getDashboardURL() + "/feed");
                 }
             } else {
                 $scope.error_message = "Authentication failed. Please try again.";

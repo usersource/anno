@@ -40,14 +40,17 @@ Dashboard.config(function($routeProvider, $locationProvider) {
     $locationProvider.html5Mode({ enabled: true, requireBase: false });
 });
 
-Dashboard.run(function($rootScope, $location, $cookieStore) {
+Dashboard.run(function($rootScope, $location, $cookieStore, Utils) {
     $rootScope.$on("$routeChangeStart", function(event, next, current) {
         var redirectTo, redirectURL;
 
         if ($cookieStore.get('authenticated')) {
             if (angular.equals(next.controller, "Login") ||
-                angular.equals(next.controller, "Register")) {
+                angular.equals(next.controller, "Register") ||
+                angular.isUndefined(next.controller)) {
                 redirectTo = "feed";
+            } else {
+                redirectTo = Utils.getRoutePath($location.path());
             }
         } else {
             redirectTo = "login";
@@ -64,7 +67,7 @@ Dashboard.run(function($rootScope, $location, $cookieStore) {
             if (next.params.hasOwnProperty("teamHash") && next.params.hasOwnProperty("teamName")) {
                 $location.path("/dashboard/" + next.params.teamHash + "/" + next.params.teamName + "/" + redirectTo);
             } else  {
-                $location.path("/dashboard/" + redirectTo);
+                $location.path(Utils.getDashboardURL() + "/" + redirectTo);
             }
         }
     });

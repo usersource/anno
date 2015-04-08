@@ -200,7 +200,7 @@ ServiceModule.factory('Utils', function($cookieStore, $location) {
     };
 
     function getTeamNameForURL(team_name) {
-        return team_name.replace(/\W+/g, "-").toLowerCase();
+        return team_name.replace(/\W+/g, "-").replace(/^\-/, '').replace(/\-$/, '').toLowerCase();
     }
 
     function getFullDashboardURL(community_name, team_hash) {
