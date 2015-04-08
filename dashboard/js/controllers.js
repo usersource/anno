@@ -898,26 +898,28 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
             "circle" : $scope.user_circle
         };
 
-        function onSuccess(message) {
+        function onSuccess(message, add_user) {
             $scope.addMemberScreenVisible = false;
             showDashboardMessage(message);
-            angular.forEach($scope.circles, function(circle) {
-                if (angular.equals(circle.circle_name, $scope.user_circle)) {
-                    var new_member = {
-                        "user_email" : $scope.user_email,
-                        "display_name" : $scope.user_display_name,
-                        "password_present" : true,
-                        "image_url" : $scope.user_image_url,
-                        "role" : $scope.user_role
-                    };
+            if (angular.equals(add_user, true)) {
+                angular.forEach($scope.circles, function(circle) {
+                    if (angular.equals(circle.circle_name, $scope.user_circle)) {
+                        var new_member = {
+                            "user_email" : $scope.user_email,
+                            "display_name" : $scope.user_display_name,
+                            "password_present" : true,
+                            "image_url" : $scope.user_image_url,
+                            "role" : $scope.user_role
+                        };
 
-                    if (circle.hasOwnProperty('users') && circle.users.length) {
-                        circle.users.push(new_member);
-                    } else {
-                        circle.users = Array(new_member);
+                        if (circle.hasOwnProperty('users') && circle.users.length) {
+                            circle.users.push(new_member);
+                        } else {
+                            circle.users = Array(new_member);
+                        }
                     }
-                }
-            });
+                });
+            }
             clearState();
         }
 
@@ -932,7 +934,7 @@ Dashboard.controller('Members', function($scope, $timeout, $location, $cookieSto
         } else {
             DataService.makeHTTPCall("community.user.insert", api_data, function(data) {
                 var message = "'" + $scope.user_display_name + "' is added to team.";
-                onSuccess(message);
+                onSuccess(message, true);
             }, function(status) {
             });
         }
