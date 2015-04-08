@@ -199,17 +199,33 @@ ServiceModule.factory('Utils', function($cookieStore, $location) {
         return newArr;
     };
 
+    function getTeamNameForURL(team_name) {
+        return team_name.replace(/\W+/g, "-").toLowerCase();
+    }
+
     function getFullDashboardURL(community_name, team_hash) {
         if (community_name && team_hash) {
             var url = $location.protocol() + "://" + $location.host();
             if ($location.port() !== 443) {
                 url = url + ":" + $location.port();
             }
-            url = url + "/dashboard/" + team_hash + "/" + community_name.replace(/\W+/g, "-").toLowerCase();
+            url = url + "/dashboard/" + team_hash + "/" + this.getTeamNameForURL(community_name);
             return url;
         } else {
             return "";
         }
+    }
+
+    function getDashboardURL() {
+        var team_name = $cookieStore.get('team_name'),
+            team_hash = $cookieStore.get('team_hash'),
+            url = "/dashboard";
+
+        if (angular.isDefined(team_name) && angular.isDefined(team_hash)) {
+            url = url + "/" + team_hash + "/" + this.getTeamNameForURL(team_name);
+        }
+
+        return url;
     }
 
     return {
@@ -226,7 +242,9 @@ ServiceModule.factory('Utils', function($cookieStore, $location) {
         getAnnoById : getAnnoById,
         watchersContainedIn : watchersContainedIn,
         getUniqueData : getUniqueData,
-        getFullDashboardURL : getFullDashboardURL
+        getTeamNameForURL : getTeamNameForURL,
+        getFullDashboardURL : getFullDashboardURL,
+        getDashboardURL : getDashboardURL
     };
 });
 
