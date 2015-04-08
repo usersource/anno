@@ -40,13 +40,22 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
             showDashboardMessage("Email can't be empty", true);
             return;
         }
+
         if (angular.isUndefined($scope.password) || angular.equals($scope.password.length, 0)) {
             showDashboardMessage("Password can't be empty", true);
             return;
         }
+
         if (angular.isUndefined($scope.confirm_password) || !angular.equals($scope.password, $scope.confirm_password)) {
             showDashboardMessage("Passwords aren't matching.", true);
             return;
+        }
+
+        if (!$scope.appInStore) {
+            if (angular.isUndefined($scope.bundleid) || !angular.equals($scope.bundleid.length, 0)) {
+                showDashboardMessage("Unique Identifier can't be empty", true);
+                return;
+            }
         }
 
         $scope.showPlans = true;
