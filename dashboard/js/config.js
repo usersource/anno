@@ -45,7 +45,8 @@ Dashboard.run(function($rootScope, $location, $cookieStore) {
         var redirectTo, redirectURL;
 
         if ($cookieStore.get('authenticated')) {
-            if (next.templateUrl === "/dashboard/partials/login.html") {
+            if (angular.equals(next.controller, "Login") ||
+                angular.equals(next.controller, "Register")) {
                 redirectTo = "feed";
             }
         } else {
