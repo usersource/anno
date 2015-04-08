@@ -6,8 +6,8 @@ Download the SDK for your platform and then read the [iOS Developer Guide](iosug
 
 ## SDK for iOS 
 
-Download the latest [SDK for iOS](http://storage.googleapis.com/usersource_sdk/ios/latest/UserSource_SDK_iOS.zip)
+Download the latest [SDK for iOS](http://downloads.usersource.io/sdk/ios/latest/UserSource_SDK_iOS.zip)
 
 ## SDK for Android
 
-Download the latest [SDK for Android](http://storage.googleapis.com/usersource_sdk/android/latest/UserSource_SDK_Android.zip)
+Download the latest [SDK for Android](http://downloads.usersource.io/sdk/android/latest/UserSource_SDK_Android.zip)
