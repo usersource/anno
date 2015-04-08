@@ -6,7 +6,7 @@ String.prototype.replaceAt = function(startIndex, replaceCount, character) {
 
 var ServiceModule = angular.module('ServiceModule', ['ngCookies', 'DashboardConstantsModule']);
 
-ServiceModule.factory('Utils', function($cookieStore) {
+ServiceModule.factory('Utils', function($cookieStore, $location) {
     function getRoutePath(location_path) {
         return location_path.split("/").reverse()[0];
     }
@@ -199,6 +199,19 @@ ServiceModule.factory('Utils', function($cookieStore) {
         return newArr;
     };
 
+    function getFullDashboardURL(community_name, team_hash) {
+        if (community_name && team_hash) {
+            var url = $location.protocol() + "://" + $location.host();
+            if ($location.port() !== 443) {
+                url = url + ":" + $location.port();
+            }
+            url = url + "/dashboard/" + team_hash + "/" + community_name.replace(/\W+/g, "-").toLowerCase();
+            return url;
+        } else {
+            return "";
+        }
+    }
+
     return {
         getRoutePath : getRoutePath,
         storeUserDataInCookies : storeUserDataInCookies,
@@ -212,7 +225,8 @@ ServiceModule.factory('Utils', function($cookieStore) {
         getUniqueEngagedUsers : getUniqueEngagedUsers,
         getAnnoById : getAnnoById,
         watchersContainedIn : watchersContainedIn,
-        getUniqueData : getUniqueData
+        getUniqueData : getUniqueData,
+        getFullDashboardURL : getFullDashboardURL
     };
 });
 

@@ -19,7 +19,7 @@ Dashboard.controller('NoAuthHeader', function($scope, $routeParams, $location) {
     };
 });
 
-Dashboard.controller('Register', function($scope, $timeout, $location, DataService) {
+Dashboard.controller('Register', function($scope, $timeout, $location, DataService, Utils) {
     $scope.showPlans = false;
     $scope.appInStore = true;
 
@@ -52,19 +52,6 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
         $scope.showPlans = true;
     };
 
-    function getDashboardURL(community_name, team_hash) {
-        if (community_name && team_hash) {
-            var url = $location.protocol() + "://" + $location.host();
-            if ($location.port() !== 443) {
-                url = url + ":" + $location.port();
-            }
-            url = url + "/dashboard/" + team_hash + "/" + community_name.replace(/\W+/g, "-").toLowerCase();
-            return url;
-        } else {
-            return "";
-        }
-    }
-
     $scope.createSDKTeam = function() {
         DataService.makeHTTPCall("community.community.create_sdk_community", {
             "app" : {
@@ -81,7 +68,7 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
         }, function(data) {
             if (data.communities.length) {
                 var community = data.communities[0];
-                window.location = getDashboardURL(community.community_name, community.team_hash);
+                window.location = Utils.getFullDashboardURL(community.community_name, community.team_hash);
             }
         }, function(status) {
         });
