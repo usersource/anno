@@ -22,7 +22,6 @@ Dashboard.controller('NoAuthHeader', function($scope, $routeParams, $location) {
 Dashboard.controller('Register', function($scope, $timeout, $location, DataService, Utils, DashboardConstants) {
     $scope.showPlans = false;
     $scope.appInStore = true;
-    $scope.showPlans = true;
 
     // START OF STRIPE
     var handler = StripeCheckout.configure({
