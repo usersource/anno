@@ -151,6 +151,28 @@
   background-color: #F62;
   border: 1px solid #F65007;
 }
+#register #appinfo_autocomplete {
+  width: 100%;
+  position: absolute;
+  left: 0;
+  background-color: #FFF;
+  border: 1px solid #C4CFD7;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+#register .appinfo_option {
+  width: 100%;
+  padding: 8px;
+  border-bottom: 1px solid #C4CFD7;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#register .appinfo_option:last-child {
+  border-bottom: 0;
+}
 
 @media (max-width: 768px) {
   #register #register_inner .input-div,

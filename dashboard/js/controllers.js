@@ -85,20 +85,25 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
 
     $scope.getAppForRegister = function() {
         var app_name = $scope.appname.toLowerCase();
-        DataService.makeHTTPCall("appinfo.appinfo.get_by_name", {
-            "name" : app_name
-        }, function(data) {
-            if (data.hasOwnProperty('app_list') && data.app_list.length) {
-                var new_data = data.app_list.filter(function(app) {
-                    return app.name.toLowerCase().indexOf(app_name) !== -1;
-                });
-                new_data = new_data.sort(function(a, b) {
-                    return a.name.toLowerCase().indexOf(app_name) - b.name.toLowerCase().indexOf(app_name);
-                });
-                console.log(new_data);
-            }
-        }, function(status) {
-        });
+
+        if (app_name.length > 2) {
+            DataService.makeHTTPCall("appinfo.appinfo.get_by_name", {
+                "name" : app_name
+            }, function(data) {
+                if (data.hasOwnProperty('app_list') && data.app_list.length) {
+                    var new_data = data.app_list.filter(function(app) {
+                        return angular.equals(app.name.toLowerCase().indexOf(app_name), 0);
+                    });
+
+                    $scope.showAppInfoAutocomplete = true;
+                    $scope.appinfo_list = new_data;
+                } else {
+                    $scope.showAppInfoAutocomplete = false;
+                    $scope.appinfo_list = [];
+                }
+            }, function(status) {
+            });
+        }
     };
 });
 

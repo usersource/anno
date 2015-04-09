@@ -7,7 +7,7 @@ from urllib import quote
 from message.appinfo_message import AppInfoMessage, AppInfoListMessage
 
 class AppInfoGetter(object):
-    ITUNES_SEARCH_URL = 'https://itunes.apple.com/search?term={term}&media=software&limit=50'
+    ITUNES_SEARCH_URL = 'https://itunes.apple.com/search?term={term}&media=software'
 
     @classmethod
     def search(cls, term):
