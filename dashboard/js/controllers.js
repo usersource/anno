@@ -19,9 +19,25 @@ Dashboard.controller('NoAuthHeader', function($scope, $routeParams, $location) {
     };
 });
 
-Dashboard.controller('Register', function($scope, $timeout, $location, DataService, Utils) {
+Dashboard.controller('Register', function($scope, $timeout, $location, DataService, Utils, DashboardConstants) {
     $scope.showPlans = false;
     $scope.appInStore = true;
+    $scope.showPlans = true;
+
+    // START OF STRIPE
+    var handler = StripeCheckout.configure({
+        key: DashboardConstants.Stripe.publishableKey,
+        token: function(token) {
+            console.log(token);
+        }
+    });
+
+    function payWithStripe() {
+        handler.open({
+            amount: DashboardConstants.Stripe.amount
+        });
+    };
+    // END OF STRIPE
 
     function showDashboardMessage(message, error_type) {
         $scope.error_message = message;
@@ -121,6 +137,11 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
         $scope.appiconurl = $scope.selectedApp.icon_url;
         $scope.appversion = $scope.selectedApp.version;
         $scope.bundleid = $scope.selectedApp.bundleid;
+    };
+
+    $scope.selectProPlan = function() {
+        $scope.proPlanSelected = true;
+        payWithStripe();
     };
 });
 
