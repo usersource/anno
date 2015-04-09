@@ -1,0 +1,18 @@
+.navbar .nav .navbtn  {
+	color: #f5f5f5;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	margin-top: 20px;
+	margin-left: 15px;
+}
+
+#back {
+	background: url('../images/usersource/bg.jpg') no-repeat center center;
+	-webkit-animation-name: none;
+	left: 0%;
+	opacity: 0.6;
+}
+
+.home {
+	background-image: url('../images/usersource/mac.png');
+}
