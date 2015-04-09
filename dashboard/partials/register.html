@@ -38,7 +38,10 @@
                             <img width="14px" height="14px" src="/dashboard/images/icon_globe.png" style="margin: 0 1px;">
                             <input ng-model="appname" type="text" id="register_app_name" placeholder="App Name" ng-keyup="getAppForRegister();"/>
                             <div id="appinfo_autocomplete" ng-show="showAppInfoAutocomplete">
-                                <div class="appinfo_option" ng-repeat="appinfo in appinfo_list">{{appinfo.name}}</div>
+                                <div class="appinfo_option" ng-repeat="appinfo in appinfo_list">
+                                    <img width="35px" height="35px" style="border-radius: 4px" ng-src="{{appinfo.icon_url}}" />
+                                    <span style="vertical-align: middle;margin-left: 8px;font-weight: 600;">{{appinfo.name}}</span>
+                                </div>
                             </div>
                         </div>
                         <div ng-hide="appInStore">
