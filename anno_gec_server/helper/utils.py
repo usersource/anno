@@ -417,6 +417,13 @@ def send_created_team_email(team_name, action_user_name):
     body = body % (action_user_name, team_name)
     send_email(SUPPORT_EMAIL_ID, to, subject=subject, html=body)
 
+def send_first_anno_email(team_name, action_user_name):
+    to = GAE_ADMIN_USERS
+    subject = "UserSource '%s': First item created" % PROJECT_NAME
+    body = "Hello,<br/><br/>'%s' created first item for team '%s'."
+    body = body % (action_user_name, team_name)
+    send_email(SUPPORT_EMAIL_ID, to, subject=subject, html=body)
+
 def extract_tags_from_text(text):
     tagcloud = {}
     # find all hashtags
