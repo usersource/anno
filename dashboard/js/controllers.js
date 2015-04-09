@@ -82,6 +82,24 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
         }, function(status) {
         });
     };
+
+    $scope.getAppForRegister = function() {
+        var app_name = $scope.appname.toLowerCase();
+        DataService.makeHTTPCall("appinfo.appinfo.get_by_name", {
+            "name" : app_name
+        }, function(data) {
+            if (data.hasOwnProperty('app_list') && data.app_list.length) {
+                var new_data = data.app_list.filter(function(app) {
+                    return app.name.toLowerCase().indexOf(app_name) !== -1;
+                });
+                new_data = new_data.sort(function(a, b) {
+                    return a.name.toLowerCase().indexOf(app_name) - b.name.toLowerCase().indexOf(app_name);
+                });
+                console.log(new_data);
+            }
+        }, function(status) {
+        });
+    };
 });
 
 Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams, Utils, DashboardConstants, DataService) {

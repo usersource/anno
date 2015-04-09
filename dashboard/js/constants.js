@@ -127,6 +127,11 @@ DashboardConstantsModule.value("DashboardConstants", {
             "root" : "community",
             "path" : "community/create_sdk_community",
             "method" : "POST"
+        },
+        "appinfo.appinfo.get_by_name" : {
+            "root" : "appinfo",
+            "path" : "appinfo/get_by_name",
+            "method" : "GET"
         }
     },
     borderColor : "#ff9900",
