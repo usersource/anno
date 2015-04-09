@@ -20,11 +20,13 @@ done
 
 # if staging and prod were specified, we only do staging
 if [ -n "$STAGING" ]; then
-	target="staging.usersource.io"
-else if [ -n "$PROD" ]; then
-	target="www.usersource.io"
-else
-	echo "Specify --staging or --prod"; echo $usage; exit 1;
+	target="www.staging.usersource.io"
+else 
+	if [ -n "$PROD" ]; then
+		target="www.usersource.io"
+	else
+		echo "Specify --staging or --prod"; echo $usage; exit 1;
+	fi
 fi
 
 (cd $rootdir && gsutil -m rsync -d -r html/ gs://$target)
