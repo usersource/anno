@@ -352,16 +352,14 @@ class CommunityApi(remote.Service):
             appinfo_message.version = request.app.version
             app = AppInfo.insert(appinfo_message)
 
-        community = Community.getCommunityFromTeamKey(team_key=team_key)
-        if not community:
-            community_message = CommunityMessage(name=community_name,
-                                                 team_key=team_key,
-                                                 team_secret=md5(community_name.lower()),
-                                                 plan=plan)
-            community_message.user = UserMessage(user_email=request.admin_user.user_email,
-                                                 display_name=request.admin_user.display_name,
-                                                 password=request.admin_user.password)
-            community, user = Community.insert(community_message, getCommunity=True)
+        community_message = CommunityMessage(name=community_name,
+                                             team_key=team_key,
+                                             team_secret=md5(community_name.lower()),
+                                             plan=plan)
+        community_message.user = UserMessage(user_email=request.admin_user.user_email,
+                                             display_name=request.admin_user.display_name,
+                                             password=request.admin_user.password)
+        community, user = Community.insert(community_message, getCommunity=True)
 
         communities_message = []
         if community and app:

@@ -73,21 +73,24 @@ class Community(ndb.Model):
             else:
                 message.type = CommunityType.PRIVATE
 
-            from helper.utils import md5
-            team_hash = md5(message.team_key)[-8:]
+            community = cls.getCommunityFromTeamKey(team_key=message.team_key)
+            if not community:
+                from helper.utils import md5
+                team_hash = md5(message.team_key)[-8:]
 
-            community = cls(name=message.name, description=message.description,
-                            welcome_msg=message.welcome_msg, type=message.type,
-                            team_key=message.team_key, team_secret=message.team_secret,
-                            team_hash=team_hash, plan=message.plan)
-            community.circles = { CircleValue.CONTRIBUTOR : CircleType.CONTRIBUTOR,
-                                  CircleValue.BETA_TESTER : CircleType.BETA_TESTER,
-                                  CircleValue.ALPHA_TESTER : CircleType.ALPHA_TESTER,
-                                  CircleValue.DEVELOPER : CircleType.DEVELOPER }
-            community.put()
-            respData = "Community created."
+                community = cls(name=message.name, description=message.description,
+                                welcome_msg=message.welcome_msg, type=message.type,
+                                team_key=message.team_key, team_secret=message.team_secret,
+                                team_hash=team_hash, plan=message.plan)
+                community.circles = { CircleValue.CONTRIBUTOR : CircleType.CONTRIBUTOR,
+                                      CircleValue.BETA_TESTER : CircleType.BETA_TESTER,
+                                      CircleValue.ALPHA_TESTER : CircleType.ALPHA_TESTER,
+                                      CircleValue.DEVELOPER : CircleType.DEVELOPER }
+                community.put()
+                respData = "Community created."
 
-            user = get_user_from_request(user_id=message.user.id, user_email=message.user.user_email,
+            user = get_user_from_request(user_id=message.user.id,
+                                         user_email=message.user.user_email,
                                          team_key=message.team_key)
             userrole = None
             userrole_type = UserRoleType.ADMIN if message.team_key else UserRoleType.MANAGER

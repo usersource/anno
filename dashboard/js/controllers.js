@@ -31,6 +31,10 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
         }, 5000);
     }
 
+    $scope.onRegisterClicked = function() {
+        $scope.showAppInfoAutocomplete = false;
+    };
+
     $scope.showInputForAppDetails = function() {
         $scope.appInStore = false;
     };
@@ -84,19 +88,19 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
     };
 
     $scope.getAppForRegister = function() {
-        var app_name = $scope.appname.toLowerCase();
-
-        if (app_name.length > 2) {
+        if (angular.isDefined($scope.appname) && $scope.appname.length > 2) {
             DataService.makeHTTPCall("appinfo.appinfo.get_by_name", {
-                "name" : app_name
+                "name" : $scope.appname
             }, function(data) {
                 if (data.hasOwnProperty('app_list') && data.app_list.length) {
                     var new_data = data.app_list.filter(function(app) {
-                        return angular.equals(app.name.toLowerCase().indexOf(app_name), 0);
+                        return angular.equals(app.name.toLowerCase().indexOf($scope.appname.toLowerCase()), 0);
                     });
 
-                    $scope.showAppInfoAutocomplete = true;
-                    $scope.appinfo_list = new_data;
+                    if (new_data.length) {
+                        $scope.showAppInfoAutocomplete = true;
+                        $scope.appinfo_list = new_data;
+                    }
                 } else {
                     $scope.showAppInfoAutocomplete = false;
                     $scope.appinfo_list = [];
@@ -104,6 +108,19 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
             }, function(status) {
             });
         }
+    };
+
+    $scope.appSelected = function(bundleid) {
+        appNotInStore.hidden = true;
+
+        $scope.selectedApp = $scope.appinfo_list.filter(function(app) {
+            return angular.equals(app.bundleid, bundleid);
+        })[0];
+
+        $scope.appname = $scope.selectedApp.name;
+        $scope.appiconurl = $scope.selectedApp.icon_url;
+        $scope.appversion = $scope.selectedApp.version;
+        $scope.bundleid = $scope.selectedApp.bundleid;
     };
 });
 
