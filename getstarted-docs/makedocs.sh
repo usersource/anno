@@ -4,7 +4,7 @@ rootdir=`dirname $0`
 docsdir=$rootdir/docs
 htmldir=$rootdir/site
 usage=`cat <<HERE
-build static html developer docs and optionally deploy them to google cloud storage
+build static html developer docs and optionally publish them to google cloud storage
 \nusage: $base
 \n\t[--publish]\tpublish the generated html to gcs
 HERE
