@@ -189,6 +189,19 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $window
 
     $scope.initHeader = function() {
         getAppinfoData();
+        checkForCurrentApp();
+    };
+
+    function checkForCurrentApp() {
+        if (angular.isDefined(team_hash)) {
+            DataService.makeHTTPCall("community.community.hash", {
+                "team_hash" : team_hash
+            }, function(data) {
+                if (!angular.equals(data.team_key, team_key)) {
+                    $scope.signoutDashboard();
+                }
+            });
+        }
     };
 
     $scope.signoutButtonClicked = function() {
