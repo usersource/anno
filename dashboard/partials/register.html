@@ -66,14 +66,14 @@
             <div id="register_form_div" class="register_main_div" ng-show="showPlans">
                 <div class="title">Choose your Plan</div>
                 <div style="width: 80%;margin: 0 auto 50px auto;">
-                    <div class="register_plan">
+                    <div class="register_plan" ng-class="{'selected' : !proPlanSelected}">
                         <div class="register_plan_selected"></div>
                         <div class="register_plan_name title">Basic Plan</div>
                         <div class="register_plan_price">Free</div>
                         <div class="register_plan_desc">Praesent magna est, mattis quis laoreet sit amet, rhoncus ac felis</div>
                         <input class="register_button register_plan_select" type="submit" value="Choose Basic Plan" ng-click="createSDKTeam();">
                     </div>
-                    <div class="register_plan selected" style="margin-left: 3%;vertical-align: top;">
+                    <div class="register_plan" ng-class="{'selected' : proPlanSelected}" style="margin-left: 3%;vertical-align: top;">
                         <div class="register_plan_selected"></div>
                         <div class="register_plan_name title">Pro Plan</div>
                         <div class="register_plan_price">$10/month</div>
