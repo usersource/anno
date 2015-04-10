@@ -19,6 +19,7 @@ from helper.utils import send_created_team_email
 from helper.utils import update_user_team_token
 from helper.utils_enum import InvitationStatusType, UserRoleType, AuthSourceType
 from helper.utils_enum import PlanType
+from helper.stripe_payment import StripePayment
 from message.community_message import CommunityMessage
 from message.community_message import CreateCommunityMessage
 from message.community_message import CommunityHashResponseMessage
@@ -39,6 +40,7 @@ from message.user_message import UserMessage
 from message.user_message import UserAdminMasterMessage
 from message.appinfo_message import AppInfoMessage
 from message.common_message import ResponseMessage
+from message.common_message import StripePaymentMessage
 from model.community import Community
 from model.userrole import UserRole
 from model.user import User
@@ -433,3 +435,10 @@ class CommunityApi(remote.Service):
         secret = Community.reset_team_secret(request.team_key)
         new_user_team_token = update_user_team_token(headers=self.request_state.headers, team_secret=secret)
         return CommunityValueMessage(secret=secret, user_team_token=json.dumps(new_user_team_token))
+
+    @endpoints.method(StripePaymentMessage, message_types.VoidMessage,
+                      path="community/stripe/payment", http_method="POST",
+                      name="community.stripe.payment")
+    def get_stripe_payment_info(self, request):
+        StripePayment.create_charge(request)
+        return message_types.VoidMessage()

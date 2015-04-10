@@ -4,7 +4,7 @@ var DashboardConstantsModule = angular.module('DashboardConstantsModule', []);
 
 DashboardConstantsModule.value("DashboardConstants", {
     Stripe : {
-        publishableKey : "pk_test_g6B2Pqk7q633S5u8KwtPBbLO",
+        publishableKey : "pk_test_QkjAhTugzqHQClhlF7pX5r4F",
         name : "UserSource",
         description : "Pro Plan $10/month",
         amount : 1000
@@ -138,6 +138,11 @@ DashboardConstantsModule.value("DashboardConstants", {
             "root" : "appinfo",
             "path" : "appinfo/get_by_name",
             "method" : "GET"
+        },
+        "community.stripe.payment" : {
+            "root" : "community",
+            "path" : "community/stripe/payment",
+            "method" : "POST"
         }
     },
     borderColor : "#ff9900",
