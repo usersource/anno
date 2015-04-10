@@ -139,6 +139,7 @@
   color: #F62;
 }
 #register .register_plan .register_plan_desc {
+  display: none;
   margin-bottom: 30px;
 }
 #register .register_plan input.register_plan_select {
