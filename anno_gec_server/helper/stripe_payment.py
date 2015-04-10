@@ -1,3 +1,4 @@
+import logging
 import stripe
 
 class StripePayment(object):
@@ -9,9 +10,7 @@ class StripePayment(object):
             charge = stripe.Charge.create(
                 amount=1000,
                 currency="usd",
-                source=token_message.id,
-                description="payinguser@example.com"
+                source=token_message.id
             )
-            print charge
         except stripe.CardError, e:
-            print e
+            logging.exception("Error while charging customer: %s" % e)

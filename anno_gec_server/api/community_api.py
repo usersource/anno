@@ -440,6 +440,5 @@ class CommunityApi(remote.Service):
                       path="community/stripe/payment", http_method="POST",
                       name="community.stripe.payment")
     def get_stripe_payment_info(self, request):
-        print request
         StripePayment.create_charge(request)
         return message_types.VoidMessage()
