@@ -103,8 +103,8 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
             }
         }, function(data) {
             if (data.communities.length) {
-                var community = data.communities[0];
-                window.location = Utils.getFullDashboardURL(community.community_name, community.team_hash);
+                // var community = data.communities[0];
+                // window.location = Utils.getFullDashboardURL(community.community_name, community.team_hash);
             }
         }, function(status) {
         });

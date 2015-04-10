@@ -375,7 +375,7 @@ class CommunityApi(remote.Service):
             community_message.community_name = community.name
             community_message.team_key = community.team_key
             community_message.team_secret = community.team_secret
-            community_message.team_hash = community.team_hash
+            # community_message.team_hash = community.team_hash
             community_message.app_name = app.name
             community_message.app_icon = app.icon_url
 
