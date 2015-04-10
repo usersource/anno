@@ -35,7 +35,7 @@
             <div id="add-member-inner">
                 <form class="form-horizontal">
                     <fieldset>
-                        <legend style="text-align: center;border: 0;font-size: 24px;margin-bottom: 30px;">{{(role == adminRole || current_user.user_email == current_user_email) && 'Add Member' || 'Member Detail'}}</legend>
+                        <legend style="text-align: center;border: 0;font-size: 24px;margin-bottom: 30px;">{{viewMemberDetailMode && ((role == adminRole || current_user.user_email == current_user_email) && 'Edit Member' || 'Member Details') || 'Add Member'}}</legend>
                         <div class="popup_close_button" style="padding: 4.916% 5.663%;"ng-click="showAddMemberScreen(false);"></div>
                         <div>
                             <div style="width: 48%;display: inline-block;">
@@ -68,7 +68,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <button type="submit" class="admin-button" id="add_member" style="border: 0;outline: 0;margin-top: 10px;" ng-click="addMember();" ng-if="(role == adminRole || current_user.user_email == current_user_email)">Save Member</button>
+                                    <button type="submit" class="admin-button" id="add_member" style="border: 0;outline: 0;margin-top: 10px;" ng-click="addMember();" ng-if="(role == adminRole || current_user.user_email == current_user_email)">Save</button>
                                 </div>
                             </div>
                             <div style="width: 48%;display: inline-block;vertical-align: top;margin-left: 3%;">
