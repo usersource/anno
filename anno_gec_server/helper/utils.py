@@ -417,6 +417,15 @@ def send_created_team_email(team_name, action_user_name):
     body = body % (action_user_name, team_name)
     send_email(SUPPORT_EMAIL_ID, to, subject=subject, html=body)
 
+def send_access_team_email(action_user_email, team_hash, team_name):
+    dashboard_url = DASHBOARD_URL % (team_hash, parseTeamName(team_name))
+
+    to = action_user_email
+    subject = "UserSource Dashboard"
+    body = "Hello,<br/><br/>You have created your project '%s' successfully.<br/><br/>The dashboard can be accessed at <a href='%s'>%s</a>"
+    body = body % (team_name, dashboard_url, dashboard_url)
+    send_email(SUPPORT_EMAIL_ID, to, subject=subject, html=body)
+
 def send_first_anno_email(team_name, action_user_name):
     to = GAE_ADMIN_USERS
     subject = "UserSource '%s': First item created" % PROJECT_NAME

@@ -16,6 +16,7 @@ from helper.utils import getAppInfo
 from helper.utils import md5
 from helper.utils import send_added_user_email
 from helper.utils import send_created_team_email
+from helper.utils import send_access_team_email
 from helper.utils import update_user_team_token
 from helper.utils_enum import InvitationStatusType, UserRoleType, AuthSourceType
 from helper.utils_enum import PlanType
@@ -394,6 +395,7 @@ class CommunityApi(remote.Service):
             communities_message.append(community_message)
 
         send_created_team_email(community.name, user.display_name)
+        send_access_team_email(user.user_email, community.team_hash, community.name)
         return CommunityAdminMasterListMessage(communities=communities_message)
 
     @endpoints.method(community_without_id_resource_container, CommunityCircleMembersListMessage,
