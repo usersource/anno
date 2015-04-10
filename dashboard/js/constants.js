@@ -138,6 +138,11 @@ DashboardConstantsModule.value("DashboardConstants", {
             "root" : "appinfo",
             "path" : "appinfo/get_by_name",
             "method" : "GET"
+        },
+        "community.stripe.payment" : {
+            "root" : "community",
+            "path" : "community/stripe/payment",
+            "method" : "POST"
         }
     },
     borderColor : "#ff9900",
