@@ -9,7 +9,7 @@
     <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center; white-space: nowrap;">SDK for iOS</div>
     <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Contact</div> -->
     <div id="action-button" class="col-lg-10 col-md-10 col-sm-10 col-xs-10" style="text-align: right;">
-        <input id="login" type="button" value="Log In" ng-click="showLoginPage();" />
-        <input id="signup" type="button" value="Sign Up" ng-click="showRegisterPage();" />
+        <input id="login" type="button" value="Log In" ng-click="showLoginPage();" ng-show="currentController == 'register'" />
+        <input id="signup" type="button" value="Sign Up" ng-click="showRegisterPage();" ng-show="currentController == 'login'" />
     </div>
 </div>

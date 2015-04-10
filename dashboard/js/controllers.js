@@ -2,8 +2,9 @@
 
 var Dashboard = angular.module('Dashboard', ['ngCookies', 'ngRoute', 'DashboardConstantsModule', 'ServiceModule']);
 
-Dashboard.controller('NoAuthHeader', function($scope, $routeParams, $location) {
+Dashboard.controller('NoAuthHeader', function($scope, $routeParams, $location, Utils) {
     var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
+    $scope.currentController = Utils.getRoutePath($location.path());
 
     $scope.showLoginPage = function() {
         var login_path = "/dashboard/";
