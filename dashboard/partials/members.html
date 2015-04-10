@@ -50,7 +50,7 @@
                                     <div class="field_title">Password</div>
                                     <div class="field_div">
                                         <img width="12px" height="15px" src="/dashboard/images/icon_password.png">
-                                        <input type="password" class="field_input" id="userPassword" placeholder="Password" ng-model="user_password">
+                                        <input type="password" class="field_input" id="userPassword" placeholder="Password {{viewMemberDetailMode && '(Leave blank to keep unchanged)' || ''}}" ng-model="user_password">
                                     </div>
                                 </div>
                                 <div>
