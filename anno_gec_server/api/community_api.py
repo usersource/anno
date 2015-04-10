@@ -391,7 +391,7 @@ class CommunityApi(remote.Service):
             community_message.users.append(user_message)
             communities_message.append(community_message)
 
-        send_created_team_email(Community.name, user.display_name)
+        send_created_team_email(community.name, user.display_name)
         return CommunityAdminMasterListMessage(communities=communities_message)
 
     @endpoints.method(community_without_id_resource_container, CommunityCircleMembersListMessage,
