@@ -34,6 +34,8 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
 
     function payWithStripe() {
         handler.open({
+            name: DashboardConstants.Stripe.name,
+            description: DashboardConstants.Stripe.description,
             amount: DashboardConstants.Stripe.amount
         });
     };

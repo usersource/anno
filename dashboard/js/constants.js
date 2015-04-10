@@ -5,6 +5,8 @@ var DashboardConstantsModule = angular.module('DashboardConstantsModule', []);
 DashboardConstantsModule.value("DashboardConstants", {
     Stripe : {
         publishableKey : "pk_test_g6B2Pqk7q633S5u8KwtPBbLO",
+        name : "UserSource",
+        description : "Pro Plan $10/month",
         amount : 1000
     },
     filters : {
