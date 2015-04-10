@@ -19,6 +19,7 @@ from helper.utils import send_created_team_email
 from helper.utils import update_user_team_token
 from helper.utils_enum import InvitationStatusType, UserRoleType, AuthSourceType
 from helper.utils_enum import PlanType
+from helper.stripe_payment import StripePayment
 from message.community_message import CommunityMessage
 from message.community_message import CreateCommunityMessage
 from message.community_message import CommunityHashResponseMessage
@@ -440,4 +441,5 @@ class CommunityApi(remote.Service):
                       name="community.stripe.payment")
     def get_stripe_payment_info(self, request):
         print request
+        StripePayment.create_charge(request)
         return message_types.VoidMessage()
