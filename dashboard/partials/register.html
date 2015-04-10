@@ -37,6 +37,7 @@
                         <div class="input-div" style="position: relative;">
                             <img width="14px" height="14px" src="/dashboard/images/icon_globe.png" style="margin: 0 1px;">
                             <input ng-model="appname" type="text" id="register_app_name" placeholder="App Name{{appInStore && ' in App Store' || ''}}" ng-keyup="getAppForRegister();"/>
+                            <div id="appFetchSpinner" ng-show="appInStore && !hideAppFetchSpinner"></div>
                             <div id="appinfo_autocomplete" ng-show="showAppInfoAutocomplete">
                                 <div class="appinfo_option" ng-repeat="appinfo in appinfo_list" ng-click="appSelected(appinfo.bundleid);">
                                     <img width="35px" height="35px" style="border-radius: 4px" ng-src="{{appinfo.icon_url}}" />

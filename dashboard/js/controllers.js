@@ -23,6 +23,7 @@ Dashboard.controller('NoAuthHeader', function($scope, $routeParams, $location, U
 Dashboard.controller('Register', function($scope, $timeout, $location, DataService, Utils, DashboardConstants) {
     $scope.showPlans = false;
     $scope.appInStore = true;
+    $scope.hideAppFetchSpinner = true;
 
     // START OF STRIPE
     var handler = StripeCheckout.configure({
@@ -107,9 +108,11 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
 
     $scope.getAppForRegister = function() {
         if (angular.isDefined($scope.appname) && $scope.appname.length > 2) {
+            $scope.hideAppFetchSpinner = false;
             DataService.makeHTTPCall("appinfo.appinfo.get_by_name", {
                 "name" : $scope.appname
             }, function(data) {
+                $scope.hideAppFetchSpinner = true;
                 if (data.hasOwnProperty('app_list') && data.app_list.length) {
                     var new_data = data.app_list.filter(function(app) {
                         return angular.equals(app.name.toLowerCase().indexOf($scope.appname.toLowerCase()), 0);
