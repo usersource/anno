@@ -381,9 +381,9 @@ class CommunityApi(remote.Service):
         new_user_team_token = update_user_team_token(headers=self.request_state.headers, team_secret=secret)
         return CommunityValueMessage(secret=secret, user_team_token=json.dumps(new_user_team_token))
 
-    @endpoints.method(StripePaymentMessage, message_types.VoidMessage,
+    @endpoints.method(StripePaymentMessage, ResponseMessage,
                       path="community/stripe/payment", http_method="POST",
                       name="community.stripe.payment")
     def get_stripe_payment_info(self, request):
-        StripePayment.create_charge(request)
-        return message_types.VoidMessage()
+        payment_success = StripePayment.create_charge(request)
+        return ResponseMessage(success=payment_success)

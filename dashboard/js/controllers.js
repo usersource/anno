@@ -29,7 +29,6 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
     var handler = StripeCheckout.configure({
         key: DashboardConstants.Stripe.publishableKey,
         token: function(token) {
-            console.log(token);
             DataService.makeHTTPCall("community.stripe.payment", token, function(data) {
             }, function(status) {
             });
