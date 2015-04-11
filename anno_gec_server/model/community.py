@@ -264,7 +264,7 @@ class Community(ndb.Model):
 
             if pro_plan:
                 if stripe_token:
-                    payment_success = StripePayment.create_charge(stripe_token)
+                    payment_success = StripePayment.create_charge(stripe_token, community.key)
                     if not payment_success:
                         registration_successful = False
                 else:
