@@ -11,7 +11,7 @@
                 <div class="register_page_indicator"></div>
                 <div class="register_page_indicator"></div>
             </div> -->
-            <div id="register_form_div" class="register_main_div" ng-hide="showPlans">
+            <div id="register_form_div" class="register_main_div" ng-hide="showPlans || registrationCompleted">
                 <div style="padding-bottom: 20px;border-bottom: 1px solid #C4CFD7;">
                     <div class="title">Sign up, it's free</div>
                     <div class="input-div">
@@ -64,7 +64,7 @@
                 </div>
                 <input class="register_button" type="submit" value="Sign Up Now" style="margin-top: 60px;" ng-click="showPlansPage();"/>
             </div>
-            <div id="register_form_div" class="register_main_div" ng-show="showPlans">
+            <div id="register_form_div" class="register_main_div" ng-show="showPlans && !registrationCompleted">
                 <div class="title">Choose your Plan</div>
                 <div style="width: 80%;margin: 0 auto 50px auto;">
                     <div class="register_plan" ng-class="{'selected' : !proPlanSelected}">
@@ -82,6 +82,9 @@
                         <input class="register_button register_plan_select" type="submit" value="Choose Pro Plan" ng-click="selectProPlan();">
                     </div>
                 </div>
+            </div>
+            <div id="registration_completion_msg" class="register_main_div" ng-show="registrationCompleted">
+                <div>That's it!<br/><br/>Please check your email for a message from usersource.io.<br/>Click on the link in the email to get started!</div>
             </div>
         </div>
         <div class="col-lg-2 col-md-2 col-sm-1 col-xs-1"></div>

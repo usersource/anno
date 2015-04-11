@@ -184,6 +184,13 @@
   background-repeat: no-repeat;
   background-position: 50%;
 }
+#register #registration_completion_msg {
+  width: 60%;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: left;
+  font-size: 18px;
+}
 
 @media (max-width: 768px) {
   #register #register_inner .input-div,

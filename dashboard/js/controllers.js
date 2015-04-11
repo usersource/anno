@@ -104,6 +104,8 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
             if (data.communities.length) {
                 // var community = data.communities[0];
                 // window.location = Utils.getFullDashboardURL(community.community_name, community.team_hash);
+                $scope.showPlans = false;
+                $scope.registrationCompleted = true;
             }
         }, function(status) {
         });
