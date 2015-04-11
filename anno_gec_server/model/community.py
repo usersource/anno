@@ -6,8 +6,13 @@ from google.appengine.ext import ndb
 from model.appinfo import AppInfo
 from model.user import User
 from message.community_message import CommunityMessage
+from message.community_message import CommunityAdminMasterMessage
+from message.appinfo_message import AppInfoMessage
+from message.user_message import UserMessage
+from message.user_message import UserAdminMasterMessage
 from helper.utils_enum import CommunityType, UserRoleType, AuthSourceType
 from helper.utils_enum import CircleType, CircleValue
+from helper.utils_enum import PlanType
 
 class Community(ndb.Model):
     name = ndb.StringProperty(required=True)
@@ -198,3 +203,66 @@ class Community(ndb.Model):
             community.put()
 
         return team_secret
+
+    @classmethod
+    def create_sdk_team(cls, message):
+        team_key = message.team_key
+        app_name = message.app.name
+        community_name = message.community_name or app_name
+        plan = message.plan or PlanType.BASIC
+
+        app = AppInfo.query().filter(AppInfo.lc_name == app_name.lower()).get()
+        if not app:
+            appinfo_message = AppInfoMessage()
+            appinfo_message.name = app_name
+            appinfo_message.icon_url = message.app.icon_url
+            appinfo_message.version = message.app.version
+            app = AppInfo.insert(appinfo_message)
+
+        from helper.utils import md5
+        community_message = CommunityMessage(name=community_name,
+                                             team_key=team_key,
+                                             team_secret=md5(community_name.lower()),
+                                             plan=plan)
+        community_message.user = UserMessage(user_email=message.admin_user.user_email,
+                                             display_name=message.admin_user.display_name,
+                                             password=message.admin_user.password)
+        community, user = cls.insert(community_message, getCommunity=True)
+
+        communities_message = []
+        if community and app:
+            if not app.key in community.apps:
+                community.apps.append(app.key)
+                community.put()
+
+            # response message
+            community_message = CommunityAdminMasterMessage()
+            community_message.community_name = community.name
+            community_message.team_key = community.team_key
+            community_message.team_secret = community.team_secret
+            # community_message.team_hash = community.team_hash
+            community_message.app_name = app.name
+            community_message.app_icon = app.icon_url
+
+            community_message.users = []
+            from model.userrole import UserRole
+
+            user_message = UserAdminMasterMessage()
+            user_message.display_name = user.display_name
+            user_message.user_email = user.user_email
+            user_message.password_present = True if user.password else False
+            user_message.role = UserRole.getRole(user, community)
+            user_message.image_url = user.image_url
+
+            if community.circles:
+                user_message.circle = community.circles.get(str(UserRole.getCircleLevel(user, community)))
+
+            community_message.users.append(user_message)
+            communities_message.append(community_message)
+
+            from helper.utils import send_created_team_email
+            from helper.utils import send_access_team_email
+            send_created_team_email(community.name, user.display_name)
+            send_access_team_email(user.user_email, community.team_hash, community.name)
+
+        return communities_message
