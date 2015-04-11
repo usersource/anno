@@ -139,9 +139,9 @@ DashboardConstantsModule.value("DashboardConstants", {
             "path" : "appinfo/get_by_name",
             "method" : "GET"
         },
-        "community.stripe.payment" : {
+        "community.create_sdk_community.pro" : {
             "root" : "community",
-            "path" : "community/stripe/payment",
+            "path" : "community/create_sdk_community/pro",
             "method" : "POST"
         }
     },

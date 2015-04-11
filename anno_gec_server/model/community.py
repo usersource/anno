@@ -13,6 +13,7 @@ from message.user_message import UserAdminMasterMessage
 from helper.utils_enum import CommunityType, UserRoleType, AuthSourceType
 from helper.utils_enum import CircleType, CircleValue
 from helper.utils_enum import PlanType
+from helper.stripe_payment import StripePayment
 
 class Community(ndb.Model):
     name = ndb.StringProperty(required=True)
@@ -205,7 +206,7 @@ class Community(ndb.Model):
         return team_secret
 
     @classmethod
-    def create_sdk_team(cls, message):
+    def create_sdk_team(cls, message, pro_plan=False, stripe_token=None):
         team_key = message.team_key
         app_name = message.app.name
         community_name = message.community_name or app_name
@@ -259,10 +260,23 @@ class Community(ndb.Model):
 
             community_message.users.append(user_message)
             communities_message.append(community_message)
+            registration_successful = True
 
-            from helper.utils import send_created_team_email
-            from helper.utils import send_access_team_email
-            send_created_team_email(community.name, user.display_name)
-            send_access_team_email(user.user_email, community.team_hash, community.name)
+            if pro_plan:
+                if stripe_token:
+                    payment_success = StripePayment.create_charge(stripe_token)
+                    if not payment_success:
+                        registration_successful = False
+                else:
+                    registration_successful = False
+
+            if registration_successful:
+                from helper.utils import send_created_team_email
+                from helper.utils import send_access_team_email
+                send_created_team_email(community.name, user.display_name)
+                send_access_team_email(user.user_email, community.team_hash, community.name)
+            else:
+                community.key.delete()
+                communities_message = []
 
         return communities_message

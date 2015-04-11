@@ -29,8 +29,19 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
     var handler = StripeCheckout.configure({
         key: DashboardConstants.Stripe.publishableKey,
         token: function(token) {
-            DataService.makeHTTPCall("community.stripe.payment", token, function(data) {
+            var msg = { "stripe_token" : token };
+            msg["community"] = getCreateSDKTeamMessage();
+            msg["community"]["plan"] = "pro";
+
+            DataService.makeHTTPCall("community.create_sdk_community.pro", msg, function(data) {
+                if (data.communities.length) {
+                    $scope.showPlans = false;
+                    $scope.registrationCompleted = true;
+                } else {
+                    showDashboardMessage("Something went wrong while creating project. Amount will be refunded if charged.", true);
+                }
             }, function(status) {
+                showDashboardMessage("Something went wrong while creating project. Amount will be refunded if charged.", true);
             });
         }
     });
@@ -86,8 +97,8 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
         $scope.showPlans = true;
     };
 
-    $scope.createSDKTeam = function() {
-        DataService.makeHTTPCall("community.community.create_sdk_community", {
+    function getCreateSDKTeamMessage(){
+        var msg = {
             "app" : {
                 "name" : $scope.appname,
                 "icon_url" : $scope.appiconurl,
@@ -99,14 +110,23 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
                 "display_name" : $scope.fullname,
                 "password" : $scope.password
             }
-        }, function(data) {
+        };
+
+        return msg;
+    };
+
+    $scope.createSDKTeam = function() {
+        DataService.makeHTTPCall("community.community.create_sdk_community", getCreateSDKTeamMessage(), function(data) {
             if (data.communities.length) {
                 // var community = data.communities[0];
                 // window.location = Utils.getFullDashboardURL(community.community_name, community.team_hash);
                 $scope.showPlans = false;
                 $scope.registrationCompleted = true;
+            } else {
+                showDashboardMessage("Something went wrong while creating project.", true);
             }
         }, function(status) {
+            showDashboardMessage("Something went wrong while creating project.", true);
         });
     };
 

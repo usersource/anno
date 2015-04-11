@@ -17,9 +17,9 @@ from helper.utils import md5
 from helper.utils import send_added_user_email
 from helper.utils import update_user_team_token
 from helper.utils_enum import InvitationStatusType, UserRoleType, AuthSourceType
-from helper.stripe_payment import StripePayment
 from message.community_message import CommunityMessage
 from message.community_message import CreateCommunityMessage
+from message.community_message import CreateProCommunityMessage
 from message.community_message import CommunityHashResponseMessage
 from message.community_message import CommunityAppInfoMessage
 from message.community_message import CommunityUserMessage
@@ -37,7 +37,6 @@ from message.community_message import CommunityTeamKeyEditMessage
 from message.user_message import UserMessage
 from message.user_message import UserAdminMasterMessage
 from message.common_message import ResponseMessage
-from message.common_message import StripePaymentMessage
 from model.community import Community
 from model.userrole import UserRole
 from model.user import User
@@ -341,6 +340,15 @@ class CommunityApi(remote.Service):
     def create_sdk_community(self, request):
         return CommunityAdminMasterListMessage(communities=Community.create_sdk_team(request))
 
+    @endpoints.method(CreateProCommunityMessage, CommunityAdminMasterListMessage,
+                      path="community/create_sdk_community/pro", http_method="POST",
+                      name="community.create_sdk_community.pro")
+    def create_pro_sdk_community(self, request):
+        communities = Community.create_sdk_team(request.community,
+                                                pro_plan=True,
+                                                stripe_token=request.stripe_token)
+        return CommunityAdminMasterListMessage(communities=communities)
+
     @endpoints.method(community_without_id_resource_container, CommunityCircleMembersListMessage,
                       path="community/circle/users/list", http_method="GET", name="community.circle.users.list")
     def get_circle_users(self, request):
@@ -380,10 +388,3 @@ class CommunityApi(remote.Service):
         secret = Community.reset_team_secret(request.team_key)
         new_user_team_token = update_user_team_token(headers=self.request_state.headers, team_secret=secret)
         return CommunityValueMessage(secret=secret, user_team_token=json.dumps(new_user_team_token))
-
-    @endpoints.method(StripePaymentMessage, ResponseMessage,
-                      path="community/stripe/payment", http_method="POST",
-                      name="community.stripe.payment")
-    def get_stripe_payment_info(self, request):
-        payment_success = StripePayment.create_charge(request)
-        return ResponseMessage(success=payment_success)
