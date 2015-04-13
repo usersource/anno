@@ -41,6 +41,9 @@ handlers:
 - url: /admin_team_master
   static_dir: dashboard/admin_team_master
   login: admin
+- url: /
+  static_files: dashboard/index.html
+  upload: dashboard/index.html
 
 - url: /.*
   script: main.application
