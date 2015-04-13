@@ -306,6 +306,7 @@ class CommunityApi(remote.Service):
             community_message.team_key = community.team_key
             community_message.team_secret = community.team_secret
             community_message.team_hash = community.team_hash
+            community_message.plan = community.plan
 
             app = community.apps[0].get()
             if app:

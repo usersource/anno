@@ -31,7 +31,8 @@ class CommunityAdminMasterMessage(messages.Message):
     team_hash = messages.StringField(4)
     app_name = messages.StringField(5)
     app_icon = messages.StringField(6)
-    users = messages.MessageField(UserAdminMasterMessage, 7, repeated=True)
+    plan = messages.StringField(7)
+    users = messages.MessageField(UserAdminMasterMessage, 8, repeated=True)
 
 class CommunityCircleMembersMessage(messages.Message):
     circle_name = messages.StringField(1)
