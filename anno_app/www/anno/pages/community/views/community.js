@@ -252,7 +252,7 @@ define([
 
                     window.plugins.socialsharing.shareViaEmail(
                         dojoString.substitute(invitationEmailTemplate.replace(/[\r\n]/g, ""), data.result),
-                        "UserSource Invitation",
+                        "Annot8 Invitation",
                         [data.result.user_email],
                         null, // CC: must be null or an array
                         null, // BCC: must be null or an array
