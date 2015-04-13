@@ -132,6 +132,7 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
     };
 
     $scope.getAppForRegister = function() {
+        if (!$scope.appInStore) return;
         if (angular.isDefined($scope.appname) && $scope.appname.length > 2) {
             $scope.hideAppFetchSpinner = false;
             DataService.makeHTTPCall("appinfo.appinfo.get_by_name", {

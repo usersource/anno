@@ -33,7 +33,11 @@
                 </div>
                 <div>
                     <div class="title">App Details</div>
-                    <div>
+                    <div ng-class="{'show_app_info':!appInStore || showAppInfoDetailsForAppStore}">
+                        <div ng-hide="appInStore && !showAppInfoDetailsForAppStore" style="position: absolute;right: 0;">
+                            <div id="appIconHolder" style="margin: 0;"></div>
+                            <img id="appIconImage" style="margin: 0;" ng-src="{{appiconurl && appiconurl || '/dashboard/images/icon_mobile.png'}}" />
+                        </div>
                         <div class="input-div" style="position: relative;">
                             <img width="14px" height="14px" src="/dashboard/images/icon_globe.png" style="margin: 0 1px;">
                             <input ng-model="appname" type="text" id="register_app_name" placeholder="App Name{{appInStore && ' in App Store' || ''}}" ng-keyup="getAppForRegister();"/>
