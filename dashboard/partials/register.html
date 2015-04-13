@@ -45,18 +45,18 @@
                                 </div>
                             </div>
                         </div>
-                        <div ng-hide="appInStore">
+                        <div ng-hide="appInStore && !showAppInfoDetailsForAppStore">
                             <div class="input-div">
                                 <img width="12px" height="15px" src="/dashboard/images/icon_key.png" style="margin: 0 2px;">
-                                <input ng-model="bundleid" type="text" id="register_bundle_id" placeholder="Unique Identifier"/>
+                                <input ng-model="bundleid" type="text" id="register_bundle_id" placeholder="Unique Identifier" ng-disabled="showAppInfoDetailsForAppStore"/>
                             </div>
                             <div class="input-div">
                                 <img width="14px" height="14px" src="/dashboard/images/icon_globe.png" style="margin: 0 1px;">
-                                <input ng-model="appiconurl" type="text" id="register_app_icon_url" placeholder="App Icon URL"/>
+                                <input ng-model="appiconurl" type="text" id="register_app_icon_url" placeholder="App Icon URL" ng-disabled="showAppInfoDetailsForAppStore"/>
                             </div>
                             <div class="input-div">
                                 <img width="12px" height="14px" src="/dashboard/images/icon_version.png" style="margin: 0 2px;">
-                                <input ng-model="appversion" type="text" id="register_app_version" placeholder="Version"/>
+                                <input ng-model="appversion" type="text" id="register_app_version" placeholder="Version" ng-disabled="showAppInfoDetailsForAppStore"/>
                             </div>
                         </div>
                         <input id="appNotInStore" class="register_button grey" type="submit" value="My App is not in App Store yet" style="margin-bottom: 0;" ng-show="appInStore" ng-click="showInputForAppDetails();"/>

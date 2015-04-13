@@ -158,6 +158,7 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
 
     $scope.appSelected = function(bundleid) {
         appNotInStore.hidden = true;
+        $scope.showAppInfoDetailsForAppStore = true;
 
         $scope.selectedApp = $scope.appinfo_list.filter(function(app) {
             return angular.equals(app.bundleid, bundleid);
