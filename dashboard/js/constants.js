@@ -20,6 +20,10 @@ DashboardConstantsModule.value("DashboardConstants", {
     roleType : {
         "admin" : "admin"
     },
+    planType : {
+        "basic" : "Basic Plan",
+        "pro" : "Pro Plan"
+    },
     apiRoot : "/_ah/api",
     imageURL : "/screenshot?anno_id=",
     endpointVersion: "1.0",

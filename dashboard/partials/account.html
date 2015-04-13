@@ -4,10 +4,10 @@
         <div id="dashboard_message_text">{{error_message}}</div>
     </div>
     <div id="account-inner">
-        <div style="width: 100%;height: 100%;padding: 0;position: absolute;right: 0;overflow-y: auto;">
-            <div style="font-weight: 600;padding: 20px 0 0 20px;font-size: 16px;">Account Details</div>
+        <div style="width: 100%;height: 100%;padding: 0;">
+            <div style="font-weight: 600;padding: 20px 0 0 20px;font-size: 18px;">Account Details</div>
             <div id="account-details" style="margin: 0 20px;padding: 0 0 10px 10px;border-bottom: 1px solid #C4CFD7;">
-                <div style="width: 48%;display: inline-block;">
+                <div style="width: 60%;display: inline-block;">
                     <div style="margin: 20px 0;">
                         <div class="field_title">Name</div>
                         <div class="field_div" style="width: 88%;display: inline-block;margin: 0;">
@@ -41,7 +41,7 @@
                         <div class="editSaveButton" ng-click="editSaveButtonClicked('app_icon');" ng-if="role == adminRole">{{app_icon_editMode && 'Save' || 'Edit'}}</div>
                     </div>
                 </div>
-                <div style="width: 48%;display: inline-block;vertical-align: top;margin-left: 3%;position: relative;">
+                <div style="width: 35%;display: inline-block;vertical-align: top;margin-left: 3%;position: relative;">
                     <div id="appIconHolder"></div>
                     <img id="appIconImage" ng-src="{{app_icon_url}}">
                 </div>
@@ -53,6 +53,17 @@
                 </div>
                 <a class="dashboard-url" ng-href="{{getDashboardURL(community_detail.community_name, community_detail.team_hash);}}" target="_blank">{{getDashboardURL(community_detail.community_name, community_detail.team_hash);}}</a>
             </div> -->
+        </div>
+        <div style="width: 100%;height: 100%;padding: 0;">
+            <div style="font-weight: 600;padding: 20px 0 0 20px;font-size: 18px;">Plan Details</div>
+            <div style="margin: 0 20px;padding: 0 0 10px 10px;">
+                <div style="width: 48%;display: inline-block;">
+                    <div style="margin: 10px 0 20px 0;">
+                        <div style="display: inline-block;font-weight: 600;">Plan Type:</div>
+                        <div style="display: inline-block;">{{plan}}</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

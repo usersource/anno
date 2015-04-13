@@ -841,6 +841,7 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
                 $scope.team_key = $scope.community_detail.team_key;
                 $scope.team_secret = $scope.community_detail.team_secret;
                 $scope.role = role;
+                $scope.plan = DashboardConstants.planType[$scope.community_detail.plan];
             }
         }, function(status) {
             showDashboardMessage("Oops... Something went wrong. Please try again.", true);
