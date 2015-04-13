@@ -34,6 +34,7 @@ from message.community_message import CommunityAdminMasterListMessage
 from message.community_message import CommunityCircleMembersMessage
 from message.community_message import CommunityCircleMembersListMessage
 from message.community_message import CommunityTeamKeyEditMessage
+from message.community_message import UpdateCommunityPlanMessage
 from message.user_message import UserMessage
 from message.user_message import UserAdminMasterMessage
 from message.common_message import ResponseMessage
@@ -389,3 +390,10 @@ class CommunityApi(remote.Service):
         secret = Community.reset_team_secret(request.team_key)
         new_user_team_token = update_user_team_token(headers=self.request_state.headers, team_secret=secret)
         return CommunityValueMessage(secret=secret, user_team_token=json.dumps(new_user_team_token))
+
+    @endpoints.method(UpdateCommunityPlanMessage, ResponseMessage,
+                      path="community/plan/update", http_method="POST",
+                      name="community.plan.update")
+    def create_pro_sdk_community(self, request):
+        update_success = Community.update_plan(request.team_key, request.stripe_token)
+        return ResponseMessage(success=update_success)

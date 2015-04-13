@@ -147,6 +147,11 @@ DashboardConstantsModule.value("DashboardConstants", {
             "root" : "community",
             "path" : "community/create_sdk_community/pro",
             "method" : "POST"
+        },
+        "community.plan.update" : {
+            "root" : "community",
+            "path" : "community/plan/update",
+            "method" : "POST"
         }
     },
     borderColor : "#ff9900",

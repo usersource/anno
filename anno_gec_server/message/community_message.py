@@ -54,6 +54,10 @@ class CreateProCommunityMessage(messages.Message):
     community = messages.MessageField(CreateCommunityMessage, 1)
     stripe_token = messages.MessageField(StripePaymentMessage, 2)
 
+class UpdateCommunityPlanMessage(messages.Message):
+    team_key = messages.StringField(1)
+    stripe_token = messages.MessageField(StripePaymentMessage, 2)
+
 class CommunityAdminMasterListMessage(messages.Message):
     communities = messages.MessageField(CommunityAdminMasterMessage, 1, repeated=True)
 
