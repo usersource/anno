@@ -179,7 +179,8 @@ static NSString *CellIdentifier = @"CellIdentifier";
                                                    teamKey:teamKeyValue
                                                 teamSecret:teamSecretValue];
                                       [anno notificationsForTarget:self performSelector:@selector(notificationsCount:)];
-                                      [anno setInfoViewControllerClass:[InfoViewController class]];
+                                      // [anno setInfoViewControllerClass:[InfoViewController class]];
+                                      [anno enableShakeGesture];
                                   }
                                   else{
                                       NSLog(@"%@", [error localizedDescription]);

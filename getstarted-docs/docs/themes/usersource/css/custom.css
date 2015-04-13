@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800');
+
+/* for mkdocs theme bootstrap */
+.navbar-brand {
+	font-weight: bold;
+	font-size: 150%;
+	color: #f62 !important;
+}
+
+.bs-sidenav a {
+	color: #f62;
+}
+
+/* for mkdocs theme readthedocs */
+
+body {
+    font-family: 'Open Sans', sans-serif !important;
+}
+
+a {
+  color: #1b96c9;
+}
+
+h3, h4, h5, h6 {
+  color: #9399a5 !important;
+}
+
+.rst-content > div[role=navigation] {
+	display: none;
+}
+
+.wy-side-nav-search {
+	background-color: #f62;
+}
+.wy-side-nav-search > a {
+	color: #fff;
+	font-size: 150%;
+    margin: 0.4045em 0;
+}
+.wy-nav-side {
+	background-color: #f5f5f5;
+}
+
+.wy-menu-vertical {
+  line-height: 22px;
+}
+
+.wy-menu-vertical a {
+  color: #282828;
+  line-height: 22px;
+}
+
+.wy-menu-vertical a:hover {
+  background-color: #9399a5;
+  color: #fff;
+}
+
+.wy-menu-vertical li ul {
+  background-color: #eceff1;
+}
+
+.wy-menu-vertical li ul li a {
+  color: #e5e8eb;
+  line-height: 22px;
+}
+.wy-menu-vertical span {
+  font-weight: bold;
+  color: #282828;
+}
+
+.wy-nav-content {
+	max-width: 100%;
+}
+
+.wy-nav-content-wrap {
+  background-color: #ffffff;
+}
+
+.rst-versions {
+  display: none;
+}
+
+/* other */
+.note, .attention, .caution, .danger, .error, .hint, .important, .tip, .warning, .seealso, .admonition-todo {
+  padding: 12px;
+  line-height: 24px;
+  margin-bottom: 24px;
+  background-color: #e7f2fa;
+}
+
+.note, .seealso {
+  background-color: #e7f2fa;
+}
+
+.admonition-title {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+}
+
+.admonition-title {
+  font-family: inherit;
+}
+
+.admonition-title {
+  font-weight: bold;
+  display: block;
+  color: #ffffff;
+  background-color: #1b96c9;
+  margin: -12px -12px 12px -12px;
+  padding: 6px 12px 6px 12px;
+}
+
+.note .admonition-title
+{
+  background-color: #1b96c9;
+}
+
+.tip .admonition-title {
+  background-color: #1ABC9C;
+}
+
+.tip {
+    background-color: #DBFAF4;
+}
+
+.warning .admonition-title {
+  background-color: #F0B37E;
+}
+
+.warning {
+    background-color: #FFEDCC;
+}
+
+.danger .admonition-title {
+  background-color: #b04040;
+}
+
+.danger {
+    background-color: #ffe9e9;
+}
+
+.rst-versions {
+  display: none;
+}

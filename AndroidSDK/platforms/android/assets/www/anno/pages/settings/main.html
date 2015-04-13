@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html class="mobile">
+    <head>
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <title>Settings</title>
+        <link type="text/css" href="../community/css/style.css" rel="stylesheet"/>
+        <link type="text/css" href="css/style.css" rel="stylesheet"/>
+        <script type="text/javascript">
+             var dojoConfig = {
+                 parseOnLoad : true,
+                 mblHideAddressBar : false,
+                 mblAndroidWorkaround : false,
+                 mblAlwaysHideAddressBar : false,
+                 async : 1,
+                 mblUserAgent : 'iPhone'
+             };
+		</script>
+        <script type="text/javascript" src="../../scripts/dojo/dojo.js"></script>
+        <script type="text/javascript" src="main.js"></script>
+        <script type="text/javascript" src="../../../cordova.js"></script>
+	</head>
+    <body id="container" onload="init();">
+		<div id="header">
+            <div id="imgBackOuter">
+                <div id="imgBack"></div>
+            </div>
+            <div id="headerTitle">Feedback</div>
+        </div>
+        <div id="settingsContent">
+            <div id="settingsInfo" style="text-align: center;">
+                <div id="settingsInfoText">Shake to Share Feedback</div>
+                <img id="settingsInfoImage" height="141px" style="margin-bottom: 40px;" src="css/images/image.png">
+            </div>
+            <div id="settingsComponent">
+                <div id="settingsComponentHeader">
+                    <div id="settingsComponentHeaderTitle">SHAKE SETTINGS</div>
+                </div>
+                <div id="settingsComponentBody">
+                    <div class="settingsComponentRow">
+                        <div>Shake Detection</div>
+                        <input id="shakeDetectionValue" type="checkbox">
+                    </div>
+                    <div class="settingsComponentRow">
+                        <div>Sensitivity</div>
+                        <select id="shakeSensitivity">
+                            <option value="0">1 Shake</option>
+                            <option value="1">2 Shakes</option>
+                            <option value="2">3 Shakes</option>
+                        </select>
+                    </div>
+                    <div id="viewFeedback" class="settingsComponentRow">
+                        <div>View Feedback</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

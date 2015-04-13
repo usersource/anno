@@ -1,0 +1,15 @@
+<div id="noAuthHeader" ng-controller="NoAuthHeader" class="header row">
+    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+        <div style="font-size: 150%; font-weight: bold; color: #f62; text-align: center;">UserSource</div>
+    </div>
+    <!-- <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"></div>
+    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Intro</div>
+    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Features</div>
+    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Benefits</div>
+    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center; white-space: nowrap;">SDK for iOS</div>
+    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="text-align: center;">Contact</div> -->
+    <div id="action-button" class="col-lg-10 col-md-10 col-sm-10 col-xs-10" style="text-align: right;">
+        <input id="login" type="button" value="Log In" ng-click="showLoginPage();" ng-show="currentController == 'register'" />
+        <input id="signup" type="button" value="Sign Up" ng-click="showRegisterPage();" ng-show="currentController == 'login'" />
+    </div>
+</div>

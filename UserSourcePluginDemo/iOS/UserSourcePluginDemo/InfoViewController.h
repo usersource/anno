@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
-#import "ShakeViewController.h"
+#import <UserSourceStatic/UserSourceStatic.h>
 
-@interface InfoViewController : ShakeViewController <UIPickerViewDataSource, UIPickerViewDelegate> {
+@interface InfoViewController : UIViewController <UIPickerViewDataSource, UIPickerViewDelegate> {
     UINavigationBar *navigationBar;
     UINavigationItem *navItem;
     UIBarButtonItem *cancelButton;

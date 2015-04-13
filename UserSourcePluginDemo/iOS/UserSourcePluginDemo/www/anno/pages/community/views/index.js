@@ -447,6 +447,7 @@ define([
             else
             {
                 navigator.app.exitApp();
+                cordova.exec(function(result) {}, function(err) {}, "AnnoCordovaPlugin", 'exit_current_activity', []);
             }
         };
 
@@ -470,7 +471,7 @@ define([
             domStyle.set('txtSearchAnno', 'display', 'none');
             dom.byId("txtSearchAnno").value = "";
             domStyle.set('tdHeadingLeft', 'width', '180px');
-            domStyle.set('annoLogoHome', 'paddingLeft', '10px');
+            domStyle.set('annoLogoHome', 'marginLeft', '0px');
             domStyle.set('searchSortsBarHome', 'display', 'none');
 
             domStyle.set("listContainerStart", "height", (viewPoint.h-topBarHeight)+"px");
@@ -981,7 +982,7 @@ define([
                 domStyle.set('tdBarMoreMenuHome', 'display', '');
                 domStyle.set('txtSearchAnno', 'display', '');
                 domStyle.set('tdHeadingLeft', 'width', '95px');
-                domStyle.set('annoLogoHome', 'paddingLeft', '0px');
+                domStyle.set('annoLogoHome', 'marginLeft', '32px');
                 domStyle.set('searchSortsBarHome', 'display', '');
 
                 dom.byId('txtSearchAnno').focus();
@@ -1311,12 +1312,9 @@ define([
                             annoUtil.startActivity("Intro", false);
                         }
 
-                        if (userInfo.signinMethod == OAuthUtil.signinMethod.anno) {
-                            OAuthUtil.processBasicAuthToken(userInfo);
-                        }
-
+                        OAuthUtil.processBasicAuthToken(userInfo);
                         annoUtil.showLoadingIndicator();
-                        OAuthUtil.getAccessToken(function() { loadListData(); });
+                        loadListData();
                     });
 
                     adjustSize();

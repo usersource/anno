@@ -3,6 +3,12 @@
 var DashboardConstantsModule = angular.module('DashboardConstantsModule', []);
 
 DashboardConstantsModule.value("DashboardConstants", {
+    Stripe : {
+        publishableKey : "pk_test_QkjAhTugzqHQClhlF7pX5r4F",
+        name : "UserSource",
+        description : "Pro Plan $10/month",
+        amount : 1000
+    },
     filters : {
         "basic" : "basic",
         "myMentions" : "by_my_mentions",
@@ -10,6 +16,13 @@ DashboardConstantsModule.value("DashboardConstants", {
         "mostFlagged" : "by_flag_count",
         "mostActive" : "by_activity_count",
         "archived" : "by_archived"
+    },
+    roleType : {
+        "admin" : "admin"
+    },
+    planType : {
+        "basic" : "Basic Plan",
+        "pro" : "Pro Plan"
     },
     apiRoot : "/_ah/api",
     imageURL : "/screenshot?anno_id=",
@@ -88,6 +101,56 @@ DashboardConstantsModule.value("DashboardConstants", {
         "community.user.insert" : {
             "root" : "community",
             "path" : "user",
+            "method" : "POST"
+        },
+        "community.user.update" : {
+            "root" : "community",
+            "path" : "user/update",
+            "method" : "POST"
+        },
+        "community.community.circle.users.list" : {
+            "root" : "community",
+            "path" : "community/circle/users/list",
+            "method" : "GET"
+        },
+        "community.teamsecret.reset" : {
+            "root" : "community",
+            "path" : "community/teamsecret/reset",
+            "method" : "POST"
+        },
+        "community.community.update" : {
+            "root" : "community",
+            "path" : "community/update",
+            "method" : "POST"
+        },
+        "community.teamkey.update" : {
+            "root" : "community",
+            "path" : "community/teamkey/update",
+            "method" : "POST"
+        },
+        "community.appicon.update" : {
+            "root" : "community",
+            "path" : "community/appicon/update",
+            "method" : "POST"
+        },
+        "community.community.create_sdk_community" : {
+            "root" : "community",
+            "path" : "community/create_sdk_community",
+            "method" : "POST"
+        },
+        "appinfo.appinfo.get_by_name" : {
+            "root" : "appinfo",
+            "path" : "appinfo/get_by_name",
+            "method" : "GET"
+        },
+        "community.create_sdk_community.pro" : {
+            "root" : "community",
+            "path" : "community/create_sdk_community/pro",
+            "method" : "POST"
+        },
+        "community.plan.update" : {
+            "root" : "community",
+            "path" : "community/plan/update",
             "method" : "POST"
         }
     },

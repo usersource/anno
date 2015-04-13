@@ -1,0 +1,105 @@
+<div id="members" class="mainSectionDiv" ng-controller="Members" ng-init="initMembers();">
+    <div class="header row" ng-include="'/dashboard/partials/header.html'"></div>
+    <div id="dashboard_message" ng-show="error_message.length" ng-class="{'error-message':dashboard_error_type}" style="left: 25%;">
+        <div id="dashboard_message_text">{{error_message}}</div>
+    </div>
+    <div id="members-inner">
+        <div id="members-header">
+            <div id="members-header-text">Members</div>
+            <div id="members-circle-selection">
+                <div id="members-circle-selection-text">Circle</div>
+                <select id="members-circle-list" ng-model="selectCircle" ng-change="changeCircle($event);">
+                    <option ng-selected="{{$index == 0}}" ng-repeat="circle in circles" value="{{circle.circle_name}}">{{circle.circle_name}}</option>
+                </select>
+            </div>
+            <div class="admin-button" style="position: absolute;right: 2.031%;top: 20px;" ng-click="showAddMemberScreen(true);" ng-if="role == adminRole">Add Member</div>
+        </div>
+        <div id="members_list">
+            <div style="margin-top: 3.0465%;">
+                <img width="16px" height="16px" src="/dashboard/images/icon_mentions.png">
+                <span style="vertical-align: middle;margin-left: 4px;font-weight: 600;">{{current_circle.users && current_circle.users.length || 0}} Member{{current_circle.users.length !== 1 && "s" || ""}}</span>
+            </div>
+            <div>
+                <div class="member_div" ng-repeat="user in current_circle.users | orderBy:'display_name'" ng-click="showMemberDetails($event, user.user_email);">
+                    <img style="width: 35px;height: 35px;border-radius: 18px;margin: 0;" ng-src="{{user.image_url && user.image_url || '/dashboard/images/icon_no-user.png'}}">
+                    <div class="member-info">
+                        <div style="font-weight: 600; color: #1b96c9;display: inline-block;width: 25%;">{{user.display_name}}</div>
+                        <div style="color: #9399A5;font-size: 13px;display: inline-block;">{{user.user_email}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="add-user" style="display: table;" ng-show="addMemberScreenVisible">
+        <div style="width: 100%;height: 100%;display: table-cell;vertical-align: middle;">
+            <div id="add-member-inner">
+                <form class="form-horizontal">
+                    <fieldset>
+                        <legend style="text-align: center;border: 0;font-size: 24px;margin-bottom: 30px;">{{viewMemberDetailMode && ((role == adminRole || current_user.user_email == current_user_email) && 'Edit Member' || 'Member Details') || 'Add Member'}}</legend>
+                        <div class="popup_close_button" style="padding: 4.916% 5.663%;"ng-click="showAddMemberScreen(false);"></div>
+                        <div>
+                            <div style="width: 48%;display: inline-block;">
+                                <div>
+                                    <div class="field_title">Email Address</div>
+                                    <div class="field_div">
+                                        <img width="16px" height="10px" src="/dashboard/images/icon_mail.png">
+                                        <input class="field_input" type="email" id="userEmail" placeholder="Email Address" ng-model="user_email" ng-disabled="viewMemberDetailMode">
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="field_title">Password</div>
+                                    <div class="field_div">
+                                        <img width="12px" height="15px" src="/dashboard/images/icon_password.png">
+                                        <input type="password" class="field_input" id="userPassword" placeholder="Password {{viewMemberDetailMode && '(Leave blank to keep unchanged)' || ''}}" ng-model="user_password">
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="field_title">Confirm Password</div>
+                                    <div class="field_div">
+                                        <img width="12px" height="15px" src="/dashboard/images/icon_password.png">
+                                        <input type="password" class="field_input" id="userConfirmPassword" placeholder="Confirm Password" ng-model="user_confirm_password">
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="field_title">Full Name</div>
+                                    <div class="field_div">
+                                        <img width="16px" height="16px" src="/dashboard/images/icon_mentions.png">
+                                        <input class="field_input" id="userDisplayName" placeholder="Full Name" ng-model="user_display_name">
+                                    </div>
+                                </div>
+                                <div>
+                                    <button type="submit" class="admin-button" id="add_member" style="border: 0;outline: 0;margin-top: 10px;" ng-click="addMember();" ng-if="(role == adminRole || current_user.user_email == current_user_email)">Save</button>
+                                </div>
+                            </div>
+                            <div style="width: 48%;display: inline-block;vertical-align: top;margin-left: 3%;">
+                                <div>
+                                    <div class="field_title">Image URL</div>
+                                    <div class="field_div">
+                                        <img width="14px" height="14px" src="/dashboard/images/icon_globe.png">
+                                        <input class="field_input" id="userImageURL" placeholder="Image URL" ng-model="user_image_url">
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="field_title">Roles</div>
+                                    <div>
+                                        <select id="selectRole" name="selectRole" ng-model="user_role" ng-disabled="role !== adminRole">
+                                            <option ng-selected="{{$index == 0}}" ng-repeat="role in roles" value="{{role}}">{{role}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="field_title">Circles</div>
+                                    <div>
+                                        <select id="selectCircle" name="selectCircle" ng-model="user_circle" ng-disabled="role !== adminRole">
+                                            <option ng-selected="{{$index == 0}}" ng-repeat="circle in circles" value="{{circle.circle_name}}">{{circle.circle_name}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

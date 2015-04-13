@@ -45,7 +45,7 @@ define([
                             closeServerURLDialog();
                             // clear device id
                             annoUtil.clearDeviceId(function(){
-                                annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
+                                annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the Annot8 app.", function(){
                                     window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
                                 });
                             });
@@ -74,7 +74,7 @@ define([
                                 closeServerURLDialog();
                                 // clear device id
                                 annoUtil.clearDeviceId(function(){
-                                    annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
+                                    annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the Annot8 app.", function(){
                                         window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
                                     });
                                 });
@@ -84,7 +84,7 @@ define([
                                 closeServerURLDialog();
                                 // clear device id
                                 annoUtil.clearDeviceId(function(){
-                                    annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the UserSource app.", function(){
+                                    annoUtil.showMessageDialog("Server URL has been changed, please tap OK button to reload the Annot8 app.", function(){
                                         window.open(phoneGapPath+"anno/pages/community/main.html", '_self', 'location=no');
                                     });
                                 });

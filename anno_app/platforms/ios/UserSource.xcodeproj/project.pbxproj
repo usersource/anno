@@ -56,6 +56,8 @@
 		1DAA390E19025A9A00FCE403 /* AnnoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D44E81C18F7FEF5007A1635 /* AnnoUtils.m */; };
 		1DAE4C2F19F528B200E3A1BA /* UserSourceStatic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBAD08719E66C560060A80D /* UserSourceStatic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1DB34AD41A1F4EF80061F604 /* usersource_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 1DB34AD31A1F4EF80061F604 /* usersource_logo.png */; };
+		1DE438801AC95A1E00DE358D /* SettingsViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DE438781AC9518E00DE358D /* SettingsViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1DE438811AC95A3F00DE358D /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DE438791AC9518E00DE358D /* SettingsViewController.m */; };
 		1DEE8C5E1AB2AC5900D6E96D /* CDVFile.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA2D6AB6D364653839AC60B /* CDVFile.m */; };
 		1DEE8C5F1AB2AC5900D6E96D /* CDVLocalFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = EFFA8AAFDA6B4CA9986F89CF /* CDVLocalFilesystem.m */; };
 		1DEE8C601AB2AC5900D6E96D /* CDVAssetLibraryFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 68CE6AE042F64A29ABB97844 /* CDVAssetLibraryFilesystem.m */; };
@@ -197,6 +199,8 @@
 		1DDCA4E818F41A2B006E63FE /* IntroViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntroViewController.m; sourceTree = "<group>"; };
 		1DDCA4E918F41A2B006E63FE /* OptionFeedbackViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionFeedbackViewController.h; sourceTree = "<group>"; };
 		1DDCA4EA18F41A2B006E63FE /* OptionFeedbackViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptionFeedbackViewController.m; sourceTree = "<group>"; };
+		1DE438781AC9518E00DE358D /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
+		1DE438791AC9518E00DE358D /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		1DF46BF919023329005408CA /* UserSourceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UserSourceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF46C0219023329005408CA /* UserSourceTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "UserSourceTests-Info.plist"; sourceTree = "<group>"; };
 		1DF46C0419023329005408CA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -343,31 +347,33 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				1D21308F1AA03236008F4566 /* UIWindow+AnnoSingleton.h */,
-				1D2130901AA03236008F4566 /* UIWindow+AnnoSingleton.m */,
-				1D21308B1AA02DB5008F4566 /* UserSourceSwizzler.h */,
-				1D21308C1AA02DB6008F4566 /* UserSourceSwizzler.m */,
-				1D44E81B18F7FEF5007A1635 /* AnnoUtils.h */,
-				1D44E81C18F7FEF5007A1635 /* AnnoUtils.m */,
+				1D933EB818F26F6400C82F37 /* AnnoCordovaPlugin.h */,
+				1D933EB918F26F6400C82F37 /* AnnoCordovaPlugin.m */,
 				1DDCA4E318F41A2B006E63FE /* AnnoDrawViewController.h */,
 				1DDCA4E418F41A2B006E63FE /* AnnoDrawViewController.m */,
+				5BB64FDC19F79C0E0017F6FE /* AnnoSingleton.h */,
+				5BB64FDD19F79C0E0017F6FE /* AnnoSingleton.m */,
+				1D44E81B18F7FEF5007A1635 /* AnnoUtils.h */,
+				1D44E81C18F7FEF5007A1635 /* AnnoUtils.m */,
 				1DDCA4E518F41A2B006E63FE /* CommunityViewController.h */,
 				1DDCA4E618F41A2B006E63FE /* CommunityViewController.m */,
 				1DDCA4E718F41A2B006E63FE /* IntroViewController.h */,
 				1DDCA4E818F41A2B006E63FE /* IntroViewController.m */,
+				302D95F014D2391D003F00A1 /* MainViewController.xib */,
 				1DDCA4E918F41A2B006E63FE /* OptionFeedbackViewController.h */,
 				1DDCA4EA18F41A2B006E63FE /* OptionFeedbackViewController.m */,
-				1D933EB818F26F6400C82F37 /* AnnoCordovaPlugin.h */,
-				1D933EB918F26F6400C82F37 /* AnnoCordovaPlugin.m */,
-				302D95F014D2391D003F00A1 /* MainViewController.xib */,
-				5BB6D26119EFAC5500AAF4A2 /* UserSourceAppDelegate.h */,
-				5BB6D26219EFAC5500AAF4A2 /* UserSourceAppDelegate.m */,
 				1D6F35C81908CDE7002051ED /* ScreenshotGestureListener.h */,
 				1D6F35C91908CDE7002051ED /* ScreenshotGestureListener.m */,
-				5BB64FDC19F79C0E0017F6FE /* AnnoSingleton.h */,
-				5BB64FDD19F79C0E0017F6FE /* AnnoSingleton.m */,
+				1DE438781AC9518E00DE358D /* SettingsViewController.h */,
+				1DE438791AC9518E00DE358D /* SettingsViewController.m */,
 				5BBA243819FFB2CB0086AB8E /* ShakeView.h */,
 				5BBA243919FFB2CB0086AB8E /* ShakeView.m */,
+				1D21308F1AA03236008F4566 /* UIWindow+AnnoSingleton.h */,
+				1D2130901AA03236008F4566 /* UIWindow+AnnoSingleton.m */,
+				5BB6D26119EFAC5500AAF4A2 /* UserSourceAppDelegate.h */,
+				5BB6D26219EFAC5500AAF4A2 /* UserSourceAppDelegate.m */,
+				1D21308B1AA02DB5008F4566 /* UserSourceSwizzler.h */,
+				1D21308C1AA02DB6008F4566 /* UserSourceSwizzler.m */,
 			);
 			name = Classes;
 			path = UserSource/Classes;
@@ -613,6 +619,7 @@
 				5BBA243C19FFB3100086AB8E /* ShakeView.h in Headers */,
 				1D2130921AA039D8008F4566 /* UIWindow+AnnoSingleton.h in Headers */,
 				1D2130931AA039D8008F4566 /* UserSourceSwizzler.h in Headers */,
+				1DE438801AC95A1E00DE358D /* SettingsViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -924,6 +931,7 @@
 				5BB6D26B19EFADAD00AAF4A2 /* OptionFeedbackViewController.m in Sources */,
 				5BB6D26C19EFADAD00AAF4A2 /* AnnoCordovaPlugin.m in Sources */,
 				5BB6D26E19EFADAD00AAF4A2 /* ScreenshotGestureListener.m in Sources */,
+				1DE438811AC95A3F00DE358D /* SettingsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

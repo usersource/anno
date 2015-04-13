@@ -29,6 +29,7 @@
 - (void) postNewTapped;
 - (void) viewFeedbackTapped;
 - (void) styleSheet;
+- (void) showShakeMenu;
 
 @end
 

@@ -1,6 +1,7 @@
 '''
 Community API implemented using Google Cloud Endpoints.
 '''
+import json
 
 import endpoints
 from protorpc import message_types
@@ -9,12 +10,16 @@ from protorpc import remote
 
 from helper.settings import anno_js_client_id
 from helper.utils import get_user_from_request
-from helper.utils_enum import InvitationStatusType, UserRoleType, AuthSourceType
 from helper.utils import auth_user
+from helper.utils import is_auth_user_admin
 from helper.utils import getAppInfo
 from helper.utils import md5
+from helper.utils import send_added_user_email
+from helper.utils import update_user_team_token
+from helper.utils_enum import InvitationStatusType, UserRoleType, AuthSourceType
 from message.community_message import CommunityMessage
 from message.community_message import CreateCommunityMessage
+from message.community_message import CreateProCommunityMessage
 from message.community_message import CommunityHashResponseMessage
 from message.community_message import CommunityAppInfoMessage
 from message.community_message import CommunityUserMessage
@@ -26,9 +31,12 @@ from message.community_message import CommunityValueMessage
 from message.community_message import CommunityValueListMessage
 from message.community_message import CommunityAdminMasterMessage
 from message.community_message import CommunityAdminMasterListMessage
+from message.community_message import CommunityCircleMembersMessage
+from message.community_message import CommunityCircleMembersListMessage
+from message.community_message import CommunityTeamKeyEditMessage
+from message.community_message import UpdateCommunityPlanMessage
 from message.user_message import UserMessage
 from message.user_message import UserAdminMasterMessage
-from message.appinfo_message import AppInfoMessage
 from message.common_message import ResponseMessage
 from model.community import Community
 from model.userrole import UserRole
@@ -50,7 +58,8 @@ class CommunityApi(remote.Service):
     community_without_id_resource_container = endpoints.ResourceContainer(
         message_types.VoidMessage,
         team_hash=messages.StringField(1),
-        team_key=messages.StringField(2)
+        team_key=messages.StringField(2),
+        get_user_list=messages.BooleanField(3)
     )
 
     community_with_circles_resource_container = endpoints.ResourceContainer(
@@ -76,6 +85,34 @@ class CommunityApi(remote.Service):
     def community_insert(self, request):
         resp = Community.insert(request)
         return ResponseMessage(success=True, msg=resp)
+
+    @endpoints.method(CommunityMessage, ResponseMessage, path="community/update",
+                      http_method="POST", name="community.update")
+    def community_update(self, request):
+        if not is_auth_user_admin(headers=self.request_state.headers):
+            return ResponseMessage(success=False)
+
+        Community.update(request)
+        return ResponseMessage(success=True)
+
+    @endpoints.method(CommunityTeamKeyEditMessage, ResponseMessage, path="community/teamkey/update",
+                      http_method="POST", name="community.teamkey.update")
+    def community_teamkey_update(self, request):
+        if not is_auth_user_admin(headers=self.request_state.headers):
+            return ResponseMessage(success=False)
+
+        Community.update_teamkey(request)
+        new_user_team_token = update_user_team_token(headers=self.request_state.headers, team_key=request.new_team_key)
+        return ResponseMessage(success=True, msg=json.dumps(new_user_team_token))
+
+    @endpoints.method(CommunityAdminMasterMessage, ResponseMessage, path="community/appicon/update",
+                      http_method="POST", name="community.appicon.update")
+    def community_appicon_update(self, request):
+        if not is_auth_user_admin(headers=self.request_state.headers):
+            return ResponseMessage(success=False)
+
+        Community.update_appicon(request)
+        return ResponseMessage(success=True)
 
     @endpoints.method(CommunityAppInfoMessage, ResponseMessage, path="app",
                       http_method="POST", name="app.insert")
@@ -117,6 +154,10 @@ class CommunityApi(remote.Service):
     @endpoints.method(CommunityUserRoleMessage, ResponseMessage, path="user",
                       http_method="POST", name="user.insert")
     def insert_user(self, request):
+        if not is_auth_user_admin(headers=self.request_state.headers):
+            return ResponseMessage(success=False)
+
+        action_user = auth_user(self.request_state.headers)
         user = get_user_from_request(user_id=request.user_id,
                                      user_email=request.user_email,
                                      team_key=request.team_key)
@@ -127,14 +168,51 @@ class CommunityApi(remote.Service):
                                     account_type=request.team_key,
                                     auth_source=AuthSourceType.PLUGIN,
                                     password=md5(request.user_password),
-                                    image_url="")
+                                    image_url=request.user_image_url or "")
 
         community = Community.getCommunityFromTeamKey(request.team_key) if request.team_key else Community.get_by_id(request.community_id)
         role = request.role if request.role else UserRoleType.MEMBER
 
         resp = None
         if user and community:
-            resp = UserRole.insert(user, community, role)
+            circle = 0
+            for circle_value, circle_name in community.circles.iteritems():
+                if circle_name == request.circle:
+                    circle = int(circle_value)
+
+            resp = UserRole.insert(user, community, role, circle)
+            send_added_user_email(community.name, user.display_name, "added", action_user.display_name, community.team_hash)
+
+        return ResponseMessage(success=True if resp else False)
+
+    @endpoints.method(CommunityUserRoleMessage, ResponseMessage, path="user/update",
+                      http_method="POST", name="user.update")
+    def update_user(self, request):
+        action_auth_user = auth_user(self.request_state.headers)
+        if not (action_auth_user.user_email == request.user_email):
+            if not is_auth_user_admin(action_auth_user=action_auth_user):
+                return ResponseMessage(success=False)
+
+        user = get_user_from_request(user_id=request.user_id,
+                                     user_email=request.user_email,
+                                     team_key=request.team_key)
+
+        if user:
+            user.display_name = request.user_display_name or user.display_name
+            user.password = md5(request.user_password) if request.user_password else user.password
+            user.image_url = request.user_image_url or user.image_url or ""
+            user.put()
+
+        community = Community.getCommunityFromTeamKey(request.team_key) if request.team_key else Community.get_by_id(request.community_id)
+
+        resp = None
+        if user and community:
+            circle = 0
+            for circle_value, circle_name in community.circles.iteritems():
+                if circle_name == request.circle:
+                    circle = int(circle_value)
+
+            resp = UserRole.edit(user, community, request.role, circle)
 
         return ResponseMessage(success=True if resp else False)
 
@@ -229,6 +307,7 @@ class CommunityApi(remote.Service):
             community_message.team_key = community.team_key
             community_message.team_secret = community.team_secret
             community_message.team_hash = community.team_hash
+            community_message.plan = community.plan
 
             app = community.apps[0].get()
             if app:
@@ -236,73 +315,85 @@ class CommunityApi(remote.Service):
                 community_message.app_icon = app.icon_url
 
             community_message.users = []
-            for userrole in UserRole.community_user_list(community_key=community.key):
-                user = userrole.user.get()
-                if user and (user.account_type == community.team_key):
-                    user_message = UserAdminMasterMessage()
-                    user_message.display_name = user.display_name
-                    user_message.user_email = user.user_email
-                    user_message.password_present = True if user.password else False
-                    user_message.role = userrole.role
-                    user_message.image_url = user.image_url
-                    if community.circles:
-                        user_message.circle = community.circles.get(str(userrole.circle_level))
-                    community_message.users.append(user_message)
+            if request.get_user_list:
+                for userrole in UserRole.community_user_list(community_key=community.key):
+                    user = userrole.user.get()
+                    if user and (user.account_type == community.team_key):
+                        if user.user_email.split("@")[1] == "devnull.usersource.io":
+                            break
+
+                        user_message = UserAdminMasterMessage()
+                        user_message.display_name = user.display_name
+                        user_message.user_email = user.user_email
+                        user_message.password_present = True if user.password else False
+                        user_message.role = userrole.role
+                        user_message.image_url = user.image_url
+                        if community.circles:
+                            user_message.circle = community.circles.get(str(userrole.circle_level))
+                        community_message.users.append(user_message)
 
             communities_message.append(community_message)
 
         return CommunityAdminMasterListMessage(communities=communities_message)
 
     @endpoints.method(CreateCommunityMessage, CommunityAdminMasterListMessage,
-                      path="community/create_sdk_community", http_method="POST", name="community.create_sdk_community")
+                      path="community/create_sdk_community", http_method="POST",
+                      name="community.create_sdk_community")
     def create_sdk_community(self, request):
-        team_key = request.team_key
-        app_name = request.app_name
-        community_name = request.community_name
+        return CommunityAdminMasterListMessage(communities=Community.create_sdk_team(request))
 
-        app = AppInfo.query().filter(AppInfo.lc_name == app_name.lower()).get()
-        if not app:
-            appinfo_message = AppInfoMessage()
-            appinfo_message.name = app_name
-            app = AppInfo.insert(appinfo_message)
+    @endpoints.method(CreateProCommunityMessage, CommunityAdminMasterListMessage,
+                      path="community/create_sdk_community/pro", http_method="POST",
+                      name="community.create_sdk_community.pro")
+    def create_pro_sdk_community(self, request):
+        communities = Community.create_sdk_team(request.community,
+                                                pro_plan=True,
+                                                stripe_token=request.stripe_token)
+        return CommunityAdminMasterListMessage(communities=communities)
 
-        community = Community.getCommunityFromTeamKey(team_key=team_key)
-        if not community:
-            community_message = CommunityMessage(name=community_name,
-                                                 team_key=team_key,
-                                                 team_secret=md5(community_name.lower()))
-            community_message.user = UserMessage(user_email=request.admin_user.user_email,
-                                                 display_name=request.admin_user.display_name,
-                                                 password=request.admin_user.password)
-            community, user = Community.insert(community_message, getCommunity=True)
+    @endpoints.method(community_without_id_resource_container, CommunityCircleMembersListMessage,
+                      path="community/circle/users/list", http_method="GET", name="community.circle.users.list")
+    def get_circle_users(self, request):
+        roles = [UserRoleType.MEMBER, UserRoleType.ADMIN]
+        community = Community.getCommunityFromTeamKey(request.team_key)
 
-        communities_message = []
-        if community and app:
-            if not app.key in community.apps:
-                community.apps.append(app.key)
-                community.put()
+        circle_list_message = []
+        for circle_value, circle_name in community.circles.items():
+            circle_message = CommunityCircleMembersMessage()
+            circle_message.circle_name = circle_name
+            circle_message.users = []
 
-            # response message
-            community_message = CommunityAdminMasterMessage()
-            community_message.community_name = community.name
-            community_message.team_key = community.team_key
-            community_message.team_secret = community.team_secret
-            community_message.team_hash = community.team_hash
-            community_message.app_name = app.name
-            community_message.app_icon = app.icon_url
+            for userrole in UserRole.getUsersByCircle(community.key, int(circle_value)):
+                user = userrole.user.get()
+                if user and (user.account_type == community.team_key):
+                    if user.user_email.split("@")[1] == "devnull.usersource.io":
+                        break
 
-            community_message.users = []
-            user_message = UserAdminMasterMessage()
-            user_message.display_name = user.display_name
-            user_message.user_email = user.user_email
-            user_message.password_present = True if user.password else False
-            user_message.role = UserRole.getRole(user, community)
-            user_message.image_url = user.image_url
+                    user_message = UserAdminMasterMessage()
+                    user_message.display_name = user.display_name
+                    user_message.user_email = user.user_email
+                    user_message.password_present = True if user.password else False
+                    user_message.role = userrole.role
+                    user_message.image_url = user.image_url
+                    circle_message.users.append(user_message)
 
-            if community.circles:
-                user_message.circle = community.circles.get(str(UserRole.getCircleLevel(user, community)))
+            circle_list_message.append(circle_message)
 
-            community_message.users.append(user_message)
-            communities_message.append(community_message)
+        return CommunityCircleMembersListMessage(circle_list=circle_list_message, roles=roles)
 
-        return CommunityAdminMasterListMessage(communities=communities_message)
+    @endpoints.method(community_without_id_resource_container, CommunityValueMessage,
+                      path="community/teamsecret/reset", http_method="POST", name="community.teamsecret.reset")
+    def reset_team_secret(self, request):
+        if not is_auth_user_admin(headers=self.request_state.headers):
+            return CommunityValueMessage(secret=None)
+
+        secret = Community.reset_team_secret(request.team_key)
+        new_user_team_token = update_user_team_token(headers=self.request_state.headers, team_secret=secret)
+        return CommunityValueMessage(secret=secret, user_team_token=json.dumps(new_user_team_token))
+
+    @endpoints.method(UpdateCommunityPlanMessage, ResponseMessage,
+                      path="community/plan/update", http_method="POST",
+                      name="community.plan.update")
+    def create_pro_sdk_community(self, request):
+        update_success = Community.update_plan(request.team_key, request.stripe_token)
+        return ResponseMessage(success=update_success)

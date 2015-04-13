@@ -45,7 +45,9 @@ AdminTeamMaster.controller('Main', function($scope, $timeout, $location, DataSer
     $scope.createSDKTeam = function() {
         DataService.makeHTTPCall("community.community.create_sdk_community",{
             "community_name" : $scope.team_name,
-            "app_name" : $scope.app_name,
+            "app" : {
+                "name" : $scope.app_name
+            },
             "team_key" : $scope.team_key,
             "admin_user" : {
                 "user_email" : $scope.admin_email,
@@ -90,6 +92,7 @@ AdminTeamMaster.controller('Main', function($scope, $timeout, $location, DataSer
 
     $scope.getAdminTeamMasterList = function(event) {
         DataService.makeHTTPCall("community.community.admin_master", {
+            "get_user_list" : true
         }, function(data) {
             if (data.hasOwnProperty('communities') && data.communities.length > 0) {
                 $scope.communities = data.communities;

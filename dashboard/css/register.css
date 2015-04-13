@@ -1,0 +1,214 @@
+#register #register_outer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background: #f9f9f9;
+  overflow: auto;
+}
+#action-button input {
+  padding: 0 20px;
+  height: 36px;
+  vertical-align: middle;
+  line-height: 33px;
+  border-radius: 4px;
+  outline: 0;
+  color: #FFF;
+  margin-left: 16px;
+  font-size: 18px;
+}
+#action-button input#login {
+  background-color: #9399a5;
+  border: 1px solid #939393;
+}
+#action-button input#signup {
+  background-color: #ff6622;
+  border: 1px solid #f65007;
+}
+#register #register_inner {
+  text-align: center;
+  margin: 124px 0 50px 0;
+}
+#register .register_main_div {
+  border-radius: 4px;
+  background: #FFF;
+  border: 1px solid #C4CFD7;
+}
+#register #register_page_indicator_parent {
+  height: 12px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+#register .register_page_indicator {
+  width: 12px;
+  height: 100%;
+  display: inline-block;
+  border-radius: 9px;
+  background: #FFF;
+  border: 1px solid #C4CFD7;
+  margin-right: 4px;
+}
+#register .register_page_indicator:last-child {
+  margin-right: 0;
+}
+#register #register_inner .title {
+  font-size: 26px;
+  color: #111D2B;
+  margin: 30px 0;
+}
+#register #register_inner .show_app_info {
+  width: 66.666666667%;
+  margin: 0 auto;
+  text-align: left;
+  position: relative;
+}
+#register #register_inner .show_app_info .input-div {
+  display: inline-block;
+  width: 77.3%;
+  width: calc(100% - 150px);
+  width: -webkit-calc(100% - 150px);
+  width: -moz-calc(100% - 150px);
+  width: -o-calc(100% - 150px);
+}
+#register #register_inner .input-div {
+  width: 66.666666667%;
+  height: 36px;
+  border-radius: 4px;
+  border: 1px solid #C4CFD7;
+  padding: 0 10px;
+  outline: 0;
+  background-color: #F5F5F5;
+  margin: 0 auto;
+  text-align: left;
+  margin-bottom: 20px;
+}
+#register #register_inner input[type="email"],
+#register #register_inner input[type="password"],
+#register #register_inner input[type="text"] {
+  width: 94.783%;
+  width: calc(100% - 26px);
+  width: -webkit-calc(100% - 26px);
+  height: 34px;
+  background-color: #F5F5F5;
+  padding: 0;
+  margin: 0;
+  outline: 0;
+  border: 0;
+  padding-left: 6px;
+  vertical-align: middle;
+}
+#register #register_email,
+#register #register_password,
+#register #register_team_key {
+  margin-bottom: 20px;
+}
+#register .register_button {
+  width: 66.666666667%;
+  height: 40px;
+  margin: 0 auto;
+  background-color: #F62;
+  border: 1px solid #F65007;
+  color: #FFF;
+  line-height: 39px;
+  border-radius: 4px;
+  margin-bottom: 60px;
+  cursor: pointer;
+  padding: 0;
+  outline: 0;
+}
+#register .register_button.grey {
+  background-color: #9399A5;
+  border: 1px solid #939393;
+}
+#register .register_plan {
+  width: 48%;
+  display: inline-block;
+  padding: 30px;
+  border: 1px solid #C4CFD7;
+  border-radius: 4px;
+  text-align: center;
+}
+#register .register_plan.selected {
+  border: 1px solid #F62;
+}
+#register .register_plan .register_plan_selected {
+  width: 31px;
+  height: 31px;
+  display: inline-block;
+  background-image: url("/dashboard/images/check-grey.png");
+  margin-bottom: 16px;
+}
+#register .register_plan.selected .register_plan_selected {
+  background-image: url("/dashboard/images/check-green.png");
+}
+#register .register_plan .register_plan_name {
+  margin: 0 0 16px 0 !important;
+}
+#register .register_plan .register_plan_price {
+  font-weight: 900;
+  font-size: 24px;
+  margin-bottom: 16px;
+  color: #9399A5;
+}
+#register .register_plan.selected .register_plan_price {
+  color: #F62;
+}
+#register .register_plan .register_plan_desc {
+  display: none;
+  margin-bottom: 30px;
+}
+#register .register_plan input.register_plan_select {
+  width: 90%;
+  margin-bottom: 20px;
+  background-color: #9399A5;
+  border: 1px solid #939393;
+}
+#register .register_plan.selected input.register_plan_select {
+  background-color: #F62;
+  border: 1px solid #F65007;
+}
+#register #appinfo_autocomplete {
+  width: 100%;
+  position: absolute;
+  left: 0;
+  background-color: #FFF;
+  border: 1px solid #C4CFD7;
+  border-radius: 4px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+#register .appinfo_option {
+  width: 100%;
+  padding: 8px;
+  border-bottom: 1px solid #C4CFD7;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#register .appinfo_option:last-child {
+  border-bottom: 0;
+}
+#register #appFetchSpinner {
+  width: 24px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-image: url("/dashboard/images/spinner.gif");
+  background-repeat: no-repeat;
+  background-position: 50%;
+}
+#register #registration_completion_msg {
+  width: 60%;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: left;
+  font-size: 18px;
+}
+
+@media (max-width: 768px) {
+  #register #register_inner .input-div,
+  #register .register_button {
+    width: 90%;
+  }
+}

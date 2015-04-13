@@ -18,6 +18,10 @@ class AppInfoMessage(messages.Message):
     app_url = messages.StringField(9)
     created = message_types.DateTimeField(10)
     platform = messages.StringField(11)
+    bundleid = messages.StringField(12)
+
+class AppInfoListMessage(messages.Message):
+    app_list = messages.MessageField(AppInfoMessage, 1, repeated=True)
 
 class UserFavoriteApp(messages.Message):
     name = messages.StringField(1)

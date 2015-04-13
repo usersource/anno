@@ -7,6 +7,8 @@
 //
 
 #import "AnnoSingleton.h"
+#import "UserSourceSwizzler.h"
+#import "UIWindow+AnnoSingleton.h"
 
 #define UNREAD_URL @"/anno/1.0/user/unread"
 #define ANONYMOUS_USER_EMAIL @"dev%@@devnull.usersource.io"
@@ -111,6 +113,7 @@ static AnnoSingleton *sharedInstance = nil;
     self.userImageURL = userImageURLValue;
     self.teamKey = teamKeyValue;
     self.teamSecret = teamSecretValue;
+    [self setInfoViewControllerClass:[SettingsViewController class]];
 
     UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
     if (window.rootViewController == nil) {

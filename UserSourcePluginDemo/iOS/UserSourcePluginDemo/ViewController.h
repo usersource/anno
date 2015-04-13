@@ -7,16 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ShakeViewController.h"
 #import "InfoViewController.h"
 #import <FacebookSDK/FacebookSDK.h>
 
-@interface ViewController : ShakeViewController <UICollectionViewDataSource,
-                                                 UICollectionViewDelegate,
-                                                 FBLoginViewDelegate,
-                                                 UIAlertViewDelegate,
-                                                 UITableViewDelegate,
-                                                 UITableViewDataSource> {
+@interface ViewController : UIViewController <UICollectionViewDataSource,
+                                              UICollectionViewDelegate,
+                                              FBLoginViewDelegate,
+                                              UIAlertViewDelegate,
+                                              UITableViewDelegate,
+                                              UITableViewDataSource> {
     UINavigationBar *navigationBar;
     UINavigationItem *navItem;
     UIBarButtonItem *continueButton;
