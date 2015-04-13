@@ -95,7 +95,16 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
             }
         }
 
-        $scope.showPlans = true;
+        var location_search = $location.search();
+        if (location_search.hasOwnProperty("plan")) {
+            if (angular.equals(location_search.plan, "pro")) {
+                payWithStripe();
+            } else {
+                $scope.createSDKTeam();
+            }
+        } else {
+            $scope.showPlans = true;
+        }
     };
 
     function getCreateSDKTeamMessage(){
