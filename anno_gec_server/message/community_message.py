@@ -9,6 +9,7 @@ from message.user_message import UserMessage
 from message.user_message import CreateUserMessage
 from message.user_message import UserAdminMasterMessage
 from message.appinfo_message import AppInfoMessage
+from message.common_message import StripePaymentMessage
 
 class CommunityMessage(messages.Message):
     id = messages.IntegerField(1)
@@ -21,6 +22,7 @@ class CommunityMessage(messages.Message):
     user = messages.MessageField(UserMessage, 8)
     team_key = messages.StringField(9)
     team_secret = messages.StringField(10)
+    plan = messages.StringField(11)
 
 class CommunityAdminMasterMessage(messages.Message):
     community_name = messages.StringField(1)
@@ -29,14 +31,32 @@ class CommunityAdminMasterMessage(messages.Message):
     team_hash = messages.StringField(4)
     app_name = messages.StringField(5)
     app_icon = messages.StringField(6)
-    users = messages.MessageField(UserAdminMasterMessage, 7, repeated=True)
+    plan = messages.StringField(7)
+    users = messages.MessageField(UserAdminMasterMessage, 8, repeated=True)
+
+class CommunityCircleMembersMessage(messages.Message):
+    circle_name = messages.StringField(1)
+    users = messages.MessageField(UserAdminMasterMessage, 2, repeated=True)
+
+class CommunityCircleMembersListMessage(messages.Message):
+    circle_list = messages.MessageField(CommunityCircleMembersMessage, 1, repeated=True)
+    roles = messages.StringField(2, repeated=True)
 
 class CreateCommunityMessage(messages.Message):
     community_name = messages.StringField(1)
     team_key = messages.StringField(2)
-    app_name = messages.StringField(3)
+    app = messages.MessageField(AppInfoMessage, 3)
     admin_user = messages.MessageField(CreateUserMessage, 4)
     other_users = messages.MessageField(CreateUserMessage, 5, repeated=True)
+    plan = messages.StringField(6)
+
+class CreateProCommunityMessage(messages.Message):
+    community = messages.MessageField(CreateCommunityMessage, 1)
+    stripe_token = messages.MessageField(StripePaymentMessage, 2)
+
+class UpdateCommunityPlanMessage(messages.Message):
+    team_key = messages.StringField(1)
+    stripe_token = messages.MessageField(StripePaymentMessage, 2)
 
 class CommunityAdminMasterListMessage(messages.Message):
     communities = messages.MessageField(CommunityAdminMasterMessage, 1, repeated=True)
@@ -68,6 +88,8 @@ class CommunityUserRoleMessage(messages.Message):
     user_display_name = messages.StringField(6)
     user_password = messages.StringField(7)
     team_key = messages.StringField(8)
+    user_image_url = messages.StringField(9)
+    circle = messages.StringField(10)
 
 class CommunityInviteMessage(messages.Message):
     name = messages.StringField(1)
@@ -86,6 +108,11 @@ class CommunityValueMessage(messages.Message):
     name = messages.StringField(1)
     key = messages.StringField(2)
     secret = messages.StringField(3)
+    user_team_token = messages.StringField(4)
 
 class CommunityValueListMessage(messages.Message):
     teams = messages.MessageField(CommunityValueMessage, 1, repeated=True)
+
+class CommunityTeamKeyEditMessage(messages.Message):
+    team_key = messages.StringField(1)
+    new_team_key = messages.StringField(2)

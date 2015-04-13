@@ -4,7 +4,7 @@ Just a few minutes of your time will enable you to start collecting awesome feed
 
 ## Step 1: Register
 
-If you haven’t already, [register]('/register') your app (or your project) to get a FREE activation code. 
+If you haven’t already, [register]('/register') your app (or your project) to get a FREE activation code.
 
 ## Step 2: Download the SDK
 
@@ -16,7 +16,7 @@ Extract its contents. You now have a folder `UserSourceSDKPackage` containing:
 
 	UserSourceSDKPackage
 	|-- UserSourceSDK
-	`-- www
+	|-- www
 
 ## Step 4: Drop the SDK into your project
 
@@ -55,58 +55,79 @@ Please continue with [common setup](#common) after this.
 
 ### <a name="common"></a>Common Setup
 Finally, update your _Android Manifest_:
+
 1. Open _AndroidManifest.xml_.
 1. Add a _uses-permission_ element to the manifest:
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+``` xml
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+```
 
 1. Add following activities to the application element:
-	<activity android:name="io.usersource.anno.CommunityActivity" />
-	<activity android:name="io.usersource.anno.AnnoDrawActivity" />
-	<activity
-	    android:name="io.usersource.annoplugin.shake.ShakeMenu"
-	    android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
-	<activity android:name="org.pgsqlite.SQLitePlugin" />
+
+``` xml
+<activity android:name="io.usersource.anno.CommunityActivity" />
+<activity android:name="io.usersource.anno.AnnoDrawActivity" />
+<activity
+    android:name="io.usersource.annoplugin.shake.ShakeMenu"
+    android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+<activity android:name="org.pgsqlite.SQLitePlugin" />
+```
 
 ## Step 5: Activate the SDK
 
 Add this line in your _Activity_ file:
 
-	import io.usersource.annoplugin.AnnoSingleton;
-	import io.usersource.annoplugin.shake.ShakeEnabler;
+``` java
+import io.usersource.annoplugin.AnnoSingleton;
+import io.usersource.annoplugin.shake.ShakeEnabler;
+```
 
 and this line inside your class declaration:
 
-	private AnnoSingleton anno = null;
+``` java
+private AnnoSingleton anno = null;
+```
 
 Add these line in `onCreate` method (if it exists else create it):
 
-	anno = AnnoSingleton.getInstance(this);
+``` java
+anno = AnnoSingleton.getInstance(this);
+```
 
 Access the [Accounts](/accounts) tab of the dashboard and obtain the _key_ and _secret_. You will pass these to the SDK in your code.
 
-The next step depends on whether your app knows your user’s email. 
+The next step depends on whether your app knows your user’s email.
 
 ### My app knows the user’s email
+
 Use this method to initialize the SDK:
 
-	anno.setupWithUserInfo(<email>, <name>, <url>, <key>, <secret>);
+``` java
+anno.setupWithUserInfo(<email>, <name>, <url>, <key>, <secret>);
+```
 
 ### My app doesn't know the user’s email
 
 Use this method to initialize the SDK:
 
-	anno.setupAnonymousUserWithTeamCredentials(<key>, <secret>);
+``` java
+anno.setupAnonymousUserWithTeamCredentials(<key>, <secret>);
+```
 
-**Note**: both anonymous feedback and normal feedback are possible in your app. For example, to allow your users to give feedback prior to sign-in, you can enable the `setupAnonymousUserWithTeamCredentials` option. After the user signs-in, switch the anno instance to have the `setupWithUserInfo` option. 
+!!! note
+	Both anonymous feedback and normal feedback are possible in your app. For example, to allow your users to give feedback prior to sign-in, you can enable the `setupAnonymousUserWithTeamCredentials` option. After the user signs-in, switch the anno instance to have the `setupWithUserInfo` option.
 
-To activate Feedback using a shake gesture, follow these steps. To use another UI approach, see the [UserSource Customization Guide](androidcg).
+To activate Feedback using a shake gesture, follow these steps. To use another UI approach, see the [UserSource Customization Guide](custg).
 
-	ShakeEnabler.startListening(this);
+``` java
+ShakeEnabler.startListening(this);
+```
 
 **That’s it, the SDK is installed and configured!**
 
-Many developers want to customize UserSource so it looks and feels exactly like the rest of their app. We’ve provided easy and powerful hooks for you to do exactly that. 
+Many developers want to customize UserSource so it looks and feels exactly like the rest of their app. We’ve provided easy and powerful hooks for you to do exactly that.
 
-Read the [UserSource Customization Guide](androidcg).
+Read the [UserSource Customization Guide](custg).

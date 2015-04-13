@@ -1,22 +1,22 @@
-site_name: UserSource Developer
-site_url: https://usersource.io
+site_name: UserSource Docs
+site_url: https://developer.usersource.io
+copyright: 2015 UserSource.io 
 
-repo_url: http://usersource.io
-
-theme: bootstrap
+theme: readthedocs
 
 extra_css: ['themes/usersource/css/custom.css']
 
 pages:
     - ['index.md', 'Introduction']
-    - [sdk.md, SDK]
+    - [sdk.md, Downloads, SDK]
     - [iosug.md, iOS Guides, Developer Guide]
-    - [ioscg.md, iOS Guides, Customization Guide]
+    - [custg.md, iOS Guides, Customization Guide]
 #    - [iosapi.md, iOS Guides, API Reference]
     - [androidug.md, Android Guides, Developer Guide]
-    - [androidcg.md, Android Guides, Customization Guide]
+    - [custg.md, Android Guides, Customization Guide]
 #    - [androidapi.md, Android Guides, API Reference]
-    - ['faq.md', 'FAQ']
+    - ['faq.md', Support, 'FAQ']
 
+markdown_extensions: [admonition]
 
-
+use_directory_urls: false

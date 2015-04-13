@@ -106,7 +106,9 @@ class AccountApi(remote.Service):
                                                              image_url=user.image_url,
                                                              team_name=team.name,
                                                              team_key=team_key,
+                                                             team_hash=team.team_hash,
                                                              user_team_token=json.dumps(userTeamToken),
+                                                             role=UserRole.getRole(user, team),
                                                              feed_data=feed_data)
 
         return respMessage

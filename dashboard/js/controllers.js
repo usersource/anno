@@ -2,6 +2,190 @@
 
 var Dashboard = angular.module('Dashboard', ['ngCookies', 'ngRoute', 'DashboardConstantsModule', 'ServiceModule']);
 
+Dashboard.controller('NoAuthHeader', function($scope, $routeParams, $location, Utils) {
+    var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
+    $scope.currentController = Utils.getRoutePath($location.path());
+
+    $scope.showLoginPage = function() {
+        var login_path = "/dashboard/";
+        if (angular.isDefined(team_hash)) {
+            login_path = login_path + team_hash + "/" + team_name + "/";
+        }
+
+        $location.path(login_path + "login");
+    };
+
+    $scope.showRegisterPage = function() {
+        $location.path("/dashboard/register");
+    };
+});
+
+Dashboard.controller('Register', function($scope, $timeout, $location, DataService, Utils, DashboardConstants) {
+    $scope.showPlans = false;
+    $scope.appInStore = true;
+    $scope.proPlanSelected = true;
+    $scope.hideAppFetchSpinner = true;
+
+    // START OF STRIPE
+    var handler = StripeCheckout.configure({
+        key: DashboardConstants.Stripe.publishableKey,
+        token: function(token) {
+            var msg = { "stripe_token" : token };
+            msg["community"] = getCreateSDKTeamMessage();
+            msg["community"]["plan"] = "pro";
+
+            DataService.makeHTTPCall("community.create_sdk_community.pro", msg, function(data) {
+                if (data.communities.length) {
+                    $scope.showPlans = false;
+                    $scope.registrationCompleted = true;
+                } else {
+                    showDashboardMessage("Something went wrong while creating project. Amount will be refunded if charged.", true);
+                }
+            }, function(status) {
+                showDashboardMessage("Something went wrong while creating project. Amount will be refunded if charged.", true);
+            });
+        }
+    });
+
+    function payWithStripe() {
+        handler.open({
+            name: DashboardConstants.Stripe.name,
+            description: DashboardConstants.Stripe.description,
+            amount: DashboardConstants.Stripe.amount
+        });
+    };
+    // END OF STRIPE
+
+    function showDashboardMessage(message, error_type) {
+        $scope.error_message = message;
+        $scope.dashboard_error_type = error_type || false;
+        $timeout(function() {
+            $scope.error_message = "";
+        }, 5000);
+    }
+
+    $scope.onRegisterClicked = function() {
+        $scope.showAppInfoAutocomplete = false;
+    };
+
+    $scope.showInputForAppDetails = function() {
+        $scope.appInStore = false;
+    };
+
+    $scope.showPlansPage = function() {
+        if (angular.isUndefined($scope.register_email) || angular.equals($scope.register_email.length, 0)) {
+            showDashboardMessage("Email can't be empty", true);
+            return;
+        }
+
+        if (angular.isUndefined($scope.password) || angular.equals($scope.password.length, 0)) {
+            showDashboardMessage("Password can't be empty", true);
+            return;
+        }
+
+        if (angular.isUndefined($scope.confirm_password) || !angular.equals($scope.password, $scope.confirm_password)) {
+            showDashboardMessage("Passwords aren't matching.", true);
+            return;
+        }
+
+        if (!$scope.appInStore) {
+            if (angular.isUndefined($scope.bundleid) || !angular.equals($scope.bundleid.length, 0)) {
+                showDashboardMessage("Unique Identifier can't be empty", true);
+                return;
+            }
+        }
+
+        var location_search = $location.search();
+        if (location_search.hasOwnProperty("plan")) {
+            if (angular.equals(location_search.plan, "pro")) {
+                payWithStripe();
+            } else {
+                $scope.createSDKTeam();
+            }
+        } else {
+            $scope.showPlans = true;
+        }
+    };
+
+    function getCreateSDKTeamMessage(){
+        var msg = {
+            "app" : {
+                "name" : $scope.appname,
+                "icon_url" : $scope.appiconurl,
+                "version" : $scope.appversion
+            },
+            "team_key" : $scope.bundleid,
+            "admin_user" : {
+                "user_email" : $scope.register_email,
+                "display_name" : $scope.fullname,
+                "password" : $scope.password
+            }
+        };
+
+        return msg;
+    };
+
+    $scope.createSDKTeam = function() {
+        DataService.makeHTTPCall("community.community.create_sdk_community", getCreateSDKTeamMessage(), function(data) {
+            if (data.communities.length) {
+                // var community = data.communities[0];
+                // window.location = Utils.getFullDashboardURL(community.community_name, community.team_hash);
+                $scope.showPlans = false;
+                $scope.registrationCompleted = true;
+            } else {
+                showDashboardMessage("Something went wrong while creating project.", true);
+            }
+        }, function(status) {
+            showDashboardMessage("Something went wrong while creating project.", true);
+        });
+    };
+
+    $scope.getAppForRegister = function() {
+        if (!$scope.appInStore) return;
+        if (angular.isDefined($scope.appname) && $scope.appname.length > 2) {
+            $scope.hideAppFetchSpinner = false;
+            DataService.makeHTTPCall("appinfo.appinfo.get_by_name", {
+                "name" : $scope.appname
+            }, function(data) {
+                $scope.hideAppFetchSpinner = true;
+                if (data.hasOwnProperty('app_list') && data.app_list.length) {
+                    var new_data = data.app_list.filter(function(app) {
+                        return angular.equals(app.name.toLowerCase().indexOf($scope.appname.toLowerCase()), 0);
+                    });
+
+                    if (new_data.length) {
+                        $scope.showAppInfoAutocomplete = true;
+                        $scope.appinfo_list = new_data;
+                    }
+                } else {
+                    $scope.showAppInfoAutocomplete = false;
+                    $scope.appinfo_list = [];
+                }
+            }, function(status) {
+            });
+        }
+    };
+
+    $scope.appSelected = function(bundleid) {
+        appNotInStore.hidden = true;
+        $scope.showAppInfoDetailsForAppStore = true;
+
+        $scope.selectedApp = $scope.appinfo_list.filter(function(app) {
+            return angular.equals(app.bundleid, bundleid);
+        })[0];
+
+        $scope.appname = $scope.selectedApp.name;
+        $scope.appiconurl = $scope.selectedApp.icon_url;
+        $scope.appversion = $scope.selectedApp.version;
+        $scope.bundleid = $scope.selectedApp.bundleid;
+    };
+
+    $scope.selectProPlan = function() {
+        $scope.proPlanSelected = true;
+        payWithStripe();
+    };
+});
+
 Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams, Utils, DashboardConstants, DataService) {
     var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
     var urlSearchParams = $location.search(), redirectTo;
@@ -39,11 +223,7 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
                     Utils.removeRedirectURL();
                     window.location = decodeURIComponent(redirectTo).replace(/"/g, '');
                 } else {
-                    if (angular.isDefined(team_hash)) {
-                        $location.path('/dashboard/' + team_hash + '/' + team_name + '/feed');
-                    } else {
-                        $location.path('/dashboard/feed');
-                    }
+                    $location.path(Utils.getDashboardURL() + "/feed");
                 }
             } else {
                 $scope.error_message = "Authentication failed. Please try again.";
@@ -57,7 +237,7 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
     };
 });
 
-Dashboard.controller('Header', function($scope, $cookieStore, $location, $routeParams, Utils, DataService) {
+Dashboard.controller('Header', function($scope, $cookieStore, $location, $window, $routeParams, Utils, DataService) {
     var team_hash = $routeParams.teamHash,
         team_name = $routeParams.teamName,
         team_key = $cookieStore.get('team_key');
@@ -71,6 +251,19 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $routeP
 
     $scope.initHeader = function() {
         getAppinfoData();
+        checkForCurrentApp();
+    };
+
+    function checkForCurrentApp() {
+        if (angular.isDefined(team_hash)) {
+            DataService.makeHTTPCall("community.community.hash", {
+                "team_hash" : team_hash
+            }, function(data) {
+                if (!angular.equals(data.team_key, team_key)) {
+                    $scope.signoutDashboard();
+                }
+            });
+        }
     };
 
     $scope.signoutButtonClicked = function() {
@@ -93,6 +286,7 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $routeP
             team_key : team_key
         }, function(data) {
             $scope.appInfo = data;
+            $scope.$emit('appInfo', data);
         });
     }
 
@@ -298,7 +492,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
     function watchersCount() {
         $timeout(function() {
             $scope.watchers = Utils.watchersContainedIn($scope);
-            console.log("Number of watchers:", $scope.watchers);
+            // console.log("Number of watchers:", $scope.watchers);
         }, 1000);
     };
 
@@ -332,6 +526,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
         if ($scope.singleAnnoMode) args.anno_id = param_anno_id;
 
         DataService.makeHTTPCall("anno.anno.dashboard.list", args, function(data) {
+            if (angular.equals(typeof annos, "undefined")) return;
             if (clear_anno) {
                 $scope.annoList = [];
                 annos.scrollTop = 0;
@@ -373,9 +568,6 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
             watchersCount();
         }, function(status) {
-            if (status == 401) {
-                $scope.signoutDashboard();
-            }
         });
     }
 
@@ -401,6 +593,7 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
     }
 
     $scope.screenshotLoad = function (event, anno_item) {
+        if (angular.equals(typeof annos, "undefined")) return;
         if (angular.isDefined(event)) {
             anno_item = Utils.findAncestor(event.currentTarget, 'anno-item');
         }
@@ -603,12 +796,41 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
     };
 });
 
-Dashboard.controller('Manage', function($scope, $timeout, $location, $cookieStore, DataService, DashboardConstants) {
-    var team_key = $cookieStore.get('team_key');
+Dashboard.controller('Account', function($scope, $timeout, $location, $cookieStore, $http, DataService, DashboardConstants) {
+    var team_key = $cookieStore.get('team_key'),
+        role = $cookieStore.get('role');
 
     $scope.communities = [];
     $scope.community_detail = {};
-    $scope.addUserScreenVisible = false;
+    $scope.adminRole = DashboardConstants.roleType.admin;
+
+    // START OF STRIPE
+    var handler = StripeCheckout.configure({
+        key: DashboardConstants.Stripe.publishableKey,
+        token: function(token) {
+            var msg = { "stripe_token" : token };
+            msg["team_key"] = team_key;
+
+            DataService.makeHTTPCall("community.create_sdk_community.pro", msg, function(data) {
+                if (data.success) {
+                    $scope.plan = DashboardConstants.planType["pro"];
+                } else {
+                    showDashboardMessage("Something went wrong while updating plan. Amount will be refunded if charged.", true);
+                }
+            }, function(status) {
+                showDashboardMessage("Something went wrong while updating plan. Amount will be refunded if charged.", true);
+            });
+        }
+    });
+
+    $scope.upgradePlan = function() {
+        handler.open({
+            name: DashboardConstants.Stripe.name,
+            description: DashboardConstants.Stripe.description,
+            amount: DashboardConstants.Stripe.amount
+        });
+    };
+    // END OF STRIPE
 
     function showDashboardMessage(message, error_type) {
         $scope.error_message = message;
@@ -618,11 +840,22 @@ Dashboard.controller('Manage', function($scope, $timeout, $location, $cookieStor
         }, 5000);
     }
 
-    $scope.initManage = function() {
+    function getAuthorizationHeader() {
+        var userTeamToken = angular.fromJson($cookieStore.get('user_team_token'));
+        if (angular.isDefined(userTeamToken)) {
+            $http.defaults.headers.common.Authorization = userTeamToken.token_type + ' ' + userTeamToken.access_token;
+        }
+    }
+
+    $scope.initAccount = function() {
+        getAuthorizationHeader();
         $scope.getAdminTeamMasterList();
+        $scope.$on('appInfo', function(event, args) {
+            $scope.app_icon_url = args.icon_url;
+        });
     };
 
-    $scope.getDashboardURL = function(community_name, team_hash) {
+    /*$scope.getDashboardURL = function(community_name, team_hash) {
         if (community_name && team_hash) {
             var url = $location.protocol() + "://" + $location.host();
             if ($location.port() !== 443) {
@@ -633,32 +866,7 @@ Dashboard.controller('Manage', function($scope, $timeout, $location, $cookieStor
         } else {
             return "";
         }
-    };
-
-    $scope.showAddUserScreen = function(state) {
-        $scope.user_role = "member";
-        $scope.addUserScreenVisible = state;
-    };
-
-    $scope.addUser = function() {
-        DataService.makeHTTPCall("community.user.insert",{
-            "team_key" : $scope.community_detail.team_key,
-            "user_email" : $scope.user_email,
-            "user_display_name" : $scope.user_display_name,
-            "user_password" : $scope.user_password,
-            "role" : $scope.user_role
-        }, function(data) {
-            $scope.addUserScreenVisible = false;
-            $scope.community_detail.users.push({
-                "user_email" : $scope.user_email,
-                "display_name" : $scope.user_display_name,
-                "password_present" : true,
-                "role" : $scope.user_role,
-                "circle" : $scope.community_detail.users[0].circle
-            });
-        }, function(status) {
-        });
-    };
+    };*/
 
     $scope.getAdminTeamMasterList = function(event) {
         DataService.makeHTTPCall("community.community.admin_master", {
@@ -667,9 +875,263 @@ Dashboard.controller('Manage', function($scope, $timeout, $location, $cookieStor
             if (data.hasOwnProperty('communities') && data.communities.length > 0) {
                 $scope.communities = data.communities;
                 $scope.community_detail = data.communities[0];
+
+                $scope.team_name = $scope.community_detail.community_name;
+                $scope.team_key = $scope.community_detail.team_key;
+                $scope.team_secret = $scope.community_detail.team_secret;
+                $scope.role = role;
+                $scope.plan = DashboardConstants.planType[$scope.community_detail.plan];
             }
         }, function(status) {
-            showDashboardMessage("Oops... Something went wrong while archiving. Please try again.", true);
+            showDashboardMessage("Oops... Something went wrong. Please try again.", true);
         });
     };
+
+    $scope.resetTeamSecret = function() {
+        if (!angular.equals(role, $scope.adminRole)) return;
+        DataService.makeHTTPCall("community.teamsecret.reset", {
+            "team_key" : team_key
+        }, function(data) {
+            if (data.hasOwnProperty('secret') && data.secret) {
+                $scope.team_secret = data.secret;
+            }
+            if (data.hasOwnProperty('user_team_token')) {
+                $cookieStore.put('user_team_token', angular.fromJson(data.user_team_token));
+                getAuthorizationHeader();
+            }
+        }, function(status) {
+            showDashboardMessage("Oops... Something went wrong. Please try again.", true);
+        });
+    };
+
+    function updateTeamName() {
+        if (!angular.equals(role, $scope.adminRole)) return;
+        DataService.makeHTTPCall("community.community.update", {
+            "team_key" : team_key,
+            "name" : $scope.team_name
+        }, function(data) {
+            if (data.success) {
+                showDashboardMessage("Team name updated");
+            }
+        }, function(status) {
+            showDashboardMessage("Oops... Something went wrong. Please try again.", true);
+        });
+    }
+
+    function updateTeamKey() {
+        if (!angular.equals(role, $scope.adminRole)) return;
+        DataService.makeHTTPCall("community.teamkey.update", {
+            "team_key" : team_key,
+            "new_team_key" : $scope.team_key
+        }, function(data) {
+            if (data.success) {
+                team_key = $scope.team_key;
+                $cookieStore.put('team_key', $scope.team_key);
+                showDashboardMessage("Team key updated");
+            }
+            if (data.hasOwnProperty('msg')) {
+                $cookieStore.put('user_team_token', angular.fromJson(data.msg));
+                getAuthorizationHeader();
+            }
+        }, function(status) {
+            showDashboardMessage("Oops... Something went wrong. Please try again.", true);
+        });
+    }
+
+    function updateAppIconURL() {
+        if (!angular.equals(role, $scope.adminRole)) return;
+        DataService.makeHTTPCall("community.appicon.update", {
+            "team_key" : team_key,
+            "app_icon" : $scope.app_icon_url
+        }, function(data) {
+        }, function(status) {
+            showDashboardMessage("Oops... Something went wrong. Please try again.", true);
+        });
+    }
+
+    $scope.editSaveButtonClicked = function(type) {
+        if (angular.equals(type, "team_name")) {
+            $scope.team_key_editMode = false;
+            $scope.app_icon_editMode = false;
+            if ($scope.team_name_editMode) {
+                updateTeamName();
+                $scope.team_name_editMode = false;
+            } else {
+                $scope.team_name_editMode = true;
+                teamName.setSelectionRange(0, teamName.value.length);
+            }
+        } else if (angular.equals(type, "team_key")) {
+            $scope.team_name_editMode = false;
+            $scope.app_icon_editMode = false;
+            if ($scope.team_key_editMode) {
+                updateTeamKey();
+                $scope.team_key_editMode = false;
+            } else {
+                $scope.team_key_editMode = true;
+                teamKey.setSelectionRange(0, teamKey.value.length);
+            }
+        } else if (angular.equals(type, "app_icon")) {
+            $scope.team_name_editMode = false;
+            $scope.team_key_editMode = false;
+            if ($scope.app_icon_editMode) {
+                updateAppIconURL();
+                $scope.app_icon_editMode = false;
+            } else {
+                $scope.app_icon_editMode = true;
+                appIconURL.setSelectionRange(0, appIconURL.value.length);
+            }
+        }
+    };
 });
+
+Dashboard.controller('Members', function($scope, $timeout, $location, $cookieStore, $http, DataService, DashboardConstants) {
+    var team_key = $cookieStore.get('team_key'),
+        user_email = $cookieStore.get('user_email'),
+        role = $cookieStore.get('role');
+
+    $scope.circles = [];
+    $scope.roles = [];
+    $scope.current_circle = [];
+    $scope.current_user = [];
+    $scope.addMemberScreenVisible = false;
+    $scope.viewMemberDetailMode = false;
+    $scope.adminRole = DashboardConstants.roleType.admin;
+
+    function showDashboardMessage(message, error_type) {
+        $scope.error_message = message;
+        $scope.dashboard_error_type = error_type || false;
+        $timeout(function() {
+            $scope.error_message = "";
+        }, 5000);
+    }
+
+    $scope.initMembers = function() {
+        var userTeamToken = angular.fromJson($cookieStore.get('user_team_token'));
+        if (angular.isDefined(userTeamToken)) {
+            $http.defaults.headers.common.Authorization = userTeamToken.token_type + ' ' + userTeamToken.access_token;
+        }
+        $scope.getCircleMembersList();
+    };
+
+    $scope.showAddMemberScreen = function(state) {
+        $scope.user_role = $scope.roles[0];
+        $scope.user_circle = $scope.circles[0].circle_name;
+        $scope.addMemberScreenVisible = state;
+
+        if (!state) {
+            $scope.viewMemberDetailMode = false;
+        }
+    };
+
+    $scope.addMember = function() {
+        if (!angular.equals($scope.current_user.user_email, $scope.current_user_email)) {
+            if (!angular.equals(role, $scope.adminRole)) return;
+        }
+        if (!angular.equals($scope.user_password, $scope.user_confirm_password)) {
+            showDashboardMessage("Passwords aren't matching", true);
+            return;
+        }
+
+        var api_data = {
+            "team_key" : team_key,
+            "user_email" : $scope.user_email,
+            "user_display_name" : $scope.user_display_name,
+            "user_password" : $scope.user_password,
+            "user_image_url" : $scope.user_image_url,
+            "role" : $scope.user_role,
+            "circle" : $scope.user_circle
+        };
+
+        function onSuccess(message, add_user) {
+            $scope.addMemberScreenVisible = false;
+            showDashboardMessage(message);
+            if (angular.equals(add_user, true)) {
+                angular.forEach($scope.circles, function(circle) {
+                    if (angular.equals(circle.circle_name, $scope.user_circle)) {
+                        var new_member = {
+                            "user_email" : $scope.user_email,
+                            "display_name" : $scope.user_display_name,
+                            "password_present" : true,
+                            "image_url" : $scope.user_image_url,
+                            "role" : $scope.user_role
+                        };
+
+                        if (circle.hasOwnProperty('users') && circle.users.length) {
+                            circle.users.push(new_member);
+                        } else {
+                            circle.users = Array(new_member);
+                        }
+                    }
+                });
+            }
+            clearState();
+        }
+
+        if ($scope.viewMemberDetailMode) {
+            DataService.makeHTTPCall("community.user.update", api_data, function(data) {
+                if (data.success) {
+                    var message = "'" + $scope.user_display_name + "' info updated.";
+                    onSuccess(message);
+                }
+            }, function(status) {
+            });
+        } else {
+            DataService.makeHTTPCall("community.user.insert", api_data, function(data) {
+                var message = "'" + $scope.user_display_name + "' is added to team.";
+                onSuccess(message, true);
+            }, function(status) {
+            });
+        }
+    };
+
+    function clearState() {
+        $scope.user_email = "";
+        $scope.user_display_name = "";
+        $scope.user_password = "";
+        $scope.user_confirm_password = "";
+        $scope.user_image_url = "";
+    }
+
+    $scope.getCircleMembersList = function(event) {
+        DataService.makeHTTPCall("community.community.circle.users.list", {
+            "team_key" : team_key
+        }, function(data) {
+            if (data.hasOwnProperty('circle_list') && data.circle_list.length > 0) {
+                $scope.circles = data.circle_list;
+                $scope.current_circle = data.circle_list[0];
+                $scope.selectCircle = $scope.current_circle.circle_name;
+            }
+
+            if (data.hasOwnProperty('roles') && data.roles.length > 0) {
+                $scope.roles = data.roles;
+            }
+
+            $scope.role = role;
+            $scope.current_user_email = user_email;
+        }, function(status) {
+            showDashboardMessage("Oops... Something went wrong. Please try again.", true);
+        });
+    };
+
+    $scope.changeCircle = function(event) {
+        $scope.current_circle = $scope.circles.filter(function(circle) {
+            return circle.circle_name === $scope.selectCircle;
+        })[0];
+    };
+
+    $scope.showMemberDetails = function(event, user_email) {
+        $scope.current_user = $scope.current_circle.users.filter(function(user) {
+            return angular.equals(user.user_email, user_email);
+        })[0];
+
+        $scope.viewMemberDetailMode = true;
+        $scope.user_email = $scope.current_user.user_email;
+        $scope.user_display_name = $scope.current_user.display_name;
+        $scope.user_image_url = $scope.current_user.image_url;
+        $scope.user_role = $scope.current_user.role;
+        $scope.user_circle = $scope.current_circle.circle_name;
+        $scope.addMemberScreenVisible = true;
+    };
+});
+
+Dashboard.controller('GetStarted', function($scope) {});

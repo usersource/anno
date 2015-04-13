@@ -1,0 +1,96 @@
+<div id="register" ng-controller="Register" ng-click="onRegisterClicked();">
+    <div class="header row" ng-include="'/dashboard/partials/no_auth_header.html'"></div>
+    <div id="dashboard_message" ng-show="error_message.length" ng-class="{'error-message':dashboard_error_type}" style="left: 25%;">
+        <div id="dashboard_message_text">{{error_message}}</div>
+    </div>
+    <div id="register_outer">
+        <div class="col-lg-2 col-md-2 col-sm-1 col-xs-1"></div>
+        <div id="register_inner" class="col-lg-8 col-md-8 col-sm-10 col-xs-10">
+            <!-- <div id="register_page_indicator_parent">
+                <div class="register_page_indicator"></div>
+                <div class="register_page_indicator"></div>
+                <div class="register_page_indicator"></div>
+            </div> -->
+            <div id="register_form_div" class="register_main_div" ng-hide="showPlans || registrationCompleted">
+                <div style="padding-bottom: 20px;border-bottom: 1px solid #C4CFD7;">
+                    <div class="title">Sign up, it's free</div>
+                    <div class="input-div">
+                        <img width="16px" height="16px" src="/dashboard/images/icon_mentions.png">
+                        <input ng-model="fullname" type="text" id="register_full_name" placeholder="Full Name" />
+                    </div>
+                    <div class="input-div">
+                        <img width="16px" height="10px" src="/dashboard/images/icon_mail.png">
+                        <input ng-model="register_email" type="email" id="register_email" placeholder="Email Address"/>
+                    </div>
+                    <div class="input-div">
+                        <img width="12px" height="15px" src="/dashboard/images/icon_password.png" style="margin: 0 2px;">
+                        <input ng-model="password" type="password" id="register_password" placeholder="Password"/>
+                    </div>
+                    <div class="input-div">
+                        <img width="12px" height="15px" src="/dashboard/images/icon_password.png" style="margin: 0 2px;">
+                        <input ng-model="confirm_password" type="password" id="register_confirm_password" placeholder="Confirm Password"/>
+                    </div>
+                </div>
+                <div>
+                    <div class="title">App Details</div>
+                    <div ng-class="{'show_app_info':!appInStore || showAppInfoDetailsForAppStore}">
+                        <div ng-hide="appInStore && !showAppInfoDetailsForAppStore" style="position: absolute;right: 0;">
+                            <div id="appIconHolder" style="margin: 0;"></div>
+                            <img id="appIconImage" style="margin: 0;" ng-src="{{appiconurl && appiconurl || '/dashboard/images/icon_mobile.png'}}" />
+                        </div>
+                        <div class="input-div" style="position: relative;">
+                            <img width="14px" height="14px" src="/dashboard/images/icon_globe.png" style="margin: 0 1px;">
+                            <input ng-model="appname" type="text" id="register_app_name" placeholder="App Name{{appInStore && ' in App Store' || ''}}" ng-keyup="getAppForRegister();"/>
+                            <div id="appFetchSpinner" ng-show="appInStore && !hideAppFetchSpinner"></div>
+                            <div id="appinfo_autocomplete" ng-show="showAppInfoAutocomplete">
+                                <div class="appinfo_option" ng-repeat="appinfo in appinfo_list" ng-click="appSelected(appinfo.bundleid);">
+                                    <img width="35px" height="35px" style="border-radius: 4px" ng-src="{{appinfo.icon_url}}" />
+                                    <span style="vertical-align: middle;margin-left: 8px;font-weight: 600;">{{appinfo.name}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-hide="appInStore && !showAppInfoDetailsForAppStore">
+                            <div class="input-div">
+                                <img width="12px" height="15px" src="/dashboard/images/icon_key.png" style="margin: 0 2px;">
+                                <input ng-model="bundleid" type="text" id="register_bundle_id" placeholder="Unique Identifier" ng-disabled="showAppInfoDetailsForAppStore"/>
+                            </div>
+                            <div class="input-div">
+                                <img width="14px" height="14px" src="/dashboard/images/icon_globe.png" style="margin: 0 1px;">
+                                <input ng-model="appiconurl" type="text" id="register_app_icon_url" placeholder="App Icon URL" ng-disabled="showAppInfoDetailsForAppStore"/>
+                            </div>
+                            <div class="input-div">
+                                <img width="12px" height="14px" src="/dashboard/images/icon_version.png" style="margin: 0 2px;">
+                                <input ng-model="appversion" type="text" id="register_app_version" placeholder="Version" ng-disabled="showAppInfoDetailsForAppStore"/>
+                            </div>
+                        </div>
+                        <input id="appNotInStore" class="register_button grey" type="submit" value="My App is not in App Store yet" style="margin-bottom: 0;" ng-show="appInStore" ng-click="showInputForAppDetails();"/>
+                    </div>
+                </div>
+                <input class="register_button" type="submit" value="Sign Up Now" style="margin-top: 60px;" ng-click="showPlansPage();"/>
+            </div>
+            <div id="register_form_div" class="register_main_div" ng-show="showPlans && !registrationCompleted">
+                <div class="title">Choose your Plan</div>
+                <div style="width: 80%;margin: 0 auto 50px auto;">
+                    <div class="register_plan" ng-class="{'selected' : !proPlanSelected}">
+                        <div class="register_plan_selected"></div>
+                        <div class="register_plan_name title">Basic Plan</div>
+                        <div class="register_plan_price">Free</div>
+                        <div class="register_plan_desc">Praesent magna est, mattis quis laoreet sit amet, rhoncus ac felis</div>
+                        <input class="register_button register_plan_select" type="submit" value="Choose Basic Plan" ng-click="createSDKTeam();">
+                    </div>
+                    <div class="register_plan" ng-class="{'selected' : proPlanSelected}" style="margin-left: 3%;vertical-align: top;">
+                        <div class="register_plan_selected"></div>
+                        <div class="register_plan_name title">Pro Plan</div>
+                        <div class="register_plan_price">$10/month</div>
+                        <div class="register_plan_desc">Praesent magna est, mattis quis laoreet sit amet, rhoncus ac felis</div>
+                        <input class="register_button register_plan_select" type="submit" value="Choose Pro Plan" ng-click="selectProPlan();">
+                    </div>
+                </div>
+            </div>
+            <div id="registration_completion_msg" class="register_main_div" ng-show="registrationCompleted">
+                <div>That's it!<br/><br/>Please check your email for a message from usersource.io.<br/>Click on the link in the email to get started!</div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-1 col-xs-1"></div>
+    </div>
+</div>

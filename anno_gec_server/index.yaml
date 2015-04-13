@@ -86,6 +86,14 @@ indexes:
 - kind: Anno
   properties:
   - name: app
+  - name: archived
+  - name: community
+  - name: created
+    direction: desc
+
+- kind: Anno
+  properties:
+  - name: app
   - name: community
   - name: created
     direction: desc

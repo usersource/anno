@@ -30,10 +30,11 @@ Double-click the package to extract its contents. You now have a folder `UserSou
 	* `MobileCoreServices.framework`
 	* `AssetsLibrary.framework`
 	* `libsqlite3.dylib`
-	* **Note**: Cordova should appear last in _Linked Frameworks and Libraries_
 4. Ensure the -ObjC flag is enabled in Build Settings > Linking > Other Linking Flags (here’s help if you need it)
 
-**Note**: _Please use the version of Cordova we supply. If your app already contains Cordova, please email info@usersource.io to check on compatibility of plugins._
+!!! note
+	* Cordova should appear last in _Linked Frameworks and Libraries_
+	* Please use the version of Cordova we supply. If your app already contains Cordova, please email [info@usersource.io](mailto:info@usersource.io) to check on compatibility of plugins.
 
 
 ## Step 5: Activate the SDK
@@ -57,9 +58,10 @@ In your `didFinishLaunchingWithOptions` handler, use this method to initialize t
 
 	[[AnnoSingleton sharedInstance] setupAnonymousUserWithteamKey:@<key> teamSecret:@<secret>];
 
-**Note**: both anonymous feedback and normal feedback are possible in your app. For example, to allow your users to give feedback prior to sign-in, you can enable the `setupAnonymousUserWithteamKey` option. After the user signs-in, switch the `AnnoSingleton` instance to have the `setupWithEmail` option.
+!!! note
+	Both anonymous feedback and normal feedback are possible in your app. For example, to allow your users to give feedback prior to sign-in, you can enable the `setupAnonymousUserWithteamKey` option. After the user signs-in, switch the `AnnoSingleton` instance to have the `setupWithEmail` option. 
 
-To activate Feedback using a shake gesture, follow these steps. To use another UI approach, see the [UserSource Customization Guide](ioscg).
+To activate Feedback using a shake gesture, follow these steps. To use another UI approach, see the [UserSource Customization Guide](custg).
 
 	[[AnnoSingleton sharedInstance] enableShakeGesture];
 
@@ -67,4 +69,4 @@ To activate Feedback using a shake gesture, follow these steps. To use another U
 
 Many developers want to customize UserSource so it looks and feels exactly like the rest of their app. We’ve provided easy and powerful hooks for you to do exactly that.
 
-Read the [UserSource Customization Guide](ioscg).
+Read the [UserSource Customization Guide](custg).

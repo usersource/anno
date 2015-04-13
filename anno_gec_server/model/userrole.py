@@ -19,6 +19,14 @@ class UserRole(ndb.Model):
     circle_level = ndb.IntegerProperty(required=True, default=0)
 
     @classmethod
+    def get(cls, user, community):
+        entity = None
+        if user and community:
+            entity = cls.query(ndb.AND(cls.user == user.key, cls.community == community.key)).get()
+
+        return entity
+
+    @classmethod
     def insert(cls, user, community, role=None, circle_level=0):
         entity = None
         role = role or UserRoleType.MEMBER
@@ -31,19 +39,17 @@ class UserRole(ndb.Model):
 
     @classmethod
     def delete(cls, user, community):
-        if user and community:
-            entity = cls.query(ndb.AND(cls.user == user.key, cls.community == community.key)).get()
-            if entity:
-                entity.key.delete()
+        entity = cls.get(user, community)
+        if entity:
+            entity.key.delete()
 
     @classmethod
-    def edit(cls, user, community, role):
-        entity = None
-        if user and community:
-            entity = cls.query(ndb.AND(cls.user == user.key, cls.community == community.key)).get()
-            if entity:
-                entity.role = role
-                entity.put()
+    def edit(cls, user, community, role=None, circle=None):
+        entity = cls.get(user, community)
+        if entity:
+            entity.role = role or entity.role
+            entity.circle_level = circle or entity.circle_level
+            entity.put()
         return entity
 
     @classmethod
@@ -69,3 +75,9 @@ class UserRole(ndb.Model):
     def getRole(cls, user, community):
         entity = cls.query(ndb.AND(cls.user == user.key, cls.community == community.key)).get()
         return entity.role if entity else None
+
+    @classmethod
+    def getUsersByCircle(cls, community_key, circle_level):
+        query = cls.query().filter(ndb.AND(cls.community == community_key,
+                                           cls.circle_level == circle_level))
+        return query.fetch()
