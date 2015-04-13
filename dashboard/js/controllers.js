@@ -23,6 +23,7 @@ Dashboard.controller('NoAuthHeader', function($scope, $routeParams, $location, U
 Dashboard.controller('Register', function($scope, $timeout, $location, DataService, Utils, DashboardConstants) {
     $scope.showPlans = false;
     $scope.appInStore = true;
+    $scope.proPlanSelected = true;
     $scope.hideAppFetchSpinner = true;
 
     // START OF STRIPE
