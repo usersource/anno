@@ -19,6 +19,7 @@ from model.userrole import UserRole
 from model.anno import Anno
 from message.account_message import AccountMessage
 from message.account_message import AccountAuthenticateMessage
+from message.account_message import AccountAuthenticateListMessage
 from message.user_message import UserMessage
 from message.anno_api_messages import AnnoListMessage
 
@@ -82,37 +83,35 @@ class AccountApi(remote.Service):
 
         return UserMessage(id=user.key.id(), display_name=user.display_name)
 
-    @endpoints.method(AccountMessage, AccountAuthenticateMessage, path="account/dashboard/authenticate",
+    @endpoints.method(AccountMessage, AccountAuthenticateListMessage, path="account/dashboard/authenticate",
                       http_method="POST", name="account.dashboard.authenticate")
     def dashboard_authenticate(self, request):
         email = request.user_email
         password = request.password
         team_key = request.team_key
-        get_feeds = request.get_feeds or False
 
-        respMessage = AccountAuthenticateMessage(authenticated=False)
-        if email and password and team_key:
+        accounts = []
+        if email and password:
             users = User.get_all_user_by_email(email, md5(password), team_key=team_key)
-            user = users[0] if len(users) else None
 
-            if user:
-                team = Community.getCommunityFromTeamKey(team_key)
-                if team:
-                    userTeamToken = get_user_team_token(email, password, team_key,
-                                                        team.team_secret, user.display_name,
-                                                        user.image_url)
-                    feed_data = Anno.query_by_page(15, None, None, user, True) if get_feeds else AnnoListMessage()
-                    respMessage = AccountAuthenticateMessage(authenticated=True,
-                                                             display_name=user.display_name,
+            for user in users:
+                if user:
+                    team_key = user.account_type
+                    team = Community.getCommunityFromTeamKey(team_key)
+                    if team:
+                        userTeamToken = get_user_team_token(email, password, team_key,
+                                                            team.team_secret, user.display_name,
+                                                            user.image_url)
+                        account = AccountAuthenticateMessage(display_name=user.display_name,
                                                              image_url=user.image_url,
                                                              team_name=team.name,
                                                              team_key=team_key,
                                                              team_hash=team.team_hash,
                                                              user_team_token=json.dumps(userTeamToken),
-                                                             role=UserRole.getRole(user, team),
-                                                             feed_data=feed_data)
+                                                             role=UserRole.getRole(user, team))
+                        accounts.append(account)
 
-        return respMessage
+        return AccountAuthenticateListMessage(authenticated=True if len(accounts) else False, account_info=accounts)
 
     @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/forgot_detail',
                       http_method='POST', name='account.forgot_detail')

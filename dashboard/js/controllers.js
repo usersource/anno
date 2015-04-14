@@ -212,20 +212,25 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
         }
     };
 
+    function gotoRedirectPage() {
+        if (angular.isDefined(redirectTo)) {
+            Utils.removeRedirectURL();
+            window.location = decodeURIComponent(redirectTo).replace(/"/g, '');
+        } else {
+            $location.path(Utils.getDashboardURL() + "/feed");
+        }
+    }
+
     $scope.authenticate_dashboard = function() {
         DataService.makeHTTPCall("account.dashboard.authenticate", {
             'user_email' : $scope.email,
             'password' : $scope.password,
             'team_key' : $scope.teamkey
         }, function(data) {
-            data['email'] = $scope.email;
             if (data.authenticated) {
-                Utils.storeUserDataInCookies(data);
-                if (angular.isDefined(redirectTo)) {
-                    Utils.removeRedirectURL();
-                    window.location = decodeURIComponent(redirectTo).replace(/"/g, '');
-                } else {
-                    $location.path(Utils.getDashboardURL() + "/feed");
+                if (angular.equals(data.account_info.length, 1)) {
+                    Utils.storeUserDataInCookies(data.account_info[0], $scope.email);
+                    gotoRedirectPage();
                 }
             } else {
                 $scope.error_message = "Authentication failed. Please try again.";
