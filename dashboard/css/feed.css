@@ -11,6 +11,7 @@
   padding-top: 1.666666667%;
 }
 #side-panel .side-panel-filter {
+  width: 100%;
   height: 26px;
   font-size: 14px;
   line-height: 24px;
@@ -20,6 +21,9 @@
   border-radius: 4px;
   margin-bottom: 8px;
   cursor: pointer;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 #side-panel .side-panel-filter.active {
   color: #1b96c9;
@@ -386,7 +390,7 @@
   border-radius: 4px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .anno-info-action-item {
     text-align: center;
     padding: 0 !important;
