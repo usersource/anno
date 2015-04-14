@@ -26,36 +26,37 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
     $scope.proPlanSelected = true;
     $scope.hideAppFetchSpinner = true;
 
-    // START OF STRIPE
-    var handler = StripeCheckout.configure({
-        key: DashboardConstants.Stripe.publishableKey,
-        allowRememberMe: false,
-        token: function(token) {
-            var msg = { "stripe_token" : token };
-            msg["community"] = getCreateSDKTeamMessage();
-            msg["community"]["plan"] = "pro";
-
-            DataService.makeHTTPCall("community.create_sdk_community.pro", msg, function(data) {
-                if (data.communities.length) {
-                    $scope.showPlans = false;
-                    $scope.registrationCompleted = true;
-                } else {
-                    showDashboardMessage("Something went wrong while creating project. Amount will be refunded if charged.", true);
-                }
-            }, function(status) {
-                showDashboardMessage("Something went wrong while creating project. Amount will be refunded if charged.", true);
-            });
-        }
-    });
-
     function payWithStripe() {
+        // START OF STRIPE
+        var handler = StripeCheckout.configure({
+            key: DashboardConstants.Stripe.publishableKey,
+            email: $scope.register_email,
+            allowRememberMe: false,
+            token: function(token) {
+                var msg = { "stripe_token" : token };
+                msg["community"] = getCreateSDKTeamMessage();
+                msg["community"]["plan"] = "pro";
+
+                DataService.makeHTTPCall("community.create_sdk_community.pro", msg, function(data) {
+                    if (data.communities.length) {
+                        $scope.showPlans = false;
+                        $scope.registrationCompleted = true;
+                    } else {
+                        showDashboardMessage("Something went wrong while creating project. Amount will be refunded if charged.", true);
+                    }
+                }, function(status) {
+                    showDashboardMessage("Something went wrong while creating project. Amount will be refunded if charged.", true);
+                });
+            }
+        });
+
         handler.open({
             name: DashboardConstants.Stripe.name,
             description: DashboardConstants.Stripe.description,
             amount: DashboardConstants.Stripe.amount
         });
+        // END OF STRIPE
     };
-    // END OF STRIPE
 
     function showDashboardMessage(message, error_type) {
         $scope.error_message = message;
