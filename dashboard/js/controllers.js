@@ -231,6 +231,10 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
                 if (angular.equals(data.account_info.length, 1)) {
                     Utils.storeUserDataInCookies(data.account_info[0], $scope.email);
                     gotoRedirectPage();
+                } else {
+                    $scope.accounts = data.account_info;
+                    $scope.selectAccountValue = 0;
+                    $scope.selectAccount = true;
                 }
             } else {
                 $scope.error_message = "Authentication failed. Please try again.";
@@ -241,6 +245,11 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
                 }, 5000);
             }
         });
+    };
+
+    $scope.continueWithDashboardLogin = function() {
+        Utils.storeUserDataInCookies($scope.accounts[Number($scope.selectAccountValue)], $scope.email);
+        gotoRedirectPage();
     };
 });
 
