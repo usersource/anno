@@ -800,39 +800,42 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
 Dashboard.controller('Account', function($scope, $timeout, $location, $cookieStore, $http, DataService, DashboardConstants) {
     var team_key = $cookieStore.get('team_key'),
+        user_email = $cookieStore.get('user_email'),
         role = $cookieStore.get('role');
 
     $scope.communities = [];
     $scope.community_detail = {};
     $scope.adminRole = DashboardConstants.roleType.admin;
 
-    // START OF STRIPE
-    var handler = StripeCheckout.configure({
-        key: DashboardConstants.Stripe.publishableKey,
-        token: function(token) {
-            var msg = { "stripe_token" : token };
-            msg["team_key"] = team_key;
-
-            DataService.makeHTTPCall("community.create_sdk_community.pro", msg, function(data) {
-                if (data.success) {
-                    $scope.plan = DashboardConstants.planType["pro"];
-                } else {
-                    showDashboardMessage("Something went wrong while updating plan. Amount will be refunded if charged.", true);
-                }
-            }, function(status) {
-                showDashboardMessage("Something went wrong while updating plan. Amount will be refunded if charged.", true);
-            });
-        }
-    });
-
     $scope.upgradePlan = function() {
+        // START OF STRIPE
+        var handler = StripeCheckout.configure({
+            key: DashboardConstants.Stripe.publishableKey,
+            email: user_email,
+            allowRememberMe: false,
+            token: function(token) {
+                var msg = { "stripe_token" : token };
+                msg["team_key"] = team_key;
+
+                DataService.makeHTTPCall("community.create_sdk_community.pro", msg, function(data) {
+                    if (data.success) {
+                        $scope.plan = DashboardConstants.planType["pro"];
+                    } else {
+                        showDashboardMessage("Something went wrong while updating plan. Amount will be refunded if charged.", true);
+                    }
+                }, function(status) {
+                    showDashboardMessage("Something went wrong while updating plan. Amount will be refunded if charged.", true);
+                });
+            }
+        });
+
         handler.open({
             name: DashboardConstants.Stripe.name,
             description: DashboardConstants.Stripe.description,
             amount: DashboardConstants.Stripe.amount
         });
+        // END OF STRIPE
     };
-    // END OF STRIPE
 
     function showDashboardMessage(message, error_type) {
         $scope.error_message = message;
