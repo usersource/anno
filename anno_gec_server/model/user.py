@@ -48,7 +48,7 @@ class User(ndb.Model):
         if team_key:
             query = query.filter(cls.account_type == team_key)
 
-        return query.get()
+        return query.fetch()
 
     @classmethod
     def find_user_by_display_name(cls, display_name):

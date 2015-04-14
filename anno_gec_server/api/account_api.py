@@ -92,7 +92,8 @@ class AccountApi(remote.Service):
 
         respMessage = AccountAuthenticateMessage(authenticated=False)
         if email and password and team_key:
-            user = User.get_all_user_by_email(email, md5(password), team_key=team_key)
+            users = User.get_all_user_by_email(email, md5(password), team_key=team_key)
+            user = users[0] if len(users) else None
 
             if user:
                 team = Community.getCommunityFromTeamKey(team_key)

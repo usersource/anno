@@ -30,6 +30,7 @@ body {
   display: inline-block;
   vertical-align: middle;
   text-decoration: none;
+  margin: 0;
 }
 .header div {
   font-size: 16px;
