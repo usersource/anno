@@ -394,6 +394,6 @@ class CommunityApi(remote.Service):
     @endpoints.method(UpdateCommunityPlanMessage, ResponseMessage,
                       path="community/plan/update", http_method="POST",
                       name="community.plan.update")
-    def create_pro_sdk_community(self, request):
+    def update_plan(self, request):
         update_success = Community.update_plan(request.team_key, request.stripe_token)
         return ResponseMessage(success=update_success)
