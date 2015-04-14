@@ -11,10 +11,10 @@ ServiceModule.factory('Utils', function($cookieStore, $location) {
         return location_path.split("/").reverse()[0];
     }
 
-    function storeUserDataInCookies(data) {
-        $cookieStore.put('authenticated', data.authenticated);
+    function storeUserDataInCookies(data, email) {
+        $cookieStore.put('authenticated', true);
         $cookieStore.put('user_display_name', data.display_name);
-        $cookieStore.put('user_email', data.email);
+        $cookieStore.put('user_email', email);
         $cookieStore.put('user_image_url', data.image_url);
         $cookieStore.put('team_key', data.team_key);
         $cookieStore.put('team_name', data.team_name);

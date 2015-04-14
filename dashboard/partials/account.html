@@ -61,7 +61,7 @@
                     <div style="margin: 10px 0 20px 0;">
                         <div style="display: inline-block;font-weight: 600;">Plan Type:</div>
                         <div style="display: inline-block;">{{plan}}</div>
-                        <button class="admin-button" ng-click="upgradePlan();" ng-if="plan == 'Basic Plan'" style="border: 1px solid #F65007;margin-left: 20px;">Upgrade Plan</button>
+                        <button class="admin-button" ng-click="upgradePlan();" ng-if="(plan == 'Basic Plan') && (role == adminRole)" style="border: 1px solid #F65007;margin-left: 20px;">Upgrade Plan</button>
                     </div>
                 </div>
             </div>

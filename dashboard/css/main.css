@@ -29,6 +29,8 @@ body {
   margin-left: 2.031%;
   display: inline-block;
   vertical-align: middle;
+  text-decoration: none;
+  margin: 0;
 }
 .header div {
   font-size: 16px;
@@ -187,4 +189,13 @@ body {
   right: 0;
   bottom: 0;
   background-color: #F9F9F9;
+}
+#noAuthHeader a#header_title {
+  font-size: 150%;
+  font-weight: bold;
+  color: #F62;
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
 }

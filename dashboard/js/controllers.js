@@ -26,35 +26,37 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
     $scope.proPlanSelected = true;
     $scope.hideAppFetchSpinner = true;
 
-    // START OF STRIPE
-    var handler = StripeCheckout.configure({
-        key: DashboardConstants.Stripe.publishableKey,
-        token: function(token) {
-            var msg = { "stripe_token" : token };
-            msg["community"] = getCreateSDKTeamMessage();
-            msg["community"]["plan"] = "pro";
-
-            DataService.makeHTTPCall("community.create_sdk_community.pro", msg, function(data) {
-                if (data.communities.length) {
-                    $scope.showPlans = false;
-                    $scope.registrationCompleted = true;
-                } else {
-                    showDashboardMessage("Something went wrong while creating project. Amount will be refunded if charged.", true);
-                }
-            }, function(status) {
-                showDashboardMessage("Something went wrong while creating project. Amount will be refunded if charged.", true);
-            });
-        }
-    });
-
     function payWithStripe() {
+        // START OF STRIPE
+        var handler = StripeCheckout.configure({
+            key: DashboardConstants.Stripe.publishableKey,
+            email: $scope.register_email,
+            allowRememberMe: false,
+            token: function(token) {
+                var msg = { "stripe_token" : token };
+                msg["community"] = getCreateSDKTeamMessage();
+                msg["community"]["plan"] = "pro";
+
+                DataService.makeHTTPCall("community.create_sdk_community.pro", msg, function(data) {
+                    if (data.communities.length) {
+                        $scope.showPlans = false;
+                        $scope.registrationCompleted = true;
+                    } else {
+                        showDashboardMessage("Something went wrong while creating project. Amount will be refunded if charged.", true);
+                    }
+                }, function(status) {
+                    showDashboardMessage("Something went wrong while creating project. Amount will be refunded if charged.", true);
+                });
+            }
+        });
+
         handler.open({
             name: DashboardConstants.Stripe.name,
             description: DashboardConstants.Stripe.description,
             amount: DashboardConstants.Stripe.amount
         });
+        // END OF STRIPE
     };
-    // END OF STRIPE
 
     function showDashboardMessage(message, error_type) {
         $scope.error_message = message;
@@ -210,20 +212,29 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
         }
     };
 
+    function gotoRedirectPage() {
+        if (angular.isDefined(redirectTo)) {
+            Utils.removeRedirectURL();
+            window.location = decodeURIComponent(redirectTo).replace(/"/g, '');
+        } else {
+            $location.path(Utils.getDashboardURL() + "/feed");
+        }
+    }
+
     $scope.authenticate_dashboard = function() {
         DataService.makeHTTPCall("account.dashboard.authenticate", {
             'user_email' : $scope.email,
             'password' : $scope.password,
             'team_key' : $scope.teamkey
         }, function(data) {
-            data['email'] = $scope.email;
             if (data.authenticated) {
-                Utils.storeUserDataInCookies(data);
-                if (angular.isDefined(redirectTo)) {
-                    Utils.removeRedirectURL();
-                    window.location = decodeURIComponent(redirectTo).replace(/"/g, '');
+                if (angular.equals(data.account_info.length, 1)) {
+                    Utils.storeUserDataInCookies(data.account_info[0], $scope.email);
+                    gotoRedirectPage();
                 } else {
-                    $location.path(Utils.getDashboardURL() + "/feed");
+                    $scope.accounts = data.account_info;
+                    $scope.selectAccountValue = 0;
+                    $scope.selectAccount = true;
                 }
             } else {
                 $scope.error_message = "Authentication failed. Please try again.";
@@ -234,6 +245,11 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
                 }, 5000);
             }
         });
+    };
+
+    $scope.continueWithDashboardLogin = function() {
+        Utils.storeUserDataInCookies($scope.accounts[Number($scope.selectAccountValue)], $scope.email);
+        gotoRedirectPage();
     };
 });
 
@@ -798,39 +814,42 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
 
 Dashboard.controller('Account', function($scope, $timeout, $location, $cookieStore, $http, DataService, DashboardConstants) {
     var team_key = $cookieStore.get('team_key'),
+        user_email = $cookieStore.get('user_email'),
         role = $cookieStore.get('role');
 
     $scope.communities = [];
     $scope.community_detail = {};
     $scope.adminRole = DashboardConstants.roleType.admin;
 
-    // START OF STRIPE
-    var handler = StripeCheckout.configure({
-        key: DashboardConstants.Stripe.publishableKey,
-        token: function(token) {
-            var msg = { "stripe_token" : token };
-            msg["team_key"] = team_key;
-
-            DataService.makeHTTPCall("community.create_sdk_community.pro", msg, function(data) {
-                if (data.success) {
-                    $scope.plan = DashboardConstants.planType["pro"];
-                } else {
-                    showDashboardMessage("Something went wrong while updating plan. Amount will be refunded if charged.", true);
-                }
-            }, function(status) {
-                showDashboardMessage("Something went wrong while updating plan. Amount will be refunded if charged.", true);
-            });
-        }
-    });
-
     $scope.upgradePlan = function() {
+        // START OF STRIPE
+        var handler = StripeCheckout.configure({
+            key: DashboardConstants.Stripe.publishableKey,
+            email: user_email,
+            allowRememberMe: false,
+            token: function(token) {
+                var msg = { "stripe_token" : token };
+                msg["team_key"] = team_key;
+
+                DataService.makeHTTPCall("community.create_sdk_community.pro", msg, function(data) {
+                    if (data.success) {
+                        $scope.plan = DashboardConstants.planType["pro"];
+                    } else {
+                        showDashboardMessage("Something went wrong while updating plan. Amount will be refunded if charged.", true);
+                    }
+                }, function(status) {
+                    showDashboardMessage("Something went wrong while updating plan. Amount will be refunded if charged.", true);
+                });
+            }
+        });
+
         handler.open({
             name: DashboardConstants.Stripe.name,
             description: DashboardConstants.Stripe.description,
             amount: DashboardConstants.Stripe.amount
         });
+        // END OF STRIPE
     };
-    // END OF STRIPE
 
     function showDashboardMessage(message, error_type) {
         $scope.error_message = message;

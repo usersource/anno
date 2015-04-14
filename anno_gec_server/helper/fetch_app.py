@@ -1,7 +1,7 @@
 import logging
 import json
 
-from urllib2 import urlopen
+from urllib2 import urlopen, URLError
 from urllib import quote
 
 from message.appinfo_message import AppInfoMessage, AppInfoListMessage
