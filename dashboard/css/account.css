@@ -13,7 +13,7 @@
   display: inline-block;
   padding: 0 15px;
   vertical-align: middle;
-  line-height: 23px;
+  line-height: 22px;
   cursor: pointer;
   color: white;
 }
@@ -54,6 +54,8 @@
   background: rgba(0, 0, 0, 0.6);
 }
 #reset_team_secret {
+  width: 10%;
+  padding: 0;
   border: 0;
   outline: 0;
   margin-left: 1%;
