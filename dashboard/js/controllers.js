@@ -29,6 +29,7 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
     // START OF STRIPE
     var handler = StripeCheckout.configure({
         key: DashboardConstants.Stripe.publishableKey,
+        allowRememberMe: false,
         token: function(token) {
             var msg = { "stripe_token" : token };
             msg["community"] = getCreateSDKTeamMessage();
