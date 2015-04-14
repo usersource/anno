@@ -28,7 +28,7 @@ body {
   color: #F62;
   margin-left: 2.031%;
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: top;
   text-decoration: none;
   margin: 0;
 }
@@ -198,4 +198,16 @@ body {
   cursor: pointer;
   display: block;
   text-decoration: none;
+}
+#header #appname {
+  width: 24.395%;
+  width: calc(92.5% - 213px);
+  width: -webkit-calc(92.5% - 213px);
+  width: -moz-calc(92.5% - 213px);
+  width: -o-calc(92.5% - 213px);
+  display: inline-block;
+  margin-left: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
