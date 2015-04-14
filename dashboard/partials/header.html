@@ -11,7 +11,7 @@
         <div class="header-tab" ng-class="{'active':(currentSection === 'members')}" ng-click="selectSection('members');">Members</div>
         <div class="header-tab" ng-class="{'active':(currentSection === 'guide')}" ng-click="selectSection('guide');">Guide</div>
         <div id="user_info" style="display: inline-block;" ng-click="signoutButtonClicked();">
-            <img width="45px" height="45px" style="border-radius: 25px;" ng-src="{{::image_url && image_url || '/dashboard/images/icon_no-user.png'}}">
+            <img width="45px" height="45px" style="border-radius: 25px;vertical-align: top;margin-top: 9px;" ng-src="{{::image_url && image_url || '/dashboard/images/icon_no-user.png'}}">
             <div id="loggedin_user_info">
                 <div style="font-size: 18px;" class="active">{{::display_name}}</div>
                 <div style="font-size: 14px;">{{::email}}</div>
