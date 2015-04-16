@@ -10,6 +10,8 @@
 <html <?php language_attributes(); ?>>
 
 <head>
+	<link href="images/favicon.ico" rel="shortcut icon">
+
 	<meta charset="<?php bloginfo( 'charset' ); ?>">
 	<meta name="viewport" content="width=device-width">
 	<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
@@ -29,6 +31,7 @@
 			<header id="header" class="site-header clr container" role="banner">
 				<?php
 				// Outputs the site logo
+				// modified by ignite to add Blog
 				wpex_logo(); ?> <h3>Blog</h3>
 				<div id="sidr-close"><a href="#sidr-close" class="toggle-sidr-close"></a></div>
 				<div id="site-navigation-wrap">
