@@ -31,11 +31,11 @@ h3, h4, h5, h6 {
 
 .wy-side-nav-search {
 	background-color: #f62;
-  padding-top: 22px;
 }
 .wy-side-nav-search > a {
 	color: #fff;
 	font-size: 150%;
+    margin: 0.4045em 0;
 }
 .wy-nav-side {
 	background-color: #f5f5f5;
@@ -140,4 +140,8 @@ h3, h4, h5, h6 {
 
 .danger {
     background-color: #ffe9e9;
+}
+
+.rst-versions {
+  display: none;
 }

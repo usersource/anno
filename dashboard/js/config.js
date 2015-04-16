@@ -13,12 +13,21 @@ Dashboard.config(function($routeProvider, $locationProvider) {
     $routeProvider.when('/dashboard/:teamHash?/:teamName?/login', {
         templateUrl: '/dashboard/partials/login.html',
         controller: 'Login'
+    }).when('/dashboard/register', {
+        templateUrl: '/dashboard/partials/register.html',
+        controller: 'Register'
     }).when('/dashboard/:teamHash?/:teamName?/feed/:annoId?', {
         templateUrl: '/dashboard/partials/feed.html',
         controller: 'Feed'
-    }).when('/dashboard/:teamHash?/:teamName?/manage', {
-        templateUrl: '/dashboard/partials/manage.html',
-        controller: 'Manage'
+    }).when('/dashboard/:teamHash?/:teamName?/account', {
+        templateUrl: '/dashboard/partials/account.html',
+        controller: 'Account'
+    }).when('/dashboard/:teamHash?/:teamName?/guide', {
+        templateUrl: '/dashboard/partials/getstarted.html',
+        controller: 'GetStarted'
+    }).when('/dashboard/:teamHash?/:teamName?/members', {
+        templateUrl: '/dashboard/partials/members.html',
+        controller: 'Members'
     }).when('/dashboard/:teamHash?/:teamName?', {
         redirectTo: function(params, current_url) {
             var action_page = angular.equals($cookies.authenticated, "true") ? '/feed' : '/login';
@@ -31,17 +40,25 @@ Dashboard.config(function($routeProvider, $locationProvider) {
     $locationProvider.html5Mode({ enabled: true, requireBase: false });
 });
 
-Dashboard.run(function($rootScope, $location, $cookieStore) {
+Dashboard.run(function($rootScope, $location, $cookieStore, Utils) {
     $rootScope.$on("$routeChangeStart", function(event, next, current) {
         var redirectTo, redirectURL;
 
         if ($cookieStore.get('authenticated')) {
-            if (next.templateUrl === "/dashboard/partials/login.html") {
+            if (angular.equals(next.controller, "Login") ||
+                angular.equals(next.controller, "Register") ||
+                angular.isUndefined(next.controller)) {
                 redirectTo = "feed";
+            } else {
+                redirectTo = Utils.getRoutePath($location.path());
             }
         } else {
             redirectTo = "login";
-            if (next.controller !== "Login") {
+            if (angular.equals(next.controller, "Register")) {
+                redirectTo = "register";
+            }
+
+            if (!angular.equals(next.controller, "Login")) {
                 $cookieStore.put('redirect_to', $location.absUrl());
             }
         }
@@ -50,7 +67,7 @@ Dashboard.run(function($rootScope, $location, $cookieStore) {
             if (next.params.hasOwnProperty("teamHash") && next.params.hasOwnProperty("teamName")) {
                 $location.path("/dashboard/" + next.params.teamHash + "/" + next.params.teamName + "/" + redirectTo);
             } else  {
-                $location.path("/dashboard/" + redirectTo);
+                $location.path(Utils.getDashboardURL() + "/" + redirectTo);
             }
         }
     });

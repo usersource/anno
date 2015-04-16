@@ -209,10 +209,12 @@ class Anno(BaseModel):
         """
         create a new anno model from request message.
         """
+        itemCount = 0
         appinfo, community = getAppAndCommunity(message, user)
 
         circle_level = 0
         if community:
+            itemCount = cls.countItemsForTeam(community.key)
             circle_level = UserRole.getCircleLevel(user, community)
             if message.circle_level and (message.circle_level <= circle_level):
                 circle_level = message.circle_level
@@ -251,6 +253,9 @@ class Anno(BaseModel):
         # update user anno state
         from model.userannostate import UserAnnoState
         UserAnnoState.insert(user=user, anno=entity, type=AnnoActionType.CREATED)
+
+        if itemCount == 0:
+            send_first_anno_email(community.name, user.display_name)
 
         return entity
 
@@ -894,3 +899,7 @@ class Anno(BaseModel):
         anno = cls.get_by_id(int(anno_id))
         anno.archived = not anno.archived
         anno.put()
+
+    @classmethod
+    def countItemsForTeam(cls, community_key):
+        return len(cls.query().filter(cls.community == community_key).fetch())

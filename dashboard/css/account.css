@@ -1,0 +1,91 @@
+#account-inner {
+  border-radius: 4px;
+  border: 1px solid #C4CFD7;
+  margin: 2.031%;
+  background-color: #FFF;
+  overflow-y: auto;
+}
+.admin-button {
+  font-size: 14px;
+  background-color: #f62;
+  border-radius: 4px;
+  height: 24px;
+  display: inline-block;
+  padding: 0 15px;
+  vertical-align: middle;
+  line-height: 22px;
+  cursor: pointer;
+  color: white;
+}
+.community {
+  padding: 10px 20px;
+  border-top: 1px solid #C4CFD7;
+  cursor: pointer;
+  background-color: #F0F2F3;
+  font-size: 16px;
+}
+.community.selected {
+  background-color: white;
+}
+.community-detail-row {
+  margin: 20px;
+  border-bottom: 1px solid #C4CFD7;
+}
+.user {
+  padding: 20px 0;
+  border-bottom: 1px solid #C4CFD7;
+}
+.user:last-child {
+  border: 0;
+}
+.dashboard-url {
+  margin-top: 10px;
+  padding-bottom: 20px;
+  display: block;
+}
+#create-community, #add-user {
+  width: 100%;
+  height: 90.62103929%;
+  height: calc(100% - 74px);
+  height: -webkit-calc(100% - 74px);
+  height: -moz-calc(100% - 74px);
+  height: -o-calc(100% - 74px);
+  position: fixed;
+  background: rgba(0, 0, 0, 0.6);
+}
+#reset_team_secret {
+  width: 10%;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  margin-left: 1%;
+  border: 1px solid #F65007;
+  line-height: 22px;
+}
+.editSaveButton {
+  display: inline-block;
+  margin-left: 1%;
+  color: #1B96C9;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.editSaveButton:hover {
+  text-decoration: underline;
+}
+#appIconHolder {
+  background: url("/dashboard/images/upload.png");
+  width: 130px;
+  height: 130px;
+  position: absolute;
+  right: 0;
+  margin-top: 20px;
+}
+#appIconImage {
+  width: 118px;
+  height: 120px;
+  position: absolute;
+  right: 6px;
+  top: 5px;
+  border-radius: 3px;
+  margin-top: 20px;
+}

@@ -6,19 +6,21 @@ String.prototype.replaceAt = function(startIndex, replaceCount, character) {
 
 var ServiceModule = angular.module('ServiceModule', ['ngCookies', 'DashboardConstantsModule']);
 
-ServiceModule.factory('Utils', function($cookieStore) {
+ServiceModule.factory('Utils', function($cookieStore, $location) {
     function getRoutePath(location_path) {
         return location_path.split("/").reverse()[0];
     }
 
-    function storeUserDataInCookies(data) {
-        $cookieStore.put('authenticated', data.authenticated);
+    function storeUserDataInCookies(data, email) {
+        $cookieStore.put('authenticated', true);
         $cookieStore.put('user_display_name', data.display_name);
-        $cookieStore.put('user_email', data.email);
+        $cookieStore.put('user_email', email);
         $cookieStore.put('user_image_url', data.image_url);
         $cookieStore.put('team_key', data.team_key);
         $cookieStore.put('team_name', data.team_name);
+        $cookieStore.put('team_hash', data.team_hash);
         $cookieStore.put('user_team_token', angular.fromJson(data.user_team_token));
+        $cookieStore.put('role', data.role);
     }
 
     function removeUserDataCookies() {
@@ -28,7 +30,9 @@ ServiceModule.factory('Utils', function($cookieStore) {
         $cookieStore.remove('user_image_url');
         $cookieStore.remove('team_key');
         $cookieStore.remove('team_name');
+        $cookieStore.remove('team_hash');
         $cookieStore.remove('user_team_token');
+        $cookieStore.remove('role');
     }
 
     function removeRedirectURL() {
@@ -195,6 +199,35 @@ ServiceModule.factory('Utils', function($cookieStore) {
         return newArr;
     };
 
+    function getTeamNameForURL(team_name) {
+        return team_name.replace(/\W+/g, "-").replace(/^\-/, '').replace(/\-$/, '').toLowerCase();
+    }
+
+    function getFullDashboardURL(community_name, team_hash) {
+        if (community_name && team_hash) {
+            var url = $location.protocol() + "://" + $location.host();
+            if ($location.port() !== 443) {
+                url = url + ":" + $location.port();
+            }
+            url = url + "/dashboard/" + team_hash + "/" + this.getTeamNameForURL(community_name);
+            return url;
+        } else {
+            return "";
+        }
+    }
+
+    function getDashboardURL() {
+        var team_name = $cookieStore.get('team_name'),
+            team_hash = $cookieStore.get('team_hash'),
+            url = "/dashboard";
+
+        if (angular.isDefined(team_name) && angular.isDefined(team_hash)) {
+            url = url + "/" + team_hash + "/" + this.getTeamNameForURL(team_name);
+        }
+
+        return url;
+    }
+
     return {
         getRoutePath : getRoutePath,
         storeUserDataInCookies : storeUserDataInCookies,
@@ -208,7 +241,10 @@ ServiceModule.factory('Utils', function($cookieStore) {
         getUniqueEngagedUsers : getUniqueEngagedUsers,
         getAnnoById : getAnnoById,
         watchersContainedIn : watchersContainedIn,
-        getUniqueData : getUniqueData
+        getUniqueData : getUniqueData,
+        getTeamNameForURL : getTeamNameForURL,
+        getFullDashboardURL : getFullDashboardURL,
+        getDashboardURL : getDashboardURL
     };
 });
 
@@ -327,8 +363,7 @@ ServiceModule.factory('DataService', function($http, $location, $window, $cookie
         var req = {
             method : endpointData.method,
             url : url,
-            params : params,
-            cache : true
+            params : params
         };
 
         if (req.method === "POST") {

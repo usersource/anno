@@ -944,7 +944,7 @@ define([
                     if (imageURI.indexOf("https%3A%2F%2F") > 0 || imageURI.indexOf("http%3A%2F%2F") > 0) {
                         cordova.exec(function(result) {
                         }, function(err) {
-                        }, "AnnoCordovaPlugin", 'show_toast', ["UserSource support local images files only."]);
+                        }, "AnnoCordovaPlugin", 'show_toast', ["Annot8 support local images files only."]);
 
                         return;
                     }
