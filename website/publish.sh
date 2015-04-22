@@ -31,4 +31,4 @@ fi
 
 (cd $rootdir && gsutil -m rsync -d -r html/ gs://$target)
 gsutil web set -m index.html gs://$target # we can add error page using -e 404.html or similar
-gsutil -m acl set -R -a public-read gs://$target
+gsutil -m acl ch -R -u AllUsers:R gs://$target
