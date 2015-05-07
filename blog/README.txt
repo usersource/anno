@@ -10,3 +10,9 @@ To setup or update the blog:
 - setup permalinks (settings->general->permalinks)
 - activate the appropriate theme
 - customize the theme (remove widgets. upload images etc)
+
+DEPLOY
+===========
+- go to the blog folder (this should contain the app.yaml)
+- run
+	appcfg.py update .
