@@ -63,6 +63,10 @@
   padding: 0;
   outline: 0;
 }
+#login #login_button.login_active {
+  background-color: #F62;
+  border: 1px solid #F65007;
+}
 #login #selectAccountValue {
   width: 66.666666667%;
   height: 36px;

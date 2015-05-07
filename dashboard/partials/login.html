@@ -18,7 +18,7 @@
                 </div>
                 <div class="input-div">
                     <img width="12px" height="15px" src="/dashboard/images/icon_password.png" style="margin: 0 2px;">
-                    <input ng-model="password" type="password" id="login_password" placeholder="Password"/>
+                    <input ng-model="password" type="password" id="login_password" placeholder="Password" ng-keydown="make_login_active();"/>
                 </div>
                 <select id="selectAccountValue" ng-model="teamkeyvalue" ng-show="selectAccount" ng-change="set_team_key();">
                     <option ng-selected="{{$index == 0}}" ng-repeat="account in accounts" value="{{$index}}">{{account.team_name}}</option>
@@ -27,7 +27,7 @@
                     <img width="12px" height="15px" src="/dashboard/images/icon_key.png" style="margin: 0 2px;">
                     <input ng-model="teamkey" type="text" id="login_team_key" placeholder="Team Key"/>
                 </div> -->
-                <input id="login_button" type="submit" value="Log In Now">
+                <input id="login_button" type="submit" value="Log In Now" ng-disabled="isLoginDisabled" ng-class="{'login_active':!isLoginDisabled}">
             </form>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-1 col-xs-1"></div>

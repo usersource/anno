@@ -193,6 +193,7 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
     var urlSearchParams = $location.search(), redirectTo;
 
     $scope.getTeamsForLogin = true;
+    $scope.isLoginDisabled = true;
 
     if ($cookies.hasOwnProperty('redirect_to')) {
         redirectTo = $cookies["redirect_to"];
@@ -200,6 +201,12 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
             redirectTo = undefined;
         }
     }
+
+    $scope.make_login_active = function() {
+        if (angular.isDefined($scope.email) && angular.isDefined($scope.teamkey)) {
+            $scope.isLoginDisabled = false;
+        }
+    };
 
     $scope.initLogin = function() {
         if (angular.isDefined(team_hash)) {
@@ -237,12 +244,16 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
                 $scope.selectAccount = true;
             } else {
                 $scope.selectAccount = false;
+                $scope.teamkey = $scope.accounts[1]['team_key'];
             }
         });
     };
 
     $scope.set_team_key = function() {
         $scope.teamkey = $scope.accounts[$scope.teamkeyvalue]['team_key'];
+        if (angular.isDefined($scope.email) && angular.isDefined($scope.password)) {
+            $scope.isLoginDisabled = false;
+        }
     };
 
     $scope.authenticate_dashboard = function() {
