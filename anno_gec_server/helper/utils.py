@@ -417,13 +417,35 @@ def send_created_team_email(team_name, action_user_name):
     body = body % (action_user_name, team_name)
     send_email(SUPPORT_EMAIL_ID, to, subject=subject, html=body)
 
-def send_access_team_email(action_user_email, team_hash, team_name):
+def send_access_team_email(action_user_email, team_hash, team_name, team_key, team_secret):
     dashboard_url = DASHBOARD_URL % (team_hash, parseTeamName(team_name))
+    guide_url = '/'.join([dashboard_url, "guide"])
 
     to = action_user_email
-    subject = "UserSource Dashboard"
-    body = "Hello,<br/><br/>You have created your project '%s' successfully.<br/><br/>The dashboard can be accessed at <a href='%s'>%s</a>"
-    body = body % (team_name, dashboard_url, dashboard_url)
+    subject = "Welcome to UserSource!"
+
+    body = (
+        "We've setup your account so you can get started with in-app user "
+        "feedback right away. Here's what you need:"
+        "<br/><br/>"
+        "Integrate our SDK in minutes using these instructions: <a href='%s'>%s</a>"
+        "<br/><br/>"
+        "Your project key: %s"
+        "<br/>"
+        "Your project secret: %s"
+        "<br/><br/>"
+        "Once you've integrated the SDK, use your UserSource Dashboard to view "
+        "and manage user feedback: <a href='%s'>%s</a>"
+        "<br/><br/>"
+        "We want you to get the most out of engaging your users. Always feel "
+        "free to contact me with questions and comments!"
+        "<br/><br/>"
+        "David Kennan<br/>"
+        "Founder, UserSource.io<br/>"
+        "david@usersource.io"
+    )
+
+    body = body % (guide_url, guide_url, team_key, team_secret, dashboard_url, dashboard_url)
     send_email(SUPPORT_EMAIL_ID, to, subject=subject, html=body)
 
 def send_first_anno_email(team_name, action_user_name):

@@ -274,7 +274,9 @@ class Community(ndb.Model):
                 from helper.utils import send_created_team_email
                 from helper.utils import send_access_team_email
                 send_created_team_email(community.name, user.display_name)
-                send_access_team_email(user.user_email, community.team_hash, community.name)
+                send_access_team_email(user.user_email, community.team_hash,
+                                       community.name, community.team_key,
+                                       community.team_secret)
             else:
                 community.key.delete()
                 communities_message = []
