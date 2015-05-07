@@ -23,5 +23,5 @@ done
 if [ -n "$publish" ]; then
 	(cd $rootdir && gsutil -m rsync -d -r site/ gs://docs.usersource.io)
 	gsutil web set -m index.html gs://docs.usersource.io # we can add error page using -e 404.html or similar
-	gsutil -m acl set -R -a public-read gs://docs.usersource.io
+    gsutil -m acl ch -R -u AllUsers:R gs://docs.usersource.io
 fi

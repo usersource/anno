@@ -19,6 +19,9 @@ from helper.utils_enum import UserRoleType
 from helper.utils_enum import SearchIndexName
 from helper.utils_enum import SignInMethod
 from helper.settings import SUPPORT_EMAIL_ID
+from helper.settings import PROJECT_NAME
+from helper.settings import DASHBOARD_URL
+from helper.settings import GAE_ADMIN_USERS
 from message.appinfo_message import AppInfoMessage
 from message.anno_api_messages import AnnoTagsResponseMessage
 
@@ -62,6 +65,17 @@ def handle_user(creator_id):
         if user is None:
             user = User.insert_user(email=current_user.email())
     return user
+
+def is_auth_user_admin(headers=None, action_auth_user=None):
+    is_admin = False
+    user = auth_user(headers) if (not action_auth_user and headers) else action_auth_user
+    if user:
+        community = Community.getCommunityFromTeamKey(user.account_type)
+        if community:
+            role = UserRole.getRole(user, community)
+            is_admin = role == UserRoleType.ADMIN
+
+    return is_admin
 
 def auth_user(headers):
     current_user = get_endpoints_current_user(raise_unauthorized=False)
@@ -112,6 +126,19 @@ def get_user_team_token(email, password, team_key, team_secret, display_name, im
     user_info_data = ['plugin', email, password, team_key, team_secret, display_name, image_url]
     token["access_token"] = base64.b64encode("_$_".join(user_info_data))
     return token
+
+def update_user_team_token(headers, team_key=None, team_secret=None):
+    credential_pair = get_credential(headers)
+
+    team_key = team_key or credential_pair[3]
+    team_secret = team_secret or credential_pair[4]
+
+    return get_user_team_token(credential_pair[1],
+                               credential_pair[2],
+                               team_key,
+                               team_secret,
+                               credential_pair[5],
+                               credential_pair[6])
 
 def get_country_by_coordinate(latitude, longitude):
     """
@@ -366,9 +393,45 @@ def reset_password(user, email):
     body = "Your new password for usersource account is %s" % new_password_string
     send_email(SUPPORT_EMAIL_ID, email, subject, body)
 
-def send_email(sender, to, subject="", body=""):
-    message = mail.EmailMessage(sender=sender, to=to, subject=subject, body=body)
+def send_email(sender, to, subject="", body="", html=""):
+    message = mail.EmailMessage(sender=sender, to=to, subject=subject, body=body, html=html)
     message.send()
+
+def parseTeamName(name):
+    return re.sub('[^A-Za-z0-9]+', '-', name).lower().strip('-')
+
+def send_added_user_email(team_name, added_user_name, action, action_user_name, team_hash):
+    dashboard_url = DASHBOARD_URL % (team_hash, parseTeamName(team_name))
+
+    to = GAE_ADMIN_USERS
+    subject = "UserSource '%s': Member update in '%s'" % (PROJECT_NAME, team_name)
+    body = "Hello,<br/><br/>Member '%s' got %s to the project '%s' by '%s'.<br/><br/>The dashboard can be accessed at <a href='%s'>%s</a>"
+    body = body % (added_user_name, action, team_name, action_user_name, dashboard_url, dashboard_url)
+
+    send_email(SUPPORT_EMAIL_ID, to, subject=subject, html=body)
+
+def send_created_team_email(team_name, action_user_name):
+    to = GAE_ADMIN_USERS
+    subject = "UserSource '%s': New team created" % PROJECT_NAME
+    body = "Hello,<br/><br/>'%s' created new team '%s'."
+    body = body % (action_user_name, team_name)
+    send_email(SUPPORT_EMAIL_ID, to, subject=subject, html=body)
+
+def send_access_team_email(action_user_email, team_hash, team_name):
+    dashboard_url = DASHBOARD_URL % (team_hash, parseTeamName(team_name))
+
+    to = action_user_email
+    subject = "UserSource Dashboard"
+    body = "Hello,<br/><br/>You have created your project '%s' successfully.<br/><br/>The dashboard can be accessed at <a href='%s'>%s</a>"
+    body = body % (team_name, dashboard_url, dashboard_url)
+    send_email(SUPPORT_EMAIL_ID, to, subject=subject, html=body)
+
+def send_first_anno_email(team_name, action_user_name):
+    to = GAE_ADMIN_USERS
+    subject = "UserSource '%s': First item created" % PROJECT_NAME
+    body = "Hello,<br/><br/>'%s' created first item for team '%s'."
+    body = body % (action_user_name, team_name)
+    send_email(SUPPORT_EMAIL_ID, to, subject=subject, html=body)
 
 def extract_tags_from_text(text):
     tagcloud = {}

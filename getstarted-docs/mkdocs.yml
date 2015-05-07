@@ -19,6 +19,4 @@ pages:
 
 markdown_extensions: [admonition]
 
-
-
-
+use_directory_urls: false

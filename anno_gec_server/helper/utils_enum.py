@@ -70,3 +70,7 @@ class CircleValue(object):
     BETA_TESTER = 10
     ALPHA_TESTER = 30
     DEVELOPER = 50
+
+class PlanType(object):
+    BASIC = "basic"
+    PRO = "pro"

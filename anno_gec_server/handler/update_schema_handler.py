@@ -19,6 +19,8 @@ from helper.utils import OPEN_COMMUNITY
 from helper.utils import extract_tags_from_text
 from helper.utils import md5
 from helper.utils_enum import SearchIndexName
+from helper.utils_enum import CircleType, CircleValue
+from helper.utils_enum import PlanType
 from message.appinfo_message import AppInfoMessage
 from message.community_message import CommunityMessage
 from message.user_message import UserMessage
@@ -28,6 +30,7 @@ BATCH_SIZE = 50  # ideal batch size may vary based on entity size
 
 class UpdateAnnoHandler(webapp2.RequestHandler):
     def get(self):
+        create_community_circle()
 #        create_teams()
 #        migrate_photo_time_annos()
 #        add_teamhash()
@@ -40,6 +43,16 @@ class UpdateAnnoHandler(webapp2.RequestHandler):
 #         update_userannostate_schema_from_anno_action(cls=FollowUp)
 #         update_userannostate_schema_from_anno_action(cls=Flag)
         self.response.out.write("Schema migration successfully initiated.")
+
+def create_community_circle():
+    communities = Community.query().filter(Community.team_key != None).fetch()
+    for community in communities:
+        community.circles = { CircleValue.CONTRIBUTOR : CircleType.CONTRIBUTOR,
+                              CircleValue.BETA_TESTER : CircleType.BETA_TESTER,
+                              CircleValue.ALPHA_TESTER : CircleType.ALPHA_TESTER,
+                              CircleValue.DEVELOPER : CircleType.DEVELOPER }
+        community.plan = PlanType.BASIC
+        community.put()
 
 def create_teams():
     team_key = ""

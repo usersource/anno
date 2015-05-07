@@ -17,5 +17,11 @@ class AccountAuthenticateMessage(messages.Message):
     image_url = messages.StringField(3)
     team_name = messages.StringField(4)
     team_key = messages.StringField(5)
-    user_team_token = messages.StringField(6)
-    feed_data = messages.MessageField(AnnoListMessage, 7)
+    team_hash = messages.StringField(6)
+    user_team_token = messages.StringField(7)
+    role = messages.StringField(8)
+    feed_data = messages.MessageField(AnnoListMessage, 9)
+
+class AccountAuthenticateListMessage(messages.Message):
+    authenticated = messages.BooleanField(1)
+    account_info = messages.MessageField(AccountAuthenticateMessage, 2, repeated=True)

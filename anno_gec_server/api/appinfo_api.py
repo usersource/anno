@@ -13,10 +13,11 @@ from protorpc import remote
 
 from helper.settings import anno_js_client_id
 from helper.utils import getAppInfo
-from message.appinfo_message import AppInfoMessage
+from message.appinfo_message import AppInfoMessage, AppInfoListMessage
 from message.common_message import ResponseMessage
 from model.appinfo import AppInfo
 
+from helper.fetch_app import AppInfoGetter
 
 @endpoints.api(name="appinfo", version="1.0", description="AppInfo API",
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, anno_js_client_id])
@@ -45,3 +46,9 @@ class AppInfoApi(remote.Service):
     def get_appinfo(self, request):
         community_app =  getAppInfo(team_key=request.team_key)
         return AppInfoMessage(name=community_app.name, icon_url=community_app.icon_url)
+
+    @endpoints.method(AppInfoMessage, AppInfoListMessage, path="appinfo/get_by_name",
+                      http_method="GET", name="appinfo.get_by_name")
+    def get_appinfo_by_name(self, request):
+        app_list = AppInfoGetter.search(request.name)
+        return AppInfoListMessage(app_list=app_list)
