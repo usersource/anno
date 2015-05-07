@@ -229,11 +229,11 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
         DataService.makeHTTPCall("account.dashboard.teams", {
             'user_email' : $scope.email
         }, function(data) {
+            data.account_info.unshift({"team_name": "Select Project"});
             $scope.accounts = data.account_info;
             $scope.teamkeyvalue = 0;
-            $scope.teamkey = $scope.accounts[$scope.teamkeyvalue]['team_key'];
 
-            if ($scope.accounts.length > 1) {
+            if ($scope.accounts.length > 2) {
                 $scope.selectAccount = true;
             } else {
                 $scope.selectAccount = false;
