@@ -192,6 +192,8 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
     var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
     var urlSearchParams = $location.search(), redirectTo;
 
+    $scope.getTeamsForLogin = true;
+
     if ($cookies.hasOwnProperty('redirect_to')) {
         redirectTo = $cookies["redirect_to"];
         if (Utils.getRoutePath(redirectTo) === "login") {
@@ -202,6 +204,7 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
     $scope.initLogin = function() {
         if (angular.isDefined(team_hash)) {
             $scope.hideTeamKeyField = true;
+            $scope.getTeamsForLogin = false;
             DataService.makeHTTPCall("community.community.hash", {
                 team_hash : team_hash
             }, function(data) {
@@ -221,7 +224,31 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
         }
     }
 
+    $scope.get_teams = function() {
+        if (!$scope.getTeamsForLogin) return;
+        DataService.makeHTTPCall("account.dashboard.teams", {
+            'user_email' : $scope.email
+        }, function(data) {
+            $scope.accounts = data.account_info;
+            $scope.teamkeyvalue = 0;
+            $scope.teamkey = $scope.accounts[$scope.teamkeyvalue]['team_key'];
+
+            if ($scope.accounts.length > 1) {
+                $scope.selectAccount = true;
+            } else {
+                $scope.selectAccount = false;
+            }
+        });
+    };
+
+    $scope.set_team_key = function() {
+        $scope.teamkey = $scope.accounts[$scope.teamkeyvalue]['team_key'];
+    };
+
     $scope.authenticate_dashboard = function() {
+        if ($scope.getTeamsForLogin && angular.isUndefined($scope.teamkeyvalue))
+            return;
+
         DataService.makeHTTPCall("account.dashboard.authenticate", {
             'user_email' : $scope.email,
             'password' : $scope.password,
@@ -245,11 +272,6 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
                 }, 5000);
             }
         });
-    };
-
-    $scope.continueWithDashboardLogin = function() {
-        Utils.storeUserDataInCookies($scope.accounts[Number($scope.selectAccountValue)], $scope.email);
-        gotoRedirectPage();
     };
 });
 

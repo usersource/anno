@@ -58,19 +58,20 @@
   line-height: 39px;
   border-radius: 4px;
   margin-bottom: 60px;
+  margin-top: 10px;
   cursor: pointer;
   padding: 0;
   outline: 0;
 }
 #login #selectAccountValue {
-  width: 60%;
+  width: 66.666666667%;
   height: 36px;
   border-color: #C4CFD7;
   background-color: #FFF;
   border-radius: 4px;
   padding: 0 5px;
   outline: 0;
-  margin: 10px 0 20px 0;
+  margin-bottom: 20px;
 }
 #login #continueLogin {
   width: 150px;

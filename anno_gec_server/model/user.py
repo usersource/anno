@@ -6,6 +6,7 @@ from message.user_message import UserMessage
 from message.appinfo_message import UserFavoriteApp
 from helper.utils_enum import PlatformType
 from helper.utils_enum import AuthSourceType
+from message.account_message import AccountAuthenticateMessage
 
 
 class User(ndb.Model):
@@ -49,6 +50,22 @@ class User(ndb.Model):
             query = query.filter(cls.account_type == team_key)
 
         return query.fetch()
+
+    @classmethod
+    def get_all_teams_by_email(cls, email):
+        from model.community import Community
+        users = cls.query().filter(cls.user_email == email).fetch()
+
+        accounts = []
+        for user in users:
+            if user:
+                team_key = user.account_type
+                team = Community.getCommunityFromTeamKey(team_key)
+                if team:
+                    account = AccountAuthenticateMessage(team_name=team.name, team_key=team_key)
+                    accounts.append(account)
+
+        return accounts
 
     @classmethod
     def find_user_by_display_name(cls, display_name):

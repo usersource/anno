@@ -33,6 +33,11 @@ DashboardConstantsModule.value("DashboardConstants", {
             "path" : "account/dashboard/authenticate",
             "method" : "POST"
         },
+        "account.dashboard.teams" : {
+            "root" : "account",
+            "path" : "account/dashboard/teams",
+            "method" : "GET"
+        },
         "appinfo.appinfo.get" : {
             "root" : "appinfo",
             "path" : "appinfo/get",
