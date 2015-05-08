@@ -395,5 +395,5 @@ class CommunityApi(remote.Service):
                       path="community/plan/update", http_method="POST",
                       name="community.plan.update")
     def update_plan(self, request):
-        update_success = Community.update_plan(request.team_key, request.stripe_token)
+        update_success = Community.update_plan(request.team_key, request.stripe_token, request.plan)
         return ResponseMessage(success=update_success)

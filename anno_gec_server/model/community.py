@@ -284,13 +284,13 @@ class Community(ndb.Model):
         return communities_message
 
     @classmethod
-    def update_plan(cls, team_key, stripe_token):
+    def update_plan(cls, team_key, stripe_token, plan):
         success = False
         community = cls.getCommunityFromTeamKey(team_key)
         if community and stripe_token:
-            payment_success = StripePayment.create_charge(stripe_token, community.key)
+            payment_success = StripePayment.create_charge(stripe_token, community.key, plan)
             if payment_success:
-                community.plan = PlanType.PRO
+                community.plan = plan
                 community.put()
                 success = True
 
