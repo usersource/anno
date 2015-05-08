@@ -356,9 +356,20 @@ ServiceModule.factory('Autocomplete', function(Utils) {
 ServiceModule.factory('DataService', function($http, $location, $window, $cookieStore, Utils, DashboardConstants) {
     var apiRoot = DashboardConstants.apiRoot;
 
+    function convert_if_custom_domain() {
+        var domain = "";
+        if (angular.equals($location.host(), DashboardConstants.prodCustomDomain)) {
+            domain = DashboardConstants.prodAppspotURL;
+        }
+
+        return domain;
+    }
+
     function makeHTTPCall(endpointName, params, success_callback, error_callback) {
         var endpointData = DashboardConstants.endpointUrl[endpointName];
-        var url = apiRoot + "/" + endpointData.root + "/" + DashboardConstants.endpointVersion + "/" + endpointData.path;
+        var url = this.convert_if_custom_domain() + apiRoot + "/" +
+                  endpointData.root + "/" + DashboardConstants.endpointVersion +
+                  "/" + endpointData.path;
 
         var req = {
             method : endpointData.method,
@@ -383,6 +394,7 @@ ServiceModule.factory('DataService', function($http, $location, $window, $cookie
     }
 
     return ({
+        convert_if_custom_domain : convert_if_custom_domain,
         makeHTTPCall : makeHTTPCall
     });
 });

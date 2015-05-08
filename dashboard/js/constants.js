@@ -32,6 +32,8 @@ DashboardConstantsModule.value("DashboardConstants", {
     roleType : {
         "admin" : "admin"
     },
+    prodAppspotURL: "https://annoserver.appspot.com",
+    prodCustomDomain: "developer.usersource.io",
     apiRoot : "/_ah/api",
     imageURL : "/screenshot?anno_id=",
     endpointVersion: "1.0",
