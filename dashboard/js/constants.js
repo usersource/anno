@@ -6,8 +6,20 @@ DashboardConstantsModule.value("DashboardConstants", {
     Stripe : {
         publishableKey : "pk_test_QkjAhTugzqHQClhlF7pX5r4F",
         name : "UserSource",
-        description : "Pro Plan $10/month",
-        amount : 1000
+        plans: {
+            pro: {
+                title: "Pro Plan",
+                price: "$50/month",
+                description : "Pro Plan $50/month",
+                amount : 5000
+            },
+            enterprise: {
+                title: "Enterprise Plan",
+                price: "$500/month",
+                description : "Enterprise Plan $500/month",
+                amount : 50000
+            }
+        }
     },
     filters : {
         "basic" : "basic",

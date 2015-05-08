@@ -70,20 +70,20 @@
             </div>
             <div id="register_form_div" class="register_main_div" ng-show="showPlans && !registrationCompleted">
                 <div class="title">Choose your Plan</div>
-                <div style="width: 80%;margin: 0 auto 50px auto;">
-                    <div class="register_plan" ng-class="{'selected' : !proPlanSelected}">
+                <div style="width: 90%;margin: 0 auto 50px auto;">
+                    <div class="register_plan">
                         <div class="register_plan_selected"></div>
                         <div class="register_plan_name title">Basic Plan</div>
                         <div class="register_plan_price">Free</div>
                         <div class="register_plan_desc">Praesent magna est, mattis quis laoreet sit amet, rhoncus ac felis</div>
                         <input class="register_button register_plan_select" type="submit" value="Choose Basic Plan" ng-click="createSDKTeam();">
                     </div>
-                    <div class="register_plan" ng-class="{'selected' : proPlanSelected}" style="margin-left: 3%;vertical-align: top;">
+                    <div class="register_plan" ng-class="{'selected' : (planSelected == key)}" ng-repeat="key in notSorted(stripe_plans)" ng-init="stripe_plan = stripe_plans[key]" style="margin-left: 3%;vertical-align: top;">
                         <div class="register_plan_selected"></div>
-                        <div class="register_plan_name title">Pro Plan</div>
-                        <div class="register_plan_price">$10/month</div>
+                        <div class="register_plan_name title">{{stripe_plan.title}}</div>
+                        <div class="register_plan_price">{{stripe_plan.price}}</div>
                         <div class="register_plan_desc">Praesent magna est, mattis quis laoreet sit amet, rhoncus ac felis</div>
-                        <input class="register_button register_plan_select" type="submit" value="Choose Pro Plan" ng-click="selectProPlan();">
+                        <input class="register_button register_plan_select" type="submit" value="Choose {{stripe_plan.title}}" ng-click="selectPricingPlan(key);">
                     </div>
                 </div>
             </div>

@@ -21,10 +21,18 @@ Dashboard.controller('NoAuthHeader', function($scope, $routeParams, $location, U
 });
 
 Dashboard.controller('Register', function($scope, $timeout, $location, DataService, Utils, DashboardConstants) {
-    $scope.showPlans = false;
+    $scope.showPlans = true;
     $scope.appInStore = true;
-    $scope.proPlanSelected = true;
     $scope.hideAppFetchSpinner = true;
+    $scope.stripe_plans = DashboardConstants.Stripe.plans;
+    $scope.planSelected = Object.keys($scope.stripe_plans)[0];
+
+    $scope.notSorted = function(obj) {
+        if (!obj) {
+            return [];
+        }
+        return Object.keys(obj);
+    };
 
     function payWithStripe() {
         // START OF STRIPE
@@ -182,8 +190,8 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
         $scope.bundleid = $scope.selectedApp.bundleid;
     };
 
-    $scope.selectProPlan = function() {
-        $scope.proPlanSelected = true;
+    $scope.selectPricingPlan = function(plan) {
+        $scope.planSelected = plan;
         payWithStripe();
     };
 });
