@@ -23,10 +23,19 @@ Dashboard.controller('NoAuthHeader', function($scope, $routeParams, $location, U
 Dashboard.controller('Register', function($scope, $timeout, $location, DataService, Utils, DashboardConstants) {
     $scope.showPlans = false;
     $scope.appInStore = true;
-    $scope.proPlanSelected = true;
     $scope.hideAppFetchSpinner = true;
+    $scope.stripe_plans = DashboardConstants.Stripe.plans;
+    $scope.planSelected = Object.keys($scope.stripe_plans)[0];
 
-    function payWithStripe() {
+    $scope.notSorted = function(obj) {
+        if (!obj) {
+            return [];
+        }
+        return Object.keys(obj);
+    };
+
+    function payWithStripe(plan) {
+        var user_selected_plan = $scope.stripe_plans[plan];
         // START OF STRIPE
         var handler = StripeCheckout.configure({
             key: DashboardConstants.Stripe.publishableKey,
@@ -35,9 +44,9 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
             token: function(token) {
                 var msg = { "stripe_token" : token };
                 msg["community"] = getCreateSDKTeamMessage();
-                msg["community"]["plan"] = "pro";
+                msg["community"]["plan"] = plan;
 
-                DataService.makeHTTPCall("community.create_sdk_community.pro", msg, function(data) {
+                DataService.makeHTTPCall("community.create_sdk_community.pricing", msg, function(data) {
                     if (data.communities.length) {
                         $scope.showPlans = false;
                         $scope.registrationCompleted = true;
@@ -52,8 +61,8 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
 
         handler.open({
             name: DashboardConstants.Stripe.name,
-            description: DashboardConstants.Stripe.description,
-            amount: DashboardConstants.Stripe.amount
+            description: user_selected_plan.description,
+            amount: user_selected_plan.amount
         });
         // END OF STRIPE
     };
@@ -99,8 +108,9 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
 
         var location_search = $location.search();
         if (location_search.hasOwnProperty("plan")) {
-            if (angular.equals(location_search.plan, "pro")) {
-                payWithStripe();
+            var plan = location_search.plan;
+            if (Object.keys($scope.stripe_plans).indexOf(plan) !== -1) {
+                payWithStripe(plan);
             } else {
                 $scope.createSDKTeam();
             }
@@ -182,9 +192,9 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
         $scope.bundleid = $scope.selectedApp.bundleid;
     };
 
-    $scope.selectProPlan = function() {
-        $scope.proPlanSelected = true;
-        payWithStripe();
+    $scope.selectPricingPlan = function(plan) {
+        $scope.planSelected = plan;
+        payWithStripe(plan);
     };
 });
 
@@ -853,20 +863,27 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
     $scope.communities = [];
     $scope.community_detail = {};
     $scope.adminRole = DashboardConstants.roleType.admin;
+    $scope.enterprise_plan = Object.keys(DashboardConstants.Stripe.plans)[1];
 
     $scope.upgradePlan = function() {
+        var user_updated_plan = Object.keys(DashboardConstants.Stripe.plans)[0];
+        if (angular.equals($scope.plan, user_updated_plan)) {
+            user_updated_plan = Object.keys(DashboardConstants.Stripe.plans)[1];
+        }
+
         // START OF STRIPE
         var handler = StripeCheckout.configure({
             key: DashboardConstants.Stripe.publishableKey,
             email: user_email,
             allowRememberMe: false,
             token: function(token) {
-                var msg = { "stripe_token" : token };
-                msg["team_key"] = team_key;
+                var msg = { "stripe_token" : token,
+                            "team_key" : team_key,
+                            "plan" : user_updated_plan };
 
-                DataService.makeHTTPCall("community.create_sdk_community.pro", msg, function(data) {
+                DataService.makeHTTPCall("community.plan.update", msg, function(data) {
                     if (data.success) {
-                        $scope.plan = DashboardConstants.planType["pro"];
+                        $scope.plan = user_updated_plan;
                     } else {
                         showDashboardMessage("Something went wrong while updating plan. Amount will be refunded if charged.", true);
                     }
@@ -878,8 +895,8 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
 
         handler.open({
             name: DashboardConstants.Stripe.name,
-            description: DashboardConstants.Stripe.description,
-            amount: DashboardConstants.Stripe.amount
+            description: DashboardConstants.Stripe.plans[user_updated_plan].description,
+            amount: DashboardConstants.Stripe.plans[user_updated_plan].amount
         });
         // END OF STRIPE
     };
@@ -932,7 +949,7 @@ Dashboard.controller('Account', function($scope, $timeout, $location, $cookieSto
                 $scope.team_key = $scope.community_detail.team_key;
                 $scope.team_secret = $scope.community_detail.team_secret;
                 $scope.role = role;
-                $scope.plan = DashboardConstants.planType[$scope.community_detail.plan];
+                $scope.plan = $scope.community_detail.plan;
             }
         }, function(status) {
             showDashboardMessage("Oops... Something went wrong. Please try again.", true);

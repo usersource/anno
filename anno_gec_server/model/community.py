@@ -206,7 +206,7 @@ class Community(ndb.Model):
         return team_secret
 
     @classmethod
-    def create_sdk_team(cls, message, pro_plan=False, stripe_token=None):
+    def create_sdk_team(cls, message, pricing_plan=False, stripe_token=None):
         team_key = message.team_key
         app_name = message.app.name
         community_name = message.community_name or app_name
@@ -262,9 +262,9 @@ class Community(ndb.Model):
             communities_message.append(community_message)
             registration_successful = True
 
-            if pro_plan:
+            if pricing_plan:
                 if stripe_token:
-                    payment_success = StripePayment.create_charge(stripe_token, community.key)
+                    payment_success = StripePayment.create_charge(stripe_token, community.key, plan)
                     if not payment_success:
                         registration_successful = False
                 else:
@@ -284,13 +284,13 @@ class Community(ndb.Model):
         return communities_message
 
     @classmethod
-    def update_plan(cls, team_key, stripe_token):
+    def update_plan(cls, team_key, stripe_token, plan):
         success = False
         community = cls.getCommunityFromTeamKey(team_key)
         if community and stripe_token:
-            payment_success = StripePayment.create_charge(stripe_token, community.key)
+            payment_success = StripePayment.create_charge(stripe_token, community.key, plan)
             if payment_success:
-                community.plan = PlanType.PRO
+                community.plan = plan
                 community.put()
                 success = True
 

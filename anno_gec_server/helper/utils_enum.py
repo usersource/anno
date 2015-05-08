@@ -74,3 +74,4 @@ class CircleValue(object):
 class PlanType(object):
     BASIC = "basic"
     PRO = "pro"
+    ENTERPRISE = "enterprise"
