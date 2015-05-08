@@ -160,9 +160,9 @@ DashboardConstantsModule.value("DashboardConstants", {
             "path" : "appinfo/get_by_name",
             "method" : "GET"
         },
-        "community.create_sdk_community.pro" : {
+        "community.create_sdk_community.pricing" : {
             "root" : "community",
-            "path" : "community/create_sdk_community/pro",
+            "path" : "community/create_sdk_community/pricing",
             "method" : "POST"
         },
         "community.plan.update" : {

@@ -21,7 +21,7 @@ Dashboard.controller('NoAuthHeader', function($scope, $routeParams, $location, U
 });
 
 Dashboard.controller('Register', function($scope, $timeout, $location, DataService, Utils, DashboardConstants) {
-    $scope.showPlans = true;
+    $scope.showPlans = false;
     $scope.appInStore = true;
     $scope.hideAppFetchSpinner = true;
     $scope.stripe_plans = DashboardConstants.Stripe.plans;
@@ -34,7 +34,8 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
         return Object.keys(obj);
     };
 
-    function payWithStripe() {
+    function payWithStripe(plan) {
+        var user_selected_plan = $scope.stripe_plans[plan];
         // START OF STRIPE
         var handler = StripeCheckout.configure({
             key: DashboardConstants.Stripe.publishableKey,
@@ -43,9 +44,9 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
             token: function(token) {
                 var msg = { "stripe_token" : token };
                 msg["community"] = getCreateSDKTeamMessage();
-                msg["community"]["plan"] = "pro";
+                msg["community"]["plan"] = plan;
 
-                DataService.makeHTTPCall("community.create_sdk_community.pro", msg, function(data) {
+                DataService.makeHTTPCall("community.create_sdk_community.pricing", msg, function(data) {
                     if (data.communities.length) {
                         $scope.showPlans = false;
                         $scope.registrationCompleted = true;
@@ -60,8 +61,8 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
 
         handler.open({
             name: DashboardConstants.Stripe.name,
-            description: DashboardConstants.Stripe.description,
-            amount: DashboardConstants.Stripe.amount
+            description: user_selected_plan.description,
+            amount: user_selected_plan.amount
         });
         // END OF STRIPE
     };
@@ -107,8 +108,9 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
 
         var location_search = $location.search();
         if (location_search.hasOwnProperty("plan")) {
-            if (angular.equals(location_search.plan, "pro")) {
-                payWithStripe();
+            var plan = location_search.plan;
+            if (Object.keys($scope.stripe_plans).indexOf(plan) !== -1) {
+                payWithStripe(plan);
             } else {
                 $scope.createSDKTeam();
             }
@@ -192,7 +194,7 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
 
     $scope.selectPricingPlan = function(plan) {
         $scope.planSelected = plan;
-        payWithStripe();
+        payWithStripe(plan);
     };
 });
 

@@ -343,11 +343,11 @@ class CommunityApi(remote.Service):
         return CommunityAdminMasterListMessage(communities=Community.create_sdk_team(request))
 
     @endpoints.method(CreateProCommunityMessage, CommunityAdminMasterListMessage,
-                      path="community/create_sdk_community/pro", http_method="POST",
-                      name="community.create_sdk_community.pro")
+                      path="community/create_sdk_community/pricing", http_method="POST",
+                      name="community.create_sdk_community.pricing")
     def create_pro_sdk_community(self, request):
         communities = Community.create_sdk_team(request.community,
-                                                pro_plan=True,
+                                                pricing_plan=True,
                                                 stripe_token=request.stripe_token)
         return CommunityAdminMasterListMessage(communities=communities)
 
