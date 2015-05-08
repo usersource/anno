@@ -28,7 +28,9 @@ body {
   color: #F62;
   margin-left: 2.031%;
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: top;
+  text-decoration: none;
+  margin: 0;
 }
 .header div {
   font-size: 16px;
@@ -39,18 +41,26 @@ body {
   cursor: pointer;
   display: inline-block;
   padding: 0 2.5%;
+  vertical-align: top;
 }
 .header .header-tab.active {
   color: #F62;
   font-weight: 600;
 }
 .header #user_info {
+  max-width: 37.32%;
+  max-width: calc(72.5% - 231px);
+  max-width: -webkit-calc(72.5% - 231px);
+  max-width: -moz-calc(72.5% - 231px);
+  max-width: -o-calc(72.5% - 231px);
+  height: 63px;
   display: inline-block;
   line-height: 22px;
   margin: 5px 0;
   text-align: right;
   cursor: pointer;
   margin-left: 7.5%;
+  vertical-align: top;
 }
 .header #user_info:hover #logout_arrow {
   background-image: url('../images/icon_chevron-blue.png');
@@ -187,4 +197,25 @@ body {
   right: 0;
   bottom: 0;
   background-color: #F9F9F9;
+}
+#noAuthHeader a#header_title {
+  font-size: 150%;
+  font-weight: bold;
+  color: #F62;
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+}
+#header #appname {
+  width: 24.395%;
+  width: calc(92.5% - 213px);
+  width: -webkit-calc(92.5% - 213px);
+  width: -moz-calc(92.5% - 213px);
+  width: -o-calc(92.5% - 213px);
+  display: inline-block;
+  margin-left: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

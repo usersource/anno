@@ -30,20 +30,26 @@ handlers:
 - url: /dashboard/partials/(.*\.(html))
   static_files: dashboard/partials/\1
   upload: /dashboard/partials/(.*\.(html))
+  secure: always
 - url: /dashboard/(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css))
   static_files: dashboard/\1
   upload: dashboard/(.*\.(bmp|gif|ico|jpeg|jpg|png|js|css))
+  secure: always
 - url: /dashboard(/.*)*
   static_files: dashboard/index.html
   upload: dashboard/(.*)
+  secure: always
 - url: /dashboard
   static_dir: dashboard
+  secure: always
 - url: /admin_team_master
   static_dir: dashboard/admin_team_master
   login: admin
+  secure: always
 - url: /
   static_files: dashboard/index.html
   upload: dashboard/index.html
+  secure: always
 
 - url: /.*
   script: main.application

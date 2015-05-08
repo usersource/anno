@@ -1,14 +1,20 @@
 import logging
 import stripe
+from helper.utils_enum import PlanType
+
+class PlanPricing(object):
+    PRO = 5000
+    ENTERPRISE = 50000
 
 class StripePayment(object):
     @classmethod
-    def create_charge(cls, token_message, community_key):
+    def create_charge(cls, token_message, community_key, plan_type):
         stripe.api_key = "sk_test_tIiaUWNgm1zeJDzjoE7WOoUO"
         payment_success = False
+        amount = PlanPricing.PRO if (plan_type == PlanType.PRO) else PlanPricing.ENTERPRISE
 
         try:
-            charge = stripe.Charge.create(amount=1000, currency="usd", source=token_message.id)
+            charge = stripe.Charge.create(amount=amount, currency="usd", source=token_message.id)
             if charge.paid and (charge.status == "succeeded"):
                 payment_success = True
                 from model.payment import Payment

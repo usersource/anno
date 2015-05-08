@@ -6,7 +6,7 @@
     <div id="account-inner">
         <div style="width: 100%;height: 100%;padding: 0;">
             <div style="font-weight: 600;padding: 20px 0 0 20px;font-size: 18px;">Account Details</div>
-            <div id="account-details" style="margin: 0 20px;padding: 0 0 10px 10px;border-bottom: 1px solid #C4CFD7;">
+            <div id="account-details" style="margin-left: 20px;padding: 0 0 10px 10px;border-bottom: 1px solid #C4CFD7;">
                 <div style="width: 60%;display: inline-block;">
                     <div style="margin: 20px 0;">
                         <div class="field_title">Name</div>
@@ -61,7 +61,7 @@
                     <div style="margin: 10px 0 20px 0;">
                         <div style="display: inline-block;font-weight: 600;">Plan Type:</div>
                         <div style="display: inline-block;">{{plan}}</div>
-                        <button class="admin-button" ng-click="upgradePlan();" ng-if="plan == 'Basic Plan'" style="border: 1px solid #F65007;margin-left: 20px;">Upgrade Plan</button>
+                        <button class="admin-button" ng-click="upgradePlan();" ng-if="(plan != enterprise_plan) && (role == adminRole)" style="border: 1px solid #F65007;margin-left: 20px;">Upgrade Plan</button>
                     </div>
                 </div>
             </div>

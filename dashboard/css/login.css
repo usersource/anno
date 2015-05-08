@@ -58,9 +58,36 @@
   line-height: 39px;
   border-radius: 4px;
   margin-bottom: 60px;
+  margin-top: 10px;
   cursor: pointer;
   padding: 0;
   outline: 0;
+}
+#login #login_button.login_active {
+  background-color: #F62;
+  border: 1px solid #F65007;
+}
+#login #selectAccountValue {
+  width: 66.666666667%;
+  height: 36px;
+  border-color: #C4CFD7;
+  background-color: #FFF;
+  border-radius: 4px;
+  padding: 0 5px;
+  outline: 0;
+  margin-bottom: 20px;
+}
+#login #continueLogin {
+  width: 150px;
+  height: 36px;
+  line-height: 35px;
+  margin: 10px auto 50px auto;
+  background-color: #F62;
+  border: 1px solid #F65007;
+  border-radius: 4px;
+  color: #FFF;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {
