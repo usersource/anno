@@ -15,7 +15,8 @@ do
 	case $1 in
 	--publish)     publish="true";
 				  shift;;
-	*) echo "Invalid parameter"; echo $usage; exit 1;;
+	--help) echo -e $usage; exit 1;;
+	*) echo "Invalid parameter"; echo -e $usage; exit 1;;
 	esac
 done
 
