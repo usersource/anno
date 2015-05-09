@@ -254,8 +254,10 @@ class Anno(BaseModel):
         from model.userannostate import UserAnnoState
         UserAnnoState.insert(user=user, anno=entity, type=AnnoActionType.CREATED)
 
-        if itemCount == 0:
-            send_first_anno_email(community.name, user.display_name)
+        if community:
+            itemCount = cls.query_count_by_community(community_key=community.key)
+            if itemCount == 0:
+                send_first_anno_email(community.name, user.display_name)
 
         return entity
 
@@ -547,6 +549,10 @@ class Anno(BaseModel):
                 return AnnoListMessage(anno_list=items, has_more=more)
         else:
             return AnnoListMessage(anno_list=[])
+
+    @classmethod
+    def query_count_by_community(cls, community_key):
+        return len(cls.query(cls.community == community_key).fetch())
 
     @classmethod
     def query_by_app(cls, app, limit, projection, curs, user):
