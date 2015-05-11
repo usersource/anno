@@ -25,7 +25,7 @@ PROJECT_NAME_TEST_USERSOURCE = "Test Server"
 PROJECT_NAME_SANDBOX_USERSOURCE = "Sandbox Server"
 
 # Dashboard URL
-DASHBOARD_URL_PROD_USERSOURCE = "https://annoserver.appspot.com/dashboard/%s/%s"
+DASHBOARD_URL_PROD_USERSOURCE = "https://developer.usersource.io/dashboard/%s/%s"
 DASHBOARD_URL_TEST_USERSOURCE = "https://annoserver-test.appspot.com/dashboard/%s/%s"
 DASHBOARD_URL_SANDBOX_USERSOURCE = "https://usersource-anno.appspot.com/dashboard/%s/%s"
 

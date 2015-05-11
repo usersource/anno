@@ -100,7 +100,7 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
         }
 
         if (!$scope.appInStore) {
-            if (angular.isUndefined($scope.bundleid) || !angular.equals($scope.bundleid.length, 0)) {
+            if (angular.isUndefined($scope.bundleid) || angular.equals($scope.bundleid.length, 0)) {
                 showDashboardMessage("Unique Identifier can't be empty", true);
                 return;
             }
