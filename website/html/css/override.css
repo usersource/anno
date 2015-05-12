@@ -16,3 +16,7 @@
 .home {
 	background-image: url('../images/usersource/mac.png');
 }
+
+.pricing-features {
+	min-height: 100px;
+}
