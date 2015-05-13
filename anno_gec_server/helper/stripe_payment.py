@@ -3,8 +3,8 @@ import stripe
 from helper.utils_enum import PlanType
 
 class PlanPricing(object):
-    PRO = 5000
-    ENTERPRISE = 50000
+    PRO = 4900
+    ENTERPRISE = 49000
 
 class StripePayment(object):
     @classmethod
@@ -19,7 +19,7 @@ class StripePayment(object):
                 payment_success = True
                 from model.payment import Payment
                 Payment.create(community_key, charge)
-        except stripe.CardError, e:
+        except stripe.CardError as e:
             logging.exception("Error while charging customer: %s" % e)
 
         return payment_success

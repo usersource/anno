@@ -9,15 +9,15 @@ DashboardConstantsModule.value("DashboardConstants", {
         plans: {
             pro: {
                 title: "Pro Plan",
-                price: "$50/month",
-                description : "Pro Plan $50/month",
-                amount : 5000
+                price: "$49/month",
+                description : "Pro Plan $49/month",
+                amount : 4900
             },
             enterprise: {
                 title: "Enterprise Plan",
-                price: "$500/month",
-                description : "Enterprise Plan $500/month",
-                amount : 50000
+                price: "$490/month",
+                description : "Enterprise Plan $490/month",
+                amount : 49000
             }
         }
     },
