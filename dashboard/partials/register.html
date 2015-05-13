@@ -4,8 +4,8 @@
         <div id="dashboard_message_text">{{error_message}}</div>
     </div>
     <div id="register_outer">
-        <div class="col-lg-2 col-md-2 col-sm-1 col-xs-1"></div>
-        <div id="register_inner" class="col-lg-8 col-md-8 col-sm-10 col-xs-10">
+        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1"></div>
+        <div id="register_inner" class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
             <!-- <div id="register_page_indicator_parent">
                 <div class="register_page_indicator"></div>
                 <div class="register_page_indicator"></div>
@@ -76,14 +76,14 @@
                         <div class="register_plan_name title">Basic Plan</div>
                         <div class="register_plan_price">Free</div>
                         <div class="register_plan_desc">Praesent magna est, mattis quis laoreet sit amet, rhoncus ac felis</div>
-                        <input class="register_button register_plan_select" type="submit" value="Choose Basic Plan" ng-click="createSDKTeam();">
+                        <input class="register_button register_plan_select" type="submit" value="Choose this plan" ng-click="createSDKTeam();">
                     </div>
                     <div class="register_plan" ng-class="{'selected' : (planSelected == key)}" ng-repeat="key in notSorted(stripe_plans)" ng-init="stripe_plan = stripe_plans[key]" style="margin-left: 3%;vertical-align: top;">
                         <div class="register_plan_selected"></div>
                         <div class="register_plan_name title">{{stripe_plan.title}}</div>
                         <div class="register_plan_price">{{stripe_plan.price}}</div>
                         <div class="register_plan_desc">Praesent magna est, mattis quis laoreet sit amet, rhoncus ac felis</div>
-                        <input class="register_button register_plan_select" type="submit" value="Choose {{stripe_plan.title}}" ng-click="selectPricingPlan(key);">
+                        <input class="register_button register_plan_select" type="submit" value="Choose this plan" ng-click="selectPricingPlan(key);">
                     </div>
                 </div>
             </div>
@@ -91,6 +91,6 @@
                 <div>That's it!<br/><br/>Please check your email for a message from usersource.io.<br/>Click on the link in the email to get started!</div>
             </div>
         </div>
-        <div class="col-lg-2 col-md-2 col-sm-1 col-xs-1"></div>
+        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1"></div>
     </div>
 </div>
