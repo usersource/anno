@@ -21,7 +21,7 @@ done
 # if staging and prod were specified, we only do staging
 if [ -n "$STAGING" ]; then
 	target="www.staging.usersource.io"
-	(cd html && cp index.html index.html.sedbackup && sed -i -e "s://developer.usersource.io://annoserver-test.appspot.com:g" index.html) 
+	(cd html && mv index.html index.html.orig && sed -e "s://developer.usersource.io://annoserver-test.appspot.com:g" index.html.orig > index.html) 
 else 
 	if [ -n "$PROD" ]; then
 		target="www.usersource.io"
@@ -33,7 +33,7 @@ fi
 (cd $rootdir && gsutil -m rsync -d -r html/ gs://$target)
 
 if [ -n "$STAGING" ]; then
-	(cd html && sed -i -e "s://annoserver-test.appspot.com://developer.usersource.io:g" index.html && rm index.html.sedbackup) 
+	(cd html && mv index.html.orig index.html) 
 fi
 
 gsutil web set -m index.html gs://$target # we can add error page using -e 404.html or similar
