@@ -19,7 +19,7 @@ tpj.fn.css = tpj.fn.cssOriginal;
 
 tpj('.banner').revolution(
 	{
-		delay:5000,
+		delay:10000,
 		startheight:520,
 		startwidth:1170,
 
