@@ -71,7 +71,7 @@ class AccountApi(remote.Service):
                 User.update_user(user=user, email=email, username=display_name, account_type=team_key, image_url=image_url)
             if not Community.authenticate(team_key, md5(team_secret)):
                 raise endpoints.UnauthorizedException("Authentication failed. Team key and secret are not matched.")
-        elif user.auth_source == AuthSourceType.ANNO:
+        elif user and user.auth_source == AuthSourceType.ANNO:
             password = request.password
             validate_password(password)
             if not user:
