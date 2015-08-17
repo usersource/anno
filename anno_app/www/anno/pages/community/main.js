@@ -10,7 +10,8 @@ require([
     "anno/common/Util",
     "anno/anno/AnnoDataHandler",
     "dojo/text!./app.json",
-    "dojo/sniff"],
+    "dojo/sniff",
+],
     function (declare, dom, registry, domClass, Application, jsonRef, _ContentPaneMixin, DBUtil, annoUtil, annoDataHandler, config, has)
     {
         var config = jsonRef.fromJson(config);

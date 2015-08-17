@@ -62,7 +62,7 @@ class AccountApi(remote.Service):
 
             display_name = request.display_name
             image_url = request.user_image_url
-
+            
             if not user:
                 user = User.insert_user(email=email, username=display_name, account_type=team_key, image_url=image_url)
                 community = Community.getCommunityFromTeamKey(team_key)
@@ -117,7 +117,6 @@ class AccountApi(remote.Service):
                       http_method="GET", name="account.dashboard.teams")
     def get_dashboard_teams(self, request):
         accounts = User.get_all_teams_by_email(request.user_email)
-        print "accounts : ", accounts
         return AccountAuthenticateListMessage(account_info=accounts)
 
     @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/forgot_detail',

@@ -9,7 +9,7 @@ define([
     "anno/common/DBUtil",
     "anno/common/Util",
     "anno/common/OAuthUtil",
-    "anno/anno/AnnoDataHandler"
+    "anno/anno/AnnoDataHandler",
 ],
     function (dom, domClass, domStyle, connect, win, registry, transit, DBUtil, annoUtil, OAuthUtil, AnnoDataHandler)
     {
@@ -61,13 +61,16 @@ define([
         {
             var email = dom.byId('signinEmail').value,
                 pwd = dom.byId('signPwd').value;
-
+            var select = dom.byId('select');
+            var selected_Team_Key = select.options[select.selectedIndex].value;
+            
             var APIConfig = {
                 name: annoUtil.API.account,
                 method: "account.account.authenticate",
                 parameter: {
                     'password':pwd,
-                    'user_email':email
+                    'user_email':email,
+                    'team_key' : selected_Team_Key 
                 },
                 success: function(resp)
                 {
@@ -267,7 +270,8 @@ define([
 
         var getAllTeams = function()
         {
-            var email = dom.byId('signinEmailcontainer').value;
+            var email = dom.byId('signinEmailId').value;
+            dom.byId("signinEmail").value = email;
             console.log('email' ,email);
             if (email.length <=0) return;
 
@@ -279,6 +283,7 @@ define([
                 success: function(resp)
                 {
                     console.log(" teams : " + JSON.stringify(resp));
+                    AddTeamOptions(resp.account_info);
                 },
                 error: function(){
                   console.log(" error ");  
@@ -287,6 +292,15 @@ define([
 
             annoUtil.callGAEAPI(APIConfig);
         };
+
+        var AddTeamOptions = function(teams){
+            var select = dom.byId('select');
+            console.log('teams :', teams);
+            for (var i = 0; i < teams.length; i++) {
+                console.log('team name : ', teams[i].team_name);
+                select.options[select.options.length] = new Option(teams[i].team_name, teams[i].team_key);
+            }           
+        };  
 
         var goBackToSignin = function()
         {
@@ -510,6 +524,7 @@ define([
                     domStyle.set('btnBackEmail','display','none');
                     domStyle.set('signinMessage', 'display', 'none');
                     dom.byId("signinEmail").value = "";
+                    dom.byId("signinEmailId").value = "";
                     dom.byId("signPwd").value = "";
                     dom.byId("nickNameSigninAnno").value = "";
                     domStyle.set('modelApp_signin', 'backgroundColor', '#DDDDDD');
@@ -533,7 +548,6 @@ define([
                     domStyle.set('signinFormContainer', 'display', '');
                     domStyle.set('signinMessage', 'display', 'none');
                     domStyle.set('btnBackEmail','display','');
-                    dom.byId("signinEmail").value = "";
                     dom.byId("signPwd").value = "";
                     dom.byId("nickNameSigninAnno").value = "";
                     domStyle.set('modelApp_signin', 'backgroundColor', '#DDDDDD');
@@ -555,6 +569,7 @@ define([
                     domStyle.set('signinMessage', 'display', 'none');
                     domStyle.set('btnBackEmail','display','none');
                     dom.byId("signinEmail").value = "";
+                    dom.byId("signinEmailId").value = "";
                     dom.byId("signPwd").value = "";
                     dom.byId("nickNameSigninAnno").value = "";
                     domStyle.set('modelApp_signin', 'backgroundColor', '#DDDDDD');
@@ -568,6 +583,7 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId("btnSubmitAnnoSignin"), 'click', function(e)
                 {
+                    
                     if (isInputValidate())
                     {
                         dom.byId('hiddenBtn').focus();

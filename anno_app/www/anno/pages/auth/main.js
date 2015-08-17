@@ -9,7 +9,7 @@ require([
     "anno/common/DBUtil",
     "anno/common/Util",
     "anno/anno/AnnoDataHandler",
-    "dojo/text!./app.json"
+    "dojo/text!./app.json",
 ],
     function (declare, dom, registry, domClass, Application, jsonRef, _ContentPaneMixin, DBUtil, annoUtil, AnnoDataHandler, config)
     {
