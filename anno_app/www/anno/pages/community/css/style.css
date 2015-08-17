@@ -1105,6 +1105,13 @@ li.unread .listTitle {
 	left: 20px;
 	top: 11px;
 }
+.arrow_back_email{
+    float: left;
+    width: 30px;
+    margin-left: 10px;
+    position: relative;
+    bottom: -150px;
+}
 
 #signinContainerInner {
 	text-align: center;

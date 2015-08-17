@@ -40,7 +40,7 @@
 				</tr>
 			</table>
 		</div>
-		<div id="signinFormContainer" style="font-weight: bold;width:80%;margin-left: auto;margin-right: auto">
+		<div id="signinFormContainer" style="font-weight: bold;width:80%;margin-left: auto;margin-right: auto; display: none">
 			<form action="signin.html" method="post">
 				<div id="signinMessage" style="color: red;text-align: left;padding-left: 4px;padding-bottom: 4px;display: none"></div>
 				<div>
@@ -56,6 +56,20 @@
 				</div>
 			</form>
 		</div>
+		<div id="signinEmailContainer" style="font-weight: bold;width:80%;margin-left: auto; width: 300px;margin-right: auto; display: none">
+			<form action="signin.html" method="post">
+				<div id="signinMessage" style="color: red;text-align: left;padding-left: 4px;padding-bottom: 4px;display: none"></div>
+				<div>
+					<input type="email" id="signinEmailcontainer" placeholder="Email" required="true" class="signin-input">
+				</div>
+				<div style="padding-top: 8px;">
+					<button id="btnNextAnnoSignin" class="bigGreenBtn" type="button" style="width: 170px;height: 44px;">
+						Next
+					</button>
+				</div>
+			</form>
+		</div>
+	<img src="../community/css/images/arrow_back.png" id="btnBackEmail" class="arrow_back_email" style="display: none;">	
 	</div>
 	<div id="pickNickNameContainer" style="margin-top: 30px;display:none;clear: both;width: 80%;margin-left: auto;margin-right: auto">
 		<div id="btnBackToSignin" style="color: #999999;font-weight: bold">

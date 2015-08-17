@@ -265,6 +265,29 @@ define([
             window.open(cbURL, "_self");
         };
 
+        var getAllTeams = function()
+        {
+            var email = dom.byId('signinEmailcontainer').value;
+            console.log('email' ,email);
+            if (email.length <=0) return;
+
+            var APIConfig = {
+                name: annoUtil.API.account,
+                method: "account.account.dashboard.teams",
+                parameter: {"user_email":email},
+                showLoadingSpinner: false,
+                success: function(resp)
+                {
+                    console.log(" teams : " + JSON.stringify(resp));
+                },
+                error: function(){
+                  console.log(" error ");  
+                }
+            };
+
+            annoUtil.callGAEAPI(APIConfig);
+        };
+
         var goBackToSignin = function()
         {
             domStyle.set('pickNickNameContainer', 'display', 'none');
@@ -281,7 +304,6 @@ define([
         var getUserDisplayName = function()
         {
             var email = dom.byId('signinEmail').value;
-
             if (email.length <=0) return;
 
             var APIConfig = {
@@ -459,11 +481,33 @@ define([
                     doFacebookAuth();
                  }));
 
+                // _connectResults.push(connect.connect(dom.byId("btnSigninWithAnno"), 'click', function(e)
+                // {
+                //     domStyle.set('pickNickNameContainer', 'display', 'none');
+                //     domStyle.set('signinContainer', 'display', 'none');
+                //     domStyle.set('annoSigninContainer', 'display', '');
+                //     domStyle.set('signinMessage', 'display', 'none');
+                //     dom.byId("signinEmail").value = "";
+                //     dom.byId("signPwd").value = "";
+                //     dom.byId("nickNameSigninAnno").value = "";
+                //     domStyle.set('modelApp_signin', 'backgroundColor', '#DDDDDD');
+
+                //     transit(null, dom.byId('annoSigninContainer'), {
+                //         transition:"slide",
+                //         duration:300
+                //     });
+
+                //     inAnnoSignInView = true;
+                // }));
+
                 _connectResults.push(connect.connect(dom.byId("btnSigninWithAnno"), 'click', function(e)
                 {
                     domStyle.set('pickNickNameContainer', 'display', 'none');
                     domStyle.set('signinContainer', 'display', 'none');
                     domStyle.set('annoSigninContainer', 'display', '');
+                    domStyle.set('signinEmailContainer', 'display', '');
+                    domStyle.set('signinFormContainer', 'display', 'none');
+                    domStyle.set('btnBackEmail','display','none');
                     domStyle.set('signinMessage', 'display', 'none');
                     dom.byId("signinEmail").value = "";
                     dom.byId("signPwd").value = "";
@@ -477,6 +521,50 @@ define([
 
                     inAnnoSignInView = true;
                 }));
+                 
+                
+                 _connectResults.push(connect.connect(dom.byId("btnNextAnnoSignin"), 'click', function(e)
+                {   
+                    getAllTeams();
+                    domStyle.set('pickNickNameContainer', 'display', 'none');
+                    domStyle.set('signinContainer', 'display', 'none');
+                    domStyle.set('annoSigninContainer', 'display', '');
+                    domStyle.set('signinEmailContainer', 'display', 'none');
+                    domStyle.set('signinFormContainer', 'display', '');
+                    domStyle.set('signinMessage', 'display', 'none');
+                    domStyle.set('btnBackEmail','display','');
+                    dom.byId("signinEmail").value = "";
+                    dom.byId("signPwd").value = "";
+                    dom.byId("nickNameSigninAnno").value = "";
+                    domStyle.set('modelApp_signin', 'backgroundColor', '#DDDDDD');
+
+                    transit(null, dom.byId('signinFormContainer'), {
+
+                    });
+                    
+                    inAnnoSignInView = true;
+                }));
+
+                _connectResults.push(connect.connect(dom.byId("btnBackEmail"), 'click', function(e)
+                {
+                    domStyle.set('pickNickNameContainer', 'display', 'none');
+                    domStyle.set('signinContainer', 'display', 'none');
+                    domStyle.set('annoSigninContainer', 'display', '');
+                    domStyle.set('signinEmailContainer', 'display', '');
+                    domStyle.set('signinFormContainer', 'display', 'none');
+                    domStyle.set('signinMessage', 'display', 'none');
+                    domStyle.set('btnBackEmail','display','none');
+                    dom.byId("signinEmail").value = "";
+                    dom.byId("signPwd").value = "";
+                    dom.byId("nickNameSigninAnno").value = "";
+                    domStyle.set('modelApp_signin', 'backgroundColor', '#DDDDDD');
+
+                    transit(null, dom.byId('signinEmailContainer'), {
+                    });
+
+                    inAnnoSignInView = true;
+                }));
+                 
 
                 _connectResults.push(connect.connect(dom.byId("btnSubmitAnnoSignin"), 'click', function(e)
                 {

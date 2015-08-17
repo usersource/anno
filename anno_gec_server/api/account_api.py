@@ -117,6 +117,7 @@ class AccountApi(remote.Service):
                       http_method="GET", name="account.dashboard.teams")
     def get_dashboard_teams(self, request):
         accounts = User.get_all_teams_by_email(request.user_email)
+        print "accounts : ", accounts
         return AccountAuthenticateListMessage(account_info=accounts)
 
     @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/forgot_detail',

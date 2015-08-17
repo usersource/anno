@@ -124,5 +124,9 @@
     "account.account.register": {
         "url": "/account/1.0/account/register",
         "method": "POST"
+    },
+    "account.account.dashboard.teams": {
+        "url": "/account/1.0/account/dashboard/teams",
+        "method": "GET"
     }
 }
