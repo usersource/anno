@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXAggregateTarget section */
 		5BBAD0D719E691860060A80D /* UserSourcePlugin */ = {
 			isa = PBXAggregateTarget;
@@ -727,7 +728,7 @@
 				LastUpgradeCheck = 600;
 				TargetAttributes = {
 					1D6058900D05DD3D006BFB54 = {
-						DevelopmentTeam = DB638VD65N;
+						DevelopmentTeam = G7Y3KRBLX8;
 					};
 					1DF46BF819023329005408CA = {
 						TestTargetID = 1D6058900D05DD3D006BFB54;
