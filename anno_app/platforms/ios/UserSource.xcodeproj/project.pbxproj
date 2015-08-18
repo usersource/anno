@@ -828,7 +828,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./Fabric.framework/run 15483efa01068726568c5a2cf531594b734f3f6f a1788e46fb883237da6d8ae5b2c4180380383886d843a82b49808dbf3faff7a0";
+			shellScript = "# ./Fabric.framework/run 15483efa01068726568c5a2cf531594b734f3f6f a1788e46fb883237da6d8ae5b2c4180380383886d843a82b49808dbf3faff7a0";
 		};
 		304B58A110DAC018002A0835 /* Copy www directory */ = {
 			isa = PBXShellScriptBuildPhase;

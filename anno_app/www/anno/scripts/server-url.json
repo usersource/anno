@@ -41,8 +41,8 @@
     "4": {
         "serverId":"Localhost",
         "serverName":"Localhost",
-        "imageServiceURL":"http://192.168.11.5:8081/screenshot",
-        "apiRoot":"http://192.168.11.5:8081/_ah/api",
+        "imageServiceURL":"http://192.168.11.140:8081/screenshot",
+        "apiRoot":"http://192.168.11.140:8081/_ah/api",
         "clientId" : "955803277195.apps.googleusercontent.com",
         "clientSecret": "l5UwDYJuv2BdUUBF2tu9fsol",
         "proxyKey":"6",
