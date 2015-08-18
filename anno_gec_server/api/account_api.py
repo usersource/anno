@@ -54,13 +54,12 @@ class AccountApi(remote.Service):
         email = request.user_email
         validate_email(email)
         team_key = request.team_key
+        password = request.password
         user = User.find_user_by_email(email, team_key)
 
         if team_key:
             team_secret = request.team_secret
-
             if not team_secret :
-                password = request.password
                 validate_password(password)
                 if not User.authenticate(email, md5(password), team_key):
                     raise endpoints.UnauthorizedException("Authentication failed. Email and password are not matched.")
