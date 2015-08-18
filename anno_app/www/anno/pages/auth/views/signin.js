@@ -62,7 +62,12 @@ define([
             var email = dom.byId('signinEmail').value,
                 pwd = dom.byId('signPwd').value;
             var select = dom.byId('select');
-            var selected_Team_Key = select.options[select.selectedIndex].value;
+            var selected_Team_Key;
+            if(select){
+                selected_Team_Key = select.options[select.selectedIndex].value;
+            }else{
+                selected_Team_Key = '';
+            }
             
             var APIConfig = {
                 name: annoUtil.API.account,
@@ -281,9 +286,9 @@ define([
                 parameter: {"user_email":email},
                 showLoadingSpinner: false,
                 success: function(resp)
-                {
-                    console.log(" teams : " + JSON.stringify(resp));
-                    AddTeamOptions(resp.account_info);
+                {   
+                    if (resp.account_info.length > 0)
+                        AddTeamOptions(resp.account_info);
                 },
                 error: function(){
                   console.log(" error ");  
@@ -294,13 +299,20 @@ define([
         };
 
         var AddTeamOptions = function(teams){
+            domStyle.set('select', 'display', '');
             var select = dom.byId('select');
-            console.log('teams :', teams);
             for (var i = 0; i < teams.length; i++) {
-                console.log('team name : ', teams[i].team_name);
                 select.options[select.options.length] = new Option(teams[i].team_name, teams[i].team_key);
             }           
         };  
+
+        var ClearTeamOptions = function(){
+            var select = dom.byId('select');
+            console.log('no of options :', select.length);
+            for (var i = 0; i < select.length; i++) {
+                select.remove(i);
+            };
+        };
 
         var goBackToSignin = function()
         {
