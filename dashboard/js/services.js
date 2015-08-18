@@ -356,6 +356,17 @@ ServiceModule.factory('Autocomplete', function(Utils) {
 ServiceModule.factory('DataService', function($http, $location, $window, $cookieStore, Utils, DashboardConstants) {
     var apiRoot = DashboardConstants.apiRoot;
 
+    var variables = {};
+    function add_data(key, value) {
+        variables[key] = value;
+    }
+    function get_data(key) {
+        //if (this.variables.hasOwnProperty(key))
+        return variables[key];
+    }
+
+
+
     function convert_if_custom_domain() {
         var domain = "";
         if (angular.equals($location.host(), DashboardConstants.prodCustomDomain)) {
@@ -395,7 +406,9 @@ ServiceModule.factory('DataService', function($http, $location, $window, $cookie
 
     return ({
         convert_if_custom_domain : convert_if_custom_domain,
-        makeHTTPCall : makeHTTPCall
+        makeHTTPCall : makeHTTPCall,
+        add_data : add_data,
+        get_data : get_data
     });
 });
 

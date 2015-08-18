@@ -1,6 +1,6 @@
 'use strict';
 
-var Dashboard = angular.module('Dashboard', ['ngCookies', 'ngRoute', 'DashboardConstantsModule', 'ServiceModule']);
+var Dashboard = angular.module('Dashboard', ['ngCookies', 'ngRoute', 'DashboardConstantsModule', 'ServiceModule', 'ui.bootstrap']);
 
 Dashboard.controller('NoAuthHeader', function($scope, $routeParams, $location, Utils) {
     var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
@@ -198,7 +198,7 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
     };
 });
 
-Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams, Utils, DashboardConstants, DataService) {
+Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams, $cookieStore, Utils, DashboardConstants, DataService) {
     var team_hash = $routeParams.teamHash, team_name = $routeParams.teamName;
     var urlSearchParams = $location.search(), redirectTo;
 
@@ -219,6 +219,7 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
     };
 
     $scope.initLogin = function() {
+
         if (angular.isDefined(team_hash)) {
             $scope.hideTeamKeyField = true;
             $scope.getTeamsForLogin = false;
@@ -240,7 +241,6 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
             $location.path(Utils.getDashboardURL() + "/feed");
         }
     }
-
     $scope.get_teams = function() {
         if (!$scope.getTeamsForLogin) return;
         DataService.makeHTTPCall("account.dashboard.teams", {
@@ -248,6 +248,9 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
         }, function(data) {
             data.account_info.unshift({"team_name": "Select Project"});
             $scope.accounts = data.account_info;
+            $cookieStore.put('accounts', data.account_info)
+            console.log('Data saved: ' , data.account_info);
+
             $scope.teamkeyvalue = 0;
 
             if ($scope.accounts.length > 2) {
@@ -256,6 +259,7 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
                 $scope.selectAccount = false;
                 $scope.teamkey = $scope.accounts[1]['team_key'];
             }
+
         });
     };
 
@@ -296,7 +300,7 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
     };
 });
 
-Dashboard.controller('Header', function($scope, $cookieStore, $location, $window, $routeParams, Utils, DataService) {
+Dashboard.controller('Header', function($scope, $cookieStore, $location, $window, $modal, $routeParams, Utils, DataService) {
     var team_hash = $routeParams.teamHash,
         team_name = $routeParams.teamName,
         team_key = $cookieStore.get('team_key');
@@ -307,10 +311,69 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $window
     $scope.showSignoutButton = "none";
     $scope.signoutArrowValue = false;
     $scope.currentSection = $location.path().split("/").reverse()[0];
+    $scope.isLoginDisabled = true;
+    var redirectTo;
+
+    if ($cookies.hasOwnProperty('redirect_to')) {
+        redirectTo = $cookies["redirect_to"];
+        if (Utils.getRoutePath(redirectTo) === "login") {
+            redirectTo = undefined;
+        }
+    }
 
     $scope.initHeader = function() {
         getAppinfoData();
         checkForCurrentApp();
+        getTeamsInfo();
+        
+        $scope.icon = $cookieStore.get('icon');
+        $scope.projName = $cookieStore.get('projName');
+        $scope.project = $cookieStore.get('project');
+    };
+
+    $scope.make_login_active = function() {
+        if (angular.isDefined($scope.email)) {
+            $scope.isLoginDisabled = false;
+        }
+    };
+    function gotoRedirectPage() {
+        if (angular.isDefined(redirectTo)) {
+            Utils.removeRedirectURL();
+            window.location = decodeURIComponent(redirectTo).replace(/"/g, '');
+        } else {
+            $location.path(Utils.getDashboardURL() + "/feed");
+        }
+    }
+    $scope.authenticate_dashboard = function() {
+        console.log("Things entered: ", $scope.email, $scope.password, $scope.project);
+
+        DataService.makeHTTPCall("account.dashboard.authenticate", {
+            'user_email' : $scope.email,
+            'password' : $scope.password,
+            'team_key' : $scope.project
+        }, function(data) {
+            if (data.authenticated) {
+                console.log('User is authentic.');
+                if (angular.equals(data.account_info.length, 1)) {
+                    Utils.storeUserDataInCookies(data.account_info[0], $scope.email);
+                    $scope.modalInstance = $cookieStore.get('modalInstance');
+                    console.log('2nd console log: ', $scope.modalInstance);
+                    gotoRedirectPage();
+
+                } else {
+                    $scope.accounts = data.account_info;
+                    $scope.selectAccountValue = 0;
+                    $scope.selectAccount = true;
+                }
+            } else {
+                $scope.error_message = "Authentication failed. Please try again.";
+                $scope.dashboard_error_type = true;
+                $timeout(function() {
+                    $scope.error_message = "";
+                    $scope.dashboard_error_type = false;
+                }, 5000);
+            }
+        });
     };
 
     function checkForCurrentApp() {
@@ -340,6 +403,52 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $window
         $scope.selectSection('login');
     };
 
+    //////////////////////////////////////////////
+    $scope.items = ['item1', 'item2', 'item3'];
+    
+    $scope.open = function () {
+        console.log('Data found: ', $scope.icon, $scope.projName);
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: '/dashboard/partials/change_project.html',
+            controller: 'ChangeProjectInstanceCtrl',
+            resolve: {
+                items: function () {
+                    return $scope.items;
+                }
+            }
+        });
+        console.log("modalInstance: ", modalInstance);
+        $cookieStore.put('modalInstance', modalInstance);
+        modalInstance.result.then(function (selectedItem) {
+            $scope.selected = selectedItem;
+        }, function () {
+            console.log('Modal dismissed at: ' + new Date());
+        });
+    }
+
+    ///////////////////////////////////////////
+
+    $scope.change_project = function() {
+        // as soon as user will change the project from the list new page will load
+        $scope.project = $scope.accounts[$scope.projectValue]['team_key'];
+        if (team_key == $scope.project || $scope.project == undefined)
+            return;
+
+        DataService.makeHTTPCall("appinfo.appinfo.get", {
+            team_key : $scope.project
+        }, function(data) {
+            $cookieStore.put('icon', data['icon_url']);
+            $cookieStore.put('projName', data['name']);
+            $cookieStore.put('project', $scope.project);
+            console.log('1st Data found: ', data);
+            $scope.open();    
+        });
+        
+        $cookieStore.put('user_email', $scope.email);
+        $cookieStore.put('team_name', team_name);
+        
+    };
     function getAppinfoData() {
         DataService.makeHTTPCall("appinfo.appinfo.get", {
             team_key : team_key
@@ -349,12 +458,35 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $window
         });
     }
 
+    function getTeamsInfo() {
+        $scope.projectValue = 0;
+        $scope.accounts = $cookieStore.get('accounts');
+        console.log('Data Received: ', $scope.accounts);
+    }
+
     $scope.selectSection = function(sectionName) {
         if (angular.isDefined(team_hash) && angular.isDefined(team_name)) {
             $location.path('/dashboard/' + team_hash + '/' + team_name + '/' + sectionName);
         } else {
             $location.path('/dashboard/' + sectionName);
         }
+    };
+});
+
+Dashboard.controller('ChangeProjectInstanceCtrl', function ($scope, $modalInstance, items) {
+    $scope.items = items;
+    $scope.selected = {
+        item: $scope.items[0]
+    };
+
+    $scope.ok = function () {
+        console.log('OK was called.');
+        $modalInstance.close($scope.selected.item);
+    };
+
+    $scope.cancel = function () {
+        console.log('Cancel was called.');
+        $modalInstance.dismiss('cancel');
     };
 });
 
