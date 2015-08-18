@@ -121,15 +121,20 @@ require([
     {
         if (domClass.contains(dom.byId("barShare"), 'barIconInactive')) return;
         domClass.add(dom.byId("barShare"), 'barIconInactive');
-
+        doShare(annoUtil.getCurrentUserInfo().team_key); 
+    });
+    function doShare(team_key){
         if (editMode)
         {
             if (level == 2 || !isAnno)
             {
                 updateDrawCommentAnno();
             }
-            else
+            else if (team_key)
             {
+                sharePost();
+            }
+            else{
                 openShareDialog();
             }
         }
@@ -146,13 +151,17 @@ require([
                     insertSimpleCommentAnno();
                 }
             }
+            else if (team_key)
+            {
+                sharePost();
+            }
             else
             {
                 openShareDialog();
             }
         }
-    });
 
+    }
     connect.connect(dom.byId("txtAppName"), 'keydown', function(e)
     {
         if (e.keyCode == 13)
@@ -224,7 +233,10 @@ require([
         // enable JS gesture listener, disable native gesture
         // annoUtil.enableJSGesture();
         // annoUtil.disableNativeGesture();
-
+        sharePost();
+        
+    });
+    function sharePost(){
         if (editMode)
         {
             updateDrawCommentAnno();
@@ -241,7 +253,7 @@ require([
             }
         }
 
-    });
+    }
 
     // home/feeds/cancel button
     /*connect.connect(dom.byId("menuItemFeed"), 'click', function(e)
@@ -977,7 +989,7 @@ require([
                     "draw_elements":dojoJson.stringify(surface.toJSON()),
                     "screenshot_is_anonymized":isScreenshotAnonymized,
                     "anno_type":"draw comment",
-                    "team_key":annoUtil.pluginTeamKey||"",
+                    "team_key":annoUtil.pluginTeamKey||annoUtil.getCurrentUserInfo().team_key||"",
                     "screen_info":screenInfo
                 };
 

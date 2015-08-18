@@ -62,11 +62,9 @@ define([
             var email = dom.byId('signinEmail').value,
                 pwd = dom.byId('signPwd').value;
             var select = dom.byId('select');
-            var selected_Team_Key;
-            if(select){
+            var selected_Team_Key = '';
+            if(select.style.display != "none"){
                 selected_Team_Key = select.options[select.selectedIndex].value;
-            }else{
-                selected_Team_Key = '';
             }
             
             var APIConfig = {
@@ -86,6 +84,7 @@ define([
                     userInfo.email = email;
                     userInfo.password = pwd;
                     userInfo.signinMethod = "anno";
+                    userInfo.team_key = selected_Team_Key;
                     userInfo.nickname = resp.result.display_name;
 
                     AnnoDataHandler.saveUserInfo(userInfo, function(){
@@ -95,7 +94,6 @@ define([
                 error: function(){
                 }
             };
-
             annoUtil.callGAEAPI(APIConfig);
         };
 
@@ -310,10 +308,6 @@ define([
         var ClearTeamOptions = function(){
             var select = dom.byId('select');
             console.log('no of options :', select.length);
-            var length = select.length;
-            // for (var i = 0; i < length; i++) {
-            //     select.remove(i);
-            // };
             while(select.options.length > 0){
                 select.remove(0);
             }
@@ -511,25 +505,6 @@ define([
                 _connectResults.push(connect.connect(dom.byId("imgFacebook"), 'click', function(e) {
                     doFacebookAuth();
                  }));
-
-                // _connectResults.push(connect.connect(dom.byId("btnSigninWithAnno"), 'click', function(e)
-                // {
-                //     domStyle.set('pickNickNameContainer', 'display', 'none');
-                //     domStyle.set('signinContainer', 'display', 'none');
-                //     domStyle.set('annoSigninContainer', 'display', '');
-                //     domStyle.set('signinMessage', 'display', 'none');
-                //     dom.byId("signinEmail").value = "";
-                //     dom.byId("signPwd").value = "";
-                //     dom.byId("nickNameSigninAnno").value = "";
-                //     domStyle.set('modelApp_signin', 'backgroundColor', '#DDDDDD');
-
-                //     transit(null, dom.byId('annoSigninContainer'), {
-                //         transition:"slide",
-                //         duration:300
-                //     });
-
-                //     inAnnoSignInView = true;
-                // }));
 
                 _connectResults.push(connect.connect(dom.byId("btnSigninWithAnno"), 'click', function(e)
                 {
