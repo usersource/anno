@@ -58,7 +58,7 @@ class AccountApi(remote.Service):
 
         if team_key:
             team_secret = request.team_secret
-            
+
             if not team_secret :
                 password = request.password
                 validate_password(password)

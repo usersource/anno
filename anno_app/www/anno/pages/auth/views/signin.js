@@ -80,6 +80,7 @@ define([
                 success: function(resp)
                 {
                     // save user info into local db
+                    console.log(' response : ', resp);
                     var userInfo = {};
                     userInfo.userId = resp.result.id;
                     userInfo.email = email;
@@ -237,7 +238,7 @@ define([
         };
 
         var doCallback = function(result)
-        {
+        {   
             var cbURL = "";
 
             if (result && result.oauthToken)
@@ -309,9 +310,13 @@ define([
         var ClearTeamOptions = function(){
             var select = dom.byId('select');
             console.log('no of options :', select.length);
-            for (var i = 0; i < select.length; i++) {
-                select.remove(i);
-            };
+            var length = select.length;
+            // for (var i = 0; i < length; i++) {
+            //     select.remove(i);
+            // };
+            while(select.options.length > 0){
+                select.remove(0);
+            }
         };
 
         var goBackToSignin = function()
@@ -572,7 +577,8 @@ define([
                 }));
 
                 _connectResults.push(connect.connect(dom.byId("btnBackEmail"), 'click', function(e)
-                {
+                {   
+                    ClearTeamOptions();
                     domStyle.set('pickNickNameContainer', 'display', 'none');
                     domStyle.set('signinContainer', 'display', 'none');
                     domStyle.set('annoSigninContainer', 'display', '');
@@ -580,6 +586,7 @@ define([
                     domStyle.set('signinFormContainer', 'display', 'none');
                     domStyle.set('signinMessage', 'display', 'none');
                     domStyle.set('btnBackEmail','display','none');
+                    domStyle.set('select', 'display', 'none');
                     dom.byId("signinEmail").value = "";
                     dom.byId("signinEmailId").value = "";
                     dom.byId("signPwd").value = "";
