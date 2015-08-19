@@ -304,10 +304,10 @@ define([
         var AddTeamOptions = function(teams){
             domStyle.set('select', 'display', '');
             var select = dom.byId('select');
+            select.options[select.options.length] = new Option("Public", "public");
             for (var i = 0; i < teams.length; i++) {
                 select.options[select.options.length] = new Option(teams[i].team_name, teams[i].team_key);
             }           
-            select.options[select.options.length] = new Option("Public", "public");
         };  
 
         var ClearTeamOptions = function(){
