@@ -300,7 +300,7 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
     };
 });
 
-Dashboard.controller('Header', function($scope, $cookieStore, $location, $window, $modal, $routeParams, Utils, DataService) {
+Dashboard.controller('Header', function($scope, $cookieStore, $location, $timeout, $window, $modal, $routeParams, Utils, DataService) {
     var team_hash = $routeParams.teamHash,
         team_name = $routeParams.teamName,
         team_key = $cookieStore.get('team_key');
@@ -308,6 +308,7 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $window
     $scope.display_name = $cookieStore.get('user_display_name');
     $scope.email = $cookieStore.get('user_email');
     $scope.image_url = $cookieStore.get('user_image_url');
+
     $scope.showSignoutButton = "none";
     $scope.signoutArrowValue = false;
     $scope.currentSection = $location.path().split("/").reverse()[0];
@@ -325,7 +326,7 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $window
         getAppinfoData();
         checkForCurrentApp();
         getTeamsInfo();
-        
+
         $scope.icon = $cookieStore.get('icon');
         $scope.projName = $cookieStore.get('projName');
         $scope.project = $cookieStore.get('project');
@@ -345,7 +346,6 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $window
         }
     }
     $scope.authenticate_dashboard = function() {
-        console.log("Things entered: ", $scope.email, $scope.password, $scope.project);
 
         DataService.makeHTTPCall("account.dashboard.authenticate", {
             'user_email' : $scope.email,
@@ -353,19 +353,17 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $window
             'team_key' : $scope.project
         }, function(data) {
             if (data.authenticated) {
-                console.log('User is authentic.');
                 if (angular.equals(data.account_info.length, 1)) {
                     Utils.storeUserDataInCookies(data.account_info[0], $scope.email);
-                    $scope.modalInstance = $cookieStore.get('modalInstance');
-                    console.log('2nd console log: ', $scope.modalInstance);
+                    $scope.$emit('isLoginSuccessful', true);
                     gotoRedirectPage();
-
                 } else {
                     $scope.accounts = data.account_info;
                     $scope.selectAccountValue = 0;
                     $scope.selectAccount = true;
                 }
             } else {
+                $scope.$emit('isLoginSuccessful', false);
                 $scope.error_message = "Authentication failed. Please try again.";
                 $scope.dashboard_error_type = true;
                 $timeout(function() {
@@ -402,24 +400,14 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $window
         Utils.removeUserDataCookies();
         $scope.selectSection('login');
     };
-
-    //////////////////////////////////////////////
-    $scope.items = ['item1', 'item2', 'item3'];
     
     $scope.open = function () {
-        console.log('Data found: ', $scope.icon, $scope.projName);
         var modalInstance = $modal.open({
             animation: true,
             templateUrl: '/dashboard/partials/change_project.html',
             controller: 'ChangeProjectInstanceCtrl',
-            resolve: {
-                items: function () {
-                    return $scope.items;
-                }
-            }
         });
-        console.log("modalInstance: ", modalInstance);
-        $cookieStore.put('modalInstance', modalInstance);
+
         modalInstance.result.then(function (selectedItem) {
             $scope.selected = selectedItem;
         }, function () {
@@ -427,11 +415,8 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $window
         });
     }
 
-    ///////////////////////////////////////////
-
-    $scope.change_project = function() {
-        // as soon as user will change the project from the list new page will load
-        $scope.project = $scope.accounts[$scope.projectValue]['team_key'];
+    $scope.change_project = function(item) {
+        $scope.project = item['team_key'];
         if (team_key == $scope.project || $scope.project == undefined)
             return;
 
@@ -441,12 +426,11 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $window
             $cookieStore.put('icon', data['icon_url']);
             $cookieStore.put('projName', data['name']);
             $cookieStore.put('project', $scope.project);
-            console.log('1st Data found: ', data);
             $scope.open();    
         });
         
         $cookieStore.put('user_email', $scope.email);
-        $cookieStore.put('team_name', team_name);
+        //$cookieStore.put('team_name', team_name);
         
     };
     function getAppinfoData() {
@@ -461,7 +445,6 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $window
     function getTeamsInfo() {
         $scope.projectValue = 0;
         $scope.accounts = $cookieStore.get('accounts');
-        console.log('Data Received: ', $scope.accounts);
     }
 
     $scope.selectSection = function(sectionName) {
@@ -473,19 +456,15 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $window
     };
 });
 
-Dashboard.controller('ChangeProjectInstanceCtrl', function ($scope, $modalInstance, items) {
-    $scope.items = items;
-    $scope.selected = {
-        item: $scope.items[0]
-    };
-
+Dashboard.controller('ChangeProjectInstanceCtrl', function ($scope, $modalInstance, $cookieStore) {
+    
     $scope.ok = function () {
-        console.log('OK was called.');
-        $modalInstance.close($scope.selected.item);
+        $scope.$on('isLoginSuccessful', function(event, args) {
+            if (args)
+                $modalInstance.close();    
+        }); 
     };
-
     $scope.cancel = function () {
-        console.log('Cancel was called.');
         $modalInstance.dismiss('cancel');
     };
 });

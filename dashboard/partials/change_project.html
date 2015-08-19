@@ -1,31 +1,37 @@
 <div ng-controller="Header" ng-init="initHeader();">
     <div id="login">
-        <div class="col-lg-6 col-md-3 col-sm-1 col-xs-1"></div>
-        <div id="login_inner" class="col-lg-12 col-md-6 col-sm-10 col-xs-10">
-            <div class="modal-header">
-                <h3 class="modal-title" align="center">Enter your project Password</h3>
+        <div id="change_project_outer">
+        <!-- <div class="col-lg-6 col-md-3 col-sm-1 col-xs-1"></div> -->
+        <!-- <div id="change_project_inner" class="col-lg-12 col-md-6 col-sm-10 col-xs-10"> -->
+        <div id="change_project_inner">
+        
+                <div id="dashboard_message" ng-show="error_message.length" ng-class="{'error-message':dashboard_error_type}">
+                <div id="dashboard_message_text">{{error_message}}</div>
+                </div>
+            
+                <h3 id="title" align="center">Enter Your Project Password</h3>
                 <div class="popup_close_button" style="padding: 4.916% 5.663%;" ng-click="cancel();"></div>
-            </div>
-            <div class="modal-body">
+         
                 <form ng-submit="authenticate_dashboard();" >   
-                    <div ng-show=true style="margin-top: 5px; font-size: 26px;" align="center">
+                    <div ng-show=true style="margin-top: 5px; margin-bottom: 34px; font-size: 26px;" align="center">
                         <img width="50px" height="50px" style="border-radius: 12px;" ng-src="{{icon || '/dashboard/images/icon_mobile.png'}}">
                         <div style="display: inline-block; margin-left: 18px; vertical-align: middle;">{{projName}}</div>
                     </div>  
                 
                         <div class="input-div">
                             <img width="16px" height="10px" src="/dashboard/images/icon_mail.png">
-                            <input ng-model="email" type="email" readonly="readonly" id="login_email" placeholder="Email Address"  />
+                            <input type="email" readonly="readonly" id="login_email" placeholder="{{email}}"  />
                         </div>
                         <div class="input-div">
                             <img width="12px" height="15px" src="/dashboard/images/icon_password.png" style="margin: 0 2px;">
                             <input ng-model="password" type="password" id="login_password" placeholder="Password" ng-keydown="make_login_active();"/>
                         </div>
-                    <div ng-click="ok();">
-                    <input id="login_button" type="submit" value="Change Project" ng-disabled="isLoginDisabled" ng-class="{'login_active':!isLoginDisabled}">
+                    <div ng-click="ok();" style="margin-bottom: 1px;">
+                    <input id="change_project_button" type="submit" value="Change Project" ng-disabled="isLoginDisabled" ng-class="{'login_active':!isLoginDisabled}">
                     </div>
                 </form>
-            </div>
+           
+        <!-- </div>  -->
         </div>
     </div>
 </div>

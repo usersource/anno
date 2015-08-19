@@ -1,8 +1,25 @@
 <div id="header" ng-controller="Header" ng-init="initHeader();">
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
         <a id="header_title" href="http://usersource.io">UserSource</a>
-        <img width="50px" height="50px" style="border-radius: 12px;margin-left: 7.5%;vertical-align: top;margin-top: 12px;" ng-src="{{appInfo.icon_url && appInfo.icon_url || '/dashboard/images/icon_mobile.png'}}">
-        <div id="appname" class="active">{{::appInfo.name}}</div>
+
+
+        <div id="change_projects" style="display: inline-block;" class="btn-group" dropdown is-open="status.isopen">
+            <div dropdown-toggle>
+            <img width="45px" height="45px" style="border-radius: 25px;vertical-align: top; margin: 5px 5px 5px 5px;" ng-src="{{appInfo.icon_url && appInfo.icon_url || '/dashboard/images/icon_mobile.png'}}">
+            
+            <div id="project_name">
+                <div style="font-size: 18px;">{{::appInfo.name}}</div>
+            </div>
+            <div class="r">
+                <div id="change_project_arrow">
+                    <span class="glyphicon glyphicon-chevron-down"></span>
+                </div>
+            </div>
+            </div>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="single-button" ng-model="projectValue" ng-change="change_project();">
+                <li id="projects_list" role="menuitem" ng-selected="{{$index == 0}}" ng-repeat="account in accounts" value="{{$index}}"><a href="#" ng-click="change_project(account);">{{account.team_name}}</a></li>         
+            </ul>
+        </div>
     </div>
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" style="text-align: right;">
         <div class="header-tab" ng-class="{'active':(currentSection === 'feed')}" ng-click="selectSection('feed');">Feed</div>
@@ -10,6 +27,7 @@
         <div class="header-tab" ng-class="{'active':(currentSection === 'account')}" ng-click="selectSection('account');">Account</div>
         <div class="header-tab" ng-class="{'active':(currentSection === 'members')}" ng-click="selectSection('members');">Members</div>
         <div class="header-tab" ng-class="{'active':(currentSection === 'guide')}" ng-click="selectSection('guide');">Guide</div>
+        
         <div id="user_info" style="display: inline-block;" ng-click="signoutButtonClicked();">
             <img width="45px" height="45px" style="border-radius: 25px;vertical-align: top;margin-top: 9px;" ng-src="{{::image_url && image_url || '/dashboard/images/icon_no-user.png'}}">
             <div id="loggedin_user_info">

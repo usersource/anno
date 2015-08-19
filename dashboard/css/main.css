@@ -219,3 +219,97 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+#header #projects {
+  width: 24.395%;
+  width: calc(92.5% - 213px);
+  width: -webkit-calc(92.5% - 213px);
+  width: -moz-calc(92.5% - 213px);
+  width: -o-calc(92.5% - 213px);
+  display: inline-block;
+  margin-left: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
+
+#header #projects_list {
+  width: 192px;
+  height: 46px;
+}
+
+#header #change_project_button {
+  width: calc(100% - 26px);
+  width: -webkit-calc(100% - 26px);
+  vertical-align: middle;
+}
+
+#header #change_projects {
+  width: 202px;
+  height: 56px;
+  display: inline-block;
+  line-height: 22px;
+  margin: 10px 0;
+  cursor: pointer;
+  margin-left: 20px;
+  vertical-align: top;
+  border-bottom: 1px solid #9399a5;
+  border-top: 1px solid #9399a5;
+  border-left: 1px solid #9399a5;
+  border-right: 1px solid #9399a5;
+  border-radius: 5px;
+}
+.header #change_projests:hover #change_project_arrow {
+  
+}
+.header #change_project_arrow {
+  width: 12px;
+  height: 6px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: 15px;
+  margin-right: 10px;
+}
+.r{
+    float:right;
+}
+
+#project_name {
+  max-width: 60.47%;
+  max-width: -webkit-calc(100% - 85px);
+  max-width: -moz-calc(100% - 85px);
+  max-width: -o-calc(100% - 85px);
+  display: inline-block;
+  margin-left: 8px;
+  vertical-align: middle;
+  margin-top: 15px;
+}
+#project_name > div {
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#projects_list {
+  max-width: 60.47%;
+  max-width: -webkit-calc(100% - 85px);
+  max-width: -moz-calc(100% - 85px);
+  max-width: -o-calc(100% - 85px);
+  height: 39px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.modal-dialog {
+  margin-top: calc(33.333% - 300px) !important;
+  margin-top: -webkit-calc(33.333% - 300px) !important;
+  margin-top: -moz-calc(33.333% - 300px) !important;
+  margin-top: -o-calc(33.333% - 300px) !important;
+}
+
+@media (min-width: 768px) {
+  .modal-dialog {
+      width: 59.4166667% !important;
+      max-width: 713px;
+  }
+}
