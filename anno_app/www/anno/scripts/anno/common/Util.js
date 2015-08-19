@@ -917,7 +917,11 @@
             var APIConfig = {
                 name: this.API.user,
                 method: "user.community.list",
-                parameter: {include_invite:includeInvite, email:self.getCurrentUserInfo().email},
+                parameter: {
+                    include_invite:includeInvite,
+                    email:self.getCurrentUserInfo().email,
+                    team_key:self.getCurrentUserInfo().team_key
+                },
                 showLoadingSpinner: false,
                 keepLoadingSpinnerShown: keepSpinnerShown,
                 success: function(data)
