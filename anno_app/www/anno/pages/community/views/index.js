@@ -91,7 +91,7 @@ define([
             var arg = {
                 outcome : 'cursor,has_more,anno_list',
                 limit : limit,
-                is_plugin : annoUtil.isPlugin
+                is_plugin : annoUtil.isPlugin || (annoUtil.getCurrentUserInfo().team_key !== '')
             };
 
             if (search)
