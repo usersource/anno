@@ -545,12 +545,14 @@ define([
                     domStyle.set('signinFormContainer', 'display', '');
                     domStyle.set('signinMessage', 'display', 'none');
                     domStyle.set('btnBackEmail','display','');
+                    dom.byId("signinEmail").focus();
                     dom.byId("signPwd").value = "";
                     dom.byId("nickNameSigninAnno").value = "";
                     domStyle.set('modelApp_signin', 'backgroundColor', '#DDDDDD');
 
                     transit(null, dom.byId('signinFormContainer'), {
-
+                        transition:"slide",
+                        duration:300
                     });
                     
                     inAnnoSignInView = true;
@@ -574,6 +576,9 @@ define([
                     domStyle.set('modelApp_signin', 'backgroundColor', '#DDDDDD');
 
                     transit(null, dom.byId('signinEmailContainer'), {
+                        transition:"slide",
+                        duration:300,
+                        reverse: true
                     });
 
                     inAnnoSignInView = true;
