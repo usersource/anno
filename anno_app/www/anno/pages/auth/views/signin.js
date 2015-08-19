@@ -64,7 +64,11 @@ define([
             var select = dom.byId('select');
             var selected_Team_Key = '';
             if(select.style.display != "none"){
-                selected_Team_Key = select.options[select.selectedIndex].value;
+                var selected_Team_Value = select.options[select.selectedIndex].value;
+                if (selected_Team_Value != "public") {
+                    selected_Team_Key = selected_Team_Value;
+                }
+                
             }
             
             var APIConfig = {
@@ -303,6 +307,7 @@ define([
             for (var i = 0; i < teams.length; i++) {
                 select.options[select.options.length] = new Option(teams[i].team_name, teams[i].team_key);
             }           
+            select.options[select.options.length] = new Option("Public", "public");
         };  
 
         var ClearTeamOptions = function(){
