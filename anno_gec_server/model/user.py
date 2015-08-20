@@ -64,10 +64,8 @@ class User(ndb.Model):
                 if team:
                     account = AccountAuthenticateMessage(team_name=team.name, team_key=team_key)
                     accounts.append(account)
-        if users:
-            return accounts, True
-        else:
-            return accounts, False
+
+        return accounts, True if len(users) else False
 
     @classmethod
     def find_user_by_display_name(cls, display_name):
