@@ -195,7 +195,8 @@ def md5(content):
     import hashlib
 
     m = hashlib.md5()
-    m.update(content)
+    # encode the unicode 'content' object so it does not fail non-ascii characters
+    m.update(content.encode('utf-8'))
     return m.hexdigest()
 
 

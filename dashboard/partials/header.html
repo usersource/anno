@@ -2,24 +2,32 @@
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
         <a id="header_title" href="http://usersource.io">UserSource</a>
 
-
         <div id="change_projects" style="display: inline-block;" class="btn-group" dropdown is-open="status.isopen">
             <div dropdown-toggle>
-            <img width="45px" height="45px" style="border-radius: 25px;vertical-align: top; margin: 5px 5px 5px 5px;" ng-src="{{appInfo.icon_url && appInfo.icon_url || '/dashboard/images/icon_mobile.png'}}">
-            
-            <div id="project_name">
-                <div style="font-size: 18px;">{{::appInfo.name}}</div>
-            </div>
-            <div class="r">
-                <div id="change_project_arrow">
-                    <span class="glyphicon glyphicon-chevron-down"></span>
+                <img width="30px" height="30px" style="border-radius: 25px;vertical-align: top; margin: 7px 5px 5px 5px;" ng-src="{{appInfo.icon_url && appInfo.icon_url || '/dashboard/images/icon_mobile.png'}}">
+                
+                <div id="project_name">
+                    <div style="font-size: 18px;">{{::appInfo.name}}</div>
+                </div>
+                <div class="r">
+                    <div id="change_project_arrow">
+                        <span class="glyphicon glyphicon-chevron-down"></span>
+                    </div>
                 </div>
             </div>
-            </div>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="single-button" ng-model="projectValue" ng-change="change_project();">
-                <li id="projects_list" role="menuitem" ng-selected="{{$index == 0}}" ng-repeat="account in accounts" value="{{$index}}"><a href="#" ng-click="change_project(account);">{{account.team_name}}</a></li>         
+            <ul id="projects_dropdown" class="dropdown-menu" role="menu" aria-labelledby="single-button" ng-model="projectValue" ng-change="change_project();">
+                <li id="projects_list" role="menuitem" ng-selected="{{$index == 0}}" ng-repeat="account in accounts" value="{{$index}}"><a id="projects_dropdown_item" href="#" ng-click="change_project(account);">{{account.team_name}}</a></li>
+                <div id="add_new_project" ng-click="add_project();">   
+                    <li id="projects_list" role="menuitem">
+                        <div id="add_new_project_button">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            <a  href="#" style="color:white">New Project</a>
+                        </div>
+                    </li>
+                </div>
             </ul>
         </div>
+
     </div>
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" style="text-align: right;">
         <div class="header-tab" ng-class="{'active':(currentSection === 'feed')}" ng-click="selectSection('feed');">Feed</div>

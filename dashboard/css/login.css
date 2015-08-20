@@ -89,7 +89,10 @@
   font-weight: 600;
   cursor: pointer;
 }
-
+#login #change_project_button.login_active {
+  background-color: #F62;
+  border: 1px solid #F65007;
+}
 #login #change_project_button {
   width: 372px;
   height: 38px;

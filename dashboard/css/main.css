@@ -233,10 +233,10 @@ body {
   text-overflow: ellipsis; 
 }
 
-#header #projects_list {
+/*#header #projects_list {
   width: 192px;
   height: 46px;
-}
+}*/
 
 #header #change_project_button {
   width: calc(100% - 26px);
@@ -244,30 +244,12 @@ body {
   vertical-align: middle;
 }
 
-#header #change_projects {
-  width: 202px;
-  height: 56px;
-  display: inline-block;
-  line-height: 22px;
-  margin: 10px 0;
-  cursor: pointer;
-  margin-left: 20px;
-  vertical-align: top;
-  border-bottom: 1px solid #9399a5;
-  border-top: 1px solid #9399a5;
-  border-left: 1px solid #9399a5;
-  border-right: 1px solid #9399a5;
-  border-radius: 5px;
-}
-.header #change_projests:hover #change_project_arrow {
-  
-}
 .header #change_project_arrow {
   width: 12px;
   height: 6px;
   display: inline-block;
   vertical-align: middle;
-  margin-top: 15px;
+  margin-top: 6px;
   margin-right: 10px;
 }
 .r{
@@ -275,14 +257,14 @@ body {
 }
 
 #project_name {
-  max-width: 60.47%;
+  max-width: 40.47%;
   max-width: -webkit-calc(100% - 85px);
   max-width: -moz-calc(100% - 85px);
   max-width: -o-calc(100% - 85px);
   display: inline-block;
-  margin-left: 8px;
   vertical-align: middle;
-  margin-top: 15px;
+  margin: 10px 10px 10px 0px;
+  overflow: hidden;
 }
 #project_name > div {
   text-align: left;
@@ -290,14 +272,41 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+#header #change_projects {
+  width: 38.94%;
+  max-width: 192px;
+  height: 46px;
+  display: inline-block;
+  line-height: 22px;
+  cursor: pointer;
+  margin: 13px;
+  vertical-align: top;
+  border-bottom: 1px solid #9399a5;
+  border-top: 1px solid #9399a5;
+  border-left: 1px solid #9399a5;
+  border-right: 1px solid #9399a5;
+  border-radius: 5px;
+}
 #projects_list {
-  max-width: 60.47%;
-  max-width: -webkit-calc(100% - 85px);
-  max-width: -moz-calc(100% - 85px);
-  max-width: -o-calc(100% - 85px);
   height: 39px;
-  margin-left: 8px;
   vertical-align: middle;
+  padding: 0px;
+  border-bottom: 1px solid #9399a5;
+}
+#projects_dropdown{
+  padding: 0px;
+  min-width: 192px;
+}
+#projects_dropdown_item {
+  /*padding: 7px 10px;*/
+}
+#add_new_project {
+  background-color: #F62;
+  border: 1px solid #F65007;
+}
+#add_new_project_button {
+  padding: 3% 0px 0px 28%;
+  color: #FFFFFF;
 }
 
 .modal-dialog {
@@ -306,10 +315,14 @@ body {
   margin-top: -moz-calc(33.333% - 300px) !important;
   margin-top: -o-calc(33.333% - 300px) !important;
 }
+.modal-content #register{
+  height: 750px;
+}
 
 @media (min-width: 768px) {
   .modal-dialog {
       width: 59.4166667% !important;
       max-width: 713px;
+      max-height: 700px;
   }
 }

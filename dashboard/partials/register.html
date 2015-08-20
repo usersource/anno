@@ -1,5 +1,5 @@
 <div id="register" ng-controller="Register" ng-click="onRegisterClicked();">
-    <div class="header row" ng-include="'/dashboard/partials/no_auth_header.html'"></div>
+    <div class="header row" ng-show="isHeaderValid" ng-include="'/dashboard/partials/no_auth_header.html'"></div>
     <div id="dashboard_message" ng-show="error_message.length" ng-class="{'error-message':dashboard_error_type}" style="left: 25%;">
         <div id="dashboard_message_text">{{error_message}}</div>
     </div>
@@ -13,14 +13,18 @@
             </div> -->
             <div id="register_form_div" class="register_main_div" ng-hide="showPlans || registrationCompleted">
                 <div style="padding-bottom: 20px;border-bottom: 1px solid #C4CFD7;">
-                    <div class="title">Sign up, it's free</div>
+                    <div class="title" ng-show="isSignupHeaderVisibile">Sign up, it's free</div>
+                    <div class="title" ng-hide="isSignupHeaderVisibile">Add new Project</div>
+
                     <div class="input-div">
                         <img width="16px" height="16px" src="/dashboard/images/icon_mentions.png">
-                        <input ng-model="fullname" type="text" id="register_full_name" placeholder="Full Name" />
+                        <input ng-model="fullname" ng-hide="display_name" type="text" id="register_full_name" placeholder="Full Name" />
+                        <input ng-model="fullname" ng-show="display_name" type="text" id="register_full_name" placeholder="{{userName}}" readonly="readonly"/>
                     </div>
                     <div class="input-div">
                         <img width="16px" height="10px" src="/dashboard/images/icon_mail.png">
-                        <input ng-model="register_email" type="email" id="register_email" placeholder="Email Address"/>
+                        <input ng-model="register_email" ng-hide="display_email" type="email" id="register_email" placeholder="Email Address"/>
+                        <input ng-model="register_email" ng-show="display_email" type="email" id="register_email" placeholder="{{userEmail}}" readonly="readonly"/>
                     </div>
                     <div class="input-div">
                         <img width="12px" height="15px" src="/dashboard/images/icon_password.png" style="margin: 0 2px;">

@@ -20,12 +20,34 @@ Dashboard.controller('NoAuthHeader', function($scope, $routeParams, $location, U
     };
 });
 
-Dashboard.controller('Register', function($scope, $timeout, $location, DataService, Utils, DashboardConstants) {
+Dashboard.controller('Register', function($scope, $timeout, $location, $cookieStore, DataService, Utils, DashboardConstants) {
     $scope.showPlans = false;
     $scope.appInStore = true;
     $scope.hideAppFetchSpinner = true;
     $scope.stripe_plans = DashboardConstants.Stripe.plans;
     $scope.planSelected = Object.keys($scope.stripe_plans)[0];
+
+
+    $scope.isHeaderValid = true;
+    $scope.isSignupHeaderVisibile = true;
+    $scope.display_name = false;
+    $scope.display_email = false;
+
+    $scope.initRegister = function() {
+        if ($cookieStore.get('ap_isHeaderValid') == -1)
+            $scope.isHeaderValid = false;
+        if ($cookieStore.get('ap_isSignupHeaderVisibile') == -1)
+            $scope.isSignupHeaderVisibile = false;
+        if ($cookieStore.get('user_display_name')) {
+            $scope.userName = $cookieStore.get('user_display_name');
+            $scope.display_name = true;
+        }
+        if ($cookieStore.get('user_email')) {
+            $scope.userEmail = $cookieStore.get('user_email');
+            $scope.display_email = true;
+        }
+    };
+    $scope.initRegister();
 
     $scope.notSorted = function(obj) {
         if (!obj) {
@@ -84,7 +106,7 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
     };
 
     $scope.showPlansPage = function() {
-        if (angular.isUndefined($scope.register_email) || angular.equals($scope.register_email.length, 0)) {
+        if ((angular.isUndefined($scope.register_email) || angular.equals($scope.register_email.length, 0)) && !$scope.userEmail) {
             showDashboardMessage("Email can't be empty", true);
             return;
         }
@@ -120,6 +142,10 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
     };
 
     function getCreateSDKTeamMessage(){
+        if (!$scope.fullname)
+            $scope.fullname = $scope.userName;
+        if (!$scope.register_email)
+            $scope.register_email = $scope.userEmail;
         var msg = {
             "app" : {
                 "name" : $scope.appname,
@@ -138,6 +164,7 @@ Dashboard.controller('Register', function($scope, $timeout, $location, DataServi
     };
 
     $scope.createSDKTeam = function() {
+        console.log("Data entered: ", getCreateSDKTeamMessage());
         DataService.makeHTTPCall("community.community.create_sdk_community", getCreateSDKTeamMessage(), function(data) {
             if (data.communities.length) {
                 // var community = data.communities[0];
@@ -300,7 +327,7 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
     };
 });
 
-Dashboard.controller('Header', function($scope, $cookieStore, $location, $timeout, $window, $modal, $routeParams, Utils, DataService) {
+Dashboard.controller('Header', function($scope, $cookieStore, $location, $cookies, $timeout, $window, $modal, $routeParams, Utils, DataService) {
     var team_hash = $routeParams.teamHash,
         team_name = $routeParams.teamName,
         team_key = $cookieStore.get('team_key');
@@ -408,8 +435,8 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $timeou
             controller: 'ChangeProjectInstanceCtrl',
         });
 
-        modalInstance.result.then(function (selectedItem) {
-            $scope.selected = selectedItem;
+        modalInstance.result.then(function () {
+            console.log('Success.');
         }, function () {
             console.log('Modal dismissed at: ' + new Date());
         });
@@ -445,7 +472,35 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $timeou
     function getTeamsInfo() {
         $scope.projectValue = 0;
         $scope.accounts = $cookieStore.get('accounts');
+        // 'accounts also has "select a project" item in the dropdown so'
+        // to remove it used splice function on array.
+        $scope.accounts.splice(0, 1);
     }
+    function removeVars() {
+        $cookieStore.remove('ap_isHeaderValid');
+        $cookieStore.remove('ap_isSignupHeaderVisibile');
+    }
+    $scope.add_project = function() {
+        $cookieStore.put('ap_isHeaderValid', -1);
+        $cookieStore.put('ap_isSignupHeaderVisibile', -1);
+
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: '/dashboard/partials/register.html',
+            controller: 'ChangeProjectInstanceCtrl',
+            size: 'lg'
+        });
+
+        modalInstance.result.then(function () {
+            removeVars();    
+        }, function () {
+            removeVars();
+            console.log('Modal dismissed at: ' + new Date());
+        });
+
+    };
+
+
 
     $scope.selectSection = function(sectionName) {
         if (angular.isDefined(team_hash) && angular.isDefined(team_name)) {

@@ -86,7 +86,7 @@
   position: fixed;
   background: rgba(0, 0, 0, 0.6);
 }
-#add-member-inner {
+#add-member-inner, #changeProject {
   width: 60%;
   height: auto;
   margin: 0 auto;
