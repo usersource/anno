@@ -1110,7 +1110,7 @@ li.unread .listTitle {
     width: 30px;
     margin-left: 10px;
     position: relative;
-    bottom: -150px;
+    bottom: -100px;
 }
 
 #signinContainerInner {

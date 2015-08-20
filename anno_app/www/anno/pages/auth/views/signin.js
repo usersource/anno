@@ -281,7 +281,10 @@ define([
             var email = dom.byId('signinEmailId').value;
             dom.byId("signinEmail").value = email;
             console.log('email' ,email);
-            if (email.length <=0) return;
+            if (email.length <=0){
+                annoUtil.showMessageDialog("Please enter Email");
+                return;  
+            } 
 
             var APIConfig = {
                 name: annoUtil.API.account,
@@ -290,16 +293,40 @@ define([
                 showLoadingSpinner: false,
                 success: function(resp)
                 {   
-                    if (resp.account_info.length > 0)
-                        AddTeamOptions(resp.account_info);
+                    if (resp.authenticated != false) {
+                        if (resp.account_info && resp.account_info.length > 0)
+                            AddTeamOptions(resp.account_info);
+                        showSignInView();      
+                    }else{
+                        var errormessage = "Authentication failed. User account " + email + " doesn't exist. This account may be Google or Facebook OAuth account."
+                        annoUtil.showToastDialog(errormessage);
+                    }
                 },
                 error: function(){
-                  console.log(" error ");  
                 }
             };
-
             annoUtil.callGAEAPI(APIConfig);
         };
+
+        function showSignInView(){
+            domStyle.set('pickNickNameContainer', 'display', 'none');
+            domStyle.set('signinContainer', 'display', 'none');
+            domStyle.set('annoSigninContainer', 'display', '');
+            domStyle.set('signinEmailContainer', 'display', 'none');
+            domStyle.set('signinFormContainer', 'display', '');
+            domStyle.set('signinMessage', 'display', 'none');
+            domStyle.set('btnBackEmail','display','');
+            dom.byId("signinEmail").focus();
+            dom.byId("signPwd").value = "";
+            dom.byId("nickNameSigninAnno").value = "";
+            domStyle.set('modelApp_signin', 'backgroundColor', '#DDDDDD');
+
+            transit(null, dom.byId('signinFormContainer'), {
+                transition:"slide",
+                duration:300
+            });
+            inAnnoSignInView = true;
+        }
 
         var AddTeamOptions = function(teams){
             domStyle.set('select', 'display', '');
@@ -538,24 +565,6 @@ define([
                  _connectResults.push(connect.connect(dom.byId("btnNextAnnoSignin"), 'click', function(e)
                 {   
                     getAllTeams();
-                    domStyle.set('pickNickNameContainer', 'display', 'none');
-                    domStyle.set('signinContainer', 'display', 'none');
-                    domStyle.set('annoSigninContainer', 'display', '');
-                    domStyle.set('signinEmailContainer', 'display', 'none');
-                    domStyle.set('signinFormContainer', 'display', '');
-                    domStyle.set('signinMessage', 'display', 'none');
-                    domStyle.set('btnBackEmail','display','');
-                    dom.byId("signinEmail").focus();
-                    dom.byId("signPwd").value = "";
-                    dom.byId("nickNameSigninAnno").value = "";
-                    domStyle.set('modelApp_signin', 'backgroundColor', '#DDDDDD');
-
-                    transit(null, dom.byId('signinFormContainer'), {
-                        transition:"slide",
-                        duration:300
-                    });
-                    
-                    inAnnoSignInView = true;
                 }));
 
                 _connectResults.push(connect.connect(dom.byId("btnBackEmail"), 'click', function(e)
