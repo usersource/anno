@@ -298,7 +298,7 @@ define([
                             AddTeamOptions(resp.account_info);
                         showSignInView();      
                     }else{
-                        var errormessage = "Authentication failed. User account " + email + " doesn't exist. This account may be Google or Facebook OAuth account."
+                        var errormessage = "Authentication failed. User account " + email + " doesn't exist."
                         annoUtil.showToastDialog(errormessage);
                     }
                 },
