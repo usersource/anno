@@ -124,7 +124,7 @@ define([
 
             for (var i= 0,c=items.length;i<c;i++)
             {
-                if (data[i].role == "manager")
+                if (data[i].role == "manager" || data[i].role == "admin")
                 {
                     items[i].on("click", function(){
                         gotoCommunityViewer(this);

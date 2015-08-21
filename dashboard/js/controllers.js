@@ -133,6 +133,10 @@ Dashboard.controller('Register', function($scope, $timeout, $location, $cookieSt
             showDashboardMessage("Passwords aren't matching.", true);
             return;
         }
+        if (angular.isUndefined($scope.appname) || angular.equals($scope.appname.length, 0)) {
+            showDashboardMessage("App Name can't be empty", true);
+            return;
+        }
 
         if (!$scope.appInStore) {
             if (angular.isUndefined($scope.bundleid) || angular.equals($scope.bundleid.length, 0)) {

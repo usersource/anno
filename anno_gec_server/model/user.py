@@ -65,7 +65,7 @@ class User(ndb.Model):
                     account = AccountAuthenticateMessage(team_name=team.name, team_key=team_key)
                     accounts.append(account)
 
-        return accounts
+        return accounts, True if len(users) else False
 
     @classmethod
     def find_user_by_display_name(cls, display_name):
@@ -102,8 +102,10 @@ class User(ndb.Model):
         return user
 
     @classmethod
-    def authenticate(cls, email, password):
+    def authenticate(cls, email, password, team_key=None):
         query = User.query().filter(cls.user_email == email).filter(cls.password == password)
+        if team_key:
+            query = query.filter(cls.account_type == team_key);
         return query.get() is not None
 
     @classmethod

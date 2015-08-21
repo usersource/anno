@@ -170,7 +170,7 @@ def get_country_by_coordinate(latitude, longitude):
 
 
 def validate_email_address_format(email):
-    em_re = re.compile("^[\w\.=-]+@[\w\.-]+\.[\w]{2,3}$")
+    em_re = re.compile("^[\w\.+=-]+@[\w\.-]+\.[\w]{2,3}$")
     return em_re.match(email)
 
 

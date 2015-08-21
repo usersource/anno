@@ -47,7 +47,8 @@ class UserApi(remote.Service):
         message_types.VoidMessage,
         id=messages.StringField(1),
         email=messages.StringField(2),
-        include_invite=messages.BooleanField(3, default=False)
+        include_invite=messages.BooleanField(3, default=False),
+        team_key=messages.StringField(4)
     )
 
     user_device_id_resource_container = endpoints.ResourceContainer(
@@ -116,7 +117,7 @@ class UserApi(remote.Service):
                       path="community/list", http_method="GET", name="community.list")
     def list_user_communities(self, request):
         if request.id or request.email:
-            user = get_user_from_request(user_id=request.id, user_email=request.email)
+            user = get_user_from_request(user_id=request.id, user_email=request.email, team_key=request.team_key)
         else:
             user = auth_user(self.request_state.headers)
 

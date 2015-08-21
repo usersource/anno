@@ -212,7 +212,11 @@ class Community(ndb.Model):
         community_name = message.community_name or app_name
         plan = message.plan or PlanType.BASIC
 
-        app = AppInfo.query().filter(AppInfo.lc_name == app_name.lower()).get()
+        if app_name:
+            app = AppInfo.query().filter(AppInfo.lc_name == app_name.lower()).get()
+        else:
+            return []
+
         if not app:
             appinfo_message = AppInfoMessage()
             appinfo_message.name = app_name
@@ -280,7 +284,6 @@ class Community(ndb.Model):
             else:
                 community.key.delete()
                 communities_message = []
-
         return communities_message
 
     @classmethod

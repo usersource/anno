@@ -54,32 +54,34 @@ class AccountApi(remote.Service):
         email = request.user_email
         validate_email(email)
         team_key = request.team_key
+        password = request.password
         user = User.find_user_by_email(email, team_key)
 
         if team_key:
             team_secret = request.team_secret
-            validate_team_secret(team_secret)
+            if not team_secret :
+                validate_password(password)
+                if not User.authenticate(email, md5(password), team_key):
+                    raise endpoints.UnauthorizedException("Authentication failed. Email and password are not matched.")
+            else:
+                validate_team_secret(team_secret)
+         
+                display_name = request.display_name
+                image_url = request.user_image_url
 
-            display_name = request.display_name
-            image_url = request.user_image_url
-
-            if not user:
-                user = User.insert_user(email=email, username=display_name, account_type=team_key, image_url=image_url)
-                community = Community.getCommunityFromTeamKey(team_key)
-                UserRole.insert(user, community)
-            elif (display_name != user.display_name) or (image_url != user.image_url):
-                User.update_user(user=user, email=email, username=display_name, account_type=team_key, image_url=image_url)
-            if not Community.authenticate(team_key, md5(team_secret)):
-                raise endpoints.UnauthorizedException("Authentication failed. Team key and secret are not matched.")
-        elif user.auth_source == AuthSourceType.ANNO:
-            password = request.password
-            validate_password(password)
-            if not user:
-                raise endpoints.NotFoundException("Authentication failed. User account " + email + " doesn't exist.")
+                if not user:
+                    user = User.insert_user(email=email, username=display_name, account_type=team_key, image_url=image_url)
+                    community = Community.getCommunityFromTeamKey(team_key)
+                    UserRole.insert(user, community)
+                elif (display_name != user.display_name) or (image_url != user.image_url):
+                    User.update_user(user=user, email=email, username=display_name, account_type=team_key, image_url=image_url)
+                if not Community.authenticate(team_key, md5(team_secret)):
+                    raise endpoints.UnauthorizedException("Authentication failed. Team key and secret are not matched.")
+        elif user and user.auth_source == AuthSourceType.ANNO:
             if not User.authenticate(email, md5(password)):
                 raise endpoints.UnauthorizedException("Authentication failed. Email and password are not matched.")
         else:
-            raise endpoints.ForbiddenException("Account for '%s' is Google or Facebook OAuth account." % email)
+            raise endpoints.NotFoundException("Authentication failed. User account " + email + " doesn't exist. This account may be Google or Facebook OAuth account.")
 
         return UserMessage(id=user.key.id(), display_name=user.display_name)
 
@@ -116,8 +118,8 @@ class AccountApi(remote.Service):
     @endpoints.method(AccountMessage, AccountAuthenticateListMessage, path="account/dashboard/teams",
                       http_method="GET", name="account.dashboard.teams")
     def get_dashboard_teams(self, request):
-        accounts = User.get_all_teams_by_email(request.user_email)
-        return AccountAuthenticateListMessage(account_info=accounts)
+        accounts, authenticated = User.get_all_teams_by_email(request.user_email)
+        return AccountAuthenticateListMessage(account_info=accounts, authenticated=authenticated)
 
     @endpoints.method(AccountMessage, message_types.VoidMessage, path='account/forgot_detail',
                       http_method='POST', name='account.forgot_detail')
