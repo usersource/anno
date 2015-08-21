@@ -70,7 +70,8 @@
                         <input id="appNotInStore" class="register_button grey" type="submit" value="My App is not in the App Store yet" style="margin-bottom: 0;" ng-show="appInStore" ng-click="showInputForAppDetails();"/>
                     </div>
                 </div>
-                <input class="register_button" type="submit" value="Sign Up Now" style="margin-top: 60px;" ng-click="showPlansPage();"/>
+                <input class="register_button" type="submit" ng-show="isSignupButtonVisible" value="Sign Up Now" style="margin-top: 60px;" ng-click="showPlansPage();"/>
+                <input class="register_button" type="submit" ng-hide="isSignupButtonVisible" value="Add Project Now" style="margin-top: 60px;" ng-click="createSDKTeam();"/>
             </div>
             <div id="register_form_div" class="register_main_div" ng-show="showPlans && !registrationCompleted">
                 <div class="title">Choose your Plan</div>

@@ -303,10 +303,15 @@ body {
 #add_new_project {
   background-color: #F62;
   border: 1px solid #F65007;
+  /*vertical-align: middle;*/
 }
 #add_new_project_button {
-  padding: 3% 0px 0px 28%;
+  padding: 2% 0px 0px 0px;
   color: #FFFFFF;
+}
+
+.modal-content #register {
+  height: 750px;
 }
 
 .modal-dialog {
@@ -315,9 +320,7 @@ body {
   margin-top: -moz-calc(33.333% - 300px) !important;
   margin-top: -o-calc(33.333% - 300px) !important;
 }
-.modal-content #register{
-  height: 750px;
-}
+
 
 @media (min-width: 768px) {
   .modal-dialog {

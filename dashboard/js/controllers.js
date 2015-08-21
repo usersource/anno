@@ -27,27 +27,40 @@ Dashboard.controller('Register', function($scope, $timeout, $location, $cookieSt
     $scope.stripe_plans = DashboardConstants.Stripe.plans;
     $scope.planSelected = Object.keys($scope.stripe_plans)[0];
 
-
+    // following variables control the behaviour of this template
+    // since this is used while registering new user as well as
+    // while adding new project
     $scope.isHeaderValid = true;
     $scope.isSignupHeaderVisibile = true;
     $scope.display_name = false;
     $scope.display_email = false;
+    $scope.isSignupButtonVisible = true;
+    $scope.isOKButtonVisible = false;
 
     $scope.initRegister = function() {
         if ($cookieStore.get('ap_isHeaderValid') == -1)
             $scope.isHeaderValid = false;
         if ($cookieStore.get('ap_isSignupHeaderVisibile') == -1)
             $scope.isSignupHeaderVisibile = false;
+        if ($cookieStore.get('ap_isSignupButtonVisible') == -1)
+            $scope.isSignupButtonVisible = false;
+        if ($cookieStore.get('ap_isOKButtonVisible') == 1)
+            $scope.isOKButtonVisible = true;
         if ($cookieStore.get('user_display_name')) {
             $scope.userName = $cookieStore.get('user_display_name');
             $scope.display_name = true;
-        }
+        } 
         if ($cookieStore.get('user_email')) {
             $scope.userEmail = $cookieStore.get('user_email');
             $scope.display_email = true;
         }
     };
     $scope.initRegister();
+
+    $scope.okButtonClicked = function() {
+        $cookieStore.put('isProjectAdded', true);
+        $scope.ok();
+    };
 
     $scope.notSorted = function(obj) {
         if (!obj) {
@@ -164,13 +177,20 @@ Dashboard.controller('Register', function($scope, $timeout, $location, $cookieSt
     };
 
     $scope.createSDKTeam = function() {
-        console.log("Data entered: ", getCreateSDKTeamMessage());
         DataService.makeHTTPCall("community.community.create_sdk_community", getCreateSDKTeamMessage(), function(data) {
             if (data.communities.length) {
                 // var community = data.communities[0];
                 // window.location = Utils.getFullDashboardURL(community.community_name, community.team_hash);
                 $scope.showPlans = false;
                 $scope.registrationCompleted = true;
+
+                if ($scope.isOKButtonVisible) {
+                    // these are stored just so that user can be logged in automatically.
+                    $cookieStore.put('password', $scope.password);
+                    $cookieStore.put('team', $scope.bundleid);
+                    $scope.okButtonClicked();
+                }
+
             } else {
                 showDashboardMessage("Something went wrong while creating project.", true);
             }
@@ -275,7 +295,7 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
         }, function(data) {
             data.account_info.unshift({"team_name": "Select Project"});
             $scope.accounts = data.account_info;
-            $cookieStore.put('accounts', data.account_info)
+            // $cookieStore.put('accounts', data.account_info);
             console.log('Data saved: ' , data.account_info);
 
             $scope.teamkeyvalue = 0;
@@ -373,7 +393,7 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $cookie
         }
     }
     $scope.authenticate_dashboard = function() {
-
+        console.log('authenticating user: ', $scope.email, $scope.password, $scope.project);
         DataService.makeHTTPCall("account.dashboard.authenticate", {
             'user_email' : $scope.email,
             'password' : $scope.password,
@@ -381,6 +401,7 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $cookie
         }, function(data) {
             if (data.authenticated) {
                 if (angular.equals(data.account_info.length, 1)) {
+                    console.log('successfully Logged in.');
                     Utils.storeUserDataInCookies(data.account_info[0], $scope.email);
                     $scope.$emit('isLoginSuccessful', true);
                     gotoRedirectPage();
@@ -471,18 +492,19 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $cookie
 
     function getTeamsInfo() {
         $scope.projectValue = 0;
-        $scope.accounts = $cookieStore.get('accounts');
-        // 'accounts also has "select a project" item in the dropdown so'
-        // to remove it used splice function on array.
-        $scope.accounts.splice(0, 1);
+        $scope.get_teams();
     }
     function removeVars() {
         $cookieStore.remove('ap_isHeaderValid');
         $cookieStore.remove('ap_isSignupHeaderVisibile');
+        $cookieStore.remove('ap_isSignupButtonVisible');
+        $cookieStore.remove('ap_isOKButtonVisible');
     }
     $scope.add_project = function() {
         $cookieStore.put('ap_isHeaderValid', -1);
         $cookieStore.put('ap_isSignupHeaderVisibile', -1);
+        $cookieStore.put('ap_isSignupButtonVisible', -1);
+        $cookieStore.put('ap_isOKButtonVisible', 1);
 
         var modalInstance = $modal.open({
             animation: true,
@@ -492,15 +514,34 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $cookie
         });
 
         modalInstance.result.then(function () {
-            removeVars();    
+            removeVars();
+            // project added succcessfully.
+            $scope.password = $cookieStore.get('password');
+            $scope.project = $cookieStore.get('team');
+
+            console.log('Team: ', $scope.project);
+
+            $cookieStore.remove('password');
+            $cookieStore.remove('team');
+            $scope.authenticate_dashboard();
+
         }, function () {
             removeVars();
-            console.log('Modal dismissed at: ' + new Date());
+            console.log('Add project Modal dismissed at: ' + new Date());
         });
-
     };
-
-
+    
+    $scope.get_teams = function() {
+        DataService.makeHTTPCall("account.dashboard.teams", {
+            'user_email' : $scope.email
+        }, function(data) {
+            data.account_info.unshift({"team_name": "Select Project"});
+            $scope.accounts = data.account_info;
+            // 'accounts also has "select a project" item in the dropdown so'
+            // to remove it used splice function on array.
+            $scope.accounts.splice(0, 1);
+        });
+    };
 
     $scope.selectSection = function(sectionName) {
         if (angular.isDefined(team_hash) && angular.isDefined(team_name)) {
@@ -514,10 +555,16 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $cookie
 Dashboard.controller('ChangeProjectInstanceCtrl', function ($scope, $modalInstance, $cookieStore) {
     
     $scope.ok = function () {
+        // used when changing project
         $scope.$on('isLoginSuccessful', function(event, args) {
             if (args)
                 $modalInstance.close();    
-        }); 
+        });
+        // used when newer project is added by existing person, using existing projects
+        if ($cookieStore.get('isProjectAdded')){
+            $cookieStore.remove('isProjectAdded');
+            $modalInstance.close();
+        }
     };
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
@@ -585,7 +632,6 @@ Dashboard.controller('Feed', function($scope, $location, $cookieStore, $sce, $ti
             getDashboardList($scope.filterType, false);
         }
     };
-
     $scope.initFeed = function() {
         var userTeamToken = angular.fromJson($cookieStore.get('user_team_token'));
         if (angular.isDefined(userTeamToken)) {
