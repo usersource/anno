@@ -382,6 +382,9 @@ ServiceModule.factory('DataService', function($http, $location, $window, $cookie
                   endpointData.root + "/" + DashboardConstants.endpointVersion +
                   "/" + endpointData.path;
 
+        console.log("URL is: ", url);
+        console.log("Params: ", params);
+
         var req = {
             method : endpointData.method,
             url : url,
