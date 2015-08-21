@@ -1110,7 +1110,10 @@ li.unread .listTitle {
     width: 30px;
     margin-left: 10px;
     position: relative;
-    bottom: -100px;
+    bottom: -50px;
+}
+.select-arrow{
+   -webkit-appearance: none;
 }
 
 #signinContainerInner {
