@@ -311,16 +311,16 @@ body {
 }
 
 .modal-content #register {
-  height: 750px;
+  height: 800px;
+
 }
 
-.modal-dialog {
+/*.modal-dialog {
   margin-top: calc(33.333% - 300px) !important;
   margin-top: -webkit-calc(33.333% - 300px) !important;
   margin-top: -moz-calc(33.333% - 300px) !important;
   margin-top: -o-calc(33.333% - 300px) !important;
 }
-
 
 @media (min-width: 768px) {
   .modal-dialog {
@@ -328,4 +328,23 @@ body {
       max-width: 713px;
       max-height: 700px;
   }
+}*/
+
+.modal {
+  text-align: center;
+}
+
+@media screen and (min-width: 768px) { 
+  .modal:before {
+    display: inline-block;
+    vertical-align: middle;
+    content: " ";
+    height: 100%;
+  }
+}
+
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
 }

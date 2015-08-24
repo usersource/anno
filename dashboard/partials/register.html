@@ -1,10 +1,11 @@
 <div id="register" ng-controller="Register" ng-click="onRegisterClicked();">
-    <div class="header row" ng-show="isHeaderValid" ng-include="'/dashboard/partials/no_auth_header.html'"></div>
+    <div class="header row" ng-show="isRegister" ng-include="'/dashboard/partials/no_auth_header.html'"></div>
     <div id="dashboard_message" ng-show="error_message.length" ng-class="{'error-message':dashboard_error_type}" style="left: 25%;">
         <div id="dashboard_message_text">{{error_message}}</div>
     </div>
     <div id="register_outer">
         <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1"></div>
+        
         <div id="register_inner" class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
             <!-- <div id="register_page_indicator_parent">
                 <div class="register_page_indicator"></div>
@@ -13,18 +14,18 @@
             </div> -->
             <div id="register_form_div" class="register_main_div" ng-hide="showPlans || registrationCompleted">
                 <div style="padding-bottom: 20px;border-bottom: 1px solid #C4CFD7;">
-                    <div class="title" ng-show="isSignupHeaderVisibile">Sign up, it's free</div>
-                    <div class="title" ng-hide="isSignupHeaderVisibile">Add new Project</div>
+                    <div class="title" ng-show="isRegister">Sign up, it's free</div>
+                    <div class="title" ng-hide="isRegister">Add new Project</div>
 
                     <div class="input-div">
                         <img width="16px" height="16px" src="/dashboard/images/icon_mentions.png">
-                        <input ng-model="fullname" ng-hide="display_name" type="text" id="register_full_name" placeholder="Full Name" />
-                        <input ng-model="fullname" ng-show="display_name" type="text" id="register_full_name" placeholder="{{userName}}" readonly="readonly"/>
+                        <input ng-model="fullname" ng-show="isRegister" type="text" id="register_full_name" placeholder="Full Name" />
+                        <input ng-model="fullname" ng-hide="isRegister" type="text" id="register_full_name" placeholder="{{userName}}" readonly="readonly"/>
                     </div>
                     <div class="input-div">
                         <img width="16px" height="10px" src="/dashboard/images/icon_mail.png">
-                        <input ng-model="register_email" ng-hide="display_email" type="email" id="register_email" placeholder="Email Address"/>
-                        <input ng-model="register_email" ng-show="display_email" type="email" id="register_email" placeholder="{{userEmail}}" readonly="readonly"/>
+                        <input ng-model="register_email" ng-show="isRegister" type="email" id="register_email" placeholder="Email Address"/>
+                        <input ng-model="register_email" ng-hide="isRegister" type="email" id="register_email" placeholder="{{userEmail}}" readonly="readonly"/>
                     </div>
                     <div class="input-div">
                         <img width="12px" height="15px" src="/dashboard/images/icon_password.png" style="margin: 0 2px;">
@@ -70,8 +71,8 @@
                         <input id="appNotInStore" class="register_button grey" type="submit" value="My App is not in the App Store yet" style="margin-bottom: 0;" ng-show="appInStore" ng-click="showInputForAppDetails();"/>
                     </div>
                 </div>
-                <input class="register_button" type="submit" ng-show="isSignupButtonVisible" value="Sign Up Now" style="margin-top: 60px;" ng-click="showPlansPage();"/>
-                <input class="register_button" type="submit" ng-hide="isSignupButtonVisible" value="Add Project Now" style="margin-top: 60px;" ng-click="createSDKTeam();"/>
+                <input class="register_button" type="submit" ng-show="isRegister" value="Sign Up Now" style="margin-top: 60px;" ng-click="showPlansPage();"/>
+                <input class="register_button" type="submit" ng-hide="isRegister" value="Add Project Now" style="margin-top: 60px;" ng-click="createSDKTeam();"/>
             </div>
             <div id="register_form_div" class="register_main_div" ng-show="showPlans && !registrationCompleted">
                 <div class="title">Choose your Plan</div>
@@ -93,8 +94,11 @@
                 </div>
             </div>
             <div id="registration_completion_msg" class="register_main_div" ng-show="registrationCompleted">
-                <div>That's it!<br/><br/>Please check your email for a message from usersource.io.<br/>Click on the link in the email to get started!</div>
+                <div ng-hide="!isRegister">That's it!<br/><br/>Please check your email for a message from usersource.io.<br/>Click on the link in the email to get started!</div>
+                <div ng-show="!isRegister">Successfully added new project.</div>
+                <button type="button" class="btn btn-default" ng-click="okButtonClicked();" ng-show="!isRegister">OK</button>
             </div>
+            
         </div>
         <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1"></div>
     </div>

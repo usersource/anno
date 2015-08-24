@@ -26,33 +26,18 @@ Dashboard.controller('Register', function($scope, $timeout, $location, $cookieSt
     $scope.hideAppFetchSpinner = true;
     $scope.stripe_plans = DashboardConstants.Stripe.plans;
     $scope.planSelected = Object.keys($scope.stripe_plans)[0];
+    
 
-    // following variables control the behaviour of this template
+    // following variable controls the behaviour of this template
     // since this is used while registering new user as well as
     // while adding new project
-    $scope.isHeaderValid = true;
-    $scope.isSignupHeaderVisibile = true;
-    $scope.display_name = false;
-    $scope.display_email = false;
-    $scope.isSignupButtonVisible = true;
-    $scope.isOKButtonVisible = false;
+    $scope.isRegister = true;
 
     $scope.initRegister = function() {
-        if ($cookieStore.get('ap_isHeaderValid') == -1)
-            $scope.isHeaderValid = false;
-        if ($cookieStore.get('ap_isSignupHeaderVisibile') == -1)
-            $scope.isSignupHeaderVisibile = false;
-        if ($cookieStore.get('ap_isSignupButtonVisible') == -1)
-            $scope.isSignupButtonVisible = false;
-        if ($cookieStore.get('ap_isOKButtonVisible') == 1)
-            $scope.isOKButtonVisible = true;
-        if ($cookieStore.get('user_display_name')) {
+        if ($cookieStore.get('ap_register') == -1) {
+            $scope.isRegister = false;
             $scope.userName = $cookieStore.get('user_display_name');
-            $scope.display_name = true;
-        } 
-        if ($cookieStore.get('user_email')) {
             $scope.userEmail = $cookieStore.get('user_email');
-            $scope.display_email = true;
         }
     };
     $scope.initRegister();
@@ -61,6 +46,7 @@ Dashboard.controller('Register', function($scope, $timeout, $location, $cookieSt
         $cookieStore.put('isProjectAdded', true);
         $scope.ok();
     };
+
 
     $scope.notSorted = function(obj) {
         if (!obj) {
@@ -188,11 +174,10 @@ Dashboard.controller('Register', function($scope, $timeout, $location, $cookieSt
                 $scope.showPlans = false;
                 $scope.registrationCompleted = true;
 
-                if ($scope.isOKButtonVisible) {
+                if (!$scope.isRegister) {
                     // these are stored just so that user can be logged in automatically.
                     $cookieStore.put('password', $scope.password);
                     $cookieStore.put('team', $scope.bundleid);
-                    $scope.okButtonClicked();
                 }
 
             } else {
@@ -300,8 +285,6 @@ Dashboard.controller('Login', function($scope, $location, $timeout, $routeParams
             data.account_info.unshift({"team_name": "Select Project"});
             $scope.accounts = data.account_info;
             // $cookieStore.put('accounts', data.account_info);
-            console.log('Data saved: ' , data.account_info);
-
             $scope.teamkeyvalue = 0;
 
             if ($scope.accounts.length > 2) {
@@ -397,7 +380,6 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $cookie
         }
     }
     $scope.authenticate_dashboard = function() {
-        console.log('authenticating user: ', $scope.email, $scope.password, $scope.project);
         DataService.makeHTTPCall("account.dashboard.authenticate", {
             'user_email' : $scope.email,
             'password' : $scope.password,
@@ -405,7 +387,6 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $cookie
         }, function(data) {
             if (data.authenticated) {
                 if (angular.equals(data.account_info.length, 1)) {
-                    console.log('successfully Logged in.');
                     Utils.storeUserDataInCookies(data.account_info[0], $scope.email);
                     $scope.$emit('isLoginSuccessful', true);
                     gotoRedirectPage();
@@ -499,16 +480,18 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $cookie
         $scope.get_teams();
     }
     function removeVars() {
-        $cookieStore.remove('ap_isHeaderValid');
+        /*$cookieStore.remove('ap_isHeaderValid');
         $cookieStore.remove('ap_isSignupHeaderVisibile');
         $cookieStore.remove('ap_isSignupButtonVisible');
-        $cookieStore.remove('ap_isOKButtonVisible');
+        $cookieStore.remove('ap_isOKButtonVisible');*/
+        $cookieStore.remove('ap_register');
     }
     $scope.add_project = function() {
-        $cookieStore.put('ap_isHeaderValid', -1);
+        /*$cookieStore.put('ap_isHeaderValid', -1);
         $cookieStore.put('ap_isSignupHeaderVisibile', -1);
         $cookieStore.put('ap_isSignupButtonVisible', -1);
-        $cookieStore.put('ap_isOKButtonVisible', 1);
+        $cookieStore.put('ap_isOKButtonVisible', 1);*/
+        $cookieStore.put('ap_register', -1);
 
         var modalInstance = $modal.open({
             animation: true,
@@ -522,9 +505,6 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $cookie
             // project added succcessfully.
             $scope.password = $cookieStore.get('password');
             $scope.project = $cookieStore.get('team');
-
-            console.log('Team: ', $scope.project);
-
             $cookieStore.remove('password');
             $cookieStore.remove('team');
             $scope.authenticate_dashboard();

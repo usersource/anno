@@ -381,16 +381,13 @@ ServiceModule.factory('DataService', function($http, $location, $window, $cookie
         var url = this.convert_if_custom_domain() + apiRoot + "/" +
                   endpointData.root + "/" + DashboardConstants.endpointVersion +
                   "/" + endpointData.path;
-
-        console.log("URL is: ", url);
-        console.log("Params: ", params);
-
         var req = {
             method : endpointData.method,
             url : url,
             params : params
         };
-
+        /*console.log("Request: ", req);
+        console.log("Parameters: ", params);*/
         if (req.method === "POST") {
             req.data = params;
         }
