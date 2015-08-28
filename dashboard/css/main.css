@@ -311,30 +311,16 @@ body {
 }
 
 .modal-content #register {
-  height: 800px;
-
+  min-height: 750px;
+  /*min-height: 100%;*/
 }
-
-/*.modal-dialog {
-  margin-top: calc(33.333% - 300px) !important;
-  margin-top: -webkit-calc(33.333% - 300px) !important;
-  margin-top: -moz-calc(33.333% - 300px) !important;
-  margin-top: -o-calc(33.333% - 300px) !important;
-}
-
-@media (min-width: 768px) {
-  .modal-dialog {
-      width: 59.4166667% !important;
-      max-width: 713px;
-      max-height: 700px;
-  }
-}*/
 
 .modal {
   text-align: center;
 }
 
 @media screen and (min-width: 768px) { 
+/*@media screen { */
   .modal:before {
     display: inline-block;
     vertical-align: middle;
@@ -347,4 +333,12 @@ body {
   display: inline-block;
   text-align: left;
   vertical-align: middle;
+}
+
+.modal-body {
+  position: relative;
+  overflow-y: auto;
+  max-height: 400px;
+  padding: 15px;
+
 }

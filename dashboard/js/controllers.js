@@ -38,6 +38,9 @@ Dashboard.controller('Register', function($scope, $timeout, $location, $cookieSt
             $scope.isRegister = false;
             $scope.userName = $cookieStore.get('user_display_name');
             $scope.userEmail = $cookieStore.get('user_email');
+
+            var element = document.getElementById('register_inner');
+            element.setAttribute('style', 'text-align: center; margin: 30px 0 30px 0;');
         }
     };
     $scope.initRegister();
@@ -178,6 +181,8 @@ Dashboard.controller('Register', function($scope, $timeout, $location, $cookieSt
                     // these are stored just so that user can be logged in automatically.
                     $cookieStore.put('password', $scope.password);
                     $cookieStore.put('team', $scope.bundleid);
+
+                    $scope.okButtonClicked();
                 }
 
             } else {
@@ -389,6 +394,7 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $cookie
                 if (angular.equals(data.account_info.length, 1)) {
                     Utils.storeUserDataInCookies(data.account_info[0], $scope.email);
                     $scope.$emit('isLoginSuccessful', true);
+                    console.log('Successfully Logged in, now redirecting.');
                     gotoRedirectPage();
                 } else {
                     $scope.accounts = data.account_info;
@@ -480,17 +486,9 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $cookie
         $scope.get_teams();
     }
     function removeVars() {
-        /*$cookieStore.remove('ap_isHeaderValid');
-        $cookieStore.remove('ap_isSignupHeaderVisibile');
-        $cookieStore.remove('ap_isSignupButtonVisible');
-        $cookieStore.remove('ap_isOKButtonVisible');*/
         $cookieStore.remove('ap_register');
     }
     $scope.add_project = function() {
-        /*$cookieStore.put('ap_isHeaderValid', -1);
-        $cookieStore.put('ap_isSignupHeaderVisibile', -1);
-        $cookieStore.put('ap_isSignupButtonVisible', -1);
-        $cookieStore.put('ap_isOKButtonVisible', 1);*/
         $cookieStore.put('ap_register', -1);
 
         var modalInstance = $modal.open({
@@ -507,6 +505,8 @@ Dashboard.controller('Header', function($scope, $cookieStore, $location, $cookie
             $scope.project = $cookieStore.get('team');
             $cookieStore.remove('password');
             $cookieStore.remove('team');
+
+            console.log('Project added successfully, window closed. Now logging in to it.');
             $scope.authenticate_dashboard();
 
         }, function () {
